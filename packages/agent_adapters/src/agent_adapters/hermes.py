@@ -1,3 +1,4 @@
+import asyncio
 import os
 import time
 import json
@@ -393,7 +394,9 @@ class HermesAdapter(BaseAgentEngine):
     async def check_llm_backend_health(self) -> dict:
         """Check the model provider configured for Hermes, not Hermes' facade."""
         start_time = time.perf_counter()
-        settings = self._llm_settings_from_config()
+        # Config discovery can run the Hermes CLI. Periodic health checks must
+        # not prevent unrelated API requests from progressing while it waits.
+        settings = await asyncio.to_thread(self._llm_settings_from_config)
         if settings is None:
             return {
                 "state": "disconnected",
@@ -409,7 +412,9 @@ class HermesAdapter(BaseAgentEngine):
         config_path = settings["config_path"]
 
         if provider == "openai-codex":
-            auth_configured, auth_error = _openai_codex_auth_status(config_path)
+            auth_configured, auth_error = await asyncio.to_thread(
+                _openai_codex_auth_status, config_path
+            )
             if auth_configured:
                 return {
                     "state": "connected",

@@ -53,6 +53,16 @@ def rivet_workflow_operations_enabled() -> bool:
     }
 
 
+def workflow_composer_enabled() -> bool:
+    """Default-off gate for provisional workflow-draft authoring APIs."""
+    return os.getenv("WRIGHT_WORKFLOW_COMPOSER_ENABLED", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
 # UI theme configuration (defaulting to "dark")
 def get_ui_theme() -> str:
     return os.getenv("UI_THEME", "dark")

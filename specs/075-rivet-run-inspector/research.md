@@ -102,3 +102,79 @@
 - Relying only on the ongoing live UI marathon was rejected because it is slower and less deterministic.
 - A component-only suite was rejected because refresh reattachment and API/UI state correlation are page-level behavior.
 
+## Decision 10: Add a Wright-owned workspace document capability, not general filesystem access
+
+**Decision**: Implement `wright-workspace-files__write_text_document` as an
+in-process gateway capability provider and invoke it through the existing Rivet
+MCP Tool Call node. The provider accepts only bounded UTF-8 text, reviewed text
+extensions/media types, relative workspace paths, and `overwrite=false`. It
+uses `WorkspacePath` confinement, atomic fail-if-exists publication, the
+existing `workspace_write_approval`, and returns a digest-bearing
+`wright://artifact` resource link only after durable artifact registration.
+
+**Rationale**: `GatewayService` already has a provider-neutral in-process tool
+seam with policy, audit, schema validation, cancellation, and output
+normalization. The existing workspace file API has strong path confinement but
+silently overwrites, creates parents, returns no digest, and is not authorized
+for runner use. A narrow provider can reuse the safe path capability without
+granting direct filesystem access to Rivet.
+
+**Alternatives considered**:
+
+- Adding a generic Rivet Write File node was rejected because it would broaden
+  filesystem authority and cannot create native engineering formats.
+- Reusing the current workspace file PUT route was rejected because it has no
+  immutable artifact identity, no digest result, and overwrite semantics that
+  violate the accepted contract.
+- Treating an output path string as an artifact was rejected because it cannot
+  prove file existence, ownership, bytes, or integrity.
+
+## Decision 11: Make deliverable intent typed and user-authoritative
+
+**Decision**: Add a mandatory host-owned requested-deliverable selection to
+Graph Builder (`value_only`, `workspace_document`, `native_cad`, or `stl_mesh`).
+Retain that selection with preview and the committed revision. Validate the
+exact graph against reviewed producer-effect declarations at preview, save, and
+run boundaries.
+
+**Rationale**: Graph Builder currently receives raw user text and can validate a
+draft, but it has no typed requested-effect manifest. Free-text heuristics or a
+model-authored claim cannot be the authority for whether a promised file must
+exist. Explicit user confirmation makes the intent deterministic and allows the
+same model-free validator to prevent value-only graphs from satisfying file
+deliverables.
+
+**Alternatives considered**:
+
+- Inferring file intent from keywords or extensions was rejected because it has
+  unavoidable false positives and negatives.
+- Trusting the generation model to declare that no artifact is required was
+  rejected because omission would bypass the safety gate.
+- Validating only after execution was rejected because a graph that cannot
+  produce its promised deliverable should not be saved or run.
+
+## Decision 12: Register workspace artifacts durably and verify every read
+
+**Decision**: Add a workspace artifact SQLite entity and repository. Store the
+opaque artifact identity, workspace-relative locator, digest, byte count, media
+type, producer/correlation provenance, and optional accepted run linkage.
+Configure `GatewayResourceProvider` callbacks and a scoped Run Inspector
+artifact route to resolve the record and verify the current file digest before
+read/open/download.
+
+**Rationale**: Production currently constructs `GatewayResourceProvider()` with
+no artifact callbacks, and the Run Inspector's open callback is not wired. Run
+manifests retain child resource links but are not a general artifact registry.
+Durable registration is required to distinguish an authoritative artifact from
+a mutable path and to preserve workspace/run access scope across restarts.
+
+**Alternatives considered**:
+
+- Encoding the digest and path in a self-verifying URI was considered but
+  rejected for the first contract because it provides no durable producer,
+  principal, session, or accepted-run provenance and cannot support safe listing
+  or retention policy.
+- Reusing surface display artifacts or engineering-model installation artifacts
+  was rejected because both have different ownership, lifecycle, and schema
+  invariants.
+

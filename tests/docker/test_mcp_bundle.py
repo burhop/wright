@@ -343,6 +343,9 @@ def test_smoke_script_covers_services_entries_and_local_tooling() -> None:
         "brep-mcp-wrapped",
         "command -v playwright-mcp",
         "@playwright/mcp/node_modules/playwright-core",
+        "/usr/local/bin/uv",
+        "pip check --python /opt/hermes/.venv/bin/python",
+        "scripts/reconcile_hermes_pip_check.py",
     ):
         assert expected in smoke
 

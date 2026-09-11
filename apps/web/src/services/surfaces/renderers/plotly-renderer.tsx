@@ -137,8 +137,14 @@ export function PlotlyRenderer({
         ref={host}
         role="img"
         aria-label={description}
-        hidden={status !== "ready"}
-        style={{ width: "100%", minHeight: 320 }}
+        aria-hidden={status !== "ready"}
+        style={{
+          width: "100%",
+          minHeight: 320,
+          // Plotly must measure the container during its first render. display:none
+          // produces the default 700px canvas and spills out of dashboard cards.
+          visibility: status === "ready" ? "visible" : "hidden",
+        }}
       />
     </div>
   );

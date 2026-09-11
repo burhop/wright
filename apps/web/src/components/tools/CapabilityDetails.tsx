@@ -1,10 +1,6 @@
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import type { CapabilityView } from "../../services/mcp-service";
-import {
-  CompatibilityBadge,
-  EvidenceBadge,
-  getSetupStatus,
-} from "./CapabilityBadges";
+import { capabilityFacts } from "./CapabilityFacts";
 import { WindowsQualificationSummary } from "./WindowsQualificationSummary";
 
 export function CapabilityDetails({
@@ -31,11 +27,10 @@ export function CapabilityDetails({
   const approvalGates = capability.requirements.approval_gates || [];
   const dependencies = capability.requirements.dependencies || {};
   const supportedPlatforms = capability.requirements.supported_platforms || {};
-  const firstReason = capability.compatibility.reasons[0];
+  const facts = capabilityFacts(capability);
   const summaries = capability.capability_summary.length
     ? capability.capability_summary
     : [capability.description];
-  const setupStatus = getSetupStatus(capability);
 
   useEffect(() => {
     previousFocus.current = document.activeElement as HTMLElement | null;
@@ -89,8 +84,7 @@ export function CapabilityDetails({
             <h2 id="capability-details-title">{capability.name}</h2>
             <p>By {capability.vendor}</p>
             <div className="capability-dialog__badges">
-              <EvidenceBadge value={capability.evidence_class} />
-              <CompatibilityBadge capability={capability} />
+              {facts.type} · {facts.location}
             </div>
           </div>
           <button
@@ -128,11 +122,6 @@ export function CapabilityDetails({
                   : "The available evidence does not specify what data it reads or changes."}
               </p>
             </div>
-            {capability.windows_qualification ? (
-              <WindowsQualificationSummary
-                summary={capability.windows_qualification}
-              />
-            ) : null}
           </section>
 
           <aside
@@ -140,17 +129,17 @@ export function CapabilityDetails({
             aria-label="Setup summary"
           >
             <section className="capability-dialog__fit">
-              <div className="capability-dialog__section-label">
-                This computer
-              </div>
-              <h3 data-testid="capability-fit-summary">{setupStatus.label}</h3>
-              <p>{setupStatus.summary}</p>
-              {firstReason?.message ? <p>{firstReason.message}</p> : null}
-              {firstReason?.recovery ? (
-                <p className="capability-dialog__recovery">
-                  {firstReason.recovery}
-                </p>
-              ) : null}
+              <h3>Installation</h3>
+              <p>{facts.method}</p>
+              {capability.source_records
+                .filter((source) => source.primary)
+                .map((source) => (
+                  <p key={source.url}>
+                    <a href={source.url} target="_blank" rel="noreferrer">
+                      Publisher instructions ↗
+                    </a>
+                  </p>
+                ))}
               <button
                 type="button"
                 className="capability-dialog__check"
@@ -203,19 +192,19 @@ export function CapabilityDetails({
                   </dd>
                 </div>
                 <div>
-                  <dt>Account or keys</dt>
+                  <dt>Cost</dt>
+                  <dd>{facts.cost}</dd>
+                </div>
+                <div>
+                  <dt>Login</dt>
                   <dd>
-                    {credentials.length
-                      ? credentials.join(", ")
-                      : "None listed"}
+                    {facts.login}
+                    {credentials.length ? " · " + credentials.join(", ") : ""}
                   </dd>
                 </div>
                 <div>
-                  <dt>License</dt>
-                  <dd>
-                    {capability.requirements.license ||
-                      "Not specified by the publisher"}
-                  </dd>
+                  <dt>MCP license</dt>
+                  <dd>{facts.license}</dd>
                 </div>
               </dl>
             </section>
@@ -223,7 +212,16 @@ export function CapabilityDetails({
         </div>
 
         <details className="capability-dialog__technical">
-          <summary>Technical evidence and requirements</summary>
+          <summary>Technical details</summary>
+          {capability.compatibility.reasons.map((reason) => (
+            <p key={reason.code}>{reason.message}</p>
+          ))}
+          {capability.windows_qualification ? (
+            <WindowsQualificationSummary
+              summary={capability.windows_qualification}
+            />
+          ) : null}
+
           <div className="capability-dialog__technical-grid">
             <section>
               <h3>Examples</h3>

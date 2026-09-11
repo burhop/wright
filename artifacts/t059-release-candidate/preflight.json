@@ -1,0 +1,31 @@
+{
+  "approvals": [],
+  "manager_adapter_channels": [],
+  "manager_adapters": [],
+  "mode": "dry-run",
+  "native_candidate": null,
+  "native_platform_results": [],
+  "native_public_verification": null,
+  "oci_candidate": null,
+  "oci_gate_evidence": null,
+  "promotions": [],
+  "python_artifacts": [],
+  "python_install_evidence": [],
+  "release_identity": {
+    "python_version": "0.1.9",
+    "source_commit": "fe6140d85f0598454394d7b7105d756c3794a7dd",
+    "tag": "v0.1.9",
+    "version": "0.1.9"
+  },
+  "schema_version": 3,
+  "skipped_optional_stages": [],
+  "stage_results": [
+    {
+      "external_mutation": false,
+      "result": "passed",
+      "stage": "preflight"
+    }
+  ],
+  "status": "preflight",
+  "verification_results": []
+}

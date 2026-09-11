@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import base64
+import hashlib
 import json
 import re
-import hashlib
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from typing import Any
@@ -18,6 +19,30 @@ _SECRET = re.compile(
     r"(?i)(token|secret|password|passwd|api[_-]?key|authorization|credential)"
 )
 _URL_SECRET = re.compile(r"(?i)([?&](?:token|access_token|api_key|key)=)[^&\s]+")
+_BASE64_DATA = re.compile(r"(?i)^data:[^;,\s]+;base64,")
+_BASE64_TEXT = re.compile(r"^[A-Za-z0-9+/]+={0,2}$")
+_BINARY_RIVET_TYPES = frozenset({"audio", "binary", "document", "image"})
+_RIVET_SCALAR_DATA_TYPES = frozenset(
+    {
+        "any",
+        "audio",
+        "binary",
+        "boolean",
+        "chat-message",
+        "control-flow-excluded",
+        "date",
+        "datetime",
+        "document",
+        "gpt-function",
+        "graph-reference",
+        "image",
+        "number",
+        "object",
+        "string",
+        "time",
+        "vector",
+    }
+)
 
 
 class RivetEvidenceError(ValueError):
@@ -60,6 +85,53 @@ def _safe_link(value: str) -> str:
     return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
 
 
+def normalize_rivet_output_value(value: Any) -> Any:
+    """Remove Rivet's typed DataValue envelope from a terminal graph output."""
+
+    if not isinstance(value, Mapping) or set(value) != {"type", "value"}:
+        return value
+    data_type = value.get("type")
+    if not isinstance(data_type, str):
+        return value
+    scalar_type = data_type.removesuffix("[]")
+    if scalar_type not in _RIVET_SCALAR_DATA_TYPES:
+        return value
+    return value.get("value")
+
+
+def rivet_data_type(value: Any) -> str:
+    if isinstance(value, Mapping) and isinstance(value.get("type"), str):
+        data_type = str(value["type"])
+        scalar_type = data_type.removesuffix("[]")
+        if scalar_type in _RIVET_SCALAR_DATA_TYPES or data_type.startswith("fn<"):
+            return data_type
+    return _result_kind(value)
+
+
+def _binary_metadata(value: Any, *, data_type: str) -> dict[str, Any]:
+    semantic = value.get("value") if isinstance(value, Mapping) else value
+    media_type: str | None = None
+    payload = semantic
+    if isinstance(semantic, Mapping):
+        media = semantic.get("mediaType") or semantic.get("media_type")
+        media_type = str(media)[:255] if media else None
+        payload = semantic.get("data")
+    byte_count: int | None = None
+    if isinstance(payload, (bytes, bytearray, memoryview)):
+        byte_count = len(payload)
+    elif isinstance(payload, Sequence) and not isinstance(
+        payload, (str, bytes, bytearray)
+    ):
+        if all(isinstance(item, int) and 0 <= item <= 255 for item in payload[:1024]):
+            byte_count = len(payload)
+    return {
+        "data_type": data_type,
+        "media_type": media_type,
+        "bytes": byte_count,
+        "body": "not retained",
+    }
+
+
 def project_result_value(
     value: Any,
     *,
@@ -67,10 +139,40 @@ def project_result_value(
     origin: str,
     maximum_bytes: int = 64 * 1024,
     artifact: Mapping[str, Any] | None = None,
+    data_type: str | None = None,
+    evidence_state: str | None = None,
 ) -> dict[str, Any]:
     """Return one deterministic, redacted, bounded result for storage and UI use."""
 
-    safe, redactions = redact_value(value, maximum_text=max(4096, maximum_bytes * 4))
+    retained_type = data_type or rivet_data_type(value)
+    scalar_type = retained_type.removesuffix("[]")
+    semantic = normalize_rivet_output_value(value)
+    compact_text = "".join(semantic.split()) if isinstance(semantic, str) else ""
+    base64_omitted = isinstance(semantic, str) and (
+        _BASE64_DATA.match(semantic) is not None
+        or (
+            len(compact_text) >= 256
+            and len(compact_text) % 4 == 0
+            and len(set(compact_text)) >= 12
+            and _BASE64_TEXT.fullmatch(compact_text) is not None
+        )
+    )
+    binary_omitted = (
+        scalar_type in _BINARY_RIVET_TYPES
+        or isinstance(semantic, (bytes, bytearray, memoryview))
+        or base64_omitted
+        or retained_type.startswith("fn<")
+        or callable(semantic)
+    )
+    if binary_omitted:
+        safe = _binary_metadata(value, data_type=retained_type)
+        redactions = 0
+        bounded = True
+    else:
+        safe, redactions, bounded = _redact_value_details(
+            semantic,
+            maximum_text=max(4096, maximum_bytes * 4),
+        )
     kind = "artifact" if artifact is not None else _result_kind(safe)
     if kind == "link" and isinstance(safe, str):
         safe = _safe_link(safe)
@@ -81,7 +183,7 @@ def project_result_value(
     else:
         rendered = json.dumps(safe, sort_keys=True, default=str)
         preview = rendered[:4096] + ("…" if len(rendered) > 4096 else "")
-    complete = len(encoded) <= maximum_bytes
+    complete = len(encoded) <= maximum_bytes and not bounded and not binary_omitted
     retained_value = safe if complete else None
     retained_bytes = len(encoded) if complete else len(preview.encode("utf-8"))
     return {
@@ -89,16 +191,67 @@ def project_result_value(
         "name": name,
         "origin": origin,
         "kind": kind,
+        "data_type": retained_type,
+        "evidence_state": evidence_state
+        or (
+            "not-retained"
+            if binary_omitted
+            else "truncated"
+            if not complete
+            else "redacted"
+            if redactions
+            else "no-value"
+            if semantic is None
+            else "available"
+        ),
         "value": retained_value,
         "preview": preview,
         "complete": complete,
-        "truncation_reason": None if complete else "size_limit",
+        "truncation_reason": (
+            None
+            if complete
+            else "binary_omitted"
+            if binary_omitted
+            else "size_limit"
+            if len(encoded) > maximum_bytes
+            else "projection_limit"
+            if bounded
+            else "size_limit"
+        ),
         "original_bytes": len(encoded),
         "retained_bytes": retained_bytes,
         "digest": digest,
         "redaction_count": redactions,
         "artifact": dict(artifact) if artifact is not None else None,
     }
+
+
+def project_named_values(
+    values: Mapping[str, Any],
+    *,
+    origin: str,
+    maximum_bytes: int = 48 * 1024,
+    maximum_items: int = 64,
+) -> tuple[list[dict[str, Any]], bool]:
+    """Project a bounded named value collection that is safe for run events."""
+
+    results = [
+        project_result_value(
+            value,
+            name=str(name)[:255],
+            origin=origin,
+            maximum_bytes=2048,
+            data_type=rivet_data_type(value),
+        )
+        for name, value in sorted(values.items(), key=lambda item: str(item[0]))[
+            :maximum_items
+        ]
+    ]
+    complete = len(values) <= len(results)
+    while results and len(_encoded({"values": results})) > maximum_bytes:
+        results.pop()
+        complete = False
+    return results, complete and all(item["complete"] for item in results)
 
 
 def project_output_summary(
@@ -115,6 +268,7 @@ def project_output_summary(
             name=str(name),
             origin="final_output",
             maximum_bytes=min(64 * 1024, maximum_bytes),
+            data_type=rivet_data_type(value),
         )
         for name, value in sorted(outputs.items(), key=lambda item: str(item[0]))[:256]
     ]
@@ -138,32 +292,75 @@ def project_output_summary(
     return summary, truncated
 
 
-def redact_value(value: Any, *, maximum_text: int = 4096) -> tuple[Any, int]:
+def _redact_value_details(
+    value: Any,
+    *,
+    maximum_text: int = 4096,
+    maximum_depth: int = 8,
+    maximum_items: int = 128,
+) -> tuple[Any, int, bool]:
     redactions = 0
+    bounded = False
 
-    def visit(item: Any) -> Any:
-        nonlocal redactions
+    def visit(item: Any, depth: int = 0) -> Any:
+        nonlocal redactions, bounded
+        if depth >= maximum_depth:
+            bounded = True
+            return "[projection depth limit]"
+        if isinstance(item, (bytes, bytearray, memoryview)):
+            bounded = True
+            return {"body": "not retained", "bytes": len(item)}
+        if callable(item):
+            bounded = True
+            return "[function not retained]"
         if isinstance(item, Mapping):
             result: dict[str, Any] = {}
-            for key, child in item.items():
+            entries = list(item.items())
+            if len(entries) > maximum_items:
+                bounded = True
+            for key, child in entries[:maximum_items]:
                 name = str(key)
                 if _SECRET.search(name):
                     result[name] = "[redacted]"
                     redactions += 1
                 else:
-                    result[name] = visit(child)
+                    result[name] = visit(child, depth + 1)
             return result
         if isinstance(item, Sequence) and not isinstance(item, (str, bytes, bytearray)):
-            return [visit(child) for child in item]
+            if len(item) > maximum_items:
+                bounded = True
+            return [visit(child, depth + 1) for child in item[:maximum_items]]
         if isinstance(item, str):
             sanitized, count = _URL_SECRET.subn(r"\1[redacted]", item)
             redactions += count
+            compact = "".join(sanitized.split())
+            if _BASE64_DATA.match(sanitized) or (
+                len(compact) >= 256
+                and len(compact) % 4 == 0
+                and len(set(compact)) >= 12
+                and _BASE64_TEXT.fullmatch(compact) is not None
+            ):
+                bounded = True
+                redactions += 1
+                try:
+                    byte_count = len(
+                        base64.b64decode(compact.split(",")[-1], validate=False)
+                    )
+                except (ValueError, TypeError):
+                    byte_count = None
+                return {"body": "base64 not retained", "bytes": byte_count}
             if len(sanitized) > maximum_text:
+                bounded = True
                 return sanitized[:maximum_text] + "…[truncated]"
             return sanitized
         return item
 
-    return visit(value), redactions
+    return visit(value), redactions, bounded
+
+
+def redact_value(value: Any, *, maximum_text: int = 4096) -> tuple[Any, int]:
+    safe, redactions, _bounded = _redact_value_details(value, maximum_text=maximum_text)
+    return safe, redactions
 
 
 def safe_argument_summary(

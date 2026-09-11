@@ -31,6 +31,24 @@ class GatewayError(RuntimeError):
         self.code = code
 
 
+class GatewayWorkspaceScopeError(GatewayError):
+    """Trusted, path-free recovery guidance for a cached browser's file root."""
+
+    user_message = (
+        "The cached browser MCP was started for a different or unspecified workspace."
+    )
+    recovery_action = (
+        "Let its active tasks finish. Disable this browser server in Tool Registry, "
+        "then run the workflow from the intended workspace so Wright starts it there."
+    )
+
+    def __init__(self) -> None:
+        super().__init__(
+            GatewayErrorCode.INVALID_BINDING,
+            f"{self.user_message} {self.recovery_action}",
+        )
+
+
 class GatewayLifecycleError(GatewayError):
     """Safe provider-neutral failure for a specialized application lifecycle."""
 

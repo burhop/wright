@@ -13,6 +13,7 @@ export function ToolRegistryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
+  const [catalogSettingsOpen, setCatalogSettingsOpen] = useState(false);
   const [initialCapabilityId, setInitialCapabilityId] = useState("");
   const [reportContext, setReportContext] =
     useState<MissingCapabilitySearchContext>({
@@ -53,9 +54,18 @@ export function ToolRegistryPage() {
           gap: "var(--space-xl)",
         }}
       >
-        <CatalogUpdatePanel
-          onCatalogChanged={() => setRefreshToken((value) => value + 1)}
-        />
+        <details
+          onToggle={(event) => setCatalogSettingsOpen(event.currentTarget.open)}
+        >
+          <summary style={{ color: "var(--color-text-muted)" }}>
+            Catalog settings
+          </summary>
+          {catalogSettingsOpen && (
+            <CatalogUpdatePanel
+              onCatalogChanged={() => setRefreshToken((value) => value + 1)}
+            />
+          )}
+        </details>
         <CapabilityLibrary
           refreshToken={refreshToken}
           onAddCapability={() => {

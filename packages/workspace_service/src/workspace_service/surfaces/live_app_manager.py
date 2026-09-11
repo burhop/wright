@@ -55,6 +55,7 @@ class LiveAppStartRequest:
     user_id: str
     session_id: str
     idempotency_key: str
+    initial_generation: int = 1
     attach_approval: AttachApproval | None = None
 
 
@@ -207,6 +208,15 @@ class LiveAppManager:
                 "SURFACE_LIFECYCLE_REQUEST_INVALID",
                 "Live-app start request is missing required scope or idempotency",
             )
+        if (
+            isinstance(request.initial_generation, bool)
+            or not isinstance(request.initial_generation, int)
+            or request.initial_generation < 1
+        ):
+            raise LiveAppManagerError(
+                "SURFACE_LIFECYCLE_REQUEST_INVALID",
+                "Live-app start generation must be a positive integer",
+            )
 
     async def _source_lock(self, key: tuple[str, str, str]) -> asyncio.Lock:
         async with self._registry_lock:
@@ -240,7 +250,7 @@ class LiveAppManager:
             surface_id=request.surface_id,
             manifest_id=request.manifest_id,
             manifest_hash=declaration.manifest.canonical_hash,
-            generation=1,
+            generation=request.initial_generation,
             revision=1,
             state="declared",
             sharing=declaration.manifest.presentation.sharing,
@@ -856,6 +866,59 @@ class LiveAppManager:
             stopped = await self._stop_locked(instance_id)
             self._operation_results[operation] = stopped
             return stopped
+
+    async def compensate_uncommitted(
+        self,
+        instance_id: str,
+        *,
+        generation: int,
+        correlation_id: str,
+    ) -> LiveAppInstance:
+        """Fail closed when a ready runtime cannot be committed to its surface.
+
+        Compensation is deliberately narrower than a normal stop or restart. It
+        may act only on the exact generation returned to the control service, so
+        a late descriptor failure can never stop a newer runtime generation.
+        """
+
+        if not correlation_id or len(correlation_id) > 64:
+            raise LiveAppManagerError(
+                "SURFACE_COMPENSATION_REQUEST_INVALID",
+                "Runtime compensation requires a bounded correlation reference",
+            )
+        lock = await self._instance_lock(instance_id)
+        async with lock:
+            current = self.get(instance_id)
+            if current.generation != generation:
+                raise LiveAppManagerError(
+                    "SURFACE_COMPENSATION_GENERATION_MISMATCH",
+                    "Runtime generation changed before compensation could be applied",
+                    instance=current,
+                )
+            if current.state in {"failed", "stopped"}:
+                return current
+            if current.state not in {"ready", "unhealthy"}:
+                raise LiveAppManagerError(
+                    "SURFACE_COMPENSATION_STATE_MISMATCH",
+                    f"Runtime compensation is not available from {current.state}",
+                    instance=current,
+                )
+            stopped = await self._stop_locked(instance_id)
+            if stopped.state != "stopped":
+                return stopped
+            return self._replace(
+                instance_id,
+                state="failed",
+                ended_at=self._clock(),
+                failure=LiveAppFailure(
+                    "SURFACE_DESCRIPTOR_COMMIT_FAILED",
+                    (
+                        "Managed runtime was stopped because its authoritative "
+                        f"surface state could not be committed. Reference {correlation_id}."
+                    ),
+                    True,
+                ),
+            )
 
     async def restart(
         self,

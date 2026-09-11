@@ -251,4 +251,4 @@ def test_interrupted_migration_does_not_leave_partial_native_tables(tmp_path):
             ).fetchone()
             is None
         )
-    assert upgrade_database(path).ending_version == 17
+    assert upgrade_database(path).ending_version == 19

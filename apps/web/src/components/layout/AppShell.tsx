@@ -32,9 +32,7 @@ export function AppShell({ children }: AppShellProps) {
       <Header />
 
       <div
-        className={`app-shell__body${
-          isWorkspaceView ? " app-shell__body--workspace" : ""
-        }`}
+        className={`app-shell__body${isWorkspaceView ? " app-shell__body--workspace" : ""}`}
       >
         {!isWorkspaceView && <Sidebar />}
 

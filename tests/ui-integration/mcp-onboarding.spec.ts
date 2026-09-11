@@ -283,7 +283,7 @@ test.describe("Guided MCP onboarding", () => {
     for (const source of ["import", "remote", "local", "host"] as const) {
       await page.goto("/tool-registry");
       await page.getByRole("button", { name: "Add custom MCP server" }).click();
-      await page.getByLabel("Source").selectOption(source);
+      await page.getByTestId("onboarding-source-kind").selectOption(source);
       if (source === "import") {
         await page
           .getByLabel("MCP configuration JSON")

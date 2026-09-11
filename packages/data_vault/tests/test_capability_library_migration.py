@@ -49,20 +49,22 @@ def test_v12_upgrade_is_additive_backed_up_idempotent_and_old_reader_safe(
     result = upgrade_database(database, backup_dir=tmp_path / "backups")
 
     assert result.starting_version == 12
-    assert result.ending_version == 17
+    assert result.ending_version == 19
     assert result.applied == (
         {"version": 13, "name": "capability_library_onboarding"},
         {"version": 14, "name": "rivet_workspace_mcp_gateway"},
         {"version": 15, "name": "rivet_engineering_scenario_reports"},
         {"version": 16, "name": "local_engineering_model_library"},
         {"version": 17, "name": "native_engineering_processes"},
+        {"version": 18, "name": "terminal_workflow_artifact_reviews"},
+        {"version": 19, "name": "workspace_document_artifacts"},
     )
     assert result.backup_manifest is not None
     assert result.diagnostics == (
         {
             "code": "pre_upgrade_backup_created",
             "from_version": 12,
-            "to_version": 17,
+            "to_version": 19,
         },
         {
             "code": "capability_library_migration_applied",

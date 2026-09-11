@@ -177,6 +177,66 @@
 
 ---
 
+## Phase 9: User Story 1 Extension — Authoritative Workspace Document Deliverables (Priority: P1)
+
+**Goal**: A Graph Builder request that promises a workspace text document saves
+and runs only when the exact reviewed graph contains an approved producer, and a
+successful run returns a durable digest-verified artifact that the engineer can
+open or download within the same workspace/run authority.
+
+**Independent Test**: In a temporary workspace, explicitly select `Workspace
+document`, generate a graph containing `Create workspace document`, approve the
+workspace write gate, and run it. Verify exactly one confined UTF-8 file and one
+immutable artifact record are created, Outputs shows the artifact first, the
+scoped open/download route verifies its digest, and the same request is rejected
+before save/run when the producer, output dependency, or approval is absent.
+
+**Safety precondition**: Do not implement only the writer. T070-T075 establish
+the typed effect and durable artifact authority that block unsafe partial
+delivery.
+
+### Contract and persistence tests
+
+- [ ] T070 [P] [US1] Add failing migration/repository tests for immutable workspace artifact identity, workspace/session/principal/producer scope, run linkage, digest conflicts, restart recovery, and bounded listing in `packages/data_vault/tests/test_workspace_artifacts.py` and `packages/data_vault/tests/test_migrations.py`
+- [ ] T071 [P] [US1] Add failing Graph Builder schema tests for mandatory `value_only|workspace_document|native_cad|stl_mesh` user-confirmed effects, bounded labels/paths, no silent default, and preview/revision identity in `integrations/rivet/spike/.work/rivet2/packages/app/src/domain/graphBuilder/graphBuilderSchemas.test.ts` and `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/sessionController.test.ts`
+- [ ] T072 [P] [US1] Add failing gateway-provider tests for `workspace_write_approval`, strict text extension/media allowlists, UTF-8/byte bounds, traversal/absolute/drive/UNC/device/URL/ADS/hidden/`.git`/`.wright`/symlink/reparse denial, atomic fail-if-exists publication, cancellation cleanup, and digest-bearing resource links in `packages/workspace_service/tests/test_workspace_document_gateway.py`
+- [ ] T073 [P] [US1] Add failing resource/read tests for cross-workspace/session denial, missing/changed bytes, digest verification, safe filename/media headers, no arbitrary browser path, and restart-safe open/download in `packages/tool_registry/tests/test_gateway_resources.py` and `apps/api/tests/test_workflow_run_artifact_api.py`
+- [ ] T074 [P] [US1] Add failing effect-coverage tests for reviewed producer declarations, exact qualified binding, required inputs/approval, producer-to-Graph-Output dependency, value-only/path-string rejection, and native CAD/STL rejection by the text producer in `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/authoringSemantics.test.ts` and `packages/workspace_service/tests/test_rivet_validation.py`
+- [ ] T075 [P] [US1] Add failing component and mocked-browser tests for the mandatory Deliverable selector, artifact-first output, authorized Open/Download actions, integrity-unavailable state, keyboard access, and absence of raw paths/secrets in `integrations/rivet/spike/.work/rivet2/packages/app/src/components/AiGraphCreatorInput.test.tsx`, `apps/web/src/components/workflows/RivetRunInspector.spec.tsx`, and `tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts`
+
+### Durable artifact authority
+
+- [ ] T076 [US1] Add the insert-only `workspace_artifacts` migration and scoped repository with immutable identity/conflict checks and optional accepted-run linkage in `packages/data_vault/src/data_vault/migrations.py`, `packages/data_vault/src/data_vault/workspace_artifacts.py`, and `packages/data_vault/src/data_vault/__init__.py`
+- [ ] T077 [US1] Implement a workspace document publication service that reuses `WorkspacePath`, rejects hidden/native/binary targets, creates only validated parents, writes bounded UTF-8 through a same-directory temporary file, atomically fails if the target exists, fsyncs before publication, records provenance, and compensates only its newly created target on record failure in `packages/workspace_service/src/workspace_service/workspace_document_artifacts.py`
+- [ ] T078 [US1] Implement the `wright-workspace-files__write_text_document` `GatewayCapabilityProvider` with exact input/output schemas, `workspace_write_approval`, closed-world annotations, cancellation cleanup, structured result, and authoritative resource link in `packages/workspace_service/src/workspace_service/workspace_document_gateway.py`
+- [ ] T079 [US1] Register the workspace document provider in production gateway composition without changing external server lifecycle or granting implicit approvals in `apps/api/src/api/composition.py`
+- [ ] T080 [US1] Wire `GatewayResourceProvider` artifact list/read callbacks to scoped repository records and digest-verified confined files, preserving catalog/workspace resources and returning bounded not-found/integrity errors in `packages/workspace_service/src/workspace_service/workspace_document_artifacts.py` and `apps/api/src/api/composition.py`
+- [ ] T081 [US1] Link accepted child artifact evidence to its workflow run only after manifest validation, preserving child-call/run terminal truth when artifact linking fails and exposing the limitation as evidence unavailability in `packages/workspace_service/src/workspace_service/workflow_runner.py` and `packages/workspace_service/tests/test_workflow_runner.py`
+
+### Typed deliverable intent and effect validation
+
+- [ ] T082 [US1] Extend Graph Builder domain/session contracts so every request carries an explicit user-confirmed requested deliverable through draft, preview, commit, and stale-revision checks in `integrations/rivet/spike/.work/rivet2/packages/app/src/domain/graphBuilder/graphBuilderSchemas.ts`, `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/sessionController.ts`, and `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/editorGateway.ts`
+- [ ] T083 [US1] Add the keyboard-operable mandatory Deliverable selector and bounded workspace-document path suggestion to Graph Builder without model inference or a silent value-only default in `integrations/rivet/spike/.work/rivet2/packages/app/src/components/AiGraphCreatorInput.tsx` and `integrations/rivet/spike/.work/rivet2/packages/app/src/components/GraphBuilderSessionPanel.tsx`
+- [ ] T084 [US1] Project reviewed artifact-producer declarations into Graph Builder's MCP resource/catalog view and identify the Wright document producer by exact qualified binding, not title/description heuristics, in `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/readExecutor.ts` and `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/authoringCatalog.ts`
+- [ ] T085 [US1] Implement model-free preview validation that rejects a non-value deliverable when producer effect, exact binding, required inputs, approval, artifact output, or downstream Graph Output dependency is missing and names the corrective action in `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/authoringSemantics.ts`, `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/legacyDraftRunner.ts`, and `integrations/rivet/spike/.work/rivet2/packages/app/src/features/graphBuilder/sessionController.ts`
+- [ ] T086 [US1] Persist the requested deliverable and producer-declaration digest with the exact workflow review/revision and binding set so save/run validation cannot borrow current editor intent in `packages/data_vault/src/data_vault/migrations.py`, `packages/core/src/core/rivet_mcp.py`, and `packages/workspace_service/src/workspace_service/rivet_approvals.py`
+- [ ] T087 [US1] Repeat effect coverage at backend save and run preflight, fail closed on binding/declaration drift, and keep native CAD/STL restricted to reviewed domain creation/export capabilities in `packages/workspace_service/src/workspace_service/rivet_validation.py`, `packages/workspace_service/src/workspace_service/workflows.py`, and `packages/workspace_service/src/workspace_service/workflow_runner.py`
+- [ ] T088 [US1] Add/refresh the maintained pinned-editor patch, rebuild the editor artifact, and verify patch/source/dist/manifest hashes after the typed effect and producer-validation tests pass in `integrations/rivet/editor/patches/`, `integrations/rivet/editor/scripts/build-rivet2.mjs`, `integrations/rivet/editor/manifest.json`, and `integrations/rivet/editor/dist/`
+
+### Authorized Inspector open and end-to-end verification
+
+- [ ] T089 [US1] Add a thin scoped `GET /workflows/runs/{run_id}/artifacts/{artifact_id}` API contract that proves run-manifest membership, resolves the immutable record, verifies current bytes, applies `no-store` and safe content-disposition headers, and reveals no cross-scope existence in `apps/api/src/api/schemas/workspace.py` and `apps/api/src/api/routers/workspace.py`
+- [ ] T090 [US1] Add the typed artifact client and wire Run Inspector Open/Download actions to artifact IDs only, with digest-changed/missing/expired states and no arbitrary path fetch in `apps/web/src/services/workspace-service.ts`, `apps/web/src/components/surfaces/DirectRivetSurface.tsx`, and `apps/web/src/components/workflows/RivetRunResult.tsx`
+- [ ] T091 [US1] Extend the local system smoke to prove one successful document artifact, one overwrite conflict with no mutation, one missing-producer preflight rejection, one native-format denial, and digest-verified authorized read after API restart in `tests/e2e/test_rivet_run_inspector.py`
+- [ ] T092 [US1] Run the focused data-vault, gateway, workspace-service, API, pinned-editor, component, mocked-browser, and E2E gates; verify no raw content/base64/credentials/absolute paths enter logs, evidence exports, URLs, DOM, clipboard, or screenshots; record results in `specs/075-rivet-run-inspector/quickstart.md`
+
+**Checkpoint**: A promised workspace document is either produced as exactly one
+registered, digest-verified, workspace-confined artifact or the graph is blocked
+before save/run with a named corrective action. Native engineering formats
+remain exclusively owned by reviewed domain capabilities.
+
+---
+
 ## Dependencies and Execution Order
 
 ### Phase dependencies
@@ -189,6 +249,7 @@
 - **Phase 6 — US4**: Depends on the inspection client/hook but not on node highlighting; history remains independently testable.
 - **Phase 7 — Polish**: Depends on all selected story phases.
 - **Phase 8 — Feedback loop**: Follows implementation and hardens the path from local validation through CI without changing feature semantics.
+- **Phase 9 — US1 authoritative document deliverables**: T070-T075 define failing authority/UX contracts; T076-T081 establish durable artifacts and the in-process capability; T082-T088 establish typed intent and preview/save/run gates; T089-T092 expose only authorized reads and close the three-tier verification. Writer implementation MUST NOT land without the persistence and effect-gate prerequisites.
 
 ### User story dependency graph
 
@@ -198,6 +259,7 @@ Setup -> Foundation -> US1 (MVP)
                          |---> US3 (canvas correlation)
                          `---> US4 (refresh/history)
 US2 + US3 + US4 -> Polish and full gates
+Typed deliverable + artifact registry -> document provider -> preview/save/run gate -> authorized Inspector open
 ```
 
 ### Within each story
@@ -217,6 +279,7 @@ US2 + US3 + US4 -> Polish and full gates
 - US2 diagnostic-domain work and US3 bridge test authoring can proceed in parallel after US1.
 - Repository/API/hook tests T047-T049 can be authored in parallel for US4.
 - Documentation tasks T056-T057 can proceed in parallel after contracts stabilize.
+- BUG-019 contract tests T070-T075 can be written in parallel; provider work T077-T080 waits for T076, and pinned-editor work T082-T088 waits for the typed-effect and producer-declaration contracts.
 
 ## Parallel Example: User Story 1
 
@@ -254,12 +317,14 @@ Task T049: Refresh/reattachment hook tests
 3. **US3** links execution evidence to the visual graph.
 4. **US4** makes observation durable across refresh and revisions.
 5. Cross-cutting gates confirm accessibility, secrecy, performance, and packaging integrity.
+6. **Authoritative document deliverables** add the typed user intent, durable artifact authority, confined writer, graph gates, and authorized open as one indivisible safety increment.
 
 ### Fast feedback rules
 
 - Use local fixtures and focused test files during implementation; do not wait on real Onshape, OAuth, Hermes, or CAD hosts.
 - Do not rebuild the pinned Rivet artifact until the maintained source bridge and patch tests are ready.
 - Preserve graph/run evidence on failures and report the exact failing layer: MCP lifecycle/transport cancellation, result projection, persistence, inspection reducer, API projection, React state, or editor bridge.
+- For Phase 9, stop if artifact persistence, exact requested-effect identity, or reviewed producer metadata is absent; never substitute a path string, free-text heuristic, or partially wired writer.
 - Do not broaden this feature into workflow authoring, MCP installation, model selection, or provider configuration.
 
 ## Notes

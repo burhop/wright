@@ -1,0 +1,1225 @@
+{
+  "updatedAt": "2026-09-05T13:29:03.070339Z",
+  "currentGoal": {
+    "title": "Native engineering process: create to verified output",
+    "status": "in_progress",
+    "activeStep": "Accumulate remaining independently testable corrections, then submit one reviewed CI/dev batch",
+    "blocker": "The local repair and image correction are passing, but cannot prove published-image acceptance until the batch is reviewed, integrated to dev, and its immutable image is published. CI/dev integration is intentionally deferred while additional bounded development work is collected.",
+    "nextAction": "Continue local high-value verification and corrective work on codex/080-hermes-mcp-isolation; run one consolidated push gate, PR CI, and dev integration after the batch is ready.",
+    "authorizationRequest": null,
+    "overnightSummary": "The current local batch contains Herm\u00e8s/MCP Python environment isolation (232d42e5) and a prevention guard in the engineering MCP smoke (f983fafb). Focused Docker/MCP and reconciliation tests pass 35/35. The rebuilt linux/amd64 image keeps Herm\u00e8s on MCP 1.29.1 while bundled tools use MCP 2.1.1; its complete MCP smoke passes and now enforces that only the two reviewed Herm\u00e8s security overrides remain. PR #121 remains merged to dev with its CI and nine dev workflows green. Final published-image acceptance, human study, and whole-milestone acceptance remain pending.",
+    "authorizedRepair": {
+      "authority": "User September 4 goal and clarifications.",
+      "repairScope": [
+        "Native language/editor/runtime",
+        "Existing implementation dashboard",
+        "Independent verification and dev PR integration"
+      ],
+      "resourceUse": {
+        "writer": "One writer per isolated worktree",
+        "gb10": "Optional bounded platform verification",
+        "reviewers": "Independent review of exact candidates"
+      },
+      "localEvidence": "The current local batch contains Herm\u00e8s/MCP Python environment isolation (232d42e5) and a prevention guard in the engineering MCP smoke (f983fafb). Focused Docker/MCP and reconciliation tests pass 35/35. The rebuilt linux/amd64 image keeps Herm\u00e8s on MCP 1.29.1 while bundled tools use MCP 2.1.1; its complete MCP smoke passes and now enforces that only the two reviewed Herm\u00e8s security overrides remain. PR #121 remains merged to dev with its CI and nine dev workflows green. Final published-image acceptance, human study, and whole-milestone acceptance remain pending.",
+      "stopConditions": "No main/release, new credentials, paid or physical effects without separate authority."
+    },
+    "outcomes": [
+      {
+        "id": "shared-language",
+        "label": "Official shared process language and contracts",
+        "status": "completed",
+        "evidence": "Planning reviewed at 5e682113; native language/quantity implementation independently reviewed at 1d0cd079."
+      },
+      {
+        "id": "native-core",
+        "label": "Native validation and exact quantities",
+        "status": "completed",
+        "evidence": "41 native language/quantity tests passed on 1d0cd079; Decimal-context correction independently closed."
+      },
+      {
+        "id": "native-editor",
+        "label": "Create, configure, connect, save and reopen",
+        "status": "completed",
+        "evidence": "Real authoring browser passed against SQLite, without mocked requests or page errors. Recovery correction da12fc6d independently closed."
+      },
+      {
+        "id": "dashboard",
+        "label": "Existing implementation dashboard and evidence projection",
+        "status": "completed",
+        "evidence": "Four dashboard findings independently closed on 88d36f37; combined task source published and displayed on this existing page."
+      },
+      {
+        "id": "runtime",
+        "label": "Execute, inspect artifact, fail/correct/rerun",
+        "status": "completed",
+        "evidence": "Combined 997e5610 passed 60 API/runtime/artifact checks and 10 browser journeys; real files, retained failure and linked correction verified. All bounded integration findings independently closed."
+      },
+      {
+        "id": "native-mcp",
+        "label": "Exact governed local MCP adapter",
+        "status": "completed",
+        "evidence": "Two actual stdio paths passed, including a native process producing value 1.25 with artifact provenance and verified teardown; no benchmark credit."
+      },
+      {
+        "id": "dev-delivery",
+        "label": "Human validation and verified dev integration",
+        "status": "pending",
+        "evidence": "Whole-candidate review, required gates, real human study and dev PR/deployment remain pending."
+      }
+    ],
+    "artifacts": {
+      "completed": [
+        "Official shared language and exact quantities",
+        "Native canvas/Inspector and safe save/reopen",
+        "Shared HTTP API/CLI runtime with durable run evidence",
+        "Actual output artifacts and failure-linked correction",
+        "Three deterministic examples with independent assertions",
+        "Real local MCP process and verified teardown",
+        "Existing standalone dashboard with preserved history"
+      ],
+      "remaining": [
+        "Independent whole-candidate review",
+        "Required candidate gates and remaining distribution/legacy checks",
+        "Real human usability validation",
+        "Dev PR integration and deployed-build verification",
+        "Final dashboard acceptance"
+      ]
+    },
+    "reviews": {
+      "checkpointAndCapabilityAudit": "full_local_gate_passed_final_typed_review_pending",
+      "modelAndRendererAudit": "bounded_findings_closed",
+      "dashboardAndMachineAudit": "dashboard_review_passed",
+      "productApproval": "human_validation_pending"
+    },
+    "history": [
+      {
+        "at": "2026-09-05T13:29:03.070339Z",
+        "status": "Verified image correction batch in local development",
+        "detail": "The current local batch contains Herm\u00e8s/MCP Python environment isolation (232d42e5) and a prevention guard in the engineering MCP smoke (f983fafb). Focused Docker/MCP and reconciliation tests pass 35/35. The rebuilt linux/amd64 image keeps Herm\u00e8s on MCP 1.29.1 while bundled tools use MCP 2.1.1; its complete MCP smoke passes and now enforces that only the two reviewed Herm\u00e8s security overrides remain. PR #121 remains merged to dev with its CI and nine dev workflows green. Final published-image acceptance, human study, and whole-milestone acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T13:22:46.214812Z",
+        "status": "Published-image acceptance correction locally verified",
+        "detail": "PR #121 is merged to dev with all required H2 CI and nine dev workflows green. The local Docker setting repair allowed the exact GHCR image to run; source selection, native schema discovery, and runtime dependency closure passed. Its cold smoke caught the MCP-major-version collision before product acceptance. The correction isolates bundled Python MCP tools in /opt/wright/mcp/venvs/python-tools: focused bundle tests passed 29/29, the rebuilt linux/amd64 image has Herm\u00e8s MCP 1.29.1 and tool MCP 2.1.1, strict dependency reconciliation accepted only the two reviewed security overrides, and the full local engineering MCP smoke test passed. Human study, final published-image acceptance, and whole-milestone acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T12:09:41.845277Z",
+        "status": "Published-image acceptance blocked by local Docker Desktop compatibility",
+        "detail": "PR #121 merged to dev and all required H2 CI plus nine dev workflows passed. Both registry payloads independently verified equivalent with distinct immutable manifests retained. Existing dashboard UTC repair remains current. Published-image attempt 1 stopped after successfully pulling the exact digest and before any Wright launch. Local Docker restart and clean re-pull did not fix the platform metadata fault. Human study and whole-milestone acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T12:07:41.016635Z",
+        "status": "Published-image acceptance blocked by local Docker Desktop compatibility",
+        "detail": "PR #121 merged to dev and all required H2 CI plus nine dev workflows passed. Both registry payloads independently verified equivalent with distinct immutable manifests retained. Existing dashboard UTC repair remains current. Published-image attempt 1 stopped after successfully pulling the exact digest and before any Wright launch. Local Docker restart and clean re-pull did not fix the platform metadata fault. Human study and whole-milestone acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T11:42:34.882582Z",
+        "status": "Dashboard current; published-image Docker preflight diagnosis",
+        "detail": "PR #121 merged to dev and all required H2 CI plus nine dev workflows passed. Both registry payloads independently verified equivalent with distinct immutable manifests retained. Existing dashboard repaired through reviewed UTC timestamp normalization and full reader validation; API confirms current71bf02a4/errornull. Published-image attempt1 exit1 after successfulpull, before any Wright container launch: localDocker28.5.1 returned unknownplatform. Actual app/browser acceptance has not run; human study and whole-milestone acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T11:36:24.143964Z",
+        "status": "Published-image acceptance running; dashboard timestamp repair under review",
+        "detail": "PR #121 is merged to dev; all H2 CI and all nine dev workflows passed. Both AMD64 and ARM64 registry payloads are independently verified equivalent while their different manifest digests are preserved. Reviewed published-image harness is running against exact source211c2598 and immutable GHCR digestc3a8500d. No published-image acceptance result yet. Existing dashboard refresh exposed mixed UTC/local timestamp comparison; local UTC canonicalization preserves actual instants and passes the full reader, with independent review pending. Human usability and whole-milestone acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T11:15:26.286430Z",
+        "status": "Merged to dev; published-image verification running",
+        "detail": "PR #121 merged to dev at 10:53:43Z with the exact tested H2 tree after 29 successful CI checks and one legitimate documentation skip. All nine subsequent dev workflows succeeded, including both image publication jobs in run 33961863967. GHCR and Docker Hub manifests differ; actual ARM64 uncompressed contents are independently verified equal, and AMD64 verification is underway. Published-image acceptance, human usability acceptance, production release and the 100-example benchmark remain separate pending work."
+      },
+      {
+        "at": "2026-09-05T10:45:49.102227Z",
+        "status": "H2 pushed; GitHub CI running",
+        "detail": "ActualH2 snapshot10:39:25Z:28successfulchecks,1legitimate docs skip,1pending Windowsbackend,0failures. CodeQL,OCI,Pythonquality andPlaywright passed. Full localgate,exactH2pushgate and finalindependentreview passed. Six current-quality evidence rows prepared andvalidated to restore28/32verified afterintegration without alteringH2. No merge orpublisheddevverification yet; humanacceptance pending."
+      },
+      {
+        "at": "2026-09-05T10:34:10.469619Z",
+        "status": "H2 pushed; GitHub CI running",
+        "detail": "H2 head7e484be7 actual GitHub snapshot10:32:30Z:25 success,1 legitimate docs skip,4 pending,0failures. Both original blockers now passed on GitHub: externalCodeQL101292191403 andOCIjob101292029472/run33960721648. Windows backend,python-quality,Playwright andleak-scan remain running. Complete full localgate,exact-headpushgate and independentreview already passed. No merge or developmentpublication yet; wholeCIclearance andhumanacceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T10:29:13.911302Z",
+        "status": "H2 pushed; GitHub CI running",
+        "detail": "Consolidated second push7e484be7 completed after required push gate exit0 at10:25:32Z with clean source before/after,886 commits scanned without leaks, fresh image336 scan and11 browser smoke passes. Full e15 gate and independent28efd review passed. PR121 remains draft; H2 GitHub CI is now being monitored. No dev merge/publication yet. Original H1 failures and earlier evidence retained; human acceptance pending."
+      },
+      {
+        "at": "2026-09-05T10:08:58.284000Z",
+        "status": "Final correction push gate running",
+        "detail": "Exact candidate28efd passed final independent review with0open findings. Complete e15 merge gate passed all required stages,547 frontend and170 browser tests/5 declared skips/0 retries. Generated lock provenance independently closed and preserved; clone restored clean. Final metadata head7e484be7/state124PR_READY is undergoing required push gate on the same source-bound image336. Original H1 failures retained; no H2 push, CI clearance, dev merge or publication yet. Human acceptance remains pending."
+      },
+      {
+        "at": "2026-09-05T09:54:34.496887Z",
+        "status": "Full merge gate passed; final review receipt pending",
+        "detail": "Actual full merge gate on e15c0749 passed09:51:29Z after32m56s: all required stages passed, frontend547 and browser170 passed/5 declared skips. Exact image336 security scan passed and fresh28efd CodeQL has0new findings. Fresh wheel/sdist correspondence passed. Gate source began clean; one generated runtime-extra-lock.json changed only its uv.lock hash to actual Windows CRLF bytes and is preserved for independent closure. Final typed review/public receipt preparation underway. H1 remains27pass/2fail/1legitimate skip. No H2 push, dev merge, publication or human acceptance."
+      },
+      {
+        "at": "2026-09-05T09:42:57.973706Z",
+        "status": "Full gate running after review closure",
+        "detail": "Frozen28efd candidate at e15c0749: full gate remains running without a new failure. Passed image336 security scan, static checks,376 control-plane tests/1 skip,176 release tests, native coverage85.34%, API449/1 skip, adapters111,core143,vault126/1 skip,model registry185,tool registry411,workspace485/9 skips. Broader compatibility/e2e/packaging suite is running; frontend and browser checks remain. Independent fresh wheel/sdist correspondence passed. Fresh CodeQL original5absent/2unchanged/0new. H1 remains27pass/2fail/1legitimate skip. No H2 push, dev merge/publication or human acceptance."
+      },
+      {
+        "at": "2026-09-05T09:35:05.487861Z",
+        "status": "Full gate running after review closure",
+        "detail": "Frozen candidate 28efd6cc at state121/e15c0749 has a closed lease and no open independent source findings. Fresh matching CodeQL: original five findings absent, two unchanged prior findings, zero new findings. Full gate has passed exact-source image336 scan, static checks,376 control-plane tests/1 skip,176 release tests,153 native tests/10 skips, and309 coverage tests/10 skips at85.34%; API and remaining suites are running. Independent image and historical OCI evidence review passed. H1 remains27 passed/2 failed/1 legitimate skip. No H2 push, dev merge, publication or human acceptance."
+      },
+      {
+        "at": "2026-09-05T09:27:13.208698Z",
+        "status": "Full gate running after review closure",
+        "detail": "All three scanner findings independently closed; frozen28efd candidate at state121/e15c0749 has closed lease. Fresh matching CodeQL completed with all43rules and934/934Python files: original five findings absent, only two unchanged prior findings, no new findings. Current full gate passed exact-LF image336 scan, static checks,376 control-plane tests/1 declared skip and176 release tests; native/runtime packaging tests continue. Original fcb interrupted gate and all earlier failures retained. Existing dashboard routing fix deployed and API healthy. H1 CI remains27passed/2failed/1legitimate skip. No H2 push, dev merge or publication; human acceptance remains pending."
+      },
+      {
+        "at": "2026-09-05T09:14:34.394384Z",
+        "status": "Independent scan review correction",
+        "detail": "Independent review found three P2 scan-helper defects in source binding, malformed findings and missing scan triggers. Full gate fcb was deliberately interrupted with original log and partial observation preserved, no overall pass. Exact-LF image336 scan and cold readiness passed. Matching local CodeQL on d734 cleared all five original findings with only two unchanged pre-existing findings. Parent is IMPLEMENTING at state119 with bounded second correction; writer108 tests passed and original probes now reject the invalid cases. No second push, dev merge or publication; human acceptance remains pending."
+      },
+      {
+        "at": "2026-09-05T09:05:23.592190Z",
+        "status": "Full correction validation running",
+        "detail": "Frozen correction candidate d734f4c0 at state116/fcb26a48 has a closed lease. Required full merge gate is running on the clean validation clone with exact-Git-blob image336e4f0d. Every3473 archived source blob was verified before build; earlier CRLF-export image and its passing smoke/scan are retained with an explicit correction, not substituted for exact-LF proof. CodeQL2.26.4 matching CI is extracting/analyzing exactd734 after bounded supported Windows interpreter configuration. Fifteen dashboard tests,12 API tests,18 independent critical checks and68 scanner/gate regressions passed. H1 CI remains27passed/2failed/1legitimate skip. No H2 push, dev merge or registry publication; human acceptance remains pending."
+      },
+      {
+        "at": "2026-09-05T08:35:22.310242Z",
+        "status": "consolidated_ci_repair_implementing",
+        "detail": "Complete first-cycle PR121 inventory:27 passed,2 failed,1 legitimate skip; no executable checks pending. Reopened bounded correction under standing authority through validated states112-114. CodeQL boundary correction a4aaace2 committed:15 dashboard routing tests and12 native API tests passed; independent review running. Container Tornado upgrade/current-image scan gate correction is in progress. Current authoritative dashboard bundle81743d59/sourcea4aaace2. Prior candidate7f55 and H1 gate results remain historical; a new candidate, full validation, independent review and terminal H2 CI are required. No second push, dev merge or publication. Human study and final acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T08:22:01.150948Z",
+        "status": "pr121_ci_security_failures_classified",
+        "detail": "PR121 first CI cycle: 26 passing, two failing, one running and one declared skip. OCI security policy rejects CVE-2026-82397 in Hermes Tornado6.5.6; upstream fixes6.5.8. CodeQL reports three dashboard path flows, one MIME header flow and one native API exception-message flow; bounded review found existing confinement and controlled errors, but the alerts remain blocking. Windows backend tests remain running. No replacement push, dev merge or registry publication. Current implementation28/32, human study and deployment acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T08:09:25.902553Z",
+        "status": "first_native_push_pr121_ci_running",
+        "detail": "The unchanged required push gate passed exact4480bf03 in attempt2 at08:00:19Z, including full865-commit history scan0 findings,361 control tests,129 selected frontend tests, production build,20 browser cases across configured profiles and strict docs. Original failures remain retained. First authorized branch push occurred08:02:52Z; draftPR121 targetsdev and its first CI cycle is running at exact4480bf03. Current source/bundle remains4480bf03/896fae2a. No dev merge or registry publication has occurred. All actual CI jobs will be collected before a consolidated second head update. Current tasks28/32; human T028, complete gates/CI T030, deployed-image T031 and final acceptance T032 pending; benchmark0/100. Actual dev verification preparation has independent guard closure but is not deployment evidence."
+      },
+      {
+        "at": "2026-09-05T07:57:04.112019Z",
+        "status": "push_gate_control_plane_passed",
+        "detail": "Reviewed PR-ready source4480bf03 and authoritative dashboard bundle896fae2a remain unchanged/current. Attempt2 of the required push gate has passed the full865-commit history scan with0 findings, static checks, backend/runtime/package suites, and all361 program-control tests with1 declared skip. All nine Windows Git path failures from attempt1 now pass using command-local core.longpaths=true; independent classification and original failed attempt are retained. No source/test/policy changes were needed. Frontend/browser/docs stages are running before any push. The actual dev-image verification preparation has independent closure of all three identified guards, but no deployment has run. Current tasks28/32; human T028, complete gates/CI T030, actual deployed-image T031 and final acceptance T032 pending. No push, PR, merge or registry publication yet; benchmark qualification0/100."
+      },
+      {
+        "at": "2026-09-05T07:35:10.148191Z",
+        "status": "push_gate_windows_path_failure_retained",
+        "detail": "Current reviewed PR-ready source4480bf03 remains unchanged and its dashboard bundle896fae2a is current. Metadata reconstruction is independently closed. Required push gate attempt1 on4480 ended exit1: full865-commit history scan0 findings, static checks and API447/core143/vault126/tools411/workspace485/broad365/native133 suites passed; program-control suite352 passed/1 skipped/9 failed. Tracebacks show Windows Git filename-too-long errors in this deep verification checkout and its long temporary paths. An exact read-only Git probe fails with default path handling and passes with command-local core.longpaths=true. Independent classification of all nine failures is underway; the unchanged gate will rerun with that per-run setting, retaining attempt1. No push, PR, merge or registry publication has occurred. Current tasks28/32; T028 human, T030 gates, T031 deployed image and T032 final acceptance pending. 100-example qualification0/100."
+      },
+      {
+        "at": "2026-09-05T07:10:15.793160Z",
+        "status": "metadata_repair_closed_pr_ready",
+        "detail": "Native implementation and packaging reviews passed; current task progress is 28/32 complete. The two metadata blockers are closed: independent source-hook proof and unchanged scanner controls confirm the digest false positive, and all repaired transition manifests passed independent review and authoritative validation. Original failed08 push/validation checks and full40 failure remain retained. The reviewed replacement preserves every product/test/task byte and historical execution; new candidate7f55 has a fresh independent review. Current PR-ready source4480bf03 is published in the authoritative dashboard bundle896fae2a. A clean verification clone is being prepared for the required push gate; no push/PR/merge/publication has occurred. T028 human usability, T030 delivery gates, T031 actual integrated-image verification and T032 final acceptance remain pending. 100-example qualification remains0/100."
+      },
+      {
+        "at": "2026-09-05T06:49:47.980034Z",
+        "status": "delivery_metadata_repair_in_progress",
+        "detail": "Independent native candidate and packaging reviews passed. Current task progress is 28/32 complete; human usability T028, required delivery gates T030, integrated-image verification T031 and final acceptance T032 remain pending. The first required push gate on 08a7135e exited 1: scanner controls passed, then history scanning flagged one public hook source digest. Independent classification is underway. The status publisher separately rejected a transition whose changed-file manifest omitted registry and task updates. Both original failures are retained. A bounded unpublished metadata repair is being prepared with independent review; product and verified package bytes remain unchanged. The last successful authoritative dashboard bundle remains 14015893 and is stale relative to current work. No PR, push, merge or publication has occurred. Human acceptance and 100-example qualification remain unpassed."
+      },
+      {
+        "at": "2026-09-05T06:08:09.933694Z",
+        "status": "browser_matrix_passed_package_recovery_passed",
+        "detail": "Corrected complete browser stage passed 170 cases with five unchanged declared skips, zero failures and zero retries. The exact fixture cause and correction are independently reviewed; original40 full-script exit1 remains preserved, while its unchanged successful stages and the corrected browser stage form explicitly attributed local acceptance. Current registry has 26/32 implemented, 26/32 verified and 0/30 integrated. Actual schema16 predecessor package to schema17 native package recovery passed: old reader rejected newer data unchanged, restored the verified16 backup separately, and current package reopened retained native document/run/events/artifact. Initial scratch setup failures remain recorded. Final package boundary review and an in-container OTel span check are in progress. Required push/CI, dev integration and actual published-image verification remain pending. Human usability and 100-example qualification have no new credit."
+      },
+      {
+        "at": "2026-09-05T05:51:11.814186Z",
+        "status": "webkit_fixture_cause_fixed_browser_stage_running",
+        "detail": "Independent reproduction confirmed the WebKit failure was an incomplete test fixture: an unmocked live-app request returned HTML, inserting an alert that moved the button between pointer down and up. A bounded two-test-file correction supplies matching runtime DTOs and preserves original focus assertions, product code, retries and timeouts. Its regression failed before and passed after; eight focus cases across four profiles and the lifecycle override case passed. The complete browser stage is now being verified on the corrected source. Original candidate40 full gate remains exit 1 with 169 browser passes, five skips and one failure; its completed backend/frontend/package stages and exact Docker verification remain separately attributed. Public-safe failed-run, package, Docker and causal evidence is committed. Final review, required push/CI, dev integration and development-image verification remain pending. Human usability and 100-example qualification have no new credit."
+      },
+      {
+        "at": "2026-09-05T05:25:35.517126Z",
+        "status": "combined_candidate_40_webkit_failure",
+        "detail": "Combined candidate 40ebc645 completed its full local gate with exit 1: all backend, release, native, security and 547 frontend tests passed, but one WebKit focus-layout test remained in normal mode after clicking focus. Browser result: 169 passed, 5 skipped, 1 failed. The exact failed log, report and trace are retained; no full-gate pass is claimed. Independent source, dependency, planning, package and Docker evidence reviews passed. Fresh npm and Python runtime audits have zero vulnerabilities. The exact Docker image passed offline startup, three examples, five artifacts, failure/correction/restart and two actual browser journeys. Windows generated lock provenance is independently explained, with no runtime or dependency change; only that derived source file was restored after terminal completion, preserving actual artifacts. Focused failure investigation is underway before dev delivery. No PR, push, merge or publication has occurred; human study and 100-example qualification remain pending."
+      },
+      {
+        "at": "2026-09-05T04:54:02.349956Z",
+        "status": "combined_candidate_40_verification_running",
+        "detail": "Overnight continuation approved. Combined candidate40ebc645 integrates reviewed npm corrections, removal of five unused Python packages, runtime audit coverage and prevention of environment serialization in test reports. Authentication behavior and security gates are unchanged. Fresh npm audit has zero vulnerabilities. Fresh Python runtime audit covers90 packages with zero vulnerabilities and zero skips; the unchanged policy passes. The earlier expired-ecdsa finding and rejected requests remain historical, with the accepted public-provenance retry recorded. Independent dependency and planning reviews passed. Predecessor22 completed its full gate with547 frontend and170 browser passes/5skips; those are predecessor results. The required fresh full gate and separate exact-source Docker build/offline/native/browser proof now run on40. Existing package/Docker evidence is retained without relabeling. The32 task meanings remain unchanged; 100-example qualification remains0/100 and human study remains a separate unpassed follow-up. No PR, push, dev merge or publication has occurred."
+      },
+      {
+        "at": "2026-09-05T04:38:44.791125Z",
+        "status": "predecessor_gate_passed_runtime_fix_pending",
+        "detail": "Overnight continuation explicitly approved. Development image publication to existing registries and npm audit metadata queries are authorized; main/production, purchases and new credentials remain excluded. Human usability is a separately tracked follow-up, never passed by automation. Current candidate22a5743a has26/32 implemented tasks and0 integrated. T027 is reopened for the corrected candidate. Original candidate60 passed its full local gate,170 browser cases and independent technical review; those results remain historical. Four affected dependencies are patched, fresh npm audit reports zero vulnerabilities, and independent dependency review passed. Node24 clean installation,97 focused tests and fresh frontend/native package builds passed. The prior full gate stopped on one lease-scope status test (360 passed,1 skipped); that unchanged test now passes after reconciliation. The complete22a5743a gate passed:547 frontend tests and170 browser passes with5 recorded skips; raw logs and safe evidence are retained. Runtime dependency removal requires a new exact-candidate gate. Fresh Docker offline/example/failure/restart proof and2 actual browser journeys passed. Independent archive review passed. The captured environment object was removed from publishable metadata history; independent comparison verified14 rewritten metadata pairs and zero captured values in8840 reachableblobs. Thirteen exact non-secret hash contexts now have independently reviewed scanner allowances; all9 credential/length/prefix controls remain detected. Final full-historyscan remains required. Automatic review accepted Python audit after verification that all87 locked package identities were already public on dev. Default CI audit passed46 packages but omitted runtime extras. The actual runtime audit found ecdsa0.19.2 with no fixed version and an expired exception; unused python-jose dependency removal and runtime audit coverage are under investigation. No exception is extended. The reviewed Playwright environment-report prevention is integrated asd8abe78c. CI runtime audit coverage correction is integrated asd97fc5a6;15 focused tests passed. The actual auth mechanism is unchanged; independent340-file analysis confirms removal of exactly5 unused packages. No PR, push, merge or publication has occurred."
+      },
+      {
+        "at": "2026-09-05T04:29:46.937405Z",
+        "status": "runtime_audit_real_finding",
+        "detail": "Overnight continuation explicitly approved. Development image publication to existing registries and npm audit metadata queries are authorized; main/production, purchases and new credentials remain excluded. Human usability is a separately tracked follow-up, never passed by automation. Current candidate22a5743a has26/32 implemented tasks and0 integrated. T027 is reopened for the corrected candidate. Original candidate60 passed its full local gate,170 browser cases and independent technical review; those results remain historical. Four affected dependencies are patched, fresh npm audit reports zero vulnerabilities, and independent dependency review passed. Node24 clean installation,97 focused tests and fresh frontend/native package builds passed. The prior full gate stopped on one lease-scope status test (360 passed,1 skipped); that unchanged test now passes after reconciliation. A fresh full gate is running on22a5743a. Fresh Docker offline/example/failure/restart proof and2 actual browser journeys passed. Independent archive review passed. The captured environment object was removed from publishable metadata history; independent comparison verified14 rewritten metadata pairs and zero captured values in8840 reachableblobs. Thirteen exact non-secret hash contexts now have independently reviewed scanner allowances; all9 credential/length/prefix controls remain detected. Final full-historyscan remains required. Automatic review accepted Python audit after verification that all87 locked package identities were already public on dev. Default CI audit passed46 packages but omitted runtime extras. The actual runtime audit found ecdsa0.19.2 with no fixed version and an expired exception; unused python-jose dependency removal and runtime audit coverage are under investigation. No exception is extended. The Playwright environment-report prevention fix58a6a0ac passed independent review and awaits integration. No PR, push, merge or publication has occurred."
+      },
+      {
+        "at": "2026-09-05T04:04:47.244826Z",
+        "status": "overnight_authorized_dependency_correction",
+        "detail": "Overnight continuation explicitly approved. Development image publication to existing registries and npm audit metadata queries are authorized; main/production, purchases and new credentials remain excluded. Human usability is a separately tracked follow-up, never passed by automation. Corrected candidate0c3875bc has26/32 implemented tasks and0 integrated. T027 is reopened for the corrected candidate. Original candidate60 passed its full local gate,170 browser cases and independent technical review; those results remain historical. Four affected dependencies are patched, fresh npm audit reports zero vulnerabilities, and independent dependency review passed. Node24 clean installation,97 focused tests and fresh frontend/native package builds passed. The prior full gate stopped on one lease-scope status test (360 passed,1 skipped); that unchanged test now passes after reconciliation. A fresh full gate is running on22a5743a. Fresh Docker offline/example/failure/restart proof and2 actual browser journeys passed. Independent archive review passed. The captured environment object was removed from publishable metadata history; independent comparison verified14 rewritten metadata pairs and zero captured values in8840 reachableblobs. Thirteen exact non-secret hash contexts now have independently reviewed scanner allowances; all9 credential/length/prefix controls remain detected. Final full-historyscan remains required. Python audit metadata authorization is pending after automatic review rejected that separate egress. No PR, push, merge or publication has occurred."
+      },
+      {
+        "at": "2026-09-05T03:47:03.970125Z",
+        "status": "overnight_authorized_dependency_correction",
+        "detail": "Overnight continuation explicitly approved. Development image publication to existing registries and npm audit metadata queries are authorized; main/production, purchases and new credentials remain excluded. Human usability is a separately tracked follow-up, never passed by automation. Corrected candidate0c3875bc has26/32 implemented tasks and0 integrated. T027 is reopened for the corrected candidate. Original candidate60 passed its full local gate,170 browser cases and independent technical review; those results remain historical. Four affected dependencies are patched, fresh npm audit reports zero vulnerabilities, and independent dependency review passed. Node24 clean installation,97 focused tests and fresh frontend/native package builds passed. The full gate stopped on one lease-scope status test (360 passed,1 skipped); the existing authorized lease needs reconciliation before rerun. Fresh Docker offline/example/failure/restart proof and2 actual browser journeys passed. Independent archive review passed. Full-history security preflight identified a captured environment object in a private test report; remove it from publishable metadata history. Thirteen other matches were independently classified as non-secret integrity/CAS hashes and need precisely scoped scanner handling. Python audit metadata authorization is pending after automatic review rejected that separate egress. No PR, push, merge or publication has occurred."
+      },
+      {
+        "at": "2026-09-05T03:29:50.470360Z",
+        "status": "overnight_authorized_dependency_correction",
+        "detail": "Overnight continuation explicitly approved. Development image publication to existing registries and npm audit metadata queries are authorized; main/production, purchases and new credentials remain excluded. Human usability is a separately tracked follow-up, never passed by automation. Corrected candidate0c3875bc has26/32 implemented tasks and0 integrated. T027 is reopened for the corrected candidate. Original candidate60 passed its full local gate,170 browser cases and independent technical review; those results remain historical. Four affected dependencies are patched, fresh npm audit reports zero vulnerabilities, and independent dependency review passed. Node24 clean installation,97 focused tests and fresh frontend/native package builds passed. The full merge gate is running on clean0c3875bc; fresh Docker verification runs separately. No PR, push, merge or publication has occurred."
+      },
+      {
+        "at": "2026-09-05T03:08:36.332899Z",
+        "status": "overnight_authorized_dependency_correction",
+        "detail": "Overnight continuation explicitly approved. Development image publication to existing registries and npm audit metadata queries are authorized; main/production, purchases and new credentials remain excluded. Human usability is a separately tracked follow-up, never passed by automation. Published7c0d3ef3 retains26/32 implemented and verified,0/30 integrated. T027 independent review subsequently completed; original candidate60 passed its full local gate,170 browser cases and independent technical review. Approved audit now reports4 affected dependencies; existing policy blocks the high advisories. A targeted four-package correction is being prepared with unrelated lockfile entries preserved, then the candidate will be rebuilt, fully gated and independently reviewed. Earlier passes remain historical. No PR, push, merge or publication has occurred."
+      },
+      {
+        "at": "2026-09-05T02:40:15.063570Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Published candidate 53ec6694: 26/32 implemented, 0/32 currently verified and 0/30 integrated. The old 24/32 observation remains historical because combined source coverage changed. Schema/migration and Docker startup corrections are independently reviewed. Earlier checks passed 361 program-control tests, 102 release tests and a 235-test coverage slice at 85.28%. Fresh wheel and sdist content checks and clean installs passed. Two real browser journeys passed. Exact Docker image f015e5a191bd passed standard cold-offline smoke and all three native examples, four artifact checks and restart retention without a workaround. The full gate passed 447 API and 119 core tests, then stopped at one stale migration-count assertion in the data-vault suite (125 passed, 1 skipped, 1 failed). Correction 01ed3bf2 passed its five affected tests. The remaining diagnostic pass found a stale evidence fixture, core resource boundary, dummy-token scan finding, docs link and stale browser label; all corrections are consolidated in c7f1f218. Strict docs now pass and the final resource correction is independently accepted. Current candidate 60ef8672 also corrects the local-link test. Its fresh wheel and sdist passed independent source/asset correspondence review with no open P1/P2 findings. Corrected production candidate c7f1f218 passed both real browser journeys and exact Docker image 455f0a756e09 passed cold offline startup, three examples, four artifacts and restart retention. The 60ef8672 full gate stopped at one API test (446 passed, 1 skipped) due to a prior-run test token in the local launcher credential store. A fresh-store focused test passed and a presence-only probe confirmed the leftover test token. The full authoritative gate now PASSED on unchanged 60ef8672 with fresh private credentials: API447, core143, workspace485, root461, frontend547 and Playwright170 passed with explicit skips retained. Strict docs and native clean installs passed. Candidate60 is frozen in validated state99; current planning review passed. Final typed review, push gate, CI, human acceptance, publication authorization and dev integration remain pending."
+      },
+      {
+        "at": "2026-09-05T02:04:18.244625Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Published candidate 53ec6694: 26/32 implemented, 0/32 currently verified and 0/30 integrated. The old 24/32 observation remains historical because combined source coverage changed. Schema/migration and Docker startup corrections are independently reviewed. Earlier checks passed 361 program-control tests, 102 release tests and a 235-test coverage slice at 85.28%. Fresh wheel and sdist content checks and clean installs passed. Two real browser journeys passed. Exact Docker image f015e5a191bd passed standard cold-offline smoke and all three native examples, four artifact checks and restart retention without a workaround. The full gate passed 447 API and 119 core tests, then stopped at one stale migration-count assertion in the data-vault suite (125 passed, 1 skipped, 1 failed). Correction 01ed3bf2 passed its five affected tests. The remaining diagnostic pass found a stale evidence fixture, core resource boundary, dummy-token scan finding, docs link and stale browser label; all corrections are consolidated in c7f1f218. Strict docs now pass and the final resource correction is independently accepted. Current candidate 60ef8672 also corrects the local-link test. Its fresh wheel and sdist passed independent source/asset correspondence review with no open P1/P2 findings. Corrected production candidate c7f1f218 passed both real browser journeys and exact Docker image 455f0a756e09 passed cold offline startup, three examples, four artifacts and restart retention. The 60ef8672 full gate stopped at one API test (446 passed, 1 skipped) due to a prior-run test token in the local launcher credential store. A fresh-store focused test passed and a presence-only probe confirmed the leftover test token. The complete gate is rerunning unchanged source with a fresh private credential store per run. Human acceptance and dev integration remain pending."
+      },
+      {
+        "at": "2026-09-05T01:36:23.017616Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Published candidate 53ec6694: 26/32 implemented, 0/32 currently verified and 0/30 integrated. The old 24/32 observation remains historical because combined source coverage changed. Schema/migration and Docker startup corrections are independently reviewed. Earlier checks passed 361 program-control tests, 102 release tests and a 235-test coverage slice at 85.28%. Fresh wheel and sdist content checks and clean installs passed. Two real browser journeys passed. Exact Docker image f015e5a191bd passed standard cold-offline smoke and all three native examples, four artifact checks and restart retention without a workaround. The full gate passed 447 API and 119 core tests, then stopped at one stale migration-count assertion in the data-vault suite (125 passed, 1 skipped, 1 failed). Correction 01ed3bf2 passed its five affected tests. The remaining diagnostic pass found a stale evidence fixture, core resource boundary, dummy-token scan finding, docs link and stale browser label; all corrections are consolidated in c7f1f218. Strict docs now pass and the final resource correction is independently accepted. The complete authoritative gate, refreshed real browser journeys and exact Docker checks are running on c7f1f218. Human acceptance and dev integration remain pending."
+      },
+      {
+        "at": "2026-09-05T01:16:16.651024Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Published candidate 53ec6694: 26/32 implemented, 0/32 currently verified and 0/30 integrated. The old 24/32 observation remains historical because combined source coverage changed. Schema/migration and Docker startup corrections are independently reviewed. Earlier checks passed 361 program-control tests, 102 release tests and a 235-test coverage slice at 85.28%. Fresh wheel and sdist content checks and clean installs passed. Two real browser journeys passed. Exact Docker image f015e5a191bd passed standard cold-offline smoke and all three native examples, four artifact checks and restart retention without a workaround. The full gate passed 447 API and 119 core tests, then stopped at one stale migration-count assertion in the data-vault suite (125 passed, 1 skipped, 1 failed). Correction 01ed3bf2 passed its five affected tests. Remaining previously unexecuted stages are running as a diagnostic pass to consolidate failures before the final full rerun. Human acceptance and dev integration remain pending."
+      },
+      {
+        "at": "2026-09-05T01:04:54.830205Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Published candidate 53ec6694: 26/32 implemented, 0/32 currently verified and 0/30 integrated. The old 24/32 observation remains historical because combined source coverage changed. Schema/migration and Docker startup corrections are independently reviewed. Earlier checks passed 361 program-control tests, 102 release tests and a 235-test coverage slice at 85.28%. Fresh wheel and sdist content checks and clean installs passed. Two real browser journeys passed. Exact Docker image f015e5a191bd passed standard cold-offline smoke and all three native examples, four artifact checks and restart retention without a workaround. The complete native gate continues; human acceptance and dev integration remain pending."
+      },
+      {
+        "at": "2026-09-05T01:00:23.657543Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Published candidate 53ec6694: 26/32 implemented, 0/32 currently verified and 0/30 integrated. The old 24/32 observation remains historical because combined source coverage changed. Schema/migration and Docker startup corrections are independently reviewed. Earlier checks passed 361 program-control tests, 102 release tests and a 235-test coverage slice at 85.28%. Fresh wheel and sdist content checks and clean installs passed. The complete gate and corrected cold-offline Docker image verification are now running. Human acceptance and dev integration remain pending."
+      },
+      {
+        "at": "2026-09-05T00:45:41.284218Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Candidate eb63344c includes the independently reviewed Docker schema packaging correction. The complete program-control suite now passes: 361 passed and 1 skipped; 102 release tests also passed. The full native gate continues. The exact Docker image built and its networked smoke passed, but standard cold offline startup failed because uv attempted dependency synchronization. A bounded startup correction is in progress. No full gate, offline Docker acceptance, native PR or dev integration is claimed."
+      },
+      {
+        "at": "2026-09-05T00:39:40.440250Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Candidate eb63344c includes the independently reviewed Docker schema packaging correction. The earlier program-control run finished with 348 passed, 13 failed and 1 skipped. Twelve failures passed with shorter Windows temporary paths; the historical state fixture was corrected and its focused test passed. The full gate is running again. A separate exact-candidate Docker build is in progress. No passing full gate, image smoke, native PR or dev integration is claimed."
+      },
+      {
+        "at": "2026-09-05T00:28:09.420506Z",
+        "status": "native_candidate_gate_and_docker_checks",
+        "detail": "Independent review closed the two editor and three delivery-rule findings. The first full gate stopped on two formatting defects, now corrected. The next gate passed formatting and blocking type checks; its program-control suite has failures and is still completing. The exact 99cee2dc Docker build failed because a frontend schema import points into excluded specs. A bounded runtime-schema packaging correction is in progress. No image, native PR or dev integration is claimed."
+      },
+      {
+        "at": "2026-09-05T00:14:53.573910Z",
+        "status": "independent_product_and_delivery_review",
+        "detail": "Fresh whole-candidate review found two P2 editor defects, independently closed by the 100-command undo and atomic path/producer correction. The prospective scoped-delivery amendment has three open P2 findings: native-only action eligibility, final-acceptance protection and task-contract freshness. Its writer is correcting them. Full candidate gates and dev PR remain pending; the published counts above still identify their earlier tested checkpoint."
+      },
+      {
+        "at": "2026-09-05T00:00:57.186994Z",
+        "status": "native_combined_execution_checkpoint_published",
+        "detail": "Published e594b3ab: 26/32 implemented, 24/32 verified, 0/30 integrated; 6/10 acceptance criteria currently pass. The combined native build passed 60 API/runtime/artifact checks and 10 Chromium journeys (2 actual server journeys, 8 simulated services). All bounded review findings are closed. Three actual example artifacts, failure/linked correction and a real disposable MCP process are demonstrated. Whole-candidate review, required gates, remaining distribution checks, actual human validation and dev PR/deployment remain pending. Benchmark qualification stays 0/100."
+      },
+      {
+        "at": "2026-09-04T23:12:24.046046Z",
+        "status": "native_combined_implementation_checkpoint_published",
+        "detail": "Published combined checkpoint 1a2eb51b records 16/32 tasks implemented, 5/32 verified, and 0/30 integrated. Native language/quantities and editor recovery passed independent review. The real authoring browser journey passed with SQLite persistence and no mocked requests. Runtime has four independently reproduced findings awaiting correction; telemetry review remains open. MCP adapter corrections passed independent review, but the full native process/tool/artifact journey remains pending. Required current verification and dev integration are separate from implementation; human validation and benchmark qualification remain pending."
+      },
+      {
+        "at": "2026-09-04T21:59:17.598334Z",
+        "status": "native_milestone_implementation_started",
+        "detail": "September 4 scope: official native language shared by AI, canvas and runtime; create/save/run/artifact/recovery plus this existing dashboard. Planning checkpoint 5e682113 independently passed. Local working-tree core and legacy definition tests:69 passed; no candidate, UI, human or deployment acceptance claimed. Baseline dev7404a549. Prior checkpoint history retained."
+      },
+      {
+        "at": "2026-08-31T21:35:00-04:00",
+        "status": "recovery_subject_and_walkthrough_complete",
+        "detail": "Exact prototype subject 4c717e22/tree 9c1d044b is committed and passes Python kernel 20/20, focused web/config/model/command/App 28/28, full recovery Chromium 4/4, and production build. Its final continuation walkthrough passes all 27 recorded steps with 53 raw plus 53 annotated screenshots, zero captured browser diagnostics, serious/critical accessibility findings zero, 390-pixel no-overflow proof, a 46.7 MB trace, and 114 manifest-bound files. Architecture re-audit reports no P0/P1 issues. Recovery tasks are 48/60; dashboard verification and SpecKit consistency remain before the mandatory T051 product-approval stop. F02C is still proposed, F02B stays blocked at 27/38, and customer readiness is incomplete."
+      },
+      {
+        "at": "2026-08-31T19:49:00-04:00",
+        "status": "canonical_recovery_freeze_and_inventory_complete",
+        "detail": "Control-plane TR-0095/revision 96 records the reversible EPP-F02B freeze after T027, closes the mutating lease, and leaves T028-T038 byte-for-byte unchecked. The deterministic capability audit passes 555/555 source rows and 33/33 roll-up capabilities with zero unexplained omissions. Canonical IR vNext, its schema/contracts, and JSON/YAML/DSL five-edit evidence are present. An independent source-edit study confirmed all 15 valid edits and exposed fail-closed gaps: every syntax currently rejects only 4/8 invalid controls. No permanent syntax, merge, release, benchmark, or customer-readiness claim was made."
+      },
+      {
+        "at": "2026-08-31T19:26:11-04:00",
+        "status": "canonical_workflow_recovery_started",
+        "detail": "Recovery branch codex/080-canonical-workflow-recovery was created from frozen Checkpoint D b4a7e996. T028-T038 remain paused. The complete recovery specification and quality checklist now cover one canonical typed workflow model, canvas/code bidirectionality, reviewed AI proposals, immutable run visualization, artifacts, and the product-approval stop boundary. Three read-only audits are active; one Windows worktree remains the sole writer. No merge, release, broad hardening, benchmark, or external customer action occurred."
+      },
+      {
+        "at": "2026-08-31T17:42:00-04:00",
+        "status": "epp_f02b_checkpoint_d_complete",
+        "detail": "EPP-F02B T021\u2013T027 are complete through clean head b4a7e996. Safe graphical editing, last-valid invalid-intent containment, two stable identity-linked diagnostics, bounded correction, validation, and revision-2 save are demonstrated in a validated clickable walkthrough with 24 pass-state images, trace, progress/status, and empty browser diagnostics. Consolidated Windows proof is green: web 481/481, workflow/process backend/API 86/86, feature-enabled production build, lint with only three unchanged warnings, Workflow Composer Chromium 1/1, Process Definition non-interference Chromium 4/4, and the exact program validator with zero blockers. GB10 aarch64 was reachable, but the unpushed exact commit was absent in both clean repositories, so the read-only probe stopped without mutation. No merge, push, release, execution, MCP/model, benchmark, or delivery action occurred."
+      },
+      {
+        "at": "2026-08-31T09:54:42-04:00",
+        "status": "dashboard_visibility_tweaks_complete",
+        "detail": "Dashboard visibility was tightened without changing Wright product scope: a prominent dual-axis history now shows all registered feature tasks and durable goal checkpoints over time; summary cards expose 145/147 task-ledger completion, 2 open tasks, 3 registered features, and the latest checkpoint. The newest 12 checkpoints remain visible while 103 older entries are preserved behind an accessible disclosure. API, desktop Chromium, disclosure interaction, newest-first ordering, and 390-pixel no-overflow checks passed."
+      },
+      {
+        "at": "2026-08-31T09:33:00-04:00",
+        "status": "epp_f02_complete_post_merge_dev_8_of_8_green",
+        "detail": "All eight workflows for exact dev merge a69cb744 are terminal and successful: CodeQL, docs, release-drafter, public-alpha-safety, python-quality, frontend-quality including Playwright, engineering image family, and Windows tests. PR #117 remains merged, origin/dev tree bad0533c exactly equals the validated feature tree, and the merged customer journey passed 8/8 Chromium tests. EPP-F02 T001\u2013T019 is complete; no direct dev/main push, release, benchmark execution, dependency change, production action, or customer-system action occurred."
+      },
+      {
+        "at": "2026-08-31T09:25:05-04:00",
+        "status": "epp_f02_post_merge_dev_ci_7_pass_1_active",
+        "detail": "Frontend-quality, including the post-merge Playwright suite, and the engineering image family passed for exact dev merge a69cb744. Post-merge state is 7 passed, 1 active, and 0 failed; only Windows tests remain active. Local merged customer verification remains green 8/8."
+      },
+      {
+        "at": "2026-08-31T09:22:45-04:00",
+        "status": "epp_f02_post_merge_dev_ci_5_pass_3_active",
+        "detail": "Python quality passed for exact dev merge a69cb744. Post-merge state is 5 passed, 3 active, and 0 failed; only frontend-quality, engineering image family, and Windows tests remain active. Customer journey verification remains green 8/8."
+      },
+      {
+        "at": "2026-08-31T09:20:30-04:00",
+        "status": "epp_f02_post_merge_dev_ci_4_pass_4_active",
+        "detail": "Public-alpha-safety passed for exact dev merge a69cb744. Post-merge state is now 4 passed, 4 active, and 0 failed; frontend-quality, engineering image family, python-quality, and Windows tests remain active. Customer journey verification remains green 8/8."
+      },
+      {
+        "at": "2026-08-31T09:18:15-04:00",
+        "status": "epp_f02_post_merge_dev_ci_3_pass_5_active",
+        "detail": "Exact dev merge a69cb744 post-merge snapshot: CodeQL, docs, and release-drafter passed; frontend-quality, engineering image family, python-quality, public-alpha-safety, and Windows tests remain active. Count is 3 passed, 5 active, 0 failed. Merged customer verification remains green 8/8 and no branch push or release action is occurring."
+      },
+      {
+        "at": "2026-08-31T09:16:30-04:00",
+        "status": "epp_f02_merged_customer_journey_8_of_8_passed",
+        "detail": "A fresh detached checkout of exact dev merge a69cb744/tree bad0533c passed all eight Chromium customer journeys: 4/4 canonical Process Definition and 4/4 Program Status, including accessibility, responsive/zoom/forced-colors behavior, exact publication refresh, last-valid fallback, and honest no-prior-bundle failure. The suites mock their governed endpoints, so unrelated background API proxy warnings are expected and non-assertive. Initial post-merge workflow snapshot is 2 passed, 6 active, and 0 failed."
+      },
+      {
+        "at": "2026-08-31T09:14:30-04:00",
+        "status": "epp_f02_pr117_merged_exact_tree",
+        "detail": "PR #117 merged through GitHub into dev as a69cb744 after exact pre-merge confirmation of aff8179b, CLEAN/MERGEABLE state, 28 passing checks, and one intentional docs-deploy skip. No direct dev push occurred. Authoritative origin/dev now resolves to a69cb744 and its tree bad0533c exactly equals the fully validated feature tree. Post-merge dev workflow monitoring and merged customer-journey verification are active; release remains out of scope."
+      },
+      {
+        "at": "2026-08-31T09:12:32-04:00",
+        "status": "epp_f02_pr117_merge_gate_fully_closed_no_code_change",
+        "detail": "The exact aff8179b/tree bad0533c compatibility rerun passed dashboard-real.spec.ts 1/1 with its committed and CI-authoritative API port 8000. This closes the full merge gate: the preceding run passed every non-browser stage and 161 browser journeys with 3 declared skips; its sole failure was the deliberately isolated 28003 versus hardcoded 8000 port mismatch. The fresh exact checkout remains clean, no source changed, and no additional feature push occurred. Final PR-state reconfirmation and merge through GitHub are next."
+      },
+      {
+        "at": "2026-08-31T09:06:51-04:00",
+        "status": "epp_f02_pr117_merge_gate_single_port_wiring_failure",
+        "detail": "The full Windows merge gate at exact aff8179b passed every non-browser stage: Ruff/format/targeted MyPy, control plane 312/1, release 102/102, native 152/10, coverage 85.28% with 234/10, distributions and clean installs, API 417/1, hardening 80/2, adapters 111/111, core 64/64, data vault 104/1, model registry 185/1 deselected, tool registry 395/395, workspace 435/7, broad 458/39, Hermes plugin 13/13, frontend 455/455, production build, and strict docs. Live Playwright finished 161 passed, 3 declared skips, 1 failed; all four Process Definition and all four Program Status journeys passed. The only failure is pre-existing dashboard-real.spec.ts hardcoding 127.0.0.1:8000 while the local gate was deliberately isolated on 28003. CI runs this same live suite on port 8000 and is green; port 8000 is currently listener-free and bindable. A fresh exact-commit, no-code rerun of only that failed test on the CI port will close the isolation mismatch before any merge."
+      },
+      {
+        "at": "2026-08-31T08:27:28-04:00",
+        "status": "epp_f02_pr117_null_lease_ci_fully_green",
+        "detail": "PR #117 correction CI is fully terminal at exact aff8179b: 28 checks passed, 0 failed, 0 pending, and the pull-request docs deploy is the one intentional skip. Linux/Windows frontend, Playwright E2E, Windows backend, Python, CodeQL, leak scan, both Linux images, OCI smoke/scan, all package matrices, and native lifecycle/aggregate are green. GitHub reports the PR open, CLEAN, and MERGEABLE against dev at e9dd5c38. The full local merge gate is next; no direct dev push or release action is authorized."
+      },
+      {
+        "at": "2026-08-31T08:18:05-04:00",
+        "status": "epp_f02_pr117_null_lease_ci_browser_green_two_active",
+        "detail": "Playwright E2E\u2014the final job that failed in the prior cycle\u2014passed at exact aff8179b in 9m24s. Both frontend Vitest jobs, all browser journeys, both Linux images, OCI smoke/scan, CodeQL, leak scan, all package matrices, and all native jobs are green. Only Python quality and Backend Tests (Windows) remain active; zero failures are present and docs deploy remains the one intentional skip."
+      },
+      {
+        "at": "2026-08-31T08:10:53-04:00",
+        "status": "epp_f02_pr117_null_lease_ci_frontend_contract_green",
+        "detail": "Both checks that previously exposed the null-lease mismatch are now green at exact aff8179b: Linux frontend-quality passed in 2m06s and Frontend Tests (Windows) passed in 2m17s. CodeQL, docs, dependency review, all eight public package matrices, native candidate build, and Linux/macOS native matrices are also green. Backend Windows, Playwright, both Linux images, OCI smoke/scan, leak scan, Windows native, native lifecycle, and Python quality remain active; zero failures are present."
+      },
+      {
+        "at": "2026-08-31T08:09:00-04:00",
+        "status": "epp_f02_pr117_null_lease_ci_started",
+        "detail": "PR #117 is open and mergeable at exact head aff8179b against dev. Initial correction-cycle snapshot: docs build, dependency review, and Linux 3.13 package matrix passed; the pull-request docs deploy is intentionally skipped; CodeQL, both engineering images, OCI, frontend Vitest, Playwright, native candidate, leak scan, Python, Windows backend/frontend, and the remaining package matrices are active. No merge action occurs before all current and downstream jobs are terminal and green."
+      },
+      {
+        "at": "2026-08-31T08:08:06-04:00",
+        "status": "epp_f02_pr117_authorized_null_lease_push_succeeded",
+        "detail": "After reconfirming authoritative local tip aff8179b/tree bad0533c, clean worktree, and actual remote tip f0a4ae75, the one authorized normal feature push fast-forwarded only codex/078-process-definition-view-current-dev to aff8179b. No force push and no direct dev/main push occurred. This authorization is now consumed. PR #117's new CI cycle will be monitored to full terminal state before any merge decision; no additional feature push is authorized."
+      },
+      {
+        "at": "2026-08-31T08:06:57-04:00",
+        "status": "epp_f02_pr117_null_lease_repair_push_gate_passed",
+        "detail": "Exact repair commit aff8179b/tree bad0533c passed all local pre-push proof. Evidence: focused Vitest 15/15, complete Vitest 455/455, lint zero errors with three unchanged warnings, Prettier, TypeScript and production build, affected Chromium Program Status 4/4, and Wright's mandatory correction-range push gate: Ruff, format, MyPy, Docker smoke 14/14, dependency dry-run, changed frontend 30/30, isolated API, and Chromium smoke 11/11. The reusable cached environments changed no lockfile or tracked source. No push has occurred yet; the one authorized normal fast-forward feature push is next."
+      },
+      {
+        "at": "2026-08-31T07:59:00-04:00",
+        "status": "epp_f02_pr117_null_lease_repair_committed_and_exact_validation_green",
+        "detail": "The proven two-file null-lease correction is committed on the clean authoritative Windows feature branch as aff8179b with tree bad0533c. The exact authoritative validator passed with zero blockers, worktree clean, next action VERIFY_CURRENT_FEATURE_CI, benchmark 0/100, and release false. The deep authoritative worktree lacks installed frontend dependencies, so its first npm invocation stopped before tests rather than failing an assertion. A fresh short-path checkout now resolves cleanly to the identical commit/tree for focused, complete, Chromium, and mandatory push-gate proof. No push has occurred; remote PR #117 remains at f0a4ae75."
+      },
+      {
+        "at": "2026-08-31T07:32:00-04:00",
+        "status": "epp_f02_pr117_one_additional_push_authorized",
+        "detail": "The user explicitly authorized one additional normal feature-branch push for the proven PR #117 null-lease correction. Read-only preflight confirms the authoritative Windows writer lane is clean at f0a4ae75, both target blobs match the disposable proof base, the remote feature branch is unchanged, and PR #117 remains open against dev. The exact two-file repair will be transferred, gated, committed, and pushed once; no direct dev/main push, release, benchmark, dependency, production, or customer-system action is authorized."
+      },
+      {
+        "at": "2026-08-31T02:52:00-04:00",
+        "status": "epp_f02_goal_blocked_push_authority_threshold_reached",
+        "detail": "A final read-only audit confirms the authoritative worktree and remote feature branch remain identical and clean at f0a4ae75. PR #117 is still open and unstable with 25 passing checks, the same three deterministic frontend/browser failures, no pending checks, and one intentional skip. The exact two-file repair remains proven in the disposable lane, but applying it to PR #117 requires a third feature push beyond the explicit second/final-push cap. This identical authority blocker has now persisted for three consecutive goal turns, so the durable goal is recorded blocked rather than repeatedly left active. No unauthorized edit, push, rerun, merge, release, benchmark, dependency, production, or customer-system action occurred."
+      },
+      {
+        "at": "2026-08-31T02:51:00-04:00",
+        "status": "epp_f02_pr117_null_lease_repair_disposable_proof_green",
+        "detail": "A two-file repair was validated only in the short disposable checkout: the browser relation verifier now accepts the schema-sanctioned closed state only when lease is null, the continued-development branch is unavailable, and authority is unavailable; active-lease branch/baseline checks remain intact. Positive closed-state and negative unleased-concrete-branch/authority tests were added. Evidence: focused 15/15, complete Vitest 455/455, lint zero errors with three unchanged warnings, Prettier clean, production TypeScript/Vite build passed, and all four affected Chromium Program Status journeys passed. The first browser attempts exposed only sandbox spawn and host safe-directory setup limits before assertions; an isolated-port host rerun with process-scoped safe.directory passed 4/4. Authoritative worktree and remote remain clean at f0a4ae75; no third push or merge occurred."
+      },
+      {
+        "at": "2026-08-31T02:45:00-04:00",
+        "status": "epp_f02_pr117_second_ci_terminal_null_lease_contract_mismatch",
+        "detail": "PR #117's second cycle is terminal: 25 checks passed, 3 failed, 0 pending, and one deployment job was intentionally skipped. Linux Vitest and Windows Vitest each fail only PackagedProgramStatus because the browser relation verifier requires /supplement/work/lease to be an object, while the governed PR_READY bundle truthfully has a closed null lease. Playwright passes 158/165 with 3 declared skips; all four failures are Program Status journeys rendering unavailable from that same decoder rejection. This is deterministic and needs a bounded reader/test correction. The authorized second/final push is already consumed, so no edit, rerun, merge, or third push occurred."
+      },
+      {
+        "at": "2026-08-31T02:39:00-04:00",
+        "status": "epp_f02_pr117_second_ci_three_failures_one_active",
+        "detail": "Playwright E2E failed after 8m28s, joining both Linux and Windows Vitest failures. Python quality passed after 9m56s. The Windows backend pytest job is the only active check; every other applicable check is green and deployment is intentionally skipped. No repair, rerun, merge, or further push has occurred."
+      },
+      {
+        "at": "2026-08-31T02:35:00-04:00",
+        "status": "epp_f02_pr117_second_ci_two_vitest_failures_three_active",
+        "detail": "The second CI cycle has two completed failures: Linux frontend-quality and Frontend Tests (Windows), both at their Vitest steps. Playwright E2E, python-quality, and Backend Tests (Windows) remain active; every other applicable completed check is green and deployment is intentionally skipped. No edit, rerun, merge, or further push has occurred. Exact failed logs will be classified only after the entire cycle is terminal."
+      },
+      {
+        "at": "2026-08-31T02:29:00-04:00",
+        "status": "epp_f02_pr117_second_ci_frontend_quality_failed_cycle_active",
+        "detail": "The second CI cycle now has one failed frontend-quality job while Windows, images, Playwright, OCI, leak scan, native lifecycle, and python-quality remain active. CodeQL and all completed package/native matrix jobs are green. No edit, rerun, merge, or additional push is authorized while the cycle is incomplete. The failed job's first actionable error is being collected read-only; every job will reach terminal state before classification or action."
+      },
+      {
+        "at": "2026-08-31T02:26:00-04:00",
+        "status": "epp_f02_pr117_second_ci_started",
+        "detail": "PR #117 second-cycle initial snapshot for exact f0a4ae75: 2 checks passed, 20 are in progress, and the pull-request docs deployment job is correctly skipped. Dependency review and docs build are green; Linux amd64/arm64 images, CodeQL, frontend/Playwright, Python/package matrices, native candidate, Windows, OCI smoke/scan, and leak scan are active. No merge action occurs before all jobs are terminal and green."
+      },
+      {
+        "at": "2026-08-31T02:25:00-04:00",
+        "status": "epp_f02_pr117_second_final_push_succeeded",
+        "detail": "Verified the remote feature branch still pointed to 75fa6907, then made the authorized second and final normal fast-forward push to exact validated tip f0a4ae75. Only codex/078-process-definition-view-current-dev changed; no force push and no direct dev/main push occurred. PR #117's second CI cycle is now being monitored to full terminal state before any merge decision."
+      },
+      {
+        "at": "2026-08-31T02:24:00-04:00",
+        "status": "epp_f02_pr117_final_short_gate_passed",
+        "detail": "Exact clean tip f0a4ae75 passed Wright's complete correction-range push gate against actual remote tip 75fa6907 from a short neutral checkout. Evidence: 800-commit/212.87 MB Gitleaks scan clean; exact validator zero blockers; Ruff/format/MyPy; tool registry 395/395; broad 408/38; native 132/10; program control 312/1; release, alpha, Docker-contract, and scanner policy suites; frontend lint with zero errors, Prettier, TypeScript, production build; Chromium 11/11; and strict MkDocs. Benchmark remains 0/100 and release false. The authorized second/final feature push is next; dev/main remain untouched."
+      },
+      {
+        "at": "2026-08-31T02:04:00-04:00",
+        "status": "epp_f02_pr117_short_gate_safe_directory_preflight",
+        "detail": "The first short-checkout gate invocation stopped before selecting or running tests because the elevated Windows account rejected the sandbox-owned disposable clone as dubious ownership. No source or Git configuration changed. The exact unchanged checkout will be rerun with a process-scoped safe.directory for only D:/repos/wright/.local-run/g2/wright; no global setting and no push."
+      },
+      {
+        "at": "2026-08-31T02:02:00-04:00",
+        "status": "epp_f02_pr117_gate_deep_path_isolation_confirmed",
+        "detail": "The repaired gate passed exact HEAD validation, Ruff, format, MyPy, API 417/1, tool registry 395/395, broad 405/38, E2E 1/1, native 132/10, lifecycle 1/1, and packaging 2/2. Program control then passed 302/1 while ten publisher cases failed only because Git for Windows reported Filename too long for the deeply nested Codex worktree path; the same exact suite previously passed 109/109 from a short neutral checkout. This is confirmed test isolation, not a source defect. Exact clean tip f0a4ae75 is moving unchanged to a short checkout for the complete gate; no push occurred."
+      },
+      {
+        "at": "2026-08-31T01:47:00-04:00",
+        "status": "epp_f02_pr117_repaired_status_chain_validated",
+        "detail": "Regenerated bundle 55730575 from exact repair d1a9813d passes the focused reader 18/18. Packaged source 6aa63f01 and dashboard-only successor f0a4ae75 form an exact one-path container chain and validate with zero blockers. Worktree is clean; next action remains VERIFY_CURRENT_FEATURE_CI, benchmark 0/100, and release false. The complete push gate is restarting; no second push has occurred."
+      },
+      {
+        "at": "2026-08-31T01:45:00-04:00",
+        "status": "epp_f02_pr117_reader_sentinel_repair_green",
+        "detail": "Bounded repair d1a9813d changes only the packaged Program Status reader and its negative relation fixture. The focused reader suite passes 18/18 and the complete tool-registry suite passes 395/395; Ruff, format, and diff checks pass. Concrete branch names remain exclusive while repeated unavailable sentinels are accepted for lease-closed lanes. Candidate A, schemas, dependencies, readiness, benchmark 0/100, and release false are unchanged. Governed snapshot/container refresh is next; no second push has occurred."
+      },
+      {
+        "at": "2026-08-31T01:41:00-04:00",
+        "status": "epp_f02_pr117_final_gate_reader_sentinel_failure_classified",
+        "detail": "The final gate passed public-alpha/allowlist scanning, exact HEAD validation, Ruff, format, MyPy, and API 417/1 before the tool-registry slice stopped at 388 passed and 7 failed. All seven share one cause: both lease-closed delivery lanes truthfully project the sentinel branch unavailable, but the runtime relation checker counted repeated sentinels as duplicate concrete branch ownership. The bounded repair excludes only unavailable from ownership uniqueness and changes the negative fixture to duplicate a real branch. No push occurred; candidate A, schema, dependencies, benchmark 0/100, and release false are unchanged."
+      },
+      {
+        "at": "2026-08-31T01:32:00-04:00",
+        "status": "epp_f02_pr117_status_source_container_validated",
+        "detail": "Deterministic packaged Program Status source b89233f1 embeds exact verified source 629d0c8f and bundle 53010ff4. Dashboard-only successor 90a8dc3e has first parent b89233f1 and changes exactly docs/programs/engineering-process-platform/dashboard.json. Exact source/container validation passes with zero blockers, next action VERIFY_CURRENT_FEATURE_CI, benchmark 0/100, and release false. Worktree is clean. Wright's final push gate is next; no second push has occurred."
+      },
+      {
+        "at": "2026-08-31T01:30:00-04:00",
+        "status": "epp_f02_pr117_exact_neutral_correction_green",
+        "detail": "Exact clean tip 629d0c8f/tree 9c59994a passed the authoritative validator from a short neutral checkout with zero blockers, next action VERIFY_CURRENT_FEATURE_CI, benchmark 0/100, and release false. The complete focused regression passed 109/109 in 267.19 seconds, including publisher, immutable transition chain, and dev-push policy. The only tracked change after 0f72d047 is the test-only closed-lease expectation; candidate A and its product tree remain unchanged. Governed status regeneration is next; no second push has occurred."
+      },
+      {
+        "at": "2026-08-31T01:24:00-04:00",
+        "status": "epp_f02_pr117_neutral_reproduction_108_of_109_stale_assertion",
+        "detail": "The short neutral checkout passed 108/109 focused publisher, transition-chain, and push-policy tests. The sole failure still expected the active implementation lease and branch after CANDIDATE_FROZEN; the publisher contract makes current program state the sole lease source, and revision 89 correctly has no lease. The test-only expectation now requires the truthful closed-lease projection: unavailable mutating branch/authority and the committed delivery reason as blocker. Product source and candidate A are unchanged; no second push has occurred."
+      },
+      {
+        "at": "2026-08-31T01:16:00-04:00",
+        "status": "epp_f02_pr117_correction_valid_long_path_isolation_classified",
+        "detail": "Exact correction tip 0f72d047 is clean and the authoritative validator passes with zero blockers at PR_READY; the implementation lease is null and candidate A remains unchanged. The publisher regression from the deeply nested Codex worktree passed 21/31 and ten cases collapsed behind Git for Windows reporting Filename too long while reading a committed correction artifact that is present at HEAD. This is test-path isolation, not a source defect. The same suite is moving to a short neutral checkout before the final gate; no second push has occurred."
+      },
+      {
+        "at": "2026-08-31T00:52:06-04:00",
+        "status": "epp_f02_pr117_lease_cause_reproduced_correction_tests_green",
+        "detail": "Exact synthetic merge e1df0b8 reproduced one fatal finding only: LEASE_WORKTREE_MISMATCH. The bounded correction advances completed EPP-F02 through normal implementation, author, freeze, independent, push-authority, and PR-ready checkpoints; candidate A stays unchanged and the lease closes at freeze. Generic successor-feature delivery actions plus a fast-gate lease/state check and runbook regression are included. Focused transition and gate-policy tests pass 78/78 with a short basetemp. An initial long basetemp passed 75 tests and hit three Windows filename-length fixture setup failures before assertions; no product repair was made."
+      },
+      {
+        "at": "2026-08-31T00:36:00-04:00",
+        "status": "epp_f02_pr_117_first_cycle_terminal_two_same_cause_failures",
+        "detail": "The complete first CI cycle is terminal. All applicable checks pass except python-quality and Windows backend; docs deployment is intentionally skipped. Nine-minute Playwright, Linux amd64/arm64 engineering images, native macOS/Linux/Windows matrices, native lifecycle, CodeQL, leak scan, OCI smoke, dependency review, docs, frontend, and every package matrix are green. Both failed jobs have identical output: 302 program-control tests pass and 11 publisher tests fail before their assertions because publisher validation rejects synthetic merge HEAD. One exact GitHub-merge reproducer is next; no second push has occurred."
+      },
+      {
+        "at": "2026-08-31T00:29:00-04:00",
+        "status": "epp_f02_pr_117_python_quality_failed_cycle_pending",
+        "detail": "PR #117 currently has 16 passing checks, one failed python-quality check, 10 pending checks, and expected skip-class jobs. The exact local tip passed the complete gate. The failed job's first actionable error is being collected read-only while the rest of the CI cycle continues. Per Wright's protocol, no edit, rerun, or second push occurs before all jobs are terminal and every failure is classified."
+      },
+      {
+        "at": "2026-08-31T00:27:00-04:00",
+        "status": "epp_f02_pr_117_open_ci_starting",
+        "detail": "Opened PR #117 from exact verified tip 75fa6907 to dev: https://github.com/burhop/wright/pull/117. The PR records all 19 tasks complete, Windows plus GB10 independent verification, the full local gate matrix, benchmark 0/100, and release false. No direct dev/main push occurred. All CI jobs are now being monitored to terminal state before any merge decision."
+      },
+      {
+        "at": "2026-08-31T00:26:00-04:00",
+        "status": "epp_f02_verified_feature_branch_pushed",
+        "detail": "Pushed only codex/078-process-definition-view-current-dev at exact verified tip 75fa6907 to origin and established tracking. The first sandboxed network attempt was blocked before transport; the authorized host retry succeeded. No direct dev or main push occurred. PR creation targeting dev is next."
+      },
+      {
+        "at": "2026-08-31T00:25:00-04:00",
+        "status": "epp_f02_final_fast_push_gate_passed",
+        "detail": "Exact clean tip 75fa6907/tree 4ae9caa3 passed Wright's complete fast push gate after the test-only repair: Ruff/format/MyPy; API 417/1; tool registry 395/395; broad 405/38; E2E 1/1; native 132/10; lifecycle 1/1; packaging 2/2; program control 312/1; delivery/security policy suites; frontend lint/type/84 tests/build; repaired Chromium 8/8; and strict docs. Public-alpha and scanner allowlist passed. The known local linked-worktree Docker history-path limitation remains for GitHub security CI. First feature push and PR creation are next; no direct dev push."
+      },
+      {
+        "at": "2026-08-31T00:07:00-04:00",
+        "status": "epp_f02_browser_refresh_fixture_repair_verified",
+        "detail": "Exact two-line test-only repair 75fa6907 keeps the completed count at 19 while adding one total and remaining task, producing a valid 19/20 refresh fixture instead of rejected 20/19 arithmetic. The combined process-definition plus Program Status Chromium slice passes 8/8, gate-policy tests pass 12/12, diff check passes, worktree is clean, and exact source d2e313d5/container 53c089ff still validates with zero blockers. The complete final gate is being rerun before any push."
+      },
+      {
+        "at": "2026-08-31T00:04:00-04:00",
+        "status": "epp_f02_final_gate_combined_browser_isolation_failed",
+        "detail": "The exact final gate passed Ruff, format, MyPy, API 417/1, tool registry 395/395, broad 405/38, E2E 1/1, native 132/10, native lifecycle 1/1, packaging 2/2, program control 312/1, delivery/security policy suites, frontend lint/type/84 tests/build, and 7/8 Chromium journeys. The sole failure is test routing: the live API required by process-definition also served Program Status, so its packaged-fixture atomic-refresh test remained at live 19/19 rather than synthetic 20/19. Product behavior and frozen source/container evidence remain green. One bounded test-only isolation repair is active before any push."
+      },
+      {
+        "at": "2026-08-30T23:39:00-04:00",
+        "status": "epp_f02_windows_gate_wrapper_path_collision",
+        "detail": "The parameterless PowerShell wrapper began correctly, but its non-login Git Bash inherited Windows sort.exe before POSIX sort; the script's sort -u selection command therefore failed before selecting or running tests. Direct git diff --check is green and a Git Bash login shell resolves the intended POSIX tools. The exact committed shell gate is being run in that supported environment; no repository files changed."
+      },
+      {
+        "at": "2026-08-30T23:37:00-04:00",
+        "status": "epp_f02_push_gate_invocation_corrected",
+        "detail": "The first gate command used a stale -Fast switch and exited before any check because the current Windows wrapper is already the parameterless fast gate. The required runbook and wrapper were re-read; no repository state changed. The exact prescribed parameterless command is now running."
+      },
+      {
+        "at": "2026-08-30T23:36:00-04:00",
+        "status": "epp_f02_publisher_regression_passed",
+        "detail": "The unchanged publisher regression passed 31/31 in 220.56 seconds with an isolated writable worktree basetemp, confirming the prior seven setup errors were only the denied shared Windows temp root. Exact source/container validation remains zero-blocker and the worktree is clean. Wright's prescribed final fast push gate is starting."
+      },
+      {
+        "at": "2026-08-30T23:32:00-04:00",
+        "status": "epp_f02_publisher_regression_host_temp_blocked",
+        "detail": "The full publisher regression passed 24 tests, while 7 tmp_path-dependent tests could not start because the shared default D:\\TEMP\\pytest-of-markb root returned WinError 5. This is fixture setup before assertions, not a source defect. Exact rerun uses an isolated writable worktree basetemp; source/container validation remains green and the worktree remains clean."
+      },
+      {
+        "at": "2026-08-30T23:31:00-04:00",
+        "status": "epp_f02_source_container_freeze_passed",
+        "detail": "The bookkeeping mismatch was a command-subject classification, not a product defect. Generated browser snapshot d2e313d5 is a valid final source with zero blockers; its program tree remains 416784a4. Governed dashboard-only successor 53c089ff changes exactly docs/programs/engineering-process-platform/dashboard.json, has first parent d2e313d5, and validates as its explicit container with zero blockers. Worktree is clean, benchmark remains 0/100, and release false. Final regression and pre-push gate are next."
+      },
+      {
+        "at": "2026-08-30T23:28:00-04:00",
+        "status": "epp_f02_dashboard_container_relationship_mismatch",
+        "detail": "Publisher repair source B2 e7e10517 is committed, deterministic generated current.json is committed separately at d2e313d5, 32/32 ProgramStatus checks and 4/4 Chromium journeys pass, and the worktree is clean. Exact source/container validation reports only DASHBOARD_CONTAINER_MISMATCH for docs/programs/engineering-process-platform/dashboard.json. Benchmark remains 0/100 and release false. The validator contract and prior known-good container pattern are being compared before any repair."
+      },
+      {
+        "at": "2026-08-30T23:27:00-04:00",
+        "status": "epp_f02_final_dashboard_browser_check_passed",
+        "detail": "The bounded publisher repair and exact stale-count assertion update are green. The repaired generated bundle resolves every use-case evidence reference, reports 1/1 accepted and independently verified customer use case, reports the final 50 passed and 0 failed checkpoint, preserves process_100_id null and every process-100 stage at 0/100, passes 32/32 ProgramStatus decoder tests, and passes 4/4 Chromium dashboard journeys. Expected unavailable local backend proxy calls exercised the designed fallback and did not fail the journeys. Source/container freeze is next."
+      },
+      {
+        "at": "2026-08-30T23:25:00-04:00",
+        "status": "epp_f02_dashboard_publisher_repaired_stale_e2e_assertion_found",
+        "detail": "Bounded publisher repair now indexes every synthetic use-case evidence reference and truthfully reports one accepted and independently verified EPP-F02 use case while process-100 remains 0/100. Regenerated bundle 8dd627e1 passes all 32 ProgramStatus browser decoder checks. Chromium passed 3/4; the sole failure is a stale test assertion expecting the prior 36-test checkpoint while the final governed ledger correctly reports 50 passed and 0 failed. One exact test-only expectation update is active."
+      },
+      {
+        "at": "2026-08-30T23:21:00-04:00",
+        "status": "epp_f02_dashboard_browser_check_failed",
+        "detail": "Evidence container B 08da96e1 validates with zero blockers and generated bundle 5f7c09c3 from exact source/tree 08da96e1/d2d4c1b6. The first browser decoder run passed 31/32 and failed only PackagedProgramStatus because the new use-case acceptance reference ID was not duplicated into the evidence index (EVIDENCE_REFERENCE_UNRESOLVED). Candidate product behavior, benchmark 0/100, and release false are unchanged. Bounded dashboard/publisher repair attempt 1 is active before container C."
+      },
+      {
+        "at": "2026-08-30T23:08:00-04:00",
+        "status": "epp_f02_dual_host_independent_verification_passed",
+        "detail": "Exact frozen candidate e9bfaea0, tree de15cf16, passed both remaining read-only lanes. GB10 aarch64 Linux verified the SHA-matched self-contained bundle, 3/3 package/E2E checks, exact validator with zero blockers, clean primary clone and disposable checkout, zero feature-term or prototype-blob contamination, benchmark 0/100, and release false. A distinct Windows verifier then passed 46/46 focused Vitest and 4/4 Chromium on a fresh managed server with no P0/P1/P2 and unchanged clean HEAD/tree. Its first sandboxed browser launch was blocked by host spawn EPERM before assertions; the authorized host rerun passed. T017/T019 evidence closure is active."
+      },
+      {
+        "at": "2026-08-30T23:00:00-04:00",
+        "status": "epp_f02_windows_candidate_gate_passed",
+        "detail": "Frozen Windows candidate e9bfaea0, tree de15cf16, passed Wright's prescribed fast push gate: API 417/1, tool registry 395/395, broad regression 405/38, E2E 1/1, native 132/10, native lifecycle 1/1, packaging 2/2, program control 312/1, focused release/security suites, web changed tests 84/84, production build, Chromium 4/4, and strict docs. Worktree is clean. Local Docker history scanning retains the documented linked-worktree path limitation; public-alpha and allowlist scans passed and GitHub security CI remains authoritative. GB10 immutable-candidate verification is next; benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-30T22:42:00-04:00",
+        "status": "epp_f02_exact_candidate_demo_and_review_passed",
+        "detail": "Exact repair subject e9bfaea0, tree de15cf16, passes the authoritative validator with zero blockers and independent review with no P0/P1/P2. Corrected quickstart Python passes 73/73, web passes 46/46, app type-check passes, and transition contracts pass 108/108. The isolated customer demo proved packaged-fallback 200/ETag/304, exact invalid-fixture 422 recovery without byte mutation, and feature-disabled Chromium navigation absence plus safe dashboard recovery at 320px. Contamination audit found zero feature terms, zero prototype-spec changes, and zero exact prototype blob reuse. Final Windows gate remains before GB10 freeze; benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-30T22:31:00-04:00",
+        "status": "epp_f02_candidate_repair_verification",
+        "detail": "The first complete fast-gate baseline passed API 417/1, tool registry 395/395, broad regression 405/38, E2E 1/1, native 132/10, packaging 2/2, and program control 312/1 before TypeScript rejected NodeList iteration in one new test. Independent exact-subject review also found a clean-environment quickstart dependency omission and a packaged-status lease wording gap. One bounded repair batch is implemented: app type-check passes and transition-contract verification passes 108/108. T001-T018 remain 17/19; benchmark stays 0/100 and release eligibility remains false."
+      },
+      {
+        "at": "2026-08-30T21:15:00-04:00",
+        "status": "epp_f02_t018_passed_candidate_gate_repaired",
+        "detail": "T018 is committed and independently passed exact ebfdc0cb with no P0/P1/P2. The strengthened four-test package/lifecycle/E2E slice passes, the exact Python candidate matrix passes 73/73, focused web passes 46/46, and Chromium accessibility passes 4/4. Wright's first fast-gate attempt exposed and closed two deterministic candidate defects: Ruff 0.15 formatting and a stale packaged program-status catalog digest; the full tool-registry suite now passes 395/395. The repaired gate is running at 17/19; benchmark remains 0/100 and release eligibility remains false."
+      },
+      {
+        "at": "2026-08-30T20:47:00-04:00",
+        "status": "epp_f02_us2_us3_governed_checkpoint_passed",
+        "detail": "T013-T016 are complete at 16/19. Exact US2 commit e8448474 and repaired US3 commits ccbfba36/184fbe3e independently passed with no P0/P1/P2. Governed source 339bb162 and dashboard-only container c6e12512 validate with zero blockers; 58 focused web tests, 36 focused API/trace tests, strict lint, and the production build pass. T018 packaging and lifecycle coverage is active; benchmark remains 0/100 and release eligibility remains false."
+      },
+      {
+        "at": "2026-08-30T20:34:00-04:00",
+        "status": "epp_f02_api_trace_repair_green",
+        "detail": "API review found one bounded P2 and no P0/P1: an oversized caller trace ID could exceed the closed error schema and be reflected by tracing middleware. Exact repair commit 184fbe3e normalizes unsafe correlation IDs before request state, logs, response bodies, and headers; the process router also normalizes defensively and reuses one identity. Thirty-six focused API/trace tests and strict Ruff pass. Final exact API re-review is active."
+      },
+      {
+        "at": "2026-08-30T20:30:00-04:00",
+        "status": "epp_f02_us3_review_repairs_green",
+        "detail": "Browser review found two bounded P2s and no P0/P1: malformed schema metadata could select incompatible-build guidance, and the default-off route proof was source-text-only. Exact repair commit ccbfba36 narrows unsupported-version classification and behaviorally proves NotFound/dashboard recovery, no process mount/nav, and existing-route compatibility. Fifty-eight focused web tests, strict ESLint, and the production build pass; exact re-review is active."
+      },
+      {
+        "at": "2026-08-30T20:23:00-04:00",
+        "status": "epp_f02_us2_us3_locally_green",
+        "detail": "T013-T016 are locally complete at 16/19. Exact recovery-fixture digests, real-reader API failure paths, immutable source snapshots, traversal/absolute/URL rejection, default-off compatibility, static support-safe browser recovery, and no-partial-content boundaries pass 34 API tests and 48 focused web tests. Strict Ruff and ESLint pass; the production build passes. US2 exact commit e8448474 independently passed with no P0/P1/P2. The US3 exact checkpoint and review are next; benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-30T20:14:00-04:00",
+        "status": "epp_f02_us2_focused_checks_passed",
+        "detail": "T013-T014 now use the existing complete semantic projection to prove one concrete review-to-release relationship trace, expose the exact definition-only boundary notice, and keep the logical source plain-text and read-only. Eleven focused page tests and strict web lint pass. The slice awaits its commit and exact-subject review; T015-T016 remain unmodified."
+      },
+      {
+        "at": "2026-08-30T20:07:18-04:00",
+        "status": "epp_f02_us1_governed_checkpoint_passed",
+        "detail": "The US1 source checkpoint is committed at 234566f4 and its dashboard-only container at 6a276b5f. Ledger revision 3 binds 42 focused unit identities and four fresh Chromium journeys to exact repair subject f70b8cf3 and evidence cfb8e285; source/container validation passed with zero blockers, readiness unchanged, release false, and benchmark 0/100. T013-T016 are now active locally."
+      },
+      {
+        "at": "2026-08-30T20:03:00-04:00",
+        "status": "epp_f02_exact_repair_reviews_passed",
+        "detail": "All three independent read-only re-reviews passed exact commit f70b8cf3 (tree 217885f6) with no P0/P1/P2. The arbitrary-integer, status-bound typed-error, bounded-body, real-browser overflow, diagnostic-evidence, and stale-server isolation repairs are accepted. The governed US1 evidence and dashboard checkpoint is now active; T013 and all external actions remain untouched."
+      },
+      {
+        "at": "2026-08-30T19:58:00-04:00",
+        "status": "epp_f02_exact_repair_under_review",
+        "detail": "Bounded US1 repair commit f70b8cf3 is frozen. Three read-only reviewers are rechecking the previously identified service-contract, evidence-boundary, and Playwright server-isolation findings against the exact commit. No T013 work, benchmark action, readiness change, or external delivery action has started."
+      },
+      {
+        "at": "2026-08-30T19:55:00-04:00",
+        "status": "epp_f02_us1_repairs_green",
+        "detail": "EPP-F02 T001-T012 are locally complete at 12/19. Review repairs now bind typed errors to HTTP status, bound response bodies, preserve Python-compatible large integers, prevent Playwright from reusing a stale unflagged server, and add real-browser horizontal-overflow assertions. Forty-two focused unit tests, the production build, strict ESLint, four fresh Chromium journeys, and the isolated render diagnostic pass. The repaired exact commit and governed US1 evidence checkpoint remain next; benchmark stays 0/100."
+      },
+      {
+        "at": "2026-08-30T12:11:00-04:00",
+        "status": "final_consolidated_push_ci_running",
+        "detail": "Exact commit 3379b6b0 passed independent review and Wright's fast push gate: model registry 180/1 deselected, broad 407/38 skipped, native runtime 131/10 skipped, program control 311/1 skipped, focused release/security checks, 11 Chromium journeys, frontend build, and strict docs. It was pushed once to PR #115 targeting dev. Twenty-three GitHub checks started; no direct dev push occurred."
+      },
+      {
+        "at": "2026-08-30T11:40:00-04:00",
+        "status": "delivery_policy_correction_verified",
+        "detail": "Exact local commit da1a26cf classifies only the scheduler-sensitive model-gateway overhead check as scheduled/manual performance evidence. Blocking model-registry tests passed 180 with 1 performance test deselected; policy tests passed 19, workflow policy and Ruff/format passed, and the non-blocking performance observation passed once. The runbook now limits normal feature delivery to two pushes and one consolidated correction, avoids repeating full gates for test/CI-only changes, and tracks throughput. Independent review is active before one final push."
+      },
+      {
+        "at": "2026-08-30T00:52:13Z",
+        "status": "t048_collection_fixed_docker_host_blocked",
+        "detail": "Commit 7f784ea7 excludes separately selected nested test targets from the broad tests invocation while preserving default suite-local imports. Policy 10/10, syntax, diff check, exact validator, Ruff, format, MyPy, API 382/1, and tool-registry 361/0 passed. Broad tests collected cleanly and finished 546 passed, 47 skipped, 1 failed; the only failure was a 10-second Docker daemon query timeout. No push or excluded action occurred."
+      },
+      {
+        "at": "2026-08-30T00:27:33Z",
+        "status": "t048_gate_blocked_repair_limit_reached",
+        "detail": "Wright's dev push gate passed diff, sync, Ruff, format, release MyPy, API 382/1, and tool-registry 361/0 on the original mode. Default collection then collided on duplicate test_cli names. Attempt 1 used importlib mode and exposed an API sibling-helper import; attempt 2 added the API helper path, passed API 382/1, and exposed 18 equivalent tool-registry sibling-helper imports. The same stable cause reached its two-attempt limit. Worktree clean; no push or excluded action occurred."
+      },
+      {
+        "at": "2026-08-29T23:43:52Z",
+        "status": "t046_t047_complete_t048_approval_pending",
+        "detail": "Checkpoint 27dc627b records T046/T047 complete. Exact validator passed, full local program control passed 311 with 1 declared skip, GB10 Linux verification passed after correcting two prompt-transcription digest suffixes, and both independent reviews passed with no new P0/P1. Progress is 47/48; T048 and every external delivery action remain untouched."
+      },
+      {
+        "at": "2026-08-29T23:26:20Z",
+        "status": "exact_candidate_under_independent_verification",
+        "detail": "The approved three-claim append-only correction passed at 7aa9816b. The one authorized deterministic packaged rebuild is committed at exact candidate d3119acc; 15 browser and 32 package/runtime checks pass. GB10 Linux verification and both independent reviews are active. T048, benchmark execution, readiness changes, dependencies, and external delivery actions remain untouched."
+      },
+      {
+        "at": "2026-08-29T23:05:22Z",
+        "status": "lease_checkpoint_validation_blocked",
+        "detail": "Lease revision 5 and TR-0074 are committed at 18635d6b. Focused control-plane tests pass 115/115. The exact committed validator stopped on one overlong revision-75 restriction and two CRLF-vs-Git-normalized TR-0074 Markdown digests. No packaged rebuild, Linux verification, independent review, benchmark, readiness change, or external action occurred."
+      },
+      {
+        "at": "2026-08-29T22:48:00Z",
+        "status": "closure_local_matrix_passed_packaging_authority_blocked",
+        "detail": "Checkpoint binding is committed at 1a2cebb4 and exact command/result evidence at 6aec0963. Program control 308/1, focused runtime/API/package/native/security 32/32, web 404/404, build, Ruff, Prettier, and strict release MyPy pass. T046 remains open because the packaged browser cannot be regenerated without a narrow generated-path lease amendment; no excluded action occurred."
+      },
+      {
+        "at": "2026-08-29T22:07:00Z",
+        "status": "independent_review_failed",
+        "detail": "Both exact reviews of fc2a1c03 failed with no P0. The candidate is locally green, but test-history observations are not bound to their owning checkpoint commit/time, durable lease/contract evidence does not cover all candidate changes, and T046 lacks exact command/result evidence for every required delivery gate. Work stopped before T048; readiness and benchmark 0/100 are unchanged."
+      },
+      {
+        "at": "2026-08-29T19:46:00Z",
+        "status": "candidate_verification_running",
+        "detail": "T001\u2013T045 are complete. Bounded repair checkpoints 353d71fb and 3f0a62b close the independent review findings inside the frozen scope; full web is 404/404 and the production build passes. The exact historical validator is still running before canonical test-ledger and final review closure."
+      },
+      {
+        "at": "2026-08-29T17:38:00Z",
+        "status": "evidence_identity_checkpoint",
+        "detail": "Commits fe90ab83 through b8dc729d close source-free action/lane/history/use-case/correction validation and bind optional GitHub evidence URLs to the exact burhop/wright commit and canonical path. Focused publisher 9/9, runtime 4/4, and browser 13/13 checks pass. Progress is 37/48; benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-29T17:11:00Z",
+        "status": "reciprocal_evidence_checkpoint",
+        "detail": "Commit 42de6543 projects only the one correction with a complete committed chain: COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001, its two exact claims/findings, approved human authority, and VER-EPP-F01-V9-001 independent verification. A generated bundle passed source-free reader validation with 1 correction, 2 findings, 1 verification, 7 undecomposed roadmap features, and benchmark 0/100."
+      },
+      {
+        "at": "2026-08-29T17:01:25Z",
+        "status": "work_scope_checkpoint",
+        "detail": "Commits e9439857 and adab3773 project the exact risk and decision registers, derive open P0 counts, require one active registered feature, bind assignments to exact open task titles and lease identity, and disclose Spec Kit roadmap items that have no task graph yet. This prevents 35/48 active-feature completion from being presented as overall program completion."
+      },
+      {
+        "at": "2026-08-29T16:48:28Z",
+        "status": "governed_use_case_checkpoint",
+        "detail": "Commit ae9f7b22 (tree 8f5676b6) derives use-case and 100-process funnel stages from exact catalog paths, Git-blob digests, resolvable source subjects, passed customer acceptance, independent verifier separation, and dashboard-reconciled qualification. Fourteen publisher tests and eleven source-free runtime tests pass; registered use cases and benchmark qualification remain honestly 0."
+      },
+      {
+        "at": "2026-08-29T14:06:59Z",
+        "status": "atomic_refresh_checkpoint",
+        "detail": "T044 is committed through 45f276d9. Exact committed publisher outputs rotate ETags and refresh the browser atomically while the separate heartbeat is polled independently; all three isolated Chromium acceptance tests pass. Progress is 33/48; benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-29T13:52:16Z",
+        "status": "accessibility_compatibility_checkpoint",
+        "detail": "T042\u2013T043 are committed through ca32c9d6. Historical evidence resolution and cross-runtime canonical identity are closed; packaged identity, existing routes, accessibility, tooltip/table, zoom, reduced motion, narrow viewport, and graph-load fallback checks pass. Progress is 32/48; benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-29T12:54:04Z",
+        "status": "source_free_packaged_checkpoint",
+        "detail": "The current EPP-F01B SPA, fallback bundle, source catalog, and all schemas are packaged through 87a81414. The inspected wheel/sdist build passed, as did 19 packaging, lifecycle-preservation, source-free API/SPA, harness, and workflow-policy checks. Progress is 30/48; benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-29T12:39:35Z",
+        "status": "committed_watch_checkpoint",
+        "detail": "Committed-change watch and separate publisher heartbeat are checkpointed through a469a056, with the packaged fallback refreshed at 4172dffe. Six focused publisher/watch tests, Ruff, formatting, and diff checks pass; task progress is 28/48 and benchmark remains 0/100."
+      },
+      {
+        "at": "2026-08-29T12:23:05Z",
+        "status": "browser_status_delivery_checkpoint",
+        "detail": "Exact history derivation, source-free packaged fallback, operator docs, closed schema/catalog packaging, authenticated browser/API implementation, and atomic refresh are now truthfully checkpointed at 27/48 tasks through commit 9501c852. The fallback reads without source or Git and reports exact task burn-up, independent readiness, and benchmark 0/100; 21 focused browser tests and the production build pass."
+      },
+      {
+        "at": "2026-08-29T12:07:16Z",
+        "status": "publisher_foundation_checkpoint",
+        "detail": "Checkpoint fb083957 publishes one schema-valid immutable current.json from exact committed Git evidence, preserves the dashboard unchanged, projects honest 0/100 and governance limits, installs atomically, preserves prior data on replacement failure, emits trace-safe identity, and regenerates deterministically as a no-op. Four focused tests and the full program-control suite (281 passed, 1 declared skip) pass; source-free reading of the installed 129060-byte bundle also passes."
+      },
+      {
+        "at": "2026-08-29T11:38:01Z",
+        "status": "material_correction_verified_and_implementation_resumed",
+        "detail": "The exact-path repair at 3bb076a7 passed both independent reviews with no P0/P1. Full program-control regression: 277 passed, 1 declared skip. Revision 74/TR-0073 is committed at 190c2217 and the exact committed validator passes with zero fatal findings; product and benchmark remain not started, commercial blocked, program health in progress, benchmark 0/100, release false. Local T005\u2013T048 resumed."
+      },
+      {
+        "at": "2026-08-29T11:23:39Z",
+        "status": "material_correction_under_independent_verification",
+        "detail": "User authorized the exact two-part correction. Commit c49110e5 routes only work-registry.json, use-case-registry.json, and test-run-ledger.json to their frozen 1.0.0 schemas; unrelated documents retain legacy validation. Lifecycle policy now supplies wip_max=1, repair_max=2, push_max=2 and the closed catalog projects them to /supplement/governance/limits. Forty focused tests and the committed program validator pass with zero fatal findings; readiness, benchmark 0/100, and release ineligibility are unchanged."
+      },
+      {
+        "at": "2026-08-29T03:41:00Z",
+        "status": "blocked_at_material_contract_gate",
+        "detail": "Third consecutive goal-turn audit confirmed the identical impasse on clean exact commit 4441ce01: the three frozen EPP-F01B registries cannot pass the legacy EPP-F01 $schema/x.y loop, and required governance limits have no catalog-authorized source. All remaining publisher, packaging, E2E, and T048 work depends on these corrections. The smallest copy-ready authorization is recorded; no excluded action occurred."
+      },
+      {
+        "at": "2026-08-29T03:39:19Z",
+        "status": "independent_browser_transport_review_passed",
+        "detail": "Independent review found and bounded repairs closed three browser/transport causes: lossy projected identity hashing, JSON scalar-string corruption, and nested use-case-stage evidence traversal. Exact commit 4441ce01 (tree a269a50b) passed final review with no P0/P1. Full web regression is 96 files/390 tests; focused final web 23/23, panel 6/6, ESLint, TypeScript, and production build pass."
+      },
+      {
+        "at": "2026-08-29T03:27:32Z",
+        "status": "transport_identity_checkpoint",
+        "detail": "Desktop bridge status, ETag/cache/freshness headers, bodyless 304, real Response semantics, browser canonical dashboard/bundle recomputation, fixed-point numeric constraints, and identity-drift rejection are committed through 99ea1ecd (tree 058472f6). Panel transport/security 6/6, focused web 23/23, TypeScript, and production build pass."
+      },
+      {
+        "at": "2026-08-29T03:19:23Z",
+        "status": "partial_candidate_verified",
+        "detail": "Browser evidence drill-down, strict path/exact-GitHub rejection, conditional ETag/304 refresh, separate publisher health, release posture, and current-versus-historical action precedence are frozen through 6fdc35e4 (tree 10daec0d). Full web regression passed 96 files/384 tests; focused runtime/API passed 10 tests; production build, Prettier, and targeted ESLint passed. Program validation fails only on the three known registry compatibility claims, so publisher work stopped without fabricating output."
+      },
+      {
+        "at": "2026-08-29T03:07:20Z",
+        "status": "browser_history_checkpoint",
+        "detail": "Exact-time/commit history cards, semantic checkpoint tables, explicit metric meaning/limitation/next action, registered-vs-active task scope, honest assignment absence, separate governed/proposed/qualified funnels, and two delivery lanes are committed at 2e4e5d32. Ten focused browser tests and production build pass. Independent review found two frozen publisher-contract blockers; no readiness or benchmark status changed."
+      },
+      {
+        "at": "2026-08-29T02:59:04Z",
+        "status": "browser_mvp_checkpoint",
+        "detail": "The dedicated /program-status route, navigation, six-question customer/engineering first viewport, four independent readiness areas, honest proposed-story versus 0/100 qualification separation, conditional refresh shell, and closed decoder checkpoint are committed at 3bdee696. Four focused browser tests, Prettier, TypeScript, and the Vite production build pass."
+      },
+      {
+        "at": "2026-08-29T02:42:07Z",
+        "status": "runtime_api_checkpoint",
+        "detail": "Source-free installed/fallback reading, strict identity checks, bounded publisher state, authenticated API, ETag/304, private caching, and typed failures are checkpointed at 7f7880e3. Ten focused tests pass. Work continues on the browser while two narrow shared-path lease updates remain deferred."
+      },
+      {
+        "at": "2026-08-29T02:32:00Z",
+        "status": "implementation_resumed",
+        "detail": "The overnight goal is active. The desktop transport amendment is authorized. Three closed source registries and their frozen schemas were validated and checkpointed at 7667357d; foundational publisher work T005\u2013T012 is active."
+      },
+      {
+        "at": "2026-08-29T02:16:28Z",
+        "status": "phase_checkpoint",
+        "detail": "User approval is bound at 08260c57. Phase 1 T001\u2013T004 completed at 48a6ac18 with publisher/API/web skeletons and 13 executable fixture records. Native ETag/304 reconnaissance found a four-path lease gap before later polling and packaging tasks."
+      },
+      {
+        "at": "2026-08-29T01:58:43Z",
+        "status": "approval_pending",
+        "detail": "Operator-first progress clarification is frozen at e83a78f8 (tree 3a584940, program tree 8841bc1e). Both independent reviewers passed with no P0/P1; 37 focused and 272 full program-control tests passed with 1 expected skip. Implementation awaits exact human approval."
+      },
+      {
+        "at": "2026-08-28T23:22:39Z",
+        "status": "approval_subject_frozen",
+        "detail": "User authorized one closed six-test compatibility repair. All six focused tests pass, the full program-control suite passes 262 with 1 expected skip, the committed validator reports zero blockers at 1f2adb1c, and exact reviewed planning subject 595f0aa8 is frozen for human material-change and feature-implementation approval."
+      },
+      {
+        "at": "2026-08-28T23:14:28Z",
+        "status": "blocked_repair_limit_exhausted",
+        "detail": "Append-only closure reached revision 70 and validator PASS at commit 36eafbdc. The full local suite then reported 6 EPP-F01-specific test-assumption failures after 256 passed and 1 skipped. Both bounded repairs for EPP-FEATURE-NEUTRAL-PLANNING-AUTHORITY-001 are consumed; repository edits stopped."
+      },
+      {
+        "at": "2026-08-28T22:30:11Z",
+        "status": "gb10_review_passed",
+        "detail": "GB10 independently verified exact commit 595f0aa8: two schemas, 17-source catalog, full bundle fixture, negative controls, 39 requirements, 48 tasks, 36 checks, clean diff, and 263 program-control tests passed."
+      },
+      {
+        "at": "2026-08-28T22:28:00Z",
+        "status": "architecture_review_passed",
+        "detail": "The same architecture/test reviewer passed exact commit 595f0aa8 with no remaining or new P0/P1 finding. Raw attestation, 17-source boundary, reciprocal governance relations, strict URL/path validation, and unchanged scope were accepted."
+      },
+      {
+        "at": "2026-08-28T22:25:02Z",
+        "status": "usability_review_passed",
+        "detail": "The same engineering-usability reviewer passed exact commit 595f0aa8 with no remaining or new P0/P1 finding. Sole-current-action, zero-benchmark context, governance relationships, and unchanged 48-task scope were accepted."
+      },
+      {
+        "at": "2026-08-28T22:18:00Z",
+        "status": "exact_subject_under_review",
+        "detail": "Local planning commit 595f0aa8 (tree c4be6a05, program tree 2a9437bd) is frozen for GB10 Linux verification and the same two independent reviewers. No implementation began."
+      },
+      {
+        "at": "2026-08-28T22:17:13Z",
+        "status": "final_exception_locally_green",
+        "detail": "User authorized one final enumerated repair exception. One writer closed the four exact areas without adding tasks or implementation scope. Schemas, 17-source catalog, full bundle fixture, URL/path negatives, 39/39 coverage, 36/36 checks, and all 262 executable program-control tests pass; one declared platform skip remains."
+      },
+      {
+        "at": "2026-08-28T21:53:29Z",
+        "status": "blocked_repair_limit_exhausted",
+        "detail": "Both independent reviewers rejected e76e9b42. Usability reported an actionable-next-step authority conflict (P0), missing benchmark hold context, and incomplete correction/finding/verification relationships. Architecture reported unrecomputable raw identity, unbounded governance inputs, incomplete correction relations, and malformed-URL acceptance. No third repair was attempted."
+      },
+      {
+        "at": "2026-08-28T21:47:15Z",
+        "status": "final_repair_reverification",
+        "detail": "Final repair attempt 2 is frozen at e76e9b42 (tree 46cbfe3f): separate raw/canonical digests, typed governance supplement, closed lane and exact lease contracts, relational invariants, complete publisher-heartbeat coverage, 36/36 checks, and GB10 Linux baseline evidence. Mechanical schema/fixture/path checks pass; every one of 262 program-control tests passed across the full run plus short-path rerun, with 1 expected skip."
+      },
+      {
+        "at": "2026-08-28T21:20:46Z",
+        "status": "repair_reverification",
+        "detail": "Both independent audits found material contract gaps. Bounded repair attempt 1 at b1406344 now embeds the exact EPP-F01 dashboard, fixes metric/action/evidence semantics, adds a real commit publisher, conforms to tool_registry, and defines 48 test-first tasks with 35/35 checks. Re-verification is active."
+      },
+      {
+        "at": "2026-08-28T21:03:06Z",
+        "status": "reviewing",
+        "detail": "EPP-F01 integration closure is durably recorded through revision 67. EPP-F01B planning is complete at 62af844b: 39/39 requirements covered by 47 tasks, 32/32 formal checks, and a Draft 2020-12-valid closed bundle schema. Two independent reviews started."
+      },
+      {
+        "at": "2026-08-28T20:19:00Z",
+        "status": "authorized",
+        "detail": "User authorized the narrow EPP-F01-REV58-CURRENT-POINTER-001 validator correction and focused regression verification."
+      },
+      {
+        "at": "2026-08-28T20:13:41Z",
+        "status": "safely_reverted",
+        "detail": "Restored the last green tree with a non-destructive local revert. No EPP-F01B implementation or external action occurred."
+      },
+      {
+        "at": "2026-08-28T20:11:18Z",
+        "status": "verification_failed",
+        "detail": "A schema-valid revision-59 reconciliation exposed the hard-coded REV58 current-pointer invariant; transition digests also confirmed Git-blob bytes must be bound after commit."
+      },
+      {
+        "at": "2026-08-28T20:00:18Z",
+        "status": "gap_identified",
+        "detail": "Authoritative revision 58 still shows EPP-F01 implementation authority; planning must also add the required history-over-time contract."
+      },
+      {
+        "at": "2026-08-28T19:59:00Z",
+        "status": "started",
+        "detail": "Verified clean continuation head 6e3dc7ca and exact merged-dev base b776b118."
+      }
+    ]
+  },
+  "integration": {
+    "branch": "codex/079-native-process-milestone",
+    "target": "dev",
+    "frozenCandidate": "7f55b31cb754421a605f2e7aff1d676ba501606d",
+    "lastPushedSha": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+    "lastPushTime": "2026-09-05T08:02:52Z",
+    "phase": "Verified image correction batch in local development",
+    "pullRequest": {
+      "number": 121,
+      "url": "https://github.com/burhop/wright/pull/121"
+    },
+    "checks": {
+      "passing": 27,
+      "failing": 2,
+      "pending": 0,
+      "skipped": 1
+    },
+    "ciStartedAt": "2026-09-05T08:03:18Z",
+    "firstActionableFailure": "The local repair and image correction are passing, but cannot prove published-image acceptance until the batch is reviewed, integrated to dev, and its immutable image is published. CI/dev integration is intentionally deferred while additional bounded development work is collected.",
+    "devSync": "PR121 is open against dev; no merge observed.",
+    "fullMergeGate": "Reviewed source40/114 composed merge-stage acceptance retained. Exact4480 unchanged push gate passed attempt2; all original failures retained.",
+    "nextAction": "Continue local high-value verification and corrective work on codex/080-hermes-mcp-isolation; run one consolidated push gate, PR CI, and dev integration after the batch is ready.",
+    "events": [
+      {
+        "at": "2026-09-05T08:22:01.150948Z",
+        "kind": "First-cycle security failures classified",
+        "sha": "4480bf03",
+        "detail": "PR121 first CI cycle: 26 passing, two failing, one running and one declared skip. OCI security policy rejects CVE-2026-82397 in Hermes Tornado6.5.6; upstream fixes6.5.8. CodeQL reports three dashboard path flows, one MIME header flow and one native API exception-message flow; bounded review found existing confinement and controlled errors, but the alerts remain blocking. Windows backend tests remain running. No replacement push, dev merge or registry publication. Current implementation28/32, human study and deployment acceptance remain pending."
+      },
+      {
+        "at": "2026-09-05T08:02:52Z",
+        "kind": "First gated native candidate pushed / PR121 CI running",
+        "sha": "4480bf03",
+        "detail": "Exact independently reviewed candidate passed the unchanged push gate and was pushed once. Draft PR121 targets dev; first CI inventory is pending. Human usability and actual dev deployment remain unpassed."
+      },
+      {
+        "at": "2026-08-30T21:12:13Z",
+        "kind": "PR #116 merged / dev verification complete",
+        "sha": "e9dd5c38",
+        "detail": "PR #116 merged through GitHub with tree d7e2ddf8, exactly matching correction candidate af95730b. PR CI finished 28 passed, 0 failed, 0 pending, and 1 intentional skip; all 8 exact post-merge dev workflows passed. Local closeout checkpoint 61178077 then passed 118 focused tests and exact committed-source validation. EPP-F02 remains untouched and paused for reboot."
+      },
+      {
+        "at": "2026-08-30T20:34:38Z",
+        "kind": "bounded runtime correction pushed / PR CI running",
+        "sha": "af95730b",
+        "detail": "The model-declared bounded startup deadline correction passed its focused regression, the exact formerly failing Chatter E2E case, Wright's full merge gate, and Wright's fast push gate. Only 077-control-plane-validator was pushed to PR #116; no direct dev push or EPP-F02 implementation occurred."
+      },
+      {
+        "at": "2026-08-30T19:36:00Z",
+        "kind": "PR CI green / local merge gate blocked",
+        "sha": "85e8ac62",
+        "detail": "PR #116 reached terminal green: 25 checks passed, none failed or remained pending, and deploy was intentionally skipped. The full Windows merge gate then passed all preceding slices but failed one unchanged Chatter generated-model E2E case on a 2-second runtime startup exchange; a focused rerun reproduced it while the other two cases passed. No source edit, merge, direct dev push, or EPP-F02 implementation occurred."
+      },
+      {
+        "at": "2026-08-30T18:37:00Z",
+        "kind": "bounded correction pushed / PR #116 CI running",
+        "sha": "85e8ac62",
+        "detail": "The approved lease-identity correction plus the single bounded no-lease projector correction passed Wright's fast gate and was pushed once to 077-control-plane-validator. PR #116 targets dev; 19 initial checks are pending. No direct dev push occurred."
+      },
+      {
+        "at": "2026-08-30T11:53:51Z",
+        "kind": "CI terminal / expired lease classified",
+        "sha": "8dfc1840",
+        "detail": "All 29 PR checks are terminal: 26 passed, 2 failed, 0 pending, and deployment was intentionally skipped. Playwright passed in 8m55s. Both failures are the same program-control cause on Linux and Windows: active lease revision 5 expired at 11:35Z, so exact-subject publication failed closed; Windows reports 301 passed and 11 publisher failures. No product, capability fixture, security, packaging, or browser failure occurred."
+      },
+      {
+        "at": "2026-08-30T11:43:32Z",
+        "kind": "verified capability-fixture correction pushed",
+        "sha": "8dfc1840",
+        "detail": "Pushed only codex/epp-continued-development-reconciled after the current-contract fixture passed three focused repetitions, the unchanged focus scenario passed all four profiles, independent review passed, and Wright's required fast push gate passed the full three-test theme file. PR #115 points exactly to 8dfc1840; initial snapshot is 1 pass, 0 fail, and 21 pending. No direct dev push or excluded action occurred."
+      },
+      {
+        "at": "2026-08-30T11:36:50Z",
+        "kind": "full merge gate failure isolated",
+        "sha": "e911c984",
+        "detail": "Every non-browser merge-gate slice passed. Playwright finished 155 pass, 3 skip, and 3 fail. A clean fresh-backend rerun passed the live capability scenario and all four focus profiles unchanged; only the legacy layout fixture reproduced because it mocked /api/mcp/servers instead of current /api/mcp/capabilities. The narrow one-file test-only correction passes 3/3 focused repetitions and is under independent review. No product behavior changed."
+      },
+      {
+        "at": "2026-08-30T10:29:35Z",
+        "kind": "Firefox correction PR CI fully green",
+        "sha": "e911c984",
+        "detail": "All PR #115 jobs are terminal: 28 passed, 0 failed, 0 pending, and the pull-request deployment job was correctly skipped. Playwright passed in 8m53s and the Windows backend passed in 26m17s. The authoritative full merge gate is starting on the exact pushed commit; no further source change occurred."
+      },
+      {
+        "at": "2026-08-30T10:03:11Z",
+        "kind": "verified Firefox correction pushed",
+        "sha": "e911c984",
+        "detail": "Pushed only codex/epp-continued-development-reconciled after the exact Firefox test, repeated cross-browser verification, independent review, and Wright's required fast push gate passed. PR #115 points exactly to e911c984; initial snapshot is 0 pass, 0 fail, and 22 pending. No direct dev push or excluded action occurred."
+      },
+      {
+        "at": "2026-08-30T10:02:21Z",
+        "kind": "Firefox F6 gate correction verified locally",
+        "sha": "e911c984",
+        "detail": "The second complete merge-gate run again passed every Python, package, security, frontend, documentation, and broad-test slice and finished Playwright at 157 pass, 3 skip, 1 fail. The sole stable failure was Firefox page-global F6 dispatch; locator-targeted key dispatch preserves the unchanged user-visible focus assertion. It passed 10/10 sequential Firefox repetitions, 8/8 across Chromium, Firefox, WebKit, and desktop, independent review, and Wright's required fast push gate. No shipped product code or contract changed."
+      },
+      {
+        "at": "2026-08-30T08:55:43Z",
+        "kind": "full merge gate browser retry justified",
+        "sha": "dfd7d89e",
+        "detail": "The first unchanged full merge-gate run passed all Python, package, security, frontend, documentation, and broad-test slices; Playwright finished 156 pass, 3 skip, 2 fail. EPP-F01B program-status passed 4/4. The two failures were existing live capability timing and Firefox F6 focus; both passed isolated unchanged reruns (18.6s and 10.2s). Exact gate-generated assets were restored to HEAD and the clean candidate is being rerun because the governing directive does not permit documenting away a failed full gate."
+      },
+      {
+        "at": "2026-08-30T07:53:45Z",
+        "kind": "PR CI fully green after transient rerun",
+        "sha": "dfd7d89e",
+        "detail": "The failed-job-only Windows rerun passed in 17m42s, including the previously failing scheduler-sensitive model-registry microbenchmark and all later package suites. Exact terminal PR counts are 28 passed, 0 failed, 0 pending, and 1 intentional deployment skip. No source change was made; origin/dev remains exact base b776b118."
+      },
+      {
+        "at": "2026-08-30T07:35:58Z",
+        "kind": "transient Windows timing failure rerun",
+        "sha": "dfd7d89e",
+        "detail": "The complete PR cycle reached 27 pass, 1 fail, 0 pending, and 1 intentional skip. The sole failure was an unrelated Windows model-registry microbenchmark measuring 17.3% overhead against a 10% threshold; the test documents scheduler jitter and passed on the preceding candidate. After every job was terminal, one failed-job-only rerun started without code changes."
+      },
+      {
+        "at": "2026-08-30T07:22:05Z",
+        "kind": "verified merge-gate correction pushed",
+        "sha": "dfd7d89e",
+        "detail": "Pushed only codex/epp-continued-development-reconciled after the direct 455-test reproducer, independent review, and Wright's required pre-push gate passed. PR #115 points exactly to dfd7d89e; initial complete-cycle snapshot was 1 pass, 0 fail, and 21 pending. No direct dev push or excluded action occurred."
+      },
+      {
+        "at": "2026-08-30T07:20:50Z",
+        "kind": "merge-gate collection correction verified",
+        "sha": "dfd7d89e",
+        "detail": "The full merge gate disclosed that its broad tests slice re-collected already-passed program-control/native roots and collided on duplicate test_cli module names. Exact three-file correction dfd7d89e excludes only those focused roots from the broad slice. The direct reproducer passed 455 tests with 39 expected skips, independent review found no P0/P1, and Wright's required pre-push gate passed. No product or EPP-F01B contract changed."
+      },
+      {
+        "at": "2026-08-30T06:37:46Z",
+        "kind": "third CI cycle fully green",
+        "sha": "a0cb3197",
+        "detail": "All PR #115 jobs are terminal: 28 passed, 0 failed, 0 pending, and the pull-request deployment job was correctly skipped. Playwright passed in 9m29s, including the corrected cross-browser explorer journey. The authoritative full merge gate is running; origin/dev remains the exact branch base."
+      },
+      {
+        "at": "2026-08-30T06:17:33Z",
+        "kind": "bounded Playwright correction pushed",
+        "sha": "a0cb3197",
+        "detail": "Pushed only codex/epp-continued-development-reconciled after the authoritative dev push gate and independent exact-commit review passed. Initial PR #115 snapshot: 0 pass, 0 fail, 22 pending. No direct dev push or excluded action occurred."
+      },
+      {
+        "at": "2026-08-30T06:13:04Z",
+        "kind": "bounded Playwright test-isolation correction committed",
+        "sha": "a0cb3197",
+        "detail": "The failed-job-only rerun reproduced the same explorer expansion race in WebKit. Trace review identified hover-toolbar click interception. A four-file test/gate/runbook correction passed 12/12 sequential browser repetitions, the adjacent Rivet spec 8/8, focused policy 10/10, formatting, shell syntax, diff checks, and independent review with no P0/P1. Product behavior and EPP-F01B contracts remain unchanged."
+      },
+      {
+        "at": "2026-08-30T05:50:06Z",
+        "kind": "failed Playwright job rerun without code changes",
+        "sha": "030dd9b1",
+        "detail": "Second-cycle checks reached terminal at 27 pass, 1 fail, 1 intentional skip. The only failure was Chromium waiting 30 seconds for /workflows/rivet; the same scenario passed in Firefox, WebKit, desktop, and an isolated local Chromium run in 3.7 seconds. Reran only failed workflow 33294736840; no push or source change occurred."
+      },
+      {
+        "at": "2026-08-30T05:27:37Z",
+        "kind": "verified CI correction pushed",
+        "sha": "030dd9b1",
+        "detail": "Pushed only codex/epp-continued-development-reconciled to PR #115 targeting dev after exact-commit gate, final independent PASS, and GB10 Gitleaks verification. Initial second-cycle snapshot: 0 pass, 0 fail, 22 pending. No direct dev push or excluded action occurred."
+      },
+      {
+        "at": "2026-08-30T05:00:50Z",
+        "kind": "bounded CI correction locally verified",
+        "sha": "5324830a",
+        "detail": "Exact-commit Wright push gate passed: 504 broad tests with 48 declared skips, 311 program-control tests with 1 declared skip, 29 Docker contracts, focused release/security suites, Ruff, format, MyPy, frontend lint/type/build, 11 Chromium smoke tests, and strict docs. GB10 Gitleaks v8.30.1 fixtures and 697-commit history scan passed with exactly seven run_key false positives suppressed and unrelated api_key detection preserved. Local Docker remained unavailable; GitHub container/Trivy CI is authoritative."
+      },
+      {
+        "at": "2026-08-30T03:28:04Z",
+        "kind": "initial CI fully classified / correction active",
+        "sha": "7ab7591e",
+        "detail": "All jobs are terminal: 24 pass, 4 fail, 0 pending, 1 skip. Windows was a false green: its log contained the same 11 detached-checkout validator failures plus one workspace cleanup failure. A single bounded correction set is active; no second push occurs before the complete local gate and independent review pass."
+      },
+      {
+        "at": "2026-08-30T03:07:15Z",
+        "kind": "initial CI classification in progress",
+        "sha": "7ab7591e",
+        "detail": "23 checks pass, 4 fail, 1 remains pending, and 1 is correctly skipped. Failures are isolated to detached-checkout governance validation, deterministic run-key Gitleaks false positives, a newly disclosed fixable tar CVE in the base image, and one existing Rivet explorer Playwright timeout. No correction is being made until every job is terminal."
+      },
+      {
+        "at": "2026-08-28T16:37:31Z",
+        "kind": "candidate frozen",
+        "sha": "3a7e5d605b37f85e2866776b69e7763f1d947068",
+        "detail": "Exact source/container/delivery validation passed with zero blockers."
+      },
+      {
+        "at": "2026-08-28T17:01:00Z",
+        "kind": "local gate correction 1",
+        "sha": "4b055499",
+        "detail": "Made six EPP-F01 Spec Kit links strict-MkDocs-safe; no product, contract, schema, readiness, benchmark, dependency, or feature-scope change."
+      },
+      {
+        "at": "2026-08-28T17:09:00Z",
+        "kind": "local gate correction 2",
+        "sha": "4df7ed03",
+        "detail": "Preserved exact relative authority targets as HTML links; both focused walkthrough tests and strict MkDocs passed. This exhausts the two-repair limit for this cause."
+      },
+      {
+        "at": "2026-08-28T17:16:00Z",
+        "kind": "fast gate passed",
+        "sha": "4df7ed03",
+        "detail": "Diff check, Ruff, format, MyPy, 258 focused tests with 1 declared skip, and strict MkDocs all passed."
+      },
+      {
+        "at": "2026-08-28T17:19:00Z",
+        "kind": "full gate environment repair",
+        "sha": "4df7ed03",
+        "detail": "Moved the isolated live gate from occupied port 18000 to verified-unused 28000/25173, then installed only the existing package-lock with npm ci after the worktree lacked frontend packages; tracked files remain unchanged."
+      },
+      {
+        "at": "2026-08-28T17:25:00Z",
+        "kind": "full gate correction 1",
+        "sha": "63af3556",
+        "detail": "Resolved nine cumulative MyPy diagnostics with annotation, binding-name, Sequence, cast, and Never changes; independent review confirmed no runtime or contract behavior change."
+      },
+      {
+        "at": "2026-08-28T17:27:00Z",
+        "kind": "full gate host limitation",
+        "sha": "63af3556",
+        "detail": "Full gate passed EPP, release, native, coverage, frontend, distribution, API, and 78 program-hardening checks before Docker daemon discovery timed out; one direct daemon retry also hung and was stopped."
+      },
+      {
+        "at": "2026-08-28T17:29:03Z",
+        "kind": "pushed / PR opened",
+        "sha": "63af3556",
+        "detail": "Pushed only 077-control-plane-validator and opened PR #114 targeting dev; CI started with 1 pass and 18 pending checks."
+      },
+      {
+        "at": "2026-08-28T17:42:00Z",
+        "kind": "CI run 1 terminal",
+        "sha": "63af3556",
+        "detail": "23 checks passed, 2 failed, 1 skipped. Failures were classified before editing: Linux unset core.autocrlf, shallow historical checkout, and duplicate pytest test_cli collection."
+      },
+      {
+        "at": "2026-08-28T18:06:32Z",
+        "kind": "CI correction pushed",
+        "sha": "34e15caab969af9217269384267486b11e2955a5",
+        "detail": "Independent verification and Wright's full fast push gate passed; pushed the bounded portability, full-history, test-isolation, and gate-policy correction set to PR #114."
+      },
+      {
+        "at": "2026-08-28T18:19:00Z",
+        "kind": "CI correction run terminal",
+        "sha": "34e15caab969af9217269384267486b11e2955a5",
+        "detail": "24 checks passed, 1 failed, 1 skipped, and none remained pending. The sole failure is a distinct test-only stable-artifact traversal assumption; all product and delivery jobs passed."
+      },
+      {
+        "at": "2026-08-28T18:38:20Z",
+        "kind": "bounded correction verified",
+        "sha": "a1a961ee",
+        "detail": "Independent audit passed, focused walkthrough 7/7 passed, full EPP 260 passed with 1 declared skip, and Wright's native pre-push gate passed."
+      },
+      {
+        "at": "2026-08-28T18:38:40Z",
+        "kind": "bounded correction pushed",
+        "sha": "a1a961ee",
+        "detail": "Pushed only 077-control-plane-validator to PR #114 targeting dev; never pushed dev. Initial snapshot: 1 passing, 0 failing, 18 pending."
+      },
+      {
+        "at": "2026-08-28T18:54:25Z",
+        "kind": "CI fully green",
+        "sha": "a1a961ee",
+        "detail": "25 checks passed, 0 failed, 0 pending, and the PR deployment job was correctly skipped. Linux quality, Windows backend, Playwright, security, packaging, and native lifecycle all passed."
+      },
+      {
+        "at": "2026-08-28T19:10:30Z",
+        "kind": "full merge gate host-limited",
+        "sha": "a1a961ee",
+        "detail": "All preceding local slices passed, including EPP 260/1, release 98, native/runtime 150/10, 85.28% coverage, web build, distributions, API/security, and 78 program-hardening checks. The sole remaining Docker persistence check could not query the local daemon within 10 seconds; corresponding GitHub native jobs are green."
+      },
+      {
+        "at": "2026-08-28T19:11:43Z",
+        "kind": "merged through PR",
+        "sha": "b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+        "detail": "PR #114 merged through GitHub into dev; no direct dev push. The merged tree exactly equals validated head a1a961ee. Seven post-merge dev workflows started."
+      },
+      {
+        "at": "2026-08-28T19:32:12Z",
+        "kind": "dev workflows terminal",
+        "sha": "b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+        "detail": "7 workflows passed and 1 failed. The sole failure was a WebKit-only 30-second file-tree-node timeout; the same scenario passed in three sibling projects and on the identical-tree PR run, supporting one transient rerun without code changes."
+      },
+      {
+        "at": "2026-08-28T19:33:00Z",
+        "kind": "transient workflow rerun",
+        "sha": "b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+        "detail": "Reran only failed frontend-quality workflow 33202775952 after all dev workflows were terminal and transient evidence was recorded. No code, dependency, schema, product, or scope change."
+      },
+      {
+        "at": "2026-08-28T19:41:37Z",
+        "kind": "post-merge verification green",
+        "sha": "b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+        "detail": "All 8 applicable dev workflows passed. The rerun confirmed the WebKit timeout was transient; Playwright, frontend quality, Windows, Linux, security, docs, and dependency automation are green. No development-image workflow applied because no container/application inputs changed."
+      }
+    ],
+    "checksObservedAt": "2026-09-05T08:24:44.159415Z"
+  },
+  "development": {
+    "taskId": "01a06e2f-adec-7710-bce2-052a49aa3d89",
+    "branch": "codex/079-native-process-milestone",
+    "customerMilestone": "Native create/save/run/artifact/recovery",
+    "latestCapability": "Create/configure/connect/save/reopen, execute all three examples, inspect real artifacts and recover through a linked correction.",
+    "blocker": "The local repair and image correction are passing, but cannot prove published-image acceptance until the batch is reviewed, integrated to dev, and its immutable image is published. CI/dev integration is intentionally deferred while additional bounded development work is collected.",
+    "nextAction": "Continue local high-value verification and corrective work on codex/080-hermes-mcp-isolation; run one consolidated push gate, PR CI, and dev integration after the batch is ready."
+  }
+}

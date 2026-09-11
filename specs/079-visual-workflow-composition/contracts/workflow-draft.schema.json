@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/workflow-draft-1.0.0-draft.1.json",
+  "title": "Wright Workflow Draft",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_kind",
+    "schema_version",
+    "draft_id",
+    "revision",
+    "semantic_sha256",
+    "layout_sha256",
+    "semantic",
+    "layout"
+  ],
+  "properties": {
+    "document_kind": { "const": "workflow-draft" },
+    "schema_version": { "const": "1.0.0-draft.1" },
+    "draft_id": { "$ref": "#/$defs/id" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "semantic_sha256": { "$ref": "#/$defs/digest" },
+    "layout_sha256": { "$ref": "#/$defs/digest" },
+    "semantic": { "$ref": "#/$defs/semantic" },
+    "layout": { "$ref": "#/$defs/layout" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "text": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "idArray": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "semantic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "purpose",
+        "phases",
+        "blocks",
+        "ports",
+        "connections",
+        "gates",
+        "feedback_paths",
+        "intended_artifacts"
+      ],
+      "properties": {
+        "title": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "phases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/phase" }
+        },
+        "blocks": {
+          "type": "array",
+          "maxItems": 100,
+          "items": { "$ref": "#/$defs/block" }
+        },
+        "ports": {
+          "type": "array",
+          "maxItems": 400,
+          "items": { "$ref": "#/$defs/port" }
+        },
+        "connections": {
+          "type": "array",
+          "maxItems": 400,
+          "items": { "$ref": "#/$defs/connection" }
+        },
+        "gates": {
+          "type": "array",
+          "maxItems": 100,
+          "items": { "$ref": "#/$defs/gate" }
+        },
+        "feedback_paths": {
+          "type": "array",
+          "maxItems": 100,
+          "items": { "$ref": "#/$defs/feedback" }
+        },
+        "intended_artifacts": {
+          "type": "array",
+          "maxItems": 200,
+          "items": { "$ref": "#/$defs/artifact" }
+        }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "purpose", "order", "block_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "order": { "type": "integer", "minimum": 0, "maximum": 15 },
+        "block_ids": { "$ref": "#/$defs/idArray" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "purpose",
+        "role",
+        "phase_id",
+        "input_port_ids",
+        "output_port_ids",
+        "gate_ids",
+        "intended_artifact_ids"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "role": { "enum": ["input", "work", "review", "release"] },
+        "phase_id": { "$ref": "#/$defs/id" },
+        "input_port_ids": { "$ref": "#/$defs/idArray" },
+        "output_port_ids": { "$ref": "#/$defs/idArray" },
+        "gate_ids": { "$ref": "#/$defs/idArray" },
+        "intended_artifact_ids": { "$ref": "#/$defs/idArray" }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "owner_block_id",
+        "direction",
+        "name",
+        "value_type_id",
+        "required",
+        "cardinality"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "owner_block_id": { "$ref": "#/$defs/id" },
+        "direction": { "enum": ["input", "output"] },
+        "name": { "$ref": "#/$defs/text" },
+        "value_type_id": { "$ref": "#/$defs/id" },
+        "required": { "type": "boolean" },
+        "cardinality": { "enum": ["one", "many"] }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source_port_id", "target_port_id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "source_port_id": { "$ref": "#/$defs/id" },
+        "target_port_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "owner_block_id",
+        "condition",
+        "proceed_target_block_id",
+        "revise_target_block_id",
+        "feedback_path_id"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "owner_block_id": { "$ref": "#/$defs/id" },
+        "condition": { "$ref": "#/$defs/text" },
+        "proceed_target_block_id": { "$ref": "#/$defs/id" },
+        "revise_target_block_id": { "$ref": "#/$defs/id" },
+        "feedback_path_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "from_gate_id", "to_block_id", "reason"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "from_gate_id": { "$ref": "#/$defs/id" },
+        "to_block_id": { "$ref": "#/$defs/id" },
+        "reason": { "$ref": "#/$defs/text" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "artifact_type_id",
+        "description",
+        "produced_by_block_id"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "artifact_type_id": { "$ref": "#/$defs/id" },
+        "description": { "$ref": "#/$defs/text" },
+        "produced_by_block_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "positions"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "positions": {
+          "type": "array",
+          "maxItems": 100,
+          "items": { "$ref": "#/$defs/position" }
+        }
+      }
+    },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semantic_id", "x", "y"],
+      "properties": {
+        "semantic_id": { "$ref": "#/$defs/id" },
+        "x": { "type": "integer", "minimum": -10000, "maximum": 10000 },
+        "y": { "type": "integer", "minimum": -10000, "maximum": 10000 }
+      }
+    }
+  }
+}

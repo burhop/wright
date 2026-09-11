@@ -1,0 +1,200 @@
+{
+  "title": "Workflow Composer Checkpoint C and save/reopen walkthrough",
+  "summary": "The local engineer created the bounded four-block graphical draft, verified text/canvas parity, saved revision 2, closed it, and reopened identical semantic and layout identities without browser diagnostics.",
+  "overall": "pass",
+  "updated": "2026-08-31T20:18:42.994Z",
+  "manualSteps": [
+    {
+      "label": "Create draft",
+      "instruction": "Open **Workflow Composer**, review the draft boundary, and click **Create working draft**."
+    },
+    {
+      "label": "Add blocks",
+      "instruction": "Click **Capture input**, **Engineering work**, **Review**, and **Release boundary** in order."
+    },
+    {
+      "label": "Inspect composition",
+      "instruction": "Compare **First-party diagram** and **Canonical text projection**, then select **Define product**."
+    },
+    {
+      "label": "Validate and save",
+      "instruction": "Click **Validate**, then click **Save draft**."
+    },
+    {
+      "label": "Close and reopen",
+      "instruction": "Click **Close**, then click **Reopen saved draft** and compare revision and identity digests."
+    }
+  ],
+  "steps": [
+    {
+      "id": "create",
+      "state": "pass",
+      "label": "Create a separate empty draft",
+      "summary": "The normal UI created revision 1 without changing the released Process Definition.",
+      "purpose": "Begin from the supported empty-draft boundary.",
+      "action": "Kept the visible title and purpose values and clicked Create working draft.",
+      "controls": [
+        "Draft title",
+        "Purpose",
+        "Create working draft"
+      ],
+      "value": "Product definition draft; Capture, define, review, and release one product definition.",
+      "expected": "A feature-bounded working draft opens at revision 1 with no released or executable authority.",
+      "actual": "Revision 1 opened with the Working draft and Not released · Not executable labels.",
+      "raw": "screenshots/raw/01-create-empty-draft.png",
+      "annotated": "screenshots/annotated/01-create-empty-draft.png"
+    },
+    {
+      "id": "add-input",
+      "state": "pass",
+      "label": "Add Capture requirements",
+      "summary": "Capture requirements entered the canonical draft and both projections.",
+      "purpose": "Advance the bounded representative workflow without inventing renderer-owned identities.",
+      "action": "Clicked Capture input.",
+      "controls": [
+        "Capture input"
+      ],
+      "expected": "Capture requirements appears in the diagram and text projection with its stable host-owned identities.",
+      "actual": "Capture requirements appeared and the next bounded palette action became available.",
+      "raw": "screenshots/raw/02-add-input.png",
+      "annotated": "screenshots/annotated/02-add-input.png"
+    },
+    {
+      "id": "add-work",
+      "state": "pass",
+      "label": "Add Define product",
+      "summary": "Define product entered the canonical draft and both projections.",
+      "purpose": "Advance the bounded representative workflow without inventing renderer-owned identities.",
+      "action": "Clicked Engineering work.",
+      "controls": [
+        "Engineering work"
+      ],
+      "expected": "Define product appears in the diagram and text projection with its stable host-owned identities.",
+      "actual": "Define product appeared and the next bounded palette action became available.",
+      "raw": "screenshots/raw/03-add-work.png",
+      "annotated": "screenshots/annotated/03-add-work.png"
+    },
+    {
+      "id": "add-review",
+      "state": "pass",
+      "label": "Add Review product definition",
+      "summary": "Review product definition entered the canonical draft and both projections.",
+      "purpose": "Advance the bounded representative workflow without inventing renderer-owned identities.",
+      "action": "Clicked Review.",
+      "controls": [
+        "Review"
+      ],
+      "expected": "Review product definition appears in the diagram and text projection with its stable host-owned identities.",
+      "actual": "Review product definition appeared and the next bounded palette action became available.",
+      "raw": "screenshots/raw/04-add-review.png",
+      "annotated": "screenshots/annotated/04-add-review.png"
+    },
+    {
+      "id": "add-release",
+      "state": "pass",
+      "label": "Add Release product definition",
+      "summary": "Release product definition entered the canonical draft and both projections.",
+      "purpose": "Advance the bounded representative workflow without inventing renderer-owned identities.",
+      "action": "Clicked Release boundary.",
+      "controls": [
+        "Release boundary"
+      ],
+      "expected": "Release product definition appears in the diagram and text projection with its stable host-owned identities.",
+      "actual": "Release product definition appeared and the next bounded palette action became available.",
+      "raw": "screenshots/raw/05-add-release.png",
+      "annotated": "screenshots/annotated/05-add-release.png"
+    },
+    {
+      "id": "parity",
+      "state": "pass",
+      "label": "Compare the complete graphical and text composition",
+      "summary": "Diagram and text expose the same 23 unique semantic identities and complete declared workflow relationships.",
+      "purpose": "Prove the first reviewable graphical slice uses one canonical model.",
+      "action": "Compared the complete diagram and text semantic identity sets.",
+      "controls": [
+        "First-party diagram",
+        "Canonical text projection",
+        "Draft inspector"
+      ],
+      "expected": "Both projections contain exactly the same 23 unique semantic identities.",
+      "actual": "Both identity sets matched exactly at 23, including phases, blocks, ports, connections, gate, feedback, and intended artifacts.",
+      "raw": "screenshots/raw/06-four-block-composition.png",
+      "annotated": "screenshots/annotated/06-four-block-composition.png"
+    },
+    {
+      "id": "select",
+      "state": "pass",
+      "label": "Select and inspect one semantic block",
+      "summary": "Canvas selection and inspector identity agree without changing draft bytes.",
+      "purpose": "Prove host-owned selection across the renderer seam.",
+      "action": "Clicked Define product in the diagram.",
+      "controls": [
+        "Define product"
+      ],
+      "expected": "The block exposes a non-color selected state and the inspector shows block.define-product.",
+      "actual": "The button exposed aria-pressed=true, visible Selected text, and the inspector showed the same stable ID.",
+      "raw": "screenshots/raw/07-selected-inspector.png",
+      "annotated": "screenshots/annotated/07-selected-inspector.png"
+    },
+    {
+      "id": "validate",
+      "state": "pass",
+      "label": "Validate the complete draft",
+      "summary": "Server validation accepted the bounded semantic and layout candidate.",
+      "purpose": "Verify all references and saved layout are valid before persistence.",
+      "action": "Clicked Validate.",
+      "controls": [
+        "Validate"
+      ],
+      "expected": "Validation passes and the inspector does not show contradictory diagnostics.",
+      "actual": "The status and inspector consistently reported validation passed.",
+      "raw": "screenshots/raw/08-validation-passed.png",
+      "annotated": "screenshots/annotated/08-validation-passed.png"
+    },
+    {
+      "id": "save",
+      "state": "pass",
+      "label": "Save revision 2 atomically",
+      "summary": "The valid four-block candidate saved as revision 2 with semantic and layout identities visible.",
+      "purpose": "Prove the normal guarded save path.",
+      "action": "Clicked Save draft.",
+      "controls": [
+        "Save draft"
+      ],
+      "expected": "The server advances to revision 2 and reports both identity digests.",
+      "actual": "Revision 2 appeared and both semantic and layout digests remained visible.",
+      "raw": "screenshots/raw/09-saved-revision.png",
+      "annotated": "screenshots/annotated/09-saved-revision.png"
+    },
+    {
+      "id": "close",
+      "state": "pass",
+      "label": "Close the editor session",
+      "summary": "The editor closed while retaining the saved revision and both identity digests.",
+      "purpose": "Separate browser working-session state from persisted draft state.",
+      "action": "Clicked Close.",
+      "controls": [
+        "Close"
+      ],
+      "expected": "The graphical editor closes and saved revision 2 remains available to reopen.",
+      "actual": "The closed state showed revision 2, draft ID, semantic digest, layout digest, and Reopen saved draft.",
+      "raw": "screenshots/raw/10-closed-draft.png",
+      "annotated": "screenshots/annotated/10-closed-draft.png"
+    },
+    {
+      "id": "reopen",
+      "state": "pass",
+      "label": "Reopen identical semantic and layout state",
+      "summary": "Revision 2 reopened with identical digests, 23 canvas identities, and all four saved positions.",
+      "purpose": "Provide initial Checkpoint E save/reopen evidence.",
+      "action": "Clicked Reopen saved draft and compared saved identities and positions.",
+      "controls": [
+        "Reopen saved draft"
+      ],
+      "expected": "Revision, semantic digest, layout digest, 23 identities, and four positions match the saved state.",
+      "actual": "Revision 2 reopened with identical digests, 23 identities, and four saved position records.",
+      "raw": "screenshots/raw/11-reopened-identical.png",
+      "annotated": "screenshots/annotated/11-reopened-identical.png"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ from .context import WorkspaceContextUseCases
 from .lifecycle import WorkspaceLifecycleUseCases
 from .tools import WorkspaceToolUseCases
 from .workflows import WorkspaceWorkflowUseCases
+from ..workflow_sources import WorkspaceWorkflowSourceUseCases
 
 __all__ = [
     "FileReadResult",
@@ -16,4 +17,5 @@ __all__ = [
     "WorkspaceLifecycleUseCases",
     "WorkspaceToolUseCases",
     "WorkspaceWorkflowUseCases",
+    "WorkspaceWorkflowSourceUseCases",
 ]

@@ -17,6 +17,31 @@ from tool_registry.gateway_models import GatewayTool
 from .rivet_validation import RivetMcpNodeRequirement
 
 
+def _valid_artifact_producer(value: Mapping[str, Any]) -> bool:
+    approvals = value.get("required_approvals")
+    effect_kind = value.get("effect_kind")
+    return bool(
+        set(value)
+        == {
+            "effect_kind",
+            "artifact_output",
+            "native_format",
+            "required_approvals",
+        }
+        and effect_kind in {"workspace_document", "native_cad", "stl_mesh"}
+        and value.get("artifact_output") is True
+        and isinstance(value.get("native_format"), bool)
+        and isinstance(approvals, list)
+        and approvals
+        and all(isinstance(item, str) and item for item in approvals)
+        and (
+            value.get("native_format") is False
+            if effect_kind == "workspace_document"
+            else value.get("native_format") is True
+        )
+    )
+
+
 class GatewayDiscoveryPort(Protocol):
     def list_tools(self, session_id: str) -> Sequence[GatewayTool]: ...
 
@@ -42,6 +67,8 @@ class RivetCapabilityProjection:
     binding_eligible: bool
     blocking_reasons: tuple[str, ...]
     provider: ProviderEvidence
+    artifact_producer: Mapping[str, Any] | None = None
+    artifact_producer_digest: str | None = None
 
     def digest_material(self) -> dict[str, Any]:
         return {
@@ -62,6 +89,8 @@ class RivetCapabilityProjection:
             "binding_eligible": self.binding_eligible,
             "blocking_reasons": self.blocking_reasons,
             "provider": self.provider.canonical(),
+            "artifact_producer": self.artifact_producer,
+            "artifact_producer_digest": self.artifact_producer_digest,
         }
 
 
@@ -212,6 +241,24 @@ class RivetCapabilityService:
             }
         )
         blockers: list[str] = []
+        artifact_producer: Mapping[str, Any] | None = None
+        artifact_producer_digest: str | None = None
+        raw_producer = tool.provenance.get("artifact_producer")
+        raw_producer_digest = tool.provenance.get("artifact_producer_digest")
+        if raw_producer is not None:
+            if not isinstance(raw_producer, Mapping):
+                blockers.append("artifact_producer_invalid")
+            else:
+                candidate_producer = dict(raw_producer)
+                candidate_digest = canonical_digest(candidate_producer)
+                if (
+                    raw_producer_digest != candidate_digest
+                    or not _valid_artifact_producer(candidate_producer)
+                ):
+                    blockers.append("artifact_producer_invalid")
+                else:
+                    artifact_producer = candidate_producer
+                    artifact_producer_digest = candidate_digest
         provider_value = tool.provenance.get("provider")
         try:
             if isinstance(provider_value, Mapping):
@@ -282,6 +329,8 @@ class RivetCapabilityService:
             binding_eligible=not blockers,
             blocking_reasons=tuple(blockers),
             provider=provider,
+            artifact_producer=artifact_producer,
+            artifact_producer_digest=artifact_producer_digest,
         )
 
     def bind(
@@ -363,6 +412,8 @@ class RivetCapabilityService:
             argument_constraints=capability.input_schema,
             created_at=created_at,
             provider=capability.provider,
+            artifact_producer=capability.artifact_producer,
+            artifact_producer_digest=capability.artifact_producer_digest,
         )
 
     def stale_reasons(
@@ -395,6 +446,11 @@ class RivetCapabilityService:
                 candidate.workspace_grant_digest,
                 binding.workspace_grant_digest,
                 "workspace_grant_changed",
+            ),
+            (
+                candidate.artifact_producer_digest,
+                binding.artifact_producer_digest,
+                "artifact_producer_changed",
             ),
         )
         for actual, expected, code in comparisons:

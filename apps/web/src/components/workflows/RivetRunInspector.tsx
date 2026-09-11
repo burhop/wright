@@ -10,7 +10,7 @@ import { RivetRunResult } from "./RivetRunResult";
 import { RivetRunStepList } from "./RivetRunStepList";
 import "./rivet-run-inspector.css";
 
-type InspectorTab = "outputs" | "steps" | "diagnosis" | "history";
+type InspectorTab = "inputs" | "outputs" | "steps" | "diagnosis" | "history";
 
 interface RivetRunInspectorProps {
   inspection: RivetRunInspection | null;
@@ -22,6 +22,7 @@ interface RivetRunInspectorProps {
   onFocusStep?: (step: RivetRunStep) => void;
   onRerun?: () => void;
   onExportEvidence?: () => void;
+  onOpenArtifact?: (artifact: Record<string, unknown>) => void;
 }
 
 const formatDuration = (milliseconds: number) => {
@@ -41,6 +42,7 @@ export function RivetRunInspector({
   onFocusStep,
   onRerun,
   onExportEvidence,
+  onOpenArtifact,
 }: RivetRunInspectorProps) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<InspectorTab>("outputs");
@@ -101,11 +103,18 @@ export function RivetRunInspector({
           )}
           <nav aria-label="Run Inspector sections">
             {(
-              ["outputs", "steps", "diagnosis", "history"] as InspectorTab[]
+              [
+                "inputs",
+                "outputs",
+                "steps",
+                "diagnosis",
+                "history",
+              ] as InspectorTab[]
             ).map((value) => (
               <button
                 key={value}
                 type="button"
+                data-testid={"rivet-run-tab-" + value}
                 aria-current={tab === value ? "page" : undefined}
                 onClick={() => setTab(value)}
               >
@@ -119,6 +128,24 @@ export function RivetRunInspector({
                 Run this workflow to see status, steps, outputs, and errors
                 here.
               </p>
+            ) : tab === "inputs" ? (
+              <div className="rivet-run-results">
+                {inspection.run_inputs.length ? (
+                  inspection.run_inputs.map((result) => (
+                    <RivetRunResult key={result.result_id} result={result} />
+                  ))
+                ) : inspection.inputs_state === "available" ? (
+                  <p className="rivet-run-empty">
+                    This run used no supplied inputs.
+                  </p>
+                ) : (
+                  <p className="rivet-run-empty">
+                    Run inputs were{" "}
+                    {inspection.inputs_state.replaceAll("-", " ")}. Values are
+                    never reconstructed from the current workflow.
+                  </p>
+                )}
+              </div>
             ) : tab === "outputs" ? (
               <div className="rivet-run-results">
                 {!inspection.completeness.outputs_complete && (
@@ -128,12 +155,46 @@ export function RivetRunInspector({
                   </p>
                 )}
                 {inspection.final_outputs.length ? (
-                  inspection.final_outputs.map((result) => (
-                    <RivetRunResult key={result.result_id} result={result} />
-                  ))
+                  <>
+                    {inspection.final_outputs.some(
+                      (result) => result.kind === "artifact",
+                    ) && <h3>Created artifacts</h3>}
+                    {inspection.final_outputs
+                      .filter((result) => result.kind === "artifact")
+                      .map((result) => (
+                        <RivetRunResult
+                          key={result.result_id}
+                          result={result}
+                          onOpenArtifact={onOpenArtifact}
+                        />
+                      ))}
+                    {inspection.final_outputs.some(
+                      (result) => result.kind !== "artifact",
+                    ) && <h3>Result values</h3>}
+                    {inspection.final_outputs
+                      .filter((result) => result.kind !== "artifact")
+                      .map((result) => (
+                        <RivetRunResult
+                          key={result.result_id}
+                          result={result}
+                        />
+                      ))}
+                  </>
+                ) : inspection.run.state === "failed" ? (
+                  <div className="rivet-run-empty">
+                    <p>
+                      This run has no final outputs because it failed. Diagnosis
+                      has the failure and recovery guidance.
+                    </p>
+                    <button type="button" onClick={() => setTab("diagnosis")}>
+                      View Diagnosis
+                    </button>
+                  </div>
                 ) : (
                   <p className="rivet-run-empty">
-                    This run has no final outputs yet.
+                    {inspection.run.state === "succeeded"
+                      ? "This run succeeded with no final outputs."
+                      : "This run has no final outputs yet."}
                   </p>
                 )}
               </div>
@@ -146,6 +207,10 @@ export function RivetRunInspector({
               inspection.diagnostic ? (
                 <div className="rivet-run-diagnosis">
                   <h3>{inspection.diagnostic.summary}</h3>
+                  <p>
+                    Failed box:{" "}
+                    {inspection.diagnostic.failed_node_label || "Unknown"}
+                  </p>
                   <p>{inspection.diagnostic.recovery_action}</p>
                   {inspection.diagnostic.residue_possible && (
                     <p className="rivet-run-warning">
@@ -170,6 +235,10 @@ export function RivetRunInspector({
                     <dl>
                       <dt>Code</dt>
                       <dd>{inspection.diagnostic.code}</dd>
+                      <dt>Node ID</dt>
+                      <dd>
+                        {inspection.diagnostic.failed_node_id || "Unavailable"}
+                      </dd>
                       <dt>Tool</dt>
                       <dd>
                         {inspection.diagnostic.qualified_tool_name ||

@@ -2,6 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning  
 **Created**: 2026-08-19  
+**Updated**: 2026-08-21
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -34,3 +35,5 @@
 - Validation completed in one pass.
 - The specification separates user-facing run visibility and recovery behavior from the technical design that will be selected during planning.
 - Partial retry is deliberately conditional; a full rerun remains the required recovery baseline.
+- The 2026-08-21 mechanical-engineering redesign was revalidated after adding retained inputs, one-row-per-box evidence, artifact authority, and promised-deliverable gates; all checklist items remain satisfied.
+- Rivet terminology is retained only where it defines compatibility with saved workflow evidence. User scenarios and presentation requirements use mechanical-engineering language rather than exposing transport or framework concepts as the primary experience.

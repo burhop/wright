@@ -4,6 +4,12 @@ shell commands, and other important information, read the current plan
 at specs/079-wright-native-authoring/plan.md
 <!-- SPECKIT END -->
 
+Before changing the workflow/process editor or its workspace entry point, read
+`docs/contributing/workflow-ui-integration.md`. Locate the latest reviewed UI
+implementation and preserve its authoring capabilities when integrating runtime
+work. Verify the served build through the workspace Workflow/Workflows control;
+component tests or a separate editor route alone do not establish UI completion.
+
 
 Before every push to a branch with a pull request targeting `dev`, read
 `docs/contributing/dev-push-runbook.md` and run `scripts/check-dev-push.ps1`

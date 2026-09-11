@@ -1,6 +1,7 @@
 /* Premium Space Slate & Glassmorphism Light Design Tokens */
 
 :root {
+  color-scheme: dark;
   /* Default Theme: Space Slate Dark */
   --color-neutral: #090d16; /* deep rich dark space-black background */
   --color-surface: #131b2e; /* card and panel surfaces */
@@ -69,6 +70,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --color-neutral: #090d16;
   --color-surface: #131b2e;
   --color-surface-elevated: #182238;
@@ -91,6 +93,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   /* Premium Glassmorphism Light Theme */
   --color-neutral: #e8edf5; /* light slate-blue background */
   --color-surface: #f1f5f9; /* card surface background */
@@ -98,7 +101,7 @@
   --color-surface-subtle: #f8fafc; /* inset/input background */
   --color-surface-hover: #e2e8f0; /* card hover background */
   --color-primary: #0f172a; /* dark slate main text */
-  --color-secondary: #0284c7; /* ocean blue highlight */
+  --color-secondary: #0369a1; /* ocean blue highlight */
   --color-accent: #0369a1; /* secondary accent */
   --color-border: #cbd5e1; /* soft grey boundaries */
   --color-border-hover: #94a3b8; /* active/hover boundaries */

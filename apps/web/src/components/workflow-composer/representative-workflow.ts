@@ -1,0 +1,285 @@
+import {
+  bindWorkflowDraftIdentities,
+  type WorkflowDraft,
+} from "../../services/workflow-drafts";
+
+export type RepresentativeRole = "input" | "work" | "review" | "release";
+
+const ROLE_ORDER: readonly RepresentativeRole[] = [
+  "input",
+  "work",
+  "review",
+  "release",
+];
+
+const semanticTemplate: WorkflowDraft["semantic"] = {
+  title: "Product definition draft",
+  purpose: "Capture, define, review, and release one product definition.",
+  phases: [
+    {
+      id: "phase.define",
+      name: "Define",
+      purpose: "Capture needs and define the product.",
+      order: 0,
+      block_ids: ["block.capture-requirements", "block.define-product"],
+    },
+    {
+      id: "phase.review",
+      name: "Review",
+      purpose: "Evaluate the product definition.",
+      order: 1,
+      block_ids: ["block.review-product-definition"],
+    },
+    {
+      id: "phase.release",
+      name: "Release",
+      purpose: "Declare the accepted definition ready for downstream work.",
+      order: 2,
+      block_ids: ["block.release-product-definition"],
+    },
+  ],
+  blocks: [
+    {
+      id: "block.capture-requirements",
+      title: "Capture requirements",
+      purpose: "Record the product need and constraints.",
+      role: "input",
+      phase_id: "phase.define",
+      input_port_ids: [],
+      output_port_ids: ["port.requirements-out"],
+      gate_ids: [],
+      intended_artifact_ids: ["artifact.requirements"],
+    },
+    {
+      id: "block.define-product",
+      title: "Define product",
+      purpose: "Create an inspectable product definition.",
+      role: "work",
+      phase_id: "phase.define",
+      input_port_ids: ["port.requirements-in"],
+      output_port_ids: ["port.product-definition-out"],
+      gate_ids: [],
+      intended_artifact_ids: ["artifact.product-definition"],
+    },
+    {
+      id: "block.review-product-definition",
+      title: "Review product definition",
+      purpose: "Evaluate completeness and acceptance criteria.",
+      role: "review",
+      phase_id: "phase.review",
+      input_port_ids: ["port.product-definition-in"],
+      output_port_ids: ["port.accepted-definition-out"],
+      gate_ids: ["gate.definition-accepted"],
+      intended_artifact_ids: ["artifact.review-record"],
+    },
+    {
+      id: "block.release-product-definition",
+      title: "Release product definition",
+      purpose: "Prepare the accepted definition for downstream use.",
+      role: "release",
+      phase_id: "phase.release",
+      input_port_ids: ["port.accepted-definition-in"],
+      output_port_ids: ["port.release-package-out"],
+      gate_ids: [],
+      intended_artifact_ids: ["artifact.release-package"],
+    },
+  ],
+  ports: [
+    {
+      id: "port.requirements-out",
+      owner_block_id: "block.capture-requirements",
+      direction: "output",
+      name: "Requirements",
+      value_type_id: "type.requirements",
+      required: true,
+      cardinality: "one",
+    },
+    {
+      id: "port.requirements-in",
+      owner_block_id: "block.define-product",
+      direction: "input",
+      name: "Requirements",
+      value_type_id: "type.requirements",
+      required: true,
+      cardinality: "one",
+    },
+    {
+      id: "port.product-definition-out",
+      owner_block_id: "block.define-product",
+      direction: "output",
+      name: "Product definition",
+      value_type_id: "type.product-definition",
+      required: true,
+      cardinality: "one",
+    },
+    {
+      id: "port.product-definition-in",
+      owner_block_id: "block.review-product-definition",
+      direction: "input",
+      name: "Product definition",
+      value_type_id: "type.product-definition",
+      required: true,
+      cardinality: "one",
+    },
+    {
+      id: "port.accepted-definition-out",
+      owner_block_id: "block.review-product-definition",
+      direction: "output",
+      name: "Accepted definition",
+      value_type_id: "type.accepted-product-definition",
+      required: true,
+      cardinality: "one",
+    },
+    {
+      id: "port.accepted-definition-in",
+      owner_block_id: "block.release-product-definition",
+      direction: "input",
+      name: "Accepted definition",
+      value_type_id: "type.accepted-product-definition",
+      required: true,
+      cardinality: "one",
+    },
+    {
+      id: "port.release-package-out",
+      owner_block_id: "block.release-product-definition",
+      direction: "output",
+      name: "Release package",
+      value_type_id: "type.release-package",
+      required: true,
+      cardinality: "one",
+    },
+  ],
+  connections: [
+    {
+      id: "connection.requirements-to-definition",
+      source_port_id: "port.requirements-out",
+      target_port_id: "port.requirements-in",
+    },
+    {
+      id: "connection.definition-to-review",
+      source_port_id: "port.product-definition-out",
+      target_port_id: "port.product-definition-in",
+    },
+    {
+      id: "connection.accepted-to-release",
+      source_port_id: "port.accepted-definition-out",
+      target_port_id: "port.accepted-definition-in",
+    },
+  ],
+  gates: [
+    {
+      id: "gate.definition-accepted",
+      owner_block_id: "block.review-product-definition",
+      condition: "Product definition is complete and accepted.",
+      proceed_target_block_id: "block.release-product-definition",
+      revise_target_block_id: "block.define-product",
+      feedback_path_id: "feedback.revise-definition",
+    },
+  ],
+  feedback_paths: [
+    {
+      id: "feedback.revise-definition",
+      from_gate_id: "gate.definition-accepted",
+      to_block_id: "block.define-product",
+      reason: "Revise the definition to resolve review findings.",
+    },
+  ],
+  intended_artifacts: [
+    {
+      id: "artifact.requirements",
+      title: "Requirements",
+      artifact_type_id: "type.requirements",
+      description: "Declared product need and constraints.",
+      produced_by_block_id: "block.capture-requirements",
+    },
+    {
+      id: "artifact.product-definition",
+      title: "Product definition",
+      artifact_type_id: "type.product-definition",
+      description: "Reviewable product definition.",
+      produced_by_block_id: "block.define-product",
+    },
+    {
+      id: "artifact.review-record",
+      title: "Review record",
+      artifact_type_id: "type.review-record",
+      description: "Declared review outcome, not an executed approval.",
+      produced_by_block_id: "block.review-product-definition",
+    },
+    {
+      id: "artifact.release-package",
+      title: "Release package",
+      artifact_type_id: "type.release-package",
+      description:
+        "Intended downstream package; no file is created in this slice.",
+      produced_by_block_id: "block.release-product-definition",
+    },
+  ],
+};
+
+const positionTemplate: WorkflowDraft["layout"]["positions"] = [
+  { semantic_id: "block.capture-requirements", x: 0, y: 0 },
+  { semantic_id: "block.define-product", x: 320, y: 32 },
+  { semantic_id: "block.review-product-definition", x: 680, y: 64 },
+  { semantic_id: "block.release-product-definition", x: 1040, y: 96 },
+];
+
+export function nextRepresentativeRole(
+  draft: WorkflowDraft,
+): RepresentativeRole | null {
+  const roles = new Set(draft.semantic.blocks.map((block) => block.role));
+  return ROLE_ORDER.find((role) => !roles.has(role)) ?? null;
+}
+
+export async function addRepresentativeRole(
+  draft: WorkflowDraft,
+  requestedRole: RepresentativeRole,
+): Promise<WorkflowDraft> {
+  const next = nextRepresentativeRole(draft);
+  if (next !== requestedRole)
+    throw new Error("WORKFLOW_DRAFT_BOUNDED_PALETTE_ORDER_INVALID");
+  const count = ROLE_ORDER.indexOf(requestedRole) + 1;
+  const includedRoles = new Set(ROLE_ORDER.slice(0, count));
+  const blocks = semanticTemplate.blocks.filter((block) =>
+    includedRoles.has(block.role),
+  );
+  const blockIds = new Set(blocks.map((block) => block.id));
+  const ports = semanticTemplate.ports.filter((port) =>
+    blockIds.has(port.owner_block_id),
+  );
+  const portIds = new Set(ports.map((port) => port.id));
+  const complete = count === ROLE_ORDER.length;
+  const semantic: WorkflowDraft["semantic"] = {
+    title: draft.semantic.title,
+    purpose: draft.semantic.purpose,
+    phases: semanticTemplate.phases
+      .map((phase) => ({
+        ...phase,
+        block_ids: phase.block_ids.filter((id) => blockIds.has(id)),
+      }))
+      .filter((phase) => phase.block_ids.length > 0)
+      .map((phase, order) => ({ ...phase, order })),
+    blocks: blocks.map((block) => ({
+      ...block,
+      gate_ids: complete ? block.gate_ids : [],
+    })),
+    ports,
+    connections: semanticTemplate.connections.filter(
+      (connection) =>
+        portIds.has(connection.source_port_id) &&
+        portIds.has(connection.target_port_id),
+    ),
+    gates: complete ? semanticTemplate.gates : [],
+    feedback_paths: complete ? semanticTemplate.feedback_paths : [],
+    intended_artifacts: semanticTemplate.intended_artifacts.filter((artifact) =>
+      blockIds.has(artifact.produced_by_block_id),
+    ),
+  };
+  const layout: WorkflowDraft["layout"] = {
+    schema_version: "1.0.0",
+    positions: positionTemplate.filter((position) =>
+      blockIds.has(position.semantic_id),
+    ),
+  };
+  return bindWorkflowDraftIdentities({ ...draft, semantic, layout });
+}

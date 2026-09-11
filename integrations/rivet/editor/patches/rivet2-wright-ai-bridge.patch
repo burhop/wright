@@ -1,0 +1,124 @@
+diff --git a/packages/app/src/features/graphBuilder/authoringCatalog.ts b/packages/app/src/features/graphBuilder/authoringCatalog.ts
+--- a/packages/app/src/features/graphBuilder/authoringCatalog.ts
++++ b/packages/app/src/features/graphBuilder/authoringCatalog.ts
+@@ -135,21 +135,46 @@
+   authorization: '',
+ };
+ 
+-function applyWrightMcpNodeDefaults(node: ChartNode): ChartNode {
+-  if (!WRIGHT_MCP_NODE_TYPES.has(node.type)) {
+-    return node;
+-  }
+-
+-  const nextNode = cloneDeep(node);
+-  const data = nextNode.data as Record<string, unknown>;
+-  for (const [key, value] of Object.entries(WRIGHT_OWNED_MCP_CONNECTION_DEFAULTS)) {
+-    if (Object.hasOwn(data, key)) {
+-      data[key] = cloneDeep(value);
+-    }
+-  }
+-  if (node.type === 'mcpToolCall') {
+-    data.useToolNameInput = false;
+-  }
++function applyWrightNodeDefaults(node: ChartNode): ChartNode {
++  let nextNode = node;
++  if (WRIGHT_MCP_NODE_TYPES.has(node.type)) {
++    nextNode = cloneDeep(node);
++    const data = nextNode.data as Record<string, unknown>;
++    for (const [key, value] of Object.entries(WRIGHT_OWNED_MCP_CONNECTION_DEFAULTS)) {
++      if (Object.hasOwn(data, key)) {
++        data[key] = cloneDeep(value);
++      }
++    }
++    if (node.type === 'mcpToolCall') {
++      data.useToolNameInput = false;
++    }
++  }
++
++  if (node.type === 'llmChatV2') {
++    nextNode = cloneDeep(nextNode);
++    Object.assign(nextNode.data as Record<string, unknown>, {
++      configurationMode: 'inline',
++      provider: 'custom',
++      model: 'wright-hermes',
++      useModelInput: false,
++      apiKeySource: 'environment',
++      customProviderApiKeyProgrammaticName: '',
++      customProviderApiKeyEnvVarName: 'CUSTOM_PROVIDER_API_KEY',
++      customProviderBaseURL: 'wright://ai',
++      useCustomProviderBaseURLInput: false,
++      baseURL: '',
++      useBaseURLInput: false,
++      headers: [],
++      useHeadersInput: false,
++      extraProviderOptions: '',
++      useExtraProviderOptionsInput: false,
++      enableOpenAIWebSearch: false,
++      enableOpenAICodeInterpreter: false,
++      enableGoogleSearchGrounding: false,
++      enableGoogleUrlContext: false,
++    });
++  }
++
+   return nextNode;
+ }
+ 
+@@ -1033,7 +1058,7 @@
+       const authoringChoiceId = `registered:${nodeType}`;
+       let defaultNode: ChartNode;
+       try {
+-        defaultNode = applyWrightMcpNodeDefaults(createAddedNode({
++        defaultNode = applyWrightNodeDefaults(createAddedNode({
+           nodeType,
+           position: { x: 0, y: 0 },
+           registry: options.registry,
+@@ -1266,7 +1291,7 @@
+         : entry.family === 'node-prefab'
+           ? `${NODE_PREFAB_INSTANCE_TYPE}:${entry.nodePrefabId}`
+           : entry.nodeType;
+-    let node = applyWrightMcpNodeDefaults(createAddedNode({
++    let node = applyWrightNodeDefaults(createAddedNode({
+       nodeType,
+       position: { x: 0, y: 0 },
+       registry: this.#registry,
+diff --git a/packages/app/src/features/graphBuilder/authoringSemantics.test.ts b/packages/app/src/features/graphBuilder/authoringSemantics.test.ts
+--- a/packages/app/src/features/graphBuilder/authoringSemantics.test.ts
++++ b/packages/app/src/features/graphBuilder/authoringSemantics.test.ts
+@@ -260,6 +260,37 @@
+       maxToolRounds: 4,
+     },
+   });
++  const llmData = llm.data as Record<string, unknown>;
++  assert.deepEqual(
++    {
++      configurationMode: llmData.configurationMode,
++      provider: llmData.provider,
++      model: llmData.model,
++      apiKeySource: llmData.apiKeySource,
++      customProviderBaseURL: llmData.customProviderBaseURL,
++      useCustomProviderBaseURLInput: llmData.useCustomProviderBaseURLInput,
++      useHeadersInput: llmData.useHeadersInput,
++      useExtraProviderOptionsInput: llmData.useExtraProviderOptionsInput,
++      enableOpenAIWebSearch: llmData.enableOpenAIWebSearch,
++      enableOpenAICodeInterpreter: llmData.enableOpenAICodeInterpreter,
++      enableGoogleSearchGrounding: llmData.enableGoogleSearchGrounding,
++      enableGoogleUrlContext: llmData.enableGoogleUrlContext,
++    },
++    {
++      configurationMode: 'inline',
++      provider: 'custom',
++      model: 'wright-hermes',
++      apiKeySource: 'environment',
++      customProviderBaseURL: 'wright://ai',
++      useCustomProviderBaseURLInput: false,
++      useHeadersInput: false,
++      useExtraProviderOptionsInput: false,
++      enableOpenAIWebSearch: false,
++      enableOpenAICodeInterpreter: false,
++      enableGoogleSearchGrounding: false,
++      enableGoogleUrlContext: false,
++    },
++  );
+   const firstDelegate = catalog.createNode({
+     authoringChoiceId: 'registered:delegateFunctionCall',
+     allocatedNodeId: 'delegate-a' as NodeId,

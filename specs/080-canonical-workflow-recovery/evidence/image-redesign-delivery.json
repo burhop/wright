@@ -1,0 +1,46 @@
+{
+  "status": "complete",
+  "title": "Image-led native authoring catch-up",
+  "subjectCommit": "af0691229e39a8b1b80db0ed7eaa44caaf765f31",
+  "subjectTree": "bd308b0bb73c810caead38435944a1314d19a866",
+  "reportRoot": "artifacts/ui-walkthrough/image-redesign/20260903T000131Z-committed-acceptance-af069122-continuation-1",
+  "reportUrl": "http://127.0.0.1:8765/evidence/image-redesign/report.html",
+  "manifestSha256": "c51638c26a431c0f195027825a69b1fc774bc127b6978200e3070b6366ed65e7",
+  "walkthrough": {
+    "passed": 32,
+    "total": 32,
+    "rawScreenshots": 87,
+    "annotatedScreenshots": 87,
+    "manifestFiles": 200,
+    "traceBytes": 112515138,
+    "unexpectedDiagnostics": 0
+  },
+  "frontendProvenance": "14 actual browser-loaded module sources match the committed subject after CRLF-to-LF normalization; raw hashes are retained separately.",
+  "backendProvenancePath": ".local-run/image-redesign-committed-api-af069122/verification.json",
+  "dashboardVerificationPath": "artifacts/dashboard-image-redesign-verification/20260903T001532131Z-complete/dashboard-verification.json",
+  "dashboardManifestSha256": "33a5d9a93e35807fc4d88cff787f8a9c9f051b93c000c1b1af1c5819a7250daa",
+  "dashboardReportControlPath": "artifacts/dashboard-image-redesign-report-checks/20260903T001600456Z-complete/report-controls-verification.json",
+  "dashboardReportControlManifestSha256": "a7fbdd5c1accfd0a6e87b542e0ac5fee2787ed9ff15eecd75be81910b76f36d5",
+  "applicationUrl": "http://127.0.0.1:5227/workspace/85cbd6b3-e9d1-474d-add2-36f6e95a7b51?workflow=canonical",
+  "summary": "Local image-led authoring catch-up is complete. All 32 exact-subject authoring/responsive checks pass, including repaired previews, actual 200% zoom and multi-tab saves. Independent internal visual review has no remaining material findings. The verified local application and current evidence dashboard are running; external study, benchmark and release gates remain open.",
+  "screenshots": [
+    {
+      "label": "Image-aligned native canvas",
+      "url": "/evidence/image-redesign/screenshots/raw/image-reference-match.png"
+    },
+    {
+      "label": "Real text input and contextual Inspector",
+      "url": "/evidence/image-redesign/screenshots/raw/05-text-input.png"
+    },
+    {
+      "label": "Explicit typed connections",
+      "url": "/evidence/image-redesign/screenshots/raw/11-connections.png"
+    }
+  ],
+  "outsideGoal": [
+    "T056 representative human study",
+    "T058 benchmark qualification",
+    "T060 production release"
+  ],
+  "executionLimit": "New templates are unbound drafts. Proposal and run are fixed local simulations, not live AI or engineering execution."
+}

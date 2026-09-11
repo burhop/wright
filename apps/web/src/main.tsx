@@ -4,6 +4,9 @@ import { telemetry } from "./services/telemetry";
 import { registerTraceIdProvider, logger } from "./services/logger";
 import "./index.css";
 import App from "./App.tsx";
+import { restoreCachedTheme } from "./services/ui-preferences";
+
+restoreCachedTheme();
 
 // Connect telemetry trace ID provider to logger
 registerTraceIdProvider(() => telemetry.getActiveTraceId());

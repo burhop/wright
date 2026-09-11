@@ -1,0 +1,74 @@
+{
+  "adapter_identity": "8486d55c698d47245bc0b9ff03c031fff5f8bd73",
+  "adapter_protocol": "hermes-git-plugin-v1",
+  "architecture": "amd64",
+  "candidate": {
+    "filename": "wright_engineering-0.1.9-py3-none-any.whl",
+    "sha256": "53a48234f18c4b1b2457a31dc8c5da95c67dfa29db1d8a5faca1ec890f36a77d",
+    "version": "0.1.9"
+  },
+  "data_preserved_on_uninstall": true,
+  "forbidden_executables": [],
+  "hermes_version": "0.19.0",
+  "lifecycle": [
+    "install",
+    "start",
+    "status",
+    "doctor",
+    "update",
+    "rollback",
+    "stop",
+    "uninstall",
+    "purge"
+  ],
+  "manager_profiles": {
+    "codex": {
+      "adapter_protocol": "mcp-v1",
+      "hermes_intermediary": false,
+      "manager_probe": {
+        "profile_loaded": true,
+        "transport": "stdio",
+        "version": "codex-cli 0.144.1"
+      },
+      "sdk_probe": {
+        "protocol_version": "2025-11-25",
+        "safe_tool": "wright__workspace_status",
+        "tool_count": 18,
+        "workspace_binding_verified": true
+      },
+      "transport": "stdio"
+    }
+  },
+  "manager_workspace": {
+    "local_path_under_wright_home": true,
+    "session_id": "wright-local-1cd31c50-3497-42ac-9f0f-d921a5d26289",
+    "workspace_id": "c9c24b56-81d3-4a03-9ca8-3a9f51a33908"
+  },
+  "mode": "real-hermes-git-adapter",
+  "observed_executables": [
+    "cmd.exe",
+    "codex.exe",
+    "conhost.exe",
+    "git",
+    "git-upload-pack.exe",
+    "git.exe",
+    "hermes.exe",
+    "node.exe",
+    "python.exe",
+    "rustc.exe",
+    "sh.exe",
+    "wright.exe"
+  ],
+  "platform": "windows-11",
+  "previous_stable": {
+    "filename": "wright_engineering-0.1.9+fixture.1-py3-none-any.whl",
+    "sha256": "642844cfd2ca925db0d9507711587d94c181b85462cc390927f41176971ac173",
+    "version": "0.1.9+fixture.1"
+  },
+  "purge_exact": true,
+  "python": "3.13.14",
+  "reinstall_preserved_data": true,
+  "schema_version": 2,
+  "source_isolation": true,
+  "status": "passed"
+}

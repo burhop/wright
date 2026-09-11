@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import sqlite3
 from dataclasses import replace
 from datetime import UTC, datetime
@@ -42,9 +43,14 @@ def _actor() -> SurfaceActor:
     )
 
 
-def _instance(*, state: str = "ready", generation: int = 1) -> LiveAppInstance:
+def _instance(
+    *,
+    state: str = "ready",
+    generation: int = 1,
+    instance_id: str = "instance-1",
+) -> LiveAppInstance:
     return LiveAppInstance(
-        instance_id="instance-1",
+        instance_id=instance_id,
         workspace_id="workspace-1",
         surface_id="surface-app",
         manifest_id="demo.app",
@@ -76,6 +82,8 @@ class _Manager:
     def __init__(self) -> None:
         self.instance = _instance()
         self.calls: list[str] = []
+        self.start_requests: list[object] = []
+        self.compensations: list[tuple[str, int, str]] = []
         self.start_error: LiveAppManagerError | None = None
         self.restart_error: LiveAppManagerError | None = None
         self.health_error: LiveAppManagerError | None = None
@@ -83,6 +91,7 @@ class _Manager:
 
     async def start(self, request):
         self.calls.append(f"start:{request.idempotency_key}")
+        self.start_requests.append(request)
         if self.start_error:
             raise self.start_error
         return self.instance
@@ -105,6 +114,28 @@ class _Manager:
     async def stop(self, instance_id: str, *, idempotency_key: str):
         self.calls.append(f"stop:{instance_id}:{idempotency_key}")
         self.instance = replace(self.instance, state="stopped", ended_at=NOW)
+        return self.instance
+
+    async def compensate_uncommitted(
+        self,
+        instance_id: str,
+        *,
+        generation: int,
+        correlation_id: str,
+    ):
+        assert instance_id == self.instance.instance_id
+        assert generation == self.instance.generation
+        self.compensations.append((instance_id, generation, correlation_id))
+        self.instance = replace(
+            self.instance,
+            state="failed",
+            ended_at=NOW,
+            failure=LiveAppFailure(
+                "SURFACE_DESCRIPTOR_COMMIT_FAILED",
+                f"Runtime contained. Reference {correlation_id}.",
+                True,
+            ),
+        )
         return self.instance
 
     def get(self, instance_id: str):
@@ -248,6 +279,102 @@ async def test_failed_start_projects_safe_retryable_diagnostic(tmp_path: Path) -
     }
 
 
+async def test_ready_runtime_is_compensated_when_descriptor_commit_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    control, surfaces, manager = _service(tmp_path)
+    project_runtime = surfaces.project_runtime
+
+    async def fail_ready_projection(**kwargs):
+        if kwargs["target"] is SurfaceLifecycle.READY:
+            raise RuntimeError("simulated descriptor commit failure")
+        return await project_runtime(**kwargs)
+
+    monkeypatch.setattr(surfaces, "project_runtime", fail_ready_projection)
+
+    with pytest.raises(LiveAppControlError) as raised:
+        await control.start(
+            actor=_actor(),
+            surface_id=SurfaceId("surface-app"),
+            idempotency_key="ready-commit-failure-0001",
+        )
+
+    current = await surfaces.get(actor=_actor(), surface_id=SurfaceId("surface-app"))
+    assert raised.value.code == "SURFACE_DESCRIPTOR_COMMIT_FAILED"
+    assert raised.value.retryable is True
+    assert raised.value.correlation_id is not None
+    assert manager.compensations == [("instance-1", 1, raised.value.correlation_id)]
+    assert manager.instance.state == "failed"
+    assert current.lifecycle is SurfaceLifecycle.FAILED
+    assert current.instance["generation"] == 1
+    assert current.diagnostic_summary["code"] == "SURFACE_DESCRIPTOR_COMMIT_FAILED"
+    assert raised.value.correlation_id in current.diagnostic_summary["message"]
+    assert "simulated descriptor commit failure" not in str(raised.value)
+
+
+async def test_after_commit_error_recognizes_authoritative_ready_descriptor(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    control, surfaces, manager = _service(tmp_path)
+    project_runtime = surfaces.project_runtime
+
+    async def commit_then_raise(**kwargs):
+        result = await project_runtime(**kwargs)
+        if kwargs["target"] is SurfaceLifecycle.READY:
+            raise RuntimeError("simulated post-commit event failure")
+        return result
+
+    monkeypatch.setattr(surfaces, "project_runtime", commit_then_raise)
+
+    instance = await control.start(
+        actor=_actor(),
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="ambiguous-ready-commit-0001",
+    )
+    current = await surfaces.get(actor=_actor(), surface_id=SurfaceId("surface-app"))
+
+    assert instance.state == "ready"
+    assert current.lifecycle is SurfaceLifecycle.READY
+    assert manager.compensations == []
+
+
+async def test_request_cancellation_waits_for_authoritative_ready_commit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    control, surfaces, manager = _service(tmp_path)
+    project_runtime = surfaces.project_runtime
+    entered = asyncio.Event()
+    release = asyncio.Event()
+
+    async def delayed_ready_projection(**kwargs):
+        if kwargs["target"] is SurfaceLifecycle.READY:
+            entered.set()
+            await release.wait()
+        return await project_runtime(**kwargs)
+
+    monkeypatch.setattr(surfaces, "project_runtime", delayed_ready_projection)
+    request = asyncio.create_task(
+        control.start(
+            actor=_actor(),
+            surface_id=SurfaceId("surface-app"),
+            idempotency_key="cancelled-ready-commit-0001",
+        )
+    )
+    await entered.wait()
+    request.cancel()
+    await asyncio.sleep(0)
+    assert request.done() is False
+
+    release.set()
+    with pytest.raises(asyncio.CancelledError):
+        await request
+
+    current = await surfaces.get(actor=_actor(), surface_id=SurfaceId("surface-app"))
+    assert current.lifecycle is SurfaceLifecycle.READY
+    assert current.instance["generation"] == 1
+    assert manager.compensations == []
+
+
 async def test_health_translates_manager_lifecycle_error(tmp_path: Path) -> None:
     control, _surfaces, manager = _service(tmp_path)
     await control.start(
@@ -333,4 +460,60 @@ async def test_restart_recovers_terminal_surface_when_manager_lost_runtime(
     assert manager.calls[-2:] == [
         "restart:instance-1:restart-stale-runtime-0001",
         "start:restart-stale-runtime-0001",
+    ]
+
+
+async def test_explicit_retry_after_manager_restart_commits_fresh_authority(
+    tmp_path: Path,
+) -> None:
+    control, surfaces, manager = _service(tmp_path)
+    actor = _actor()
+    await control.start(
+        actor=actor,
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="start-before-api-restart-0001",
+    )
+    current = await surfaces.get(actor=actor, surface_id=SurfaceId("surface-app"))
+    failed = await surfaces.project_runtime(
+        actor=actor,
+        surface_id=SurfaceId("surface-app"),
+        target=SurfaceLifecycle.FAILED,
+        expected_revision=current.revision,
+        instance=current.instance,
+        presentations=current.presentations,
+        diagnostic_summary={
+            "code": "SURFACE_RECONCILE_OWNERSHIP_UNPROVABLE",
+            "message": "Runtime authority was revoked during startup reconciliation.",
+            "retryable": True,
+        },
+    )
+    assert failed.instance["instanceId"] == "instance-1"
+    assert failed.instance["generation"] == 1
+
+    manager.restart_error = LiveAppManagerError(
+        "SURFACE_INSTANCE_NOT_FOUND",
+        "Live-app instance was not found after API restart",
+        retryable=True,
+    )
+    manager.instance = _instance(
+        generation=2,
+        instance_id="instance-after-api-restart",
+    )
+
+    retried = await control.retry(
+        actor=actor,
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="retry-after-api-restart-0001",
+    )
+    committed = await surfaces.get(actor=actor, surface_id=SurfaceId("surface-app"))
+
+    assert retried.instance_id == "instance-after-api-restart"
+    assert retried.generation == 2
+    assert committed.lifecycle is SurfaceLifecycle.READY
+    assert committed.instance["instanceId"] == retried.instance_id
+    assert committed.instance["generation"] == retried.generation
+    assert manager.start_requests[-1].initial_generation == 2
+    assert manager.calls[-2:] == [
+        "restart:instance-1:retry-after-api-restart-0001",
+        "start:retry-after-api-restart-0001",
     ]

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   closePresentation: vi.fn(),
   createPresentation: vi.fn(),
   ensureRivetEditorRunning: vi.fn(),
+  retryRivetEditorRunning: vi.fn(),
 }));
 
 vi.mock("../../services/rivet-editor", () => ({
@@ -17,6 +18,7 @@ vi.mock("../../services/rivet-editor", () => ({
 
 vi.mock("../../services/rivet-editor-lifecycle", () => ({
   ensureRivetEditorRunning: mocks.ensureRivetEditorRunning,
+  retryRivetEditorRunning: mocks.retryRivetEditorRunning,
 }));
 
 vi.mock("../../services/surfaces/surface-client", () => ({
@@ -59,7 +61,79 @@ describe("ManagedRivetSurface", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.ensureRivetEditorRunning.mockResolvedValue("surface-rivet");
+    mocks.retryRivetEditorRunning.mockResolvedValue("surface-rivet");
     mocks.closePresentation.mockResolvedValue(undefined);
+  });
+
+  it("authorizes one explicit lifecycle Retry and continues to the editor", async () => {
+    let finishRetry: ((surfaceId: string) => void) | undefined;
+    mocks.ensureRivetEditorRunning.mockRejectedValue(
+      new Error("Rivet editor cannot start from failed."),
+    );
+    mocks.retryRivetEditorRunning.mockReturnValue(
+      new Promise<string>((resolve) => {
+        finishRetry = resolve;
+      }),
+    );
+    mocks.createPresentation.mockResolvedValue(launch("recovered"));
+
+    render(
+      <ManagedRivetSurface
+        workspaceId="workspace-1"
+        sessionId="session-failed"
+        initialSlug="rivet"
+      />,
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Rivet editor cannot start from failed.",
+    );
+    expect(mocks.retryRivetEditorRunning).not.toHaveBeenCalled();
+
+    const retry = screen.getByTestId("managed-rivet-retry");
+    fireEvent.click(retry);
+    fireEvent.click(retry);
+
+    expect(mocks.ensureRivetEditorRunning).toHaveBeenCalledTimes(1);
+    expect(mocks.retryRivetEditorRunning).toHaveBeenCalledTimes(1);
+    expect(mocks.retryRivetEditorRunning).toHaveBeenCalledWith(
+      "workspace-1",
+      "session-failed",
+    );
+    expect(retry).toBeDisabled();
+
+    finishRetry?.("surface-rivet");
+    await waitFor(() =>
+      expect(screen.getByTestId("direct-rivet-fixture")).toHaveAttribute(
+        "data-url",
+        launch("recovered").absoluteBootstrapUrl,
+      ),
+    );
+    expect(mocks.createPresentation).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the explicit Retry failure reason visible", async () => {
+    const user = userEvent.setup();
+    mocks.ensureRivetEditorRunning.mockRejectedValue(
+      new Error("Rivet editor cannot start from failed."),
+    );
+    mocks.retryRivetEditorRunning.mockRejectedValue(
+      new Error("Surface Retry was rejected because its generation changed."),
+    );
+
+    render(
+      <ManagedRivetSurface
+        workspaceId="workspace-1"
+        sessionId="session-failed"
+        initialSlug="rivet"
+      />,
+    );
+
+    await user.click(await screen.findByTestId("managed-rivet-retry"));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Surface Retry was rejected because its generation changed.",
+    );
+    expect(mocks.retryRivetEditorRunning).toHaveBeenCalledTimes(1);
   });
 
   it("renews an unauthorized preview once and offers Retry after a repeat", async () => {

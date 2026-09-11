@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import type { EditorTab } from "../../store/viewer";
 import { CloseIcon } from "../common/Icons";
 
@@ -15,46 +15,77 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
   onSelectTab,
   onCloseTab,
 }) => {
+  const container = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const reveal = () =>
+      container.current
+        ?.querySelector<HTMLElement>('[aria-selected="true"]')
+        ?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    reveal();
+    if (typeof ResizeObserver === "undefined" || !container.current) return;
+    const observer = new ResizeObserver(reveal);
+    observer.observe(container.current);
+    return () => observer.disconnect();
+  }, [activeTabPath, tabs.length]);
   return (
     <div
+      ref={container}
       className="editor-tabs-container"
       data-testid="editor-tabs-container"
+      role="tablist"
+      aria-label="Open documents"
       style={{
         display: "flex",
-        backgroundColor: "var(--color-neutral-dark, #121212)",
+        backgroundColor: "var(--color-surface-subtle)",
         borderBottom: "1px solid var(--color-border, #2e2e2e)",
         overflowX: "auto",
         whiteSpace: "nowrap",
-        height: "38px",
+        height: "32px",
         alignItems: "center",
-        paddingLeft: "var(--space-xs, 4px)",
+        paddingLeft: "0",
       }}
     >
       {tabs.map((tab) => {
         const isActive = tab.path === activeTabPath;
-        const ext = tab.path.split(".").pop()?.toLowerCase() || "";
-
-        // Premium type icons
-        let icon = "";
-        if (ext === "stl" || ext === "step" || ext === "iges") icon = "";
-        else if (
-          ["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)
-        )
-          icon = "";
-        else if (ext === "pdf") icon = "";
-        else if (ext === "md") icon = "";
-        else if (["py", "js", "ts", "tsx", "json", "scad"].includes(ext))
-          icon = "";
-
         return (
           <div
             key={tab.path}
             onClick={() => onSelectTab(tab.path)}
             data-testid={`editor-tab-${tab.path}`}
+            title={tab.path}
+            role="tab"
+            aria-label={tab.name.replace(/\.workflow\.wflow$/i, ".wflow")}
+            aria-selected={isActive}
+            tabIndex={isActive ? 0 : -1}
+            onKeyDown={(e) => {
+              if (e.target !== e.currentTarget) return;
+              const index = tabs.indexOf(tab);
+              const next =
+                e.key === "ArrowRight"
+                  ? (index + 1) % tabs.length
+                  : e.key === "ArrowLeft"
+                    ? (index - 1 + tabs.length) % tabs.length
+                    : e.key === "Home"
+                      ? 0
+                      : e.key === "End"
+                        ? tabs.length - 1
+                        : -1;
+              if (next >= 0) {
+                e.preventDefault();
+                onSelectTab(tabs[next]!.path);
+                (
+                  e.currentTarget.parentElement?.children[next] as HTMLElement
+                )?.focus();
+              }
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onSelectTab(tab.path);
+              }
+            }}
             style={{
               display: "flex",
               alignItems: "center",
-              padding: "0 var(--space-md, 12px)",
+              padding: "0 8px",
               borderRight: "1px solid var(--color-border, #2e2e2e)",
               borderTop: isActive
                 ? "2px solid var(--color-primary-active, #007acc)"
@@ -71,13 +102,14 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
               fontFamily: "var(--font-ui, system-ui, sans-serif)",
               height: "100%",
               userSelect: "none",
+              flexShrink: 0,
               transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
               position: "relative",
             }}
             onMouseEnter={(e) => {
               if (!isActive) {
                 e.currentTarget.style.backgroundColor =
-                  "var(--color-neutral-hover, rgba(255, 255, 255, 0.05))";
+                  "var(--color-surface-hover)";
               }
             }}
             onMouseLeave={(e) => {
@@ -88,21 +120,13 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
           >
             <span
               style={{
-                marginRight: "var(--space-sm, 6px)",
-                fontSize: "0.9rem",
-              }}
-            >
-              {icon}
-            </span>
-            <span
-              style={{
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                maxWidth: "140px",
+                maxWidth: "180px",
                 marginRight: "var(--space-sm, 6px)",
               }}
             >
-              {tab.name}
+              {tab.name.replace(/\.workflow\.wflow$/i, ".wflow")}
             </span>
 
             {/* Dirty Indicator */}
@@ -141,8 +165,8 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                width: "18px",
-                height: "18px",
+                width: "24px",
+                height: "24px",
                 flexShrink: 0,
                 transition: "all 0.15s ease",
               }}

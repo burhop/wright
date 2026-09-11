@@ -1,12 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { useEffect, useRef } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   dedupeEditorTabs,
   normalizeEditorTabPath,
   useViewerPanel,
   ViewerPanelProvider,
 } from "../src/store/viewer";
+import { workspaceService } from "../src/services/workspace-service";
 
 const mockUseChat = vi.fn();
 
@@ -99,11 +100,16 @@ function RenameTransientTabHarness() {
 describe("ViewerPanelProvider tab state", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(workspaceService, "getFileContentText").mockResolvedValue("");
     mockUseChat.mockReturnValue({
       state: {
         activeSessionId: "session-1",
       },
     });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("normalizes and deduplicates persisted editor tabs", () => {

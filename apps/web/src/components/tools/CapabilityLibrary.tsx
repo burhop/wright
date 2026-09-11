@@ -9,6 +9,7 @@ import { CapabilityCard } from "./CapabilityCard";
 import { CapabilityDetails } from "./CapabilityDetails";
 import {
   CapabilityFilters,
+  matchesCapabilityOwnershipFilters,
   readCapabilityFilters,
   writeCapabilityFilters,
   type CapabilityFilterState,
@@ -86,6 +87,8 @@ export function CapabilityLibrary({
         host: filters.host,
         validation: filters.validation,
         installed: filters.installed,
+        commercial: String(filters.commercial),
+        open_source: String(filters.openSource),
       },
     }),
     [filters],
@@ -116,34 +119,41 @@ export function CapabilityLibrary({
     };
   }, [query, refreshToken, retryToken]);
 
-  const firstMatch = result?.capabilities[0] || null;
-  const blockerOrigin = firstMatch?.compatibility.reasons[0]?.source
-    ? firstMatch.compatibility.reasons[0].source.startsWith("machine.")
+  const visibleCapabilities = useMemo(
+    () =>
+      result?.capabilities.filter((capability) =>
+        matchesCapabilityOwnershipFilters(capability, filters),
+      ) || [],
+    [result, filters],
+  );
+  const firstVisibleMatch = visibleCapabilities[0] || null;
+  const blockerOrigin = firstVisibleMatch?.compatibility.reasons[0]?.source
+    ? firstVisibleMatch.compatibility.reasons[0].source.startsWith("machine.")
       ? "this machine"
-      : firstMatch.compatibility.reasons[0].source.startsWith("policy.")
+      : firstVisibleMatch.compatibility.reasons[0].source.startsWith("policy.")
         ? "local Wright policy"
         : "recorded MCP server evidence"
     : null;
-  const primaryAction = firstMatch
-    ? !firstMatch.available_actions.includes("plan_onboarding")
+  const primaryAction = firstVisibleMatch
+    ? !firstVisibleMatch.available_actions.includes("plan_onboarding")
       ? {
           label: "Review catalog decision",
           consequence:
             "View the reason, next review action, and existing installation details.",
         }
-      : firstMatch.compatibility.status === "incompatible"
+      : firstVisibleMatch.compatibility.status === "incompatible"
         ? {
             label: "Review setup requirements",
             consequence:
               "This opens evidence and alternatives; it does not install or enable anything.",
           }
-        : firstMatch.compatibility.status === "uncertain"
+        : firstVisibleMatch.compatibility.status === "uncertain"
           ? {
               label: "Review setup requirements",
               consequence:
                 "This explains what is known before you create an onboarding plan; it does not install anything.",
             }
-          : firstMatch.user_state?.active
+          : firstVisibleMatch.user_state?.active
             ? {
                 label: "Review workspace availability",
                 consequence:
@@ -342,7 +352,7 @@ export function CapabilityLibrary({
           </button>
         </div>
       )}
-      {!loading && !error && firstMatch && primaryAction ? (
+      {!loading && !error && firstVisibleMatch && primaryAction ? (
         <aside
           aria-labelledby="capability-next-action-title"
           data-testid="capability-next-action"
@@ -351,10 +361,11 @@ export function CapabilityLibrary({
           <p>
             <strong>{primaryAction.label}.</strong> {primaryAction.consequence}
           </p>
-          {blockerOrigin && firstMatch.compatibility.status !== "compatible" ? (
+          {blockerOrigin &&
+          firstVisibleMatch.compatibility.status !== "compatible" ? (
             <p>
               Blocker origin: <strong>{blockerOrigin}</strong>.{" "}
-              {firstMatch.compatibility.reasons[0]?.message}
+              {firstVisibleMatch.compatibility.reasons[0]?.message}
             </p>
           ) : null}
           <button
@@ -363,22 +374,24 @@ export function CapabilityLibrary({
             onClick={() => {
               if (
                 onPlanOnboarding &&
-                firstMatch.compatibility.status === "compatible" &&
-                firstMatch.available_actions.includes("plan_onboarding") &&
-                !firstMatch.user_state?.active
+                firstVisibleMatch.compatibility.status === "compatible" &&
+                firstVisibleMatch.available_actions.includes(
+                  "plan_onboarding",
+                ) &&
+                !firstVisibleMatch.user_state?.active
               ) {
                 setSelected(null);
-                onPlanOnboarding(firstMatch.capability_id);
+                onPlanOnboarding(firstVisibleMatch.capability_id);
                 return;
               }
-              setSelected(firstMatch);
+              setSelected(firstVisibleMatch);
             }}
           >
             {primaryAction.label}
           </button>
         </aside>
       ) : null}
-      {!loading && !error && result?.capabilities.length === 0 && (
+      {!loading && !error && visibleCapabilities.length === 0 && (
         <div data-testid="capability-empty-state">
           <h2>No MCP servers match these filters</h2>
           <p>Clear one or more filters, or report a missing MCP candidate.</p>
@@ -411,7 +424,7 @@ export function CapabilityLibrary({
           )}
         </div>
       )}
-      {!loading && !error && result && result.capabilities.length > 0 && (
+      {!loading && !error && result && visibleCapabilities.length > 0 && (
         <div
           data-testid="capability-results"
           style={{
@@ -421,11 +434,12 @@ export function CapabilityLibrary({
             gap: "var(--space-lg)",
           }}
         >
-          {result.capabilities.map((capability) => (
+          {visibleCapabilities.map((capability) => (
             <CapabilityCard
               key={capability.capability_id}
               capability={capability}
               onOpen={setSelected}
+              onInstall={onPlanOnboarding}
             />
           ))}
         </div>

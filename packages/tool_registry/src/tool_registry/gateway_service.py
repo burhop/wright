@@ -404,6 +404,12 @@ class GatewayService:
         )
         if tool is None:
             return set()
+        # In-process capability providers are Wright-owned authority
+        # boundaries, not catalog servers enabled for a workspace. Their
+        # approval gates must be satisfied by an explicit reviewed operation
+        # (such as a Rivet run approval), never synthesized for a model call.
+        if self._provider_for_tool(session, tool) is not None:
+            return set()
         if tool.server_id != "wright":
             return set(tool.required_approvals)
         if RIVET_WORKFLOW_MUTATION_APPROVAL not in tool.required_approvals:

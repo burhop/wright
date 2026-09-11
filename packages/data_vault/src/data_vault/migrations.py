@@ -21,6 +21,7 @@ from .models import (
     UpgradeResult,
 )
 from .state_store import connect_state_db
+from .workflow_artifact_review_repository import REVIEW_SCHEMA
 
 PRODUCT_VERSION = "0.1.0"
 LEDGER_TABLE = "wright_schema_migrations"
@@ -1189,6 +1190,52 @@ MIGRATIONS: tuple[Migration, ...] = (
             )"""),
             sql("""CREATE INDEX IF NOT EXISTS idx_native_process_runs_history
                 ON native_process_runs(workspace_id, process_id, created_at DESC, run_id)"""),
+        ),
+    ),
+)
+
+
+MIGRATIONS += (
+    Migration(18, "terminal_workflow_artifact_reviews", (sql(REVIEW_SCHEMA),)),
+    Migration(
+        19,
+        "workspace_document_artifacts",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS workspace_artifacts (
+                artifact_id TEXT PRIMARY KEY,
+                workspace_id TEXT NOT NULL,
+                session_id TEXT NOT NULL,
+                principal_id TEXT NOT NULL,
+                relative_path TEXT NOT NULL,
+                media_type TEXT NOT NULL,
+                sha256 TEXT NOT NULL CHECK(length(sha256) = 64),
+                byte_count INTEGER NOT NULL CHECK(byte_count >= 0),
+                producer_provider_id TEXT NOT NULL,
+                producer_tool_name TEXT NOT NULL,
+                producer_declaration_digest TEXT NOT NULL
+                    CHECK(length(producer_declaration_digest) = 64),
+                request_id TEXT NOT NULL,
+                correlation_id TEXT NOT NULL,
+                record_digest TEXT NOT NULL UNIQUE CHECK(length(record_digest) = 64),
+                created_at INTEGER NOT NULL,
+                UNIQUE(workspace_id, relative_path),
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS workspace_run_artifacts (
+                run_id TEXT NOT NULL,
+                artifact_id TEXT NOT NULL UNIQUE,
+                linked_at INTEGER NOT NULL,
+                PRIMARY KEY (run_id, artifact_id),
+                FOREIGN KEY (run_id) REFERENCES workspace_workflow_runs(run_id)
+                    ON DELETE RESTRICT,
+                FOREIGN KEY (artifact_id) REFERENCES workspace_artifacts(artifact_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_workspace_artifacts_scope
+                ON workspace_artifacts(workspace_id, session_id, created_at DESC)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_workspace_run_artifacts_run
+                ON workspace_run_artifacts(run_id, linked_at, artifact_id)"""),
         ),
     ),
 )

@@ -1,0 +1,9 @@
+[
+  {"name": "unknown top-level field", "path": ["unexpected"], "value": true},
+  {"name": "wrong document kind", "path": ["document_kind"], "value": "process-definition"},
+  {"name": "wrong schema version", "path": ["schema_version"], "value": "1.0.0"},
+  {"name": "noncanonical draft id", "path": ["draft_id"], "value": "Draft With Spaces"},
+  {"name": "semantic digest mismatch", "path": ["semantic_sha256"], "value": "0000000000000000000000000000000000000000000000000000000000000000"},
+  {"name": "layout digest mismatch", "path": ["layout_sha256"], "value": "0000000000000000000000000000000000000000000000000000000000000000"},
+  {"name": "unknown nested field", "path": ["semantic", "phases", 0, "unexpected"], "value": "reject"}
+]

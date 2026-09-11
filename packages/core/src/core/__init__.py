@@ -25,6 +25,44 @@ from .workflow_runs import (
     WorkflowRunEvent as WorkflowRunEvent,
     WorkflowRunState as WorkflowRunState,
 )
+from .canonical_workflow_runs import (
+    CanonicalWorkflowRun as CanonicalWorkflowRun,
+    RecoveryWorkflowRunEnvelope as RecoveryWorkflowRunEnvelope,
+    WorkflowArtifactRecord as WorkflowArtifactRecord,
+    WorkflowComponentScope as WorkflowComponentScope,
+    WorkflowRunActivity as WorkflowRunActivity,
+    WorkflowRunStepRecord as WorkflowRunStepRecord,
+    capture_recovery_workflow_run as capture_recovery_workflow_run,
+    validate_artifact_subject as validate_artifact_subject,
+    validate_run_subject as validate_run_subject,
+    validate_step_subject as validate_step_subject,
+)
+from .workflow_definitions import (
+    WorkflowCommandBatch as WorkflowCommandBatch,
+    WorkflowDefinition as WorkflowDefinition,
+    WorkflowDefinitionProjection as WorkflowDefinitionProjection,
+    WorkflowDraftPromotion as WorkflowDraftPromotion,
+    WorkflowRecoveryPromotion as WorkflowRecoveryPromotion,
+    accept_workflow_candidate as accept_workflow_candidate,
+    apply_workflow_commands as apply_workflow_commands,
+    canonical_definition_sha256 as canonical_definition_sha256,
+    decode_workflow_definition as decode_workflow_definition,
+    project_workflow_definition as project_workflow_definition,
+    promote_recovery_workflow_definition as promote_recovery_workflow_definition,
+    promote_workflow_draft as promote_workflow_draft,
+    rollback_recovery_workflow_definition as rollback_recovery_workflow_definition,
+    rollback_workflow_draft as rollback_workflow_draft,
+)
+from .workflow_layouts import (
+    WorkflowLayout as WorkflowLayout,
+    WorkflowLayoutDecodeResult as WorkflowLayoutDecodeResult,
+    WorkflowLayoutPromotion as WorkflowLayoutPromotion,
+    canonical_layout_sha256 as canonical_layout_sha256,
+    decode_workflow_layout as decode_workflow_layout,
+    promote_recovery_workflow_layout as promote_recovery_workflow_layout,
+    rollback_recovery_workflow_layout as rollback_recovery_workflow_layout,
+    validate_workflow_layout_subject as validate_workflow_layout_subject,
+)
 from .workflow_editor import (
     EditorAssetManifest as EditorAssetManifest,
     EditorAvailability as EditorAvailability,

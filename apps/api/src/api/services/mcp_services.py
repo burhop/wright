@@ -254,7 +254,9 @@ class McpApiService:
         cursor: str | None,
     ):
         entries, snapshot = self._capability_context()
-        observation = self._machine_observation(entries)
+        observation = load_latest_machine_observation(
+            self.db_path, now=self.capability_dependencies.clock()
+        )
         views = self._capability_views(entries, observation)
         try:
             return paginate_capabilities(
@@ -270,7 +272,9 @@ class McpApiService:
 
     def get_capability(self, capability_id: str):
         entries = self._capability_entries()
-        observation = self._machine_observation(entries)
+        observation = load_latest_machine_observation(
+            self.db_path, now=self.capability_dependencies.clock()
+        )
         view = find_capability(
             self._capability_views(entries, observation), capability_id
         )
@@ -708,11 +712,18 @@ class McpApiService:
                 "Catalog installation is unavailable for this reviewed record. "
                 + entry.curation.reason
             )
+        server = get_server(self.db_path, server_id)
+        approval_context = (
+            ApprovalContext(machine_approvals=set(server.approval_gates))
+            if server is not None
+            else None
+        )
         result = await registry_services.install_server(
             self.engine,
             server_id,
             session_id=session_id,
             is_server_enabled_for_session=self._server_enabled_for_session(session_id),
+            approval_context=approval_context,
         )
         self._sync_workspace_tools(result.sync_session_id)
         self._notify_gateway_changes(result.sync_session_id)

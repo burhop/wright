@@ -12,8 +12,8 @@ test.describe("Global Settings Flow", () => {
       });
     });
 
-    // App startup still reads setup status for the active theme, but setup
-    // status no longer gates access to the dashboard or settings page.
+    // Setup status can report an environment default. Saved appearance comes
+    // from /api/settings and must survive a direct page load.
     await page.route("**/api/setup/status", async (route) => {
       await route.fulfill({
         status: 200,
@@ -34,7 +34,7 @@ test.describe("Global Settings Flow", () => {
           contentType: "application/json",
           body: JSON.stringify({
             llm_provider: "hermes",
-            theme: "dark",
+            theme: savedSettings?.theme ?? "dark",
             api_keys: {},
           }),
         });
@@ -50,35 +50,58 @@ test.describe("Global Settings Flow", () => {
     });
   });
 
-  test("loads and saves LLM, theme, and credential preferences", async ({
+  test("previews and persists appearance while Hermes manages credentials", async ({
     page,
   }) => {
     await page.goto("/settings");
-
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Global Settings",
     );
-    await expect(page.getByTestId("settings-llm-provider")).toHaveValue(
-      "hermes",
-    );
-    await expect(page.getByTestId("settings-theme")).toHaveValue("dark");
+    const theme = page.getByLabel("Interface Theme");
+    await expect(theme).toBeEnabled();
+    await expect(theme).toHaveValue("dark");
+    await expect(page.getByText("API Keys & Secrets")).toHaveCount(0);
+    await expect(page.getByTestId("settings-llm-provider")).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { name: /Open Model Setup/ }),
+    ).toHaveAttribute("href", "/setup/model");
 
-    await page.getByTestId("settings-llm-provider").selectOption("openai");
-    await page.getByTestId("settings-theme").selectOption("light");
-    await page.getByTestId("settings-api-key-openai").fill("sk-test-value");
+    await theme.selectOption("light");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect(page.locator("body")).toHaveCSS(
+      "background-color",
+      "rgb(232, 237, 245)",
+    );
+    expect(savedSettings).toBeNull();
     await page.getByTestId("settings-save-btn").click();
-
-    await expect(page.getByTestId("settings-message-banner")).toContainText(
-      "Global settings successfully updated!",
+    await expect(page.getByTestId("settings-message-banner")).toHaveText(
+      "Preferences saved.",
     );
-    await expect
-      .poll(() => savedSettings)
-      .toMatchObject({
-        llm_provider: "openai",
-        theme: "light",
-        api_keys: {
-          OPENAI_API_KEY: "sk-test-value",
-        },
-      });
+    expect(savedSettings).toEqual({
+      llm_provider: "hermes",
+      theme: "light",
+      api_keys: {},
+    });
+
+    await page.reload();
+    await expect(theme).toBeEnabled();
+    await expect(theme).toHaveValue("light");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await page.getByRole("link", { name: "Settings", exact: true }).click();
+    await expect(theme).toBeEnabled();
+    await theme.selectOption("dark");
+    await expect(page.locator("body")).toHaveCSS(
+      "background-color",
+      "rgb(9, 13, 22)",
+    );
+    await page.getByTestId("settings-save-btn").click();
+    await expect(page.getByTestId("settings-message-banner")).toHaveText(
+      "Preferences saved.",
+    );
+    await page.reload();
+    await expect(theme).toHaveValue("dark");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   });
 });

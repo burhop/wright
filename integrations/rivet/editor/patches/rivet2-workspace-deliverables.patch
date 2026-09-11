@@ -1,0 +1,1251 @@
+diff --git a/packages/app/src/components/AiGraphCreatorInput.tsx b/packages/app/src/components/AiGraphCreatorInput.tsx
+index 05dea7ea..5739ee75 100644
+--- a/packages/app/src/components/AiGraphCreatorInput.tsx
++++ b/packages/app/src/components/AiGraphCreatorInput.tsx
+@@ -2,6 +2,7 @@ import Button from '@atlaskit/button';
+ import { css } from '@emotion/react';
+ import { atom, useAtom, useAtomValue } from 'jotai';
+ import { useEffect, useRef, useState, type FC } from 'react';
++import type { GraphBuilderRequestedDeliverable } from '../domain/graphBuilder/index.js';
+ import {
+   isGraphBuilderTerminalViewState,
+   type GraphBuilderSessionViewState,
+@@ -45,9 +46,13 @@ export const AiGraphCreatorInput: FC = () => {
+   const [feedbackItems, setFeedbackItems] = useState<string[]>([]);
+   const [prompt, setPrompt] = useState('');
+   const [clarificationAnswer, setClarificationAnswer] = useState('');
++  const [deliverableKind, setDeliverableKind] = useState<GraphBuilderRequestedDeliverable['kind'] | ''>('');
++  const [deliverableLabel, setDeliverableLabel] = useState('');
++  const [deliverablePath, setDeliverablePath] = useState('');
+   const [show, setShow] = useAtom(showAiGraphCreatorInputState);
+   const implementationMode = useAtomValue(graphBuilderImplementationModeState);
+   const latchedModeRef = useRef<GraphBuilderImplementationMode>();
++  const requestedDeliverableRef = useRef<GraphBuilderRequestedDeliverable>();
+   const feedbackLogRef = useRef<HTMLTextAreaElement | null>(null);
+ 
+   const selectedAssistModel = useAtomValue(selectedAssistModelState);
+@@ -80,8 +85,12 @@ export const AiGraphCreatorInput: FC = () => {
+     void resetLegacy();
+     void resetPlanB();
+     latchedModeRef.current = undefined;
++    requestedDeliverableRef.current = undefined;
+     setClarificationAnswer('');
+     setFeedbackItems([]);
++    setDeliverableKind('');
++    setDeliverableLabel('');
++    setDeliverablePath('');
+   }, [resetLegacy, resetPlanB, show]);
+ 
+   useEffect(() => {
+@@ -91,9 +100,9 @@ export const AiGraphCreatorInput: FC = () => {
+     }
+   }, [feedbackItems]);
+ 
+-  const runLegacyPrompt = async () => {
++  const runLegacyPrompt = async (requestedDeliverable: GraphBuilderRequestedDeliverable) => {
+     setFeedbackItems([]);
+-    await legacy.start(prompt, assistModel);
++    await legacy.start(prompt, assistModel, requestedDeliverable);
+   };
+ 
+   const runPrimaryAction = wrapAsync(async () => {
+@@ -102,18 +111,37 @@ export const AiGraphCreatorInput: FC = () => {
+       if (!prompt.trim() || assistModel.missingConfiguration) {
+         return;
+       }
++      if (
++        !deliverableKind ||
++        !deliverableLabel.trim() ||
++        (deliverableKind === 'workspace_document' && !deliverablePath.trim())
++      ) {
++        return;
++      }
++      const requestedDeliverable: GraphBuilderRequestedDeliverable = {
++        kind: deliverableKind,
++        label: deliverableLabel.trim(),
++        confirmedAt: new Date().toISOString(),
++        confirmationRevision: 0,
++        ...(deliverableKind === 'workspace_document'
++          ? { suggestedRelativePath: deliverablePath.trim() }
++          : {}),
++      };
++      requestedDeliverableRef.current = requestedDeliverable;
+       latchedModeRef.current = implementationMode;
+       if (implementationMode === 'legacy') {
+-        await runLegacyPrompt();
++        await runLegacyPrompt(requestedDeliverable);
+       } else {
+-        await planB.start(prompt);
++        await planB.start(prompt, requestedDeliverable);
+       }
+       return;
+     }
+ 
+     if (mode === 'legacy') {
+       if (!legacyState) {
+-        await legacy.start(prompt, assistModel);
++        if (requestedDeliverableRef.current) {
++          await legacy.start(prompt, assistModel, requestedDeliverableRef.current);
++        }
+       } else if (legacyState.status === 'ready-for-preview') {
+         await legacy.apply();
+       } else if (isGraphBuilderTerminalViewState(legacyState)) {
+@@ -124,7 +152,9 @@ export const AiGraphCreatorInput: FC = () => {
+       return;
+     }
+     if (!planBState) {
+-      await planB.start(prompt);
++      if (requestedDeliverableRef.current) {
++        await planB.start(prompt, requestedDeliverableRef.current);
++      }
+       return;
+     }
+     if (planBState.status === 'awaiting-user') {
+@@ -200,6 +230,7 @@ export const AiGraphCreatorInput: FC = () => {
+     await legacy.reset();
+     await planB.reset();
+     latchedModeRef.current = undefined;
++    requestedDeliverableRef.current = undefined;
+     setClarificationAnswer('');
+   }, 'Start Graph Builder over');
+ 
+@@ -221,12 +252,61 @@ export const AiGraphCreatorInput: FC = () => {
+     missingConfiguration: Boolean(assistModel.missingConfiguration),
+     prompt,
+     clarificationAnswer,
++    deliverableKind,
++    deliverableLabel,
++    deliverablePath,
+   });
+ 
+   return (
+     <AiAssistPromptModal
+       bodyExtra={
+-        activeState ? (
++        <>
++          {!activeState ? (
++            <fieldset data-testid="graph-builder-deliverable" style={{ display: 'grid', gap: 8 }}>
++              <legend>Requested deliverable</legend>
++              <label>
++                Deliverable type
++                <select
++                  aria-label="Deliverable type"
++                  value={deliverableKind}
++                  onChange={(event) =>
++                    setDeliverableKind(event.target.value as GraphBuilderRequestedDeliverable['kind'] | '')
++                  }
++                >
++                  <option value="">Select a deliverable…</option>
++                  <option value="value_only">Result value only</option>
++                  <option value="workspace_document">Workspace document</option>
++                  <option value="native_cad">Native CAD design</option>
++                  <option value="stl_mesh">STL mesh</option>
++                </select>
++              </label>
++              <label>
++                Deliverable name
++                <input
++                  aria-label="Deliverable name"
++                  maxLength={160}
++                  value={deliverableLabel}
++                  onChange={(event) => setDeliverableLabel(event.target.value)}
++                />
++              </label>
++              {deliverableKind === 'workspace_document' ? (
++                <label>
++                  Workspace-relative document path
++                  <input
++                    aria-label="Workspace-relative document path"
++                    maxLength={512}
++                    placeholder="reports/design-review.md"
++                    value={deliverablePath}
++                    onChange={(event) => setDeliverablePath(event.target.value)}
++                  />
++                </label>
++              ) : null}
++              {deliverableKind === 'native_cad' || deliverableKind === 'stl_mesh' ? (
++                <p>Wright will require a reviewed Solid Edge/domain producer; an LLM response cannot satisfy this deliverable.</p>
++              ) : null}
++            </fieldset>
++          ) : null}
++          {activeState ? (
+           <>
+             <GraphBuilderSessionPanel
+               clarificationAnswer={clarificationAnswer}
+@@ -243,7 +323,7 @@ export const AiGraphCreatorInput: FC = () => {
+               />
+             ) : null}
+           </>
+-        ) : feedbackItems.length > 0 ? (
++          ) : feedbackItems.length > 0 ? (
+           <textarea
+             aria-label="AI graph generation log"
+             css={feedbackStyles}
+@@ -251,7 +331,8 @@ export const AiGraphCreatorInput: FC = () => {
+             ref={feedbackLogRef}
+             value={feedbackItems.join('\n')}
+           />
+-        ) : null
++          ) : null}
++        </>
+       }
+       footerExtra={
+         activeState ? (
+@@ -295,6 +376,9 @@ function getPrimaryAction(
+     missingConfiguration: boolean;
+     prompt: string;
+     clarificationAnswer: string;
++    deliverableKind: GraphBuilderRequestedDeliverable['kind'] | '';
++    deliverableLabel: string;
++    deliverablePath: string;
+   },
+ ): { disabled: boolean; label: string } {
+   if (context.legacyRunning) {
+@@ -302,7 +386,12 @@ function getPrimaryAction(
+   }
+   if (context.idle || !state) {
+     return {
+-      disabled: context.missingConfiguration || !context.prompt.trim(),
++      disabled:
++        context.missingConfiguration ||
++        !context.prompt.trim() ||
++        !context.deliverableKind ||
++        !context.deliverableLabel.trim() ||
++        (context.deliverableKind === 'workspace_document' && !context.deliverablePath.trim()),
+       label: 'Generate',
+     };
+   }
+diff --git a/packages/app/src/components/GraphBuilderSessionPanel.test.tsx b/packages/app/src/components/GraphBuilderSessionPanel.test.tsx
+index ec6fe640..a1338bee 100644
+--- a/packages/app/src/components/GraphBuilderSessionPanel.test.tsx
++++ b/packages/app/src/components/GraphBuilderSessionPanel.test.tsx
+@@ -34,6 +34,12 @@ test('preview renders exact delta totals instead of bounded detail-array lengths
+       diagnostics: [],
+       draftRevision: 1,
+       summary: 'Prepared a large graph.',
++      requestedDeliverable: {
++        kind: 'value_only',
++        label: 'Test result',
++        confirmedAt: 'test',
++        confirmationRevision: 0,
++      },
+     },
+   };
+ 
+@@ -100,6 +106,12 @@ test('conflicted sessions retain the deterministic semantic delta instead of onl
+       diagnostics: [],
+       draftRevision: 2,
+       summary: 'Updated the prompt.',
++      requestedDeliverable: {
++        kind: 'value_only',
++        label: 'Test result',
++        confirmedAt: 'test',
++        confirmationRevision: 0,
++      },
+     },
+   };
+ 
+diff --git a/packages/app/src/components/GraphBuilderSessionPanel.tsx b/packages/app/src/components/GraphBuilderSessionPanel.tsx
+index 05ffaae1..dee42225 100644
+--- a/packages/app/src/components/GraphBuilderSessionPanel.tsx
++++ b/packages/app/src/components/GraphBuilderSessionPanel.tsx
+@@ -164,6 +164,9 @@ function GraphBuilderPreviewContent({ preview }: { preview: GraphBuilderPreview
+     graphDeltas.reduce((total, delta) => total + select(delta), 0);
+   return (
+     <>
++      <div className="graph-builder-session-copy" data-testid="graph-builder-deliverable-preview">
++        Deliverable: {deliverableLabel(preview)}
++      </div>
+       <div className="graph-builder-session-copy">{preview.summary}</div>
+       <ul className="graph-builder-session-delta">
+         <li>
+@@ -197,6 +200,17 @@ function GraphBuilderPreviewContent({ preview }: { preview: GraphBuilderPreview
+   );
+ }
+ 
++function deliverableLabel(preview: GraphBuilderPreview): string {
++  const value = preview.requestedDeliverable;
++  const kind = {
++    value_only: 'Result value only',
++    workspace_document: 'Workspace document',
++    native_cad: 'Native CAD design',
++    stl_mesh: 'STL mesh',
++  }[value.kind];
++  return `${kind} — ${value.label}${value.suggestedRelativePath ? ` (${value.suggestedRelativePath})` : ''}`;
++}
++
+ function GraphBuilderDeltaDetails({ delta }: { delta: GraphDraftDelta }) {
+   const groups: { heading: string; items: { key: string; content: ReactNode }[] }[] = [];
+   if (delta.addedNodes.length > 0) {
+diff --git a/packages/app/src/domain/graphBuilder/graphBuilderSchemas.ts b/packages/app/src/domain/graphBuilder/graphBuilderSchemas.ts
+index 690ee8ee..cffe9a2c 100644
+--- a/packages/app/src/domain/graphBuilder/graphBuilderSchemas.ts
++++ b/packages/app/src/domain/graphBuilder/graphBuilderSchemas.ts
+@@ -25,6 +25,32 @@ const safeDictionaryKeySchema = boundedIdentifierSchema.refine(
+ 
+ const boundedTextSchema = (maximumLength: number) => z.string().min(1).max(maximumLength);
+ 
++export const graphBuilderRequestedDeliverableSchema = z
++  .strictObject({
++    kind: z.enum(['value_only', 'workspace_document', 'native_cad', 'stl_mesh']),
++    label: z.string().trim().min(1).max(160),
++    suggestedRelativePath: z.string().min(1).max(512).optional(),
++    confirmedAt: z.string().min(1).max(64),
++    confirmationRevision: z.number().int().safe().nonnegative(),
++  })
++  .superRefine((value, context) => {
++    if (value.kind === 'workspace_document' && !value.suggestedRelativePath) {
++      context.addIssue({
++        code: 'custom',
++        message: 'Workspace documents require a user-confirmed relative path.',
++        path: ['suggestedRelativePath'],
++      });
++    }
++    if (value.kind !== 'workspace_document' && value.suggestedRelativePath !== undefined) {
++      context.addIssue({
++        code: 'custom',
++        message: 'Only workspace documents may carry a suggested relative path.',
++        path: ['suggestedRelativePath'],
++      });
++    }
++  });
++export type GraphBuilderRequestedDeliverable = z.infer<typeof graphBuilderRequestedDeliverableSchema>;
++
+ const virtualDocumentPathSchema = z
+   .string()
+   .min(1)
+diff --git a/packages/app/src/features/graphBuilder/authoringSemantics.ts b/packages/app/src/features/graphBuilder/authoringSemantics.ts
+index d4ce2dcd..5d03e97a 100644
+--- a/packages/app/src/features/graphBuilder/authoringSemantics.ts
++++ b/packages/app/src/features/graphBuilder/authoringSemantics.ts
+@@ -17,6 +17,7 @@ import { cloneDeep } from 'lodash-es';
+ import {
+   type GraphBuilderAuthoringProject,
+   type GraphBuilderAuthoringSemantics,
++  type GraphBuilderRequestedDeliverable,
+   type GraphBuilderResolvedNodePorts,
+   type GraphBuilderTouchedScope,
+   type GraphDiagnostic,
+@@ -32,6 +33,129 @@ import type { GraphBuilderAuthoringCatalogSnapshot } from './authoringCatalog.js
+ import { layoutGraphBuilderCreatedNodes } from './deterministicGraphLayout.js';
+ 
+ const RULES_VERSION = 'graph-builder-authoring-v1';
++const WRIGHT_DOCUMENT_TOOL = 'wright-workspace-files__write_text_document';
++
++export function validateGraphBuilderDeliverableEffect(input: {
++  project: GraphBuilderAuthoringProject;
++  graphId: GraphId;
++  requestedDeliverable: GraphBuilderRequestedDeliverable;
++}): GraphValidationResult {
++  if (input.requestedDeliverable.kind === 'value_only') {
++    return validation([]);
++  }
++  const graph = input.project.graphs[input.graphId];
++  if (!graph) {
++    return validation([
++      diagnostic({
++        key: `deliverable:missing-graph:${input.graphId}`,
++        ruleId: 'requested-deliverable-effect',
++        graphId: input.graphId,
++        message: 'The graph for the requested deliverable is unavailable.',
++      }),
++    ]);
++  }
++  if (input.requestedDeliverable.kind !== 'workspace_document') {
++    return validation([
++      diagnostic({
++        key: `deliverable:domain-producer-required:${input.graphId}:${input.requestedDeliverable.kind}`,
++        ruleId: 'requested-deliverable-domain-producer',
++        graphId: input.graphId,
++        message:
++          'This native deliverable requires a reviewed Solid Edge/domain artifact producer. The generic document writer and LLM text cannot satisfy it.',
++      }),
++    ]);
++  }
++  const candidates = graph.nodes.filter(
++    (node) =>
++      node.type === 'mcpToolCall' &&
++      (node.data as { toolName?: unknown }).toolName === WRIGHT_DOCUMENT_TOOL,
++  );
++  if (candidates.length !== 1) {
++    return validation([
++      diagnostic({
++        key: `deliverable:document-producer-count:${input.graphId}`,
++        ruleId: 'requested-deliverable-producer',
++        graphId: input.graphId,
++        message:
++          'Add exactly one “Create workspace document” MCP Tool Call using the reviewed Wright document producer.',
++      }),
++    ]);
++  }
++  const producer = candidates[0]!;
++  const data = producer.data as {
++    toolArguments?: unknown;
++    useToolArgumentsInput?: unknown;
++    useToolNameInput?: unknown;
++  };
++  const diagnostics: GraphDiagnostic[] = [];
++  if (data.useToolNameInput === true) {
++    diagnostics.push(
++      diagnostic({
++        key: `deliverable:dynamic-tool:${input.graphId}:${producer.id}`,
++        ruleId: 'requested-deliverable-producer',
++        graphId: input.graphId,
++        nodeId: producer.id,
++        message: 'Create workspace document must keep its exact reviewed tool identity.',
++      }),
++    );
++  }
++  const argumentsConnection = graph.connections.some(
++    (connection) =>
++      connection.inputNodeId === producer.id &&
++      (connection.inputId === 'toolArguments' || connection.inputId === 'arguments'),
++  );
++  let staticArguments: Record<string, unknown> | undefined;
++  if (typeof data.toolArguments === 'string' && data.toolArguments.trim()) {
++    try {
++      const value: unknown = JSON.parse(data.toolArguments);
++      if (value && typeof value === 'object' && !Array.isArray(value)) {
++        staticArguments = value as Record<string, unknown>;
++      }
++    } catch {
++      // Reported below as incomplete producer arguments.
++    }
++  }
++  if (!argumentsConnection) {
++    if (
++      !staticArguments ||
++      typeof staticArguments.content !== 'string' ||
++      typeof staticArguments.mediaType !== 'string' ||
++      staticArguments.relativePath !== input.requestedDeliverable.suggestedRelativePath ||
++      staticArguments.overwrite !== false
++    ) {
++      diagnostics.push(
++        diagnostic({
++          key: `deliverable:document-inputs:${input.graphId}:${producer.id}`,
++          ruleId: 'requested-deliverable-inputs',
++          graphId: input.graphId,
++          nodeId: producer.id,
++          message:
++            'Create workspace document needs the confirmed relative path, content, media type, and overwrite=false through static arguments or one connected arguments object.',
++        }),
++      );
++    }
++  }
++  const graphOutputIds = new Set(
++    graph.nodes.filter((node) => node.type === 'graphOutput').map((node) => node.id),
++  );
++  if (
++    !graph.connections.some(
++      (connection) =>
++        connection.outputNodeId === producer.id && graphOutputIds.has(connection.inputNodeId),
++    )
++  ) {
++    diagnostics.push(
++      diagnostic({
++        key: `deliverable:document-output:${input.graphId}:${producer.id}`,
++        ruleId: 'requested-deliverable-output',
++        graphId: input.graphId,
++        nodeId: producer.id,
++        message: 'Connect the Create workspace document result to Graph Output.',
++      }),
++    );
++  }
++  return validation(diagnostics);
++}
+ 
+ export type CreateGraphBuilderAuthoringSemanticsOptions = {
+   registry: NodeRegistration<any, any>;
+diff --git a/packages/app/src/features/graphBuilder/editorGateway.test.ts b/packages/app/src/features/graphBuilder/editorGateway.test.ts
+index 8fcddf10..0a3f0579 100644
+--- a/packages/app/src/features/graphBuilder/editorGateway.test.ts
++++ b/packages/app/src/features/graphBuilder/editorGateway.test.ts
+@@ -123,6 +123,47 @@ test('commit publishes graph, project and one history entry as one observable tr
+   assert.ok(notificationCount >= 1);
+ });
+ 
++test('commit persists the user-confirmed deliverable atomically with graph undo and redo', () => {
++  const store = createReadyStore();
++  const context = captureGraphBuilderEditorContext(store);
++  const draft = structuredClone(context.snapshot.authoringProject);
++  draft.graphs[graphId]!.metadata!.name = 'Document graph';
++  draft.metadata.wrightRequestedDeliverable = {
++    kind: 'workspace_document',
++    label: 'Design review',
++    suggestedRelativePath: 'reports/design-review.md',
++    confirmedAt: '2026-08-21T20:00:00Z',
++    confirmationRevision: 0,
++  };
++  const prepared = prepareGraphBuilderCommit({
++    base: context.base,
++    commitId: 'deliverable-commit',
++    draft,
++    draftRevision: 1,
++    summary: 'Created the document workflow.',
++  });
++
++  const outcome = store.set(tryCommitGraphBuilderDraftState, {
++    prepared,
++    publishHistorySnapshot: (activeGraphId, snapshot) =>
++      store.set(publishGraphBuilderHistorySnapshotState, { activeGraphId, snapshot }),
++  });
++
++  assert.equal(outcome.status, 'committed');
++  assert.deepEqual(
++    store.get(projectState).metadata.wrightRequestedDeliverable,
++    draft.metadata.wrightRequestedDeliverable,
++  );
++  const entry = store.get(commandHistoryStackStatePerGraph)[graphId]![0]!;
++  entry.command.undo(entry.data, entry.appliedData, {} as never);
++  assert.equal(store.get(projectState).metadata.wrightRequestedDeliverable, undefined);
++  entry.command.apply(entry.data, entry.appliedData, {} as never);
++  assert.deepEqual(
++    store.get(projectState).metadata.wrightRequestedDeliverable,
++    draft.metadata.wrightRequestedDeliverable,
++  );
++});
++
+ test('commit is idempotent and rejects same-ID different-content reuse', () => {
+   const store = createReadyStore();
+   const prepared = prepareChangedCommit(store);
+diff --git a/packages/app/src/features/graphBuilder/editorGateway.ts b/packages/app/src/features/graphBuilder/editorGateway.ts
+index e8f64872..c99797ce 100644
+--- a/packages/app/src/features/graphBuilder/editorGateway.ts
++++ b/packages/app/src/features/graphBuilder/editorGateway.ts
+@@ -94,6 +94,7 @@ export type PreparedGraphBuilderCommit = {
+    */
+   nextGraphs?: Partial<Record<GraphId, NodeGraph | null>>;
+   ownerSessionId?: string;
++  requestedDeliverable?: NonNullable<Project['metadata']['wrightRequestedDeliverable']>;
+   summary: string;
+ };
+ 
+@@ -138,6 +139,7 @@ export type GraphBuilderHistorySnapshot = {
+   lastRunDataByNode: RunDataByNodeId;
+   persistedGraph: NodeGraph | undefined;
+   recoverableConnections: RecoverableNodeConnectionsByNode | undefined;
++  requestedDeliverable: Project['metadata']['wrightRequestedDeliverable'] | null;
+   selectedNodeIds: NodeId[];
+   selectedProcessPages: Record<NodeId, number | 'latest'>;
+ };
+@@ -161,6 +163,12 @@ export const publishGraphBuilderHistorySnapshotState = atom(
+   null,
+   (get, set, input: { activeGraphId: GraphId; snapshot: GraphBuilderHistorySnapshot }) => {
+     const currentProject = get(projectState);
++    const nextMetadata = { ...currentProject.metadata };
++    if (input.snapshot.requestedDeliverable) {
++      nextMetadata.wrightRequestedDeliverable = cloneDeep(input.snapshot.requestedDeliverable);
++    } else {
++      delete nextMetadata.wrightRequestedDeliverable;
++    }
+     const nextGraphs = { ...currentProject.graphs };
+     for (const [rawGraphId, graphSnapshot] of historyGraphSnapshots(input.activeGraphId, input.snapshot)) {
+       const graphId = rawGraphId as GraphId;
+@@ -171,7 +179,7 @@ export const publishGraphBuilderHistorySnapshotState = atom(
+       }
+     }
+ 
+-    set(projectState, { ...currentProject, graphs: nextGraphs });
++    set(projectState, { ...currentProject, metadata: nextMetadata, graphs: nextGraphs });
+     set(graphState, cloneDeep(input.snapshot.graph));
+     set(selectedNodesState, [...input.snapshot.selectedNodeIds]);
+     set(editingNodeState, input.snapshot.editingNodeId);
+@@ -300,6 +308,9 @@ export const tryCommitGraphBuilderDraftState = atom(
+     const after = activeGraphChanged
+       ? createPostCommitHistorySnapshot(before, nextGraphs[activeGraphId]!)
+       : cloneDeep(before);
++    if (input.prepared.requestedDeliverable) {
++      after.requestedDeliverable = cloneDeep(input.prepared.requestedDeliverable);
++    }
+     after.additionalGraphs = createPostCommitRelatedGraphSnapshots(before.additionalGraphs, nextGraphs, activeGraphId);
+     const currentProject = get(projectState);
+     const committedProjectGraphs = { ...currentProject.graphs };
+@@ -311,8 +322,13 @@ export const tryCommitGraphBuilderDraftState = atom(
+         committedProjectGraphs[graphId] = cloneDeep(nextGraph);
+       }
+     }
++    const nextMetadata = { ...currentProject.metadata };
++    if (input.prepared.requestedDeliverable) {
++      nextMetadata.wrightRequestedDeliverable = cloneDeep(input.prepared.requestedDeliverable);
++    }
+     const nextProject = {
+       ...currentProject,
++      metadata: nextMetadata,
+       graphs: committedProjectGraphs,
+     };
+     const historyData: GraphBuilderHistoryCommandData = {
+@@ -383,12 +399,16 @@ export function prepareGraphBuilderCommit(options: {
+   }
+ 
+   const nextGraphs = collectChangedGraphSnapshots(options.base, options.draft);
++  const requestedDeliverable = options.draft.metadata.wrightRequestedDeliverable
++    ? cloneDeep(options.draft.metadata.wrightRequestedDeliverable)
++    : undefined;
+   const canonicalContent = canonicalPreparedCommitContent({
+     base: options.base,
+     draftRevision: options.draftRevision,
+     nextGraph,
+     nextGraphs,
+     ownerSessionId: options.ownerSessionId,
++    requestedDeliverable,
+     summary: options.summary,
+   });
+ 
+@@ -405,6 +425,7 @@ export function prepareGraphBuilderCommit(options: {
+     draftRevision: options.draftRevision,
+     nextGraph: retainedNextGraph,
+     nextGraphs: retainedNextGraphs,
++    ...(requestedDeliverable ? { requestedDeliverable } : {}),
+     ...(options.ownerSessionId ? { ownerSessionId: options.ownerSessionId } : {}),
+     summary: options.summary,
+   };
+@@ -521,6 +542,9 @@ function captureHistorySnapshot(
+     lastRunDataByNode: cloneDeep(get(lastRunDataByNodeState)),
+     persistedGraph: cloneDeep(currentProject.graphs[activeGraphId]),
+     recoverableConnections: cloneDeep(recoverableConnectionsByGraph[activeGraphId]),
++    requestedDeliverable: currentProject.metadata.wrightRequestedDeliverable
++      ? cloneDeep(currentProject.metadata.wrightRequestedDeliverable)
++      : null,
+     selectedNodeIds: [...get(selectedNodesState)],
+     selectedProcessPages: { ...get(selectedProcessPageNodesState) },
+   };
+@@ -547,6 +571,9 @@ function createPostCommitHistorySnapshot(
+       survivingNodeIds,
+       graph.connections,
+     ),
++    requestedDeliverable: before.requestedDeliverable
++      ? cloneDeep(before.requestedDeliverable)
++      : null,
+     selectedNodeIds: before.selectedNodeIds.filter((nodeId) => survivingNodeIds.has(nodeId)),
+     selectedProcessPages: filterNodeRecord(before.selectedProcessPages, survivingNodeIds) ?? {},
+   };
+@@ -711,7 +738,13 @@ function rememberOutcome(
+ function canonicalPreparedCommitContent(
+   prepared: Pick<
+     PreparedGraphBuilderCommit,
+-    'base' | 'draftRevision' | 'nextGraph' | 'nextGraphs' | 'ownerSessionId' | 'summary'
++    | 'base'
++    | 'draftRevision'
++    | 'nextGraph'
++    | 'nextGraphs'
++    | 'ownerSessionId'
++    | 'requestedDeliverable'
++    | 'summary'
+   >,
+ ): string {
+   return canonicalGraphBuilderAuthoringStringify({
+@@ -720,6 +753,7 @@ function canonicalPreparedCommitContent(
+     nextGraph: prepared.nextGraph,
+     nextGraphs: prepared.nextGraphs ?? null,
+     ownerSessionId: prepared.ownerSessionId ?? null,
++    requestedDeliverable: prepared.requestedDeliverable ?? null,
+     summary: prepared.summary,
+   });
+ }
+diff --git a/packages/app/src/features/graphBuilder/evaluation/runtimeAdapters.ts b/packages/app/src/features/graphBuilder/evaluation/runtimeAdapters.ts
+index f8cdaad8..dce5431a 100644
+--- a/packages/app/src/features/graphBuilder/evaluation/runtimeAdapters.ts
++++ b/packages/app/src/features/graphBuilder/evaluation/runtimeAdapters.ts
+@@ -119,6 +119,12 @@ export function createHardenedLegacyGraphBuilderEvaluationAdapter(
+           referencedProjects: input.materialization.referencedProjects,
+           registry: input.materialization.registry,
+           request: input.fixture.request,
++          requestedDeliverable: {
++            kind: 'value_only',
++            label: 'Evaluation result',
++            confirmedAt: 'evaluation',
++            confirmationRevision: 0,
++          },
+         });
+       } catch (error) {
+         if (cancellationRequested && sessionAbort.signal.aborted) {
+@@ -224,6 +230,12 @@ export function createPlanBGraphBuilderEvaluationAdapter(
+         referencedProjects: input.materialization.referencedProjects,
+         registry: input.materialization.registry,
+         request: input.fixture.request,
++        requestedDeliverable: {
++          kind: 'value_only',
++          label: 'Evaluation result',
++          confirmedAt: 'evaluation',
++          confirmationRevision: 0,
++        },
+         safeSettingsAdapters: input.materialization.safeSettingsAdapters,
+         sessionId: `evaluation-${input.fixture.id}-${input.trial}`,
+         verifyIdentity: () => ({
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+index 4d65f019..006f1abb 100644
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+@@ -482,6 +482,12 @@ function options(
+     referencedProjects: {},
+     registry,
+     request: 'Create a text node.',
++    requestedDeliverable: {
++      kind: 'value_only',
++      label: 'Test result',
++      confirmedAt: 'test',
++      confirmationRevision: 0,
++    },
+     ...overrides,
+     baseProject: project,
+   };
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
+index c44a5023..24da7a92 100644
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
+@@ -14,6 +14,7 @@ import {
+   calculateGraphBuilderDraftDelta,
+   parsePortableJson,
+   type GraphBuilderAuthoringProject,
++  type GraphBuilderRequestedDeliverable,
+   type GraphDraftDelta,
+   type PortableJsonObject,
+ } from '../../domain/graphBuilder/index.js';
+@@ -30,6 +31,7 @@ import {
+   summarizeLegacyGraphBuilderResult,
+ } from '../../hooks/legacyGraphBuilderLogging.js';
+ import type { GraphBuilderAuthoringCatalogSnapshot } from './authoringCatalog.js';
++import { validateGraphBuilderDeliverableEffect } from './authoringSemantics.js';
+ import { layoutGraphBuilderCreatedNodes } from './deterministicGraphLayout.js';
+ import { buildGraphBuilderProjection } from './readExecutor.js';
+ import type { GraphBuilderPreview } from './sessionController.js';
+@@ -91,6 +93,7 @@ export type RunLegacyGraphBuilderDraftOptions = {
+   referencedProjects: Record<string, Project>;
+   registry: NodeRegistration<any, any>;
+   request: string;
++  requestedDeliverable: GraphBuilderRequestedDeliverable;
+ };
+ 
+ /**
+@@ -102,6 +105,7 @@ export async function runLegacyGraphBuilderDraft(
+   options: RunLegacyGraphBuilderDraftOptions,
+ ): Promise<LegacyGraphBuilderDraftResult> {
+   const baseProject = cloneDeep(options.baseProject);
++  baseProject.metadata.wrightRequestedDeliverable = cloneDeep(options.requestedDeliverable);
+   const initialGraph = baseProject.graphs[options.activeGraphId];
+   if (!initialGraph) {
+     throw new Error('The legacy Graph Builder base does not contain the active graph.');
+@@ -367,6 +371,14 @@ export async function runLegacyGraphBuilderDraft(
+   }
+ 
+   const draft = cloneDeep(getWorkingProject());
++  const deliverableValidation = validateGraphBuilderDeliverableEffect({
++    project: draft,
++    graphId: options.activeGraphId,
++    requestedDeliverable: options.requestedDeliverable,
++  });
++  if (deliverableValidation.blockingDiagnosticKeys.length > 0) {
++    throw new Error(deliverableValidation.diagnostics[0]?.message ?? 'The requested deliverable is incomplete.');
++  }
+   const delta = calculateGraphBuilderDraftDelta(baseProject, draft, options.activeGraphId);
+   if (isEmptyDelta(delta)) {
+     return {
+@@ -386,6 +398,7 @@ export async function runLegacyGraphBuilderDraft(
+       diagnostics: [],
+       draftRevision: workingRevision,
+       summary,
++      requestedDeliverable: cloneDeep(options.requestedDeliverable),
+     },
+   };
+ }
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunnerGateway.test.ts b/packages/app/src/features/graphBuilder/legacyDraftRunnerGateway.test.ts
+index 61c9b5e5..cbf11608 100644
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunnerGateway.test.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunnerGateway.test.ts
+@@ -130,5 +130,11 @@ async function createPrivateLegacyDraft(context: ReturnType<typeof captureGraphB
+     referencedProjects: context.referencedProjects,
+     registry: context.registry,
+     request: 'Add one text node.',
++    requestedDeliverable: {
++      kind: 'value_only',
++      label: 'Test result',
++      confirmedAt: 'test',
++      confirmationRevision: 0,
++    },
+   });
+ }
+diff --git a/packages/app/src/features/graphBuilder/planBSessionRuntime.test.ts b/packages/app/src/features/graphBuilder/planBSessionRuntime.test.ts
+index 4d614ab7..fc23b6cd 100644
+--- a/packages/app/src/features/graphBuilder/planBSessionRuntime.test.ts
++++ b/packages/app/src/features/graphBuilder/planBSessionRuntime.test.ts
+@@ -159,6 +159,12 @@ test('Plan B reads the full private YAML, uses canonical templates, and accepts
+   const runtime = createPlanBGraphBuilderSessionRuntime({
+     activeGraphId,
+     authoringProject: project,
++    requestedDeliverable: {
++      kind: 'value_only',
++      label: 'Test result',
++      confirmedAt: 'test',
++      confirmationRevision: 0,
++    },
+     base: baseIdentity(),
+     commit: ({ draft, draftRevision, summary }) => {
+       committedDraft = draft;
+diff --git a/packages/app/src/features/graphBuilder/planBSessionRuntime.ts b/packages/app/src/features/graphBuilder/planBSessionRuntime.ts
+index 59536a12..65e721c6 100644
+--- a/packages/app/src/features/graphBuilder/planBSessionRuntime.ts
++++ b/packages/app/src/features/graphBuilder/planBSessionRuntime.ts
+@@ -9,9 +9,13 @@ import {
+   calculateGraphBuilderDraftDelta,
+   graphBuilderStringTupleKey,
+   type GraphBuilderTouchedScope,
++  type GraphBuilderRequestedDeliverable,
+   type GraphDiagnostic,
+ } from '../../domain/graphBuilder/index.js';
+-import { createAppGraphBuilderAuthoringSemantics } from './authoringSemantics.js';
++import {
++  createAppGraphBuilderAuthoringSemantics,
++  validateGraphBuilderDeliverableEffect,
++} from './authoringSemantics.js';
+ import { createGraphBuilderAuthoringCatalog, type GraphBuilderNodeAuthoringAdapter } from './authoringCatalog.js';
+ import type { GraphBuilderCommitOutcome } from './editorGateway.js';
+ import type { GraphBuilderProjectDataManifestEntry } from './editorSnapshot.js';
+@@ -52,6 +56,7 @@ export type CreatePlanBGraphBuilderSessionRuntimeOptions = {
+   referencedProjects: Record<ProjectId, Project>;
+   registry: NodeRegistration<any, any>;
+   request: string;
++  requestedDeliverable: GraphBuilderRequestedDeliverable;
+   safeSettingsAdapters?: Readonly<Record<string, GraphBuilderNodeAuthoringAdapter>>;
+   sessionId?: string;
+   verifyIdentity(): {
+@@ -154,6 +159,7 @@ export function createPlanBGraphBuilderSessionRuntime(
+   const controller = new GraphBuilderSessionController({
+     sessionId: options.sessionId,
+     request: options.request,
++    requestedDeliverable: options.requestedDeliverable,
+     base: options.base,
+     policyVersion: options.policyVersion ?? GRAPH_BUILDER_POLICY_VERSION,
+     kernel: kernelFacade,
+@@ -169,15 +175,32 @@ export function createPlanBGraphBuilderSessionRuntime(
+       }),
+     read: (readRequest, readContext) => readExecutor.execute(readRequest, readContext),
+     executePolicy: options.executePolicy,
+-    validateDraft: (draft) =>
+-      semantics.validateCandidate({
++    validateDraft: (draft) => {
++      const authoring = semantics.validateCandidate({
+         base: options.authoringProject,
+         candidate: draft,
+         touchedScope: completeGraphScope(
+           workspace.getProjectDraftDelta().graphDeltas.map((delta) => delta.graphId as GraphId),
+           draft,
+         ),
+-      }),
++      });
++      const deliverable = validateGraphBuilderDeliverableEffect({
++        project: draft,
++        graphId: options.activeGraphId,
++        requestedDeliverable: options.requestedDeliverable,
++      });
++      const diagnostics = [...authoring.diagnostics, ...deliverable.diagnostics].slice(0, 256);
++      return {
++        completeness:
++          authoring.completeness === 'complete' && deliverable.completeness === 'complete'
++            ? 'complete'
++            : 'incomplete',
++        diagnostics,
++        blockingDiagnosticKeys: diagnostics
++          .filter((entry) => entry.severity === 'error')
++          .map((entry) => entry.diagnosticKey),
++      };
++    },
+     verifyIdentity: options.verifyIdentity,
+     commit: options.commit,
+     limits: options.limits,
+diff --git a/packages/app/src/features/graphBuilder/policyPrompt.ts b/packages/app/src/features/graphBuilder/policyPrompt.ts
+index 2621be2a..00c65d20 100644
+--- a/packages/app/src/features/graphBuilder/policyPrompt.ts
++++ b/packages/app/src/features/graphBuilder/policyPrompt.ts
+@@ -33,6 +33,7 @@ guessing a line boundary.
+ get-node-templates may request defaults for several choices at once. If authoringSettings is present, request exactly one authoringChoiceId and provide a nonempty settings object. A node's runtime type and its canonical authoringChoiceId are different identifiers. Use search-node-types and get-node-templates when adding an unfamiliar node; never guess aliases, referenced graphs, or prefabs.
+ 
+ Virtual documents are the authoritative model-facing graph authoring surface, not .rivet-project files and not direct editor state. Existing node envelopes and data, including complete Code/Text/prompt contents, may be edited directly when the requested change requires it. Preserve every field and document section that the task does not require changing, including opaque-preservation markers and host-owned identifiers. To add another node of a type already visible in the graph, you may copy that complete node object, assign a unique graph-local ID, and change only task-required fields. Otherwise start from a host-provided node template; do not invent its default data shape. Read the relevant document lines before editing them whenever the inline active document is truncated or a different graph is involved. Resource kinds are "data", "graph", "knowledge-store", "mcp-server", "node-prefab", and "referenced-project".
++requestedDeliverable is user-confirmed host authority, not a hint to infer from userRequest. For workspace_document, the accepted graph must contain one ordinary MCP Tool Call whose exact toolName is "wright-workspace-files__write_text_document", whose arguments supply relativePath/content/mediaType/overwrite=false, and whose result is connected to Graph Output. Use the confirmed suggestedRelativePath exactly. For native_cad or stl_mesh, use only a reviewed domain MCP producer visible in host context; never substitute the text writer, LLM prose, or a path string. For value_only, do not add a file producer unless the request separately requires one. Host diagnostics are authoritative and block unsupported producer claims.
+ You may add a new Graph Input or Graph Output when the request needs another interface value. Preserve the type, node ID, configured boundary ID, and data type of every boundary node already present in a persisted graph; changing or deleting an existing boundary is rejected because it could silently break callers. A newly created transient canvas is the only exception and host diagnostics remain authoritative.
+ 
+ unifiedDiff must be exactly one standard unified diff for one normalized relative virtual-document path. Use matching headers such as "--- a/active-graph.yaml" and "+++ b/active-graph.yaml", followed by one or more valid @@ hunks whose line counts are exact. Encode line breaks inside the JSON string as \\n. Do not include Markdown fences, prose, timestamps, absolute paths, parent traversal, fuzzy context, or patches for multiple files. baseRevision must equal the draftRevision of the document you read. Keep hunks narrow but include enough unchanged context for exact application. If the relevant base text is missing or truncated, request it instead of guessing.
+diff --git a/packages/app/src/features/graphBuilder/policyRunner.providerContract.test.ts b/packages/app/src/features/graphBuilder/policyRunner.providerContract.test.ts
+index 92681b18..919bbe4d 100644
+--- a/packages/app/src/features/graphBuilder/policyRunner.providerContract.test.ts
++++ b/packages/app/src/features/graphBuilder/policyRunner.providerContract.test.ts
+@@ -39,6 +39,12 @@ function policyTurn(provider: string): GraphBuilderPolicyTurn {
+     attemptId: `attempt-${provider}`,
+     phase: 'editing',
+     userRequest: `Return a ready decision through the ${provider} wire protocol.`,
++    requestedDeliverable: {
++      kind: 'value_only',
++      label: 'Test result',
++      confirmedAt: 'test',
++      confirmationRevision: 0,
++    },
+     draftRevision: 0,
+     projection: {
+       protocolVersion: GRAPH_BUILDER_PROTOCOL_VERSION,
+diff --git a/packages/app/src/features/graphBuilder/policyRunner.test.ts b/packages/app/src/features/graphBuilder/policyRunner.test.ts
+index 7ea6db3f..75286e2d 100644
+--- a/packages/app/src/features/graphBuilder/policyRunner.test.ts
++++ b/packages/app/src/features/graphBuilder/policyRunner.test.ts
+@@ -41,6 +41,12 @@ function policyTurn(): GraphBuilderPolicyTurn {
+     attemptId: 'attempt-1',
+     phase: 'editing',
+     userRequest: 'Create one text node.',
++    requestedDeliverable: {
++      kind: 'value_only',
++      label: 'Test result',
++      confirmedAt: 'test',
++      confirmationRevision: 0,
++    },
+     draftRevision: 0,
+     projection: {
+       protocolVersion: GRAPH_BUILDER_PROTOCOL_VERSION,
+diff --git a/packages/app/src/features/graphBuilder/requestedDeliverable.test.ts b/packages/app/src/features/graphBuilder/requestedDeliverable.test.ts
+new file mode 100644
+index 00000000..5d95b4bf
+--- /dev/null
++++ b/packages/app/src/features/graphBuilder/requestedDeliverable.test.ts
+@@ -0,0 +1,135 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++import type { GraphId, NodeConnection, NodeId, PortId } from '@valerypopoff/rivet2-core';
++import {
++  graphBuilderRequestedDeliverableSchema,
++  type GraphBuilderAuthoringProject,
++  type GraphBuilderRequestedDeliverable,
++} from '../../domain/graphBuilder/index.js';
++import { validateGraphBuilderDeliverableEffect } from './authoringSemantics.js';
++
++const graphId = 'main' as GraphId;
++const deliverable: GraphBuilderRequestedDeliverable = {
++  kind: 'workspace_document',
++  label: 'Design review',
++  suggestedRelativePath: 'reports/design-review.md',
++  confirmedAt: '2026-08-21T20:00:00Z',
++  confirmationRevision: 0,
++};
++
++function project({
++  connectOutput = true,
++  toolName = 'wright-workspace-files__write_text_document',
++}: {
++  connectOutput?: boolean;
++  toolName?: string;
++} = {}) {
++  const connections: NodeConnection[] = connectOutput
++    ? [
++        {
++          outputNodeId: 'writer' as NodeId,
++          outputId: 'result' as PortId,
++          inputNodeId: 'output' as NodeId,
++          inputId: 'value' as PortId,
++        },
++      ]
++    : [];
++  return {
++    metadata: {
++      id: 'project',
++      title: 'Document workflow',
++      description: '',
++      mainGraphId: graphId,
++    },
++    graphs: {
++      [graphId]: {
++        metadata: { id: graphId, name: 'Main' },
++        nodes: [
++          {
++            id: 'writer',
++            type: 'mcpToolCall',
++            title: 'Create workspace document',
++            visualData: { x: 0, y: 0 },
++            data: {
++              toolName,
++              useToolNameInput: false,
++              useToolArgumentsInput: false,
++              toolArguments: JSON.stringify({
++                relativePath: deliverable.suggestedRelativePath,
++                content: '# Design review\n',
++                mediaType: 'text/markdown',
++                overwrite: false,
++              }),
++            },
++          },
++          {
++            id: 'output',
++            type: 'graphOutput',
++            title: 'Document artifact',
++            visualData: { x: 200, y: 0 },
++            data: { id: 'artifact', dataType: 'object' },
++          },
++        ],
++        connections,
++      },
++    },
++    nodePrefabs: {},
++  } as unknown as GraphBuilderAuthoringProject;
++}
++
++test('requested deliverable requires an explicit user-confirmed kind and document path', () => {
++  assert.equal(
++    graphBuilderRequestedDeliverableSchema.safeParse({
++      label: 'Design review',
++      confirmedAt: '2026-08-21T20:00:00Z',
++      confirmationRevision: 0,
++    }).success,
++    false,
++  );
++  assert.equal(
++    graphBuilderRequestedDeliverableSchema.safeParse({
++      ...deliverable,
++      suggestedRelativePath: undefined,
++    }).success,
++    false,
++  );
++  assert.equal(graphBuilderRequestedDeliverableSchema.safeParse(deliverable).success, true);
++});
++
++test('workspace document accepts only the exact producer and authoritative output dependency', () => {
++  assert.deepEqual(
++    validateGraphBuilderDeliverableEffect({
++      project: project(),
++      graphId,
++      requestedDeliverable: deliverable,
++    }).blockingDiagnosticKeys,
++    [],
++  );
++  const disconnected = validateGraphBuilderDeliverableEffect({
++    project: project({ connectOutput: false }),
++    graphId,
++    requestedDeliverable: deliverable,
++  });
++  assert.equal(disconnected.blockingDiagnosticKeys.length, 1);
++  assert.match(disconnected.diagnostics[0]!.message, /Graph Output/);
++
++  const substitute = validateGraphBuilderDeliverableEffect({
++    project: project({ toolName: 'other__return_path' }),
++    graphId,
++    requestedDeliverable: deliverable,
++  });
++  assert.equal(substitute.blockingDiagnosticKeys.length, 1);
++  assert.match(substitute.diagnostics[0]!.message, /exactly one/i);
++});
++
++test('native CAD and STL stay fail-closed until a reviewed domain producer is available', () => {
++  for (const kind of ['native_cad', 'stl_mesh'] as const) {
++    const result = validateGraphBuilderDeliverableEffect({
++      project: project(),
++      graphId,
++      requestedDeliverable: { ...deliverable, kind, suggestedRelativePath: undefined },
++    });
++    assert.equal(result.blockingDiagnosticKeys.length, 1);
++    assert.match(result.diagnostics[0]!.message, /Solid Edge\/domain artifact producer/);
++  }
++});
+diff --git a/packages/app/src/features/graphBuilder/sessionController.test.ts b/packages/app/src/features/graphBuilder/sessionController.test.ts
+index d231d669..5e699d6b 100644
+--- a/packages/app/src/features/graphBuilder/sessionController.test.ts
++++ b/packages/app/src/features/graphBuilder/sessionController.test.ts
+@@ -419,6 +419,12 @@ function createController(options: {
+         payload: null,
+       })),
+     request: options.request ?? 'Create a text node',
++    requestedDeliverable: {
++      kind: 'value_only',
++      label: 'Test result',
++      confirmedAt: 'test',
++      confirmationRevision: 0,
++    },
+     ...(options.sessionId !== undefined ? { sessionId: options.sessionId } : {}),
+     validateDraft:
+       options.validateDraft ??
+diff --git a/packages/app/src/features/graphBuilder/sessionController.ts b/packages/app/src/features/graphBuilder/sessionController.ts
+index 0d688df9..73e56db8 100644
+--- a/packages/app/src/features/graphBuilder/sessionController.ts
++++ b/packages/app/src/features/graphBuilder/sessionController.ts
+@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash-es';
+ import {
+   GRAPH_BUILDER_LIMITS,
+   GRAPH_BUILDER_PROTOCOL_VERSION,
++  graphBuilderRequestedDeliverableSchema,
+   canonicalGraphBuilderAuthoringStringify,
+   hashCanonicalGraphBuilderValue,
+   parseGraphBuilderDecision,
+@@ -16,6 +17,7 @@ import {
+   type GraphBuilderProjectDraftDelta,
+   type GraphBuilderReadRequest,
+   type GraphBuilderReadResult,
++  type GraphBuilderRequestedDeliverable,
+   type GraphBuilderSessionResult,
+   type GraphDiagnostic,
+   type GraphDraftDelta,
+@@ -56,6 +58,7 @@ export type GraphBuilderPolicyTurn = {
+   attemptId: string;
+   phase: GraphBuilderPolicyPhase;
+   userRequest: string;
++  requestedDeliverable: GraphBuilderRequestedDeliverable;
+   draftRevision: number;
+   projection: GraphBuilderProjection;
+   workspace: VirtualGraphPolicyWorkspaceContext;
+@@ -155,6 +158,7 @@ export type GraphBuilderPreview = {
+   diagnostics: GraphDiagnostic[];
+   draftRevision: number;
+   summary: string;
++  requestedDeliverable: GraphBuilderRequestedDeliverable;
+ };
+ 
+ export type GraphBuilderSessionViewState =
+@@ -277,6 +281,7 @@ export type GraphBuilderSessionControllerOptions = {
+     },
+   ): Promise<GraphBuilderReadResult>;
+   request: string;
++  requestedDeliverable: GraphBuilderRequestedDeliverable;
+   sessionId?: string;
+   validateDraft(draft: AuthoringProject): GraphValidationResult;
+   verifyIdentity(): {
+@@ -303,6 +308,7 @@ export class GraphBuilderSessionController {
+   readonly #options: GraphBuilderSessionControllerOptions;
+   readonly #limits: GraphBuilderSessionLimits;
+   readonly #request: string;
++  readonly #requestedDeliverable: GraphBuilderRequestedDeliverable;
+   readonly #sessionId: string;
+   readonly #startedAt = Date.now();
+   readonly #hardDeadlineAt: number;
+@@ -337,6 +343,9 @@ export class GraphBuilderSessionController {
+     });
+     this.#hardDeadlineAt = this.#startedAt + this.#limits.maxWallTimeMs;
+     this.#request = options.request.trim();
++    this.#requestedDeliverable = graphBuilderRequestedDeliverableSchema.parse(
++      cloneDeep(options.requestedDeliverable),
++    );
+     const sessionId = options.sessionId ?? newId();
+     if (
+       typeof sessionId !== 'string' ||
+@@ -569,6 +578,7 @@ export class GraphBuilderSessionController {
+         attemptId,
+         phase,
+         userRequest: this.#request,
++        requestedDeliverable: this.#requestedDeliverable,
+         draftRevision,
+         projection,
+         workspace,
+@@ -1191,6 +1201,7 @@ export class GraphBuilderSessionController {
+       diagnostics: this.#diagnostics,
+       draftRevision: this.#options.kernel.getDraftRevision(),
+       summary: summary.trim() || deterministicSummary(delta),
++      requestedDeliverable: cloneDeep(this.#requestedDeliverable),
+     };
+     if (!this.#checkHardDeadline()) {
+       return true;
+diff --git a/packages/app/src/features/graphBuilder/sessionPresentation.test.ts b/packages/app/src/features/graphBuilder/sessionPresentation.test.ts
+index 210eb0fb..919227c4 100644
+--- a/packages/app/src/features/graphBuilder/sessionPresentation.test.ts
++++ b/packages/app/src/features/graphBuilder/sessionPresentation.test.ts
+@@ -59,6 +59,12 @@ test('only generation phases are presented as cancelable work', () => {
+           ],
+         },
+         diagnostics: [],
++        requestedDeliverable: {
++          kind: 'value_only',
++          label: 'Test result',
++          confirmedAt: 'test',
++          confirmationRevision: 0,
++        },
+       },
+     }),
+     false,
+diff --git a/packages/app/src/hooks/useAiGraphBuilder.ts b/packages/app/src/hooks/useAiGraphBuilder.ts
+index ae326a23..6518da60 100644
+--- a/packages/app/src/hooks/useAiGraphBuilder.ts
++++ b/packages/app/src/hooks/useAiGraphBuilder.ts
+@@ -3,7 +3,11 @@ import { useAtomValue, useStore } from 'jotai';
+ import { cloneDeep } from 'lodash-es';
+ import { useCallback, useEffect, useRef, useState } from 'react';
+ import { toast } from 'react-toastify';
+-import type { GraphBuilderAuthoringProject, GraphDraftDelta } from '../domain/graphBuilder/index.js';
++import type {
++  GraphBuilderAuthoringProject,
++  GraphBuilderRequestedDeliverable,
++  GraphDraftDelta,
++} from '../domain/graphBuilder/index.js';
+ import { createGraphBuilderAuthoringCatalog } from '../features/graphBuilder/authoringCatalog.js';
+ import {
+   captureGraphBuilderEditorContext,
+@@ -92,7 +96,11 @@ export function useLegacyAiGraphBuilder({ onFeedback }: { onFeedback: (feedback:
+   }, [releaseOwnership]);
+ 
+   const start = useCallback(
+-    async (request: string, requestedModel: ResolvedAiAssistModelSettings): Promise<void> => {
++    async (
++      request: string,
++      requestedModel: ResolvedAiAssistModelSettings,
++      requestedDeliverable: GraphBuilderRequestedDeliverable,
++    ): Promise<void> => {
+       if (activeRef.current || !request.trim()) {
+         return;
+       }
+@@ -267,6 +275,7 @@ export function useLegacyAiGraphBuilder({ onFeedback }: { onFeedback: (feedback:
+           referencedProjects: context.referencedProjects,
+           registry: context.registry,
+           request: request.trim(),
++          requestedDeliverable,
+         });
+ 
+         if (!isCurrent() || !mountedRef.current) {
+diff --git a/packages/app/src/hooks/usePlanBGraphBuilder.ts b/packages/app/src/hooks/usePlanBGraphBuilder.ts
+index b9553213..4d24a631 100644
+--- a/packages/app/src/hooks/usePlanBGraphBuilder.ts
++++ b/packages/app/src/hooks/usePlanBGraphBuilder.ts
+@@ -2,6 +2,7 @@ import { newId, type RuntimeSettings } from '@valerypopoff/rivet2-core';
+ import { useStore } from 'jotai';
+ import { cloneDeep } from 'lodash-es';
+ import { useCallback, useEffect, useRef, useState } from 'react';
++import type { GraphBuilderRequestedDeliverable } from '../domain/graphBuilder/index.js';
+ import {
+   captureGraphBuilderEditorContext,
+   prepareGraphBuilderCommit,
+@@ -81,7 +82,7 @@ export function usePlanBGraphBuilder() {
+   }, [disposeController]);
+ 
+   const start = useCallback(
+-    async (request: string): Promise<void> => {
++    async (request: string, requestedDeliverable: GraphBuilderRequestedDeliverable): Promise<void> => {
+       if (controllerRef.current || startupAbortRef.current || !request.trim()) {
+         return;
+       }
+@@ -185,12 +186,15 @@ export function usePlanBGraphBuilder() {
+         }
+ 
+         const policyRunner = createGraphBuilderPolicyRunner();
++        const authoringProject = cloneDeep(context.snapshot.authoringProject);
++        authoringProject.metadata.wrightRequestedDeliverable = cloneDeep(requestedDeliverable);
+         const { controller } = createPlanBGraphBuilderSessionRuntime({
+           sessionId,
+           request: request.trim(),
++          requestedDeliverable,
+           base: context.base,
+           activeGraphId: context.base.activeGraphId,
+-          authoringProject: context.snapshot.authoringProject,
++          authoringProject,
+           referencedProjects: context.referencedProjects,
+           registry: context.registry,
+           projectDataManifest: context.snapshot.projectDataManifest,
+diff --git a/packages/core/src/model/Project.ts b/packages/core/src/model/Project.ts
+index 596b3039..95de4736 100644
+--- a/packages/core/src/model/Project.ts
++++ b/packages/core/src/model/Project.ts
+@@ -45,6 +45,17 @@ export type ProjectMetadata = {
+ 
+   /** Named, non-secret knowledge-store connections available to graphs in this project. */
+   knowledgeStores?: Record<KnowledgeStoreConnectionId, KnowledgeStoreConnectionDefinition>;
++
++  /** Wright-owned, user-confirmed deliverable intent retained with this revision. */
++  wrightRequestedDeliverable?: WrightRequestedDeliverable;
++};
++
++export type WrightRequestedDeliverable = {
++  kind: 'value_only' | 'workspace_document' | 'native_cad' | 'stl_mesh';
++  label: string;
++  suggestedRelativePath?: string;
++  confirmedAt: string;
++  confirmationRevision: number;
+ };
+ 
+ export type KnowledgeStoreConnectionDefinition = {

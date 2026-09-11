@@ -34,6 +34,7 @@ from .rivet_validation import (
     ValidationIssue,
     extract_rivet_mcp_requirements,
     validate_rivet_project,
+    validate_requested_deliverable_effect,
 )
 from .workflow_runner import WorkspaceWorkflowRunner
 from .workflows import WorkspaceWorkflowStore
@@ -414,6 +415,15 @@ class WorkspaceWorkflowOperations:
                     "RIVET_REVIEW_STALE",
                     "The current workspace capability scope changed",
                 )
+            deliverable_issues = validate_requested_deliverable_effect(
+                document.project,
+                selected_graph=graph_id,
+                bindings=binding_set.bindings,
+                require_reviewed_binding=True,
+            )
+            if deliverable_issues:
+                issue = deliverable_issues[0]
+                raise WorkflowOperationsError(issue.code, issue.message)
             review_digest = canonical_digest(
                 {
                     "workspace_id": workspace_id,
@@ -661,6 +671,17 @@ class WorkspaceWorkflowOperations:
                 raise WorkflowOperationsError(
                     "RIVET_BINDING_STALE",
                     "The current MCP tool connection changed: " + ", ".join(stale),
+                )
+            deliverable_issues = validate_requested_deliverable_effect(
+                document.project,
+                selected_graph=graph_id,
+                bindings=binding_set.bindings,
+                require_reviewed_binding=True,
+            )
+            if deliverable_issues:
+                raise WorkflowOperationsError(
+                    deliverable_issues[0].code,
+                    deliverable_issues[0].message,
                 )
             resolved_binding_set_digest = binding_set.binding_set_digest
             run_authorization_digest = canonical_digest(

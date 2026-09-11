@@ -1,0 +1,50 @@
+{
+  "artifacts": [
+    {
+      "filename": "wright_engineering-0.1.9-py3-none-any.whl",
+      "sha256": "53a48234f18c4b1b2457a31dc8c5da95c67dfa29db1d8a5faca1ec890f36a77d",
+      "size": 16298531
+    },
+    {
+      "filename": "wright_engineering-0.1.9.tar.gz",
+      "sha256": "988c95f8b3af5fa255cb0278c5ce40432f4efe5d5d4abaf3374a7b37aab7b9a3",
+      "size": 15830322
+    }
+  ],
+  "compatibility_sha256": "98342002826df1666b866ceb51b3edcddabb2a9922332dca844ed5eb0805f402",
+  "distribution": "wright-engineering",
+  "native_inspections": [
+    {
+      "artifact_kind": "wheel",
+      "bundled_modules": [
+        "wright_engineering",
+        "api",
+        "core",
+        "agent_adapters",
+        "tool_registry",
+        "data_vault",
+        "workspace_service"
+      ],
+      "runtime_extra_lock_sha256": "5ee9590e5d906448aa86d75a15fd145fa85dc3e6b9e40e8594e5117b8f6e4896",
+      "ui_manifest_sha256": "67343d0219b22e2edc6eb66713817f93081a144a3574e9f6015799add626806a"
+    },
+    {
+      "artifact_kind": "sdist",
+      "bundled_modules": [
+        "wright_engineering",
+        "api",
+        "core",
+        "agent_adapters",
+        "tool_registry",
+        "data_vault",
+        "workspace_service"
+      ],
+      "runtime_extra_lock_sha256": "5ee9590e5d906448aa86d75a15fd145fa85dc3e6b9e40e8594e5117b8f6e4896",
+      "ui_manifest_sha256": "67343d0219b22e2edc6eb66713817f93081a144a3574e9f6015799add626806a"
+    }
+  ],
+  "runtime_extra_lock_sha256": "5ee9590e5d906448aa86d75a15fd145fa85dc3e6b9e40e8594e5117b8f6e4896",
+  "schema_version": 1,
+  "ui_manifest_sha256": "67343d0219b22e2edc6eb66713817f93081a144a3574e9f6015799add626806a",
+  "version": "0.1.9"
+}
