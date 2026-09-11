@@ -4424,8 +4424,11 @@ def validate_roadmap_approval_and_lease(
                 )
 
             governance_tooling = (
+                "docs/contributing/dev-push-runbook.md",
+                "scripts/check-dev-push.sh",
                 "scripts/program_control/validation.py",
                 "tests/program_control_plane/test_native_scoped_delivery.py",
+                "tests/release/test_dev_push_process.py",
             )
 
             def is_governance_tooling(path: str) -> bool:
