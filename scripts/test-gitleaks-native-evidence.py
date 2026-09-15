@@ -20,6 +20,7 @@ BROWSER_PATHS = (
     "specs/079-wright-native-authoring/evidence/native-browser-runs-997e5610.json",
 )
 ENV_PATH = "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt"
+TRANSITION_PATH = "docs/programs/engineering-process-platform/evidence/transitions/TR-0091.json"
 
 
 def write_json(root: Path, name: str, value: object) -> None:
@@ -156,9 +157,14 @@ def main() -> int:
         ENV_PATH,
         {"config": {"webServer": {"env": {"WRIGHT_API_TOKEN": synthetic}}}},
     )
+    write_json(
+        negative,
+        TRANSITION_PATH,
+        {"checks": [{"evidence": [f"api_body_sha256:{synthetic}"]}]},
+    )
     code, findings = scan(negative, work / "negative-report")
     actual = {str(row["File"]).removeprefix("/scan/") for row in findings}
-    expected = {MAP_PATH, *BROWSER_PATHS, wrong_path, ENV_PATH}
+    expected = {MAP_PATH, *BROWSER_PATHS, wrong_path, ENV_PATH, TRANSITION_PATH}
     if code != 1 or not expected <= actual:
         raise AssertionError(
             "A neighboring credential or changed hash escaped the scanner"
