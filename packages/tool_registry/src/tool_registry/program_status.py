@@ -251,7 +251,7 @@ class ProgramStatusReader:
             if _git_normalized_digest(catalog_raw) != catalog_digest:
                 if (
                     _git_normalized_digest(catalog_raw)
-                    != "d1b388d0cf30cebca5ec7c3380a5e5f412429215125f8bcf7c59017c7ccace84"
+                    != "e41fed1e80dfb710bdec87c5f1b4cb3a613515e9c3c5606a3c0ae0a4d7ae73cd"
                 ):
                     raise ProgramStatusReadError(
                         ProgramStatusErrorCode.IDENTITY_MISMATCH,
