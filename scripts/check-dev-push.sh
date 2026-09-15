@@ -225,6 +225,10 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(hermes-plugin-wright/tests)
       ;;
+    tests/conftest.py|tests/*/conftest.py)
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=("${changed_file%/conftest.py}")
+      ;;
     tests/*.py|tests/*/*.py)
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=("$changed_file")

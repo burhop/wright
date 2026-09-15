@@ -225,6 +225,15 @@ def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection(
     assert "--import-mode=importlib" not in gate
 
 
+def test_fast_gate_routes_changed_conftest_to_its_test_directory() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("tests/conftest.py|tests/*/conftest.py)")
+    route = gate[start : gate.index(";;", start)]
+
+    assert 'PYTHON_TEST_TARGETS+=("${changed_file%/conftest.py}")' in route
+    assert 'PYTHON_TEST_TARGETS+=("$changed_file")' not in route
+
+
 def test_full_gate_excludes_focused_roots_from_broad_tests_collection() -> None:
     gate = _read("scripts/check-dev-merge.sh")
 
