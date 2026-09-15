@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0155", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED", "to_state": "CANDIDATE_FROZEN", "prior_revision": 155, "new_revision": 156,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "d11c958cf73daf2a0f527ee1b6ff4f3dbc25aeb4ff6c016b2db6198129b405c7", "new_state_digest": "1276adb29c9e8cca59f9ee36ea6617c21dcd403c2e3305a491d70d69fa46dbbf",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Freeze exact candidate ffada082c18b0f14defbe710ea24a4a6db9eccd1 for attachment of its completed independent one-line delta review.",
+  "started_at": "2026-09-15T18:57:00Z", "finished_at": "2026-09-15T18:58:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "e9d2ef250eee6c96cbd730bfdc4ed4e6c570f6a4", "source_tree": "f0075aa6a7abd981ff159790afbb965f0e515e96", "source_program_tree": "32a51187a47ade215ef10663a62732f815411c28", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0156.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0155.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0155.json", "sha256": "03ca12369ee8ef55227dad0de6faa53ffd01c03ec2192cf8b9b5582e7ccf62e7", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0156.json", "sha256": "91c6123913404a71aabe1335953a57fa38d447ffda6eb52060af8dd4e3c89682", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-CATALOG-DIGEST-FREEZE", "method": "Freeze exact commit and tree after the one-line correction and closed lease; require independent review before integration.", "environment": "Committed Git", "duration_ms": 0, "result": "passed", "failure_class": null, "evidence": ["candidate:ffada082c18b0f14defbe710ea24a4a6db9eccd1", "tree:e7150d40840e03410a5bf0a053cc55af868eef6d"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": null, "repair": {"stable_cause_id": "EPP-N01-STATUS-CATALOG-DIGEST-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Attach the completed independent review before integration.", "Required gates, CI and dev integration remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0155.json", "next_action": "VERIFY_CURRENT_FEATURE_CANDIDATE"
+}
