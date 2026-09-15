@@ -248,6 +248,8 @@ def test_changes_after_review_require_new_candidate(candidate, path: str):
     [
         f"{ROOT}/roadmap.json",
         f"{ROOT}/schemas/transition-artifact-digest-correction.schema.json",
+        "packages/tool_registry/tests/test_native_application_lifecycle.py",
+        "scripts/qualify_hermes_workflow_vision.py",
         "tests/program_control_plane/test_transition_chain.py",
     ],
 )

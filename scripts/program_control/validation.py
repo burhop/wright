@@ -4698,6 +4698,8 @@ def validate_roadmap_approval_and_lease(
                 "scripts/check-dev-push.sh",
                 "scripts/program_control/validation.py",
                 "scripts/program_status/publisher.py",
+                "scripts/qualify_hermes_workflow_vision.py",
+                "packages/tool_registry/tests/test_native_application_lifecycle.py",
                 "tests/program_control_plane/test_native_scoped_delivery.py",
                 "tests/program_control_plane/test_program_status_publisher.py",
                 "tests/program_control_plane/test_transition_chain.py",

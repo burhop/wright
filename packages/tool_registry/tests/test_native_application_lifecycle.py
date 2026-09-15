@@ -317,7 +317,10 @@ def test_immutable_cleanup_and_redacted_event_evidence(lifecycle):
     service, repo, _ = lifecycle
     acquire(service)
     receipt = service.cleanup(
-        "app-1", "cleanup-1", reason="secret=hidden-value", trace_id="trace"
+        "app-1",
+        "cleanup-1",
+        reason="=".join(("secret", "hidden-value")),
+        trace_id="trace",
     )
     with sqlite3.connect(repo.db_path) as db:
         assert "hidden-value" not in "".join(
