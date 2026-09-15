@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/native-candidate-review.schema.json",
+  "schema_version": "1.0",
+  "feature_id": "EPP-N01",
+  "review_type": "independent_technical",
+  "review_scope": "entire_candidate",
+  "candidate_commit": "c8eed26b58bb925f510bc17993ccf2a146f06eef",
+  "candidate_tree": "88cbfa83b369a45c87ad77f6dee04855acc73c9e",
+  "task_ids": ["T001", "T002", "T003", "T004", "T005", "T006", "T007", "T008", "T009", "T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T020", "T021", "T022", "T023", "T024", "T025", "T026", "T027", "T029", "T030"],
+  "reviewer_identity": "/root/epp_n01_independent_review",
+  "implementation_authors": ["Test User <test@example.com>", "/root"],
+  "reviewed_at": "2026-09-15T20:39:00Z",
+  "result": "passed",
+  "open_actionable_findings": 0,
+  "human_study_evidence": false,
+  "evidence": "PASS with zero actionable findings on exact commit c8eed26b58bb925f510bc17993ccf2a146f06eef and tree 88cbfa83b369a45c87ad77f6dee04855acc73c9e. The substantive delta is confined to packages/workspace_service/tests/test_engineering_workflow_templates.py: splitlines() accepts LF and CRLF while exact-string count still requires exactly one unmodified workflow declaration. The assertion is not weakened. The exact previously failing focused test passed (1 passed in 0.13s). No broad tests were run by the reviewer; integration status is not inferred."
+}
