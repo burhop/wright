@@ -41,7 +41,7 @@
   "inputs": [
     {
       "path": "evidence/states/program-state-revision-0126.json",
-      "sha256": "bb2b7dab8efa659fdad8bc1e02596e658a52910062e9b157a984f10a74129618",
+      "sha256": "878a2daf16dc3c6018e286d2c84e81e29cea5bab405a120d2868358029b49e82",
       "schema_version": "2.0",
       "role": "append_only_evidence"
     }
@@ -49,7 +49,7 @@
   "outputs": [
     {
       "path": "evidence/states/program-state-revision-0127.json",
-      "sha256": "e2b24e8a2b116860a2758d723a0a511ec41dafd7d3dc1da3bdcc5e69e5732352",
+      "sha256": "f3db0412b443ccf79a0e1edab25f0fe094e79ce00d24f63074ec52c54a2a6323",
       "schema_version": "2.0",
       "role": "append_only_evidence"
     }
