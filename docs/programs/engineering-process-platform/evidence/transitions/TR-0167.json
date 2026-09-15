@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0167",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "REPAIRING",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 167,
+  "new_revision": 168,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "c73efb5e984ceedf1d9acd91cfd3f15968be15306a6e41c5f94487605c3a2d30",
+  "new_state_digest": "7b1846427821064fb929c88ba1086ee1f186ae25b9acd5a9ea5ca380b1b93138",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex repository integration coordinator"
+  },
+  "action": "Bind exact fail-closed handling for absent ignored recovery evidence.",
+  "started_at": "2026-09-15T22:22:00Z",
+  "finished_at": "2026-09-15T22:23:00Z",
+  "duration_ms": 60000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "d1038059aa8dedfa0b0b242c3a2486ca012e0ddf",
+    "source_tree": "b8f8375bf5edce3ed8ec015b1ded27196d9db02e",
+    "source_program_tree": "2b74197f7f73ff1489c29bd389f95e46e757e531",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0168.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0167.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0167.json",
+      "sha256": "06c0ef9d90506b52de1b10a6ef2ce174d92aa6f61b03d57dd568790a1c1f2b06",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0168.json",
+      "sha256": "fc00ee2980a5b29fccf47fec6e080d532d2ab07d7403f53a3c1234f20bdb1d92",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-FEATURE081-CLEAN-WORKTREE-EVIDENCE",
+      "method": "Run the exact previously failing recovery audit test, focused Ruff checks, and independent exact-candidate review.",
+      "environment": "Windows clean integration worktree",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "candidate:9523f45b587e4868406aab6ae15df16557c9beb0",
+        "focused-test:1-passed",
+        "review:NATIVE-REVIEW-20260915-9523F45B.json"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-N01-CLEAN-WORKTREE-EVIDENCE-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Required local gate and remote CI remain pending.",
+    "Human study, content validation and deployed-browser verification remain pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0167.json",
+  "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}
