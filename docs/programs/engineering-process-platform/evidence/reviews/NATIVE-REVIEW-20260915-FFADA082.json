@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/native-candidate-review.schema.json",
+  "schema_version": "1.0",
+  "feature_id": "EPP-N01",
+  "review_type": "independent_technical",
+  "review_scope": "entire_candidate",
+  "candidate_commit": "ffada082c18b0f14defbe710ea24a4a6db9eccd1",
+  "candidate_tree": "e7150d40840e03410a5bf0a053cc55af868eef6d",
+  "task_ids": ["T001", "T002", "T003", "T004", "T005", "T006", "T007", "T008", "T009", "T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T020", "T021", "T022", "T023", "T024", "T025", "T026", "T027", "T029", "T030"],
+  "reviewer_identity": "/root/epp_n01_independent_review",
+  "implementation_authors": ["Test User <test@example.com>", "/root"],
+  "reviewed_at": "2026-09-15T18:58:00Z",
+  "result": "passed",
+  "open_actionable_findings": 0,
+  "human_study_evidence": false,
+  "evidence": "PASS with zero actionable findings on exact commit ffada082c18b0f14defbe710ea24a4a6db9eccd1 and tree e7150d40840e03410a5bf0a053cc55af868eef6d. The candidate changes one line in packages/tool_registry/src/tool_registry/program_status.py, replacing stale normalized catalog digest d1b388... with e41fed.... Independent recomputation found both canonical current catalog copies normalize to e41fed1e80dfb710bdec87c5f1b4cb3a613515e9c3c5606a3c0ae0a4d7ae73cd, while the packaged legacy catalog is c0f2c73246d9d06d8897a9a65b44d8c3c85dc6347e972b3b0bc37ae83f8812f7 and exactly matches current.json's bound legacy digest. The correction is minimal and fail-closed: the current catalog must match the exact trusted identity before fallback, then the legacy catalog must match the bundle-declared digest. Arbitrary mutation remains rejected. All five prior gate failures share this stale-identity cause. No tests or broad gate were run by the reviewer; integration status is not inferred."
+}
