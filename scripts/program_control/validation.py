@@ -4748,7 +4748,10 @@ def validate_roadmap_approval_and_lease(
                 and reader.is_ancestor(identity.source_commit, review_boundary)
                 and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
                 and not (protected_candidate_paths & post_integration_changes)
-                and all(is_permitted_metadata(path) for path in changes)
+                and all(
+                    is_permitted_metadata(path) or is_governance_tooling(path)
+                    for path in changes
+                )
             )
             if state.get("revision", 0) >= 98:
                 valid_checkpoint = (

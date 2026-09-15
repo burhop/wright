@@ -243,6 +243,21 @@ def test_changes_after_review_require_new_candidate(candidate, path: str):
     )
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        f"{ROOT}/roadmap.json",
+        f"{ROOT}/schemas/transition-artifact-digest-correction.schema.json",
+        "tests/program_control_plane/test_transition_chain.py",
+    ],
+)
+def test_scoped_checkpoint_allows_exact_governance_metadata(candidate, path: str):
+    builder, _, _ = candidate
+    builder.write_bytes(path, b"governance metadata\n")
+    builder.commit("record post-candidate governance metadata")
+    assert findings(candidate) == []
+
+
 def _record_integrated_boundary(candidate):
     builder, reader, docs = candidate
     builder.write_bytes(f"{ROOT}/evidence/integration.txt", b"merged to dev\n")
