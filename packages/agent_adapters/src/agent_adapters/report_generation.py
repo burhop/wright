@@ -157,11 +157,12 @@ def _tool_free_completion_recovery_payload(
 
 
 def _recorded_evidence_completion(messages: list[dict]) -> dict | None:
-    """Return a minimal completion envelope after repeated null transport results.
+    """Return a blocked envelope after repeated null transport results.
 
     This is intentionally limited to evidence already marked successful by the
-    workflow executor. Concrete downstream file and engineering checks remain
-    authoritative; the envelope claims only that those calls were recorded.
+    workflow executor. A successful observation is not proof that the requested
+    task reached its terminal operation, so this preserves evidence without
+    synthesizing completion.
     """
     payload = _tool_free_completion_recovery_payload(messages)
     if payload is None:
@@ -176,7 +177,7 @@ def _recorded_evidence_completion(messages: list[dict]) -> dict | None:
         if message.get("role") == "system" and isinstance(message.get("content"), str)
     ).lower()
     summary = {
-        "status": "completed_from_recorded_tool_evidence",
+        "status": "blocked_after_null_model_response",
         "successful_tool_call_numbers": numbers,
         "content_validated": False,
     }
@@ -184,7 +185,8 @@ def _recorded_evidence_completion(messages: list[dict]) -> dict | None:
         response = (
             "<!doctype html><html><head><title>Recorded tool evidence</title></head>"
             "<body><h1>Recorded tool evidence</h1><p>Wright retained successful "
-            f"tool calls {', '.join(map(str, numbers))}. Output validation follows.</p>"
+            f"tool calls {', '.join(map(str, numbers))}, but the model did not "
+            "return a terminal completion decision.</p>"
             "</body></html>"
         )
     elif "format response as json" in system:
@@ -193,12 +195,12 @@ def _recorded_evidence_completion(messages: list[dict]) -> dict | None:
         response = (
             "Wright retained successful tool-call evidence "
             + ", ".join(map(str, numbers))
-            + "; concrete output validation follows."
+            + ", but the model did not return a terminal completion decision."
         )
     return {
         "role": "assistant",
         "content": json.dumps(
-            {"status": "completed", "response": response, "evidence": numbers},
+            {"status": "blocked", "response": response, "evidence": numbers},
             separators=(",", ":"),
         ),
     }
@@ -346,27 +348,10 @@ async def decide_workflow_tool_action(
                 if not exact_null_failure:
                     raise
                 if attempt == 2:
-                    recovery_payload = _tool_free_completion_recovery_payload(messages)
-                    if recovery_payload is None:
+                    completion = _recorded_evidence_completion(messages)
+                    if completion is None:
                         raise
-                    for recovery_attempt in range(3):
-                        try:
-                            result = await bridge.complete(recovery_payload)
-                            break
-                        except AttributeError as recovery_error:
-                            if (
-                                str(recovery_error)
-                                != "'NoneType' object has no attribute 'rstrip'"
-                            ):
-                                raise
-                            if recovery_attempt == 2:
-                                completion = _recorded_evidence_completion(messages)
-                                if (
-                                    completion is None
-                                ):  # pragma: no cover - guarded above
-                                    raise
-                                result = {"choices": [{"message": completion}]}
-                                break
+                    result = {"choices": [{"message": completion}]}
                     break
         else:  # pragma: no cover - the bounded loop returns or raises
             result = await bridge.complete(payload)

@@ -159,16 +159,12 @@ def test_decision_adapter_stops_after_three_null_rstrip_failures(monkeypatch):
         asyncio.run(report_generation.decide_workflow_tool_action([], []))
 
 
-def test_decision_adapter_recovers_post_tool_null_failure_without_tools(monkeypatch):
+def test_decision_adapter_blocks_post_tool_null_failure_without_replaying(monkeypatch):
     monkeypatch.setattr(
         report_generation,
         "resolve_hermes_api_settings",
         lambda: SimpleNamespace(base_url="http://invalid.test", api_key=""),
     )
-    message = {
-        "role": "assistant",
-        "content": '{"status":"completed","response":"Exported.","evidence":[1]}',
-    }
 
     class Bridge:
         calls = []
@@ -178,9 +174,7 @@ def test_decision_adapter_recovers_post_tool_null_failure_without_tools(monkeypa
 
         async def complete(self, payload):
             self.calls.append(payload)
-            if len(self.calls) <= 3:
-                raise AttributeError("'NoneType' object has no attribute 'rstrip'")
-            return {"choices": [{"message": message}]}
+            raise AttributeError("'NoneType' object has no attribute 'rstrip'")
 
     source = "SECRET_SOURCE_CODE()"
     messages = [
@@ -223,20 +217,16 @@ def test_decision_adapter_recovers_post_tool_null_failure_without_tools(monkeypa
     ]
     monkeypatch.setattr(hermes_openai_bridge, "HermesOpenAICompatibilityBridge", Bridge)
 
-    assert (
-        asyncio.run(
-            report_generation.decide_workflow_tool_action(
-                messages, [{"type": "function"}]
-            )
+    message = asyncio.run(
+        report_generation.decide_workflow_tool_action(
+            messages, [{"type": "function"}]
         )
-        == message
     )
-    assert len(Bridge.calls) == 4
-    recovery = Bridge.calls[-1]
-    assert recovery["tools"] == [] and recovery["tool_choice"] == "none"
-    encoded = json.dumps(recovery)
-    assert "Exported part.stl." in encoded
-    assert "Export the part." in encoded
+    envelope = json.loads(message["content"])
+    assert len(Bridge.calls) == 3
+    assert envelope["status"] == "blocked"
+    assert envelope["evidence"] == [1]
+    encoded = json.dumps(envelope)
     assert source not in encoded
     assert "SECRET_IMAGE" not in encoded
 
@@ -309,14 +299,12 @@ def test_completion_recovery_excludes_success_status_with_error_text(text):
     )
 
 
-def test_post_tool_completion_recovery_retries_exact_null_twice(monkeypatch):
+def test_post_tool_completion_stops_after_bounded_exact_null_retries(monkeypatch):
     monkeypatch.setattr(
         report_generation,
         "resolve_hermes_api_settings",
         lambda: SimpleNamespace(base_url="http://invalid.test", api_key=""),
     )
-    message = {"role": "assistant", "content": "done"}
-
     class Bridge:
         calls = []
 
@@ -325,9 +313,7 @@ def test_post_tool_completion_recovery_retries_exact_null_twice(monkeypatch):
 
         async def complete(self, payload):
             self.calls.append(payload)
-            if len(self.calls) <= 5:
-                raise AttributeError("'NoneType' object has no attribute 'rstrip'")
-            return {"choices": [{"message": message}]}
+            raise AttributeError("'NoneType' object has no attribute 'rstrip'")
 
     messages = [
         {"role": "user", "content": "Export."},
@@ -345,14 +331,14 @@ def test_post_tool_completion_recovery_retries_exact_null_twice(monkeypatch):
     ]
     monkeypatch.setattr(hermes_openai_bridge, "HermesOpenAICompatibilityBridge", Bridge)
 
-    assert (
-        asyncio.run(report_generation.decide_workflow_tool_action(messages, [{}]))
-        == message
+    observed = asyncio.run(
+        report_generation.decide_workflow_tool_action(messages, [{}])
     )
-    assert len(Bridge.calls) == 6
+    assert json.loads(observed["content"])["status"] == "blocked"
+    assert len(Bridge.calls) == 3
 
 
-def test_post_tool_completion_uses_recorded_evidence_after_six_exact_nulls(
+def test_post_tool_completion_blocks_with_recorded_evidence_after_exact_nulls(
     monkeypatch,
 ):
     monkeypatch.setattr(
@@ -394,11 +380,11 @@ def test_post_tool_completion_uses_recorded_evidence_after_six_exact_nulls(
     message = asyncio.run(report_generation.decide_workflow_tool_action(messages, [{}]))
     envelope = json.loads(message["content"])
     response = json.loads(envelope["response"])
-    assert Bridge.calls == 6
-    assert envelope["status"] == "completed"
+    assert Bridge.calls == 3
+    assert envelope["status"] == "blocked"
     assert envelope["evidence"] == [1]
     assert response == {
-        "status": "completed_from_recorded_tool_evidence",
+        "status": "blocked_after_null_model_response",
         "successful_tool_call_numbers": [1],
         "content_validated": False,
     }
