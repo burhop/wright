@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import re
 from pathlib import Path
 
 import pytest
@@ -64,10 +63,7 @@ def test_sources_and_layouts_have_one_fresh_workflow_identity_and_valid_shape():
     catalog = EngineeringWorkflowTemplateCatalog()
     for template in catalog.list():
         detail = catalog.get(template.template_id)
-        assert (
-            len(re.findall(r"^workflow __instance__$", detail.source, re.MULTILINE))
-            == 1
-        )
+        assert detail.source.splitlines().count("workflow __instance__") == 1
         assert "reviewed_ai_suggestions: true" in detail.source
         assert detail.layout == {
             "documentKind": "workflow-layout",
