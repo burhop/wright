@@ -218,9 +218,7 @@ def test_decision_adapter_blocks_post_tool_null_failure_without_replaying(monkey
     monkeypatch.setattr(hermes_openai_bridge, "HermesOpenAICompatibilityBridge", Bridge)
 
     message = asyncio.run(
-        report_generation.decide_workflow_tool_action(
-            messages, [{"type": "function"}]
-        )
+        report_generation.decide_workflow_tool_action(messages, [{"type": "function"}])
     )
     envelope = json.loads(message["content"])
     assert len(Bridge.calls) == 3
@@ -305,6 +303,7 @@ def test_post_tool_completion_stops_after_bounded_exact_null_retries(monkeypatch
         "resolve_hermes_api_settings",
         lambda: SimpleNamespace(base_url="http://invalid.test", api_key=""),
     )
+
     class Bridge:
         calls = []
 

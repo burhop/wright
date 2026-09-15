@@ -38,6 +38,7 @@ async def test_tool_free_format_correction_preserves_single_actual_call(repair_k
 
     async def decide(messages, schemas, **kwargs):
         decisions.append(schemas)
+
         class Decision(dict):
             pass
 
@@ -56,29 +57,33 @@ async def test_tool_free_format_correction_preserves_single_actual_call(repair_k
             return message
 
         if len(decisions) == 1:
-            return observed({
-                "role": "assistant",
-                "tool_calls": [
-                    {
-                        "id": "first",
-                        "function": {
-                            "name": schemas[0]["function"]["name"],
-                            "arguments": "{}",
-                        },
-                    }
-                ],
-            })
+            return observed(
+                {
+                    "role": "assistant",
+                    "tool_calls": [
+                        {
+                            "id": "first",
+                            "function": {
+                                "name": schemas[0]["function"]["name"],
+                                "arguments": "{}",
+                            },
+                        }
+                    ],
+                }
+            )
         if len(decisions) == 2:
-            return observed({
-                "role": "assistant",
-                "content": json.dumps(
-                    {
-                        "status": "completed",
-                        "response": "The observed volume is 123 cubic millimeters.",
-                        "evidence": [1],
-                    }
-                ),
-            })
+            return observed(
+                {
+                    "role": "assistant",
+                    "content": json.dumps(
+                        {
+                            "status": "completed",
+                            "response": "The observed volume is 123 cubic millimeters.",
+                            "evidence": [1],
+                        }
+                    ),
+                }
+            )
         assert schemas == []
         assert len(messages) == 2
         assert [message["role"] for message in messages] == ["system", "user"]
