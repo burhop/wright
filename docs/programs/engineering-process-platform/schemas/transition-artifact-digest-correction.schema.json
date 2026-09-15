@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/transition-artifact-digest-correction.schema.json",
+  "title": "Closed EPP-N01 TR-0126 Artifact Digest Correction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "correction_id",
+    "program_id",
+    "feature_id",
+    "stable_cause_id",
+    "accept_new_records",
+    "target_transition",
+    "claims",
+    "resolution_semantics",
+    "authority"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "../../schemas/transition-artifact-digest-correction.schema.json"
+    },
+    "schema_version": { "const": "1.0" },
+    "correction_id": {
+      "const": "COR-EPP-N01-TR0126-WORKTREE-DIGEST-001"
+    },
+    "program_id": { "const": "EPP-2026" },
+    "feature_id": { "const": "EPP-N01" },
+    "stable_cause_id": {
+      "const": "EPP-N01-TR0126-CRLF-WORKTREE-DIGEST"
+    },
+    "accept_new_records": { "const": false },
+    "target_transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "introducing_commit", "raw_sha256", "git_blob"],
+      "properties": {
+        "path": { "type": "string" },
+        "introducing_commit": { "pattern": "^[a-f0-9]{40}$" },
+        "raw_sha256": { "pattern": "^[a-f0-9]{64}$" },
+        "git_blob": { "pattern": "^[a-f0-9]{40}$" }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "json_pointer",
+          "artifact_commit",
+          "artifact_path",
+          "artifact_git_blob",
+          "recorded_value",
+          "authoritative_value"
+        ],
+        "properties": {
+          "json_pointer": { "type": "string" },
+          "artifact_commit": { "pattern": "^[a-f0-9]{40}$" },
+          "artifact_path": { "type": "string" },
+          "artifact_git_blob": { "pattern": "^[a-f0-9]{40}$" },
+          "recorded_value": { "pattern": "^[a-f0-9]{64}$" },
+          "authoritative_value": { "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "resolution_semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect",
+        "original_transition_immutable",
+        "validator_recomputes_git_blob_bytes",
+        "no_candidate_or_readiness_credit"
+      ],
+      "properties": {
+        "effect": { "const": "two_historical_digest_findings_only" },
+        "original_transition_immutable": { "const": true },
+        "validator_recomputes_git_blob_bytes": { "const": true },
+        "no_candidate_or_readiness_credit": { "const": true }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record",
+        "record_digest",
+        "user_directive",
+        "exact_subject_approval"
+      ],
+      "properties": {
+        "record": { "type": "string" },
+        "record_digest": { "pattern": "^[a-f0-9]{64}$" },
+        "user_directive": { "type": "string" },
+        "exact_subject_approval": { "const": false }
+      }
+    }
+  }
+}

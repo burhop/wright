@@ -1,0 +1,45 @@
+{
+  "$schema": "../../schemas/transition-artifact-digest-correction.schema.json",
+  "schema_version": "1.0",
+  "correction_id": "COR-EPP-N01-TR0126-WORKTREE-DIGEST-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "stable_cause_id": "EPP-N01-TR0126-CRLF-WORKTREE-DIGEST",
+  "accept_new_records": false,
+  "target_transition": {
+    "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0126.json",
+    "introducing_commit": "ad68b62759778ac0a367e783c959a39aea1d654a",
+    "raw_sha256": "b84420a6af10c414693310e4bf8fa099e454189c332f491a59fbf4baac6fa165",
+    "git_blob": "b6837c141d9587793be6fe76067d5bab13e7283d"
+  },
+  "claims": [
+    {
+      "json_pointer": "/inputs/0/sha256",
+      "artifact_commit": "f64bfb92b6e53359a6695d7a79994940fe5d15cb",
+      "artifact_path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0126.json",
+      "artifact_git_blob": "32b5e02be169d34ca323a3c24e8b70853ea52e48",
+      "recorded_value": "bb2b7dab8efa659fdad8bc1e02596e658a52910062e9b157a984f10a74129618",
+      "authoritative_value": "878a2daf16dc3c6018e286d2c84e81e29cea5bab405a120d2868358029b49e82"
+    },
+    {
+      "json_pointer": "/outputs/0/sha256",
+      "artifact_commit": "ad68b62759778ac0a367e783c959a39aea1d654a",
+      "artifact_path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0127.json",
+      "artifact_git_blob": "543ca45f22c305eac9284814adcaa1c3dffc3e05",
+      "recorded_value": "e2b24e8a2b116860a2758d723a0a511ec41dafd7d3dc1da3bdcc5e69e5732352",
+      "authoritative_value": "f3db0412b443ccf79a0e1edab25f0fe094e79ce00d24f63074ec52c54a2a6323"
+    }
+  ],
+  "resolution_semantics": {
+    "effect": "two_historical_digest_findings_only",
+    "original_transition_immutable": true,
+    "validator_recomputes_git_blob_bytes": true,
+    "no_candidate_or_readiness_credit": true
+  },
+  "authority": {
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "user_directive": "2026-09-15: OK do that.",
+    "exact_subject_approval": false
+  }
+}
