@@ -2,12 +2,12 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "2.0",
   "program_id": "EPP-2026",
-  "revision": 127,
+  "revision": 128,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
-    "commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
-    "tree": "469e6cf099d20f137881fa317ee07e691919656c",
+    "commit": "17f7a816e7be118e40d062f1cdb8d2508fd8e0f6",
+    "tree": "b8d1b6e503995c6a6330b0ef98478815bb6bdbae",
     "observed_clean": true
   },
   "prototype_evidence": {
@@ -20,13 +20,61 @@
   },
   "control_plane": {
     "root": "docs/programs/engineering-process-platform",
-    "candidate_subject_resolution": "Scoped implementation delivery; exact candidate review and pending milestone acceptance remain separate.",
+    "candidate_subject_resolution": "User-authorized recovery validates exact candidate 332802fdd828a3880b1e3bcbec71a42931a052e8 through the existing scoped-delivery lifecycle; historical 28efd6cc evidence remains unchanged.",
     "schema_status": "passed",
     "audit_status": "passed"
   },
   "current_feature": "EPP-N01",
-  "active_mutating_lease": null,
-  "last_transition": "TR-0126",
+  "active_mutating_lease": {
+    "feature_id": "EPP-N01",
+    "branch": "codex/081-engineering-workflow-templates",
+    "worktree_id": "wright",
+    "dev_baseline": {
+      "commit": "17f7a816e7be118e40d062f1cdb8d2508fd8e0f6",
+      "tree": "b8d1b6e503995c6a6330b0ef98478815bb6bdbae"
+    },
+    "worktree_start": {
+      "commit": "332802fdd828a3880b1e3bcbec71a42931a052e8",
+      "tree": "a55b8bded489ea526dd4f824f34aa0573d8ddb14"
+    },
+    "holder_role": "feature_owner",
+    "lease_mode": "verification",
+    "lease_revision": 8,
+    "acquired_at": "2026-09-15T14:47:18.9656362Z",
+    "expires_at": "2026-09-16T02:47:18.9656362Z",
+    "allowed_paths": [
+      "docs/programs/engineering-process-platform",
+      "packages/agent_adapters/src/agent_adapters/report_generation.py",
+      "packages/agent_adapters/tests/test_workflow_response_timeout.py",
+      "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+      "packages/workspace_service/tests/test_workflow_response_format_repair.py",
+      "scripts/run_engineering_dataset_campaign.py",
+      "tests/test_run_engineering_dataset_campaign.py"
+    ],
+    "path_restrictions": [
+      {
+        "path": "docs/programs/engineering-process-platform/**",
+        "restriction": "Append prospective evidence/status only; preserve historical checkpoints, failures and review records."
+      }
+    ],
+    "allowed_actions": [
+      "inspect",
+      "edit_allowlisted_paths",
+      "run_deterministic_checks",
+      "create_local_artifacts",
+      "create_local_commits"
+    ],
+    "recovery": {
+      "status": "reactivated",
+      "last_audit_transition": "TR-0126",
+      "rollback_state": "evidence/states/program-state-revision-0127.json",
+      "exhausted_cause_ids": [],
+      "active_cause_id": "EPP-N01-FEATURE081-INTEGRATION-REVIEW-001",
+      "repair_maximum": 2,
+      "repair_remaining": 0
+    }
+  },
+  "last_transition": "TR-0127",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -66,7 +114,7 @@
       "blockers": [
         "F02 merged; deployment verification is pending and has not been inferred from CI.",
         "Native milestone and benchmark/commercial/release assessments remain independent.",
-        "EPP-N01 deployment verification is invalidated: post-integration dev changes modified reviewed candidate paths, and PR125 merged without review while four checks were failing."
+        "Fresh exact candidate 332802fdd828a3880b1e3bcbec71a42931a052e8 passed independent technical review; lifecycle replay, push/full gates, CI and deployment verification remain pending."
       ]
     }
   },
@@ -86,10 +134,10 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE",
+      "action": "START_CURRENT_FEATURE_IMPLEMENTATION",
       "roadmap_item": "EPP-N01",
-      "requires_human_approval": true,
-      "reason": "Block rather than rewrite the reviewed baseline. After PR121 integration, PR125 changed protected native paths and merged with no review plus failed leak-scan, Python-quality, Windows-backend and Playwright checks. Retain the historical 28efd6cc checkpoint as evidence; require a new authorized exact candidate, full gates and independent review before another integration claim. Feature-081 candidate f64bfb92 is separate and receives no approval from this transition."
+      "requires_human_approval": false,
+      "reason": "The user authorized the recommended bounded recovery and exact candidate 332802fdd828a3880b1e3bcbec71a42931a052e8 passed independent technical review. Record unchanged-subject verification through existing lifecycle edges; do not claim deployment or whole-feature completion."
     }
   ],
   "approval": {
@@ -99,53 +147,6 @@
     "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
     "exact_subject_approval": false
   },
-  "feature_state": "BLOCKED",
-  "policy_version": "EPP-LIFECYCLE-1",
-  "scoped_checkpoint": {
-    "status": "independently_verified",
-    "candidate_commit": "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211",
-    "candidate_tree": "50900ed4a7a93c5018b9cd85660f7d7aa6d10c49",
-    "task_ids": [
-      "T001",
-      "T002",
-      "T003",
-      "T004",
-      "T005",
-      "T006",
-      "T007",
-      "T008",
-      "T009",
-      "T010",
-      "T011",
-      "T012",
-      "T013",
-      "T014",
-      "T015",
-      "T016",
-      "T017",
-      "T018",
-      "T019",
-      "T020",
-      "T021",
-      "T022",
-      "T023",
-      "T024",
-      "T025",
-      "T026"
-    ],
-    "pending_task_ids": [
-      "T027",
-      "T028",
-      "T029",
-      "T030",
-      "T031",
-      "T032"
-    ],
-    "independent_review": {
-      "path": "evidence/reviews/NATIVE-REVIEW-20260905-28EFD6CC.json",
-      "record_digest": "90a8626a00b8a72bb05e678bdecdd1d2a1e22bc99c9c91e43bcb66d96a665581"
-    },
-    "whole_feature_complete": false,
-    "reason": "Correction attempt2 passed108 focused tests and independent original-probe closure of all three P2 scanner findings. Exact-LF image336 cold smoke and scan passed; Docker inputs unchanged. Prior d734 local CodeQL cleared the original five findings; fresh28efd analysis is running. Preserve26-task scope, all failures and pending full gate/final review/H2 CI."
-  }
+  "feature_state": "IMPLEMENTATION_AUTHORIZED",
+  "policy_version": "EPP-LIFECYCLE-1"
 }
