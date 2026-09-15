@@ -43,6 +43,11 @@ def candidate(git_builder, repository_root: Path):
         )
         for name in names
     }
+    next(
+        item
+        for item in docs[f"{ROOT}/roadmap.json"]["items"]
+        if item["id"] == "EPP-N01"
+    )["status"] = "active"
     git_builder.write_bytes("baseline.txt", b"native baseline\n")
     delivery_baseline = git_builder.commit("native delivery baseline")
     docs[f"{ROOT}/work-registry.json"]["milestone"]["delivery"]["baseline_commit"] = (

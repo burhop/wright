@@ -274,7 +274,8 @@
         "https://wright.local/programs/epp/repair-evidence-correction.schema.json",
         "https://wright.local/programs/epp/checkpoint-evidence-correction.schema.json",
         "https://wright.local/programs/epp/preflight-evidence-correction.schema.json",
-        "https://wright.local/programs/epp/f01b-activation-correction.schema.json"
+        "https://wright.local/programs/epp/f01b-activation-correction.schema.json",
+        "https://wright.local/programs/epp/transition-artifact-digest-correction.schema.json"
       ],
       "parser_contract": "EPP_CORRECTION_COLLECTION_V1",
       "selection_rule": "Select only schema-valid profiles referenced by the validated transition chain; derive claim IDs from the profile claims and require exact verification and finding links before marking any claim or finding resolved.",
