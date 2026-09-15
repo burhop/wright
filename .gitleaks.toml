@@ -90,7 +90,7 @@ condition = "AND"
 commits = ["c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba"]
 paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list\.json\.txt$''']
 regexTarget = "match"
-regexes = ['''^"WRIGHT_API_TOKEN": "[0-9a-f]{64}"$''']
+regexes = ['''^WRIGHT_API_TOKEN": "[0-9a-f]{64}"$''']
 
 [[allowlists]]
 description = "Historical EPP transition observation is a SHA-256 response-body digest, not a credential; exact introducing commit, evidence path, rule and key shape only."
@@ -99,4 +99,4 @@ condition = "AND"
 commits = ["80e7e19d53e42c6c01990731d7cc111cef3009d8"]
 paths = ['''^docs/programs/engineering-process-platform/evidence/transitions/TR-0091\.json$''']
 regexTarget = "match"
-regexes = ['''^api_body_sha256:[0-9a-f]{64}$''']
+regexes = ['''^api_body_sha256:[0-9a-f]{64}"$''']
