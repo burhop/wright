@@ -4682,6 +4682,8 @@ def validate_roadmap_approval_and_lease(
                 f"{program_root}/work-registry.json",
                 f"{program_root}/test-run-ledger.json",
                 f"{program_root}/program-state.json",
+                f"{program_root}/roadmap.json",
+                f"{program_root}/schemas/transition-artifact-digest-correction.schema.json",
                 "specs/079-wright-native-authoring/tasks.md",
             )
 
@@ -4698,6 +4700,7 @@ def validate_roadmap_approval_and_lease(
                 "scripts/program_status/publisher.py",
                 "tests/program_control_plane/test_native_scoped_delivery.py",
                 "tests/program_control_plane/test_program_status_publisher.py",
+                "tests/program_control_plane/test_transition_chain.py",
                 "tests/release/test_dev_push_process.py",
             )
 
