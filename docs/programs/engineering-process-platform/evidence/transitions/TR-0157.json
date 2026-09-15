@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0157", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "INDEPENDENTLY_VERIFIED", "to_state": "PUSH_AUTHORIZATION_PENDING", "prior_revision": 157, "new_revision": 158,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "0ac18c4f441d5642f72e6cf2778606a3286193c2d9acbee77bb550b7c241f706", "new_state_digest": "2211a26dab2d538677518dbf4d97fd20252cf95a7272fc6a987ae3dfda7370b3",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Bind the user's explicit merge-to-dev instruction to the required feature-branch PR path while retaining all runbook gates and prohibiting direct dev push.",
+  "started_at": "2026-09-15T19:01:00Z", "finished_at": "2026-09-15T19:02:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "dde16a9b9e9d443be8d5e5218900e14996f7aa71", "source_tree": "0a4f58d90c9892c490047d02640efcd6ba3caecf", "source_program_tree": "b9da9a2913adc4b9b18ba42c8dbe239fe6afeaec", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0158.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0157.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0157.json", "sha256": "d7e0093da453da32c04fde5afda2036c9f22e96f0e8392e2f0dba062c8cb9688", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0158.json", "sha256": "ac8b2b023409baa0aeead663264bcf541a6db7fe7037d9a5e0e22ae8fda06fcc", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-PUSH-AUTHORITY", "method": "Bind the user's explicit merge instruction to a feature-branch PR targeting dev; direct dev push remains prohibited.", "environment": "Current task directive and standing scope authority", "duration_ms": 0, "result": "passed", "failure_class": null, "evidence": ["user-message:merge-to-dev", "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "review:NATIVE-REVIEW-20260915-FFADA082.json"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": "Exact candidate review passed and is attached; required local push/merge gates remain pending.",
+  "repair": {"stable_cause_id": "EPP-N01-STATUS-CATALOG-DIGEST-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Required local gates have not yet passed on the corrected branch; remote CI is absent.", "Human study, content validation and deployed-browser verification remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0157.json", "next_action": "OPEN_CURRENT_FEATURE_PR"
+}
