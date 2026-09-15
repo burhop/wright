@@ -11,9 +11,9 @@ from data_vault.workflow_artifact_review_repository import (
 
 def test_review_migration_is_additive_and_repository_survives_restart(tmp_path):
     validate_definitions()
-    migration = MIGRATIONS[-1]
+    migration = next(migration for migration in MIGRATIONS if migration.version == 18)
     assert (
-        migration.version == 17
+        migration.version == 18
         and migration.name == "terminal_workflow_artifact_reviews"
     )
     database = str(tmp_path / "state.db")

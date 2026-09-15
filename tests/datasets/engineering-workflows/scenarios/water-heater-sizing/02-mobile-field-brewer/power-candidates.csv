@@ -1,0 +1,4 @@
+case_id,electrical_power_W,inverter_continuous_limit_W,inverter_efficiency_assumed
+P400,400,800,0.88
+P600,600,800,0.88
+P800,800,800,0.88

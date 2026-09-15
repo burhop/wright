@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "template_id": "printed-replacement-part",
+  "expected_outputs": [
+    {
+      "role": "source_mesh",
+      "patterns": [
+        "**/*source*.stl",
+        "**/*source*.obj",
+        "**/source_mesh/*.stl"
+      ]
+    },
+    {
+      "role": "repaired_mesh",
+      "patterns": [
+        "**/*repaired*.stl",
+        "**/*repaired*.obj",
+        "**/repaired_mesh/*.stl"
+      ]
+    },
+    {
+      "role": "slice_package",
+      "patterns": [
+        "**/*.3mf"
+      ]
+    },
+    {
+      "role": "printer_transfer_receipt",
+      "patterns": [
+        "**/*receipt*.json",
+        "**/*transfer*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "All people, organizations, operating measurements, and sketches in this pack are fictional test inputs. Drawings are original SVG concepts, not photographs or evidence of a real product. A test receipt must declare a simulated destination; no physical dispatch is authorized."
+  },
+  "input_bindings": {},
+  "scenario_id": "printed-replacement-part-03",
+  "title": "Recreate a styled removable synthesizer tilt foot",
+  "summary": "A touring musician supplies a measured wedge-foot sketch, screw pattern, and cable keepout for a desk-only instrument prototype.",
+  "difficulty": "advanced",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  }
+}

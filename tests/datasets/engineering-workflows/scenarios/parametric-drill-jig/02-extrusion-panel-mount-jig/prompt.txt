@@ -1,0 +1,3 @@
+We have to add four clearance holes to the top of a rectangular aluminum tube for a display fixture. Please use the uploaded coordinates and top-face datum, and make a saddle jig that locates on the outer corner. Do not let a drill guide imply that we should drill the bottom tube wall.
+
+The end clamps must stay in place and their occupied zones are in the keepout CSV. Our bushing sizes are attached, with a slip fit for this prototype. Give me the model, a DXF with hole locations, and a dimension report. Include a clear front arrow and leave a chip-removal opening between the two hole pairs.

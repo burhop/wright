@@ -1,0 +1,4 @@
+loss_case,linear_loss_coefficient_W_per_K,provenance
+low,1.92,supplied_synthetic_uncertainty_case
+nominal,2.40,supplied_synthetic_uncertainty_case
+high,2.88,supplied_synthetic_uncertainty_case

@@ -1,0 +1,27 @@
+# Pure Python excerpts from selected build123d 0.10.0; no CAD import or geometry.
+# build_enums.py:43-52 SHA256 f2066d252241238d001ba6c62a71bbd51528c1eedb2dc1593c4669083deb33d4.
+# topology/utils.py:412-421 normalizes primitive align arguments to dimensions.
+# SHA256 8f56217ec64bdcfa91123dd0d302e101242e6abd875aebbe7d1ad732d98cc897.
+# geometry.py:3251 converts tuple entries using map(Align, align).
+# SHA256 cf0b3994b357ae0324c6d6b1405e8ca598bfb6a0d146397570a04993e380ab2a.
+class Align(Enum):
+    """Align object about Axis"""
+
+    MIN = auto()
+    CENTER = auto()
+    MAX = auto()
+    NONE = None
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}.{self.name}>"
+
+
+def tuplify(obj: Any, dim: int) -> tuple | None:
+    """Create a size tuple"""
+    if obj is None:
+        result = None
+    elif isinstance(obj, (tuple, list)):
+        result = tuple(obj)
+    else:
+        result = tuple([obj] * dim)
+    return result

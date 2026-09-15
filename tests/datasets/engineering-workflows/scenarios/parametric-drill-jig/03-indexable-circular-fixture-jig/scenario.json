@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "template_id": "parametric-drill-jig",
+  "expected_outputs": [
+    {
+      "role": "jig_model",
+      "patterns": [
+        "**/*.step",
+        "**/*.stp",
+        "**/*.stl"
+      ]
+    },
+    {
+      "role": "hole_location_drawing",
+      "patterns": [
+        "**/*.dxf"
+      ]
+    },
+    {
+      "role": "dimension_report",
+      "patterns": [
+        "**/*dimension*.json",
+        "**/*alignment*.json",
+        "**/*measurement*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "The people, organizations, workpiece dimensions, shop capability numbers, and bushing fixture data are invented. Bushing tables are synthetic dimensional stand-ins for a user upload, not an actual supplier datasheet. Original SVG sketches are redistributable. Nothing is physically machined or dispatched."
+  },
+  "input_bindings": {},
+  "scenario_id": "parametric-drill-jig-03",
+  "title": "Keyed six-hole jig for a circular lab fixture plate",
+  "summary": "A lab fabricator supplies a polar mounting pattern, Cartesian hole CSV, existing datum notch, and asymmetric clamp keepouts for a keyed annular jig.",
+  "difficulty": "advanced",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "holes.csv",
+      "bushings.csv",
+      "keepouts.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  }
+}

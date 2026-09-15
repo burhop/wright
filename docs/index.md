@@ -26,6 +26,8 @@ http://localhost:8080
 
 - **Agent orchestration**: coordinate LLM-backed agents and deterministic
   engineering tools through a local API and web UI.
+- **Engineering workflow templates**: create editable workspace workflows from
+  ten versioned templates with explicit readiness and approval boundaries.
 - **MCP tool registry**: catalog, classify, and validate selected engineering
   MCP servers.
 - **Flexible AI backends**: use local model servers or hosted
@@ -74,3 +76,4 @@ Selected MCP servers and engineering tools
 - [PC Local Setup](getting-started/quickstart-local.md)
 - [GB10 and DGX Workstations](getting-started/workstation-gb10-dgx.md)
 - [Existing Hermes Plugin](getting-started/hermes-plugin.md)
+- [Engineering Workflow Templates](workflows/engineering-workflow-templates.md)

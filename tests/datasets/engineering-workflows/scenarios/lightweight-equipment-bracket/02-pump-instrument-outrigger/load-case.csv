@@ -1,0 +1,2 @@
+case_id,fx_N,fy_N,fz_N,resultant_N,pad_x_min_mm,pad_x_max_mm,pad_y_min_mm,pad_y_max_mm,pad_z_mm
+instrument_pull,60,0,-80,100,72,100,-25,25,72

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "template_id": "raspberry-pi-enclosure",
+  "status": "prepared_requires_runtime_preflight",
+  "execution_kind": "integration",
+  "manufacturer_sources": [
+    "https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#schematics-and-mechanical-drawings",
+    "https://pip-assets.raspberrypi.com/categories/892-raspberry-pi-5/documents/RP-008347-DS-1-raspberry-pi-5-mechanical-drawing.pdf",
+    "https://www.raspberrypi.com/products/raspberry-pi-5/"
+  ],
+  "allowed_tools": {
+    "blender-mcp-ahujasid": ["execute_blender_code", "get_scene_info"],
+    "wright-workspace-files": ["write_text_document"],
+    "agentcad": ["docs", "run", "export", "measure", "inspect"],
+    "foam-agent-csml-rpi": ["run"]
+  },
+  "host_requirements": {
+    "agentcad_package": "agentcad[mcp]==0.6.0",
+    "agentcad_runtime": "build123d",
+    "foam_container": "wright-foam-agent",
+    "foam_mount_host": ".local-run/feature-081-live/foam-agent-workspace",
+    "foam_mount_container": "/workspace",
+    "foam_bashrc": "/opt/openfoam10/etc/bashrc",
+    "foam_python": "/opt/conda/envs/FoamAgent/bin/python",
+    "solver": "chtMultiRegionFoam",
+    "solver_model_access_needed": false,
+    "pdf_extraction": "A explicitly selected Python environment with pypdf is required before dispatch. The preparer does not install software."
+  },
+  "scenarios": {
+    "raspberry-pi-enclosure-01": {
+      "variant_a": "underside/low side inlet and rear vents",
+      "variant_b": "same inlet plus twelve rounded leaf-like top slots",
+      "envelope_mm": [112, 86, 39],
+      "ambient_c": 25,
+      "synthetic_heat_w": 6,
+      "style": "soft riverstone form, matte ivory, no top screws"
+    },
+    "raspberry-pi-enclosure-02": {
+      "variant_a": "lower side inlet with downward-facing louvers",
+      "variant_b": "same inlet with raised ventilated chimney",
+      "envelope_mm": [130, 95, 60],
+      "ambient_c": 35,
+      "synthetic_heat_w": 8,
+      "style": "serviceable protected greenhouse gateway, removable lid and external mounting ears"
+    },
+    "raspberry-pi-enclosure-03": {
+      "variant_a": "straight front-to-rear forced flow",
+      "variant_b": "same fan and vent areas with curved internal guide",
+      "envelope_mm": [145, 110, 48],
+      "ambient_c": 30,
+      "synthetic_heat_w": 11,
+      "style": "charcoal instrument, aligned slots, restrained status light bar"
+    }
+  },
+  "expected_geometry": ["enclosure-a.step", "enclosure-b.step", "fluid-domain-a.step", "fluid-domain-b.step", "enclosure-a.stl", "enclosure-b.stl", "fluid-domain-a.stl", "fluid-domain-b.stl", "geometry-lineage.json"],
+  "scope": "Real manufacturer retrieval before design, real AgentCAD kernel geometry, actual CAD-derived meshing and OpenFOAM fields. No content qualification or physical handoff is claimed."
+}

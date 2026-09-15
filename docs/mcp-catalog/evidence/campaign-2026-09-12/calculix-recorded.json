@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "observed_date": "2026-09-12",
+  "scope": "selected installation and actual bounded backend qualification; full dataset runs pending",
+  "status": "prerequisite_checks_passed",
+  "public_catalog_qualification_changed": false,
+  "clean_wright_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "selected_image": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+  "release_identity": {
+    "schema_version": "1.0",
+    "version": "0.8.6",
+    "tag": "v0.8.6",
+    "commit": "f92ac31e4a2a35f023522946b7aa81bac1ce4808",
+    "jsr": "jsr:@casys/mcp-calculix@0.8.6",
+    "image": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+    "platforms": [
+      "linux/amd64",
+      "linux/arm64"
+    ]
+  },
+  "direct_gateway_evidence": {
+    "status": "passed",
+    "scope": "clean Wright HTTP2026 direct and GatewayService recorded static/resources",
+    "clean_wright_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+    "selected_image": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+    "discovery": {
+      "supportedVersions": [
+        "2026-07-28"
+      ],
+      "capabilities": {
+        "tools": {},
+        "resources": {
+          "listChanged": true
+        }
+      },
+      "serverInfo": {
+        "name": "mcp-calculix",
+        "version": "0.8.6"
+      },
+      "instructions": "Bounded STEP analysis: mesh/selection preflight, linear static, modal, linear buckling, Norton-law creep, and steady-state coupled temperature-displacement. Mesh preflight stops before CalculiX and reports mesh diagnostics only. Solve results report mesh and physical observations; durable exact evidence is available for recorded static solves, and no requirement verdict is produced.",
+      "ttlMs": 0,
+      "cacheScope": "private",
+      "resultType": "complete",
+      "_meta": {
+        "io.modelcontextprotocol/serverInfo": {
+          "name": "mcp-calculix",
+          "version": "0.8.6"
+        }
+      }
+    },
+    "tool_count": 8,
+    "outcomes": [
+      {
+        "route": "direct",
+        "run_id": "r-1af3d5be-0500-425f-921d-60b6d6fa7c39",
+        "artifacts": [
+          {
+            "name": "input.step",
+            "bytes": 15403,
+            "sha256": "7fd18bcff988836bfb419193a56638c5920bef1bb628592ef14cca6a85122de5",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/input.step"
+          },
+          {
+            "name": "request.json",
+            "bytes": 910,
+            "sha256": "0ed32055be4cfd9c1f6a2098d254d38e0ef95e24a6aba4c777d29e2a1e594c14",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/request.json"
+          },
+          {
+            "name": "mesh.geo",
+            "bytes": 374,
+            "sha256": "c419cf1ede4e0bc8795a739286a742afd25beece038d31437c30da0baddc1a16",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/mesh.geo"
+          },
+          {
+            "name": "mesh.inp",
+            "bytes": 78606,
+            "sha256": "cc9ea3c1ffc4d142d558fe4c3942e63d9d676594e66e3a42e0f4694980e9aecd",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/mesh.inp"
+          },
+          {
+            "name": "gmsh.log",
+            "bytes": 5034,
+            "sha256": "2876866b3e311ca5532229bf888535f3df44c6db74ec6e314b1a3249e554ce3b",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/gmsh.log"
+          },
+          {
+            "name": "job.inp",
+            "bytes": 78853,
+            "sha256": "fd9963eccdd48b5b8ce5c4826398c186dd9ebc2ab042002afa5a0c9ea4d602a2",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/job.inp"
+          },
+          {
+            "name": "ccx.log",
+            "bytes": 2265,
+            "sha256": "f8d5c615c0a57dab1001881fcdc046d6e87b077e95dd81d5767852902814fe61",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/ccx.log"
+          },
+          {
+            "name": "job.dat",
+            "bytes": 257307,
+            "sha256": "1bffa0120a5ce83544dc1a89abbc4f21269e4e40b80fad93d758f437cbf541be",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/job.dat"
+          },
+          {
+            "name": "result.json",
+            "bytes": 665,
+            "sha256": "effa662893ccc13b1f81c5f7d6eb1965591eac20098dc085315d30600603ddaf",
+            "uri": "casys://calculix/runs/r-1af3d5be-0500-425f-921d-60b6d6fa7c39/result.json"
+          }
+        ]
+      },
+      {
+        "route": "gateway",
+        "run_id": "r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7",
+        "artifacts": [
+          {
+            "name": "input.step",
+            "bytes": 15403,
+            "sha256": "7fd18bcff988836bfb419193a56638c5920bef1bb628592ef14cca6a85122de5",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/input.step"
+          },
+          {
+            "name": "request.json",
+            "bytes": 911,
+            "sha256": "b7d6df1e7632de661f0e4df43c8ad3869e6a2518a65ad5d94a56bcfb00bfe8a1",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/request.json"
+          },
+          {
+            "name": "mesh.geo",
+            "bytes": 374,
+            "sha256": "c419cf1ede4e0bc8795a739286a742afd25beece038d31437c30da0baddc1a16",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/mesh.geo"
+          },
+          {
+            "name": "mesh.inp",
+            "bytes": 78606,
+            "sha256": "cc9ea3c1ffc4d142d558fe4c3942e63d9d676594e66e3a42e0f4694980e9aecd",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/mesh.inp"
+          },
+          {
+            "name": "gmsh.log",
+            "bytes": 5040,
+            "sha256": "0116dc3571422239c426a99ac7f9e17e80175865e05699ca5ceb126818e82a66",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/gmsh.log"
+          },
+          {
+            "name": "job.inp",
+            "bytes": 78853,
+            "sha256": "fd9963eccdd48b5b8ce5c4826398c186dd9ebc2ab042002afa5a0c9ea4d602a2",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/job.inp"
+          },
+          {
+            "name": "ccx.log",
+            "bytes": 2265,
+            "sha256": "188fdd5348de8f8364c87bef6e9d9185a02496c054e8407afd6fb9ef3a9b16bd",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/ccx.log"
+          },
+          {
+            "name": "job.dat",
+            "bytes": 257307,
+            "sha256": "1bffa0120a5ce83544dc1a89abbc4f21269e4e40b80fad93d758f437cbf541be",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/job.dat"
+          },
+          {
+            "name": "result.json",
+            "bytes": 665,
+            "sha256": "b1e210022be27e2bd3e9619938cc5f794d1ce23095ddb0bfb373da5e9fe60576",
+            "uri": "casys://calculix/runs/r-37ae1c85-0e3c-42f8-82d4-71b34af64ad7/result.json"
+          }
+        ]
+      }
+    ],
+    "campaign_runs": 0,
+    "limitations": [
+      "Qualification-only current-protocol adapter, production integration uses upstream compatible stdio.",
+      "Actual DAT has full U/S fields; this probe does not check engineering correctness or output RF."
+    ]
+  },
+  "field_expansion_evidence": {
+    "status": "passed",
+    "scope": "native selected companion MCP actual output-only second solve and exact idempotent read",
+    "original_run_id": "r-1af3d5be-0500-425f-921d-60b6d6fa7c39",
+    "source_sha256": "1053b5b92c590bbb157f638a6f990dd6e32c5ebd1126d7f8841c23302058d4e1",
+    "tool_count": 1,
+    "output_files": 27,
+    "campaign_runs": 0,
+    "content_validated": false,
+    "original_deck_sha256": "fd9963eccdd48b5b8ce5c4826398c186dd9ebc2ab042002afa5a0c9ea4d602a2",
+    "expanded_deck_sha256": "ca043c8d8af3cd1fec83b3a039ecb01b9b51b02f079b1b7e2dac9bbed626fd09",
+    "rows": {
+      "U": 1062,
+      "S": 2028
+    }
+  },
+  "production_transport": "native stdio; separate archive from HTTP qualification",
+  "selected_server_ids": [
+    "91ae7c8e-9b16-45fb-ae96-b08bee1e0d02",
+    "ef468fc1-cf00-4551-8cc7-0425b8d7052d"
+  ],
+  "campaign_cases_executed_by_qualification": 0,
+  "content_validated": false
+}

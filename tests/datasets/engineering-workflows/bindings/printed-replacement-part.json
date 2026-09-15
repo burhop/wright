@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "template_id": "printed-replacement-part",
+  "allowed_tools": ["execute_blender_code", "get_scene_info", "get_viewport_screenshot"],
+  "repair_server": "wright-printed-part-mesh-repair",
+  "repair_tool": "repair_model_file",
+  "slicer_server": "wright-printed-part-slicer",
+  "slicer_tool": "slice_model_file",
+  "slicer": {
+    "executable": ".local-run/feature-081-live/tools/bambu-studio-2.8.2.61/bambu-studio.exe",
+    "profiles_root": ".local-run/feature-081-live/tools/bambu-studio-2.8.2.61/resources/profiles/BBL",
+    "machine": "machine/Bambu Lab P1S 0.4 nozzle.json",
+    "filament": "filament/Bambu PETG HF @BBL P1S 0.4 nozzle.json"
+  },
+  "scenarios": {
+    "printed-replacement-part-01": {"reference_dimension_mm":38.0,"process":{"base":"process/0.20mm Standard @BBL X1C.json","layer_height":"0.20","wall_loops":"4","sparse_infill_density":"35%","enable_support":"1"}},
+    "printed-replacement-part-02": {"reference_dimension_mm":96.0,"process":{"base":"process/0.20mm Standard @BBL X1C.json","layer_height":"0.20","wall_loops":"5","sparse_infill_density":"40%","enable_support":"1"}},
+    "printed-replacement-part-03": {"reference_dimension_mm":38.0,"process":{"base":"process/0.16mm Optimal @BBL X1C.json","layer_height":"0.16","wall_loops":"5","sparse_infill_density":"45%","enable_support":"1"}}
+  },
+  "stages": {
+    "create_mesh": {
+      "expected_files":["source_mesh.stl"],
+      "prompt":"Use the attached original PNG and the user's exact prompt, profile and dimensional context to construct the requested part in the already-owned Blender scene. Interpret the sketch with written dimensions governing. Do not replace the requested geometry with a cube, canned asset or predetermined fixture. Honor the specific holes, pockets, scallops, blends, keepouts and styling in the actual inputs. Work in millimetres; note STL unit convention. Create uniquely named owned objects and do not delete unrelated scenes or objects. Use only guarded bpy/bmesh/mathutils construction, booleans, modifiers, rendering, save and STL import/export. Do not use open, pathlib, os, sys, hashlib, runpy, subprocess, text datablocks, handlers, timers, drivers, addon operations or raw filesystem/network/process APIs. Apply modifiers before STL export and export the constructed source mesh to {output_root}/source_mesh.stl. Return a compact JSON summary listing input references, design dimensions, artifact dimensions, operations performed and unresolved assumptions; do not repeat submitted source code because Wright retains the exact tool arguments plus input/output hashes in canonical evidence outside Blender. Do not claim engineering correctness, strength or fit. Return failures explicitly; never assert an absent output exists. Do not call image-generation or asset download services. Preserve the original user prompt verbatim in user_prompt for each tool call."
+    },
+    "repair_measure_orient": {
+      "expected_files":["repaired_mesh.stl","mesh-preview.png"],
+      "prompt":"Consume the actual upstream source mesh and compact report, including original user and manufacturing context. In the already-owned Blender scene import {output_root}/source_mesh.stl into owned objects and preserve the original file. Complete import, repair, measurement, orientation, export and preview rendering in one execute_blender_code call when possible and use at most one corrective execute_blender_code call. Use only guarded bpy/bmesh/mathutils construction, mesh repair, rendering and STL import/export. Do not use open, pathlib, os, sys, hashlib, runpy, subprocess, text datablocks, handlers, timers, drivers, addon operations or raw filesystem/network/process APIs. Merge coincident vertices with a declared small mm tolerance, remove degenerate geometry, recalculate outward normals, apply transforms and verify manifold closed topology, measured dimensions and fit within the declared P1S 256 mm build cube. Keep the exported repaired mesh at or below 80000 triangles for reliable Bambu Studio ingestion. If voxel remeshing exceeds that bound, use a Blender decimate modifier conservatively, then repeat all closed-manifold, normal, degeneracy, dimension and feature-presence checks before export. These are retained process safety checks, not campaign content validation. If mesh cannot be made printable within the triangle bound without losing intended features, fail explicitly. Choose and record an orientation based on the actual socket/bores/pad/contact faces and planned supports, compare requested alternatives where present. Export {output_root}/repaired_mesh.stl and render a real geometry preview to {output_root}/mesh-preview.png. Return compact JSON with actual artifact names, before/after measurements, counts, orientation, checks and unresolved assumptions; do not repeat submitted source code because Wright retains exact tool arguments and source/output hashes in canonical evidence outside Blender. Do not overwrite source or unrelated Blender objects."
+    },
+    "supports_and_slice": {
+      "expected_files":["slice_package.gcode.3mf","support-preview.svg","slice-preview.png","slice-evidence.json","process-profile.json","machine-profile.json","filament-profile.json","slicer.stdout.log"],
+      "prompt":"Invoke the exact configured slicer tool outside Blender with the same-attempt slice-operation.json and staged fixed operation source. The operation derives the declared P1S PETG process with supports enabled, slices actual repaired geometry, requires nonempty emitted G-code, and extracts actual package and support-toolpath previews. It never connects to a printer. Fail if the actual slicer fails. Never fabricate a 3MF, G-code, preview or receipt. Printer transfer is a separate later approval; this stage creates no receipt."
+    }
+  }
+}

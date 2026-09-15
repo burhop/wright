@@ -1,0 +1,3 @@
+keepout_id,x_min_mm,x_max_mm,y_min_mm,y_max_mm,z_min_mm,z_max_mm,purpose
+CLAMP_LEFT,75,95,0,18,0,35,existing_clamp_pad
+CLAMP_RIGHT,105,125,42,60,0,35,existing_clamp_pad

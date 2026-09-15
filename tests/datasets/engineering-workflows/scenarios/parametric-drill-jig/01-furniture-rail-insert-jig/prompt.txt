@@ -1,0 +1,3 @@
+Please make a reusable drill jig for the two pilot holes in our furniture rails. I have uploaded the rail sketch, hole CSV, bushing dimensions, and clamp keepouts. The holes are dimensioned from the lower-left corner of the top face, not from the jig outline.
+
+The jig should register on the left end and lower long edge, expose a clear orientation mark, and let the two clamp pads remain where drawn. Use the declared slip clearance for the bushings; don't guess a press fit. Please create the jig STEP or STL, a hole-location DXF, and a dimension report. This is a digital prototype for review before we make it.

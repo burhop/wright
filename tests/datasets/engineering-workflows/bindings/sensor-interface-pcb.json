@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "template_id": "sensor-interface-pcb",
+  "selected_provider": "blwfish/kicad-mcp@bcc6f11de92e5f47cb7dde1d24565f7779b2fbed with reviewed stderr diagnostics and native_rule_check extension",
+  "original_stages": ["capture_electrical_basis", "author_pcb", "verify_and_export"],
+  "allowed_tools": ["library", "schematic", "pcb", "project", "build_pcb_from_schematic", "estimate_board_size", "suggest_placement", "audit", "analyze", "autoroute", "drc", "export", "native_rule_check"],
+  "expected_authored_files": ["design.kicad_sch"],
+  "additional_scoped_tools": ["wright-workspace-files__copy_file"],
+  "native_artifact_flow": {
+    "symbols": ["symbols/design.kicad_sch"],
+    "connected": ["connected/design.kicad_sch"],
+    "built": ["unrouted/design.kicad_pcb", "unrouted/design.kicad_pro"],
+    "routed": ["routing/design.kicad_pcb", "routing/design.kicad_pro"],
+    "final": ["design.kicad_pcb", "design.kicad_pro", "design.kicad_sch"],
+    "copy_nodes": 6,
+    "complete_stages": 14,
+    "constraint": "Every recorded native intermediate remains immutable. Initial setup is working project context; single build reapplies supplied rules before sealing. Route edits separate working copies, including native implicit project saves. Final files are copied once after routing and only read by checks/exports."
+  },
+  "expected_verification_files": ["erc.json", "drc.json", "design_bom.csv", "gerbers/design-F_Cu.gtl", "gerbers/design-Edge_Cuts.gm1", "gerbers/design.drl", "design-gerbers.zip"],
+  "network_required_at_runtime": false,
+  "physical_actions": false,
+  "notes": "Preserve all supplied nets, board dimensions, connector pin assignments, clearance/current requirements, native checks and fabrication exports. Candidate datasheet gaps remain explicit; output existence is not correctness qualification. Configure expected BOM/extension paths from native discovered provider outputs, not assumptions."
+}

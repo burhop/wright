@@ -721,7 +721,15 @@ class RuntimeSupervisor:
             "PYTHONIOENCODING": "utf-8",
             "PYTHONUNBUFFERED": "1",
         }
-        for key in ("SYSTEMROOT", "WINDIR", "COMSPEC", "TEMP", "TMP"):
+        for key in (
+            "SYSTEMROOT",
+            "WINDIR",
+            "COMSPEC",
+            "TEMP",
+            "TMP",
+            "PROCESSOR_ARCHITECTURE",
+            "PROCESSOR_ARCHITEW6432",
+        ):
             if value := os.environ.get(key):
                 result[key] = value
         return result

@@ -49,6 +49,9 @@ class WorkflowSourceRecentRun(BaseModel):
     results: list[dict[str, Any]]
     last_event: dict[str, Any] | None = None
     review: dict[str, Any] | None = None
+    approval: dict[str, Any] | None = None
+    verification: dict[str, Any] | None = None
+    capture_rights: dict[str, Any] | None = None
     run_id: str | None = None
     execution_ended_at: str | None = None
     source_matches_current: bool | None = None
@@ -194,6 +197,115 @@ class WorkflowSourceResponse(BaseModel):
     layout_status: Literal["missing", "current", "stale"] = "missing"
 
 
+class EngineeringWorkflowTemplateListResponse(BaseModel):
+    catalog_version: str
+    templates: list[Dict[str, Any]]
+
+
+class EngineeringWorkflowTemplateDetailResponse(BaseModel):
+    template: Dict[str, Any]
+
+
+class EngineeringWorkflowTemplateReadinessRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    template_version: str = Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")
+
+
+class EngineeringWorkflowTemplateInstanceRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    template_version: str = Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")
+    expected_source_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    workflow_path: str = Field(
+        pattern=r"^workflows/[a-z0-9][a-z0-9-]{0,62}\.workflow\.wflow$",
+        max_length=96,
+    )
+    request_id: str = Field(
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$", max_length=128
+    )
+
+
+class EngineeringWorkflowTemplateInstanceResponse(WorkflowSourceResponse):
+    workflow_id: str
+    template: Dict[str, str]
+
+
+class WorkflowApprovalDecisionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    subject_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    decision: Literal["approved", "changes_requested"]
+    auto: bool = False
+    reason: str | None = Field(default=None, max_length=2000)
+    request_id: str = Field(
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$", max_length=128
+    )
+
+
+class WorkflowApprovalResumeRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    checkpoint_id: str = Field(min_length=1, max_length=128)
+    subject_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    request_id: str = Field(
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$", max_length=128
+    )
+
+
+class WorkflowExternalActionReconcileRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    subject_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    outcome: Literal["dispatched", "not_dispatched", "outcome_unknown"]
+    evidence: Dict[str, Any] = Field(default_factory=dict)
+
+
+class WorkflowApprovalCheckpointResponse(BaseModel):
+    checkpoint_id: str
+    workspace_id: str
+    workflow_id: str
+    run_id: str
+    step_id: str
+    action_kind: str
+    subject: Dict[str, Any]
+    subject_digest: str
+    state: Literal[
+        "pending", "approved", "changes_requested", "expired", "stale", "consumed"
+    ]
+    continuation: Dict[str, Any]
+    actor: str | None = None
+    reason: str | None = None
+    created_at: int
+    updated_at: int
+    expires_at: int | None = None
+    external_action: Dict[str, Any] | None = None
+    execution_result: Dict[str, Any] | None = None
+
+
+class WorkflowDemoCaptureRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    run_log_path: str = Field(pattern=r"^runs/[A-Za-z0-9._/-]+\.json$", max_length=256)
+    artifact_ids: list[str] = Field(min_length=1, max_length=12)
+    caption: str = Field(min_length=1, max_length=8000)
+
+
+class WorkflowDemoCaptureResponse(BaseModel):
+    path: str
+    size_bytes: int = Field(gt=0, le=80 * 1024 * 1024)
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    manifest_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    artifact_count: int = Field(ge=1, le=12)
+    published: Literal[False]
+
+
 class WorkflowSourceRunRequest(BaseModel):
     """Run a saved workspace workflow without accepting a client execution plan."""
 
@@ -202,11 +314,17 @@ class WorkflowSourceRunRequest(BaseModel):
     session_id: str = Field(min_length=1, max_length=256)
     path: str = Field(min_length=1, max_length=256)
     expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    integration_policy_digest: str | None = Field(
+        default=None, pattern=r"^[0-9a-f]{64}$"
+    )
 
 
 class WorkflowSourceRunResponse(BaseModel):
-    status: Literal["completed", "pending_review"] = "completed"
+    status: Literal["completed", "pending_review", "awaiting_approval"] = "completed"
     review: dict | None = None
+    approval: WorkflowApprovalCheckpointResponse | None = None
+    verification: dict | None = None
+    capture_rights: dict | None = None
     run_id: str | None = None
     results: list[dict] = Field(default_factory=list)
     run_log_path: str | None = None

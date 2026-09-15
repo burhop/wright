@@ -1,0 +1,6 @@
+quantity,value,unit,interpretation
+nominal_pack_voltage,24,V,fictional_planning_assumption
+nominal_pack_capacity,20,Ah,fictional_planning_assumption
+usable_nominal_energy_fraction,0.70,dimensionless,planning_allowance_not_discharge_test
+maximum_battery_energy_per_batch,70,Wh,customer_target
+inverter_efficiency,0.88,dimensionless,postprocess_accounting_assumption

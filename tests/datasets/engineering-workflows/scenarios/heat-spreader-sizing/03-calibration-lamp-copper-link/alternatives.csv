@@ -1,0 +1,4 @@
+case_id,length_mm,width_mm,thickness_mm,conductivity_w_mk,density_kg_m3,heat_input_w,rail_temperature_c,total_contact_resistance_k_per_w,limit_c
+copper_60,120,60,2,385,8960,18,35,0.15,75
+copper_80,120,80,2,385,8960,18,35,0.15,75
+copper_100,120,100,2,385,8960,18,35,0.15,75

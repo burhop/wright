@@ -1,6 +1,9 @@
 import type { RecoveryCommand } from "./command-system";
 import {
   RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY,
+  RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY,
+  RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY,
+  RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
   recoveryAuthoringSectionKind,
   type RecoveryBlock,
   type RecoveryDiagnostic,
@@ -749,7 +752,12 @@ export function authoringConfigurationCommands(
   patch: Record<string, string | number | boolean>,
 ): RecoveryCommand[] {
   if (
-    Object.hasOwn(patch, RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY) ||
+    [
+      RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY,
+      RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY,
+      RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY,
+      RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
+    ].some((key) => Object.hasOwn(patch, key)) ||
     Object.keys(patch).some((key) =>
       ["__proto__", "prototype", "constructor"].includes(key),
     )

@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "scenario_id": "water-heater-sizing-02",
+  "template_id": "water-heater-sizing",
+  "title": "Mobile field-station brewer power budget",
+  "summary": "Compare portable brewer heat-up options under a limited inverter output and battery-energy planning budget.",
+  "difficulty": "intermediate",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "parameters.csv",
+      "power-candidates.csv",
+      "energy-budget.csv",
+      "kit-mapping.md"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  },
+  "expected_outputs": [
+    {
+      "role": "temperature_time_series",
+      "patterns": [
+        "**/*temperature*time*.csv"
+      ]
+    },
+    {
+      "role": "power_comparison",
+      "patterns": [
+        "**/*power*comparison*.csv"
+      ]
+    },
+    {
+      "role": "energy_summary",
+      "patterns": [
+        "**/*energy*summary*.csv"
+      ]
+    },
+    {
+      "role": "temperature_plot",
+      "patterns": [
+        "**/*temperature*curve*.svg",
+        "**/*temperature*curve*.png"
+      ]
+    },
+    {
+      "role": "selection_report",
+      "patterns": [
+        "**/*heater*selection*.md",
+        "**/*heater*selection*.pdf"
+      ]
+    },
+    {
+      "role": "kit_run_parameters",
+      "patterns": [
+        "**/*kit*parameters*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "Original fictional personas, businesses, heater concepts, parameter requests and synthetic observation tables. Kit availability and parameter support are not claimed; supplied values are design assumptions."
+  },
+  "input_bindings": {}
+}

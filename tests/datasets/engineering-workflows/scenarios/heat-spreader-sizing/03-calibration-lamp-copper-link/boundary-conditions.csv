@@ -1,0 +1,5 @@
+boundary_name,geometric_selector,type,value,units,notes
+hot_end,X=120mm,total_heat_input,18,W,uniform_over_complete_end_face
+rail,external_cold_reference,fixed_temperature,35,degC,reference_beyond_contact_interface
+cold_contact,X=0mm,total_thermal_resistance,0.15,K_per_W,whole_interface_not_area_specific
+longitudinal_faces,Y_and_Z_faces,normal_heat_flux,0,W_per_m2,ideal_insulation

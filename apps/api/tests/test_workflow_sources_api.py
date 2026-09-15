@@ -68,6 +68,9 @@ class _WorkflowSources:
     def __init__(self):
         self.current = None
 
+    async def read_template_origin(self, workspace_dir, path):
+        return None
+
     async def create(
         self,
         workspace_dir: str,

@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "scope": "Local selected offline robot campaign prerequisites; not three canonical campaign successes or public broad ROSBag qualification",
+  "clean_rosbag": {
+    "status": "passed",
+    "steps": [
+      {
+        "stage": "direct_protocol_backend_outcome",
+        "attempt": 1,
+        "status": "passed"
+      },
+      {
+        "stage": "controlled_missing_bag_error_in_content",
+        "status": "passed"
+      },
+      {
+        "stage": "direct_protocol_backend_outcome",
+        "attempt": 2,
+        "status": "passed"
+      },
+      {
+        "stage": "direct_protocol_backend_outcome",
+        "attempt": 3,
+        "status": "passed"
+      },
+      {
+        "stage": "wright_gateway_backend_outcome",
+        "status": "passed"
+      },
+      {
+        "stage": "hermes_facing_gateway_mcp_backend_outcome",
+        "status": "passed"
+      }
+    ],
+    "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+    "source_url": "https://pypi.org/project/rosbag-mcp/",
+    "scope": "ROS 2 known-message retrieval",
+    "cleanup": "passed",
+    "observed_at": "2026-09-12T14:24:06.806282+00:00",
+    "finished_at": "2026-09-12T14:24:36.246118+00:00"
+  },
+  "actual_numeric_probe": {
+    "status": "passed",
+    "observed_at": "2026-09-12T14:36:47.090705+00:00",
+    "finished_at": "2026-09-12T14:37:04.175860+00:00",
+    "cases": [
+      {
+        "scenario_id": "robot-tracking-diagnosis-01",
+        "topics": [
+          {
+            "topic": "/wright_test/planned_pose",
+            "schema": "geometry_msgs/msg/PoseStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/external_pose",
+            "schema": "geometry_msgs/msg/PoseStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/odom",
+            "schema": "nav_msgs/msg/Odometry",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/cmd_vel",
+            "schema": "geometry_msgs/msg/TwistStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/operator_event",
+            "schema": "std_msgs/msg/String",
+            "count": 1
+          }
+        ],
+        "omitted_rows": 0,
+        "retained_samples": 61,
+        "position_rmse_m": 0.014113165506822019,
+        "lateral_rmse_m": 0.014113165506822019,
+        "event_difference_s": [
+          0.0
+        ],
+        "independent_relative_difference": [
+          0.0,
+          0.0
+        ],
+        "external_gaps_not_interpolated": [],
+        "alignment": {
+          "external_frame": "map",
+          "map_frame": "map",
+          "translation_x_m": 0,
+          "translation_y_m": 0,
+          "rotation_rad": 0,
+          "header_offset_s": 0,
+          "max_interpolation_gap_s": 0.5,
+          "event_tolerance_s": 0.5
+        },
+        "files": [
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/analysis/analysis-operation.py",
+            "sha256": "7e36dd498509aba752756fd49bd1d7dac6a72d20924a113a059298e76d2eeeae",
+            "bytes": 13799
+          },
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/analysis/timeline.csv",
+            "sha256": "0f02c061411ef54b5d35bda3294ad5e14e21e18660dd3fdc4069464695d479a0",
+            "bytes": 3856
+          },
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/analysis/tracking-metrics.json",
+            "sha256": "2c81d38459ca53e7f83e8df5c1728f673fbea3cf1defc491789d46b1815b7fd0",
+            "bytes": 1704
+          },
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/analysis/trajectory-overlay.svg",
+            "sha256": "24818b96ff4e037f52e61386ffbacf374c6ad5748e7217c880cddb47713f9b10",
+            "bytes": 52658
+          },
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/converted/conversion-manifest.json",
+            "sha256": "20aad7b87a435c3ea0253916dcb773946ab3dd7c448a09124967fb737a519a7e",
+            "bytes": 2136
+          },
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/converted/conversion-operation.py",
+            "sha256": "7e36dd498509aba752756fd49bd1d7dac6a72d20924a113a059298e76d2eeeae",
+            "bytes": 13799
+          },
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/converted/recording/metadata.yaml",
+            "sha256": "d3d7626b96357368b5d7f72392b37d7ab3540727ddef5ca5b48cca9177b3362f",
+            "bytes": 1978
+          },
+          {
+            "path": "robot-tracking-diagnosis-01/artifacts/converted/recording/recording.db3",
+            "sha256": "4d082a3e225cd13a537b352ec43795113e01ca1a116dcffca128ea76befd562a",
+            "bytes": 98304
+          }
+        ]
+      },
+      {
+        "scenario_id": "robot-tracking-diagnosis-02",
+        "topics": [
+          {
+            "topic": "/wright_test/planned_pose",
+            "schema": "geometry_msgs/msg/PoseStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/external_pose",
+            "schema": "geometry_msgs/msg/PoseStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/odom",
+            "schema": "nav_msgs/msg/Odometry",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/cmd_vel",
+            "schema": "geometry_msgs/msg/TwistStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/operator_event",
+            "schema": "std_msgs/msg/String",
+            "count": 1
+          }
+        ],
+        "omitted_rows": 0,
+        "retained_samples": 61,
+        "position_rmse_m": 0.10613942977788116,
+        "lateral_rmse_m": 0.006411903944762738,
+        "event_difference_s": [
+          0.0
+        ],
+        "independent_relative_difference": [
+          2.6150108092452754e-16,
+          1.082189309709628e-15
+        ],
+        "external_gaps_not_interpolated": [
+          [
+            0.9999999999999999,
+            1.5
+          ],
+          [
+            15.999999999999998,
+            16.5
+          ]
+        ],
+        "alignment": {
+          "external_frame": "tracker",
+          "map_frame": "map",
+          "translation_x_m": -1,
+          "translation_y_m": 2,
+          "rotation_rad": 0,
+          "header_offset_s": 0.15,
+          "max_interpolation_gap_s": 0.5,
+          "event_tolerance_s": 0.5
+        },
+        "files": [
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/analysis/analysis-operation.py",
+            "sha256": "7e36dd498509aba752756fd49bd1d7dac6a72d20924a113a059298e76d2eeeae",
+            "bytes": 13799
+          },
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/analysis/timeline.csv",
+            "sha256": "7db57efc91982d000c73484bc0416627a3a367acb82fd3c1070a53888a4707e5",
+            "bytes": 5860
+          },
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/analysis/tracking-metrics.json",
+            "sha256": "46187ad54f272cc46872f3727832b36f2a6a98014da4eeedf5b94b43e3dd5425",
+            "bytes": 1843
+          },
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/analysis/trajectory-overlay.svg",
+            "sha256": "f5521e47cd678c42c41bb8495d52a9b7611866fb4fa2357c035a13dea3e592b1",
+            "bytes": 56381
+          },
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/converted/conversion-manifest.json",
+            "sha256": "29a38a61fbad646bc4ae6f801532b671d02df7407d464198175616aab90b6152",
+            "bytes": 2137
+          },
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/converted/conversion-operation.py",
+            "sha256": "7e36dd498509aba752756fd49bd1d7dac6a72d20924a113a059298e76d2eeeae",
+            "bytes": 13799
+          },
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/converted/recording/metadata.yaml",
+            "sha256": "d3d7626b96357368b5d7f72392b37d7ab3540727ddef5ca5b48cca9177b3362f",
+            "bytes": 1978
+          },
+          {
+            "path": "robot-tracking-diagnosis-02/artifacts/converted/recording/recording.db3",
+            "sha256": "fcda026ac3c79b035f113d79ef495f537838ec6af8a9d55ddd25db73dbdf5ecb",
+            "bytes": 102400
+          }
+        ]
+      },
+      {
+        "scenario_id": "robot-tracking-diagnosis-03",
+        "topics": [
+          {
+            "topic": "/wright_test/planned_pose",
+            "schema": "geometry_msgs/msg/PoseStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/external_pose",
+            "schema": "geometry_msgs/msg/PoseStamped",
+            "count": 56
+          },
+          {
+            "topic": "/wright_test/odom",
+            "schema": "nav_msgs/msg/Odometry",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/cmd_vel",
+            "schema": "geometry_msgs/msg/TwistStamped",
+            "count": 61
+          },
+          {
+            "topic": "/wright_test/operator_event",
+            "schema": "std_msgs/msg/String",
+            "count": 1
+          }
+        ],
+        "omitted_rows": 5,
+        "retained_samples": 56,
+        "position_rmse_m": 0.008614542537186748,
+        "lateral_rmse_m": 0.006423582096768288,
+        "event_difference_s": [
+          0.0
+        ],
+        "independent_relative_difference": [
+          2.013715143303844e-16,
+          0.0
+        ],
+        "external_gaps_not_interpolated": [
+          [
+            13.5,
+            16.5
+          ]
+        ],
+        "alignment": {
+          "external_frame": "map",
+          "map_frame": "map",
+          "translation_x_m": 0,
+          "translation_y_m": 0,
+          "rotation_rad": 0,
+          "header_offset_s": 0,
+          "max_interpolation_gap_s": 0.5,
+          "event_tolerance_s": 0.5
+        },
+        "files": [
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/analysis/analysis-operation.py",
+            "sha256": "7e36dd498509aba752756fd49bd1d7dac6a72d20924a113a059298e76d2eeeae",
+            "bytes": 13799
+          },
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/analysis/timeline.csv",
+            "sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+            "bytes": 6839
+          },
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/analysis/tracking-metrics.json",
+            "sha256": "3cade81e46981a1a37747c53040e644844b46a0d6b020ce5882b15ad3eaa0726",
+            "bytes": 1757
+          },
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/analysis/trajectory-overlay.svg",
+            "sha256": "2d1f921742491efc53ae845fa33bddab93f8b9f117b830a8dcfb0c0d518c5b4e",
+            "bytes": 64606
+          },
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/converted/conversion-manifest.json",
+            "sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+            "bytes": 2867
+          },
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/converted/conversion-operation.py",
+            "sha256": "7e36dd498509aba752756fd49bd1d7dac6a72d20924a113a059298e76d2eeeae",
+            "bytes": 13799
+          },
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/converted/recording/metadata.yaml",
+            "sha256": "c0bc2a44876a805443e706b4a990c0e3d07d2b04e86909a7ff5f7cd2578c1d0d",
+            "bytes": 1978
+          },
+          {
+            "path": "robot-tracking-diagnosis-03/artifacts/converted/recording/recording.db3",
+            "sha256": "119ba240e8f76e230324ed457a42bc9fe100692feed4c12cb87520229ba31963",
+            "bytes": 98304
+          }
+        ]
+      }
+    ]
+  },
+  "runtime": {
+    "container": "wright-081-robot-runtime",
+    "server_map": {
+      "wright-campaign-rosbag": "413c3100-cd94-4436-b34a-5fa0373985a9",
+      "wright-campaign-robot-operations": "c7279493-594a-4e17-b38e-673395a5f987"
+    },
+    "tool_count": 33,
+    "workspace_only": "c33593b1-73a8-4056-a7f4-a07a9903dd2d"
+  },
+  "tests": {
+    "canonical_preparer": "3 passed",
+    "selected_dependency_operations": "3 passed, one harmless FastMCP/Pydantic incomplete lifespan annotation warning"
+  },
+  "problems": [
+    {
+      "problem": "Clean image imports omit API and agent-adapter paths when qualifier is mounted from repository",
+      "solution": "Explicit PYTHONPATH covers current repository package src directories; no base changes",
+      "result": "Clean qualifier passed direct3and both gateways"
+    },
+    {
+      "problem": "Native list_topics does not exist; unknown tool returns error text without isError",
+      "solution": "Use actually advertised get_topic_schema and validate tool names before call",
+      "result": "Probe001 invalid for schema inspection;002and final source-pinned003 pass actual schema and five-topic extraction"
+    },
+    {
+      "problem": "Native tracking function expects nav_msgs/Path and no survey/frame correction",
+      "solution": "Native MCP performs actual metadata/schema/extraction; fixed source-pinned selected offline operation computes supplied survey/time contract from real CDR messages",
+      "result": "All3cases produced real timeline/SVG/metrics/source; no physical robot actions"
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/robot_tracking_operations.py",
+      "sha256": "7e36dd498509aba752756fd49bd1d7dac6a72d20924a113a059298e76d2eeeae"
+    },
+    {
+      "path": "scripts/robot_tracking_mcp.py",
+      "sha256": "c26cabb53399aeeec4956f4e05c2532e7e390c87ca514d79d186f84de114bf78"
+    },
+    {
+      "path": "scripts/qualify-robot-campaign.py",
+      "sha256": "36b9837b5289b05cf62d0d672c6d2572eef4a4b14bc01ed55b7974d22c7d2a25"
+    },
+    {
+      "path": "scripts/prepare-robot-dataset-campaign.py",
+      "sha256": "c8a8751f3b2abdc899baf55c33b80fa91db9314b0bdda58cb20c7277e233b72c"
+    }
+  ]
+}

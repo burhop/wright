@@ -1,0 +1,192 @@
+catalog_version: 1.0.0
+templates:
+  - id: printed-replacement-part
+    version: 1.0.0
+    title: 3D Printed Replacement Part
+    summary: Create, repair, support, slice, verify, and authorize transfer of a dimensioned replacement part from an original image.
+    discipline: Additive manufacturing
+    source: templates/printed-replacement-part.workflow.wflow
+    layout: layouts/printed-replacement-part.json
+    preview: {asset: previews/printed-replacement-part.svg, alt: "A source photo progressing through a measured mesh and sliced replacement part."}
+    provided_inputs: [{name: "Demo knob photograph", kind: image, attribution: "Wright project generated fixture"}]
+    requested_inputs: [{name: "Reference dimension", kind: quantity, units: mm}, {name: "Bambu P1S and profiles", kind: configured_destination}]
+    expected_outputs: [{name: "Measured repaired mesh", format: STL}, {name: "Support-bearing slice package", format: 3MF}, {name: "Transfer receipt", format: JSON}]
+    capabilities: [{operation: image_to_mesh, qualification: required}, {operation: mesh_repair, qualification: required}, {operation: slice_with_supports, qualification: required}, {operation: printer_transfer, qualification: required}]
+    external_effects: [printer_transfer]
+    acceptance_profile: additive-replacement-part/v1
+    definition_status: reviewed
+    rights: {fixture: project_created, redistribution: allowed, social_capture: allowed}
+    readiness: setup_required
+    readiness_facts: [{code: definition-reviewed, label: "Starter definition reviewed", satisfied: true}, {code: adapters-qualified, label: "Image, slicer, and printer adapters qualified", satisfied: false}]
+    blocking_reasons: ["Configure and qualify image-to-mesh, slicer, and Bambu P1S transfer adapters before a live run."]
+  - id: raspberry-pi-enclosure
+    version: 1.0.0
+    title: Vented Raspberry Pi Enclosure
+    summary: Source Raspberry Pi 5 dimensions, write a design basis, create AgentCAD geometry, and compare vent designs with field-based CFD.
+    discipline: Mechanical and thermal design
+    source: templates/raspberry-pi-enclosure.workflow.wflow
+    layout: layouts/raspberry-pi-enclosure.json
+    preview: {asset: previews/raspberry-pi-enclosure.svg, alt: "A Raspberry Pi enclosure beside two airflow field comparisons."}
+    provided_inputs: [{name: "Raspberry Pi 5 reference pointer", kind: manufacturer_reference, attribution: "Raspberry Pi Ltd documentation link"}]
+    requested_inputs: [{name: "Board model and operating conditions", kind: engineering_requirements}]
+    expected_outputs: [{name: "Sourced design document", format: Markdown}, {name: "Enclosure and fluid domain", format: STEP}, {name: "CFD comparison", format: JSON}]
+    capabilities: [{operation: manufacturer_reference_retrieval, qualification: required}, {operation: agentcad_modeling, qualification: required}, {operation: cfd_solver_fields, qualification: required}]
+    external_effects: [network_reference_lookup, solver_execution]
+    acceptance_profile: vented-enclosure-cfd/v1
+    definition_status: reviewed
+    rights: {fixture: link_and_extraction_expectations, redistribution: allowed, social_capture: attributed}
+    readiness: setup_required
+    readiness_facts: [{code: definition-reviewed, label: "Starter definition reviewed", satisfied: true}, {code: agentcad-qualified, label: "AgentCAD qualified in Wright", satisfied: false}, {code: cfd-qualified, label: "Matching CFD path qualified", satisfied: false}]
+    blocking_reasons: ["AgentCAD D001 and Foam-Agent D040 are discovery candidates and require qualification before live execution."]
+  - id: sheet-metal-supplier-handoff
+    version: 1.0.0
+    title: Sheet-Metal Supplier Handoff
+    summary: Turn image and text intent into checked sheet-metal CAD, verified exports, and a human-controlled SendCutSend quote handoff.
+    discipline: Sheet-metal manufacturing
+    source: templates/sheet-metal-supplier-handoff.workflow.wflow
+    layout: layouts/sheet-metal-supplier-handoff.json
+    preview: {asset: previews/sheet-metal-supplier-handoff.svg, alt: "A folded sheet-metal bracket, flat pattern, and supplier quote preview."}
+    provided_inputs: [{name: "Bracket intent fixture", kind: image_and_text, attribution: "Wright project curated demo fixture"}]
+    requested_inputs: [{name: "Approved manufacturing context", kind: engineering_requirements}, {name: "Supplier session", kind: configured_destination}]
+    expected_outputs: [{name: "Native sheet-metal model", format: PSM}, {name: "Folded neutral model", format: STEP}, {name: "Verified flat pattern", format: DXF}, {name: "Supplier preview", format: JSON}]
+    capabilities: [{operation: solid_edge_sheet_metal, qualification: required}, {operation: independent_design_check, qualification: required}, {operation: supplier_preview, qualification: required}]
+    external_effects: [supplier_upload_preview, cart_quote_handoff]
+    acceptance_profile: sendcutsend-sheet-metal/v1
+    definition_status: reviewed
+    rights: {fixture: project_curated, redistribution: allowed, social_capture: allowed}
+    readiness: setup_required
+    readiness_facts: [{code: recovered-definition, label: "Recovered approval and export sequence", satisfied: true}, {code: supplier-path-qualified, label: "Current supplier preview path qualified", satisfied: false}]
+    blocking_reasons: ["A current Solid Edge and supplier-preview qualification is required; ordering and payment remain outside Wright."]
+  - id: lightweight-equipment-bracket
+    version: 1.0.0
+    title: Lightweight Equipment Bracket
+    summary: Create a load-bearing bracket, run static analysis, and compare mass while enforcing displacement and stress requirements.
+    discipline: Structural mechanics
+    source: templates/lightweight-equipment-bracket.workflow.wflow
+    layout: layouts/lightweight-equipment-bracket.json
+    preview: {asset: previews/lightweight-equipment-bracket.svg, alt: "Two bracket revisions with a stress contour and mass comparison."}
+    provided_inputs: []
+    requested_inputs: [{name: "Mounting geometry, load, fixtures, and material properties", kind: engineering_requirements}]
+    expected_outputs: [{name: "Bracket CAD", format: STEP}, {name: "Mesh and solver deck", format: native}, {name: "Stress, displacement, and mass comparison", format: JSON}]
+    capabilities: [{operation: brep_cad, qualification: required}, {operation: calculix_static_analysis, qualification: required}]
+    external_effects: [solver_execution]
+    acceptance_profile: structural-bracket/v1
+    definition_status: reviewed
+    rights: {fixture: user_supplied, redistribution: conditional, social_capture: requires_review}
+    readiness: reference
+    readiness_facts: [{code: workflow-authored, label: "Reference workflow authored", satisfied: true}, {code: full-chain-qualified, label: "Full CAD-to-FEA chain qualified", satisfied: false}]
+    blocking_reasons: ["Bracket geometry and CalculiX D034 integration require clean-environment qualification."]
+  - id: sensor-interface-pcb
+    version: 1.0.0
+    title: Sensor-Interface PCB
+    summary: Turn an approved schematic and connector pinout into a constrained board and independently checked fabrication package.
+    discipline: Electronics design
+    source: templates/sensor-interface-pcb.workflow.wflow
+    layout: layouts/sensor-interface-pcb.json
+    preview: {asset: previews/sensor-interface-pcb.svg, alt: "A sensor schematic progressing to a routed PCB and fabrication layers."}
+    provided_inputs: []
+    requested_inputs: [{name: "Approved schematic, datasheets, pinout, and board envelope", kind: engineering_requirements}]
+    expected_outputs: [{name: "Editable KiCad design", format: KiCad}, {name: "BOM and fabrication files", format: Gerber}]
+    capabilities: [{operation: kicad_authoring, qualification: partial}, {operation: independent_erc_drc, qualification: required}]
+    external_effects: []
+    acceptance_profile: sensor-interface-pcb/v1
+    definition_status: reviewed
+    rights: {fixture: user_supplied, redistribution: conditional, social_capture: requires_review}
+    readiness: reference
+    readiness_facts: [{code: kicad-partial, label: "KiCad basic authoring and export qualified", satisfied: true}, {code: drc-qualified, label: "Independent ERC and DRC path qualified", satisfied: false}]
+    blocking_reasons: ["The pinned KiCad adapter's DRC path is excluded until its protocol output is repaired and qualified."]
+  - id: parametric-drill-jig
+    version: 1.0.0
+    title: Parametric Drill Jig
+    summary: Generate a reusable drill jig from a workpiece, hole table, purchased bushings, keepouts, and declared fit clearances.
+    discipline: Manufacturing engineering
+    source: templates/parametric-drill-jig.workflow.wflow
+    layout: layouts/parametric-drill-jig.json
+    preview: {asset: previews/parametric-drill-jig.svg, alt: "A transparent drill jig aligned over workpiece hole locations."}
+    provided_inputs: []
+    requested_inputs: [{name: "Workpiece, hole CSV, bushing dimensions, and keepouts", kind: engineering_requirements}]
+    expected_outputs: [{name: "Jig model", format: STEP}, {name: "Hole-location drawing", format: DXF}, {name: "Dimension report", format: JSON}]
+    capabilities: [{operation: brep_cad, qualification: partial}, {operation: drawing_export, qualification: partial}, {operation: dfm_measurement, qualification: required}]
+    external_effects: []
+    acceptance_profile: parametric-drill-jig/v1
+    definition_status: reviewed
+    rights: {fixture: user_supplied, redistribution: conditional, social_capture: requires_review}
+    readiness: reference
+    readiness_facts: [{code: primitives-qualified, label: "CAD and drawing primitives qualified", satisfied: true}, {code: jig-chain-qualified, label: "Complete jig chain qualified", satisfied: false}]
+    blocking_reasons: ["The complete jig and optional DFM D037 checks require qualification."]
+  - id: robot-tracking-diagnosis
+    version: 1.0.0
+    title: Robot Tracking Diagnosis
+    summary: Analyze a recorded ROS 2 run, align planned and observed paths, and report evidence-linked tracking error without overclaiming cause.
+    discipline: Robotics diagnostics
+    source: templates/robot-tracking-diagnosis.workflow.wflow
+    layout: layouts/robot-tracking-diagnosis.json
+    preview: {asset: previews/robot-tracking-diagnosis.svg, alt: "Planned and observed robot paths with a time-aligned error chart."}
+    provided_inputs: []
+    requested_inputs: [{name: "Redistributable ROS 2 bag and annotated event", kind: recorded_data}]
+    expected_outputs: [{name: "Trajectory overlay", format: SVG}, {name: "Tracking metrics and timeline", format: JSON}]
+    capabilities: [{operation: rosbag_retrieval, qualification: partial}, {operation: time_alignment_and_metrics, qualification: required}]
+    external_effects: []
+    acceptance_profile: robot-tracking-diagnosis/v1
+    definition_status: reviewed
+    rights: {fixture: user_supplied, redistribution: conditional, social_capture: requires_review}
+    readiness: reference
+    readiness_facts: [{code: rosbag-retrieval, label: "Known-message retrieval qualified", satisfied: true}, {code: analysis-qualified, label: "Numeric alignment and metrics qualified", satisfied: false}]
+    blocking_reasons: ["Numeric messages, independent alignment, plotting, and recovery behavior require qualification."]
+  - id: heat-spreader-sizing
+    version: 1.0.0
+    title: Conduction Heat-Spreader Sizing
+    summary: Size a conduction plate by comparing a numerical temperature field with an analytical baseline, heat balance, and mesh sensitivity.
+    discipline: Thermal analysis
+    source: templates/heat-spreader-sizing.workflow.wflow
+    layout: layouts/heat-spreader-sizing.json
+    preview: {asset: previews/heat-spreader-sizing.svg, alt: "Two heat-spreader temperature maps and a maximum-temperature comparison."}
+    provided_inputs: []
+    requested_inputs: [{name: "Geometry, conductivity, heat input, boundary conditions, and limit", kind: engineering_requirements}]
+    expected_outputs: [{name: "Plate geometry", format: STEP}, {name: "Temperature field and balance", format: solver_result}, {name: "Sizing decision", format: JSON}]
+    capabilities: [{operation: brep_cad, qualification: partial}, {operation: conduction_solver, qualification: required}]
+    external_effects: [solver_execution]
+    acceptance_profile: conduction-heat-spreader/v1
+    definition_status: reviewed
+    rights: {fixture: user_supplied, redistribution: conditional, social_capture: requires_review}
+    readiness: reference
+    readiness_facts: [{code: oasis-baseline, label: "OASiS unit-square Poisson path qualified", satisfied: true}, {code: dimensional-thermal-qualified, label: "Dimensional thermal handoff qualified", satisfied: false}]
+    blocking_reasons: ["The dimensional thermal problem and CAD handoff require qualification."]
+  - id: sensor-fan-harness
+    version: 1.0.0
+    title: Sensor-and-Fan Wiring Harness
+    summary: Create and validate a 24 V harness plan, connector pin schedule, cut list, and independent voltage-drop checks.
+    discipline: Electrical integration
+    source: templates/sensor-fan-harness.workflow.wflow
+    layout: layouts/sensor-fan-harness.json
+    preview: {asset: previews/sensor-fan-harness.svg, alt: "A labeled branched wiring harness with connector and voltage-drop checks."}
+    provided_inputs: []
+    requested_inputs: [{name: "Wiring schedule, connector data, branch lengths, and currents", kind: engineering_requirements}]
+    expected_outputs: [{name: "Harness plan and pin schedule", format: JSON}, {name: "Cut list and assembly document", format: CSV}]
+    capabilities: [{operation: splice_harness_authoring, qualification: required}, {operation: independent_electrical_checks, qualification: required}]
+    external_effects: [credentialed_cloud_operation]
+    acceptance_profile: sensor-fan-harness/v1
+    definition_status: reviewed
+    rights: {fixture: user_supplied, redistribution: conditional, social_capture: requires_review}
+    readiness: reference
+    readiness_facts: [{code: source-backed, label: "Splice CAD D031 source reviewed", satisfied: true}, {code: runtime-qualified, label: "Credentialed runtime qualified", satisfied: false}]
+    blocking_reasons: ["Splice CAD D031 requires beta access, credentials, and full Wright qualification."]
+  - id: water-heater-sizing
+    version: 1.0.0
+    title: Water-Heater Power Sizing
+    summary: Compare allowed heater settings against heat-up time, energy consistency, and timestep-stability requirements using an approved Modelica kit.
+    discipline: System simulation
+    source: templates/water-heater-sizing.workflow.wflow
+    layout: layouts/water-heater-sizing.json
+    preview: {asset: previews/water-heater-sizing.svg, alt: "Water temperature curves comparing several heater power settings."}
+    provided_inputs: [{name: "Approved CoffeeMachine kit pointer", kind: model_reference, attribution: "Provider-recorded approved kit"}]
+    requested_inputs: [{name: "Water mass, initial and target temperature, and time requirement", kind: engineering_requirements}]
+    expected_outputs: [{name: "Temperature-time series", format: CSV}, {name: "Energy and requirement comparison", format: JSON}]
+    capabilities: [{operation: approved_modelica_kit_execution, qualification: required}, {operation: independent_energy_check, qualification: required}]
+    external_effects: [solver_execution]
+    acceptance_profile: water-heater-sizing/v1
+    definition_status: reviewed
+    rights: {fixture: provider_approved_kit, redistribution: metadata_only, social_capture: requires_review}
+    readiness: reference
+    readiness_facts: [{code: source-backed, label: "Modelica D035 source reviewed", satisfied: true}, {code: runtime-qualified, label: "Approved-kit runtime qualified", satisfied: false}]
+    blocking_reasons: ["Modelica D035 is unqualified; only its approved bounded kit interface may be used after qualification."]

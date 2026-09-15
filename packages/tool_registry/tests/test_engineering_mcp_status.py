@@ -66,12 +66,12 @@ def build_current(as_of: date = date(2026, 9, 10)):
 def test_combined_baseline_has_one_category_per_canonical_integration():
     status = build_current()
     ids = [record["server_id"] for record in status["records"]]
-    assert len(ids) == len(set(ids)) == status["total"] == 78
+    assert len(ids) == len(set(ids)) == status["total"] == 81
     assert status["category_counts"] == {
         "works": 10,
         "preview": 6,
         "requires_login": 15,
-        "in_progress": 1,
+        "in_progress": 4,
         "abandoned": 46,
         "vendor_blocked": 0,
     }
@@ -128,7 +128,12 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         "webmcp-openscad",
         "wincc-unified-mcp",
     } <= by_category["abandoned"]
-    assert by_category["in_progress"] == {"openscad-mcp"}
+    assert by_category["in_progress"] == {
+        "agentcad",
+        "bambu-p1s-mcp-marctheshark3",
+        "foam-agent-csml-rpi",
+        "openscad-mcp",
+    }
     assert set().union(*by_category.values()) == set(ids)
     assert {record["protocol_family"] for record in status["records"]} == {
         "mcp",

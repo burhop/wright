@@ -291,6 +291,28 @@ def test_integrated_checkpoint_still_protects_reviewed_candidate_paths(candidate
     )
 
 
+def test_blocked_checkpoint_retains_invalidated_review_as_evidence(candidate):
+    builder = _record_integrated_boundary(candidate)
+    builder.write_bytes("product.py", b"VALUE = 2\n")
+    builder.commit("change reviewed native implementation")
+    state = candidate[2][f"{ROOT}/program-state.json"]
+    state["feature_state"] = "BLOCKED"
+    roadmap = candidate[2][f"{ROOT}/roadmap.json"]
+    next(item for item in roadmap["items"] if item["id"] == "EPP-N01")["status"] = (
+        "blocked"
+    )
+    state["next_eligible_actions"][0].update(
+        action="APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE",
+        requires_human_approval=True,
+        reason="The retained scoped checkpoint was invalidated after integration.",
+    )
+    blocked_findings = findings(candidate)
+    assert blocked_findings == [], [
+        (finding.code, finding.invariant) for finding in blocked_findings
+    ]
+    assert state["scoped_checkpoint"]["status"] == "independently_verified"
+
+
 def test_checkbox_progress_remains_valid_under_the_same_review(candidate):
     builder, _, docs = candidate
     path = "specs/079-wright-native-authoring/tasks.md"

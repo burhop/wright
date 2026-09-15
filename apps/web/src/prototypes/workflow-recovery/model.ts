@@ -6,6 +6,12 @@ export type RecoveryRelationshipKind =
   "data" | "control" | "decision" | "feedback";
 export const RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY =
   "__wright_authoring_section";
+export const RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY =
+  "__wright_authoring_instruction_field";
+export const RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY =
+  "__wright_authoring_secondary_instruction";
+export const RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY =
+  "__wright_authoring_approval_objects";
 export type RecoveryRunState =
   | "idle"
   | "queued"

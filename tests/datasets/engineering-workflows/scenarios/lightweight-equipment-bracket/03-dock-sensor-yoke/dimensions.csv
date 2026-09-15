@@ -1,0 +1,7 @@
+feature,axis,x_mm,y_mm,z_mm,diameter_mm
+base_A,z,-42,-18,4,6.6
+base_B,z,-42,18,4,6.6
+base_C,z,42,-18,4,6.6
+base_D,z,42,18,4,6.6
+pivot_left,x,-56,0,62,8.2
+pivot_right,x,56,0,62,8.2

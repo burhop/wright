@@ -1,0 +1,992 @@
+{
+  "kind": "selected_prerequisite_probe",
+  "started_at": "2026-09-12T15:07:52.130933+00:00",
+  "calls": [
+    {
+      "tool": "library",
+      "operation": "search",
+      "result": {
+        "status": "ok",
+        "count": 4,
+        "results": [
+          {
+            "library": "Resistor_SMD",
+            "name": "R_0603_1608Metric",
+            "full_name": "Resistor_SMD:R_0603_1608Metric",
+            "description": "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator",
+            "tags": "resistor",
+            "pad_count": 2
+          },
+          {
+            "library": "Resistor_SMD",
+            "name": "R_0603_1608Metric_Pad0.98x0.95mm_HandSolder",
+            "full_name": "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder",
+            "description": "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal with elongated pad for handsoldering. (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator",
+            "tags": "resistor handsolder",
+            "pad_count": 2
+          },
+          {
+            "library": "Resistor_SMD",
+            "name": "R_0201_0603Metric",
+            "full_name": "Resistor_SMD:R_0201_0603Metric",
+            "description": "Resistor SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator",
+            "tags": "resistor",
+            "pad_count": 4
+          },
+          {
+            "library": "Resistor_SMD",
+            "name": "R_0201_0603Metric_Pad0.64x0.40mm_HandSolder",
+            "full_name": "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder",
+            "description": "Resistor SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC-7351 nominal with elongated pad for handsoldering. (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator",
+            "tags": "resistor handsolder",
+            "pad_count": 4
+          }
+        ],
+        "truncated": false
+      },
+      "isError": false
+    },
+    {
+      "tool": "pcb",
+      "operation": "create",
+      "result": {
+        "status": "ok",
+        "file": "/work/probe.kicad_pcb"
+      },
+      "isError": false
+    },
+    {
+      "tool": "pcb",
+      "operation": "set_outline",
+      "result": {
+        "status": "ok",
+        "previous_edge_cuts_removed": 0,
+        "outline": {
+          "x_mm": 0.0,
+          "y_mm": 0.0,
+          "width_mm": 40.0,
+          "height_mm": 30.0
+        }
+      },
+      "isError": false
+    },
+    {
+      "tool": "pcb",
+      "operation": "place_footprint",
+      "result": {
+        "status": "ok",
+        "placed": {
+          "reference": "R1",
+          "footprint": "Resistor_SMD:R_0603_1608Metric",
+          "x_mm": 10.0,
+          "y_mm": 15.0,
+          "rotation": 0.0,
+          "layer": "F.Cu"
+        },
+        "bounding_box": {
+          "x_min_mm": 8.49,
+          "y_min_mm": 14.24,
+          "x_max_mm": 11.51,
+          "y_max_mm": 15.76,
+          "width_mm": 3.01,
+          "height_mm": 1.51,
+          "courtyard": {
+            "x_min_mm": 8.49,
+            "y_min_mm": 14.24,
+            "x_max_mm": 11.51,
+            "y_max_mm": 15.76,
+            "width_mm": 3.01,
+            "height_mm": 1.51
+          }
+        }
+      },
+      "isError": false
+    },
+    {
+      "tool": "pcb",
+      "operation": "place_footprint",
+      "result": {
+        "status": "ok",
+        "placed": {
+          "reference": "R2",
+          "footprint": "Resistor_SMD:R_0603_1608Metric",
+          "x_mm": 25.0,
+          "y_mm": 15.0,
+          "rotation": 0.0,
+          "layer": "F.Cu"
+        },
+        "bounding_box": {
+          "x_min_mm": 23.5,
+          "y_min_mm": 14.24,
+          "x_max_mm": 26.5,
+          "y_max_mm": 15.76,
+          "width_mm": 3.01,
+          "height_mm": 1.51,
+          "courtyard": {
+            "x_min_mm": 23.5,
+            "y_min_mm": 14.24,
+            "x_max_mm": 26.5,
+            "y_max_mm": 15.76,
+            "width_mm": 3.01,
+            "height_mm": 1.51
+          }
+        }
+      },
+      "isError": false
+    },
+    {
+      "tool": "pcb",
+      "operation": "add_net",
+      "result": {
+        "status": "ok",
+        "net": "A",
+        "net_code": 1
+      },
+      "isError": false
+    },
+    {
+      "tool": "pcb",
+      "operation": "add_net",
+      "result": {
+        "status": "ok",
+        "net": "B",
+        "net_code": 2
+      },
+      "isError": false
+    },
+    {
+      "tool": "pcb",
+      "operation": "bulk_assign_pad_nets",
+      "result": {
+        "status": "ok",
+        "assigned": 4,
+        "error_count": 0,
+        "nets_created": [],
+        "errors": [],
+        "results": [
+          {
+            "reference": "R1",
+            "pad": "1",
+            "net": "A",
+            "sub_pads": 1
+          },
+          {
+            "reference": "R1",
+            "pad": "2",
+            "net": "B",
+            "sub_pads": 1
+          },
+          {
+            "reference": "R2",
+            "pad": "1",
+            "net": "A",
+            "sub_pads": 1
+          },
+          {
+            "reference": "R2",
+            "pad": "2",
+            "net": "B",
+            "sub_pads": 1
+          }
+        ]
+      },
+      "isError": false
+    },
+    {
+      "tool": "drc",
+      "operation": "run",
+      "result": {
+        "success": true,
+        "method": "cli",
+        "pcb_file": "/work/probe.kicad_pcb",
+        "total_violations": 2,
+        "violation_categories": {
+          "unconnected": 2
+        },
+        "violations": [],
+        "unconnected_items": [
+          {
+            "description": "Missing connection between items",
+            "items": [
+              {
+                "description": "Pad 1 [A] of R1 on F.Cu",
+                "pos": {
+                  "x": 9.175,
+                  "y": 15.0
+                },
+                "uuid": "2aa98dc9-3664-4f07-9993-de2d0eb0f899"
+              },
+              {
+                "description": "Pad 1 [A] of R2 on F.Cu",
+                "pos": {
+                  "x": 24.175,
+                  "y": 15.0
+                },
+                "uuid": "9bedd525-d744-4f9e-b887-4ad7f79b1323"
+              }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+          },
+          {
+            "description": "Missing connection between items",
+            "items": [
+              {
+                "description": "Pad 2 [B] of R1 on F.Cu",
+                "pos": {
+                  "x": 10.825,
+                  "y": 15.0
+                },
+                "uuid": "8b9f8b9e-04ae-4364-9564-db0a3445e5b1"
+              },
+              {
+                "description": "Pad 2 [B] of R2 on F.Cu",
+                "pos": {
+                  "x": 25.825,
+                  "y": 15.0
+                },
+                "uuid": "a4cc76de-459a-4d65-a5bd-c5da50cb0e5c"
+              }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+          }
+        ],
+        "schematic_parity": [],
+        "unconnected_count": 2,
+        "parity_count": 0
+      },
+      "isError": false
+    },
+    {
+      "tool": "drc",
+      "operation": "run",
+      "result": {
+        "success": true,
+        "method": "cli",
+        "pcb_file": "/work/probe.kicad_pcb",
+        "total_violations": 2,
+        "violation_categories": {
+          "unconnected": 2
+        },
+        "violations": [],
+        "unconnected_items": [
+          {
+            "description": "Missing connection between items",
+            "items": [
+              {
+                "description": "Pad 1 [A] of R1 on F.Cu",
+                "pos": {
+                  "x": 9.175,
+                  "y": 15.0
+                },
+                "uuid": "2aa98dc9-3664-4f07-9993-de2d0eb0f899"
+              },
+              {
+                "description": "Pad 1 [A] of R2 on F.Cu",
+                "pos": {
+                  "x": 24.175,
+                  "y": 15.0
+                },
+                "uuid": "9bedd525-d744-4f9e-b887-4ad7f79b1323"
+              }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+          },
+          {
+            "description": "Missing connection between items",
+            "items": [
+              {
+                "description": "Pad 2 [B] of R1 on F.Cu",
+                "pos": {
+                  "x": 10.825,
+                  "y": 15.0
+                },
+                "uuid": "8b9f8b9e-04ae-4364-9564-db0a3445e5b1"
+              },
+              {
+                "description": "Pad 2 [B] of R2 on F.Cu",
+                "pos": {
+                  "x": 25.825,
+                  "y": 15.0
+                },
+                "uuid": "a4cc76de-459a-4d65-a5bd-c5da50cb0e5c"
+              }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+          }
+        ],
+        "schematic_parity": [],
+        "unconnected_count": 2,
+        "parity_count": 0,
+        "comparison": {
+          "current_violations": 2,
+          "previous_violations": 2,
+          "change": 0,
+          "previous_datetime": "2026-09-12 15:07:59",
+          "new_categories": {},
+          "resolved_categories": {},
+          "changed_categories": {}
+        }
+      },
+      "isError": false
+    },
+    {
+      "tool": "drc",
+      "operation": "history",
+      "result": {
+        "success": true,
+        "project_path": "/work/probe.kicad_pcb",
+        "history_entries": [
+          {
+            "timestamp": 1789225679.2239003,
+            "datetime": "2026-09-12 15:07:59",
+            "total_violations": 2,
+            "violation_categories": {
+              "unconnected": 2
+            },
+            "raw_violations": []
+          },
+          {
+            "timestamp": 1789225678.7793956,
+            "datetime": "2026-09-12 15:07:58",
+            "total_violations": 2,
+            "violation_categories": {
+              "unconnected": 2
+            },
+            "raw_violations": []
+          }
+        ],
+        "entry_count": 2,
+        "trend": "stable"
+      },
+      "isError": false
+    },
+    {
+      "tool": "schematic",
+      "operation": "create",
+      "result": {
+        "status": "ok",
+        "name": "real-erc-negative-probe"
+      },
+      "isError": false
+    },
+    {
+      "tool": "library",
+      "operation": "search",
+      "result": {
+        "status": "ok",
+        "count": 5,
+        "results": [
+          {
+            "lib_id": "Device:R",
+            "name": "R",
+            "library": "Device",
+            "description": "Resistor",
+            "keywords": "R res resistor",
+            "pin_count": 2
+          },
+          {
+            "lib_id": "Device:R_Potentiometer",
+            "name": "R_Potentiometer",
+            "library": "Device",
+            "description": "Potentiometer",
+            "keywords": "resistor variable",
+            "pin_count": 3
+          },
+          {
+            "lib_id": "Device:Resonator",
+            "name": "Resonator",
+            "library": "Device",
+            "description": "Three pin ceramic resonator",
+            "keywords": "ceramic resonator",
+            "pin_count": 3
+          },
+          {
+            "lib_id": "Device:R_Potentiometer_Small",
+            "name": "R_Potentiometer_Small",
+            "library": "Device",
+            "description": "Potentiometer",
+            "keywords": "resistor variable",
+            "pin_count": 3
+          },
+          {
+            "lib_id": "Device:R_Small",
+            "name": "R_Small",
+            "library": "Device",
+            "description": "Resistor, small symbol",
+            "keywords": "R resistor",
+            "pin_count": 2
+          }
+        ],
+        "truncated": true
+      },
+      "isError": false
+    },
+    {
+      "tool": "schematic",
+      "operation": "add_component",
+      "result": {
+        "status": "ok",
+        "reference": "R1",
+        "lib_id": "Device:R",
+        "value": "10k",
+        "position": [
+          50.8,
+          50.8
+        ]
+      },
+      "isError": false
+    },
+    {
+      "tool": "schematic",
+      "operation": "save",
+      "result": {
+        "status": "ok",
+        "file_path": "/work/probe.kicad_sch"
+      },
+      "isError": false
+    },
+    {
+      "tool": "export",
+      "operation": "bom_csv",
+      "result": {
+        "success": true,
+        "schematic_file": "/work/probe.kicad_sch",
+        "output_file": "/work/probe_bom.csv",
+        "file_size": 90,
+        "message": "BOM exported successfully"
+      },
+      "isError": false
+    },
+    {
+      "tool": "native_rule_check",
+      "operation": null,
+      "result": {
+        "operation": "native_erc",
+        "engine": "kicad-cli",
+        "exit_code": 0,
+        "source_sha256": "2316b74ef34ce7d9aa1400fdd0728a8d2622f10e55cbb6ff375b89d1511bdc96",
+        "issue_count": 3,
+        "error_count": 2,
+        "warning_count": 1,
+        "issues": [
+          {
+            "description": "Pin not connected",
+            "items": [
+              {
+                "description": "Symbol R1 Pin 1 [Passive, Line]",
+                "pos": {
+                  "x": 0.508,
+                  "y": 0.4699
+                },
+                "uuid": "2d44289a-c18b-4476-9ed2-c7ec2b5c9cd4"
+              }
+            ],
+            "severity": "error",
+            "type": "pin_not_connected"
+          },
+          {
+            "description": "The current configuration does not include the symbol library 'Device'",
+            "items": [
+              {
+                "description": "Symbol R1 [R]",
+                "pos": {
+                  "x": 0.508,
+                  "y": 0.508
+                },
+                "uuid": "13afcc19-52c5-4400-97c3-2e7d8176aace"
+              }
+            ],
+            "severity": "warning",
+            "type": "lib_symbol_issues"
+          },
+          {
+            "description": "Pin not connected",
+            "items": [
+              {
+                "description": "Symbol R1 Pin 2 [Passive, Line]",
+                "pos": {
+                  "x": 0.508,
+                  "y": 0.5461
+                },
+                "uuid": "c3838e5c-d8f7-41d0-b52b-d0a1eba031d0"
+              }
+            ],
+            "severity": "error",
+            "type": "pin_not_connected"
+          }
+        ],
+        "produced_files": [
+          {
+            "output_path": "/work/selected-erc.json",
+            "output_bytes": 2194,
+            "sha256": "bb9594d4fc9071d41f386cf3e7c1df88fbbd3af609377d17325ed55165bad7ab",
+            "output_format": "json",
+            "output_port": "report"
+          }
+        ]
+      },
+      "isError": false
+    },
+    {
+      "tool": "native_rule_check",
+      "operation": null,
+      "result": {
+        "operation": "native_drc",
+        "engine": "kicad-cli",
+        "exit_code": 0,
+        "source_sha256": "2b3103a9947dc783c53cd72267a463f6649cfba97ec29bb196eb2039afc32b4d",
+        "issue_count": 2,
+        "error_count": 2,
+        "warning_count": 0,
+        "issues": [
+          {
+            "description": "Missing connection between items",
+            "items": [
+              {
+                "description": "Pad 1 [A] of R1 on F.Cu",
+                "pos": {
+                  "x": 9.175,
+                  "y": 15.0
+                },
+                "uuid": "2aa98dc9-3664-4f07-9993-de2d0eb0f899"
+              },
+              {
+                "description": "Pad 1 [A] of R2 on F.Cu",
+                "pos": {
+                  "x": 24.175,
+                  "y": 15.0
+                },
+                "uuid": "9bedd525-d744-4f9e-b887-4ad7f79b1323"
+              }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+          },
+          {
+            "description": "Missing connection between items",
+            "items": [
+              {
+                "description": "Pad 2 [B] of R1 on F.Cu",
+                "pos": {
+                  "x": 10.825,
+                  "y": 15.0
+                },
+                "uuid": "8b9f8b9e-04ae-4364-9564-db0a3445e5b1"
+              },
+              {
+                "description": "Pad 2 [B] of R2 on F.Cu",
+                "pos": {
+                  "x": 25.825,
+                  "y": 15.0
+                },
+                "uuid": "a4cc76de-459a-4d65-a5bd-c5da50cb0e5c"
+              }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+          }
+        ],
+        "produced_files": [
+          {
+            "output_path": "/work/selected-drc-before.json",
+            "output_bytes": 1818,
+            "sha256": "3927ec4adf04f4be8b7bf5ee71b0ae552b6d39fbe449852d3e67f1a6ad6fb90b",
+            "output_format": "json",
+            "output_port": "report"
+          }
+        ]
+      },
+      "isError": false
+    },
+    {
+      "tool": "autoroute",
+      "operation": "run",
+      "result": {
+        "status": "ok",
+        "pcb_path": "/work/probe.kicad_pcb",
+        "freerouter_jar": "/opt/freerouting-2.2.4.jar",
+        "zones_removed": 0,
+        "tracks_before": 0,
+        "vias_before": 0,
+        "tracks_after": 6,
+        "vias_after": 0,
+        "net_count": 3,
+        "unconnected_after_routing": 0,
+        "passes_run": 1,
+        "best_unconnected": 0,
+        "pass_results": [
+          {
+            "pass": 1,
+            "status": "ok",
+            "unconnected": 0
+          }
+        ],
+        "note": "Routing complete."
+      },
+      "isError": false
+    },
+    {
+      "tool": "drc",
+      "operation": "run",
+      "result": {
+        "success": true,
+        "method": "cli",
+        "pcb_file": "/work/probe.kicad_pcb",
+        "total_violations": 0,
+        "violation_categories": {},
+        "violations": [],
+        "unconnected_items": [],
+        "schematic_parity": [],
+        "unconnected_count": 0,
+        "parity_count": 0,
+        "comparison": {
+          "current_violations": 0,
+          "previous_violations": 0,
+          "change": 0,
+          "previous_datetime": "2026-09-12 15:08:10",
+          "new_categories": {},
+          "resolved_categories": {},
+          "changed_categories": {}
+        }
+      },
+      "isError": false
+    },
+    {
+      "tool": "export",
+      "operation": "gerbers",
+      "result": {
+        "status": "ok",
+        "output_dir": "/work/gerbers",
+        "gerber_files": [
+          "probe-B_Adhesive.gba",
+          "probe-B_Courtyard.gbr",
+          "probe-B_Cu.gbl",
+          "probe-B_Fab.gbr",
+          "probe-B_Mask.gbs",
+          "probe-B_Paste.gbp",
+          "probe-B_Silkscreen.gbo",
+          "probe-Edge_Cuts.gm1",
+          "probe-F_Adhesive.gta",
+          "probe-F_Courtyard.gbr",
+          "probe-F_Cu.gtl",
+          "probe-F_Fab.gbr",
+          "probe-F_Mask.gts",
+          "probe-F_Paste.gtp",
+          "probe-F_Silkscreen.gto",
+          "probe-Margin.gbr",
+          "probe-User_1.gbr",
+          "probe-User_2.gbr",
+          "probe-User_3.gbr",
+          "probe-User_4.gbr",
+          "probe-User_Comments.gbr",
+          "probe-User_Drawings.gbr",
+          "probe-User_Eco1.gbr",
+          "probe-User_Eco2.gbr",
+          "probe-job.gbrjob"
+        ],
+        "drill_files": [
+          "probe.drl"
+        ],
+        "gerber_count": 25,
+        "drill_count": 1,
+        "total_files": 26,
+        "zip_path": "/work/probe-gerbers.zip",
+        "zip_size_bytes": 14020
+      },
+      "isError": false
+    }
+  ],
+  "campaign_run": false,
+  "initialize": {
+    "meta": null,
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "experimental": {},
+      "logging": {},
+      "prompts": {
+        "listChanged": false
+      },
+      "resources": {
+        "subscribe": false,
+        "listChanged": false
+      },
+      "tools": {
+        "listChanged": true
+      },
+      "completions": null,
+      "tasks": null,
+      "extensions": {
+        "io.modelcontextprotocol/ui": {}
+      }
+    },
+    "serverInfo": {
+      "name": "KiCad",
+      "title": null,
+      "version": "3.4.6",
+      "websiteUrl": null,
+      "icons": null
+    },
+    "instructions": "KiCad EDA \u2014 design schematics and lay out PCBs. Most tools are routers that dispatch on an `operation=` argument (e.g. pcb(operation=\"place_footprint\"), drc(operation=\"autofix\"), library(operation=\"search\")); the rest are standalone (build_pcb_from_schematic, estimate_board_size, suggest_placement, panelize_pcb).\n\nCritical rules:\n- NEVER hand-route. Don't use pcb add_trace/add_via to route a board \u2014 use autoroute(operation=\"run\") (wraps FreeRouter). LLM-placed traces short and violate clearances.\n- NEVER guess library/footprint names \u2014 they change between KiCad versions. Search first with library(operation=\"search\").\n- NEVER modify one PCB file with concurrent calls. PCB ops are load/modify/save subprocesses; parallel writes corrupt the file. Serialize them.\n- Verify with drc(operation=\"run\") and audit(operation=\"all\") before finishing.\n\nSee AGENT-INSTRUCTIONS.md for the full workflow, TOOLS.md for the operation reference."
+  },
+  "native_erc": {
+    "exit_code": 0,
+    "stdout": "Checking sheet names...\nChecking bus conflicts...\nChecking conflicts...\nChecking units...\nChecking footprints...\nChecking pins...\nChecking similar labels...\nChecking local and global labels...\nChecking for unresolved variables...\nChecking no connect pins for connections...\nChecking for library symbol issues...\nChecking for off grid pins and wires...\nChecking for labels on more than one wire...\nChecking for undefined netclasses...\nFound 3 violations\nSaved ERC Report to /work/native-erc.json\n",
+    "stderr": "15:08:11: Error: An error occurred attempting to load the global design block library table.\nPlease edit this global design block library table in Preferences menu. Permission denied\n15:08:11: Error: can't create file '/home/agent/.config/kicad/9.0/fp-lib-table' (error 13: Permission denied)\n15:08:11: Error: Error copying the file '/usr/share/kicad/template/fp-lib-table' to '/home/agent/.config/kicad/9.0/fp-lib-table'.\n15:08:11: Error: An error occurred attempting to load the global footprint library table. Permission denied\n"
+  },
+  "native_drc": {
+    "exit_code": 0,
+    "stdout": "Found 0 violations\nFound 0 unconnected items\nSaved DRC Report to /work/native-drc.json\n",
+    "stderr": ""
+  },
+  "files": [
+    {
+      "path": "native-drc.json",
+      "bytes": 271,
+      "sha256": "4f8286c5018c5d08aacd82f67f1d3b9f3f4208d2c10c130318f099d01bc9be17"
+    },
+    {
+      "path": "native-erc.json",
+      "bytes": 2194,
+      "sha256": "829fbc05711e25fc467128c4740e0f476c56f6b0199e98130eb96453acd513c7"
+    },
+    {
+      "path": "probe-gerbers.zip",
+      "bytes": 14020,
+      "sha256": "944635eeeddfa69efb67087975e8188d18c8a7a4b062f4dbbf886c0d9918cb73"
+    },
+    {
+      "path": "probe.kicad_pcb",
+      "bytes": 11066,
+      "sha256": "b2b7e6da928c07174145b5fa0966aac44b7f8c6d927fc8fb58df4cec4aff7415"
+    },
+    {
+      "path": "probe.kicad_prl",
+      "bytes": 2056,
+      "sha256": "6b6f98272c4fe7567b0d4a0091c5f0311b7f1410477778bf76fd2b6c6de26f9b"
+    },
+    {
+      "path": "probe.kicad_pro",
+      "bytes": 8358,
+      "sha256": "40a4f5fb18151388d927b6830d4162e118a0a27e8fbc2ccd41f9cdeab29cd0e7"
+    },
+    {
+      "path": "probe.kicad_sch",
+      "bytes": 2959,
+      "sha256": "2316b74ef34ce7d9aa1400fdd0728a8d2622f10e55cbb6ff375b89d1511bdc96"
+    },
+    {
+      "path": "probe_bom.csv",
+      "bytes": 90,
+      "sha256": "c96d765db2d5f932fd4378b3e72437153ebe609b11a66e14689ab86062c1ad6e"
+    },
+    {
+      "path": "selected-drc-before.json",
+      "bytes": 1818,
+      "sha256": "3927ec4adf04f4be8b7bf5ee71b0ae552b6d39fbe449852d3e67f1a6ad6fb90b"
+    },
+    {
+      "path": "selected-erc.json",
+      "bytes": 2194,
+      "sha256": "bb9594d4fc9071d41f386cf3e7c1df88fbbd3af609377d17325ed55165bad7ab"
+    },
+    {
+      "path": "server-stderr.log",
+      "bytes": 34155,
+      "sha256": "40dd318de1acdf21c21cd02e2222ef647e51a35fb421dd91886ac3ffe339328f"
+    },
+    {
+      "path": "tools.json",
+      "bytes": 71046,
+      "sha256": "3744418590c95be21f35178674643d8f911467bdf95b4709ca20a9b2800aa688"
+    },
+    {
+      "path": "gerbers/probe-B_Adhesive.gba",
+      "bytes": 461,
+      "sha256": "b5f17dab1283194cc2a62c03e19e3da8f01b62b6b7d2502dc4359a0a77a5a589"
+    },
+    {
+      "path": "gerbers/probe-B_Courtyard.gbr",
+      "bytes": 435,
+      "sha256": "cba602a7f111e28a606d40ec18a5d28acc3ff11b9b09fea2407b688131821801"
+    },
+    {
+      "path": "gerbers/probe-B_Cu.gbl",
+      "bytes": 466,
+      "sha256": "979915c542c72eadf285629886609938cea950020f2d4b098fd39d971a302238"
+    },
+    {
+      "path": "gerbers/probe-B_Fab.gbr",
+      "bytes": 444,
+      "sha256": "1027168924acd52c5bde53d9492bdfcb5057a97d1666dc4ae166284671bc4f81"
+    },
+    {
+      "path": "gerbers/probe-B_Mask.gbs",
+      "bytes": 467,
+      "sha256": "b1bce43a0ee1a82e9358525076ca182fbc3de1faac4e1d3abb0390bebe162cde"
+    },
+    {
+      "path": "gerbers/probe-B_Paste.gbp",
+      "bytes": 462,
+      "sha256": "a360ef145468c23b59f6ca592a219d7908dda158c8b9419062c9f7af66a10674"
+    },
+    {
+      "path": "gerbers/probe-B_Silkscreen.gbo",
+      "bytes": 463,
+      "sha256": "8e759cc28dd6df63af1be78c63d13ded3fea2598aaf651b5dd76b2f58ad2143d"
+    },
+    {
+      "path": "gerbers/probe-Edge_Cuts.gm1",
+      "bytes": 624,
+      "sha256": "f02081de2570c8005101f09c2d7ca8887c3983f4a46a472ce10933f6a082154b"
+    },
+    {
+      "path": "gerbers/probe-F_Adhesive.gta",
+      "bytes": 461,
+      "sha256": "adbc57b5fc5e9f469cee7e9dbdb7b7b45ceda6b38f1c33d29b65620dbfb5e073"
+    },
+    {
+      "path": "gerbers/probe-F_Courtyard.gbr",
+      "bytes": 867,
+      "sha256": "71c8a39ef1e77e1300e77d271a50d6517bba91993d3ff87f6c802ba1134ed461"
+    },
+    {
+      "path": "gerbers/probe-F_Cu.gtl",
+      "bytes": 1728,
+      "sha256": "32e164342630f67a1bda13725b230c30e892a2243102bcdec33f4d3225045691"
+    },
+    {
+      "path": "gerbers/probe-F_Fab.gbr",
+      "bytes": 5350,
+      "sha256": "2b638cfb378c546803b291f01a6914d843a3044cc5a03c39ef85f6309b5717b4"
+    },
+    {
+      "path": "gerbers/probe-F_Mask.gts",
+      "bytes": 1251,
+      "sha256": "40175ddbd1d3da96aef584911a71856508d7dbfb505cf22fceda1be2881fb1d1"
+    },
+    {
+      "path": "gerbers/probe-F_Paste.gtp",
+      "bytes": 1246,
+      "sha256": "08dc66f6a51a2b68209d505e7d50a2422fd8969249db95a0579b30e0ffc1a9f1"
+    },
+    {
+      "path": "gerbers/probe-F_Silkscreen.gto",
+      "bytes": 2483,
+      "sha256": "f3cb3b1e3750db495bb0bc4f3aba18261d90929a25f37362f9d993f5b37793b9"
+    },
+    {
+      "path": "gerbers/probe-job.gbrjob",
+      "bytes": 4037,
+      "sha256": "578c2cc59a7db9909124ab1a9efa6bb04f45212c6df856b05998c735cec88760"
+    },
+    {
+      "path": "gerbers/probe-Margin.gbr",
+      "bytes": 435,
+      "sha256": "cba602a7f111e28a606d40ec18a5d28acc3ff11b9b09fea2407b688131821801"
+    },
+    {
+      "path": "gerbers/probe-User_1.gbr",
+      "bytes": 435,
+      "sha256": "cba602a7f111e28a606d40ec18a5d28acc3ff11b9b09fea2407b688131821801"
+    },
+    {
+      "path": "gerbers/probe-User_2.gbr",
+      "bytes": 435,
+      "sha256": "cba602a7f111e28a606d40ec18a5d28acc3ff11b9b09fea2407b688131821801"
+    },
+    {
+      "path": "gerbers/probe-User_3.gbr",
+      "bytes": 435,
+      "sha256": "cba602a7f111e28a606d40ec18a5d28acc3ff11b9b09fea2407b688131821801"
+    },
+    {
+      "path": "gerbers/probe-User_4.gbr",
+      "bytes": 435,
+      "sha256": "cba602a7f111e28a606d40ec18a5d28acc3ff11b9b09fea2407b688131821801"
+    },
+    {
+      "path": "gerbers/probe-User_Comments.gbr",
+      "bytes": 438,
+      "sha256": "d4164fc2aa7170a4c79cd5521c4f2842f34e86439c3d7e872b93aca34d2d34d3"
+    },
+    {
+      "path": "gerbers/probe-User_Drawings.gbr",
+      "bytes": 445,
+      "sha256": "1047aa501972ff2abbd281ffaf4859919e20433126ee40a36a07626c4692b181"
+    },
+    {
+      "path": "gerbers/probe-User_Eco1.gbr",
+      "bytes": 435,
+      "sha256": "2d98f2f95d2e60d75213ef59c62365b1e293f686247a0b77a2f6c06d1dfa477e"
+    },
+    {
+      "path": "gerbers/probe-User_Eco2.gbr",
+      "bytes": 435,
+      "sha256": "9f12d5d82a7949377ba90d5e739b84631329cecfc458bc8ecb7e3b5ad160ca07"
+    },
+    {
+      "path": "gerbers/probe.drl",
+      "bytes": 281,
+      "sha256": "73ab6a211af2aac47cf339923e3bfbbca121b756e06b366b766588b72e07f661"
+    }
+  ],
+  "finished_at": "2026-09-12T15:08:12.554688+00:00",
+  "status": "passed",
+  "source_revision": "bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+  "selected_image": "sha256:eaaf00be76c3750bf5d0525f3637d8cf630232f13a249709a4adbdb2e12beda7",
+  "probe_image": "sha256:eaaf00be76c3750bf5d0525f3637d8cf630232f13a249709a4adbdb2e12beda7",
+  "selected_server_id": "c488c91b-8310-4cf1-9198-6e5f0342202f",
+  "gateway_qualification": "not_yet_executed",
+  "registration": "installed_and_18_tools_discovered",
+  "copied_artifacts": [
+    {
+      "path": "probe.kicad_pcb",
+      "sha256": "b2b7e6da928c07174145b5fa0966aac44b7f8c6d927fc8fb58df4cec4aff7415",
+      "bytes": 11066
+    },
+    {
+      "path": "probe.kicad_sch",
+      "sha256": "2316b74ef34ce7d9aa1400fdd0728a8d2622f10e55cbb6ff375b89d1511bdc96",
+      "bytes": 2959
+    },
+    {
+      "path": "probe_bom.csv",
+      "sha256": "c96d765db2d5f932fd4378b3e72437153ebe609b11a66e14689ab86062c1ad6e",
+      "bytes": 90
+    },
+    {
+      "path": "native-erc.json",
+      "sha256": "829fbc05711e25fc467128c4740e0f476c56f6b0199e98130eb96453acd513c7",
+      "bytes": 2194
+    },
+    {
+      "path": "native-drc.json",
+      "sha256": "4f8286c5018c5d08aacd82f67f1d3b9f3f4208d2c10c130318f099d01bc9be17",
+      "bytes": 271
+    },
+    {
+      "path": "selected-erc.json",
+      "sha256": "bb9594d4fc9071d41f386cf3e7c1df88fbbd3af609377d17325ed55165bad7ab",
+      "bytes": 2194
+    },
+    {
+      "path": "selected-drc-before.json",
+      "sha256": "3927ec4adf04f4be8b7bf5ee71b0ae552b6d39fbe449852d3e67f1a6ad6fb90b",
+      "bytes": 1818
+    },
+    {
+      "path": "probe-gerbers.zip",
+      "sha256": "944635eeeddfa69efb67087975e8188d18c8a7a4b062f4dbbf886c0d9918cb73",
+      "bytes": 14020
+    },
+    {
+      "path": "tools.json",
+      "sha256": "3744418590c95be21f35178674643d8f911467bdf95b4709ca20a9b2800aa688",
+      "bytes": 71046
+    }
+  ]
+}

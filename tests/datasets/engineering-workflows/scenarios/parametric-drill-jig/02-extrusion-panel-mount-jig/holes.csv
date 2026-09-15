@@ -1,0 +1,5 @@
+hole_id,x_mm,y_mm,z_surface_mm,drill_diameter_mm,nominal_wall_mm,center_tolerance_mm,bushing_id
+H1,30,20,0,6.6,3,0.15,B66
+H2,30,60,0,6.6,3,0.15,B66
+H3,150,20,0,6.6,3,0.15,B66
+H4,150,60,0,6.6,3,0.15,B66

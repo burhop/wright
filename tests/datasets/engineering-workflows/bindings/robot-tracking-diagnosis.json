@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "template_id": "robot-tracking-diagnosis",
+  "container": "wright-081-rosbag-campaign",
+  "bag_server": "wright-campaign-rosbag",
+  "operation_server": "wright-campaign-robot-operations",
+  "allowed_tools": {
+    "wright-campaign-rosbag": ["bag_info", "get_topic_schema", "get_messages_in_range", "get_message_at_time"],
+    "wright-campaign-robot-operations": ["normalize_csv_to_ros2", "calculate_tracking_metrics"]
+  },
+  "scenarios": {
+    "robot-tracking-diagnosis-01": {"external_frame":"map","map_frame":"map","translation_x_m":0,"translation_y_m":0,"rotation_rad":0,"header_offset_s":0,"max_interpolation_gap_s":0.5,"event_tolerance_s":0.5},
+    "robot-tracking-diagnosis-02": {"external_frame":"tracker","map_frame":"map","translation_x_m":-1,"translation_y_m":2,"rotation_rad":0,"header_offset_s":0.15,"max_interpolation_gap_s":0.5,"event_tolerance_s":0.5},
+    "robot-tracking-diagnosis-03": {"external_frame":"map","map_frame":"map","translation_x_m":0,"translation_y_m":0,"rotation_rad":0,"header_offset_s":0,"max_interpolation_gap_s":0.5,"event_tolerance_s":0.5}
+  }
+}

@@ -185,6 +185,7 @@ async def lifespan(app: FastAPI):
             )
         reconcile_installed_bundle(DATABASE_PATH)
         reconcile_wright_managed_servers(DATABASE_PATH)
+        logger.info("api_startup_stage", stage="database_ready")
     except Exception as exc:
         logger.error(
             "database_readiness_failed",
@@ -213,11 +214,13 @@ async def lifespan(app: FastAPI):
         # not cancel those permitted calls at the shorter default deadline.
         operation_timeout=mcp_settings.maximum_timeout_seconds,
     )
+    logger.info("api_startup_stage", stage="mcp_engine_ready")
     if app.state.workspace_surface_settings.flags.webmcp:
         app.state.surface_webmcp_router = app.state.mcp_engine.webmcp_router
         preview_app.state.surface_webmcp_router = app.state.surface_webmcp_router
     if api_mcp_autostart_enabled():
         await app.state.mcp_engine.sync_active_servers()
+    logger.info("api_startup_stage", stage="mcp_reconciliation_ready")
     app.state.gateway_service = build_api_gateway_service(
         DATABASE_PATH, app.state.mcp_engine, mcp_settings
     )
@@ -232,8 +235,10 @@ async def lifespan(app: FastAPI):
             DATABASE_PATH, app.state.gateway_service, app.state.workspace_service
         )
         await app.state.native_process_service.startup()
+        logger.info("api_startup_stage", stage="native_reconciliation_ready")
         app.state.engineering_model_application = engineering_model_application()
         app.state.support_diagnostic_application = support_diagnostic_application()
+        logger.info("api_startup_stage", stage="applications_ready")
         if app.state.workspace_surface_settings.flags.model:
             app.state.surface_application = surface_application()
             await app.state.surface_application.reconcile_startup()
@@ -254,7 +259,9 @@ async def lifespan(app: FastAPI):
                     "surface_route_authority",
                 ):
                     setattr(preview_app.state, name, getattr(app.state, name))
+        logger.info("api_startup_stage", stage="surfaces_ready")
         async with app.state.mcp_transport.run():
+            logger.info("api_startup_stage", stage="serving")
             yield
     finally:
         # Shutdown owns every process and worker constructed during startup.

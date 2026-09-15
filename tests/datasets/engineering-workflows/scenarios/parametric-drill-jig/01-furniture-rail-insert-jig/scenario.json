@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "template_id": "parametric-drill-jig",
+  "expected_outputs": [
+    {
+      "role": "jig_model",
+      "patterns": [
+        "**/*.step",
+        "**/*.stp",
+        "**/*.stl"
+      ]
+    },
+    {
+      "role": "hole_location_drawing",
+      "patterns": [
+        "**/*.dxf"
+      ]
+    },
+    {
+      "role": "dimension_report",
+      "patterns": [
+        "**/*dimension*.json",
+        "**/*alignment*.json",
+        "**/*measurement*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "The people, organizations, workpiece dimensions, shop capability numbers, and bushing fixture data are invented. Bushing tables are synthetic dimensional stand-ins for a user upload, not an actual supplier datasheet. Original SVG sketches are redistributable. Nothing is physically machined or dispatched."
+  },
+  "input_bindings": {},
+  "scenario_id": "parametric-drill-jig-01",
+  "title": "Repeatable pilot-hole jig for furniture assembly rails",
+  "summary": "A furniture maker supplies a workpiece envelope, two-hole table, fictional bushing data, and clamp limits for a reusable top-registering jig.",
+  "difficulty": "basic",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "holes.csv",
+      "bushings.csv",
+      "keepouts.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  }
+}

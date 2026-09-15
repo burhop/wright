@@ -18,11 +18,13 @@ def test_workspace_artifact_migration_is_additive_and_contiguous(tmp_path) -> No
     database = tmp_path / "migration-19.db"
     prior = upgrade_database(database, migrations=MIGRATIONS[:18])
 
-    result = upgrade_database(database)
+    result = upgrade_database(database, migrations=MIGRATIONS[:19])
 
     assert prior.ending_version == 18
     assert result.applied == ({"version": 19, "name": "workspace_document_artifacts"},)
-    assert [migration.version for migration in MIGRATIONS] == list(range(1, 20))
+    assert [migration.version for migration in MIGRATIONS] == list(
+        range(1, len(MIGRATIONS) + 1)
+    )
     with sqlite3.connect(database) as connection:
         assert connection.execute(
             "SELECT name FROM sqlite_master "

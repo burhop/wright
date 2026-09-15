@@ -175,6 +175,10 @@ class DatabaseLifecycleAdapter:
                 env=env,
                 cwd=workspace_path,
                 operation_timeout=self.operation_timeout,
+                # The native lifecycle contract allows 120 seconds for a cold
+                # application/runtime startup. Keep the historical 60-second
+                # floor for other stdio servers and never extend past it.
+                startup_timeout=min(max(self.operation_timeout, 60.0), 120.0),
                 ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
             )
         if server.type == "sse":
@@ -184,6 +188,7 @@ class DatabaseLifecycleAdapter:
                 server.command,
                 ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
                 server_id=server_id,
+                operation_timeout=self.operation_timeout,
             )
         raise ValueError(f"Unsupported coordinated server type: {server.type}")
 

@@ -138,7 +138,7 @@ test:
 	npm run test --workspace=apps/web
 
 test-external-freecad:
-	cd packages/freecad_mcp && uv run pytest
+	cd packages/freecad_mcp && uv run --extra dev pytest
 
 check:
 	uv run ruff check $(PYTHON_WORKSPACE_PATHS)

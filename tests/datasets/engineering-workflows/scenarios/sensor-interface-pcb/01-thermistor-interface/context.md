@@ -1,0 +1,12 @@
+# Thermistor interface brief
+Original fictional customer upload for a low-voltage instrument prototype.
+## Business and circuit
+Emberbench needs 10 hand-assembled pilot boards. The thermistor is external; the board is at ambient room temperature, away from the hot roaster. An existing isolated controller supplies 3.3 V ±5%; board supply budget 5 mA. External sensor is an assumed 10 kΩ NTC at 25°C with beta 3950 K for the eventual controller conversion; conversion firmware is outside this board scope.
+R1 is a 10 kΩ 1% divider pull-up from 3V3 to SENSE. External TH1 is connected between SENSE and GND at J2. R2 is 1 kΩ in series from SENSE to ADC_OUT. C1 is 100 nF from ADC_OUT to GND. C2 is 100 nF from 3V3 to GND. No mains or high-energy circuits are present in this design input.
+## Placement
+J1 controller header at x=7,y=15 mm on left edge region, pins ordered top to bottom 3V3, ADC_OUT, GND. J2 sensor header at x=33,y=15 mm on right region, pins SENSE then GND. Headers are straight 2.54 mm pitch, viewed from component side; coordinate is connector center. C1 should be near J1 signal pin. Mark J2 as NTC and J1 voltage as 3V3. Supply/reference and signal grounds share one ground net.
+## Board and shop requirements
+Board outline: 40.0 × 30.0 mm rectangular, origin lower left, 1.6 mm nominal two-layer FR-4, 35 µm nominal copper. Four non-plated mounting holes Ø2.5 mm at (3,3), (37,3), (3,27), (37,27) mm. Copper clearance from mounting-hole edges: 1.0 mm. Minimum track/clearance: 0.25/0.25 mm. Minimum via drill: 0.30 mm. Place all components on the front, label connector pin 1, and keep assembly-readable reference designators. These are fictional internal prototype design rules, not a supplier capability certification.
+Use the supplied netlist as the approved connectivity input for this scenario. Component-library.csv describes internal prototype component requirements; exact purchasable connector selection and datasheet evidence must be resolved by the workflow before release. Do not substitute pinouts or claim approvals that are not provided. Schematic approval in this fictional input is design intent, not authorization to order boards.
+## Deliverables
+Return editable .kicad_sch and .kicad_pcb files, bom.csv, Gerber copper/outline layers, a .drl drill file, ERC and DRC reports. Keep native sources and fabrication exports from the same revision. Presence checking is the initial automation scope; no test run constitutes electrical qualification or production release.

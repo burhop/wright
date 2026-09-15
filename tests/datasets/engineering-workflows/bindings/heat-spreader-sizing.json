@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "template_id": "heat-spreader-sizing",
+  "status": "real_solver_probed_requires_full_workflow_execution",
+  "selected_solver": "OASiS pinned 7c184d5b7ca5cda6086f3912d1c7923c58307780, MCP1.28.1, scikit-fem12.0.2 in wright-oasis-campaign",
+  "operation_source": "scripts/engineering/heat_conduction_skfem.py",
+  "solver_tool": "run_simulation",
+  "container_workspace": "/workspace",
+  "host_workspace": ".local-run/feature-081-live/oasis-workspace",
+  "preserved_original_stages": ["define_thermal_case", "create_plate_geometry", "solve_and_verify"],
+  "outputs": ["candidate STEP files", "geometry-measurements.json", "coarse/fine raw temperature VTU and CSV per candidate", "heat-balance.json", "mesh-comparison.json", "sizing-decision.json"],
+  "physics": "Actual 3D P1 tetrahedral conduction FE assembly and sparse solve; uniform full hot-face Neumann heat, insulated sides, fixed cold-face or area-correct total-resistance Robin boundary. Analytical formula is comparison only.",
+  "review": "Preserve reviewed thermal basis. critic_approved remains false unless a separate documented critic has reviewed exact numerical setup; do not invent OASiS attestation.",
+  "approval_mode": "auto only under server-owned integration grant; local reviews retained",
+  "qualification": "Private real execution readiness; no public qualification promotion and no campaign correctness count"
+}

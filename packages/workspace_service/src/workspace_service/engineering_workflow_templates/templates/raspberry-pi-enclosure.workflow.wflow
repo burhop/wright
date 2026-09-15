@@ -1,0 +1,85 @@
+# Built-in engineering example. AgentCAD and CFD remain setup-required until qualified.
+workflow __instance__
+  name: "Vented Raspberry Pi Enclosure"
+  purpose: "Source Raspberry Pi dimensions, establish a design basis, create measured CAD, and compare vents using matching CFD fields."
+  discipline: "mechanical.thermal"
+  reviewed_ai_suggestions: true
+end
+
+task source_dimensions___instance__
+  name: "Source manufacturer dimensions"
+  purpose: "Retrieve the selected board's manufacturer-controlled mechanical drawing and record its identity and date."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Record board envelope, mounting holes, connector keepouts, document URL, revision, digest, and retrieval date. Stop on conflicts."
+  settings: {"initial_model":"Raspberry Pi 5","manufacturer_source_required":true,"reference_fixture":"__input_root__/reference.json"}
+  tool: null
+  reusable_step: null
+end
+
+task design_basis___instance__
+  name: "Create reviewable enclosure design document"
+  purpose: "Define geometry, keepouts, thermal loads, vents, flow conditions, and measurable acceptance criteria before CAD."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Write a design basis that separates sourced dimensions, user requirements, assumptions, conflicts, and unresolved questions."
+  settings: {"approval_subject":"design_document_digest","reference_fixture":"__input_root__/reference.json"}
+  tool: null
+  reusable_step: null
+end
+
+task agentcad_enclosure___instance__
+  name: "Create and measure AgentCAD enclosure"
+  purpose: "Generate editable CAD from the accepted design document and verify every controlled dimension."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Create enclosure and vent alternatives with AgentCAD, export STEP, and compare measured output with the design basis."
+  settings: {"candidate":"AgentCAD D001","artifact_role":"cad_native_and_step"}
+  tool: null
+  reusable_step: null
+end
+
+task cfd_compare___instance__
+  name: "Build matching CFD domains and compare vents"
+  purpose: "Run the selected solver path on fluid domains proven to match each CAD alternative."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Verify CAD/domain identity, boundary names, mesh quality and sensitivity, convergence, mass balance, and values extracted from computed fields. Reject substituted geometry and theoretical-only results."
+  settings: {"candidate":"Foam-Agent D040","minimum_alternatives":2}
+  tool: null
+  reusable_step: null
+end
+
+connection source_to_basis___instance__
+  type: order
+  from: "source_dimensions___instance__"
+  to: "design_basis___instance__"
+  label: "manufacturer facts"
+  when: null
+end
+connection basis_to_cad___instance__
+  type: order
+  from: "design_basis___instance__"
+  to: "agentcad_enclosure___instance__"
+  label: "reviewed design basis"
+  when: null
+end
+connection cad_to_cfd___instance__
+  type: order
+  from: "agentcad_enclosure___instance__"
+  to: "cfd_compare___instance__"
+  label: "measured CAD alternatives"
+  when: null
+end

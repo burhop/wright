@@ -18,8 +18,8 @@ from tool_registry.engineering_catalog import ENGINEERING_CATALOG
 def test_canonical_catalog_resource_is_schema_valid_and_exact() -> None:
     document = load_catalog_document()
     assert document["format_version"] == 1
-    assert len(document["servers"]) == 78
-    assert len(ENGINEERING_CATALOG) == 78
+    assert len(document["servers"]) == 81
+    assert len(ENGINEERING_CATALOG) == 81
     assert files("tool_registry.catalog").joinpath("schema.json").is_file()
     assert files("tool_registry.catalog").joinpath("engineering-catalog.yaml").is_file()
 
@@ -154,6 +154,27 @@ def test_researched_entries_carry_source_and_runtime_metadata() -> None:
     assert omniverse_kit.maturity == "official"
     assert omniverse_kit.runtime_requirements.docker == "yes"
     assert "NVIDIA_API_KEY" in {env.name for env in omniverse_kit.env_vars}
+
+    foam_agent = entries["foam-agent-csml-rpi"]
+    assert foam_agent.transport == "streamable_http"
+    assert foam_agent.runtime_requirements.docker == "yes"
+    assert foam_agent.curation.disposition == "follow_up"
+    assert "9e3e253e76727036585ca6e88e6fc5a762cb62e0" in (
+        foam_agent.source_records[0].url
+    )
+
+    bambu_p1s = entries["bambu-p1s-mcp-marctheshark3"]
+    assert bambu_p1s.hardware_standard == "hardware_mcp"
+    assert bambu_p1s.risk_level == "safety-critical"
+    assert bambu_p1s.default_enabled is False
+    assert "7b50d0288fb7b91af8af422b96c4df4db0f1110c" in " ".join(bambu_p1s.command)
+    assert "BAMBU_ACCESS_CODE" in {env.name for env in bambu_p1s.env_vars if env.secret}
+    assert {
+        "BAMBU_MACHINE_JSON",
+        "BAMBU_PROCESS_JSON",
+        "BAMBU_FILAMENT_JSON",
+    } <= {env.name for env in bambu_p1s.env_vars}
+    assert "47,207-byte" in bambu_p1s.validation_result.message
 
 
 def test_platform_filter_selects_gb10_candidates_without_desktop_hosts() -> None:

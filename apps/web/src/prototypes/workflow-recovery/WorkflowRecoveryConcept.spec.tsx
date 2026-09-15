@@ -21,6 +21,7 @@ import type { WorkflowRunOptions } from "./WorkflowRecoveryConcept";
 import type { WorkspaceEngineeringResult } from "../../services/workspace-service";
 import {
   workspaceService,
+  type WorkflowApprovalCheckpoint,
   type WorkspaceWorkflowReview,
 } from "../../services/workspace-service";
 
@@ -698,6 +699,228 @@ describe("WorkflowRecoveryConcept component states", () => {
     expect(
       screen.getByTestId("workflow-recovery-native-run-input"),
     ).not.toHaveTextContent("titanium");
+  });
+
+  it("shows the exact external-action subject and issues one-shot resume authority", async () => {
+    const subject = {
+      definition_digest: "a".repeat(64),
+      input_digests: ["b".repeat(64)],
+      artifact_digests: ["c".repeat(64)],
+      binding: { server: "bambu", tool: "transfer", schema: "d".repeat(64) },
+      destination: { kind: "printer", id: "p1s-shop" },
+      settings: { material: "PLA", profile: "0.20-standard" },
+      action: { kind: "printer_transfer", package: "c".repeat(64) },
+    };
+    const pending: WorkflowApprovalCheckpoint = {
+      checkpoint_id: "checkpoint-12345678",
+      workspace_id: "workspace-1",
+      workflow_id: "workflows/printer.workflow.wflow",
+      run_id: "run-1",
+      step_id: "authorize_transfer",
+      action_kind: "printer_transfer",
+      subject,
+      subject_digest: "e".repeat(64),
+      state: "pending",
+      continuation: { next_step_index: 1 },
+      actor: null,
+      reason: null,
+      created_at: 1,
+      updated_at: 1,
+      expires_at: null,
+      external_action: null,
+    };
+    const decide = vi
+      .spyOn(workspaceService, "decideWorkflowApproval")
+      .mockResolvedValue({ ...pending, state: "approved" });
+    const resume = vi
+      .spyOn(workspaceService, "resumeWorkflowApproval")
+      .mockResolvedValue({
+        ...pending,
+        state: "consumed",
+        external_action: {
+          action_id: "resume-1",
+          outcome: "not_dispatched",
+          subject_digest: pending.subject_digest,
+        },
+      });
+    const onRun = vi.fn().mockResolvedValue({
+      status: "awaiting_approval" as const,
+      approval: pending,
+      outputPath: "package.3mf",
+      outputBytes: 4096,
+      taskTitle: "Generate supports and slice",
+      taskId: "supports_and_slice",
+      outputs: [
+        {
+          output_path: "package.3mf",
+          output_bytes: 4096,
+          output_format: "3mf",
+          task_id: "supports_and_slice",
+          task_title: "Generate supports and slice",
+        },
+      ],
+    });
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        workflowFilePath="workflows/printer.workflow.wflow"
+        definitionRevision={2}
+        storageDigest={"a".repeat(64)}
+        workspaceSessionId="session-1"
+        onRun={onRun}
+      />,
+    );
+
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    expect(
+      await screen.findByTestId("workflow-external-approval"),
+    ).toHaveTextContent(pending.subject_digest);
+    expect(screen.getByTestId("workflow-external-approval")).toHaveTextContent(
+      "p1s-shop",
+    );
+    await userEvent.click(
+      screen.getByTestId("workflow-external-approval-approve"),
+    );
+    await userEvent.click(
+      await screen.findByTestId("workflow-external-approval-resume"),
+    );
+    await waitFor(() => expect(resume).toHaveBeenCalledOnce());
+    expect(decide).toHaveBeenCalledWith(
+      "session-1",
+      pending,
+      "approved",
+      null,
+      expect.any(String),
+    );
+    expect(resume).toHaveBeenCalledWith(
+      "session-1",
+      expect.objectContaining({ state: "approved" }),
+      expect.any(String),
+    );
+    expect(screen.getByTestId("workflow-external-approval")).toHaveTextContent(
+      "waiting for the qualified adapter",
+    );
+    decide.mockRestore();
+    resume.mockRestore();
+  });
+
+  it("creates a local capture only from a verified run and selected persistent evidence", async () => {
+    const createCapture = vi
+      .spyOn(workspaceService, "createWorkflowDemoCapture")
+      .mockResolvedValue({
+        path: "captures/run-verified.demo-capture.zip",
+        size_bytes: 2048,
+        sha256: "d".repeat(64),
+        manifest_digest: "e".repeat(64),
+        artifact_count: 1,
+        published: false,
+      });
+    const onOpenFile = vi.fn();
+    const onRun = vi.fn().mockResolvedValue({
+      status: "completed" as const,
+      runId: "run-verified",
+      runLogPath: "runs/report/run-verified.json",
+      verification: {
+        status: "verified",
+        assertions: [{ id: "dimension-check", status: "passed" }],
+      },
+      captureRights: {
+        capture_allowed: true,
+        attribution: "Wright project fixture",
+      },
+      outputPath: "outputs/preview.svg",
+      outputBytes: 512,
+      taskTitle: "Verified preview",
+      taskId: "preview",
+      results: [
+        {
+          schema_version: 1,
+          id: "run-verified:preview:image",
+          kind: "image" as const,
+          name: "Verified preview",
+          artifact_role: "verification" as const,
+          representations: [
+            {
+              kind: "workspace_file" as const,
+              location: "outputs/preview.svg",
+              format: "svg",
+              provider_id: "",
+              resource_id: "",
+              revision: null,
+              durability: "persistent" as const,
+              sha256: "c".repeat(64),
+              size_bytes: 512,
+            },
+          ],
+          provenance: {
+            run_id: "run-verified",
+            task_id: "preview",
+            output_port: "image",
+            input_revisions: [],
+          },
+          exports: [],
+        },
+      ],
+    });
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        definitionRevision={2}
+        storageDigest={"a".repeat(64)}
+        workspaceSessionId="session-1"
+        onRun={onRun}
+        onOpenFile={onOpenFile}
+      />,
+    );
+
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    await userEvent.click(
+      await screen.findByTestId("workflow-demo-capture-toggle"),
+    );
+    fireEvent.change(screen.getByTestId("workflow-demo-capture-caption"), {
+      target: { value: "Verified dimension and mesh evidence." },
+    });
+    await userEvent.click(screen.getByTestId("workflow-demo-capture-create"));
+    await waitFor(() => expect(createCapture).toHaveBeenCalledOnce());
+    expect(createCapture).toHaveBeenCalledWith(
+      "session-1",
+      "run-verified",
+      "runs/report/run-verified.json",
+      ["run-verified:preview:image"],
+      "Verified dimension and mesh evidence.",
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "No post was published",
+    );
+    await userEvent.click(screen.getByTestId("workflow-demo-capture-open"));
+    expect(onOpenFile).toHaveBeenCalledWith(
+      "captures/run-verified.demo-capture.zip",
+    );
+    createCapture.mockRestore();
+  });
+
+  it("explains why an unverified run cannot create a capture", async () => {
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        definitionRevision={2}
+        storageDigest={"a".repeat(64)}
+        workspaceSessionId="session-1"
+        onRun={vi.fn().mockResolvedValue({
+          outputPath: "report.html",
+          outputBytes: 128,
+          taskTitle: "Report",
+          taskId: "document_1",
+        })}
+      />,
+    );
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    expect(
+      await screen.findByTestId("workflow-demo-capture-ineligible"),
+    ).toHaveTextContent("verified engineering assertions");
+    expect(
+      screen.queryByTestId("workflow-demo-capture-create"),
+    ).not.toBeInTheDocument();
   });
 
   it("projects completed steps, correction invalidation and transition gaps only during the active run", async () => {

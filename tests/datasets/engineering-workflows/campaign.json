@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "campaign_id": "081-engineering-datasets-v1",
+  "title": "Engineering workflow input campaign",
+  "target": 30,
+  "scenarios_per_template": 3,
+  "template_ids": [
+    "printed-replacement-part",
+    "raspberry-pi-enclosure",
+    "sheet-metal-supplier-handoff",
+    "lightweight-equipment-bracket",
+    "sensor-interface-pcb",
+    "parametric-drill-jig",
+    "robot-tracking-diagnosis",
+    "heat-spreader-sizing",
+    "sensor-fan-harness",
+    "water-heater-sizing"
+  ],
+  "approval_mode": "auto",
+  "execution_environment": "integration_test",
+  "external_effects": "test_destinations_only",
+  "validation": "output_presence_only",
+  "content_validation_enabled": false,
+  "concurrency": 1,
+  "case_timeout_seconds": 1800,
+  "max_attempts_per_case_per_revision": 3,
+  "retry_delays_seconds": [15, 60, 180],
+  "notes": "Auto applies to exact digest-bound review gates in the isolated integration campaign. Actual engineering operations must run; external printer/supplier effects use explicit test destinations. These may count as completed integration processes, but never as fully live hardware/supplier qualification. Real CAD/solver jobs in explicitly configured disposable engineering projects may use existing authorized provider access, including provider job storage. Purchasing access, unapproved paid services, real printer/supplier writes and publication remain outside campaign authority."
+}

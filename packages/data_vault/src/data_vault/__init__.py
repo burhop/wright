@@ -15,6 +15,11 @@ from .state_store import ClosingConnection, connect_state_db
 from .workspace_repository import WorkspaceRepository
 from .workflow_repository import WorkflowIndexRecord, WorkflowRepository
 from .workflow_review_repository import WorkflowReview, WorkflowReviewRepository
+from .workflow_continuation_repository import (
+    WorkflowContinuationCheckpoint,
+    WorkflowContinuationRepository,
+    WorkflowContinuationStateConflict,
+)
 from .workflow_draft_repository import (
     WorkflowDraftAlreadyExists,
     WorkflowDraftRepository,
@@ -121,6 +126,9 @@ __all__ = [
     "WorkflowRepository",
     "WorkflowReview",
     "WorkflowReviewRepository",
+    "WorkflowContinuationCheckpoint",
+    "WorkflowContinuationRepository",
+    "WorkflowContinuationStateConflict",
     "WorkflowRunEventRecord",
     "WorkflowRunRecord",
     "WorkflowRunRepository",

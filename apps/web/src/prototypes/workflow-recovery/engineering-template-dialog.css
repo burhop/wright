@@ -1,0 +1,188 @@
+.engineering-template-dialog {
+  width: min(1040px, 94vw);
+  max-height: 90vh;
+  padding: 0;
+  overflow: hidden;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgb(0 0 0 / 35%);
+}
+
+.engineering-template-dialog::backdrop {
+  background: rgb(7 12 24 / 72%);
+}
+.engineering-template-dialog > header,
+.engineering-template-dialog > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+}
+.engineering-template-dialog > header {
+  border-bottom: 1px solid var(--color-border);
+}
+.engineering-template-dialog > footer {
+  justify-content: flex-end;
+  border-top: 1px solid var(--color-border);
+}
+.engineering-template-dialog h2,
+.engineering-template-dialog h3,
+.engineering-template-dialog p {
+  margin-top: 0;
+}
+.engineering-template-dialog__eyebrow {
+  margin-bottom: 4px;
+  color: var(--color-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.engineering-template-dialog__close {
+  align-self: flex-start;
+  min-width: 40px;
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 30px;
+  cursor: pointer;
+}
+.engineering-template-dialog__body {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(360px, 1.4fr);
+  min-height: 540px;
+  max-height: 66vh;
+}
+.engineering-template-dialog__list {
+  overflow: auto;
+  padding: 12px;
+  border-right: 1px solid var(--color-border);
+}
+.engineering-template-dialog__list > button {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  margin-bottom: 6px;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.engineering-template-dialog__list > button:hover {
+  background: color-mix(
+    in srgb,
+    var(--color-surface) 85%,
+    var(--color-primary)
+  );
+}
+.engineering-template-dialog__list > button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--color-surface) 88%, #38bdf8);
+  border-color: #38bdf8;
+}
+.engineering-template-dialog__list small {
+  color: var(--color-muted);
+}
+.engineering-template-state {
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 650;
+}
+.engineering-template-state--reference {
+  background: #334155;
+  color: #e2e8f0;
+}
+.engineering-template-state--setup_required {
+  background: #78350f;
+  color: #fef3c7;
+}
+.engineering-template-state--ready {
+  background: #075985;
+  color: #e0f2fe;
+}
+.engineering-template-state--verified {
+  background: #166534;
+  color: #dcfce7;
+}
+.engineering-template-dialog__details {
+  overflow: auto;
+  padding: 22px;
+}
+.engineering-template-dialog__preview {
+  min-height: 130px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #0f172a;
+}
+.engineering-template-dialog__preview img {
+  display: block;
+  width: 100%;
+  min-height: 130px;
+  max-height: 210px;
+  object-fit: cover;
+}
+.engineering-template-dialog__readiness {
+  margin: 16px 0;
+  padding: 12px;
+  border-left: 4px solid #f59e0b;
+  background: color-mix(in srgb, var(--color-surface) 92%, #f59e0b);
+}
+.engineering-template-dialog__readiness p {
+  margin: 6px 0 0;
+}
+.engineering-template-dialog dl {
+  display: grid;
+  gap: 10px;
+}
+.engineering-template-dialog dl > div {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+}
+.engineering-template-dialog dt {
+  color: var(--color-muted);
+}
+.engineering-template-dialog dd {
+  margin: 0;
+}
+.engineering-template-dialog input {
+  width: 100%;
+  margin-top: 7px;
+  padding: 10px 12px;
+  color: inherit;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+.engineering-template-dialog__error {
+  margin: 0;
+  padding: 10px 22px;
+  color: #fecaca;
+  background: #7f1d1d;
+}
+.engineering-template-dialog button:focus-visible,
+.engineering-template-dialog input:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .engineering-template-dialog__body {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .engineering-template-dialog__list {
+    max-height: 220px;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+}

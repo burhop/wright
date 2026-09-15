@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "template_id": "sheet-metal-supplier-handoff",
+  "status": "prepared_requires_native_host_preflight",
+  "execution_kind": "integration",
+  "supplier_sources": [
+    "https://sendcutsend.com/guidelines/",
+    "https://sendcutsend.com/faq/what-are-your-bending-requirements/",
+    "https://sendcutsend.com/services/cnc-bending/",
+    "https://sendcutsend.com/bending-calculator/",
+    "https://sendcutsend.com/faq/what-are-your-bend-relief-requirements/",
+    "https://sendcutsend.com/faq/what-are-your-channel-bend-requirements/",
+    "https://sendcutsend.com/guidelines/bend-deformation/",
+    "https://sendcutsend.com/materials/processing-min-max/"
+  ],
+  "allowed_tools": {
+    "wright-engineering-evidence": ["retrieve_public_references", "read_reference_text", "collect_artifact_manifest"],
+    "solid-edge-mcp-burhop": [
+      "cad.list_providers", "cad.get_status", "cad.list_materials", "cad.list_documents",
+      "cad.connect", "cad.validate_sheet_metal_recipe", "cad.create_sheet_metal_from_recipe",
+      "cad.save_document", "cad.export_document", "cad.measure_body_extents",
+      "cad.list_features", "cad.list_variables", "cad.list_body_faces",
+      "cad.list_reference_frames", "cad.get_inspection_capabilities", "cad.verify_inspection_requirements"
+    ]
+  },
+  "host_requirements": {
+    "platform": "Windows with separately installed/licensed Solid Edge",
+    "server_id": "solid-edge-mcp-burhop",
+    "provider_id": "solid_edge",
+    "native_format": "psm",
+    "export_formats": ["step", "flat_dxf", "screenshot_jpeg"],
+    "cad_allowed_roots": "The scenario workspace must be under CADMCP_SOLID_EDGE_ALLOWED_ROOTS before dispatch.",
+    "drawing_status": "No native Draft/dimensioned drawing creation tool is exposed. JPEG inspection views are not manufacturing drawings.",
+    "material_status": "Read exact installed names and properties. Do not infer H32 from a 5052-only library label."
+  },
+  "scenarios": {
+    "sheet-metal-supplier-handoff-01": {
+      "parts": ["wall-dock"],
+      "quantity_per_part": 4,
+      "material_query": "5052",
+      "geometry_authority": "context.md: 110 by 75 shelf, 60 rear flange, split 12 front lip, two wall slots and cable notch; prototype requests remain distinct from supplier facts.",
+      "specific_decisions": "Retain the reader-contact clearance, cable notch, rounded exposed corners, open sides and X/Y/Z frame. Record exact flank geometry and sheet-thickness offsets; no prebuilt bracket recipe."
+    },
+    "sheet-metal-supplier-handoff-02": {
+      "parts": ["cable-trough"],
+      "quantity_per_part": 6,
+      "material_query": "steel",
+      "geometry_authority": "context.md and mounting-holes.csv: 400 by 80 bottom, two 60 walls, two outward 20 returns, four longitudinal bends and four mounting slots.",
+      "specific_decisions": "Resolve exterior versus interior spans from observed geometry and preserve 45 clear depth. Read each mounting slot from CSV. No end caps, welding, electrical-ground claims or substitute simple U-channel."
+    },
+    "sheet-metal-supplier-handoff-03": {
+      "parts": ["base-tray", "removable-lid"],
+      "quantity_per_part": 2,
+      "material_query": "5052",
+      "geometry_authority": "context.md and panel-cutouts.csv: separate four-wall base and skirted lid with original styled openings; both native parts and both developed exports required.",
+      "specific_decisions": "Apply the explicit company-policy resolution to the conflicting clear-height request: preserve 80 exterior wall height, electronics keepout top 75. Preserve CSV cutout coordinates, two vent banks, separate lid clearances and two-piece itemization. Do not claim supplier acceptance or invent threaded-sheet features."
+    }
+  },
+  "scope": "Actual native sheet-metal creation, existing measured-design/revision gates and persisted flat-pattern exports; only supplier preview/cart handoffs are simulated. File-presence accounting does not qualify engineering correctness."
+}

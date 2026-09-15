@@ -1,0 +1,3 @@
+Please size the aluminum conduction strap for our small sign controller. We are testing an idealized thermal model first: a 100 mm long, 2 mm thick plate with 4 W entering uniformly through one end, the other end fixed at 25 C, and all other faces insulated. Use k=200 W/(m K) as the constant in the model.
+
+Compare 40 and 60 mm widths. I want the narrowest option that keeps the hot end at or below 45 C in this simplified study. Create the STEP geometry, numerical temperature field, heat-balance data, and sizing-decision JSON. Compare the numerical result with the one-dimensional baseline, but don't present this as the temperature of a real controller or as verified hardware performance.

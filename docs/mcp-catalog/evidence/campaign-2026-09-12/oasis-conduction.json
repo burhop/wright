@@ -1,0 +1,154 @@
+{
+  "status": "passed",
+  "scope": "clean selected-container 3D conduction backend and native Wright GatewayService",
+  "container": "wright-oasis-campaign",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "command": [
+    "docker",
+    "exec",
+    "-i",
+    "-e",
+    "PYTHONPATH=",
+    "-e",
+    "PYVISTA_OFF_SCREEN=true",
+    "wright-oasis-campaign",
+    "uv",
+    "run",
+    "--isolated",
+    "--python",
+    "3.12",
+    "--with",
+    "git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780",
+    "--with",
+    "mcp[cli]==1.28.1",
+    "--with",
+    "scikit-fem==12.0.2",
+    "python",
+    "-m",
+    "server"
+  ],
+  "tool_count": 17,
+  "results": [
+    {
+      "route": "direct",
+      "result": {
+        "job_id": "0588a89c",
+        "solver": "skfem",
+        "status": "completed",
+        "work_dir": "/workspace/qualification/attempt-004/direct",
+        "elapsed": "0.60s",
+        "output_files": [
+          "qualification_fixed-coarse-temperature.vtu",
+          "qualification_fixed-fine-temperature.vtu",
+          "qualification_link-coarse-temperature.vtu",
+          "qualification_link-fine-temperature.vtu"
+        ],
+        "stdout_tail": "{\"status\": \"candidate_selected\", \"case_count\": 2, \"output_root\": \"/workspace/qualification/attempt-004/direct\"}\n",
+        "trustworthy_result": false,
+        "verification": "NOT VERIFIED \u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.",
+        "critic_review": "REQUIRED \u2014 mandatory critic not yet performed"
+      },
+      "files": [
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\direct\\qualification_link-fine-temperature.vtu",
+          "bytes": 29128,
+          "sha256": "970b180a715fbc391b0e8de48955773a8dd39908074b9bf76c6802d3c21565aa"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\direct\\qualification_link-fine-temperature.csv",
+          "bytes": 76526,
+          "sha256": "91636477da52406d2e9a2d2447a8b2803e77e1eebb08ce111f40dc9ebe3186a8"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\direct\\qualification_fixed-fine-temperature.vtu",
+          "bytes": 29028,
+          "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\direct\\qualification_fixed-fine-temperature.csv",
+          "bytes": 76526,
+          "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\direct\\heat-balance.json",
+          "bytes": 3291,
+          "sha256": "236aed3ca90624f045f0578e69c25fc1285803a41bb723eb80f02fd053e2b537"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\direct\\mesh-comparison.json",
+          "bytes": 99,
+          "sha256": "8b98cb7afbb2918684476e40d0c6e9ed9618351b6c4fb053401a4fd4f065514c"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\direct\\sizing-decision.json",
+          "bytes": 5580,
+          "sha256": "3d59eff6c0c5492eb9bd6b8c1f1e88886a6b9276f3601b6e6e4460c8f5b893bf"
+        }
+      ]
+    },
+    {
+      "route": "gateway",
+      "result": {
+        "job_id": "56a4cb60",
+        "solver": "skfem",
+        "status": "completed",
+        "work_dir": "/workspace/qualification/attempt-004/gateway",
+        "elapsed": "0.53s",
+        "output_files": [
+          "qualification_fixed-coarse-temperature.vtu",
+          "qualification_fixed-fine-temperature.vtu",
+          "qualification_link-coarse-temperature.vtu",
+          "qualification_link-fine-temperature.vtu"
+        ],
+        "stdout_tail": "{\"status\": \"candidate_selected\", \"case_count\": 2, \"output_root\": \"/workspace/qualification/attempt-004/gateway\"}\n",
+        "trustworthy_result": false,
+        "verification": "NOT VERIFIED \u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.",
+        "critic_review": "REQUIRED \u2014 mandatory critic not yet performed"
+      },
+      "files": [
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\gateway\\qualification_link-fine-temperature.vtu",
+          "bytes": 29128,
+          "sha256": "970b180a715fbc391b0e8de48955773a8dd39908074b9bf76c6802d3c21565aa"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\gateway\\qualification_link-fine-temperature.csv",
+          "bytes": 76526,
+          "sha256": "91636477da52406d2e9a2d2447a8b2803e77e1eebb08ce111f40dc9ebe3186a8"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\gateway\\qualification_fixed-fine-temperature.vtu",
+          "bytes": 29028,
+          "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\gateway\\qualification_fixed-fine-temperature.csv",
+          "bytes": 76526,
+          "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\gateway\\heat-balance.json",
+          "bytes": 3295,
+          "sha256": "62b68698e8292e6f83928b282a350d947194be896b36ac9d151921827d0bedca"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\gateway\\mesh-comparison.json",
+          "bytes": 99,
+          "sha256": "8b98cb7afbb2918684476e40d0c6e9ed9618351b6c4fb053401a4fd4f065514c"
+        },
+        {
+          "path": ".local-run\\feature-081-live\\oasis-workspace\\qualification\\attempt-004\\gateway\\sizing-decision.json",
+          "bytes": 5584,
+          "sha256": "ebebeed43dce8c43fbd9ae58ddf4a2b71a1d0acd1b2fd087c1aa0aa4d84afebb"
+        }
+      ]
+    }
+  ],
+  "critic_approved": false,
+  "campaign_runs": 0,
+  "public_qualification_changed": false,
+  "limitations": [
+    "Probe checks actual file presence only; numerical correctness remains unqualified.",
+    "Hermes-facing gateway MCP proxy is a separate outstanding qualification scope."
+  ]
+}

@@ -8205,4 +8205,431 @@ servers:
     review_due: '2026-12-10'
     next_action: Rediscover only after the publisher ships every runtime dependency as an immutable registry artifact.
     adoption: unknown
+- id: agentcad
+  name: AgentCAD
+  vendor: James Edward Dillard
+  description: Community build123d CAD authoring server with rendering, measurement, validation, version comparison, and STEP and mesh exports.
+  domains:
+  - cad
+  - mechanical
+  - manufacturing
+  engineering_stages:
+  - concept
+  - design
+  - manufacturing
+  - test_quality
+  tags:
+  - build123d
+  - headless
+  - cad-as-code
+  - export
+  transport: stdio
+  command:
+  - uv
+  - run
+  - --isolated
+  - --python
+  - '3.12'
+  - --with
+  - agentcad[mcp]==0.6.0
+  - python
+  - -m
+  - agentcad.mcp
+  source_url: https://github.com/jdilla1277/agentcad
+  repository_url: https://github.com/jdilla1277/agentcad
+  package_url: https://pypi.org/project/agentcad/0.6.0/
+  license: Apache-2.0
+  auth_model: none
+  install_method: uvx
+  maturity: community
+  evidence_class: community_candidate
+  capability_summary:
+  - Execute build123d CAD scripts and retain versioned design outputs
+  - Render and measure generated geometry
+  - Validate and compare model revisions
+  - Export STEP, STL, GLB, and OBJ artifacts
+  data_touched:
+  - Workspace CAD source, build logs, renders, and generated geometry
+  examples:
+  - Create a parameterized mounting bracket, validate its dimensions, and export STEP and STL
+  source_records:
+  - url: https://github.com/jdilla1277/agentcad
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-11'
+    notes: Publisher README documents the stdio MCP module, build123d workflow, measurement, validation, comparison, rendering, and export surface.
+  - url: https://pypi.org/project/agentcad/0.6.0/
+    kind: package
+    primary: true
+    authority: publisher
+    observed_at: '2026-09-11'
+    notes: PyPI metadata identifies release 0.6.0, Python 3.10 through 3.12, the mcp extra, and Apache-2.0 source identity.
+  - url: docs/mcp-catalog/discovery/2026-09-11/README.md
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-11'
+    notes: The bounded discovery sweep preserved the GitHub query position, source hash, package metadata, and comparison-candidate rationale. No runtime command was executed.
+  runtime_requirements:
+    cpu: standard x64 workstation CPU
+    gpu: not required for the documented headless path
+    docker: unknown
+    notes: Python 3.10 through 3.12 and OpenCascade-backed build123d dependencies are documented; clean-container installability has not been tested.
+  locality: local
+  weight: medium
+  dependencies:
+    python:
+    - python==3.12.*
+    - agentcad[mcp]==0.6.0
+  aliases:
+  - agentcad-mcp
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-stdio
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: true
+      notes: AgentCAD 0.6.0 initialized locally, exposed 11 tools, and was installed, activated, and enabled in the Wright demo workspace. No deterministic geometry task or independent exported-artifact check has completed.
+    linux_x64:
+      status: unknown
+      tested: false
+      notes: First clean-container target; runtime qualification is intentionally deferred.
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  validation_result:
+    status: blocked
+    message: AgentCAD 0.6.0 initialized on Windows, exposed 11 tools with schema digest 8a60a9a8d71f6e14dd6f17cbab3066a1560e5e33ab7e67866bd3af38348d09d5, and is active in the Wright demo workspace. Qualification remains blocked on a deterministic CAD create, measure, render, export, and independent geometry check.
+    environment: windows-11-local-wright-workspace
+    missing_dependencies: []
+    evidence_status: partial
+  curation:
+    disposition: follow_up
+    reason: Highest-priority source-reviewed omission from the 11 September CAD discovery; selected as the lead headless CAD-authoring comparison candidate.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-11'
+    review_due: '2026-10-11'
+    next_action: Freeze resolved artifacts, repeat two fresh protocol sessions, then create, measure, render, export, and independently verify a deterministic bracket through Wright.
+    adoption: unknown
+- id: foam-agent-csml-rpi
+  name: Foam-Agent
+  vendor: CSML Lab at RPI
+  description: Community MCP server for planning, writing, running, reviewing, repairing, and visualizing OpenFOAM CFD cases.
+  domains:
+  - cfd
+  - simulation
+  - meshing
+  engineering_stages:
+  - design
+  - simulation
+  - test_quality
+  tags:
+  - openfoam
+  - cfd
+  - docker
+  - external-mesh
+  - local
+  transport: streamable_http
+  command: http://127.0.0.1:7860/mcp
+  source_url: https://github.com/csml-rpi/Foam-Agent
+  repository_url: https://github.com/csml-rpi/Foam-Agent
+  container_url: https://hub.docker.com/r/leoyue123/foamagent
+  license: MIT
+  auth_model: api-key
+  install_method: docker
+  maturity: community
+  evidence_class: community_candidate
+  capability_summary:
+  - Plan a CFD case from bounded engineering requirements
+  - Generate Foundation OpenFOAM v10 case files and accept external Gmsh meshes
+  - Run an OpenFOAM Allrun workflow and collect solver errors
+  - Review and repair failed cases with bounded iteration
+  - Render computed fields with PyVista
+  data_touched:
+  - Workspace geometry, meshes, boundary conditions, solver cases, logs, and computed fields
+  examples:
+  - Compare vent patterns for a Raspberry Pi enclosure using matching fluid domains and field-derived temperatures
+  source_records:
+  - url: https://github.com/csml-rpi/Foam-Agent/tree/9e3e253e76727036585ca6e88e6fc5a762cb62e0
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-11'
+    notes: Exact reviewed source exposes six MCP tools and documents Foundation OpenFOAM v10, external Gmsh meshes, Docker, and stdio or Streamable HTTP transports.
+  - url: https://github.com/csml-rpi/Foam-Agent/blob/9e3e253e76727036585ca6e88e6fc5a762cb62e0/docker/Dockerfile
+    kind: container
+    primary: true
+    authority: community
+    observed_at: '2026-09-11'
+    notes: Dockerfile builds on the OpenFOAM 10 and ParaView 5.10 image and installs the FoamAgent environment from source.
+  runtime_requirements:
+    cpu: CFD workstation CPU
+    gpu: optional for visualization
+    docker: 'yes'
+    notes: The documented Windows path uses Docker Desktop. A useful qualification must inspect mesh identity, boundaries, convergence, conservation, and field-derived results.
+  locality: local
+  weight: heavy
+  env_vars:
+  - name: FOAMAGENT_MODEL_PROVIDER
+    label: Model provider
+    description: Foam-Agent model backend such as openai, openai-codex, anthropic, bedrock, or ollama.
+    required: false
+    secret: false
+  - name: FOAMAGENT_MODEL_VERSION
+    label: Model version
+    description: Exact model used for case planning and repair.
+    required: false
+    secret: false
+  - name: OPENAI_API_KEY
+    label: OpenAI API key
+    description: Required only when the OpenAI API provider is selected.
+    required: false
+    secret: true
+  - name: ANTHROPIC_API_KEY
+    label: Anthropic API key
+    description: Required only when the Anthropic provider is selected.
+    required: false
+    secret: true
+  dependencies:
+    system:
+    - Docker Desktop or Foundation OpenFOAM v10
+    - Gmsh for external enclosure meshes
+    python:
+    - foamagent==2.0.0 source revision 9e3e253e76727036585ca6e88e6fc5a762cb62e0
+    node: []
+  aliases:
+  - foamagent
+  - foamagent-mcp
+  - Foam-Agent D040
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-docker-http
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: true
+      notes: Docker Desktop launched the published image at digest sha256:5c8bd752884b95b45c02d74a4b5e449fbf22aea8fa13a0eb1a40be851350ff1e on loopback; direct HTTP MCP initialization passed and listed six tools. The documented v2.0.0 tag is missing, bundled source identity is unknown, and no solver case has run through Wright.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Upstream Dockerfile targets Linux x64 with Foundation OpenFOAM v10; Wright qualification is pending.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: The upstream Dockerfile downloads an x86_64 Miniconda installer and needs ARM64 adaptation.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Docker-hosted execution may work; not tested.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: The upstream Dockerfile is x86_64-specific; not tested.
+  host_software_required:
+  - Docker Desktop or Foundation OpenFOAM v10
+  - Gmsh for imported enclosure meshes
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  - network_model_approval
+  validation_result:
+    status: dependency_missing
+    message: The published latest image at digest sha256:5c8bd752884b95b45c02d74a4b5e449fbf22aea8fa13a0eb1a40be851350ff1e started on Windows Docker Desktop with updates disabled and its bundled module initialized HTTP MCP with six tools. The documented v2.0.0 tag does not exist, the image omits the foamagent-mcp console script, exact bundled source identity is unknown, and no model-backed CFD task or independently checked result ran.
+    environment: windows-11-docker-desktop-loopback
+    missing_dependencies:
+    - Exact-source or immutable version-tagged Foam-Agent image
+    - Real model-provider credential or qualified local model
+    - Completed OpenFOAM solver qualification
+    evidence_status: partial
+  headless_ok: 'yes'
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Selected CFD candidate for the Raspberry Pi enclosure workflow; source review is complete and clean Docker plus real solver qualification remains pending.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-11'
+    review_due: '2026-10-11'
+    next_action: Build the exact source in a clean container, initialize MCP, run a bounded enclosure airflow case, and independently verify mesh identity, boundaries, convergence, conservation, and computed fields through Wright.
+    adoption: unknown
+- id: bambu-p1s-mcp-marctheshark3
+  name: Bambu P1S MCP
+  vendor: Marc Mailloux
+  description: Harness-agnostic P1S MCP server for local status, AMS inspection, Bambu Studio slicing, FTPS upload, and guarded MQTT print control.
+  domains:
+  - additive-manufacturing
+  - slicing
+  - machine-control
+  engineering_stages:
+  - manufacturing
+  - test_quality
+  - operations
+  tags:
+  - bambu-lab
+  - p1s
+  - mqtt
+  - ftps
+  - slicer
+  - hermes
+  transport: stdio
+  command:
+  - uv
+  - run
+  - --isolated
+  - --python
+  - '3.12'
+  - --with
+  - git+https://github.com/marctheshark3/bambu-p1s-mcp.git@7b50d0288fb7b91af8af422b96c4df4db0f1110c
+  - bambu-p1s-mcp
+  source_url: https://github.com/marctheshark3/bambu-p1s-mcp
+  repository_url: https://github.com/marctheshark3/bambu-p1s-mcp
+  license: MIT
+  auth_model: local-host
+  install_method: uvx
+  maturity: experimental
+  evidence_class: community_candidate
+  capability_summary:
+  - Inspect P1S status, AMS inventory, and printer files over the local network
+  - Slice STL or 3MF inputs with the Bambu Studio command line
+  - Upload a selected package over implicit FTPS
+  - Pause, resume, stop, and start a print with explicit confirmation flags
+  data_touched:
+  - Workspace mesh and 3MF files, printer identity, AMS state, printer storage, and physical printer commands
+  examples:
+  - Slice a verified replacement-part STL for a P1S and stop for exact package and destination approval before transfer
+  source_records:
+  - url: https://github.com/marctheshark3/bambu-p1s-mcp/tree/7b50d0288fb7b91af8af422b96c4df4db0f1110c
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-11'
+    notes: Exact source revision documents stdio and Streamable HTTP, P1S LAN access, Bambu Studio slicing, and confirmation-gated write tools for Hermes and other MCP clients.
+  runtime_requirements:
+    cpu: standard x64 workstation CPU
+    gpu: not required
+    docker: 'no'
+    notes: Must run on the same trusted LAN as the P1S. Printer transfer and print start require a fresh exact approval in Wright even though the server also requires confirm=true.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: BAMBU_IP
+    label: P1S IP address
+    description: Local network address shown by the printer or router.
+    required: true
+    secret: false
+  - name: BAMBU_ACCESS_CODE
+    label: P1S LAN access code
+    description: Printer LAN access code used for MQTT and FTPS authentication.
+    required: true
+    secret: true
+  - name: BAMBU_SERIAL
+    label: P1S serial number
+    description: Exact destination identity shown by the printer.
+    required: true
+    secret: false
+  - name: BAMBU_MODEL
+    label: Printer model
+    description: Expected printer model; this workflow requires P1S.
+    required: true
+    secret: false
+  - name: BAMBU_SLICER
+    label: Bambu Studio executable
+    description: Absolute path to the reviewed Bambu Studio command-line binary.
+    required: false
+    secret: false
+  - name: BAMBU_STUDIO_CONFIG
+    label: Bambu Studio configuration
+    description: Local Bambu Studio profile directory containing the reviewed machine, process, and filament settings.
+    required: false
+    secret: false
+  - name: BAMBU_MACHINE_JSON
+    label: P1S machine profile
+    description: Exact Bambu Studio P1S machine preset used for slicing, such as the 0.4 mm nozzle profile.
+    required: false
+    secret: false
+  - name: BAMBU_PROCESS_JSON
+    label: Slicing process profile
+    description: Exact Bambu Studio layer-height and process preset used for slicing.
+    required: false
+    secret: false
+  - name: BAMBU_FILAMENT_JSON
+    label: Filament profile
+    description: Exact Bambu Studio material preset reviewed against the loaded printer material.
+    required: false
+    secret: false
+  dependencies:
+    system:
+    - Bambu Lab P1S on the same trusted LAN
+    - Bambu Studio 2.8.2.61 for slicing
+    python:
+    - bambu-p1s-mcp source revision 7b50d0288fb7b91af8af422b96c4df4db0f1110c
+    node: []
+  aliases:
+  - bambu-p1s-mcp
+  - qualified-bambu-adapter
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: safety-critical
+  deployment_mode: local-hardware-bridge
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: true
+      notes: Exact source initialized stdio MCP and listed 11 tools; the read-only doctor detected portable Bambu Studio 2.8.2.61, and a bounded local STL sliced successfully with packaged P1S 0.4 mm, 0.20 mm Standard, and Bambu PLA Basic profiles. No printer connection, transfer, or print command was attempted.
+    linux_x64:
+      status: host-dependent
+      tested: false
+      notes: Upstream documents a Linux LAN host and Hermes HTTP deployment; physical qualification is pending.
+    linux_arm64:
+      status: host-dependent
+      tested: false
+      notes: Pure Python dependencies appear portable, but printer and slicer behavior are untested on ARM64.
+    macos_x64:
+      status: unknown
+      tested: false
+      notes: Not tested.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: Not tested.
+  host_software_required:
+  - Bambu Lab P1S with LAN access enabled
+  - Bambu Studio 2.8.2.61
+  credentials_required:
+  - BAMBU_IP
+  - BAMBU_ACCESS_CODE
+  - BAMBU_SERIAL
+  - BAMBU_MODEL
+  default_enabled: false
+  approval_gates:
+  - secrets_approval
+  - workspace_write_approval
+  - machine_control_approval
+  - safety_review_approval
+  validation_result:
+    status: blocked
+    message: Exact source revision 7b50d0288fb7b91af8af422b96c4df4db0f1110c initialized stdio MCP on Windows and listed 11 tools with schema digest a00ff5d6d9c4498834e89aac17c711f86141ccef6d90e4bce8818cdea96ca4aa. The read-only doctor detected portable Bambu Studio 2.8.2.61 and safely reported missing BAMBU_IP, BAMBU_ACCESS_CODE, and BAMBU_SERIAL. A bounded 20 x 20 x 10 mm STL sliced successfully to a 47,207-byte gcode.3mf artifact with SHA-256 a3d37723b397b7be0c02f0a75a534d07a810e7e79b235c05c7e4334c3bb80c62 using packaged profiles whose machine, process, and filament SHA-256 values are df86ba7669bb9a41f1323fa2f649f8a5bb0127d24d882adb4f4969014fce426d, 9cfd44e7378d6fed4b3507e6bd01d618662837bf1cce9a1a0bc30f8b89454512, and 504ba52224376ec15fe4ee1960a79cf16691db58286b3b363994f1833316c506. Upstream tests passed 17 of 18; the remaining assertion hard-codes POSIX /tmp path spelling on Windows. No printer command ran.
+    environment: windows-11-local-portable-bambu-studio-2.8.2.61
+    missing_dependencies:
+    - P1S LAN identity and access code
+    - Confirmation that the P1S has a 0.4 mm nozzle and Bambu PLA Basic loaded for the selected profiles
+    - Explicit authorization for a bounded non-printing transfer test
+    evidence_status: partial
+  headless_ok: partial
+  integration_kind: mcp_server
+  hardware_standard: hardware_mcp
+  curation:
+    disposition: follow_up
+    reason: The server directly matches the flagship P1S slice and transfer chain, but physical printer behavior is safety critical and has not passed Wright qualification.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-11'
+    review_due: '2026-10-11'
+    next_action: Fix or waive the POSIX-only Windows test fixture, repeat two fresh protocol sessions, then qualify read-only printer status and an explicitly approved transfer-only action without starting a print.
+    adoption: unknown
 format_version: 1

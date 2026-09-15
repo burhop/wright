@@ -74,6 +74,9 @@ def candidate_70_catalog() -> dict:
         "atlassian-rovo-mcp",
         "grafana-official-mcp",
         "partuno-mcp",
+        "agentcad",
+        "foam-agent-csml-rpi",
+        "bambu-p1s-mcp-marctheshark3",
     }
     payload["servers"] = [
         entry for entry in payload["servers"] if entry["id"] not in additions

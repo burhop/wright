@@ -53,6 +53,36 @@ def test_persistent_cloud_model_needs_no_native_file():
     assert model.to_dict()["schema_version"] == 1
 
 
+def test_artifact_roles_and_exact_lineage_are_versioned_in_result_contract():
+    result = EngineeringResult(
+        "run:check:report",
+        "analysis",
+        "Independent mesh check",
+        (Representation("value", "checks/mesh", "json"),),
+        Provenance(
+            "run",
+            "check",
+            "report",
+            (("mesh", "revision-4"),),
+            definition_digest="a" * 64,
+            binding_digest="b" * 64,
+        ),
+        artifact_role="verification",
+    )
+    encoded = result.to_dict()
+    assert encoded["artifact_role"] == "verification"
+    assert encoded["provenance"]["definition_digest"] == "a" * 64
+    with pytest.raises(ValueError, match="artifact role"):
+        EngineeringResult(
+            "run:bad:result",
+            "analysis",
+            "Bad role",
+            (Representation("value", "checks/bad"),),
+            Provenance("run", "bad", "result"),
+            artifact_role="marketing",  # type: ignore[arg-type]
+        )
+
+
 def test_incompatible_application_and_format_require_explicit_export():
     with pytest.raises(ValueError, match="Configure an export.*step"):
         validate_result_input(

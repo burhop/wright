@@ -1,0 +1,6 @@
+connector,pins,min_power_contact_A,min_voltage_V,min_operating_temperature_C,reserved_pins,requirement_source
+J0,8,4,30,50,none,fictional_customer_requirement
+ZX,6,2,30,50,6_unconnected,fictional_customer_requirement
+ZY,6,2,30,50,6_unconnected,fictional_customer_requirement
+JFX;JFY,3,2,30,50,none,fictional_customer_requirement
+JSX;JSY,3,0.1,30,50,none,fictional_customer_requirement

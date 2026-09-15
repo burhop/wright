@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "template_id": "raspberry-pi-enclosure",
+  "implementation": "Reviewed fixed primary-reference/CAD-region/OpenFOAM operations; AgentCAD remains actual CAD provider",
+  "allowed_tools": {
+    "wright-campaign-pi-references": ["retrieve_pi_manufacturer_references", "read_pi_reference_page"],
+    "wright-workspace-files": ["write_text_document"],
+    "agentcad": ["docs", "run", "export", "measure", "inspect"],
+    "wright-campaign-pi-cfd": ["prepare_pi_cfd_comparison", "collect_pi_cfd_comparison"],
+    "foam-agent-csml-rpi": ["run"]
+  },
+  "expected_geometry": ["enclosure-a.step", "enclosure-b.step", "fluid-domain-a.step", "fluid-domain-b.step", "enclosure-a.stl", "enclosure-b.stl", "fluid-domain-a.stl", "fluid-domain-b.stl", "geometry-lineage.json"],
+  "scenarios": {
+    "raspberry-pi-enclosure-01": {"heat_regions": ["board_hot_patch"]},
+    "raspberry-pi-enclosure-02": {"heat_regions": ["pi_surrogate", "sensor_interface"]},
+    "raspberry-pi-enclosure-03": {"heat_regions": ["board_hot_patch", "power_interface"]}
+  },
+  "output_validation": "presence only; no convergence, material or engineering correctness claim"
+}

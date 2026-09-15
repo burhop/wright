@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "template_id": "sheet-metal-supplier-handoff",
+  "expected_outputs": [
+    {
+      "role": "native_sheet_metal",
+      "patterns": [
+        "**/*.psm"
+      ]
+    },
+    {
+      "role": "folded_neutral_model",
+      "patterns": [
+        "**/*.step",
+        "**/*.stp"
+      ]
+    },
+    {
+      "role": "developed_flat_pattern",
+      "patterns": [
+        "**/*.dxf"
+      ]
+    },
+    {
+      "role": "supplier_preview",
+      "patterns": [
+        "**/*preview*.json",
+        "**/*quote*.json"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "title": "SendCutSend design guidelines and capability research starting point",
+      "url": "https://sendcutsend.com/guidelines/",
+      "kind": "manufacturer",
+      "verification": "not_retrieved"
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "All people, businesses, load/volume assumptions, internal policies, and drawings are fictional. No supplied sketch is a flat pattern or supplier-approved drawing. Supplier facts require current primary-source retrieval. A test supplier receipt must declare simulation; no upload, order, payment, or production release is authorized."
+  },
+  "input_bindings": {},
+  "scenario_id": "sheet-metal-supplier-handoff-02",
+  "title": "Four-bend cable trough for a test-station frame",
+  "summary": "An industrial test-cell builder supplies cable routing and maintenance constraints for a long open-ended steel trough with outward return flanges.",
+  "difficulty": "intermediate",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "manufacturing-policy.md",
+      "mounting-holes.csv",
+      "stock-selection-revision-r1.md",
+      "native-label-revision-r2.md",
+      "cad-design-choices-revision-r3.md",
+      "company-fabrication-capabilities-r4.md"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  }
+}

@@ -40,6 +40,7 @@ WORKFLOW_SOURCE_METADATA_MAX_BYTES = 16 * 1024
 WORKFLOW_SOURCE_MAX_REVISIONS = 100_000
 WORKFLOW_SOURCE_LOCK_TIMEOUT_SECONDS = 5.0
 WORKFLOW_LAYOUT_MAX_BYTES = 256 * 1024
+WORKFLOW_TEMPLATE_ORIGIN_MAX_BYTES = 16 * 1024
 
 _SOURCE_FILE = re.compile(
     r"^workflows/(?P<slug>[a-z0-9][a-z0-9-]{0,62})\.workflow\.wflow$"
@@ -1474,6 +1475,7 @@ class WorkspaceWorkflowSourceStore:
         source: str,
         layout: dict[str, object] | None = None,
         layout_revision: int = 0,
+        origin: dict[str, object] | None = None,
     ) -> WorkflowSourceDocument:
         if not 1 <= storage_revision <= WORKFLOW_SOURCE_MAX_REVISIONS:
             raise WorkflowSourceStorageError(
@@ -1529,6 +1531,26 @@ class WorkspaceWorkflowSourceStore:
         previous_layout_head = (
             self._layout_head_bytes(slug) if layout is not None else None
         )
+        origin_created = False
+        origin_path = self._metadata_directory(slug) / "template-origin.json"
+        origin_content = (
+            json.dumps(
+                origin,
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
+            ).encode("utf-8")
+            if origin is not None
+            else None
+        )
+        if (
+            origin_content is not None
+            and len(origin_content) > WORKFLOW_TEMPLATE_ORIGIN_MAX_BYTES
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_template_origin_invalid",
+                "Workflow template origin is too large",
+            )
 
         # The visible replace, immutable journal publication, and committed-head
         # switch occur under one cross-process lock. Any synchronous failure is
@@ -1540,6 +1562,9 @@ class WorkspaceWorkflowSourceStore:
             journal_created = True
             if layout is not None:
                 document = self._publish_layout(slug, document, layout, layout_revision)
+            if origin_content is not None:
+                self._write_once(origin_path, origin_content)
+                origin_created = True
             self._atomic_write(head_path, head_record)
         except BaseException as error:
             rollback_error: BaseException | None = None
@@ -1560,6 +1585,11 @@ class WorkspaceWorkflowSourceStore:
                     self._restore_layout_head(slug, previous_layout_head)
                 except BaseException as caught:
                     rollback_error = rollback_error or caught
+            if origin_created:
+                try:
+                    self._unlink(origin_path, missing_ok=True)
+                except BaseException as caught:
+                    rollback_error = rollback_error or caught
             if rollback_error is not None:
                 raise WorkflowSourceStorageError(
                     "workflow_source_integrity",
@@ -1568,10 +1598,24 @@ class WorkspaceWorkflowSourceStore:
             raise error
         return document if layout is not None else self._with_layout(slug, document)
 
-    def create(self, user_path: str, source: str) -> WorkflowSourceDocument:
+    def create(
+        self,
+        user_path: str,
+        source: str,
+        *,
+        layout: dict[str, object] | None = None,
+        origin: dict[str, object] | None = None,
+    ) -> WorkflowSourceDocument:
         try:
             normalized, slug, path = self._source_path(user_path)
             _source_bytes(source)
+            if layout is not None:
+                layout = validate_source_layout(layout)
+            if origin is not None and not isinstance(origin, dict):
+                raise WorkflowSourceStorageError(
+                    "workflow_template_origin_invalid",
+                    "Workflow template origin must be an object",
+                )
             with self._transaction(slug, path):
                 if path.exists():
                     raise WorkflowSourceStorageError(
@@ -1591,6 +1635,9 @@ class WorkspaceWorkflowSourceStore:
                     definition_revision=1,
                     semantic_change_validated=True,
                     source=source,
+                    layout=layout,
+                    layout_revision=1 if layout is not None else 0,
+                    origin=origin,
                 )
         except WorkflowSourceStorageError:
             raise
@@ -1599,6 +1646,17 @@ class WorkspaceWorkflowSourceStore:
                 "workflow_source_unavailable",
                 "Workflow source storage is unavailable",
             ) from error
+
+    def read_template_origin(self, user_path: str) -> dict[str, object] | None:
+        """Read host-owned immutable template lineage for an instantiated source."""
+        normalized, slug, path = self._source_path(user_path)
+        with self._transaction(slug, path):
+            self._read_state_unlocked(normalized, slug, path)
+            origin_path = self._metadata_directory(slug) / "template-origin.json"
+            if not origin_path.exists():
+                return None
+            value, _content = self._decode_json(origin_path, label="template origin")
+            return value
 
     def update(
         self,
@@ -1713,11 +1771,22 @@ class WorkspaceWorkflowSourceUseCases:
         workspace_dir: str,
         path: str,
         source: str,
+        *,
+        layout: dict[str, object] | None = None,
+        origin: dict[str, object] | None = None,
     ) -> WorkflowSourceDocument:
         try:
             return await self._executor.run_to_completion(
                 "workspace.workflow_sources.create",
-                lambda: self._store_factory(workspace_dir).create(path, source),
+                lambda: self._store_factory(workspace_dir).create(
+                    path,
+                    source,
+                    **(
+                        {"layout": layout, "origin": origin}
+                        if layout is not None or origin is not None
+                        else {}
+                    ),
+                ),
             )
         except WorkflowSourceStorageError:
             raise
@@ -1725,6 +1794,21 @@ class WorkspaceWorkflowSourceUseCases:
             raise WorkflowSourceStorageError(
                 "workflow_source_unavailable",
                 "Workflow source storage is unavailable",
+            ) from error
+
+    async def read_template_origin(
+        self, workspace_dir: str, path: str
+    ) -> dict[str, object] | None:
+        try:
+            return await self._executor.run(
+                "workspace.workflow_sources.template_origin",
+                lambda: self._store_factory(workspace_dir).read_template_origin(path),
+                timeout_seconds=30.0,
+            )
+        except WorkspaceTimeoutError as error:
+            raise WorkflowSourceStorageError(
+                "workflow_source_unavailable",
+                "Workflow template origin read did not finish before its deadline",
             ) from error
 
     async def read(self, workspace_dir: str, path: str) -> WorkflowSourceDocument:

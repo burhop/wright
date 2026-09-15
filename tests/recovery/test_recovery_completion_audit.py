@@ -40,6 +40,19 @@ def test_task_ledger_derives_counts_and_rejects_gaps_or_duplicates(
     assert AUDIT._task_ledger(task_file)["well_formed"] is False
 
 
+def test_frozen_task_comparison_ignores_only_checkbox_marker_case() -> None:
+    original = "- [X] T001 Complete\n- [ ] T002 Open\n"
+    normalized = "- [x] T001 Complete\r\n- [ ] T002 Open\r\n"
+    changed = "- [x] T001 Different\n- [ ] T002 Open\n"
+
+    assert AUDIT._canonical_frozen_task_document(original) == (
+        AUDIT._canonical_frozen_task_document(normalized)
+    )
+    assert AUDIT._canonical_frozen_task_document(original) != (
+        AUDIT._canonical_frozen_task_document(changed)
+    )
+
+
 def test_capability_map_summary_uses_the_current_source_map(tmp_path: Path) -> None:
     source_map = tmp_path / "capability-source-map.csv"
     source_map.write_text(

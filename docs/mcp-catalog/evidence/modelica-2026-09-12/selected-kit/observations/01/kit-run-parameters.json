@@ -1,0 +1,114 @@
+{
+  "selected_electrical_power_w": null,
+  "time_limit_s": 180,
+  "candidate_powers_w": [
+    350
+  ],
+  "loss_conductances_w_per_k": [
+    0.6
+  ],
+  "runs": [
+    {
+      "request_id": "water-heater-sizing-01-attempt-qualification-baseline",
+      "run_id": "run_fcd9e1f0-629b-4490-9a2b-152f949264f6",
+      "manifest_sha256": "b7be16bad015baf71f21b13f72716cc36335e7a9213a22b5af779bc822a8232e",
+      "source_csv_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-qualification-baseline/artifacts/result.csv",
+      "source_csv_sha256": "66172c33da3bfaaa8f80e2b17fb88d50f0779831a7fefc9176cad6bd8e58e2d7",
+      "parameters": {
+        "ambient_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "boiler_heat_capacity": {
+          "unit": "J/K",
+          "value": 90
+        },
+        "electrical_power": {
+          "unit": "W",
+          "value": 350
+        },
+        "heat_loss_conductance": {
+          "unit": "W/K",
+          "value": 0.6
+        },
+        "heater_efficiency": {
+          "unit": "1",
+          "value": 0.92
+        },
+        "hysteresis": {
+          "unit": "K",
+          "value": 2
+        },
+        "initial_water_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "setpoint_temperature": {
+          "unit": "degC",
+          "value": 93
+        },
+        "water_mass": {
+          "unit": "kg",
+          "value": 0.35
+        }
+      },
+      "controls": {
+        "max_step_size_s": 1,
+        "tolerance": 1e-06
+      },
+      "power": 350,
+      "loss": 0.6
+    },
+    {
+      "request_id": "water-heater-sizing-01-attempt-qualification-refined",
+      "run_id": "run_e2e9950f-a22a-4925-bb89-153a9daaabea",
+      "manifest_sha256": "f51a9f767f996fc3aaf7748e07a0e9f7908405a0334f1b4a33e2b0718e0b0590",
+      "source_csv_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-qualification-refined/artifacts/result.csv",
+      "source_csv_sha256": "1d41247e4037127fa86e0151647a0ffbfea1cb3108d1e83fc265bf9372f61142",
+      "parameters": {
+        "ambient_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "boiler_heat_capacity": {
+          "unit": "J/K",
+          "value": 90
+        },
+        "electrical_power": {
+          "unit": "W",
+          "value": 350
+        },
+        "heat_loss_conductance": {
+          "unit": "W/K",
+          "value": 0.6
+        },
+        "heater_efficiency": {
+          "unit": "1",
+          "value": 0.92
+        },
+        "hysteresis": {
+          "unit": "K",
+          "value": 2
+        },
+        "initial_water_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "setpoint_temperature": {
+          "unit": "degC",
+          "value": 93
+        },
+        "water_mass": {
+          "unit": "kg",
+          "value": 0.35
+        }
+      },
+      "controls": {
+        "max_step_size_s": 0.25,
+        "tolerance": 1e-08
+      },
+      "power": 350,
+      "loss": 0.6
+    }
+  ]
+}

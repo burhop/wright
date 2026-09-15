@@ -130,6 +130,43 @@ class PromptStep:
     design_check: bool = False
     max_revisions: int = 0
     human_review: bool = False
+    external_action: dict | None = None
+    expected_file_ports: dict[str, str] = field(default_factory=dict)
+    source_contract: str = ""
+    reference_inline_max_bytes: int = 1_048_576
+
+
+def _reference_prompt_context(
+    name: str,
+    reference: WorkflowReference,
+    inline_max_bytes: int,
+) -> tuple[str, dict[str, object]]:
+    """Render a connected text reference without discarding its durable identity."""
+    record: dict[str, object] = {
+        "path": reference.path,
+        "sha256": reference.sha256,
+        "kind": "text",
+    }
+    size_bytes = reference.size_bytes
+    if size_bytes is None:
+        size_bytes = len(reference.text.encode())
+    if size_bytes <= inline_max_bytes:
+        return (
+            f"\n\nReference document — {name} ({reference.path}):\n{reference.text}",
+            record,
+        )
+    identity = {
+        "path": reference.path,
+        "sha256": reference.sha256,
+        "size_bytes": size_bytes,
+        "contents_inlined": False,
+    }
+    record.update(size_bytes=size_bytes, contents_inlined=False)
+    return (
+        f"\n\nReference document identity — {name}:\n"
+        + json.dumps(identity, separators=(",", ":")),
+        record,
+    )
 
 
 @dataclass(frozen=True)
@@ -139,6 +176,7 @@ class PromptWorkflow:
     inputs: dict[str, dict]
     revisions: dict[str, str] = field(default_factory=dict)
     review_context: dict = field(default_factory=dict)
+    definition_digest: str = ""
 
 
 def _invalid(
@@ -297,6 +335,21 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 dependencies[target_id].add(source_id)
                 outgoing[source_id].add(target_id)
             continue
+        if fields.get("type") == "order" and fields.get("when") is None:
+            source_id, target_id = fields.get("from"), fields.get("to")
+            if (
+                not isinstance(source_id, str)
+                or not isinstance(target_id, str)
+                or source_id not in blocks
+                or target_id not in blocks
+                or blocks[target_id]["kind"] != "task"
+            ):
+                raise _invalid(
+                    "An execution-order connection references a missing block."
+                )
+            dependencies[target_id].add(source_id)
+            outgoing[source_id].add(target_id)
+            continue
         if fields.get("type") != "item" or fields.get("when") is not None:
             raise _invalid(
                 "This run contains a conditional or control connection.",
@@ -360,6 +413,86 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         settings = fields.get("settings", {})
         if not isinstance(settings, dict):
             raise _invalid(f"{title}: invalid settings.")
+        if settings.get("authoring_template") == "external-action-approval":
+            action_kind = settings.get("action_kind")
+
+            def approval_object(name, fallback):
+                value = settings.get(name)
+                if isinstance(value, str):
+                    try:
+                        value = json.loads(value)
+                    except ValueError:
+                        value = None
+                return value if value is not None else fallback
+
+            binding = approval_object(
+                "approval_binding",
+                {
+                    "server": settings.get("approval_server"),
+                    "tool": settings.get("approval_tool"),
+                    "schema": settings.get("approval_schema"),
+                },
+            )
+            destination = approval_object(
+                "approval_destination",
+                {
+                    "kind": settings.get("approval_destination_kind"),
+                    "id": settings.get("approval_destination_id"),
+                },
+            )
+            action_settings = approval_object("approval_settings", None)
+            action = approval_object("approval_action", None)
+            if (
+                action_kind
+                not in {
+                    "local_review",
+                    "printer_transfer",
+                    "supplier_upload_preview",
+                    "cart_quote_handoff",
+                }
+                or fields.get("performed_by") != "engineer"
+                or fields.get("step_type") != "review"
+                or fields.get("tool") is not None
+                or fields.get("reusable_step") is not None
+                or fields.get("outputs")
+                or not dependencies[block_id]
+                or not all(
+                    isinstance(value, dict) and value
+                    for value in (binding, destination, action_settings, action)
+                )
+                or action.get("kind") != action_kind
+            ):
+                raise _invalid(
+                    f"{title}: configure an Engineer external-action approval with an upstream dependency and exact binding, destination, settings, and action details."
+                )
+            instructions = fields.get("instructions", "")
+            if not isinstance(instructions, str) or not instructions.strip():
+                raise _invalid(f"{title}: enter approval instructions.")
+            steps.append(
+                PromptStep(
+                    block_id,
+                    title,
+                    instructions,
+                    None,
+                    tuple(
+                        (str(port.get("name", "Document")), source)
+                        for port in fields.get("inputs", [])
+                        for source in incoming.get(f"{block_id}.{port['key']}", [])
+                    ),
+                    "text",
+                    "",
+                    False,
+                    "indexed",
+                    external_action={
+                        "action_kind": action_kind,
+                        "binding": binding,
+                        "destination": destination,
+                        "settings": action_settings,
+                        "action": action,
+                    },
+                )
+            )
+            continue
         if settings.get("authoring_template") == "manual-review":
             refs = [
                 (str(port.get("name", "Document")), source)
@@ -372,7 +505,6 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 or fields.get("step_type") != "work"
                 or fields.get("tool") is not None
                 or fields.get("reusable_step") is not None
-                or outgoing[block_id]
                 or len(fields.get("inputs", [])) != 1
                 or len(refs) != 1
                 or not isinstance(instructions, str)
@@ -380,7 +512,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 or len(instructions) > 8000
             ):
                 raise _invalid(
-                    f"{title}: use one terminal Engineer review with one connected document and review instructions."
+                    f"{title}: use an Engineer review with one connected document and review instructions."
                 )
             steps.append(
                 PromptStep(
@@ -393,6 +525,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     "",
                     False,
                     "indexed",
+                    output_ports=tuple(
+                        (p["key"], str(p.get("kind", "engineering_document")))
+                        for p in fields.get("outputs", [])
+                    ),
                     human_review=True,
                 )
             )
@@ -448,6 +584,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             raise _invalid(f"{title}: choose a workspace-enabled MCP server.")
         max_calls = settings.get("max_tool_calls", 8)
         timeout = settings.get("timeout_seconds", 300)
+        reference_inline_max_bytes = settings.get(
+            "reference_inline_max_bytes", 1_048_576
+        )
         guidance = settings.get("task_guidance", "")
         expected = settings.get("expected_result", "")
         if not isinstance(expected, str) or len(expected) > 16000:
@@ -462,10 +601,35 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         expected_files = tuple(
             _safe_path(p.strip()) for p in raw_files.splitlines() if p.strip()
         )
-        if len(expected_files) > 16 or (expected_files and not agent_task):
+        if len(expected_files) > 16 or (expected_files and not (agent_task or is_mcp)):
             raise _invalid(
-                f"{title}: declared tool-created files require an MCP task (maximum 16)."
+                f"{title}: declared tool-created files require an MCP tool or task (maximum 16)."
             )
+        file_ports = settings.get("expected_file_ports", {})
+        if isinstance(file_ports, str):
+            try:
+                file_ports = json.loads(file_ports)
+            except ValueError:
+                raise _invalid(
+                    f"{title}: expected file ports must be a JSON object."
+                ) from None
+        declared_file_ports = {
+            p["key"]
+            for p in fields.get("outputs", [])
+            if p.get("kind") == "workspace_file"
+        }
+        if not isinstance(file_ports, dict) or any(
+            port not in declared_file_ports or path not in expected_files
+            for port, path in file_ports.items()
+        ):
+            raise _invalid(f"{title}: map file outputs to declared expected files.")
+        if is_mcp and declared_file_ports and expected_files:
+            if not file_ports and len(declared_file_ports) == len(expected_files) == 1:
+                file_ports = {next(iter(declared_file_ports)): expected_files[0]}
+            if declared_file_ports != set(file_ports):
+                raise _invalid(
+                    f"{title}: map each file output to one exact expected file."
+                )
         if agent_task and (
             type(max_calls) is not int
             or not 1 <= max_calls <= 32
@@ -477,6 +641,11 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             raise _invalid(
                 f"{title}: use 1–32 tool calls and a 30–600 second task limit."
             )
+        if (
+            type(reference_inline_max_bytes) is not int
+            or not 1_024 <= reference_inline_max_bytes <= 1_048_576
+        ):
+            raise _invalid(f"{title}: reference inline limit must be 1 KiB to 1 MiB.")
         if (
             fields.get("step_type") != "work"
             or fields.get("tool") is not None
@@ -632,6 +801,12 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 raise _invalid(
                     f"{title}: a connected input is not assigned to a tool argument."
                 )
+        source_contract = settings.get("mcp_source_contract", "")
+        if source_contract:
+            from .workflow_mcp_source_contracts import SUPPORTED_MCP_SOURCE_CONTRACTS
+
+            if not is_mcp or source_contract not in SUPPORTED_MCP_SOURCE_CONTRACTS:
+                raise _invalid(f"{title}: choose a supported MCP source contract.")
         steps.append(
             PromptStep(
                 block_id,
@@ -664,33 +839,69 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 application_from,
                 design_check,
                 max_revisions,
+                expected_file_ports=file_ports,
+                source_contract=source_contract,
+                reference_inline_max_bytes=reference_inline_max_bytes,
             )
         )
     from .workflow_design_check import validate_rework
 
     reviews = [step for step in steps if step.human_review]
     if reviews:
-        if (
-            len(reviews) != 1
-            or revisions
-            or any(step.tool_name or step.agent_task for step in steps)
-        ):
-            raise _invalid(
-                "Engineer review currently supports one terminal review after AI document tasks; MCP/CAD continuation is not supported."
-            )
-        review = reviews[0]
-        producer_id = review.references[0][1].split(".")[0]
-        producer = next((step for step in steps if step.id == producer_id), None)
-        if producer is None or not producer.save or producer.file_policy != "indexed":
-            raise _invalid(
-                "Save the reviewed document as an indexed workspace file before Engineer review."
-            )
+        for review in reviews:
+            producer_id = review.references[0][1].split(".")[0]
+            producer = next((step for step in steps if step.id == producer_id), None)
+            if producer is None or not (
+                (producer.save and producer.file_policy == "indexed")
+                or producer.expected_files
+                or producer.cad
+                or producer.application
+                or producer.human_review
+            ):
+                raise _invalid(
+                    "Save the reviewed document as an indexed workspace file before Engineer review."
+                )
         if any(step.save and step.file_policy != "indexed" for step in steps):
             raise _invalid(
                 "A workflow with Engineer review must use indexed output files to preserve earlier drafts."
             )
-        # Independent terminal branches finish before the review package is sealed.
-        steps = [step for step in steps if not step.human_review] + reviews
+        if (
+            len(reviews) == 1
+            and not outgoing[reviews[0].id]
+            and not revisions
+            and not any(
+                step.tool_name or step.agent_task or step.external_action
+                for step in steps
+            )
+        ):
+            # Preserve existing single terminal document-review packages.
+            steps = [step for step in steps if not step.human_review] + reviews
+        else:
+            from dataclasses import replace
+            import hashlib
+
+            steps = [
+                replace(
+                    step,
+                    human_review=False,
+                    external_action={
+                        "action_kind": "local_review",
+                        "binding": {
+                            "server": "wright",
+                            "tool": "review_artifacts",
+                            "schema": hashlib.sha256(
+                                b"wright.local_review.v1"
+                            ).hexdigest(),
+                        },
+                        "destination": {"kind": "local_review", "id": "workspace"},
+                        "settings": {"review_task_id": step.id},
+                        "action": {"kind": "local_review", "mode": "review_only"},
+                    },
+                )
+                if step.human_review
+                else step
+                for step in steps
+            ]
     validate_rework(steps, revisions)
     # Reject output collisions within one run before calling any model.
     names: dict[str, str] = {}
@@ -977,6 +1188,9 @@ async def prepare_prompt_workflow(
         ):
             raise _invalid(f"{fields['name']}: supply text before running.")
         values[key] = value
+    from dataclasses import replace
+
+    plan = replace(plan, definition_digest=expected_digest)
     if review_snapshots:
         from dataclasses import replace
 
@@ -1002,6 +1216,40 @@ async def prepare_prompt_workflow(
     return plan, values
 
 
+def _execution_snapshot(
+    *,
+    input_values,
+    responses,
+    records,
+    engineering_results,
+    artifacts_by_output,
+    attempts,
+    revision_counts,
+    feedback,
+):
+    from .workflow_execution_continuation import encode_value, input_identities
+
+    # Round-tripping here guarantees the checkpoint repository receives plain
+    # JSON and the current execution cannot mutate its already sealed state.
+    return json.loads(
+        json.dumps(
+            {
+                "input_identities": input_identities(input_values),
+                "responses": {
+                    key: encode_value(value) for key, value in responses.items()
+                },
+                "records": records,
+                "results": [value.to_dict() for value in engineering_results],
+                "artifacts_by_output": artifacts_by_output,
+                "revision_attempts": attempts,
+                "revision_counts": revision_counts,
+                "feedback": feedback,
+            },
+            allow_nan=False,
+        )
+    )
+
+
 async def execute_prompt_workflow(
     *,
     service,
@@ -1012,6 +1260,10 @@ async def execute_prompt_workflow(
     on_event=None,
     tool_runtime=None,
     action_generator=None,
+    continuation=None,
+    completed_checkpoint=None,
+    execution_context=None,
+    run_id=None,
 ) -> dict:
     from uuid import uuid4
     from dataclasses import replace
@@ -1023,7 +1275,7 @@ async def execute_prompt_workflow(
         file_result,
     )
 
-    run_id = uuid4().hex
+    run_id = run_id or uuid4().hex
     engineering_results = []
 
     async def emit(kind, **data):
@@ -1134,10 +1386,111 @@ async def execute_prompt_workflow(
             responses[f"{key}.{port['key']}"] = input_values[key]
     records, attempts, revision_counts, feedback = [], [], {}, {}
     cursor = 0
+    if continuation is not None:
+        from .workflow_execution_continuation import restore_continuation
+
+        restored = await restore_continuation(
+            state=continuation,
+            checkpoint=completed_checkpoint,
+            plan=plan,
+            input_values=input_values,
+            service=service,
+            workspace_dir=workspace_dir,
+        )
+        run_id = restored["run_id"]
+        cursor = restored["cursor"]
+        responses = restored["responses"]
+        artifacts_by_output = restored["artifacts_by_output"]
+        records = restored["records"]
+        engineering_results = restored["engineering_results"]
+        attempts = restored["attempts"]
+        revision_counts = restored["revision_counts"]
+        feedback = restored["feedback"]
+        execution_context = continuation.get("execution_context")
+        released = plan.steps[cursor]
+        receipt_files = (
+            completed_checkpoint.get("external_action", {}).get("evidence") or {}
+        ).get("produced_files", [])
+        verified_receipts = []
+        if receipt_files:
+            import hashlib
+
+            for receipt in receipt_files:
+                path = _safe_path(receipt.get("output_path"))
+                raw = await service.files.read_reference(workspace_dir, path)
+                if (
+                    not raw
+                    or len(raw) != receipt.get("output_bytes")
+                    or hashlib.sha256(raw).hexdigest() != receipt.get("sha256")
+                ):
+                    raise _invalid(
+                        "The completed handoff receipt changed before continuation."
+                    )
+                output = {
+                    **receipt,
+                    "task_id": released.id,
+                    "task_title": released.title,
+                    "artifact_role": "external_action_receipt",
+                }
+                receipt_result = file_result(
+                    output,
+                    Provenance(
+                        run_id, released.id, receipt.get("output_port") or "receipt"
+                    ),
+                )
+                engineering_results.append(receipt_result)
+                verified_receipts.append(output)
+                await emit(
+                    "result_ready",
+                    task_id=released.id,
+                    task_title=released.title,
+                    engineering_result=receipt_result.to_dict(),
+                )
+        # A review may expose the same exact artifact to downstream tasks. The
+        # approval never creates a replacement engineering artifact.
+        if released.references:
+            approved_source = released.references[0][1]
+            for port, _ in released.output_ports:
+                responses[f"{released.id}.{port}"] = responses[approved_source]
+                artifacts_by_output[f"{released.id}.{port}"] = artifacts_by_output.get(
+                    approved_source, []
+                )
+        records.append(
+            {
+                "task_id": released.id,
+                "task_title": released.title,
+                "execution_kind": "approval",
+                "output_format": "text",
+                "output_path": None,
+                "output_bytes": 0,
+                "response": "Approved",
+                "checkpoint_id": completed_checkpoint["checkpoint_id"],
+                "subject_digest": completed_checkpoint["subject_digest"],
+                "external_action": completed_checkpoint["external_action"],
+                "produced_files": verified_receipts,
+            }
+        )
+        await emit(
+            "step_completed",
+            task_id=released.id,
+            task_title=released.title,
+            checkpoint_id=completed_checkpoint["checkpoint_id"],
+            response="Approved",
+            output_format="text",
+        )
+        cursor += 1
     while cursor < len(plan.steps):
+        if (
+            tool_runtime is not None
+            and getattr(tool_runtime, "_integration_file_copy_authority", None)
+            is not None
+        ):
+            tool_runtime._verified_copy_sources = tuple(engineering_results)
         step = plan.steps[cursor]
         if step.human_review:
             break  # Terminal review is persisted by the run recorder after all outputs are sealed.
+        if step.external_action:
+            break  # The recorder seals an exact durable approval checkpoint below.
         check_report = None
         if step.tool_name:
             if tool_runtime is None:
@@ -1170,6 +1523,21 @@ async def execute_prompt_workflow(
                     )
                     tool_values[source_id] = value.text
             arguments = tool_runtime.arguments(step, tool_values)
+            from .workflow_mcp_source_contracts import validate_mcp_source_contract
+
+            source_contract_receipt = validate_mcp_source_contract(
+                step, workspace_dir, arguments
+            )
+            if source_contract_receipt is not None:
+                await emit(
+                    "stage_contract_validated",
+                    task_id=step.id,
+                    task_title=step.title,
+                    contract=source_contract_receipt,
+                )
+            from .workflow_references import snapshot_task_files, verify_task_files
+
+            prior_files = snapshot_task_files(workspace_dir, step.expected_files)
             await emit(
                 "step_started",
                 task_id=step.id,
@@ -1180,6 +1548,31 @@ async def execute_prompt_workflow(
                 output_format=step.output_format,
             )
             value, text = await tool_runtime.call(step, arguments, on_event=emit)
+            produced_files = verify_task_files(
+                workspace_dir, step.expected_files, prior_files
+            )
+            for produced in produced_files:
+                port = next(
+                    (
+                        key
+                        for key, path in step.expected_file_ports.items()
+                        if path == produced["output_path"]
+                    ),
+                    None,
+                )
+                if port:
+                    produced["output_port"] = port
+                produced_result = file_result(
+                    {"task_id": step.id, "task_title": step.title, **produced},
+                    Provenance(run_id, step.id, port or produced["output_path"]),
+                )
+                engineering_results.append(produced_result)
+                await emit(
+                    "result_ready",
+                    task_id=step.id,
+                    task_title=step.title,
+                    engineering_result=produced_result.to_dict(),
+                )
             structured = json.dumps(
                 value, ensure_ascii=False, indent=2, allow_nan=False
             )
@@ -1192,11 +1585,24 @@ async def execute_prompt_workflow(
                 "arguments": arguments,
                 "prompt": "",
                 "response": response,
+                "produced_files": produced_files,
             }
             if reference_records:
                 record["references"] = reference_records
             for key, kind in step.output_ports:
-                responses[f"{step.id}.{key}"] = text if kind == "text" else structured
+                mapped = [
+                    item for item in produced_files if item.get("output_port") == key
+                ]
+                if mapped:
+                    responses[f"{step.id}.{key}"] = file_result(
+                        mapped[0], Provenance(run_id, step.id, key)
+                    )
+                    artifacts_by_output[f"{step.id}.{key}"] = mapped
+                else:
+                    responses[f"{step.id}.{key}"] = (
+                        text if kind == "text" else structured
+                    )
+                    artifacts_by_output[f"{step.id}.{key}"] = produced_files
         else:
             images, reference_records = [], []
             prompt = (
@@ -1227,18 +1633,24 @@ async def execute_prompt_workflow(
                             f"{step.title}: this file cannot be read as reference text.",
                             "Connect it to an application that imports this format.",
                         )
-                    reference_records.append(
-                        {
-                            "path": reference.path,
-                            "sha256": reference.sha256,
-                            "kind": "image" if reference.image_url else "text",
-                        }
-                    )
                     if reference.image_url:
+                        reference_records.append(
+                            {
+                                "path": reference.path,
+                                "sha256": reference.sha256,
+                                "kind": "image",
+                            }
+                        )
                         images.append(reference.image_url)
                         prompt += f"\n\nReference image — {name}: {reference.path} (attached image)"
                     else:
-                        prompt += f"\n\nReference document — {name} ({reference.path}):\n{reference.text}"
+                        context, reference_record = _reference_prompt_context(
+                            name,
+                            reference,
+                            step.reference_inline_max_bytes,
+                        )
+                        reference_records.append(reference_record)
+                        prompt += context
                 else:
                     prompt += f"\n\nReference material — {name}:\n{reference}"
             for source_id in ([step.prompt_from] if step.prompt_from else []) + [
@@ -1421,14 +1833,22 @@ async def execute_prompt_workflow(
                             )
                         )
                 else:
-                    response = validate_response(
+                    generated = (
                         await response_generator(
                             prompt, step.output_format, images=images
                         )
                         if images
-                        else await response_generator(prompt, step.output_format),
-                        step.output_format,
+                        else await response_generator(prompt, step.output_format)
                     )
+                    usage = getattr(generated, "wright_usage", None)
+                    if isinstance(usage, dict):
+                        await emit(
+                            "model_usage",
+                            task_id=step.id,
+                            task_title=step.title,
+                            usage=usage,
+                        )
+                    response = validate_response(generated, step.output_format)
             except TimeoutError as error:
                 raise _error(
                     "MODEL_TIMEOUT",
@@ -1627,9 +2047,11 @@ async def execute_prompt_workflow(
         cursor += 1
     # Validate every model response before replacing any previous output.
     outputs = []
-    for step, record in zip(
-        (step for step in plan.steps if not step.human_review), records, strict=True
-    ):
+    executed_steps = [
+        next(step for step in plan.steps if step.id == record["task_id"])
+        for record in records
+    ]
+    for step, record in zip(executed_steps, records, strict=True):
         for produced in record.get("produced_files", []):
             output = {"task_id": step.id, "task_title": step.title, **produced}
             outputs.append(output)
@@ -1638,26 +2060,38 @@ async def execute_prompt_workflow(
             outputs.append(
                 record.get("saved_response") or await save_response(step, record)
             )
+    pending_action = (
+        plan.steps[cursor]
+        if cursor < len(plan.steps) and plan.steps[cursor].external_action
+        else None
+    )
     last = (
         outputs[-1]
         if outputs
+        else records[-1]
+        if records
         else {
             "output_path": "",
             "output_bytes": 0,
-            "task_title": records[-1]["task_title"],
-            "task_id": records[-1]["task_id"],
+            "task_title": pending_action.title if pending_action else plan.title,
+            "task_id": pending_action.id if pending_action else "",
         }
     )
     result = {
         "workflow_title": plan.title,
         **last,
+        "output_path": last.get("output_path") or "",
         "outputs": outputs,
         "steps": records,
         "run_id": run_id,
         "results": [result.to_dict() for result in engineering_results],
         "revision_attempts": attempts,
     }
-    review = next((step for step in plan.steps if step.human_review), None)
+    review = (
+        plan.steps[cursor]
+        if cursor < len(plan.steps) and plan.steps[cursor].human_review
+        else None
+    )
     if review:
         if not plan.review_context:
             raise _invalid(
@@ -1676,5 +2110,115 @@ async def execute_prompt_workflow(
             "instructions": review.prompt,
             "artifacts": reviewed_outputs,
             "context": plan.review_context,
+        }
+    if pending_action:
+        import hashlib
+
+        def digest_input(value):
+            if isinstance(value, WorkflowReference):
+                return value.sha256
+            return hashlib.sha256(str(value).encode("utf-8")).hexdigest()
+
+        artifact_digests = sorted(
+            {
+                representation.sha256
+                for engineering_result in engineering_results
+                for representation in (
+                    *engineering_result.representations,
+                    *(
+                        rep
+                        for exported in engineering_result.exports
+                        for rep in exported.representations
+                    ),
+                )
+                if representation.sha256
+            }
+        )
+        artifact_files = sorted(
+            (
+                {"path": representation.location, "sha256": representation.sha256}
+                for engineering_result in engineering_results
+                for representation in (
+                    *engineering_result.representations,
+                    *(
+                        rep
+                        for exported in engineering_result.exports
+                        for rep in exported.representations
+                    ),
+                )
+                if representation.kind == "workspace_file" and representation.sha256
+            ),
+            key=lambda item: item["path"],
+        )
+        # A local requirements review may be the first task: its artifacts are
+        # the exact connected uploaded files, before any engineering output exists.
+        # This does not permit an external handoff without produced artifacts.
+        if pending_action.external_action["action_kind"] == "local_review":
+            from .workflow_execution_continuation import local_review_input_files
+
+            reviewed_inputs = local_review_input_files(pending_action, input_values)
+            artifact_digests = sorted(
+                set(artifact_digests) | set(reviewed_inputs.values())
+            )
+            artifact_files = sorted(
+                (
+                    {"path": path, "sha256": sha}
+                    for path, sha in {
+                        **{item["path"]: item["sha256"] for item in artifact_files},
+                        **reviewed_inputs,
+                    }.items()
+                ),
+                key=lambda item: item["path"],
+            )
+        if not plan.definition_digest or not artifact_digests:
+            raise _invalid(
+                f"{pending_action.title}: exact source and artifact digests are required before approval."
+            )
+        action = pending_action.external_action
+        subject = {
+            "definition_digest": plan.definition_digest,
+            "input_digests": sorted(
+                digest_input(value) for value in input_values.values()
+            ),
+            "artifact_digests": artifact_digests,
+            "binding": action["binding"],
+            "destination": action["destination"],
+            "settings": action["settings"],
+            "action": action["action"],
+        }
+        result["_approval_request"] = {
+            "step_id": pending_action.id,
+            "step_title": pending_action.title,
+            "instructions": pending_action.prompt,
+            "action_kind": action["action_kind"],
+            "subject": subject,
+            "continuation": {
+                "schema_version": 2,
+                "run_id": run_id,
+                "definition_digest": plan.definition_digest,
+                "execution_context": execution_context,
+                "next_step_index": cursor,
+                "completed_step_ids": [step.id for step in executed_steps],
+                "result_ids": [item.id for item in engineering_results],
+                "input_files": sorted(
+                    (
+                        {"path": value.path, "sha256": value.sha256}
+                        for value in input_values.values()
+                        if isinstance(value, WorkflowReference)
+                    ),
+                    key=lambda item: item["path"],
+                ),
+                "artifact_files": artifact_files,
+                **_execution_snapshot(
+                    input_values=input_values,
+                    responses=responses,
+                    records=records,
+                    engineering_results=engineering_results,
+                    artifacts_by_output=artifacts_by_output,
+                    attempts=attempts,
+                    revision_counts=revision_counts,
+                    feedback=feedback,
+                ),
+            },
         }
     return result

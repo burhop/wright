@@ -1,0 +1,5 @@
+feature,axis,x_mm,y_mm,z_mm,diameter_mm,note
+wall_hole_1,x,3,0,15,6.6,through wall leg
+wall_hole_2,x,3,0,45,6.6,through wall leg
+camera_hole_1,z,70,-15,57,4.5,through shelf
+camera_hole_2,z,70,15,57,4.5,through shelf

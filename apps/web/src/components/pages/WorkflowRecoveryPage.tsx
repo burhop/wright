@@ -4,6 +4,7 @@ import WorkflowRecoveryConcept, {
   type WorkflowRunOptions,
   type WorkflowRecoveryStoredSource,
 } from "../../prototypes/workflow-recovery/WorkflowRecoveryConcept";
+import { EngineeringTemplateDialog } from "../../prototypes/workflow-recovery/EngineeringTemplateDialog";
 import {
   initialWorkflow,
   type RecoveryLayout,
@@ -45,6 +46,7 @@ export function WorkflowRecoveryPage({
   const [message, setMessage] = useState("");
   const [editorInstance, setEditorInstance] = useState(0);
   const [fileAction, setFileAction] = useState<"new" | "open" | null>(null);
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [fileActionError, setFileActionError] = useState("");
   const [fileActionPending, setFileActionPending] = useState(false);
   const [newWorkflowName, setNewWorkflowName] = useState("");
@@ -56,6 +58,16 @@ export function WorkflowRecoveryPage({
     scope: string;
     promise: Promise<WorkspaceWorkflowSourceDocument>;
   } | null>(null);
+
+  const closeTemplateDialog = useCallback(() => {
+    setTemplateDialogOpen(false);
+    window.requestAnimationFrame(() => {
+      const menu = window.document.querySelector<HTMLElement>(
+        '[data-testid="workflow-file-menu"]',
+      );
+      if (menu?.offsetParent) menu.focus();
+    });
+  }, []);
 
   const requireScopedDocument = useCallback(
     (loaded: WorkspaceWorkflowSourceDocument) => {
@@ -287,6 +299,10 @@ export function WorkflowRecoveryPage({
       return {
         status: result.status,
         review: result.review,
+        approval: result.approval,
+        runId: result.run_id,
+        verification: result.verification,
+        captureRights: result.capture_rights,
         outputPath: result.output_path,
         runLogPath: result.run_log_path,
         outputBytes: result.output_bytes,
@@ -414,6 +430,14 @@ export function WorkflowRecoveryPage({
           layout before saving.
         </p>
       )}
+      <EngineeringTemplateDialog
+        open={templateDialogOpen}
+        sessionId={sessionId}
+        workspaceId={workspaceId}
+        workspaceName={workspaceName}
+        onClose={closeTemplateDialog}
+        onCreated={(path) => onOpenWorkflow?.(path)}
+      />
       <dialog
         ref={fileDialog}
         aria-labelledby={`${dialogId}-title`}
@@ -579,6 +603,16 @@ export function WorkflowRecoveryPage({
                       }}
                     >
                       New workflow
+                    </button>
+                    <button
+                      type="button"
+                      data-testid="workflow-start-template"
+                      onClick={(e) => {
+                        e.currentTarget.closest("details")!.open = false;
+                        setTemplateDialogOpen(true);
+                      }}
+                    >
+                      Start from template
                     </button>
                   </div>
                 </details>

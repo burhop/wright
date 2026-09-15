@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "revision": "2026-09-12-sheet-capabilities-r4",
+  "scenario_id": "sheet-metal-supplier-handoff-01",
+  "reason": "Add fictional Parcelwood tooling, split-lip forming sequence and staged supplier-confirmation policy after attempt-006; preserve original geometry, known supplier hard limits, exact intent/simulator approvals, native measurement/export gates and HOLD.",
+  "prior_dataset_digest": "f18523eb2ffee3edceb65912229c89dc69cb0fc77a4f87bce12b0a79d64c08a5",
+  "dataset_digest": "33d0e09a773f7941fe83c1daafd34524c82e87d5b0254825b25d8b0ae62e0bb8",
+  "template_digest": "57713c8df9f293e7e71c0ec53c1fc074c35532853a984c00b52ea0a061eab40b",
+  "original_manifest_sha256": "9680c715717eb39061b8f3d179d5a455e538c74b334f0d8b1507bcb3007c0554",
+  "revised_manifest_sha256": "09883fe369edf3b6f838856acfa8ad226e2f354ed46b1bf4d8bc3fa4e7a0eecc",
+  "retained_original_files": {
+    "cad-design-choices-revision-r3.md": "9b11da64a3a2152d9eef9c5166292ce81999abd300d62b7c9333a4fe751536d3",
+    "concept.png": "85e2a868e9492cd01a61e8d0d6b668e7377e45e628a819551c13b48f98c6a0fb",
+    "concept.svg": "82304379ad96430d7f7f09b5a09cd33952b38d2c7711ecbe03486c56a53b9c8a",
+    "context.md": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+    "manufacturing-policy.md": "a2ca35182be5025ad85062d272d49c5945cfe4bae6e5762063fb7a799166b58e",
+    "prompt.txt": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+    "stock-selection-revision-r1.md": "a8dd81c8a20f03e62e50976c7ad07dce36a3062657d0ec670620a110842cecaf",
+    "user-profile.md": "b1416c18cc2fcddfb0a0609e88ce2e60fe647800de3a74c0a49d51bb81235f00"
+  },
+  "addendum": "company-fabrication-capabilities-r4.md",
+  "addendum_sha256": "ed73ef7775bcfe77c5c6f998036cc64791b9bbe9eaecbf9c72730f49da447bd1",
+  "prior_manifest": "scenario.before.json",
+  "execution_started": false
+}

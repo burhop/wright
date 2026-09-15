@@ -8,6 +8,7 @@ from uuid import uuid4
 import socket
 import hashlib
 import logging
+from dataclasses import asdict
 
 import anyio
 
@@ -40,7 +41,7 @@ def _execution_snapshot(record, state):
 
     def artifact(value, depth=0):
         nonlocal truncated
-        out = fields(value, ("schema_version", "id", "kind", "name"))
+        out = fields(value, ("schema_version", "id", "kind", "name", "artifact_role"))
         if not out.get("id") or not out.get("kind") or not out.get("name"):
             truncated = True
             return None
@@ -206,6 +207,10 @@ def _execution_snapshot(record, state):
             "design_check",
             "design_revision",
             "review_requested",
+            "approval_requested",
+            "approval_decided",
+            "external_action_authorized",
+            "external_action_reconciled",
         }:
             progress = fields(event, event_fields)
 
@@ -274,6 +279,9 @@ async def record_workflow_run(
     execute,
     on_event=None,
     workspace_id=None,
+    execution_context=None,
+    run_id=None,
+    required_step_ids=None,
 ):
     from .workflow_resource_lease import ApplicationLease
 
@@ -288,6 +296,78 @@ async def record_workflow_run(
             on_event=on_event,
             identity=identity,
             workspace_id=workspace_id,
+            execution_context=execution_context,
+            run_id=run_id,
+            required_step_ids=required_step_ids,
+        )
+
+
+async def record_workflow_resume(
+    *, service, workspace_dir, workspace_id, checkpoint, execute, on_event=None
+):
+    """Continue one recorded run once; completed segment retries are read-only."""
+    from .workflow_resource_lease import ApplicationLease
+    from .workflow_source_execution import _error
+
+    relative = checkpoint.continuation.get("run_log_path")
+    if not isinstance(relative, str) or not relative.startswith("runs/"):
+        raise ValueError("Approval continuation has no run-log path")
+    identity = f"workflow-resume:{workspace_id}:{checkpoint.run_id}"
+    async with ApplicationLease(identity):
+        raw = await service.files.read_reference(workspace_dir, relative)
+        if len(raw) > 16 * 1024 * 1024:
+            raise ValueError("Workflow run log exceeds the recovery limit")
+        record = json.loads(raw)
+        result = record.get("result") or {}
+        if (
+            record.get("workflow_path") != checkpoint.workflow_id
+            or result.get("run_id") != checkpoint.run_id
+            or record.get("source_digest")
+            != checkpoint.subject.get("definition_digest")
+        ):
+            raise ValueError("Continuation does not belong to this recorded run")
+        claims = record.setdefault("resume_segments", {})
+        previous = claims.get(checkpoint.checkpoint_id)
+        if previous:
+            if previous.get("subject_digest") != checkpoint.subject_digest:
+                raise ValueError("Continuation segment identity changed")
+            if previous.get("state") == "completed":
+                return {**previous["result"], "run_log_path": relative}
+            raise _error(
+                "WORKFLOW_CONTINUATION_OUTCOME_UNKNOWN",
+                "This continuation already began; unfinished operations cannot be replayed.",
+                "Inspect persisted tool evidence and reconcile before creating another continuation.",
+            )
+        if (
+            checkpoint.state != "consumed"
+            or (checkpoint.external_action or {}).get("outcome") != "dispatched"
+        ):
+            raise _error(
+                "WORKFLOW_CONTINUATION_NOT_AUTHORIZED",
+                "The checkpoint does not have a completed approved action.",
+                "Resolve the exact checkpoint before continuing.",
+            )
+        current = result.get("approval") or record.get("approval") or {}
+        if current.get("checkpoint_id") != checkpoint.checkpoint_id:
+            raise ValueError("This run is waiting at another checkpoint")
+        claims[checkpoint.checkpoint_id] = {
+            "state": "executing",
+            "subject_digest": checkpoint.subject_digest,
+            "started_at": datetime.now(timezone.utc).isoformat(),
+        }
+        return await _record_run(
+            service=service,
+            workspace_dir=workspace_dir,
+            source_path=checkpoint.workflow_id,
+            source_digest=record["source_digest"],
+            execute=execute,
+            on_event=on_event,
+            identity=identity,
+            workspace_id=workspace_id,
+            execution_context=checkpoint.continuation.get("execution_context"),
+            resume_record=record,
+            resume_filename=relative,
+            resume_checkpoint_id=checkpoint.checkpoint_id,
         )
 
 
@@ -301,6 +381,12 @@ async def _record_run(
     on_event,
     identity,
     workspace_id,
+    execution_context=None,
+    resume_record=None,
+    resume_filename=None,
+    resume_checkpoint_id=None,
+    run_id=None,
+    required_step_ids=None,
 ):
     started = datetime.now(timezone.utc)
     slug = PurePosixPath(source_path).name.removesuffix(".workflow.wflow")
@@ -315,6 +401,20 @@ async def _record_run(
         "status": "running",
         "events": [],
     }
+    if resume_record is not None:
+        record = resume_record
+        filename = resume_filename
+        record.update(
+            status="running", owner={"host": socket.gethostname(), "lease": identity}
+        )
+        record.pop("completed_at", None)
+        record.pop("error", None)
+    if execution_context:
+        record["execution_context"] = dict(execution_context)
+    if run_id:
+        record["run_id"] = run_id
+    if required_step_ids is not None:
+        record["required_step_ids"] = list(required_step_ids)
     # Publish before execution, then atomically checkpoint this run's own file.
     # A host crash leaves a nonterminal record with the last known operation;
     # reopening it must not imply that a submitted mutation is safe to repeat.
@@ -322,7 +422,7 @@ async def _record_run(
         workspace_dir,
         filename,
         json.dumps(record, ensure_ascii=False, indent=2),
-        "indexed",
+        "overwrite" if resume_record is not None else "indexed",
     )
 
     async def checkpoint():
@@ -352,7 +452,8 @@ async def _record_run(
     try:
         await emit(
             {
-                "kind": "run_started",
+                "kind": "run_resumed" if resume_record is not None else "run_started",
+                "run_id": record.get("run_id"),
                 "at": started.isoformat(),
                 "task_id": "",
                 "task_title": slug,
@@ -360,8 +461,58 @@ async def _record_run(
             }
         )
         result = await execute(emit)
+        if record.get("run_id") and result.get("run_id") != record["run_id"]:
+            raise ValueError("Execution returned another run identity")
+        if result.get("run_id"):
+            record["run_id"] = result["run_id"]
         review_request = result.pop("_review_request", None)
-        if review_request:
+        approval_request = result.pop("_approval_request", None)
+        if review_request and approval_request:
+            raise ValueError("A run cannot request two approval mechanisms at once")
+        if approval_request:
+            if not workspace_id:
+                raise ValueError(
+                    "External-action approval requires a workspace identity"
+                )
+            continuation = {
+                **approval_request["continuation"],
+                "run_log_path": filename,
+                "run_id": result["run_id"],
+                "workflow_path": source_path,
+                "source_digest": source_digest,
+                "step_title": approval_request["step_title"],
+                **(
+                    {"execution_context": dict(execution_context)}
+                    if execution_context
+                    else {}
+                ),
+            }
+            checkpoint_record = service.workflow_external_actions.request(
+                workspace_id=workspace_id,
+                workflow_id=source_path,
+                run_id=result["run_id"],
+                step_id=approval_request["step_id"],
+                action_kind=approval_request["action_kind"],
+                subject=approval_request["subject"],
+                continuation=continuation,
+            )
+            checkpoint_data = asdict(checkpoint_record)
+            result.update(status="awaiting_approval", approval=checkpoint_data)
+            record.update(
+                status="awaiting_approval", result=result, approval=checkpoint_data
+            )
+            await emit(
+                {
+                    "kind": "approval_requested",
+                    "at": datetime.now(timezone.utc).isoformat(),
+                    "task_id": approval_request["step_id"],
+                    "task_title": approval_request["step_title"],
+                    "message": approval_request["instructions"],
+                    "checkpoint_id": checkpoint_record.checkpoint_id,
+                    "subject_digest": checkpoint_record.subject_digest,
+                }
+            )
+        elif review_request:
             if not workspace_id:
                 raise ValueError("Engineer review requires a workspace identity")
             review = await service.workflow_artifact_reviews.create(
@@ -384,8 +535,32 @@ async def _record_run(
                 }
             )
         else:
+            required = record.get("required_step_ids")
+            if required is not None and set(required) != {
+                step["task_id"] for step in result.get("steps", [])
+            }:
+                raise ValueError(
+                    "Canonical terminal state is missing required completed steps"
+                )
             result["status"] = "completed"
             record.update(status="completed", result=result)
+            await emit(
+                {
+                    "kind": "run_completed",
+                    "at": datetime.now(timezone.utc).isoformat(),
+                    "run_id": result.get("run_id"),
+                    "task_id": result.get("task_id", ""),
+                    "required_steps_completed": [
+                        step["task_id"] for step in result.get("steps", [])
+                    ],
+                }
+            )
+        if resume_checkpoint_id:
+            record["resume_segments"][resume_checkpoint_id].update(
+                state="completed",
+                result=result,
+                finished_at=datetime.now(timezone.utc).isoformat(),
+            )
     except asyncio.CancelledError:
         record.update(
             status="cancelled", error="Cancelled; completed tool operations remain."
@@ -399,8 +574,10 @@ async def _record_run(
         )
         raise
     finally:
+        if resume_checkpoint_id and record["status"] in {"failed", "cancelled"}:
+            record["resume_segments"][resume_checkpoint_id]["state"] = "outcome_unknown"
         record["execution_ended_at"] = datetime.now(timezone.utc).isoformat()
-        if record["status"] != "pending_review":
+        if record["status"] not in {"pending_review", "awaiting_approval"}:
             record["completed_at"] = record["execution_ended_at"]
         # Indexed publication never replaces another run. Logs survive reloads and
         # remain accessible through the existing workspace file browser/viewer.
@@ -422,6 +599,91 @@ async def _record_run(
                 "Unable to persist final workflow checkpoint: %s", filename
             )
     return {**result, "run_log_path": filename}
+
+
+async def record_workflow_approval_transition(
+    *, service, workspace_dir, checkpoint, kind: str
+):
+    """Project the durable checkpoint state into its immutable run evidence.
+
+    The checkpoint repository remains the authority. This projection gives run
+    recovery and the workspace observer the same current state without executing
+    any completed step or external action again.
+    """
+
+    if kind not in {
+        "approval_decided",
+        "external_action_authorized",
+        "external_action_reconciled",
+    }:
+        raise ValueError("Unknown workflow approval transition")
+    relative = checkpoint.continuation.get("run_log_path")
+    if not isinstance(relative, str) or not relative.startswith("runs/"):
+        raise ValueError("Approval continuation has no safe run-log path")
+    raw = await service.files.read_reference(workspace_dir, relative)
+    if len(raw) > 16 * 1024 * 1024:
+        raise ValueError("Workflow run log exceeds the recovery limit")
+    record = json.loads(raw)
+    result = record.get("result") if isinstance(record, dict) else None
+    if (
+        not isinstance(record, dict)
+        or not isinstance(result, dict)
+        or result.get("run_id") != checkpoint.run_id
+        or record.get("workflow_path") != checkpoint.workflow_id
+    ):
+        raise ValueError("Approval continuation does not match its run log")
+
+    approval = asdict(checkpoint)
+    result["approval"] = approval
+    record["approval"] = approval
+    now = datetime.now(timezone.utc).isoformat()
+    if checkpoint.state in {"pending", "approved"}:
+        state = "awaiting_approval"
+    elif checkpoint.state == "changes_requested":
+        state = "changes_requested"
+    elif checkpoint.state == "consumed":
+        external_action = checkpoint.external_action or {}
+        outcome = external_action.get("outcome")
+        state = {
+            "dispatched": "continuation_ready",
+            "not_dispatched": (
+                "external_action_not_dispatched"
+                if external_action.get("reconciled_at")
+                else "awaiting_external_outcome"
+            ),
+            "outcome_unknown": "external_action_outcome_unknown",
+        }.get(outcome, "awaiting_external_outcome")
+    else:
+        state = "awaiting_approval"
+    result["status"] = state
+    record["status"] = state
+    event = {
+        "kind": kind,
+        "at": now,
+        "task_id": checkpoint.step_id,
+        "task_title": checkpoint.continuation.get("step_title", checkpoint.step_id),
+        "message": (
+            f"Approval is {checkpoint.state.replace('_', ' ')}."
+            if kind == "approval_decided"
+            else f"External action outcome is {(checkpoint.external_action or {}).get('outcome', 'not dispatched')}."
+        ),
+        "checkpoint_id": checkpoint.checkpoint_id,
+        "subject_digest": checkpoint.subject_digest,
+    }
+    record.setdefault("events", []).append(event)
+    if state in {
+        "completed",
+        "changes_requested",
+        "external_action_not_dispatched",
+        "external_action_outcome_unknown",
+    }:
+        record["completed_at"] = now
+    await service.files.write_generated(
+        workspace_dir,
+        relative,
+        json.dumps(record, ensure_ascii=False, indent=2),
+        "overwrite",
+    )
 
 
 def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=False):
@@ -475,6 +737,12 @@ def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=Fa
                 "running",
                 "completed",
                 "pending_review",
+                "awaiting_approval",
+                "awaiting_external_outcome",
+                "continuation_ready",
+                "changes_requested",
+                "external_action_not_dispatched",
+                "external_action_outcome_unknown",
                 "failed",
                 "cancelled",
                 "interrupted",
@@ -533,6 +801,9 @@ def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=Fa
                 "results": result.get("results")
                 or list(record.get("partial_results", {}).values()),
                 "last_event": events[-1] if events else None,
+                "approval": result.get("approval") or record.get("approval"),
+                "verification": result.get("verification"),
+                "capture_rights": result.get("capture_rights"),
             }
             if latest_only:
                 snapshot, artifacts, run_id = _execution_snapshot(record, state)

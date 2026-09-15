@@ -1,4 +1,5 @@
 import json
+import sqlite3
 import pytest
 
 from data_vault import (
@@ -73,3 +74,66 @@ def test_gateway_audit_is_append_only_scoped_and_redacted(tmp_path) -> None:
     assert repository.list_audit("foreign") == []
 
     assert database_status(db_path).current_version == len(MIGRATIONS)
+
+
+def _discovery_event(index=0):
+    return dict(
+        correlation_id=f"c{index}",
+        session_id="s1",
+        principal_id="p1",
+        workspace_id="w1",
+        operation="tool.list",
+        reason_code="policy",
+        outcome="listed" if index == 0 else "hidden",
+        allowed=index == 0,
+        target_name=f"tool-{index}",
+        occurred_at=index + 1,
+        metadata={"token": "private-value", "index": index},
+    )
+
+
+def test_discovery_batch_keeps_order_redaction_and_one_commit(tmp_path, monkeypatch):
+    from data_vault import gateway_repository
+
+    db_path, _ = _seed(tmp_path)
+    original = gateway_repository.connect_state_db
+    statements, connections = [], []
+
+    def connect(*args, **kwargs):
+        connection = original(*args, **kwargs)
+        connections.append(connection)
+        connection.set_trace_callback(statements.append)
+        return connection
+
+    monkeypatch.setattr(gateway_repository, "connect_state_db", connect)
+    repository = GatewayRepository(db_path)
+    identities = repository.record_audits([_discovery_event(0), _discovery_event(1)])
+    assert len(connections) == 1
+    assert statements.count("BEGIN IMMEDIATE") == 1
+    assert statements.count("COMMIT") == 1
+    rows = repository.list_audit("s1")
+    assert [row["event_id"] for row in rows] == identities
+    assert [row["allowed"] for row in rows] == [1, 0]
+    assert [row["target_name"] for row in rows] == ["tool-0", "tool-1"]
+    assert "private-value" not in json.dumps(rows)
+    assert all(
+        json.loads(row["metadata_json"])["token"] == "[REDACTED]" for row in rows
+    )
+
+
+@pytest.mark.parametrize(
+    "failure", ["missing_field", "duplicate_id", "foreign_workspace"]
+)
+def test_discovery_batch_failure_never_leaves_partial_audit(tmp_path, failure):
+    db_path, _ = _seed(tmp_path)
+    repository = GatewayRepository(db_path)
+    first, second = _discovery_event(0), _discovery_event(1)
+    if failure == "missing_field":
+        second.pop("principal_id")
+    elif failure == "duplicate_id":
+        first["event_id"] = second["event_id"] = "same-event"
+    else:
+        second["workspace_id"] = "missing"
+    with pytest.raises((ValueError, sqlite3.IntegrityError)):
+        repository.record_audits([first, second])
+    assert repository.list_audit("s1") == []

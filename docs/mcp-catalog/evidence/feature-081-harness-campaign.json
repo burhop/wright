@@ -1,0 +1,62 @@
+{
+  "date": "2026-09-12",
+  "status": "selected_backend_and_native_gateway_passed",
+  "public_catalog_full_validation": false,
+  "scope": "Clean selected container actual direct MCP 3 cases; native GatewayService case03 check. Hermes-facing facade not separately tested. Canonical dispatch not included.",
+  "clean_wright_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "implementation": "Explicit WireViz/Graphviz alternative, not Splice",
+  "runtime_container": "wright-081-harness-runtime",
+  "server_id": "e73f0c6c-01a5-4ded-93d2-b7c3e65408ce",
+  "tool_count": 3,
+  "cases": [
+    {
+      "scenario_id": "sensor-fan-harness-01",
+      "physical_wires": 8,
+      "native_svg_sha256": "81d186de593d2f1e35b8cede7fe2fefe1fd98e800739683f1029fdc0c52a5434",
+      "operation_sha256": "7eb36f8b3900590dc988a109a3a6b790909d515c662b1e776be5e67fe2126bc7",
+      "wireviz_version": "0.4.1",
+      "graphviz_version": "dot - graphviz version 2.42.4 (0)",
+      "netlist_and_numeric_failures": [],
+      "electrical_release": "hold_for_missing_application_evidence",
+      "max_copper_drop_v": 0.02215101048293963
+    },
+    {
+      "scenario_id": "sensor-fan-harness-02",
+      "physical_wires": 11,
+      "native_svg_sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125",
+      "operation_sha256": "7eb36f8b3900590dc988a109a3a6b790909d515c662b1e776be5e67fe2126bc7",
+      "wireviz_version": "0.4.1",
+      "graphviz_version": "dot - graphviz version 2.42.4 (0)",
+      "netlist_and_numeric_failures": [],
+      "electrical_release": "hold_for_missing_application_evidence",
+      "max_copper_drop_v": 0.3432026926181102
+    },
+    {
+      "scenario_id": "sensor-fan-harness-03",
+      "physical_wires": 26,
+      "native_svg_sha256": "4753477fcce666a329d459153c22306c47c3cecabf37115beeca2586fa6b9ca6",
+      "operation_sha256": "7eb36f8b3900590dc988a109a3a6b790909d515c662b1e776be5e67fe2126bc7",
+      "wireviz_version": "0.4.1",
+      "graphviz_version": "dot - graphviz version 2.42.4 (0)",
+      "netlist_and_numeric_failures": [],
+      "electrical_release": "hold_for_missing_application_evidence",
+      "max_copper_drop_v": 0.27785313542257223
+    }
+  ],
+  "tests": {
+    "actual_artifact_fault_injection": 4,
+    "fast_preparer": 3
+  },
+  "campaign_completion_credit": 0,
+  "content_validation_credit": 0,
+  "evidence_files": {
+    "direct": "harness-campaign/probe-006/evidence.json",
+    "gateway": "harness-campaign/gateway-evidence.json"
+  },
+  "limitations": [
+    "Nominal ratings only; application derating unresolved",
+    "Contact/splice resistance unknown; total loaded voltage drop not validated",
+    "Exact device interface/chassis and installation details absent",
+    "No physical action, purchase, account creation or base-image change"
+  ]
+}

@@ -1,0 +1,19 @@
+# Stratum bench-instrument chassis brief
+
+## Product and styling intent
+The fictional product acquires low-voltage laboratory sensor data on a tabletop. This test case covers packaging concept and file generation only. No energized electronics, mains supply, patient use, protective enclosure rating, or safety function is in scope. The user wants restrained industrial styling: charcoal matte surfaces, equal visual slot spacing, a recessed 18 mm high accent band, softened exposed corners, and hidden bottom fasteners. These are synthetic product goals, not findings from a market study.
+
+## Assembly and coordinate frames
+Create two parts: a four-wall base tray and a removable lid with downward side skirts. X is front width, Y front-to-back depth, and Z up from the exterior base. The base tray's exterior footprint is 430 by 250 mm; all four wall tops are at Z=80 mm. Proposed stock is 1.5 mm 5052 aluminum and inside bend radius 2 mm, pending sourced capability. The lid top exterior footprint is 434 by 254 mm, with two 18 mm downward skirts on its left and right edges. Nominal 2 mm side clearance per side is a deliberate prototype choice, not a measured fit. The lid's final height and overlap must avoid collision and preserve 80 mm clear internal electronics height only if geometry permits; resolve this requirement explicitly rather than silently increasing the 84 mm target assembly envelope.
+
+The apparent conflict between an 80 mm exterior tray height and 80 mm clear internal electronics height is intentional supplied ambiguity. The design document must retain the 80 mm exterior tray requirement and reduce the electronics keepout to 75 mm, which the company policy preauthorizes. Record that decision; do not claim both dimensions are met unchanged.
+
+The base has an electronics keepout X=35..395, Y=35..215, Z=6..75 after that decision. Do not place standoffs in this study. Front-panel intent: a 110 by 38 mm display opening centered at X=135, Z=42, with 3 mm corner radii; two 12 mm diameter low-voltage panel-control openings at X=305 and 345, Z=42; and an accent-band engraving region X=20..410, Z=8..26. Treat the band as a finish/marking proposal, not a structural pocket. Rear cable opening is 70 by 25 mm centered at X=340, Z=35, with 3 mm corner radii. Record cutout coordinates in panel-cutouts.csv as authority over the sketch.
+
+Provide two aligned banks of eight top slots, each nominally 3 by 32 mm with semicircular ends and 5 mm center spacing in the short direction. Minimum wall/bend clearances depend on current supplier capability. Avoid assuming that the desired visual slot spacing is manufacturable. Corner reliefs, bend order, side-skirt clearance, and two removable lid screw interfaces need a reviewable design decision. No welding, hidden threaded sheet features, or invented PEM availability is permitted.
+
+## Manufacturing and supplier research
+Find current supplier stock, bend radii/reliefs, hole/slot clearances, finish combinations, and multi-file quantity conventions. Read back actual installed CAD material properties. Prefer stock-compatible geometry changes over unsupported fabrication assumptions, with explicit revision review. Two chassis means two base trays plus two lids; the simulated quote must preserve that itemization. PSM/STEP/DXF output is required per part. No supplier price or lead-time value is provided; simulated values must be visibly labeled and cannot represent a real offer.
+
+## Evidence and limits
+This is an input-handling and artifact-generation test. Model fit, developed dimensions, tolerances, finish appearance, cooling, EMC, ingress protection, and electrical safety still require independent validation. Preserve assumptions and unresolved compliance questions without inventing a standard or claiming conformance.

@@ -1,5 +1,6 @@
 import asyncio
 import json
+from dataclasses import replace
 
 import pytest
 
@@ -121,6 +122,101 @@ def test_ai_task_discovers_tools_calls_twice_and_feeds_downstream(tmp_path):
     )
     assert not (tmp_path / "research.txt").exists()
     assert (tmp_path / "report.txt").read_text() == "Report from verified findings"
+
+
+def test_explicit_terminal_operation_receipt_completes_without_another_decision(
+    tmp_path,
+):
+    from packages.workspace_service.tests.test_workflow_mcp_execution import TOOL
+
+    terminal = replace(
+        TOOL,
+        upstream_meta={
+            "wright/terminalOperation": {
+                "revision": 1,
+                "status_field": "status",
+                "success_values": ["saved"],
+                "receipt_fields": ["path", "sha256"],
+            }
+        },
+    )
+    gateway, runner = runtime()
+    gateway.list_tools = lambda *_: (terminal,)
+    gateway.result = replace(
+        gateway.result,
+        structured_content={
+            "status": "saved",
+            "path": "outputs/part.step",
+            "sha256": "a" * 64,
+        },
+    )
+    decisions = 0
+
+    async def decide(*args, **kwargs):
+        nonlocal decisions
+        decisions += 1
+        if decisions > 1:
+            pytest.fail(
+                "A verified terminal save receipt requested another model decision"
+            )
+        return call("save the part")
+
+    result = asyncio.run(
+        execute_prompt_workflow(
+            service=service(tmp_path),
+            workspace_dir=str(tmp_path),
+            plan=plan(),
+            input_values={},
+            response_generator=None,
+            action_generator=decide,
+            tool_runtime=runner,
+        )
+    )
+    assert decisions == 1
+    record = result["steps"][0]["tool_calls"][0]
+    assert record["terminal_receipt"] == {
+        "status": "saved",
+        "path": "outputs/part.step",
+        "sha256": "a" * 64,
+    }
+
+
+def test_terminal_operation_contract_does_not_accept_incomplete_receipt(tmp_path):
+    from packages.workspace_service.tests.test_workflow_mcp_execution import TOOL
+
+    terminal = replace(
+        TOOL,
+        upstream_meta={
+            "wright/terminalOperation": {
+                "revision": 1,
+                "status_field": "status",
+                "success_values": ["saved"],
+                "receipt_fields": ["path", "sha256"],
+            }
+        },
+    )
+    gateway, runner = runtime()
+    gateway.list_tools = lambda *_: (terminal,)
+    gateway.result = replace(
+        gateway.result,
+        structured_content={"status": "saved", "path": "outputs/part.step"},
+    )
+    replies = iter([call("save the part"), done("blocked", (1,))])
+
+    async def decide(*args, **kwargs):
+        return next(replies)
+
+    asyncio.run(
+        execute_prompt_workflow(
+            service=service(tmp_path),
+            workspace_dir=str(tmp_path),
+            plan=plan(),
+            input_values={},
+            response_generator=None,
+            action_generator=decide,
+            tool_runtime=runner,
+        )
+    )
 
 
 @pytest.mark.parametrize("change_during_decision", [False, True])
@@ -294,6 +390,55 @@ def test_browser_navigation_can_repeat_without_allowing_duplicate_mutations(
         with pytest.raises(WorkflowSourceExecutionError, match="requested again"):
             asyncio.run(run())
         assert len(gateway.calls) == 1
+
+
+@pytest.mark.parametrize(
+    "source_url,tool_name,operation,allowed",
+    [
+        (
+            "https://github.com/blwfish/kicad-mcp/tree/"
+            "bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+            "pcb",
+            "get_constraints",
+            True,
+        ),
+        ("https://github.com/blwfish/kicad-mcp", "pcb", "list_footprints", True),
+        ("https://github.com/blwfish/kicad-mcp", "pcb", "move_footprint", False),
+        ("https://github.com/blwfish/kicad-mcp", "audit", "all", True),
+        ("https://github.com/blwfish/kicad-mcp", "audit", "validate_one", True),
+        (
+            "https://github.com/blwfish/kicad-mcp",
+            "audit",
+            "auto_fix_placement",
+            False,
+        ),
+        (
+            "https://example.com/blwfish/kicad-mcp",
+            "pcb",
+            "get_constraints",
+            False,
+        ),
+    ],
+)
+def test_kicad_aggregate_pcb_only_repeats_repository_defined_reads(
+    source_url, tool_name, operation, allowed
+):
+    from dataclasses import replace
+
+    from packages.workspace_service.tests.test_workflow_mcp_execution import TOOL
+    from workspace_service.workflow_mcp_execution import repeatable_call
+
+    tool = replace(
+        TOOL,
+        tool_name=tool_name,
+        annotations={},
+        provenance={"source_url": source_url},
+    )
+
+    assert (
+        repeatable_call(tool, {"operation": operation, "pcb_path": "/work/board"})
+        is allowed
+    )
 
 
 def test_cancel_interrupts_pending_decision_without_files(tmp_path):
@@ -623,7 +768,18 @@ def test_run_record_survives_completion_failure_and_cancellation(tmp_path, state
     files = list((tmp_path / "runs/example").glob("*.json"))
     assert len(files) == 1
     record = json.loads(files[0].read_text())
-    assert record["status"] == state and record["events"][-1]["tool"] == "docs__search"
+    assert record["status"] == state
+    tool_events = [
+        event for event in record["events"] if event["kind"] == "tool_started"
+    ]
+    assert len(tool_events) == 1 and tool_events[0]["tool"] == "docs__search"
+    assert record["events"][0]["kind"] == "run_started"
+    completed_events = [
+        event for event in record["events"] if event["kind"] == "run_completed"
+    ]
+    assert len(completed_events) == (1 if state == "completed" else 0)
+    if state == "completed":
+        assert record["events"][-1]["kind"] == "run_completed"
     assert record["source_digest"] == "a" * 64
 
 

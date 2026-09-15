@@ -225,12 +225,16 @@ class SseRunner(BaseRunner):
         ui_enabled: bool = False,
         server_id: str | None = None,
         oauth_enabled: bool = True,
+        operation_timeout: float = 60.0,
     ):
+        if operation_timeout <= 0:
+            raise ValueError("operation_timeout must be positive")
         self.sse_url = sse_url
         self.server_id = (
             server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
         )
         self.oauth_enabled = oauth_enabled
+        self.operation_timeout = operation_timeout
         self.startup_timeout = _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
         self.client: Optional[httpx.AsyncClient] = None
         self._oauth_callback: _OAuthCallbackServer | None = None
@@ -320,7 +324,7 @@ class SseRunner(BaseRunner):
                 auth = self._oauth_provider
 
             self.client = httpx.AsyncClient(
-                timeout=60.0,
+                timeout=self.operation_timeout,
                 headers=headers,
                 follow_redirects=True,
                 auth=auth,
@@ -465,12 +469,14 @@ class SseRunner(BaseRunner):
         try:
             payload = {"name": tool_name, "arguments": arguments}
             response = await asyncio.wait_for(
-                self._send_request("tools/call", payload), timeout=60.0
+                self._send_request("tools/call", payload),
+                timeout=self.operation_timeout,
             )
             return response
         except asyncio.TimeoutError:
             raise TimeoutError(
-                f"Call to tool '{tool_name}' timed out after 60 seconds."
+                f"Call to tool '{tool_name}' timed out after "
+                f"{self.operation_timeout:g} seconds."
             )
 
     async def list_resources(self, cursor: str | None = None) -> Dict[str, Any]:

@@ -1,0 +1,59 @@
+workflow __instance__
+  name: "Parametric Drill Jig"
+  purpose: "Create a reusable jig from workpiece geometry, a hole table, purchased bushings, keepouts, and declared fit clearances."
+  discipline: "manufacturing.engineering"
+  reviewed_ai_suggestions: true
+end
+task validate_inputs___instance__
+  name: "Validate workpiece, holes, bushings, and keepouts"
+  purpose: "Create a dimensioned basis without inventing fit or manufacturing tolerance."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Validate coordinate units, bushing source dimensions, clamp keepouts, and declared clearances."
+  settings: {"coordinates":"csv","units":"mm"}
+  tool: null
+  reusable_step: null
+end
+task generate_jig___instance__
+  name: "Generate parametric jig and drawing"
+  purpose: "Create the model, STEP or STL, and hole-location DXF."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Create the jig and drawing from exact coordinates while preserving source lineage."
+  settings: {"candidates":"BREP MCP and AutoCAD MCP"}
+  tool: null
+  reusable_step: null
+end
+task check_alignment___instance__
+  name: "Check hole alignment and keepouts"
+  purpose: "Measure every hole, bushing clearance, and clamp intersection against the basis."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Fail on an out-of-tolerance center or diameter, any clamp intersection, or missing clearance evidence."
+  settings: {"physical_fit_claim":false}
+  tool: null
+  reusable_step: null
+end
+connection inputs_to_jig___instance__
+  type: order
+  from: "validate_inputs___instance__"
+  to: "generate_jig___instance__"
+  label: "validated dimensions"
+  when: null
+end
+connection jig_to_check___instance__
+  type: order
+  from: "generate_jig___instance__"
+  to: "check_alignment___instance__"
+  label: "exact model and drawing"
+  when: null
+end

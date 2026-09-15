@@ -1,0 +1,59 @@
+workflow __instance__
+  name: "Lightweight Equipment Bracket"
+  purpose: "Create a bracket and compare structural revisions against declared load, displacement, stress, mesh, and mass requirements."
+  discipline: "structural.mechanics"
+  reviewed_ai_suggestions: true
+end
+task define_load_case___instance__
+  name: "Define geometry, material, fixtures, and load"
+  purpose: "Establish a complete dimensional and mechanical analysis basis."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Record supplied values and units; leave unknown properties unresolved."
+  settings: {"example_load_n":100,"example_deflection_limit_mm":0.5}
+  tool: null
+  reusable_step: null
+end
+task create_bracket___instance__
+  name: "Create and measure bracket CAD"
+  purpose: "Generate a STEP model and measure the exact geometry used for analysis."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Create bracket CAD, export STEP, and record mass and controlled dimensions."
+  settings: {"candidate":"BREP MCP"}
+  tool: null
+  reusable_step: null
+end
+task solve_and_compare___instance__
+  name: "Solve, refine mesh, and compare revisions"
+  purpose: "Use actual solver fields to check displacement, stress treatment, mesh sensitivity, and mass reduction."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Verify CAD-to-mesh lineage; declare singularity treatment; require mesh-refinement stability before selecting a lighter revision."
+  settings: {"candidate":"Casys CalculiX D034","example_mesh_change_percent":5}
+  tool: null
+  reusable_step: null
+end
+connection basis_to_cad___instance__
+  type: order
+  from: "define_load_case___instance__"
+  to: "create_bracket___instance__"
+  label: "accepted load case"
+  when: null
+end
+connection cad_to_solver___instance__
+  type: order
+  from: "create_bracket___instance__"
+  to: "solve_and_compare___instance__"
+  label: "measured geometry"
+  when: null
+end

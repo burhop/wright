@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "scenario_id": "water-heater-sizing-01",
+  "template_id": "water-heater-sizing",
+  "title": "Single-cup countertop brewer heat-up",
+  "summary": "Select the lowest allowed heater power that heats a small brew reservoir within a three-minute wait target.",
+  "difficulty": "basic",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "parameters.csv",
+      "power-candidates.csv",
+      "kit-mapping.md"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  },
+  "expected_outputs": [
+    {
+      "role": "temperature_time_series",
+      "patterns": [
+        "**/*temperature*time*.csv"
+      ]
+    },
+    {
+      "role": "power_comparison",
+      "patterns": [
+        "**/*power*comparison*.csv"
+      ]
+    },
+    {
+      "role": "energy_summary",
+      "patterns": [
+        "**/*energy*summary*.csv"
+      ]
+    },
+    {
+      "role": "temperature_plot",
+      "patterns": [
+        "**/*temperature*curve*.svg",
+        "**/*temperature*curve*.png"
+      ]
+    },
+    {
+      "role": "selection_report",
+      "patterns": [
+        "**/*heater*selection*.md",
+        "**/*heater*selection*.pdf"
+      ]
+    },
+    {
+      "role": "kit_run_parameters",
+      "patterns": [
+        "**/*kit*parameters*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "Original fictional personas, businesses, heater concepts, parameter requests and synthetic observation tables. Kit availability and parameter support are not claimed; supplied values are design assumptions."
+  },
+  "input_bindings": {}
+}

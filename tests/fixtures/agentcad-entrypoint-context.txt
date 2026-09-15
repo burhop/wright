@@ -1,0 +1,10 @@
+# AST-only excerpt from selected AgentCAD0.6.0 runner; never imported or executed.
+script_globals: dict[str, Any] = {
+        "__name__": "__agentcad_script__",
+        "__file__": filename,
+        "show_object": show_object,
+        "show_assembly": show_assembly,
+        "show_compound": show_assembly,
+        "build123d": _b3d,
+    }
+exec(code, script_globals)

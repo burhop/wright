@@ -93,6 +93,8 @@ def test_workflow_review_migration_preserves_prior_workflow_metadata(tmp_path):
         {"version": 17, "name": "native_engineering_processes"},
         {"version": 18, "name": "terminal_workflow_artifact_reviews"},
         {"version": 19, "name": "workspace_document_artifacts"},
+        {"version": 20, "name": "workflow_continuation_checkpoints"},
+        {"version": 21, "name": "native_application_lifecycle"},
     )
     with sqlite3.connect(path) as connection:
         assert connection.execute(
@@ -157,6 +159,8 @@ def test_capability_library_migration_is_additive_and_complete(tmp_path):
         {"version": 17, "name": "native_engineering_processes"},
         {"version": 18, "name": "terminal_workflow_artifact_reviews"},
         {"version": 19, "name": "workspace_document_artifacts"},
+        {"version": 20, "name": "workflow_continuation_checkpoints"},
+        {"version": 21, "name": "native_application_lifecycle"},
     )
     with sqlite3.connect(path) as connection:
         tables = {

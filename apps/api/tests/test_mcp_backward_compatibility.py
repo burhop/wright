@@ -138,7 +138,9 @@ def test_migrated_v12_legacy_endpoints_keep_shapes_and_user_rows(
 
 
 @pytest.mark.asyncio
-async def test_explicit_installation_preserves_recorded_approvals(monkeypatch) -> None:
+async def test_explicit_installation_preserves_recorded_approvals(
+    monkeypatch, tmp_path
+) -> None:
     captured = {}
     server = SimpleNamespace(
         server_id="local-cad",
@@ -153,7 +155,9 @@ async def test_explicit_installation_preserves_recorded_approvals(monkeypatch) -
     monkeypatch.setattr(
         "api.services.mcp_services.registry_services.install_server", install
     )
-    service = McpApiService(SimpleNamespace(db_path="state.db"), SimpleNamespace())
+    database = tmp_path / "state.db"
+    upgrade_database(database)
+    service = McpApiService(SimpleNamespace(db_path=str(database)), SimpleNamespace())
     assert await service.install_server("local-cad") is server
     assert captured["approval_context"].machine_approvals == set(server.approval_gates)
 

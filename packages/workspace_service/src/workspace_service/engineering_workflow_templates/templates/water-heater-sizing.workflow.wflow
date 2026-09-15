@@ -1,0 +1,59 @@
+workflow __instance__
+  name: "Water-Heater Power Sizing"
+  purpose: "Compare allowed heater power settings against heat-up time, energy consistency, and timestep stability using an approved model kit."
+  discipline: "system.simulation"
+  reviewed_ai_suggestions: true
+end
+task define_requirement___instance__
+  name: "Define water-heating requirement"
+  purpose: "Record water mass, initial and target temperature, loss assumptions, allowed power settings, and time limit."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Use only supplied requirements and parameters accepted by the approved recorded kit."
+  settings: {"example_initial_temperature_c":20,"example_target_temperature_c":90}
+  tool: null
+  reusable_step: null
+end
+task run_allowed_settings___instance__
+  name: "Run approved Modelica kit settings"
+  purpose: "Execute bounded parameter sets and preserve exact kit and result evidence."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "List the approved CoffeeMachine kit, submit only its bounded parameters, and retrieve temperature-time evidence."
+  settings: {"candidate":"Casys Modelica D035","arbitrary_source":false}
+  tool: null
+  reusable_step: null
+end
+task verify_selection___instance__
+  name: "Verify time, energy, and timestep stability"
+  purpose: "Select only settings that satisfy the declared time requirement with consistent energy and stable integration."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Calculate heat-up time and energy independently and rerun with a tighter timestep before recommending a setting."
+  settings: {"timestep_sensitivity_required":true}
+  tool: null
+  reusable_step: null
+end
+connection requirement_to_run___instance__
+  type: order
+  from: "define_requirement___instance__"
+  to: "run_allowed_settings___instance__"
+  label: "bounded approved inputs"
+  when: null
+end
+connection run_to_verify___instance__
+  type: order
+  from: "run_allowed_settings___instance__"
+  to: "verify_selection___instance__"
+  label: "recorded time series"
+  when: null
+end

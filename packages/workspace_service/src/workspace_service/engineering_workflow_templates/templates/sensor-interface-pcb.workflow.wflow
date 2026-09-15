@@ -1,0 +1,59 @@
+workflow __instance__
+  name: "Sensor-Interface PCB"
+  purpose: "Create an editable sensor board and independently verify connectivity, constraints, ERC, DRC, and fabrication exports."
+  discipline: "electronics.design"
+  reviewed_ai_suggestions: true
+end
+task capture_electrical_basis___instance__
+  name: "Capture approved electrical design basis"
+  purpose: "Bind the schematic, datasheets, pinout, and board envelope used downstream."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Create an exact net and constraint table from approved inputs; flag every conflict."
+  settings: {"example_board_width_mm":40,"example_board_height_mm":30}
+  tool: null
+  reusable_step: null
+end
+task author_pcb___instance__
+  name: "Author schematic and PCB"
+  purpose: "Create editable KiCad sources from the accepted electrical basis."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Select exact library parts, author connectivity and board geometry, route, audit, and retain native files."
+  settings: {"candidate":"kicad-mcp-blwfish"}
+  tool: null
+  reusable_step: null
+end
+task verify_and_export___instance__
+  name: "Verify design and fabrication package"
+  purpose: "Independently compare nets and dimensions, run valid ERC and DRC, and reopen fabrication outputs."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Block on any unreviewed ERC or DRC error and verify Gerber and drill identity after export."
+  settings: {"zero_unreviewed_errors":true}
+  tool: null
+  reusable_step: null
+end
+connection basis_to_authoring___instance__
+  type: order
+  from: "capture_electrical_basis___instance__"
+  to: "author_pcb___instance__"
+  label: "approved connectivity"
+  when: null
+end
+connection authoring_to_verify___instance__
+  type: order
+  from: "author_pcb___instance__"
+  to: "verify_and_export___instance__"
+  label: "editable board"
+  when: null
+end

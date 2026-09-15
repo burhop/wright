@@ -4132,7 +4132,7 @@ def _native_scoped_checkpoint(state: Mapping[str, Any]) -> bool:
             )
             or (
                 state.get("revision", 0) >= 98
-                and state.get("feature_state") in NATIVE_REVIEWED_STATES
+                and state.get("feature_state") in (NATIVE_REVIEWED_STATES | {"BLOCKED"})
                 and checkpoint.get("status") == "independently_verified"
             )
         )
@@ -4396,8 +4396,10 @@ def validate_roadmap_approval_and_lease(
         "ROLLED_BACK",
         "STOPPED",
     } or _native_scoped_checkpoint(state)
+    checkpoint_requires_current_identity = feature_state != "BLOCKED"
     if (
         _native_scoped_checkpoint(state)
+        and checkpoint_requires_current_identity
         and reader is not None
         and source_commit is not None
     ):

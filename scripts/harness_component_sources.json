@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "scope": "Candidate component evidence; nominal ratings do not establish application-specific current derating or certified harness approval",
+  "documents": [
+    {"id":"plug3","url":"https://www.amphenol-sine.com/pdf/datasheet/AT06-3S.pdf","tokens":["AT06-3S","13","125","AW3S"]},
+    {"id":"socket3","url":"https://www.amphenol-sine.com/pdf/datasheet/AT04-3P.pdf","tokens":["AT04-3P","AW3P"]},
+    {"id":"plug4","url":"https://www.amphenol-sine.com/pdf/datasheet/AT06-4S.pdf","tokens":["AT06-4S","AW4S"]},
+    {"id":"socket4","url":"https://www.amphenol-sine.com/pdf/datasheet/AT04-4P.pdf","tokens":["AT04-4P","AW4P"]},
+    {"id":"plug6","url":"https://www.amphenol-sine.com/pdf/datasheet/AT06-6S.pdf","tokens":["AT06-6S","13","125","AW6S"]},
+    {"id":"socket6","url":"https://www.amphenol-sine.com/pdf/datasheet/AT04-6P.pdf","tokens":["AT04-6P","AW6P"]},
+    {"id":"plug8","url":"https://www.amphenol-sine.com/pdf/datasheet/AT06-08SA.pdf","tokens":["AT06-08SA","AW8S"]},
+    {"id":"socket8","url":"https://www.amphenol-sine.com/pdf/datasheet/AT04-08PA.pdf","tokens":["AT04-08PA","AW8P"]},
+    {"id":"contacts","url":"https://www.amphenol-sine.com/pdf/catalog/A-Series-Contacts.pdf","tokens":["AT60-202-16141","AT62-201-16141","6.35","7.92","AUTK-16","A114017"]},
+    {"id":"crimp_tool","url":"https://www.amphenol-sine.com/pdf/datasheet/AUTK-16.pdf","tokens":[]},
+    {"id":"family_voltage","url":"https://www.amphenol-sine.com/at-series","tokens":["250V","13A"]},
+    {"id":"wire","url":"https://www.alphawire.com/en/products/wire/hook-up-wire/premium/3057","tokens":["3057","16","105","300","4.4"]},
+    {"id":"shielded_pair","url":"https://catalog.belden.com/techdata/EN/8719_techdata.pdf","tokens":["8719","16 AWG","80","600","3.10"]},
+    {"id":"splice","url":"https://www.wago.com/gb/installation-terminal-blocks-and-connectors/splicing-connector-with-levers/p/221-413","tokens":["221-413","11","450 V","32 A"]}
+  ],
+  "component_basis": {
+    "housing_family":"Amphenol AT size16; exact mating pairs in retrieved drawings",
+    "nominal_contact_current_a":13,"nominal_voltage_v":250,"temperature_max_c":125,
+    "rated_current_at_scenario_ambient_a":null,"contact_resistance_ohm":null,
+    "socket_terminal":"AT62-201-16141","pin_terminal":"AT60-202-16141","terminal_awg_min":16,"terminal_awg_max":20,
+    "tool":"AUTK-16","strip_min_mm":6.35,"strip_max_mm":7.92,"design_strip_mm":7.0,
+    "rear_seal_min_od_mm":2.24,"rear_seal_max_od_mm":3.68,
+    "reserved_cavity_seal":"A114017",
+    "wire_mpn":"Alpha Wire 3057","wire_awg":16,"wire_od_mm":2.3368,"wire_voltage_v":300,"wire_temperature_max_c":105,"wire_nominal_r20_ohm_m":0.014435695538057743,
+    "pair_mpn":"Belden 8719","pair_awg":16,"pair_conductor_od_mm":3.10,"pair_voltage_v":600,"pair_temperature_max_c":80,"pair_nominal_r20_ohm_m":0.014829396325459318,
+    "splice_mpn":"WAGO 221-413","splice_strip_mm":11,"splice_nominal_current_a":32,"splice_nominal_voltage_v":450,"splice_current_derated_a":null,
+    "source_mapping":{"nominal_contact_current_a":"contacts pp2-3 and exact housing p1","nominal_voltage_v":"family_voltage","temperature_max_c":"exact housing p1","terminal_and_strip":"contacts p10","tool":"contacts tooling table and crimp_tool","rear_seal":"exact housing p1","wire":"wire","pair":"shielded_pair","splice_strip_mm":"splice"}
+  }
+}

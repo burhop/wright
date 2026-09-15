@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "revision": "2026-09-12-sheet-stock-r1",
+  "scenario_id": "sheet-metal-supplier-handoff-01",
+  "reason": "Explicit fictional stock-compatible bounds, sourced-row selection and geometric native-label mapping; preserve mandatory DFM, geometry, approvals and manufacturing HOLD.",
+  "prior_dataset_digest": "296f9c7198ef9a15e5d4f48ca5474e52fc0467f747797e9ab22ba7549cb8e77e",
+  "dataset_digest": "cc431398266fa137fa083aaa7aa257a28e8761234dff47a0231afc7fe74ce4c1",
+  "template_digest": "57713c8df9f293e7e71c0ec53c1fc074c35532853a984c00b52ea0a061eab40b",
+  "original_manifest_sha256": "82722b830da27bf792179df2895fad88b9858fcce4fc346d3836a1b5774ba7bd",
+  "revised_manifest_sha256": "399bf6b81173d89ce186ed55912648409ae9ba33125a736591389cfabfc66736",
+  "retained_original_files": {
+    "concept.png": "85e2a868e9492cd01a61e8d0d6b668e7377e45e628a819551c13b48f98c6a0fb",
+    "concept.svg": "82304379ad96430d7f7f09b5a09cd33952b38d2c7711ecbe03486c56a53b9c8a",
+    "context.md": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+    "manufacturing-policy.md": "a2ca35182be5025ad85062d272d49c5945cfe4bae6e5762063fb7a799166b58e",
+    "prompt.txt": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+    "user-profile.md": "b1416c18cc2fcddfb0a0609e88ce2e60fe647800de3a74c0a49d51bb81235f00"
+  },
+  "addendum": "stock-selection-revision-r1.md",
+  "addendum_sha256": "a8dd81c8a20f03e62e50976c7ad07dce36a3062657d0ec670620a110842cecaf",
+  "prior_manifest": "scenario.before.json",
+  "execution_started": false
+}

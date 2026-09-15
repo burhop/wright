@@ -8,6 +8,7 @@ All handlers are decorated with @traced for OTel span creation.
 
 import asyncio
 import anyio
+import hashlib
 import json
 import time
 from dataclasses import dataclass
@@ -36,6 +37,7 @@ from agent_adapters.report_generation import (
 )
 from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
+from core.engineering_workflow_templates import EngineeringWorkflowTemplateError
 from api.config import (
     DATABASE_PATH,
     api_mcp_autostart_enabled,
@@ -116,6 +118,17 @@ from api.schemas.workspace import (
     WorkflowArtifactReviewDecisionRequest,
     WorkflowSourceUpdateRequest,
     WorkflowSourceResponse,
+    EngineeringWorkflowTemplateListResponse,
+    EngineeringWorkflowTemplateDetailResponse,
+    EngineeringWorkflowTemplateReadinessRequest,
+    EngineeringWorkflowTemplateInstanceRequest,
+    EngineeringWorkflowTemplateInstanceResponse,
+    WorkflowApprovalDecisionRequest,
+    WorkflowApprovalResumeRequest,
+    WorkflowExternalActionReconcileRequest,
+    WorkflowApprovalCheckpointResponse,
+    WorkflowDemoCaptureRequest,
+    WorkflowDemoCaptureResponse,
     WorkflowInputFilesResponse,
     WorkflowTemplateInstantiateRequest,
     WorkflowTemplateListResponse,
@@ -181,13 +194,14 @@ from workspace_service.workflow_sources import (
 )
 from workspace_service.workflow_source_execution import (
     WorkflowSourceExecutionError,
-    prepare_prompt_workflow,
     execute_prompt_workflow,
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
 from workspace_service.workflow_operations import WorkflowOperationsError
 from workspace_service.rivet_approvals import RivetApprovalError
+from workspace_service.workflow_external_actions import WorkflowExternalActionError
+from workspace_service.workflow_demo_capture import WorkflowDemoCaptureError
 from workspace_service.workspace_document_artifacts import (
     WorkspaceDocumentArtifactError,
 )
@@ -370,6 +384,68 @@ def _workflow_source_unavailable(_error: OSError) -> HTTPException:
         "Workflow source storage is unavailable",
     )
     return _workflow_source_http_error(unavailable)
+
+
+def _engineering_template_http_error(
+    error: EngineeringWorkflowTemplateError,
+) -> HTTPException:
+    error_status = (
+        status.HTTP_404_NOT_FOUND
+        if error.code == "template_not_found"
+        else status.HTTP_409_CONFLICT
+        if error.code in {"template_digest_mismatch", "template_idempotency_conflict"}
+        else status.HTTP_503_SERVICE_UNAVAILABLE
+        if error.code in {"template_catalog_unavailable", "template_resource_missing"}
+        else status.HTTP_400_BAD_REQUEST
+    )
+    return HTTPException(
+        status_code=error_status,
+        detail={"code": error.code, "message": str(error)},
+    )
+
+
+def _workflow_external_action_http_error(
+    error: WorkflowExternalActionError,
+) -> HTTPException:
+    error_status = (
+        status.HTTP_404_NOT_FOUND
+        if error.code == "approval_not_found"
+        else status.HTTP_409_CONFLICT
+        if error.code
+        in {
+            "approval_state_conflict",
+            "approval_stale",
+            "approval_expired",
+            "approval_consumed",
+            "external_action_state_conflict",
+        }
+        else status.HTTP_422_UNPROCESSABLE_CONTENT
+    )
+    return HTTPException(
+        status_code=error_status,
+        detail={"code": error.code, "message": str(error)},
+    )
+
+
+def _workflow_approval_response(checkpoint) -> WorkflowApprovalCheckpointResponse:
+    return WorkflowApprovalCheckpointResponse(
+        checkpoint_id=checkpoint.checkpoint_id,
+        workspace_id=checkpoint.workspace_id,
+        workflow_id=checkpoint.workflow_id,
+        run_id=checkpoint.run_id,
+        step_id=checkpoint.step_id,
+        action_kind=checkpoint.action_kind,
+        subject=checkpoint.subject,
+        subject_digest=checkpoint.subject_digest,
+        state=checkpoint.state,
+        continuation=checkpoint.continuation,
+        actor=checkpoint.actor,
+        reason=checkpoint.reason,
+        created_at=checkpoint.created_at,
+        updated_at=checkpoint.updated_at,
+        expires_at=checkpoint.expires_at,
+        external_action=checkpoint.external_action,
+    )
 
 
 def _workflow_template_response(template) -> WorkflowTemplateResponse:
@@ -1260,25 +1336,21 @@ async def run_workflow_source_endpoint(
 
     runtime = None
     try:
+        from workspace_service.workflow_run_preparation import (
+            prepare_authorized_workflow_run,
+        )
 
-        def open_tools():
-            nonlocal runtime
-            from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
-
-            runtime = WorkflowMcpRuntime(
-                request.app.state.gateway_service,
-                workspace_id=scope.workspace_id,
-                session_id=body.session_id,
-            )
-            return runtime
-
-        plan, values = await prepare_prompt_workflow(
+        prepared = await prepare_authorized_workflow_run(
             service=service,
             workspace_dir=scope.workspace_dir,
-            path=body.path,
-            expected_digest=body.expected_storage_digest,
-            tool_runtime=open_tools,
+            workspace_id=scope.workspace_id,
+            session_id=body.session_id,
+            source_path=body.path,
+            source_digest=body.expected_storage_digest,
+            gateway=lambda: request.app.state.gateway_service,
+            integration_policy_digest=body.integration_policy_digest,
         )
+        plan, values, runtime = prepared.plan, prepared.values, prepared.runtime
 
         async def run(on_event=None):
             from workspace_service.workflow_run_record import record_workflow_run
@@ -1293,6 +1365,8 @@ async def run_workflow_source_endpoint(
                     on_event=emit,
                     tool_runtime=runtime,
                     action_generator=decide_workflow_tool_action,
+                    execution_context=prepared.execution_context,
+                    run_id=prepared.run_id,
                 )
 
             result = await record_workflow_run(
@@ -1303,6 +1377,9 @@ async def run_workflow_source_endpoint(
                 source_digest=body.expected_storage_digest,
                 execute=execute,
                 on_event=on_event,
+                execution_context=prepared.execution_context,
+                run_id=prepared.run_id,
+                required_step_ids=[step.id for step in plan.steps],
             )
             for step in result["steps"]:
                 if step.get("execution_kind") == "ai":
@@ -1374,7 +1451,8 @@ async def run_workflow_source_endpoint(
             await runtime.close()
         status_code = (
             409
-            if error.code == "WORKFLOW_SOURCE_CONFLICT"
+            if error.code
+            in {"WORKFLOW_SOURCE_CONFLICT", "WORKFLOW_TEMPLATE_SETUP_REQUIRED"}
             else 503
             if error.code == "MODEL_UNAVAILABLE"
             else 422
@@ -1384,6 +1462,407 @@ async def run_workflow_source_endpoint(
         if runtime is not None:
             await runtime.close()
         raise HTTPException(status_code=422, detail=detail(error)) from error
+
+
+@router.get(
+    "/workflow-source-templates",
+    response_model=EngineeringWorkflowTemplateListResponse,
+)
+@traced("workspace.workflow_source_templates.list")
+async def list_engineering_workflow_templates_endpoint(
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        return EngineeringWorkflowTemplateListResponse(
+            catalog_version=service.engineering_workflow_templates.catalog_version,
+            templates=list(service.engineering_workflow_templates.list()),
+        )
+    except EngineeringWorkflowTemplateError as error:
+        raise _engineering_template_http_error(error) from error
+
+
+@router.get(
+    "/workflow-source-templates/{template_id}",
+    response_model=EngineeringWorkflowTemplateDetailResponse,
+)
+@traced("workspace.workflow_source_templates.detail")
+async def engineering_workflow_template_detail_endpoint(
+    template_id: str,
+    version: str | None = Query(default=None),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        return EngineeringWorkflowTemplateDetailResponse(
+            template=service.engineering_workflow_templates.detail(template_id, version)
+        )
+    except EngineeringWorkflowTemplateError as error:
+        raise _engineering_template_http_error(error) from error
+
+
+@router.get("/workflow-source-templates/{template_id}/preview")
+@traced("workspace.workflow_source_templates.preview")
+async def engineering_workflow_template_preview_endpoint(
+    template_id: str,
+    version: str | None = Query(default=None),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        content, media_type = service.engineering_workflow_templates.preview(
+            template_id, version
+        )
+    except EngineeringWorkflowTemplateError as error:
+        raise _engineering_template_http_error(error) from error
+    return Response(
+        content=content,
+        media_type=media_type,
+        headers={"Cache-Control": "public, max-age=31536000, immutable"},
+    )
+
+
+@router.post("/workflow-source-templates/{template_id}/readiness")
+@traced("workspace.workflow_source_templates.readiness")
+async def engineering_workflow_template_readiness_endpoint(
+    template_id: str,
+    body: EngineeringWorkflowTemplateReadinessRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_source_scope(body.session_id, service)
+    try:
+        return service.engineering_workflow_templates.readiness(
+            template_id, body.template_version
+        )
+    except EngineeringWorkflowTemplateError as error:
+        raise _engineering_template_http_error(error) from error
+
+
+@router.post(
+    "/workflow-source-templates/{template_id}/instances",
+    response_model=EngineeringWorkflowTemplateInstanceResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflow_source_templates.instantiate")
+async def instantiate_engineering_workflow_template_endpoint(
+    template_id: str,
+    body: EngineeringWorkflowTemplateInstanceRequest,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(body.session_id, service)
+    try:
+        instance = await service.engineering_workflow_templates.instantiate(
+            workspace_id=scope.workspace_id,
+            workspace_dir=scope.workspace_dir,
+            template_id=template_id,
+            template_version=body.template_version,
+            expected_source_digest=body.expected_source_digest,
+            workflow_path=body.workflow_path,
+            request_id=body.request_id,
+            created_by="local_workspace_user",
+        )
+    except EngineeringWorkflowTemplateError as error:
+        raise _engineering_template_http_error(error) from error
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    response.headers["Cache-Control"] = "no-store"
+    source = _workflow_source_response(scope.workspace_id, instance.document)
+    return EngineeringWorkflowTemplateInstanceResponse(
+        **source.model_dump(),
+        workflow_id=instance.workflow_id,
+        template={
+            "template_id": instance.template_id,
+            "version": instance.template_version,
+            "source_digest": instance.template_source_digest,
+            "layout_digest": instance.template_layout_digest,
+        },
+    )
+
+
+def _scoped_workflow_checkpoint(
+    service: WorkspaceService, run_id: str, checkpoint_id: str, session_id: str
+):
+    scope = _workflow_source_scope(session_id, service)
+    return service.workflow_external_actions.get(
+        checkpoint_id,
+        workspace_id=scope.workspace_id,
+        run_id=run_id,
+    )
+
+
+async def _project_workflow_checkpoint(
+    service: WorkspaceService, checkpoint, kind: str
+):
+    """Update the run observer projection when this checkpoint belongs to a run log."""
+
+    if not checkpoint.continuation.get("run_log_path"):
+        return
+    workspace = service.require_safe_workspace(checkpoint.workspace_id)
+    from workspace_service.workflow_run_record import (
+        record_workflow_approval_transition,
+    )
+
+    await record_workflow_approval_transition(
+        service=service,
+        workspace_dir=workspace["local_path"],
+        checkpoint=checkpoint,
+        kind=kind,
+    )
+
+
+async def _current_workflow_approval_subject(
+    service: WorkspaceService, workspace_dir: str, checkpoint
+):
+    """Rebuild mutable file/source identities from server-authorized workspace bytes."""
+
+    subject = json.loads(json.dumps(checkpoint.subject))
+    workflow_path = checkpoint.continuation.get("workflow_path")
+    if isinstance(workflow_path, str) and workflow_path == checkpoint.workflow_id:
+        try:
+            document = await service.workflow_sources.read(workspace_dir, workflow_path)
+            subject["definition_digest"] = document.storage_digest
+        except (OSError, WorkflowSourceStorageError):
+            subject["definition_digest"] = "0" * 64
+
+    async def refresh_digests(subject_key: str, evidence_key: str, reader):
+        current = list(subject.get(subject_key, []))
+        for evidence in checkpoint.continuation.get(evidence_key, []):
+            if not isinstance(evidence, dict):
+                continue
+            path, prior = evidence.get("path"), evidence.get("sha256")
+            if not isinstance(path, str) or not isinstance(prior, str):
+                continue
+            try:
+                digest = hashlib.sha256(await reader(workspace_dir, path)).hexdigest()
+            except (OSError, ValueError):
+                digest = "0" * 64
+            try:
+                current.remove(prior)
+            except ValueError:
+                pass
+            current.append(digest)
+        subject[subject_key] = sorted(current)
+
+    if checkpoint.continuation.get("input_files"):
+        await refresh_digests(
+            "input_digests", "input_files", service.files.read_reference
+        )
+    if checkpoint.continuation.get("artifact_files"):
+        await refresh_digests(
+            "artifact_digests", "artifact_files", service.files.read_capture_file
+        )
+    return subject
+
+
+@router.get(
+    "/workflow-runs/{run_id}/approvals/{checkpoint_id}",
+    response_model=WorkflowApprovalCheckpointResponse,
+)
+@traced("workspace.workflow_approval.get")
+async def get_workflow_approval_checkpoint_endpoint(
+    run_id: str,
+    checkpoint_id: str,
+    session_id: str = Query(..., min_length=1, max_length=256),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        checkpoint = _scoped_workflow_checkpoint(
+            service, run_id, checkpoint_id, session_id
+        )
+    except WorkflowExternalActionError as error:
+        raise _workflow_external_action_http_error(error) from error
+    return _workflow_approval_response(checkpoint)
+
+
+@router.post(
+    "/workflow-runs/{run_id}/approvals/{checkpoint_id}/decisions",
+    response_model=WorkflowApprovalCheckpointResponse,
+)
+@traced("workspace.workflow_approval.decide")
+async def decide_workflow_approval_checkpoint_endpoint(
+    run_id: str,
+    checkpoint_id: str,
+    body: WorkflowApprovalDecisionRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        current = _scoped_workflow_checkpoint(
+            service, run_id, checkpoint_id, body.session_id
+        )
+        if current.continuation.get("schema_version") == 2:
+            from workspace_service.workflow_approval_execution import (
+                decide_workflow_approval,
+            )
+
+            scope = _workflow_source_scope(body.session_id, service)
+            checkpoint = await decide_workflow_approval(
+                service=service,
+                workspace_id=scope.workspace_id,
+                workspace_dir=scope.workspace_dir,
+                checkpoint=current,
+                subject_digest=body.subject_digest,
+                decision=body.decision,
+                reason=body.reason,
+                auto=body.auto,
+                gateway=request.app.state.gateway_service,
+                session_id=body.session_id,
+            )
+            return _workflow_approval_response(checkpoint)
+        if body.auto:
+            raise WorkflowExternalActionError(
+                "approval_integration_policy_required",
+                "Automatic decisions require an enrolled canonical integration run.",
+            )
+        checkpoint = service.workflow_external_actions.decide(
+            checkpoint_id,
+            workspace_id=current.workspace_id,
+            expected_subject_digest=body.subject_digest,
+            actor="local_workspace_user",
+            approved=body.decision == "approved",
+            reason=body.reason,
+        )
+        await _project_workflow_checkpoint(service, checkpoint, "approval_decided")
+    except WorkflowExternalActionError as error:
+        raise _workflow_external_action_http_error(error) from error
+    except WorkflowSourceExecutionError as error:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": error.code.lower(),
+                "message": str(error),
+                "correction": error.correction,
+            },
+        ) from error
+    return _workflow_approval_response(checkpoint)
+
+
+@router.post(
+    "/workflow-runs/{run_id}/resume",
+    response_model=WorkflowApprovalCheckpointResponse,
+)
+@traced("workspace.workflow_approval.resume")
+async def resume_workflow_approval_checkpoint_endpoint(
+    run_id: str,
+    body: WorkflowApprovalResumeRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        current = _scoped_workflow_checkpoint(
+            service, run_id, body.checkpoint_id, body.session_id
+        )
+        if current.continuation.get("schema_version") == 2:
+            from workspace_service.workflow_approval_execution import (
+                resume_workflow_approval,
+            )
+
+            scope = _workflow_source_scope(body.session_id, service)
+            checkpoint, result = await resume_workflow_approval(
+                service=service,
+                workspace_id=scope.workspace_id,
+                workspace_dir=scope.workspace_dir,
+                checkpoint=current,
+                subject_digest=body.subject_digest,
+                request_id=body.request_id,
+                gateway=request.app.state.gateway_service,
+                session_id=body.session_id,
+                response_generator=generate_workflow_response,
+                action_generator=decide_workflow_tool_action,
+            )
+            return _workflow_approval_response(checkpoint).model_copy(
+                update={"execution_result": result}
+            )
+        if current.subject_digest != body.subject_digest:
+            raise WorkflowExternalActionError(
+                "approval_stale", "Approval subject changed"
+            )
+        scope = _workflow_source_scope(body.session_id, service)
+        current_subject = await _current_workflow_approval_subject(
+            service, scope.workspace_dir, current
+        )
+        checkpoint = service.workflow_external_actions.consume_for_dispatch(
+            body.checkpoint_id,
+            workspace_id=current.workspace_id,
+            current_subject=current_subject,
+            action_id=body.request_id,
+        )
+        await _project_workflow_checkpoint(
+            service, checkpoint, "external_action_authorized"
+        )
+    except WorkflowExternalActionError as error:
+        raise _workflow_external_action_http_error(error) from error
+    except WorkflowSourceExecutionError as error:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": error.code.lower(),
+                "message": str(error),
+                "correction": error.correction,
+            },
+        ) from error
+    return _workflow_approval_response(checkpoint)
+
+
+@router.post(
+    "/workflow-runs/{run_id}/approvals/{checkpoint_id}/reconcile",
+    response_model=WorkflowApprovalCheckpointResponse,
+)
+@traced("workspace.workflow_external_action.reconcile")
+async def reconcile_workflow_external_action_endpoint(
+    run_id: str,
+    checkpoint_id: str,
+    body: WorkflowExternalActionReconcileRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        current = _scoped_workflow_checkpoint(
+            service, run_id, checkpoint_id, body.session_id
+        )
+        checkpoint = service.workflow_external_actions.reconcile(
+            checkpoint_id,
+            workspace_id=current.workspace_id,
+            run_id=run_id,
+            expected_subject_digest=body.subject_digest,
+            outcome=body.outcome,
+            evidence=body.evidence,
+        )
+        await _project_workflow_checkpoint(
+            service, checkpoint, "external_action_reconciled"
+        )
+    except WorkflowExternalActionError as error:
+        raise _workflow_external_action_http_error(error) from error
+    return _workflow_approval_response(checkpoint)
+
+
+@router.post(
+    "/workflow-runs/{run_id}/capture",
+    response_model=WorkflowDemoCaptureResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflow_demo_capture.create")
+async def create_workflow_demo_capture_endpoint(
+    run_id: str,
+    body: WorkflowDemoCaptureRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(body.session_id, service)
+    try:
+        return await service.workflow_demo_captures.create(
+            workspace_dir=scope.workspace_dir,
+            run_log_path=body.run_log_path,
+            expected_run_id=run_id,
+            artifact_ids=body.artifact_ids,
+            caption=body.caption,
+        )
+    except WorkflowDemoCaptureError as error:
+        conflict = error.code in {
+            "capture_run_unverified",
+            "capture_rights_missing",
+            "capture_artifact_changed",
+        }
+        raise HTTPException(
+            status_code=409 if conflict else 422,
+            detail={"code": error.code, "message": str(error)},
+        ) from error
 
 
 @router.get("/workflow-templates", response_model=WorkflowTemplateListResponse)

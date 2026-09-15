@@ -1,0 +1,5 @@
+feature_id,face,center_x_mm,center_z_mm,shape,width_mm,height_mm,diameter_mm,corner_radius_mm
+DISPLAY,front,135,42,rounded_rectangle,110,38,,3
+CONTROL_A,front,305,42,circle,,,12,
+CONTROL_B,front,345,42,circle,,,12,
+CABLE,rear,340,35,rounded_rectangle,70,25,,3

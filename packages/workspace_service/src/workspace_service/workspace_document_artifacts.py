@@ -6,6 +6,8 @@ import hashlib
 import os
 import re
 import uuid
+import threading
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import unquote
@@ -62,7 +64,7 @@ def document_producer_declaration_digest() -> str:
 
 
 def _safe_relative_path(
-    root: str, value: object, media_type: object
+    root: str, value: object, media_type: object, *, integration_python: bool = False
 ) -> tuple[str, Path, str]:
     if not isinstance(value, str) or not value or len(value) > 512:
         raise WorkspaceDocumentArtifactError(
@@ -82,6 +84,8 @@ def _safe_relative_path(
         raise WorkspaceDocumentArtifactError(str(error)) from error
     extension = target.suffix.lower()
     expected_media = TEXT_MEDIA_BY_EXTENSION.get(extension)
+    if integration_python and extension == ".py":
+        expected_media = "text/plain"
     if expected_media is None:
         raise WorkspaceDocumentArtifactError(
             "Document path must use a reviewed text extension"
@@ -109,6 +113,53 @@ def _verify_bytes(record: WorkspaceArtifactRecord, target: Path) -> bytes:
 class WorkspaceDocumentArtifactService:
     def __init__(self, repository: WorkspaceArtifactRepository) -> None:
         self.repository = repository
+        from .workspace_file_inspection import WorkspaceFileInspector
+
+        self.file_inspector = WorkspaceFileInspector()
+        from .workspace_file_copy import WorkspaceFileCopier
+
+        self.file_copier = WorkspaceFileCopier()
+        self._integration_source_writes = {}
+        self._integration_source_lock = threading.Lock()
+
+    def _grant_integration_source_write(
+        self,
+        *,
+        request_id,
+        session_id,
+        workspace_id,
+        relative_path,
+        content_sha256,
+        policy_digest,
+        actor,
+    ):
+        """Private one-call capability, issued by authenticated canonical runtime.
+
+        No tool argument or public approval_context field can populate this map.
+        This permits publication of declared source text; it never executes it.
+        """
+        with self._integration_source_lock:
+            self._integration_source_writes = {
+                key: value
+                for key, value in self._integration_source_writes.items()
+                if value["expires_at"] > time.monotonic()
+            }
+            if (
+                len(self._integration_source_writes) >= 1024
+                or request_id in self._integration_source_writes
+            ):
+                raise WorkspaceDocumentArtifactError(
+                    "Source-write capability identity is unavailable"
+                )
+            self._integration_source_writes[request_id] = {
+                "session_id": session_id,
+                "workspace_id": workspace_id,
+                "relative_path": relative_path,
+                "content_sha256": content_sha256,
+                "policy_digest": policy_digest,
+                "actor": actor,
+                "expires_at": time.monotonic() + 30,
+            }
 
     def publish(
         self,
@@ -137,8 +188,27 @@ class WorkspaceDocumentArtifactService:
             raise WorkspaceDocumentArtifactError(
                 f"Document content exceeds the {MAX_DOCUMENT_BYTES}-byte limit"
             )
+        with self._integration_source_lock:
+            permit = self._integration_source_writes.pop(request_id, None)
+        integration_python = False
+        if permit is not None:
+            if (
+                permit["expires_at"] <= time.monotonic()
+                or permit["session_id"] != session.session_id
+                or permit["workspace_id"] != session.workspace_id
+                or permit["relative_path"] != relative_path
+                or permit["content_sha256"] != hashlib.sha256(payload).hexdigest()
+                or session.principal_id != "wright-native-workflow"
+            ):
+                raise WorkspaceDocumentArtifactError(
+                    "Integration source-write capability does not match this exact call"
+                )
+            integration_python = True
         normalized, target, safe_media = _safe_relative_path(
-            session.workspace_path, relative_path, media_type
+            session.workspace_path,
+            relative_path,
+            media_type,
+            integration_python=integration_python,
         )
         workspace = WorkspacePath(session.workspace_path)
         parent_parts = normalized.split("/")[:-1]

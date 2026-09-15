@@ -1,0 +1,3 @@
+Please design a serviceable case for our Raspberry Pi 5 greenhouse logger. It will sit under a dry bench canopy, not in irrigation spray. Start by checking the official board drawing and connectors. Use my installation sketch and the context notes for the bracket clearance, sensor lead exit, ambient conditions, and heat load.
+
+I need a removable lid, underside cable entry with a drip-loop space, and two vent concepts: downward-facing side louvers versus a raised ventilated chimney. Create a sourced design document, send the reviewed requirements to AgentCAD, export both cases and CFD domains, and compare cooling. Do not call either case waterproof or IP rated. Please point out if ventilation makes the temperature or debris goals incompatible.

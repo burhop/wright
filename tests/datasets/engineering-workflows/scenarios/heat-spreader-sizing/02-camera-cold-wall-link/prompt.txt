@@ -1,0 +1,3 @@
+Our camera packaging study needs a conduction link to the cooled frame. Please compare the three widths in alternatives.csv using an 80 mm length and 3 mm thickness. For this study use 9 W through the entire hot end, a 30 C fixed cold end, constant conductivity 167 W/(m K), and insulated remaining faces.
+
+The link must fit a 64 mm-wide channel and should keep the hot end no warmer than 56 C. Please create geometry and actual numerical fields for the alternatives, record heat balance and mesh sensitivity, and recommend the narrowest passing width in a JSON decision. This is only the link temperature study; do not claim a camera sensor or enclosure temperature from it.

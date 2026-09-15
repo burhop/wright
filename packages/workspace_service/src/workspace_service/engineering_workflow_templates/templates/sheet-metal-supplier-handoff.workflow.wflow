@@ -1,0 +1,134 @@
+# Recovered sheet-metal sequence with automated checks and separate human external-action approval.
+workflow __instance__
+  name: "Sheet-Metal Supplier Handoff"
+  purpose: "Create checked native sheet-metal CAD and verified supplier files, then stop at human-controlled preview and quote handoff gates."
+  discipline: "sheet.metal.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+task intent_document___instance__
+  name: "Create intent and manufacturing document"
+  purpose: "Combine image, text, and approved manufacturing context while separating facts from assumptions."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Create a detailed sheet-metal design document. Do not invent loads, dimensions, supplier acceptance, or approval."
+  settings: {"drawings":"only_when_requested","image_fixture":"__input_root__/bracket-intent.svg","intent_fixture":"__input_root__/design-intent.md","rights_file":"__input_root__/rights.json"}
+  tool: null
+  reusable_step: null
+end
+
+task solid_edge_cad___instance__
+  name: "Create native Solid Edge sheet-metal CAD"
+  purpose: "Build the native model with exact installed material readback and retained revision identity."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Create a PSM model, record installed material name and properties, and retain each indexed attempt."
+  settings: {"maximum_corrective_revisions":2,"artifact_role":"cad_native"}
+  tool: null
+  reusable_step: null
+end
+
+task measured_design_check___instance__
+  name: "Run independent measured design check"
+  purpose: "Evaluate the exact model against every design criterion without modifying it."
+  step_type: decision
+  group: null
+  performed_by: ai_assisted
+  inputs: []
+  outputs: []
+  instructions: "Return pass, revise, or needs_input with feature-level evidence. A pass is an automated engineering gate, not human supplier approval."
+  settings: {"maximum_corrective_revisions":2,"modify_during_check":false}
+  tool: null
+  reusable_step: null
+end
+
+task export_and_verify___instance__
+  name: "Export and independently verify PSM, STEP, and flat DXF"
+  purpose: "Create the exact handoff representations and prove the developed DXF identity, units, scale, contours, holes, and bends."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Export PSM, folded STEP, and genuine flat-pattern DXF. Bind verification to file digests; never substitute STEP for a failed DXF."
+  settings: {"units":"mm","dxf_required":true}
+  tool: null
+  reusable_step: null
+end
+
+task supplier_preview_approval___instance__
+  name: "Approve exact supplier preview request"
+  purpose: "Pause before upload and bind approval to files, supplier, stock, thickness, quantity, services, and session state."
+  step_type: review
+  group: null
+  performed_by: engineer
+  inputs: []
+  outputs: []
+  instructions: "After approval, verify file association, units, bends, warnings, price, currency, delivery, shipping and tax availability, and timestamp. Never order or pay."
+  settings: {"authoring_template":"external-action-approval","action_kind":"supplier_upload_preview","order":false,"payment":false,"approval_server":"qualified-supplier-preview-adapter","approval_tool":"upload_and_preview","approval_schema":"qualification-required","approval_destination_kind":"supplier","approval_destination_id":"sendcutsend-preview","approval_settings":"{\"stock\":\"configured-stock\",\"thickness\":\"configured-thickness\",\"quantity\":\"configured-quantity\",\"services\":\"configured-services\"}","approval_action":"{\"kind\":\"supplier_upload_preview\",\"mode\":\"preview_only\",\"order\":false,\"payment\":false}"}
+  tool: null
+  reusable_step: null
+end
+
+task cart_quote_handoff___instance__
+  name: "Hand off reviewed cart or quote to user"
+  purpose: "Stop with a reviewable supplier state so the user controls any final purchase outside Wright."
+  step_type: review
+  group: null
+  performed_by: engineer
+  inputs: []
+  outputs: []
+  instructions: "Confirm the exact preview evidence and hand off control. Do not place an order, pay, accept production-releasing credit, or contact support."
+  settings: {"authoring_template":"external-action-approval","action_kind":"cart_quote_handoff","external_purchase_required":true,"approval_server":"qualified-supplier-preview-adapter","approval_tool":"handoff_quote","approval_schema":"qualification-required","approval_destination_kind":"user_handoff","approval_destination_id":"local-workspace-user","approval_settings":"{\"supplier\":\"SendCutSend\",\"purchase\":\"outside_wright\"}","approval_action":"{\"kind\":\"cart_quote_handoff\",\"mode\":\"reviewed_handoff\",\"order\":false,\"payment\":false}"}
+  tool: null
+  reusable_step: null
+end
+
+connection document_to_cad___instance__
+  type: order
+  from: "intent_document___instance__"
+  to: "solid_edge_cad___instance__"
+  label: "reviewed requirements"
+  when: null
+end
+connection cad_to_check___instance__
+  type: order
+  from: "solid_edge_cad___instance__"
+  to: "measured_design_check___instance__"
+  label: "indexed CAD attempt"
+  when: null
+end
+connection revise_cad___instance__
+  type: revision
+  from: "measured_design_check___instance__"
+  to: "solid_edge_cad___instance__"
+  label: "bounded correction"
+  when: "revise"
+end
+connection release_export___instance__
+  type: approval
+  from: "measured_design_check___instance__"
+  to: "export_and_verify___instance__"
+  label: "checks pass"
+  when: "pass"
+end
+connection export_to_preview___instance__
+  type: order
+  from: "export_and_verify___instance__"
+  to: "supplier_preview_approval___instance__"
+  label: "verified exact package"
+  when: null
+end
+connection preview_to_handoff___instance__
+  type: order
+  from: "supplier_preview_approval___instance__"
+  to: "cart_quote_handoff___instance__"
+  label: "validated supplier preview"
+  when: null
+end

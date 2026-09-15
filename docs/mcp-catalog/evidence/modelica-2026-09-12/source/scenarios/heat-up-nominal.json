@@ -1,0 +1,12 @@
+{
+  "id": "heat-up-nominal",
+  "description": "Cold start at room temperature; measure warm-up, thermostat behaviour and energy.",
+  "start_time_s": 0,
+  "stop_time_s": 900,
+  "number_of_intervals": 900,
+  "solver": "dassl",
+  "target_temperature": {
+    "value": 90,
+    "unit": "degC"
+  }
+}

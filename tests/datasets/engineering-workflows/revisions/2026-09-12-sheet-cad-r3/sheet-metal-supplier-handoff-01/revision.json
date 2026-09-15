@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "revision": "2026-09-12-sheet-cad-r3",
+  "scenario_id": "sheet-metal-supplier-handoff-01",
+  "reason": "Explicit fictional CAD datum, relief and development-method choices, complete native flat settings, lid features and sourced-rule research; retain originals, R1/R2, independent geometry/DFM gates and manufacturing HOLD.",
+  "prior_dataset_digest": "cc431398266fa137fa083aaa7aa257a28e8761234dff47a0231afc7fe74ce4c1",
+  "dataset_digest": "f18523eb2ffee3edceb65912229c89dc69cb0fc77a4f87bce12b0a79d64c08a5",
+  "template_digest": "57713c8df9f293e7e71c0ec53c1fc074c35532853a984c00b52ea0a061eab40b",
+  "original_manifest_sha256": "399bf6b81173d89ce186ed55912648409ae9ba33125a736591389cfabfc66736",
+  "revised_manifest_sha256": "9680c715717eb39061b8f3d179d5a455e538c74b334f0d8b1507bcb3007c0554",
+  "retained_original_files": {
+    "concept.png": "85e2a868e9492cd01a61e8d0d6b668e7377e45e628a819551c13b48f98c6a0fb",
+    "concept.svg": "82304379ad96430d7f7f09b5a09cd33952b38d2c7711ecbe03486c56a53b9c8a",
+    "context.md": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+    "manufacturing-policy.md": "a2ca35182be5025ad85062d272d49c5945cfe4bae6e5762063fb7a799166b58e",
+    "prompt.txt": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+    "stock-selection-revision-r1.md": "a8dd81c8a20f03e62e50976c7ad07dce36a3062657d0ec670620a110842cecaf",
+    "user-profile.md": "b1416c18cc2fcddfb0a0609e88ce2e60fe647800de3a74c0a49d51bb81235f00"
+  },
+  "addendum": "cad-design-choices-revision-r3.md",
+  "addendum_sha256": "9b11da64a3a2152d9eef9c5166292ce81999abd300d62b7c9333a4fe751536d3",
+  "prior_manifest": "scenario.before.json",
+  "execution_started": false
+}

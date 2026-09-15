@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "template_id": "raspberry-pi-enclosure",
+  "implementation": "Actual primary-source pixels and selected supplier evidence; actual AgentCAD and native OpenFOAM; prototype assumptions explicit",
+  "allowed_tools": {
+    "wright-workspace-files": [
+      "write_text_document",
+      "inspect_file"
+    ],
+    "agentcad": [
+      "docs",
+      "run",
+      "export",
+      "measure",
+      "inspect"
+    ],
+    "wright-campaign-pi-cfd": [
+      "prepare_pi_cfd_variant",
+      "collect_pi_cfd_comparison"
+    ],
+    "foam-agent-csml-rpi": [
+      "run"
+    ],
+    "wright-campaign-pi-visual-references": [
+      "retrieve_pi_primary_references",
+      "read_pi_primary_text",
+      "observe_pi_primary_page"
+    ]
+  },
+  "expected_geometry": [
+    "enclosure-a.step",
+    "enclosure-b.step",
+    "fluid-domain-a.step",
+    "fluid-domain-b.step",
+    "enclosure-a.stl",
+    "enclosure-b.stl",
+    "fluid-domain-a.stl",
+    "fluid-domain-b.stl",
+    "geometry-lineage.json"
+  ],
+  "scenarios": {
+    "raspberry-pi-enclosure-01": {
+      "heat_regions": [
+        "board_hot_patch"
+      ],
+      "fan": false
+    },
+    "raspberry-pi-enclosure-02": {
+      "heat_regions": [
+        "pi_surrogate",
+        "sensor_interface"
+      ],
+      "fan": false
+    },
+    "raspberry-pi-enclosure-03": {
+      "heat_regions": [
+        "board_hot_patch",
+        "power_interface"
+      ],
+      "fan": true
+    }
+  },
+  "output_validation": "presence only; no convergence, material or engineering correctness claim"
+}

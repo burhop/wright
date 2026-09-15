@@ -165,6 +165,32 @@ class WorkspaceFileUseCases:
             "workspace.files.reference", work, timeout_seconds=self._timeout
         )
 
+    async def hash_reference(self, workspace_dir: str, path: str) -> str:
+        """Verify checkpoint bytes without applying the document-loading limit."""
+        from ..workspace_file_identity import workspace_file_sha256
+
+        return await self._executor.run(
+            "workspace.files.reference_identity",
+            lambda: workspace_file_sha256(workspace_dir, path),
+            timeout_seconds=self._timeout,
+        )
+
+    async def read_capture_file(self, workspace_dir: str, path: str) -> bytes:
+        """Read one verified capture artifact with an explicit 20 MiB ceiling."""
+        from ..workspace_path import WorkspacePath
+
+        def work():
+            target = WorkspacePath(workspace_dir).resolve(path, must_exist=True)
+            with target.open("rb") as stream:
+                content = stream.read(20 * 1024 * 1024 + 1)
+            if len(content) > 20 * 1024 * 1024:
+                raise ValueError("Choose a capture artifact no larger than 20 MiB.")
+            return content
+
+        return await self._executor.run(
+            "workspace.files.capture", work, timeout_seconds=self._timeout
+        )
+
     async def upload_workflow_image(
         self, workspace_dir: str, name: str, content: bytes
     ) -> str:
