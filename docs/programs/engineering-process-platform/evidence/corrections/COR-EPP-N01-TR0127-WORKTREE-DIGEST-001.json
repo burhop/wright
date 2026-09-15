@@ -1,0 +1,37 @@
+{
+  "$schema": "../../schemas/transition-artifact-digest-correction.schema.json",
+  "schema_version": "1.0",
+  "correction_id": "COR-EPP-N01-TR0127-WORKTREE-DIGEST-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "stable_cause_id": "EPP-N01-TR0127-CRLF-WORKTREE-DIGEST",
+  "accept_new_records": false,
+  "target_transition": {
+    "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0127.json",
+    "introducing_commit": "c9029b92a0b2cac0ec4be78f1271a853f081861e",
+    "raw_sha256": "13d77b6b08392e1a0ed983988083e9667e3106d6c9dffeabf40d34b17eeffe7b",
+    "git_blob": "e9bedfe8c5e07837f5af471d2f490c5d3a4e3b09"
+  },
+  "claims": [
+    {
+      "json_pointer": "/inputs/0/sha256",
+      "artifact_commit": "332802fdd828a3880b1e3bcbec71a42931a052e8",
+      "artifact_path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0127.json",
+      "artifact_git_blob": "543ca45f22c305eac9284814adcaa1c3dffc3e05",
+      "recorded_value": "e2b24e8a2b116860a2758d723a0a511ec41dafd7d3dc1da3bdcc5e69e5732352",
+      "authoritative_value": "f3db0412b443ccf79a0e1edab25f0fe094e79ce00d24f63074ec52c54a2a6323"
+    }
+  ],
+  "resolution_semantics": {
+    "effect": "one_historical_digest_finding_only",
+    "original_transition_immutable": true,
+    "validator_recomputes_git_blob_bytes": true,
+    "no_candidate_or_readiness_credit": true
+  },
+  "authority": {
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "user_directive": "2026-09-15: Approved. Please follow this recommendation.",
+    "exact_subject_approval": false
+  }
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://wright.local/programs/epp/transition-artifact-digest-correction.schema.json",
-  "title": "Closed EPP-N01 TR-0126 Artifact Digest Correction",
+  "title": "Closed EPP-N01 Transition Artifact Digest Correction",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -23,12 +23,18 @@
     },
     "schema_version": { "const": "1.0" },
     "correction_id": {
-      "const": "COR-EPP-N01-TR0126-WORKTREE-DIGEST-001"
+      "enum": [
+        "COR-EPP-N01-TR0126-WORKTREE-DIGEST-001",
+        "COR-EPP-N01-TR0127-WORKTREE-DIGEST-001"
+      ]
     },
     "program_id": { "const": "EPP-2026" },
     "feature_id": { "const": "EPP-N01" },
     "stable_cause_id": {
-      "const": "EPP-N01-TR0126-CRLF-WORKTREE-DIGEST"
+      "enum": [
+        "EPP-N01-TR0126-CRLF-WORKTREE-DIGEST",
+        "EPP-N01-TR0127-CRLF-WORKTREE-DIGEST"
+      ]
     },
     "accept_new_records": { "const": false },
     "target_transition": {
@@ -44,7 +50,7 @@
     },
     "claims": {
       "type": "array",
-      "minItems": 2,
+      "minItems": 1,
       "maxItems": 2,
       "items": {
         "type": "object",
@@ -77,7 +83,12 @@
         "no_candidate_or_readiness_credit"
       ],
       "properties": {
-        "effect": { "const": "two_historical_digest_findings_only" },
+        "effect": {
+          "enum": [
+            "one_historical_digest_finding_only",
+            "two_historical_digest_findings_only"
+          ]
+        },
         "original_transition_immutable": { "const": true },
         "validator_recomputes_git_blob_bytes": { "const": true },
         "no_candidate_or_readiness_credit": { "const": true }
