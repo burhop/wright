@@ -66,6 +66,11 @@ def _json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _json_if_present(path: Path) -> dict[str, Any]:
+    """Return absent generated evidence as an empty, therefore failing, record."""
+    return _json(path) if path.is_file() else {}
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -90,6 +95,31 @@ def _walkthrough_evidence(
     screenshots: int,
     files: int,
 ) -> dict[str, Any]:
+    required_paths = (
+        root / "status.json",
+        root / "manifest.json",
+        root / "trace" / "browser-diagnostics.json",
+    )
+    missing_required = [
+        path.relative_to(root).as_posix()
+        for path in required_paths
+        if not path.is_file()
+    ]
+    if missing_required:
+        return {
+            "ok": False,
+            "commit": None,
+            "tree": None,
+            "manifest_sha256": None,
+            "steps_passed": 0,
+            "steps_total": 0,
+            "raw_screenshots": 0,
+            "annotated_screenshots": 0,
+            "manifest_files": 0,
+            "browser_diagnostics": 0,
+            "missing_files": missing_required,
+            "digest_mismatches": [],
+        }
     status = _json(root / "status.json")
     manifest = _json(root / "manifest.json")
     diagnostics = _json(root / "trace" / "browser-diagnostics.json")
@@ -362,14 +392,16 @@ def collect() -> dict[str, Any]:
         and dashboard.get("checks", {}).get("api", {}).get("customerReady") is False
     )
 
-    preflight = _json(ROOT / "artifacts" / "t059-release-candidate" / "preflight.json")
-    native_build = _json(
+    preflight = _json_if_present(
+        ROOT / "artifacts" / "t059-release-candidate" / "preflight.json"
+    )
+    native_build = _json_if_present(
         ROOT / "artifacts" / "t059-release-candidate" / "native-build-evidence.json"
     )
-    native_lifecycle = _json(
+    native_lifecycle = _json_if_present(
         ROOT / "artifacts" / "t059-release-candidate" / "native-lifecycle-windows.json"
     )
-    release = _json(
+    release = _json_if_present(
         ROOT / "artifacts" / "t059-release-candidate" / "release-evidence.json"
     )
     release_text = (FEATURE / "evidence" / "release-candidate-hardening.md").read_text(
