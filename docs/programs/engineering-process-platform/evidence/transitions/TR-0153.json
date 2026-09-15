@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0153", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "REPAIRING", "to_state": "IMPLEMENTING", "prior_revision": 153, "new_revision": 154,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "5cd4a871afd2c3d07fd3dee9aea6ce5f8e15972fa55f3951d20bd06c5f0c42fa", "new_state_digest": "93c04c9dcbae116eb6857eb1483daecbcb6c5788dc3b3a20793c79c87f34e8a2",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Bind the already-committed one-line catalog-digest successor as the complete repair implementation; no further product change is performed.",
+  "started_at": "2026-09-15T18:53:00Z", "finished_at": "2026-09-15T18:54:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "ed075ae8206621d33fe65f5d68d95e21e7d2c34c", "source_tree": "c9dfe3533becfa28de20ed0bf56872207b9d42cd", "source_program_tree": "94a02a574a50b1d6ed55ddd84cb5e972896c1528", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0154.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0153.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0153.json", "sha256": "b129a3930b85a3450a2add3621479185767e2bdd6c360719a3f3426e18637b63", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0154.json", "sha256": "acf02dfc5e88a6b47ba5a91f777acb971720cd61a7f54d0ac7fa9e1cf05f667f", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-CATALOG-DIGEST-IMPLEMENTATION", "method": "Confirm exact one-line correction is present and both current catalog copies normalize to the trusted replacement digest.", "environment": "Committed Git", "duration_ms": 0, "result": "passed", "failure_class": null, "evidence": ["commit:ffada082c18b0f14defbe710ea24a4a6db9eccd1", "catalog-digest:e41fed1e80dfb710bdec87c5f1b4cb3a613515e9c3c5606a3c0ae0a4d7ae73cd"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": null, "repair": {"stable_cause_id": "EPP-N01-STATUS-CATALOG-DIGEST-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Close the lease and attach exact-candidate review.", "Required gates, CI and dev integration remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0153.json", "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}
