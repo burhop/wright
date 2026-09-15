@@ -135,10 +135,24 @@ class RetryEpisodeLedger:
                 not isinstance(item, dict)
                 or not isinstance(item.get("id"), str)
                 or not item["id"]
+                or not isinstance(item.get("path"), str)
+                or not item["path"]
                 or not isinstance(item.get("sha256"), str)
                 or len(item["sha256"]) != 64
                 or any(c not in "0123456789abcdef" for c in item["sha256"].lower())
             ):
+                raise ValueError("Retry correction evidence is invalid")
+            evidence_root = self.path.parent
+            evidence_path = (evidence_root / item["path"]).resolve()
+            try:
+                evidence_path.relative_to(evidence_root)
+            except ValueError:
+                raise ValueError("Retry correction evidence is invalid") from None
+            try:
+                raw = evidence_path.read_bytes()
+            except OSError:
+                raise ValueError("Retry correction evidence is invalid") from None
+            if not raw or hashlib.sha256(raw).hexdigest() != item["sha256"].lower():
                 raise ValueError("Retry correction evidence is invalid")
         document = self._load()
         episodes = document["episodes"]

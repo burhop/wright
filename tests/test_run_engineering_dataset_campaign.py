@@ -1,4 +1,5 @@
 """Persistent runner state-machine tests; no engineering tool/server calls."""
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -121,6 +122,9 @@ def test_retry_episode_survives_attempt_and_grant_changes(tmp_path, case):
     ledger_path = tmp_path / "campaign" / "reliability-episodes.json"
 
     def enrolled(attempt, correction):
+        evidence_path = tmp_path / "campaign" / "fix-evidence" / f"{correction}.txt"
+        evidence_path.parent.mkdir(parents=True, exist_ok=True)
+        evidence_path.write_text(f"focused verification for {correction}")
         return {
             **case,
             "attempt_id": attempt,
@@ -134,7 +138,11 @@ def test_retry_episode_survives_attempt_and_grant_changes(tmp_path, case):
                 "correction": {
                     "id": correction,
                     "evidence": [
-                        {"id": f"focused-test:{correction}", "sha256": "f" * 64}
+                        {
+                            "id": f"focused-test:{correction}",
+                            "path": f"fix-evidence/{correction}.txt",
+                            "sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+                        }
                     ],
                 },
             },
@@ -155,6 +163,32 @@ def test_retry_episode_survives_attempt_and_grant_changes(tmp_path, case):
         "attempt-045",
         "attempt-046",
     ]
+
+
+def test_retry_episode_recomputes_bounded_fix_evidence(tmp_path, case):
+    ledger_path = tmp_path / "campaign" / "reliability-episodes.json"
+    configured = {
+        **case,
+        "retry_episode": {
+            "episode_id": "pi03-model-tool-protocol",
+            "failure_key": "translation_invalid",
+            "boundary": "author_cad_source:model_decision",
+            "max_corrections": 2,
+            "baseline_attempt_ids": ["attempt-044"],
+            "correction": {
+                "id": "unverified-label",
+                "evidence": [
+                    {
+                        "id": "focused-test:nonexistent",
+                        "path": "fix-evidence/nonexistent.txt",
+                        "sha256": "0" * 64,
+                    }
+                ],
+            },
+        },
+    }
+    with pytest.raises(ValueError, match="Retry correction evidence is invalid"):
+        runner_module.RetryEpisodeLedger(ledger_path).authorize(configured)
 
 
 def test_disk_probe_error_blocks_only_new_start(case,tmp_path,make_runner,monkeypatch):

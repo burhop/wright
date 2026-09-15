@@ -38,8 +38,25 @@ async def test_tool_free_format_correction_preserves_single_actual_call(repair_k
 
     async def decide(messages, schemas, **kwargs):
         decisions.append(schemas)
+        class Decision(dict):
+            pass
+
+        def observed(value):
+            message = Decision(value)
+            message.wright_usage = {
+                "status": "reported",
+                "model": "test-model",
+                "input_tokens": len(decisions),
+                "cached_input_tokens": 0,
+                "output_tokens": 1,
+                "reasoning_output_tokens": 0,
+                "total_tokens": len(decisions) + 1,
+                "duration_ms": len(decisions),
+            }
+            return message
+
         if len(decisions) == 1:
-            return {
+            return observed({
                 "role": "assistant",
                 "tool_calls": [
                     {
@@ -50,9 +67,9 @@ async def test_tool_free_format_correction_preserves_single_actual_call(repair_k
                         },
                     }
                 ],
-            }
+            })
         if len(decisions) == 2:
-            return {
+            return observed({
                 "role": "assistant",
                 "content": json.dumps(
                     {
@@ -61,7 +78,7 @@ async def test_tool_free_format_correction_preserves_single_actual_call(repair_k
                         "evidence": [1],
                     }
                 ),
-            }
+            })
         assert schemas == []
         assert len(messages) == 2
         assert [message["role"] for message in messages] == ["system", "user"]
@@ -94,7 +111,7 @@ async def test_tool_free_format_correction_preserves_single_actual_call(repair_k
             message["tool_calls"] = [
                 {"function": {"name": "tool_0", "arguments": "{}"}}
             ]
-        return message
+        return observed(message)
 
     if repair_kind == "valid":
         result, records = await service.run_task(
@@ -117,6 +134,16 @@ async def test_tool_free_format_correction_preserves_single_actual_call(repair_k
             )
     assert len(gateway.calls) == 1
     assert len(decisions) == 3
+    usage = [payload for kind, payload in events if kind == "model_usage"]
+    assert len(usage) == 3
+    assert [payload["usage"]["input_tokens"] for payload in usage] == [
+        1,
+        2,
+        None if repair_kind == "model_error" else 3,
+    ]
+    assert usage[-1]["usage"]["status"] == (
+        "unknown" if repair_kind == "model_error" else "reported"
+    )
     assert any(kind == "task_response_format_repair" for kind, _ in events)
     failures = [
         payload

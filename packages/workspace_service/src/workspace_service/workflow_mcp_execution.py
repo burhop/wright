@@ -7,6 +7,7 @@ import asyncio
 from html import escape
 import json
 import re
+import time
 import uuid
 from dataclasses import replace
 from jsonschema import Draft202012Validator
@@ -770,6 +771,8 @@ class WorkflowMcpRuntime:
                             original_response=outcome["response"],
                         )
                         repair = {}
+                        repair_usage_recorded = False
+                        repair_started = time.perf_counter()
                         failure_reason = "model_request_failed"
                         try:
                             repair = await decide(
@@ -779,6 +782,27 @@ class WorkflowMcpRuntime:
                                 [],
                                 required=False,
                             )
+                            repair_usage = getattr(repair, "wright_usage", None)
+                            if not isinstance(repair_usage, dict):
+                                repair_usage = {
+                                    "status": "unknown",
+                                    "model": None,
+                                    "input_tokens": None,
+                                    "cached_input_tokens": None,
+                                    "output_tokens": None,
+                                    "reasoning_output_tokens": None,
+                                    "total_tokens": None,
+                                    "duration_ms": round(
+                                        (time.perf_counter() - repair_started) * 1000
+                                    ),
+                                }
+                            await emit(
+                                "model_usage",
+                                task_id=step.id,
+                                task_title=step.title,
+                                usage=repair_usage,
+                            )
+                            repair_usage_recorded = True
                             failure_reason = "invalid_completion_envelope"
                             corrected = json.loads(repair.get("content", ""))
                             if repair.get("tool_calls"):
@@ -806,6 +830,25 @@ class WorkflowMcpRuntime:
                                 if isinstance(repair, dict)
                                 else ""
                             )
+                            if not repair_usage_recorded:
+                                await emit(
+                                    "model_usage",
+                                    task_id=step.id,
+                                    task_title=step.title,
+                                    usage={
+                                        "status": "unknown",
+                                        "model": None,
+                                        "input_tokens": None,
+                                        "cached_input_tokens": None,
+                                        "output_tokens": None,
+                                        "reasoning_output_tokens": None,
+                                        "total_tokens": None,
+                                        "duration_ms": round(
+                                            (time.perf_counter() - repair_started)
+                                            * 1000
+                                        ),
+                                    },
+                                )
                             content = content if isinstance(content, str) else ""
                             await emit(
                                 "task_response_format_repair_failed",
