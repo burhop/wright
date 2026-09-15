@@ -123,10 +123,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     curl \
+    gzip \
     libblkid1 \
     liblastlog2-2 \
     libmount1 \
+    libpcre2-8-0 \
+    libpython3.13-minimal \
+    libpython3.13-stdlib \
     libsmartcols1 \
+    libsqlite3-0 \
+    libssh2-1t64 \
     libuuid1 \
     libatomic1 \
     libssl3t64 \
@@ -134,6 +140,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     mount \
     openssl \
     openssl-provider-legacy \
+    perl-base \
+    python3.13 \
+    python3.13-minimal \
     vim \
     nano \
     htop \

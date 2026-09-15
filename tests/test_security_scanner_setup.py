@@ -78,7 +78,16 @@ def test_security_scan_scripts_use_pinned_scanner_images() -> None:
 
     assert 'DOCKER_ROOT_DIR="$(cygpath -w "$ROOT_DIR")"' in bash_script
     assert "MSYS_NO_PATHCONV=1 docker run" in bash_script
-    assert '-v "$DOCKER_ROOT_DIR:/repo"' in bash_script
+    assert '-v "$DOCKER_SCAN_ROOT_DIR:/repo"' in bash_script
+    assert '[ -f "$ROOT_DIR/.git" ]' in bash_script
+    assert "git clone --no-hardlinks --no-checkout" in bash_script
+    assert "rev-list --count HEAD" in bash_script
+    assert "refusing a false-green scan" in bash_script
+
+    assert 'Test-Path -LiteralPath (Join-Path $RootDir ".git") -PathType Leaf' in powershell_script
+    assert "git clone --no-hardlinks --no-checkout" in powershell_script
+    assert "rev-list --count HEAD" in powershell_script
+    assert 'Remove-Item -LiteralPath $TemporaryScanParent -Recurse -Force' in powershell_script
 
     assert "scripts/security-scan.sh --include-untracked" in alpha_bash
     assert "scripts/security-scan.ps1 -IncludeUntracked" in alpha_powershell
