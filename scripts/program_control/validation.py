@@ -101,6 +101,7 @@ def _finding(
         "CHECKPOINT_EVENT_RULE_MISMATCH": "Do not rewrite history; inspect the exact approved V8 checkpoint-evidence disposition.",
         "CHECKPOINT_EVIDENCE_CORRECTION_INVALID": "Restore the exact closed three-claim checkpoint profile or stop for a new material approval.",
         "N01_TRANSITION_DIGEST_CORRECTION_INVALID": "Restore the exact two-claim TR-0126 digest correction or stop.",
+        "N01_RECOVERY_DIGEST_CORRECTION_INVALID": "Restore the exact one-claim TR-0127 digest correction or stop.",
         "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V8 authority bundle.",
         "REV58_RAW_IDENTITY_REPAIR_INVALID": "Restore the exact authorized revision-58 raw-identity repair evidence or stop.",
         "F01B_ACTIVATION_CORRECTION_INVALID": "Restore the exact authorized three-claim TR-0070 correction or stop.",
@@ -902,6 +903,22 @@ N01_TRANSITION_DIGEST_TARGETS = frozenset(
     }
 )
 
+N01_RECOVERY_DIGEST_CORRECTION_ID = "COR-EPP-N01-TR0127-WORKTREE-DIGEST-001"
+N01_RECOVERY_DIGEST_CONTAINER = "0173e7c5c212954dad202da9173794b4b6f8aceb"
+N01_RECOVERY_DIGEST_RAW_SHA256 = (
+    "13d77b6b08392e1a0ed983988083e9667e3106d6c9dffeabf40d34b17eeffe7b"
+)
+N01_RECOVERY_DIGEST_BLOB = "e9bedfe8c5e07837f5af471d2f490c5d3a4e3b09"
+N01_RECOVERY_DIGEST_TARGETS = frozenset(
+    {
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/"
+            "TR-0127.json",
+            "/inputs/0/sha256",
+        ),
+    }
+)
+
 
 def _prefetch_closed_correction_blobs(
     reader: GitReader,
@@ -1125,6 +1142,111 @@ def validate_n01_transition_digest_correction(
             )
         ], frozenset()
     return [], N01_TRANSITION_DIGEST_TARGETS
+
+
+def validate_n01_recovery_digest_correction(
+    reader: GitReader,
+    source_commit: str,
+    program_root: str,
+    profile: Mapping[str, Any],
+) -> tuple[list[Finding], frozenset[tuple[str, str]]]:
+    """Validate the closed one-claim correction for TR-0127 checkout input."""
+
+    root = normalize_repo_path(program_root)
+    correction_path = (
+        f"{root}/evidence/corrections/{N01_RECOVERY_DIGEST_CORRECTION_ID}.json"
+    )
+    schema_path = f"{root}/schemas/transition-artifact-digest-correction.schema.json"
+    transition_path = f"{root}/evidence/transitions/TR-0127.json"
+    artifact_path = f"{root}/evidence/states/program-state-revision-0127.json"
+    valid = True
+    try:
+        current = reader.resolve_commit(source_commit)
+        schema = strict_loads(reader.blob(current, schema_path))
+        if not isinstance(schema, Mapping) or validate_schema(schema, profile):
+            valid = False
+        correction_container = reader.containing_commit(current, correction_path)
+        transition_identity = reader.resolve_identity(
+            "c9029b92a0b2cac0ec4be78f1271a853f081861e", root
+        )
+        original_transition = reader.blob(
+            "c9029b92a0b2cac0ec4be78f1271a853f081861e", transition_path
+        )
+        current_transition = reader.blob(current, transition_path)
+        transition = strict_loads(original_transition)
+        valid = valid and (
+            reader.is_ancestor(N01_RECOVERY_DIGEST_CONTAINER, current)
+            and correction_container == N01_RECOVERY_DIGEST_CONTAINER
+            and reader.blob(N01_RECOVERY_DIGEST_CONTAINER, correction_path)
+            == reader.blob(current, correction_path)
+            and original_transition == current_transition
+            and sha256_bytes(original_transition) == N01_RECOVERY_DIGEST_RAW_SHA256
+            and reader.blob_id(
+                "c9029b92a0b2cac0ec4be78f1271a853f081861e", transition_path
+            )
+            == N01_RECOVERY_DIGEST_BLOB
+            and transition_identity.source_tree
+            == "dacf0397b17a35e51fa9ea882be3d6ae1c8e6d1a"
+            and transition_identity.program_tree
+            == "15203bda317242bbdbfd0188c647e7561fd7bcdf"
+            and profile.get("correction_id") == N01_RECOVERY_DIGEST_CORRECTION_ID
+            and profile.get("accept_new_records") is False
+            and profile.get("target_transition")
+            == {
+                "path": transition_path,
+                "introducing_commit": "c9029b92a0b2cac0ec4be78f1271a853f081861e",
+                "raw_sha256": N01_RECOVERY_DIGEST_RAW_SHA256,
+                "git_blob": N01_RECOVERY_DIGEST_BLOB,
+            }
+            and profile.get("resolution_semantics")
+            == {
+                "effect": "one_historical_digest_finding_only",
+                "original_transition_immutable": True,
+                "validator_recomputes_git_blob_bytes": True,
+                "no_candidate_or_readiness_credit": True,
+            }
+            and profile.get("authority")
+            == {
+                "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+                "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+                "user_directive": "2026-09-15: Approved. Please follow this recommendation.",
+                "exact_subject_approval": False,
+            }
+        )
+        claims = profile.get("claims")
+        claim = claims[0] if isinstance(claims, list) and len(claims) == 1 else None
+        fact = reader.blob_facts(
+            [("332802fdd828a3880b1e3bcbec71a42931a052e8", artifact_path)]
+        )[("332802fdd828a3880b1e3bcbec71a42931a052e8", artifact_path)]
+        valid = valid and (
+            isinstance(claim, Mapping)
+            and claim
+            == {
+                "json_pointer": "/inputs/0/sha256",
+                "artifact_commit": "332802fdd828a3880b1e3bcbec71a42931a052e8",
+                "artifact_path": artifact_path,
+                "artifact_git_blob": "543ca45f22c305eac9284814adcaa1c3dffc3e05",
+                "recorded_value": "e2b24e8a2b116860a2758d723a0a511ec41dafd7d3dc1da3bdcc5e69e5732352",
+                "authoritative_value": "f3db0412b443ccf79a0e1edab25f0fe094e79ce00d24f63074ec52c54a2a6323",
+            }
+            and _pointer_value(transition, "/inputs/0/sha256")
+            == "e2b24e8a2b116860a2758d723a0a511ec41dafd7d3dc1da3bdcc5e69e5732352"
+            and fact.git_blob == "543ca45f22c305eac9284814adcaa1c3dffc3e05"
+            and fact.sha256
+            == "f3db0412b443ccf79a0e1edab25f0fe094e79ce00d24f63074ec52c54a2a6323"
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        valid = False
+    if not valid:
+        return [
+            _finding(
+                "N01_RECOVERY_DIGEST_CORRECTION_INVALID",
+                "fatal",
+                correction_path,
+                "EXACT_ONE_CLAIM_CORRECTION",
+            )
+        ], frozenset()
+    return [], N01_RECOVERY_DIGEST_TARGETS
 
 
 def _correction_claim_rows(
@@ -3033,6 +3155,7 @@ def _validate_transition_history(
             *F01B_ACTIVATION_DIGEST_TARGETS,
             *F01B_LEASE_CHECKPOINT_DIGEST_TARGETS,
             *N01_TRANSITION_DIGEST_TARGETS,
+            *N01_RECOVERY_DIGEST_TARGETS,
         }
     ):
         findings.append(
@@ -5586,6 +5709,23 @@ def validate_program(
             {*corrected_digest_targets, *n01_digest_targets}
         )
         findings.extend(n01_correction_findings)
+    n01_recovery_correction_path = (
+        f"{root}/evidence/corrections/{N01_RECOVERY_DIGEST_CORRECTION_ID}.json"
+    )
+    n01_recovery_correction = documents.get(n01_recovery_correction_path)
+    if isinstance(n01_recovery_correction, Mapping):
+        n01_recovery_findings, n01_recovery_targets = (
+            validate_n01_recovery_digest_correction(
+                reader,
+                identity.source_commit,
+                root,
+                n01_recovery_correction,
+            )
+        )
+        corrected_digest_targets = frozenset(
+            {*corrected_digest_targets, *n01_recovery_targets}
+        )
+        findings.extend(n01_recovery_findings)
     preflight_correction_path = (
         f"{root}/evidence/corrections/{PREFLIGHT_CORRECTION_ID}.json"
     )
