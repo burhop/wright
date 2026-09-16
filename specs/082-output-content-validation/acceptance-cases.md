@@ -24,6 +24,43 @@ Read [jig center guidance](../081-engineering-workflow-templates/dataset-campaig
 
 Each family has cases 01, 02 and 03. T002/T029 reconcile all canonical manifest IDs and sources; no family is silently dropped.
 
+The machine-readable authority is packaged as `process_validation/profiles/coverage.json` version 2. `qualified` means a frozen bounded profile, independent controls and a retained canonical process demonstration exist. `implemented` means a reusable reader exists but the named pack has no qualified profile. `planned` means the extension recipe is defined but incomplete. `unavailable` means there is currently no trustworthy bounded reader. A scenario is `unsupported` unless all capabilities in its declared bounded profile are qualified; a generic reader does not make the scenario pass-ready.
+
+### Reconciled pack status
+
+| Canonical pack | Scenario status | Capability status | Qualified scope or blocking reason |
+|---|---|---|---|
+| heat-spreader-sizing-01 | qualified | thermal.conduction=qualified, numerical.refinement=qualified | 40/60 mm conduction fields, analytical rise, heat balance, refinement and 45°C selection only. |
+| heat-spreader-sizing-02 | unsupported | thermal.conduction=planned, numerical.refinement=planned | No frozen scenario profile; mandatory requests block until both recipes are implemented and qualified. |
+| heat-spreader-sizing-03 | unsupported | thermal.conduction=planned, numerical.refinement=planned | No frozen scenario profile; mandatory requests block until both recipes are implemented and qualified. |
+| lightweight-equipment-bracket-01 | unsupported | geometry=planned, structural.fields=unavailable | No frozen profile or qualified structural-field reader. |
+| lightweight-equipment-bracket-02 | unsupported | geometry=planned, structural.fields=unavailable | No frozen profile or qualified structural-field reader. |
+| lightweight-equipment-bracket-03 | unsupported | geometry=planned, structural.fields=unavailable | No frozen profile or qualified structural-field reader. |
+| parametric-drill-jig-01 | qualified | geometry=qualified, fit.datum=qualified | H1/H2 seat centers and diameters in the frozen workpiece datum only. |
+| parametric-drill-jig-02 | unsupported | geometry=planned, fit.datum=planned | No frozen scenario profile; the jig-01 selectors cannot be assumed to cover this pack. |
+| parametric-drill-jig-03 | unsupported | geometry=planned, fit.datum=planned | No frozen scenario profile; the jig-01 selectors cannot be assumed to cover this pack. |
+| printed-replacement-part-01 | unsupported | geometry=planned, manufacturing.slice=unavailable | No frozen profile or qualified slicer/toolpath reader. |
+| printed-replacement-part-02 | unsupported | geometry=planned, manufacturing.slice=unavailable | No frozen profile or qualified slicer/toolpath reader. |
+| printed-replacement-part-03 | unsupported | geometry=planned, manufacturing.slice=unavailable | No frozen profile or qualified slicer/toolpath reader. |
+| raspberry-pi-enclosure-01 | unsupported | geometry=planned, source.authority=unavailable, thermal.cfd=unavailable | Manufacturer-authority and CFD readback are unavailable. |
+| raspberry-pi-enclosure-02 | unsupported | geometry=planned, source.authority=unavailable, thermal.cfd=unavailable | Manufacturer-authority and CFD readback are unavailable. |
+| raspberry-pi-enclosure-03 | unsupported | geometry=planned, source.authority=unavailable, thermal.cfd=unavailable | Manufacturer-authority and CFD readback are unavailable. |
+| robot-tracking-diagnosis-01 | unsupported | structured=implemented, timeseries.frames=planned | Generic CSV/JSON inspection exists; pack-specific clock/frame semantics and profile are not qualified. |
+| robot-tracking-diagnosis-02 | unsupported | structured=implemented, timeseries.frames=planned | Generic CSV/JSON inspection exists; pack-specific clock/frame semantics and profile are not qualified. |
+| robot-tracking-diagnosis-03 | unsupported | structured=implemented, timeseries.frames=planned | Generic CSV/JSON inspection exists; pack-specific clock/frame semantics and profile are not qualified. |
+| sensor-fan-harness-01 | unsupported | structured=implemented, electrical.network=unavailable | Generic structured inspection exists; no qualified connectivity/current/drop reader. |
+| sensor-fan-harness-02 | unsupported | structured=implemented, electrical.network=unavailable | Generic structured inspection exists; no qualified connectivity/current/drop reader. |
+| sensor-fan-harness-03 | unsupported | structured=implemented, electrical.network=unavailable | Generic structured inspection exists; no qualified connectivity/current/drop reader. |
+| sensor-interface-pcb-01 | unsupported | electrical.netlist=unavailable, manufacturing.ecad=unavailable | No qualified native netlist or PCB/fabrication correspondence reader. |
+| sensor-interface-pcb-02 | unsupported | electrical.netlist=unavailable, manufacturing.ecad=unavailable | No qualified native netlist or PCB/fabrication correspondence reader. |
+| sensor-interface-pcb-03 | unsupported | electrical.netlist=unavailable, manufacturing.ecad=unavailable | No qualified native netlist or PCB/fabrication correspondence reader. |
+| sheet-metal-supplier-handoff-01 | unsupported | geometry=planned, manufacturing.sheet_metal=unavailable, bundle=planned | No qualified native flat-pattern reader or frozen cross-format bundle profile. |
+| sheet-metal-supplier-handoff-02 | unsupported | geometry=planned, manufacturing.sheet_metal=unavailable, bundle=planned | No qualified native flat-pattern reader or frozen cross-format bundle profile. |
+| sheet-metal-supplier-handoff-03 | unsupported | geometry=planned, manufacturing.sheet_metal=unavailable, bundle=planned | No qualified native flat-pattern reader or frozen cross-format bundle profile. |
+| water-heater-sizing-01 | unsupported | numerical.timeseries=planned, modelica.model=unavailable | No qualified trajectory reader or Modelica semantic/runtime inspection. |
+| water-heater-sizing-02 | unsupported | numerical.timeseries=planned, modelica.model=unavailable | No qualified trajectory reader or Modelica semantic/runtime inspection. |
+| water-heater-sizing-03 | unsupported | numerical.timeseries=planned, modelica.model=unavailable | No qualified trajectory reader or Modelica semantic/runtime inspection. |
+
 | Family | Reusable capabilities and distinctive constraints | Version 1 / expansion |
 |---|---|---|
 | printed-replacement-part | Geometry/fit, D-socket/scallops, finger clearance, wedge orientation, slice/material correspondence | Basic geometry reused; full manufacturing/slicer inspection later |
@@ -40,6 +77,26 @@ Each family has cases 01, 02 and 03. T002/T029 reconcile all canonical manifest 
 Support states are capability-level `implemented`, `qualified`, `planned` or `unavailable`, with named limitations. Requested mandatory unsupported checks return blocked. A profile cannot declare itself fully supported by silently removing required checks.
 
 Preserve current Modelica derivative and 2 K thermostat/energy semantics, Pi source authority and exact sheet-metal amendment scopes when expanding. No all-30 evaluation or campaign counter changes belong to this initial goal.
+
+### Extension recipes
+
+Every new pack starts by freezing all mandatory requirements, exact source locators and exclusions. It then binds actual candidate revisions, implements bounded readback, and qualifies valid, alternative, targeted-defect and inclusive-boundary controls before changing `support` to `qualified`. The packaged support map contains exact prerequisites and steps for every capability. The family-specific work is:
+
+| Capability | Required extension |
+|---|---|
+| geometry / fit.datum | Define semantic features, datum transforms, units and tolerances; inspect every mandatory feature in the actual candidate; qualify missing/topology/datum/clearance defects. |
+| manufacturing.slice | Bind model revision, material and slicer settings; read layers/toolpaths; check orientation, print clearance and source/output correspondence. |
+| source.authority | Pin versioned manufacturer sources and locators; define conflict/staleness policy; block unavailable or inconsistent authority. |
+| thermal.cfd | Bind geometry, mesh, materials, loads and boundaries; read fields; independently check balance, convergence and requirement quantities. |
+| manufacturing.sheet_metal / bundle | Bind formed, native-flat, STEP, DXF and inventory revisions; inspect bends/reliefs/thickness and exact multipart/quantity correspondence. |
+| structural.fields | Bind geometry, material, load, restraint and mesh; read reactions/stress/displacement fields; check equilibrium, convergence and wrong-boundary controls. |
+| structured / timeseries.frames | Freeze JSON/CSV selectors plus unit, clock, mask and frame rules; derive metrics from raw samples; qualify duplicate, offset, dropout and transform defects. |
+| electrical.network | Read the actual endpoint/splice graph and wire properties; independently compute shared currents, voltage drop and cut lengths. |
+| electrical.netlist / manufacturing.ecad | Read native nets, values, footprints and coordinates; bind native PCB to Gerber/drill/BOM revisions; test wrong content despite clean ERC/DRC. |
+| thermal.conduction / numerical.refinement | Freeze dimensions, loads, conductivity and boundaries; bind coarse/fine fields; independently compute analytical rise, balance and sensitivity. |
+| numerical.timeseries / modelica.model | Inspect approved equations, parameters and derivative semantics; bind the compiled trajectory; independently check integration, crossings, energy and candidate grids. |
+
+Changing a status requires updating the generated map, adding the frozen profile and readers to the installed package, linking qualification evidence, and passing `test_process_validation_coverage.py`. Copying a sibling profile or observing a tool success flag is insufficient.
 
 ## Validator correctness and process reliability
 

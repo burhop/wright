@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M0–M3 complete; M4 capability and process slices complete through T028.
-**Implementation:** T001–T028 complete. T029–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M0–M4 complete; closure M5 remains.
+**Implementation:** T001–T029 complete. T030–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -131,3 +131,13 @@ T023–T027 are complete. At this checkpoint their reader tests alone did not cl
 - Independent retained-evidence and saved-process checks: **17 passed** using `.venv/Scripts/python.exe -m pytest tests/external/process_validation/test_engineering_process_evidence.py packages/workspace_service/tests/test_workflow_process_validation_rework.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-m4-evidence-2`. Ruff and `git diff --check` passed.
 
 T028 is complete. T029 30-pack capability reconciliation and closure tasks T030–T034 remain. Failed exploratory evidence directories are local diagnostics and are not retained as qualifying artifacts.
+
+## M4 capability reconciliation — 2026-09-16
+
+- T029: `coverage.json` version 2 is a deterministic packaged support map for exactly 30 canonical scenario IDs across ten families. It retains every source path, size and SHA-256 plus its source requirement and defect seeds. Regeneration from current manifests must produce the committed file byte-for-byte at the data-model level.
+- Only `parametric-drill-jig-01` and `heat-spreader-sizing-01` are scenario-qualified, and only for their frozen bounded profiles. Their exact profile/baseline references, reader identities, limitations and retained evidence are pinned. The other 28 scenarios are explicitly `unsupported`; none inherits qualification from a sibling.
+- Generic structured JSON/CSV/text inspection is recorded as `implemented` for the robot-diagnosis and harness families, while their pack profiles remain unsupported. Remaining gaps distinguish `planned` extensions from `unavailable` trusted readers, including slicer, CFD, FEA, native sheet-metal, electrical network/netlist, ECAD and Modelica semantics.
+- `acceptance-cases.md` now lists every pack and capability state and gives extension recipes. The packaged map carries machine-readable prerequisites and steps for every capability. Status cannot advance to qualified without a frozen profile, installed reader, independent controls and linked process evidence.
+- Coverage integrity suite: **4 passed** using `.venv/Scripts/python.exe -m pytest packages/workspace_service/tests/test_process_validation_coverage.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-coverage-1`. Ruff and `git diff --check` passed.
+
+M4 and T023–T029 are complete. Closure tasks T030–T034 remain; the capability map explicitly does not claim whole-design, physical or all-30 output qualification.

@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** Implementation active under the submitted goal. T001–T028 and the engineering process demonstrations are complete; T029 and M5 remain. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
+**Status:** Implementation active under the submitted goal. T001–T029 and M4 are complete; M5 remains. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -61,7 +61,7 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 - [x] T026 [US4] Implement heat field/table/balance/refinement readers and independent numerical checks in `packages/workspace_service/src/workspace_service/process_validation/readers/thermal.py`; require actual candidate/baseline/refined field lineage, analytical temperature-rise comparison, heat balance and source-derived selection limits.
 - [x] T027 [US4] Qualify numerical checks with analytical references and targeted wrong-load, missing-candidate, fabricated-summary, unit and threshold controls in `tests/datasets/process-validation/thermal/` and `tests/external/process_validation/test_thermal.py`; accurate infeasibility must remain distinct from invalid analysis.
 - [x] T028 [US4] Run isolated canonical jig AI/MCP producer → validator → actual correction → revalidation → consumer and a heat-output validation process; retain real measurements, feedback delivery, old/new output identities and final dispositions under `artifacts/process-validation/engineering/`. Reuse retained source output read-only where appropriate; do not repair the generation campaign.
-- [ ] T029 [US4] Reconcile all 30 pack entries against implemented/planned capabilities in `process_validation/profiles/coverage.json` and `specs/082-output-content-validation/acceptance-cases.md`; publish extension recipes and honest unsupported states. Do not claim all 30 designs or all family readers are verified.
+- [x] T029 [US4] Reconcile all 30 pack entries against implemented/planned capabilities in `process_validation/profiles/coverage.json` and `specs/082-output-content-validation/acceptance-cases.md`; publish extension recipes and honest unsupported states. Do not claim all 30 designs or all family readers are verified.
 
 ## Phase 7 — Closure (M5)
 

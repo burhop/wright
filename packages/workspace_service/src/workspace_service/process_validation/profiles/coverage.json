@@ -1,7 +1,206 @@
 {
-  "schema_version": "wright.process-validation-coverage/1",
-  "kind": "source_inventory",
-  "scope": "Requirement seeds and planned reader support; no measured output verdicts.",
+  "schema_version": "wright.process-validation-coverage/2",
+  "kind": "capability_support_map",
+  "scope": "Thirty source packs reconciled against current bounded runtime capabilities. Qualification applies only to the declared profile scope and is not a whole-design or physical verdict.",
+  "support_definitions": {
+    "qualified": "A frozen scenario profile and reader scope passed independent controls and a retained canonical process demonstration.",
+    "implemented": "A reusable runtime capability exists, but this scenario has no frozen and qualified profile for it.",
+    "planned": "The extension is defined, but its scenario-specific profile or reader is not implemented and qualified.",
+    "unavailable": "No bounded trustworthy runtime reader is currently available for this capability."
+  },
+  "qualified_scenarios": [
+    "heat-spreader-sizing-01",
+    "parametric-drill-jig-01"
+  ],
+  "extension_recipes": {
+    "geometry": {
+      "prerequisites": [
+        "authoritative geometry requirements",
+        "actual candidate files"
+      ],
+      "steps": [
+        "freeze semantic feature selectors, datum, units and tolerances",
+        "implement actual-file readback for every mandatory feature",
+        "qualify good, alternate, targeted-defect and boundary controls"
+      ]
+    },
+    "fit.datum": {
+      "prerequisites": [
+        "source-backed mating dimensions",
+        "declared datum frame"
+      ],
+      "steps": [
+        "separate radial and diametral clearances",
+        "measure mating features in the declared frame",
+        "qualify transformed-datum and unit-error controls"
+      ]
+    },
+    "manufacturing.slice": {
+      "prerequisites": [
+        "qualified slicer or format reader",
+        "material and process limits"
+      ],
+      "steps": [
+        "bind model revision to slicer inputs and settings",
+        "read layer/toolpath and material facts independently",
+        "qualify orientation, clearance and correspondence defects"
+      ]
+    },
+    "source.authority": {
+      "prerequisites": [
+        "versioned manufacturer source",
+        "approved authority policy"
+      ],
+      "steps": [
+        "pin source identity and retrieval date",
+        "map each interface requirement to an exact locator",
+        "block stale, conflicting or unavailable authority"
+      ]
+    },
+    "thermal.cfd": {
+      "prerequisites": [
+        "qualified field reader",
+        "boundary-condition lineage"
+      ],
+      "steps": [
+        "bind mesh, loads, materials and solver output revisions",
+        "measure balance, convergence and requirement quantities",
+        "qualify wrong-load, mesh and fabricated-summary defects"
+      ]
+    },
+    "manufacturing.sheet_metal": {
+      "prerequisites": [
+        "qualified native flat-pattern reader",
+        "bend and material rules"
+      ],
+      "steps": [
+        "bind formed and flat revisions",
+        "inspect bends, reliefs, thickness and true flat geometry",
+        "qualify correspondence and multipart completeness defects"
+      ]
+    },
+    "bundle": {
+      "prerequisites": [
+        "declared deliverable inventory",
+        "cross-format identity rules"
+      ],
+      "steps": [
+        "freeze required files, quantities and revision relationships",
+        "inspect bounded archive contents and cross-file identifiers",
+        "qualify missing, duplicate, stale and mismatched members"
+      ]
+    },
+    "structural.fields": {
+      "prerequisites": [
+        "qualified FEA field reader",
+        "load/restraint lineage"
+      ],
+      "steps": [
+        "bind geometry, loads, restraints, materials and mesh",
+        "read reactions, stress and displacement fields",
+        "qualify equilibrium, convergence and wrong-boundary defects"
+      ]
+    },
+    "structured": {
+      "prerequisites": [
+        "frozen field/table schema",
+        "source-backed limits"
+      ],
+      "steps": [
+        "map every mandatory requirement to exact JSON/CSV selectors",
+        "freeze units, missing-value and identity rules",
+        "qualify duplicate, malformed, boundary and stale controls"
+      ]
+    },
+    "timeseries.frames": {
+      "prerequisites": [
+        "clock and frame definitions",
+        "qualified time-series reader"
+      ],
+      "steps": [
+        "bind timestamps, masks and transforms",
+        "derive metrics from raw samples rather than summaries",
+        "qualify offset, frame, dropout and windowing defects"
+      ]
+    },
+    "electrical.network": {
+      "prerequisites": [
+        "frozen connectivity graph",
+        "wire and load properties"
+      ],
+      "steps": [
+        "read endpoint and splice topology",
+        "compute shared currents, voltage drop and cut length",
+        "qualify swapped-net, missing-return and unit defects"
+      ]
+    },
+    "electrical.netlist": {
+      "prerequisites": [
+        "qualified native netlist reader",
+        "frozen component/net rules"
+      ],
+      "steps": [
+        "read exact nets, values, footprints and coordinates",
+        "bind electrical rules to source requirements",
+        "qualify wrong-net, value, placement and power defects"
+      ]
+    },
+    "manufacturing.ecad": {
+      "prerequisites": [
+        "qualified PCB/fabrication readers",
+        "fab-output lineage"
+      ],
+      "steps": [
+        "bind native design to Gerber, drill and BOM revisions",
+        "inspect stackup, clearances and output correspondence",
+        "qualify DRC-success-with-wrong-content and stale-output defects"
+      ]
+    },
+    "thermal.conduction": {
+      "prerequisites": [
+        "candidate and refined fields",
+        "source-backed thermal constants"
+      ],
+      "steps": [
+        "freeze geometry, loads, conductivity and boundary conditions",
+        "read actual fields and independently compute balance/reference rise",
+        "qualify load, unit, lineage and threshold defects"
+      ]
+    },
+    "numerical.refinement": {
+      "prerequisites": [
+        "paired coarse/fine outputs",
+        "declared comparison metric"
+      ],
+      "steps": [
+        "bind both outputs to one candidate revision",
+        "derive sensitivity from the actual fields",
+        "qualify missing, swapped and nonconverged pairs"
+      ]
+    },
+    "numerical.timeseries": {
+      "prerequisites": [
+        "qualified trajectory reader",
+        "source-backed event criteria"
+      ],
+      "steps": [
+        "bind parameters, initial conditions and time grid",
+        "integrate energy and locate threshold crossings independently",
+        "qualify truncation, timestep, unit and candidate-grid defects"
+      ]
+    },
+    "modelica.model": {
+      "prerequisites": [
+        "qualified Modelica parser/runtime",
+        "approved model semantics"
+      ],
+      "steps": [
+        "inspect equations, parameters and derivative semantics",
+        "bind compiled simulation to the exact model revision",
+        "qualify altered thermostat, energy and initialization behavior"
+      ]
+    }
+  },
   "seed_source": {
     "path": "specs/081-engineering-workflow-templates/content-validation/acceptance-cases.md",
     "sha256": "72225ff8461837333a5ab30acccef26c9d2d5b618b068245d40e86762fe4fc87"
@@ -12,7 +211,7 @@
       "family": "heat-spreader-sizing",
       "source_requirements_seed": "Two true conduction fields, 40/60 mm widths; 4 W, k=200, 25°C cold end; analytical/balance/refinement agreement; choose 60 mm against 45°C",
       "targeted_defect_seed": "Use the analytical table as a supposed solver field",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
@@ -50,14 +249,51 @@
           "size_bytes": 442
         }
       ],
+      "support_status": "qualified",
+      "profile": {
+        "profile_resource": "heat-spreader-sizing-01",
+        "profile_ref": {
+          "id": "heat-spreader-sizing-01-fields",
+          "version": "1",
+          "sha256": "28c7cbd9811fe2423715b7c485195a5cafd53cbc7118a66492fa0995036bdc82"
+        },
+        "baseline_ref": {
+          "id": "heat-spreader-sizing-01-basis",
+          "version": "1",
+          "sha256": "3f6464140ae741a0ef9ecd8dabcde8bcbbe3cc1f9755955d7ec12b1cac89e564"
+        },
+        "reader_ids": [
+          "thermal-field@1"
+        ],
+        "scope": "40/60 mm conduction fields, analytical rise, heat balance, refinement and 45 degC selection.",
+        "limitations": "Interface resistance, CAD/manufacturing and physical thermal qualification remain excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_thermal.py",
+          "artifacts/process-validation/engineering/20260916T213859Z/heat/evidence.json"
+        ]
+      },
       "capabilities": [
         {
           "id": "thermal.conduction",
-          "support": "planned"
+          "support": "qualified",
+          "scope": "40/60 mm conduction fields, analytical rise, heat balance, refinement and 45 degC selection.",
+          "limitation": "Interface resistance, CAD/manufacturing and physical thermal qualification remain excluded.",
+          "extension_recipe": "thermal.conduction",
+          "evidence": [
+            "tests/external/process_validation/test_thermal.py",
+            "artifacts/process-validation/engineering/20260916T213859Z/heat/evidence.json"
+          ]
         },
         {
           "id": "numerical.refinement",
-          "support": "planned"
+          "support": "qualified",
+          "scope": "40/60 mm conduction fields, analytical rise, heat balance, refinement and 45 degC selection.",
+          "limitation": "Interface resistance, CAD/manufacturing and physical thermal qualification remain excluded.",
+          "extension_recipe": "numerical.refinement",
+          "evidence": [
+            "tests/external/process_validation/test_thermal.py",
+            "artifacts/process-validation/engineering/20260916T213859Z/heat/evidence.json"
+          ]
         }
       ],
       "initial_slice": true
@@ -105,14 +341,24 @@
           "size_bytes": 436
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "thermal.conduction",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "thermal.conduction",
+          "evidence": []
         },
         {
           "id": "numerical.refinement",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "numerical.refinement",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -165,14 +411,24 @@
           "size_bytes": 470
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "thermal.conduction",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "thermal.conduction",
+          "evidence": []
         },
         {
           "id": "numerical.refinement",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "numerical.refinement",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -225,14 +481,24 @@
           "size_bytes": 343
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "structural.fields",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "structural.fields",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -285,14 +551,24 @@
           "size_bytes": 321
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "structural.fields",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "structural.fields",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -345,14 +621,24 @@
           "size_bytes": 312
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "structural.fields",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "structural.fields",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -362,7 +648,7 @@
       "family": "parametric-drill-jig",
       "source_requirements_seed": "Workpiece-datum seat centers at (30,30)/(170,30), ±0.20 mm per axis; body seats from 10.0+0.20 mm diametral clearance; flange stackup and clamps",
       "targeted_defect_seed": "Use radial instead of diametral clearance or center the holes relative to the jig outline",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/01-furniture-rail-insert-jig/bushings.csv",
@@ -410,14 +696,51 @@
           "size_bytes": 432
         }
       ],
+      "support_status": "qualified",
+      "profile": {
+        "profile_resource": "parametric-drill-jig-01",
+        "profile_ref": {
+          "id": "parametric-drill-jig-01-seat-geometry",
+          "version": "1",
+          "sha256": "5488f377adfa5eaea61ce4b8e299654bb74709ed313b67e8f04494bd2e4a3884"
+        },
+        "baseline_ref": {
+          "id": "parametric-drill-jig-01-seat-basis",
+          "version": "1",
+          "sha256": "5fb63ff5fca47d189665efe2d22424743205a0c12812f193cd79b49fe4ebf2d8"
+        },
+        "reader_ids": [
+          "step-seat-geometry@1"
+        ],
+        "scope": "H1/H2 seat centers and diameters in the frozen workpiece datum only.",
+        "limitations": "Clamp, keys, stock, full fit/manufacturing and physical qualification remain excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_geometry.py",
+          "artifacts/process-validation/engineering/20260916T213859Z/jig/evidence.json"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "qualified",
+          "scope": "H1/H2 seat centers and diameters in the frozen workpiece datum only.",
+          "limitation": "Clamp, keys, stock, full fit/manufacturing and physical qualification remain excluded.",
+          "extension_recipe": "geometry",
+          "evidence": [
+            "tests/external/process_validation/test_geometry.py",
+            "artifacts/process-validation/engineering/20260916T213859Z/jig/evidence.json"
+          ]
         },
         {
           "id": "fit.datum",
-          "support": "planned"
+          "support": "qualified",
+          "scope": "H1/H2 seat centers and diameters in the frozen workpiece datum only.",
+          "limitation": "Clamp, keys, stock, full fit/manufacturing and physical qualification remain excluded.",
+          "extension_recipe": "fit.datum",
+          "evidence": [
+            "tests/external/process_validation/test_geometry.py",
+            "artifacts/process-validation/engineering/20260916T213859Z/jig/evidence.json"
+          ]
         }
       ],
       "initial_slice": true
@@ -475,14 +798,24 @@
           "size_bytes": 423
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "fit.datum",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "fit.datum",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -540,14 +873,24 @@
           "size_bytes": 484
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "fit.datum",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "fit.datum",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -590,14 +933,24 @@
           "size_bytes": 584
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "manufacturing.slice",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.slice",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -640,14 +993,24 @@
           "size_bytes": 500
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "manufacturing.slice",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.slice",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -690,14 +1053,24 @@
           "size_bytes": 521
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "manufacturing.slice",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.slice",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -740,18 +1113,32 @@
           "size_bytes": 491
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "source.authority",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "source.authority",
+          "evidence": []
         },
         {
           "id": "thermal.cfd",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "thermal.cfd",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -799,18 +1186,32 @@
           "size_bytes": 474
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "source.authority",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "source.authority",
+          "evidence": []
         },
         {
           "id": "thermal.cfd",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "thermal.cfd",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -863,18 +1264,32 @@
           "size_bytes": 527
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "source.authority",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "source.authority",
+          "evidence": []
         },
         {
           "id": "thermal.cfd",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "thermal.cfd",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -952,14 +1367,26 @@
           "size_bytes": 1363
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "structured",
-          "support": "planned"
+          "support": "implemented",
+          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
+          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "extension_recipe": "structured",
+          "evidence": [
+            "packages/workspace_service/tests/test_process_validation.py"
+          ]
         },
         {
           "id": "timeseries.frames",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "timeseries.frames",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1037,14 +1464,26 @@
           "size_bytes": 1374
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "structured",
-          "support": "planned"
+          "support": "implemented",
+          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
+          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "extension_recipe": "structured",
+          "evidence": [
+            "packages/workspace_service/tests/test_process_validation.py"
+          ]
         },
         {
           "id": "timeseries.frames",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "timeseries.frames",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1122,14 +1561,26 @@
           "size_bytes": 1598
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "structured",
-          "support": "planned"
+          "support": "implemented",
+          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
+          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "extension_recipe": "structured",
+          "evidence": [
+            "packages/workspace_service/tests/test_process_validation.py"
+          ]
         },
         {
           "id": "timeseries.frames",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "timeseries.frames",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1187,14 +1638,26 @@
           "size_bytes": 421
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "structured",
-          "support": "planned"
+          "support": "implemented",
+          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
+          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "extension_recipe": "structured",
+          "evidence": [
+            "packages/workspace_service/tests/test_process_validation.py"
+          ]
         },
         {
           "id": "electrical.network",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "electrical.network",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1252,14 +1715,26 @@
           "size_bytes": 572
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "structured",
-          "support": "planned"
+          "support": "implemented",
+          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
+          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "extension_recipe": "structured",
+          "evidence": [
+            "packages/workspace_service/tests/test_process_validation.py"
+          ]
         },
         {
           "id": "electrical.network",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "electrical.network",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1317,14 +1792,26 @@
           "size_bytes": 1120
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "structured",
-          "support": "planned"
+          "support": "implemented",
+          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
+          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "extension_recipe": "structured",
+          "evidence": [
+            "packages/workspace_service/tests/test_process_validation.py"
+          ]
         },
         {
           "id": "electrical.network",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "electrical.network",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1377,14 +1864,24 @@
           "size_bytes": 296
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "electrical.netlist",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "electrical.netlist",
+          "evidence": []
         },
         {
           "id": "manufacturing.ecad",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.ecad",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1437,14 +1934,24 @@
           "size_bytes": 293
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "electrical.netlist",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "electrical.netlist",
+          "evidence": []
         },
         {
           "id": "manufacturing.ecad",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.ecad",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1497,14 +2004,24 @@
           "size_bytes": 336
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "electrical.netlist",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "electrical.netlist",
+          "evidence": []
         },
         {
           "id": "manufacturing.ecad",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.ecad",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1567,18 +2084,32 @@
           "size_bytes": 452
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "manufacturing.sheet_metal",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.sheet_metal",
+          "evidence": []
         },
         {
           "id": "bundle",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "bundle",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1651,18 +2182,32 @@
           "size_bytes": 456
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "manufacturing.sheet_metal",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.sheet_metal",
+          "evidence": []
         },
         {
           "id": "bundle",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "bundle",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1730,18 +2275,32 @@
           "size_bytes": 554
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "geometry",
+          "evidence": []
         },
         {
           "id": "manufacturing.sheet_metal",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "manufacturing.sheet_metal",
+          "evidence": []
         },
         {
           "id": "bundle",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "bundle",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1799,14 +2358,24 @@
           "size_bytes": 286
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "numerical.timeseries",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "numerical.timeseries",
+          "evidence": []
         },
         {
           "id": "modelica.model",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "modelica.model",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1869,14 +2438,24 @@
           "size_bytes": 301
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "numerical.timeseries",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "numerical.timeseries",
+          "evidence": []
         },
         {
           "id": "modelica.model",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "modelica.model",
+          "evidence": []
         }
       ],
       "initial_slice": false
@@ -1939,14 +2518,24 @@
           "size_bytes": 338
         }
       ],
+      "support_status": "unsupported",
+      "profile": null,
       "capabilities": [
         {
           "id": "numerical.timeseries",
-          "support": "planned"
+          "support": "planned",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "numerical.timeseries",
+          "evidence": []
         },
         {
           "id": "modelica.model",
-          "support": "planned"
+          "support": "unavailable",
+          "scope": null,
+          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "extension_recipe": "modelica.model",
+          "evidence": []
         }
       ],
       "initial_slice": false

@@ -20,6 +20,238 @@ CAPABILITIES = {
     "water-heater-sizing": ["numerical.timeseries", "modelica.model"],
 }
 
+SUPPORT_DEFINITIONS = {
+    "qualified": "A frozen scenario profile and reader scope passed independent controls and a retained canonical process demonstration.",
+    "implemented": "A reusable runtime capability exists, but this scenario has no frozen and qualified profile for it.",
+    "planned": "The extension is defined, but its scenario-specific profile or reader is not implemented and qualified.",
+    "unavailable": "No bounded trustworthy runtime reader is currently available for this capability.",
+}
+
+EXTENSION_RECIPES = {
+    "geometry": {
+        "prerequisites": ["authoritative geometry requirements", "actual candidate files"],
+        "steps": [
+            "freeze semantic feature selectors, datum, units and tolerances",
+            "implement actual-file readback for every mandatory feature",
+            "qualify good, alternate, targeted-defect and boundary controls",
+        ],
+    },
+    "fit.datum": {
+        "prerequisites": ["source-backed mating dimensions", "declared datum frame"],
+        "steps": [
+            "separate radial and diametral clearances",
+            "measure mating features in the declared frame",
+            "qualify transformed-datum and unit-error controls",
+        ],
+    },
+    "manufacturing.slice": {
+        "prerequisites": ["qualified slicer or format reader", "material and process limits"],
+        "steps": [
+            "bind model revision to slicer inputs and settings",
+            "read layer/toolpath and material facts independently",
+            "qualify orientation, clearance and correspondence defects",
+        ],
+    },
+    "source.authority": {
+        "prerequisites": ["versioned manufacturer source", "approved authority policy"],
+        "steps": [
+            "pin source identity and retrieval date",
+            "map each interface requirement to an exact locator",
+            "block stale, conflicting or unavailable authority",
+        ],
+    },
+    "thermal.cfd": {
+        "prerequisites": ["qualified field reader", "boundary-condition lineage"],
+        "steps": [
+            "bind mesh, loads, materials and solver output revisions",
+            "measure balance, convergence and requirement quantities",
+            "qualify wrong-load, mesh and fabricated-summary defects",
+        ],
+    },
+    "manufacturing.sheet_metal": {
+        "prerequisites": ["qualified native flat-pattern reader", "bend and material rules"],
+        "steps": [
+            "bind formed and flat revisions",
+            "inspect bends, reliefs, thickness and true flat geometry",
+            "qualify correspondence and multipart completeness defects",
+        ],
+    },
+    "bundle": {
+        "prerequisites": ["declared deliverable inventory", "cross-format identity rules"],
+        "steps": [
+            "freeze required files, quantities and revision relationships",
+            "inspect bounded archive contents and cross-file identifiers",
+            "qualify missing, duplicate, stale and mismatched members",
+        ],
+    },
+    "structural.fields": {
+        "prerequisites": ["qualified FEA field reader", "load/restraint lineage"],
+        "steps": [
+            "bind geometry, loads, restraints, materials and mesh",
+            "read reactions, stress and displacement fields",
+            "qualify equilibrium, convergence and wrong-boundary defects",
+        ],
+    },
+    "structured": {
+        "prerequisites": ["frozen field/table schema", "source-backed limits"],
+        "steps": [
+            "map every mandatory requirement to exact JSON/CSV selectors",
+            "freeze units, missing-value and identity rules",
+            "qualify duplicate, malformed, boundary and stale controls",
+        ],
+    },
+    "timeseries.frames": {
+        "prerequisites": ["clock and frame definitions", "qualified time-series reader"],
+        "steps": [
+            "bind timestamps, masks and transforms",
+            "derive metrics from raw samples rather than summaries",
+            "qualify offset, frame, dropout and windowing defects",
+        ],
+    },
+    "electrical.network": {
+        "prerequisites": ["frozen connectivity graph", "wire and load properties"],
+        "steps": [
+            "read endpoint and splice topology",
+            "compute shared currents, voltage drop and cut length",
+            "qualify swapped-net, missing-return and unit defects",
+        ],
+    },
+    "electrical.netlist": {
+        "prerequisites": ["qualified native netlist reader", "frozen component/net rules"],
+        "steps": [
+            "read exact nets, values, footprints and coordinates",
+            "bind electrical rules to source requirements",
+            "qualify wrong-net, value, placement and power defects",
+        ],
+    },
+    "manufacturing.ecad": {
+        "prerequisites": ["qualified PCB/fabrication readers", "fab-output lineage"],
+        "steps": [
+            "bind native design to Gerber, drill and BOM revisions",
+            "inspect stackup, clearances and output correspondence",
+            "qualify DRC-success-with-wrong-content and stale-output defects",
+        ],
+    },
+    "thermal.conduction": {
+        "prerequisites": ["candidate and refined fields", "source-backed thermal constants"],
+        "steps": [
+            "freeze geometry, loads, conductivity and boundary conditions",
+            "read actual fields and independently compute balance/reference rise",
+            "qualify load, unit, lineage and threshold defects",
+        ],
+    },
+    "numerical.refinement": {
+        "prerequisites": ["paired coarse/fine outputs", "declared comparison metric"],
+        "steps": [
+            "bind both outputs to one candidate revision",
+            "derive sensitivity from the actual fields",
+            "qualify missing, swapped and nonconverged pairs",
+        ],
+    },
+    "numerical.timeseries": {
+        "prerequisites": ["qualified trajectory reader", "source-backed event criteria"],
+        "steps": [
+            "bind parameters, initial conditions and time grid",
+            "integrate energy and locate threshold crossings independently",
+            "qualify truncation, timestep, unit and candidate-grid defects",
+        ],
+    },
+    "modelica.model": {
+        "prerequisites": ["qualified Modelica parser/runtime", "approved model semantics"],
+        "steps": [
+            "inspect equations, parameters and derivative semantics",
+            "bind compiled simulation to the exact model revision",
+            "qualify altered thermostat, energy and initialization behavior",
+        ],
+    },
+}
+
+GENERIC_IMPLEMENTED = {
+    ("robot-tracking-diagnosis", "structured"),
+    ("sensor-fan-harness", "structured"),
+}
+
+UNAVAILABLE = {
+    "manufacturing.slice",
+    "source.authority",
+    "thermal.cfd",
+    "manufacturing.sheet_metal",
+    "structural.fields",
+    "electrical.network",
+    "electrical.netlist",
+    "manufacturing.ecad",
+    "modelica.model",
+}
+
+QUALIFIED = {
+    "parametric-drill-jig-01": {
+        "profile_resource": "parametric-drill-jig-01",
+        "profile_ref": {
+            "id": "parametric-drill-jig-01-seat-geometry",
+            "version": "1",
+            "sha256": "5488f377adfa5eaea61ce4b8e299654bb74709ed313b67e8f04494bd2e4a3884",
+        },
+        "baseline_ref": {
+            "id": "parametric-drill-jig-01-seat-basis",
+            "version": "1",
+            "sha256": "5fb63ff5fca47d189665efe2d22424743205a0c12812f193cd79b49fe4ebf2d8",
+        },
+        "reader_ids": ["step-seat-geometry@1"],
+        "scope": "H1/H2 seat centers and diameters in the frozen workpiece datum only.",
+        "limitations": "Clamp, keys, stock, full fit/manufacturing and physical qualification remain excluded.",
+        "evidence": [
+            "tests/external/process_validation/test_geometry.py",
+            "artifacts/process-validation/engineering/20260916T213859Z/jig/evidence.json",
+        ],
+    },
+    "heat-spreader-sizing-01": {
+        "profile_resource": "heat-spreader-sizing-01",
+        "profile_ref": {
+            "id": "heat-spreader-sizing-01-fields",
+            "version": "1",
+            "sha256": "28c7cbd9811fe2423715b7c485195a5cafd53cbc7118a66492fa0995036bdc82",
+        },
+        "baseline_ref": {
+            "id": "heat-spreader-sizing-01-basis",
+            "version": "1",
+            "sha256": "3f6464140ae741a0ef9ecd8dabcde8bcbbe3cc1f9755955d7ec12b1cac89e564",
+        },
+        "reader_ids": ["thermal-field@1"],
+        "scope": "40/60 mm conduction fields, analytical rise, heat balance, refinement and 45 degC selection.",
+        "limitations": "Interface resistance, CAD/manufacturing and physical thermal qualification remain excluded.",
+        "evidence": [
+            "tests/external/process_validation/test_thermal.py",
+            "artifacts/process-validation/engineering/20260916T213859Z/heat/evidence.json",
+        ],
+    },
+}
+
+
+def _capability(family: str, scenario_id: str, capability_id: str) -> dict:
+    if scenario_id in QUALIFIED:
+        support = "qualified"
+        scope = QUALIFIED[scenario_id]["scope"]
+        limitation = QUALIFIED[scenario_id]["limitations"]
+        evidence = QUALIFIED[scenario_id]["evidence"]
+    elif (family, capability_id) in GENERIC_IMPLEMENTED:
+        support = "implemented"
+        scope = "Generic bounded structured JSON/CSV/text inspection only."
+        limitation = "This pack has no frozen profile or qualified domain semantics, so requests remain blocked."
+        evidence = ["packages/workspace_service/tests/test_process_validation.py"]
+    else:
+        support = "unavailable" if capability_id in UNAVAILABLE else "planned"
+        scope = None
+        limitation = "No frozen scenario profile and qualified reader currently cover this capability."
+        evidence = []
+    return {
+        "id": capability_id,
+        "support": support,
+        "scope": scope,
+        "limitation": limitation,
+        "extension_recipe": capability_id,
+        "evidence": evidence,
+    }
+
 
 def build(root: Path) -> dict:
     source = root / "tests/datasets/engineering-workflows/scenarios"
@@ -53,19 +285,21 @@ def build(root: Path) -> dict:
                     "size_bytes": len(content),
                 }
             )
+        qualified = QUALIFIED.get(case_id)
         entries.append(
             {
                 "scenario_id": case_id,
                 "family": family,
                 "source_requirements_seed": requirements,
                 "targeted_defect_seed": defect,
-                "requirements_frozen": False,
+                "requirements_frozen": qualified is not None,
                 "sources": sources,
+                "support_status": "qualified" if qualified else "unsupported",
+                "profile": qualified,
                 "capabilities": [
-                    {"id": item, "support": "planned"} for item in CAPABILITIES[family]
+                    _capability(family, case_id, item) for item in CAPABILITIES[family]
                 ],
-                "initial_slice": case_id
-                in {"parametric-drill-jig-01", "heat-spreader-sizing-01"},
+                "initial_slice": case_id in QUALIFIED,
             }
         )
     ids = {entry["scenario_id"] for entry in entries}
@@ -76,9 +310,12 @@ def build(root: Path) -> dict:
     ):
         raise ValueError("Expected 30 unique scenarios in the ten known families")
     return {
-        "schema_version": "wright.process-validation-coverage/1",
-        "kind": "source_inventory",
-        "scope": "Requirement seeds and planned reader support; no measured output verdicts.",
+        "schema_version": "wright.process-validation-coverage/2",
+        "kind": "capability_support_map",
+        "scope": "Thirty source packs reconciled against current bounded runtime capabilities. Qualification applies only to the declared profile scope and is not a whole-design or physical verdict.",
+        "support_definitions": SUPPORT_DEFINITIONS,
+        "qualified_scenarios": sorted(QUALIFIED),
+        "extension_recipes": EXTENSION_RECIPES,
         "seed_source": {
             "path": seeds.relative_to(root).as_posix(),
             "sha256": hashlib.sha256(seeds.read_bytes()).hexdigest(),
