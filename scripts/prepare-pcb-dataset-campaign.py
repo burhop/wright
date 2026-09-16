@@ -115,6 +115,9 @@ def prepare(args, directory):
     image = h.add_file_input(
         sections, suffix, "electrical_sketch", inputs + "/concept.png"
     )
+    editable_image = h.add_file_input(
+        sections, suffix, "electrical_sketch_source", inputs + "/concept.svg"
+    )
     next(s for s in sections if s["id"] == image.split(".")[0])["fields"]["outputs"][0][
         "kind"
     ] = "reference_images"
@@ -158,6 +161,12 @@ def prepare(args, directory):
         stages["capture_electrical_basis"],
         "human_image",
         "reference_images",
+    )
+    h.add_reference(
+        sections,
+        editable_image,
+        stages["capture_electrical_basis"],
+        "editable_image_source",
     )
     review = {
         "kind": "task",
