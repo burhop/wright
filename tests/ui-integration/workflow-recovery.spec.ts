@@ -316,6 +316,10 @@ test("expands a reusable component without adding search clutter to a small grap
   await openRecoveryEditor(page);
 
   const concept = page.getByTestId("workflow-recovery-concept");
+  await expect(concept).toHaveAttribute(
+    "data-semantic-digest",
+    /^sha256:[a-f0-9]{64}$/,
+  );
   const revision = await concept.getAttribute("data-revision");
   const digest = await concept.getAttribute("data-semantic-digest");
   const component = page.getByTestId(
@@ -606,9 +610,14 @@ test("uses real typed handles and preserves source across a layout save", async 
   expect(state.current()?.source.replace(/\r\n/g, "\n")).toBe(
     publicWorkflowSource.replace(/\r\n/g, "\n"),
   );
+  const storedDefinitionRevision = state.current()?.definition_revision;
+  expect(storedDefinitionRevision).toBeDefined();
 
   await page.reload();
-  await expect(concept).toHaveAttribute("data-revision", "3");
+  await expect(concept).toHaveAttribute(
+    "data-revision",
+    String(storedDefinitionRevision),
+  );
   const exportNode = page.locator(
     '.react-flow__node[data-id="block.export-step"]',
   );
@@ -628,7 +637,10 @@ test("uses real typed handles and preserves source across a layout save", async 
   await page
     .getByTestId("workflow-recovery-disconnect-rel.review-to-export")
     .click();
-  await expect(concept).toHaveAttribute("data-revision", "4");
+  await expect(concept).toHaveAttribute(
+    "data-revision",
+    String(storedDefinitionRevision! + 1),
+  );
 
   const sourceHandle = page.getByTestId(
     "workflow-recovery-handle-port.approved-geometry-out",
@@ -644,7 +656,10 @@ test("uses real typed handles and preserves source across a layout save", async 
   await expect(
     page.getByTestId("workflow-recovery-edge-rel.review-to-export"),
   ).toBeVisible();
-  await expect(concept).toHaveAttribute("data-revision", "5");
+  await expect(concept).toHaveAttribute(
+    "data-revision",
+    String(storedDefinitionRevision! + 2),
+  );
 
   await page
     .getByTestId("workflow-recovery-edge-select-rel.review-to-export")
@@ -653,7 +668,10 @@ test("uses real typed handles and preserves source across a layout save", async 
   await page
     .getByTestId("workflow-recovery-disconnect-rel.review-to-export")
     .click();
-  await expect(concept).toHaveAttribute("data-revision", "6");
+  await expect(concept).toHaveAttribute(
+    "data-revision",
+    String(storedDefinitionRevision! + 3),
+  );
   await sourceHandle.focus();
   await sourceHandle.press("Enter");
   await expect(
@@ -664,7 +682,10 @@ test("uses real typed handles and preserves source across a layout save", async 
   await expect(
     page.getByTestId("workflow-recovery-edge-rel.review-to-export"),
   ).toBeVisible();
-  await expect(concept).toHaveAttribute("data-revision", "7");
+  await expect(concept).toHaveAttribute(
+    "data-revision",
+    String(storedDefinitionRevision! + 4),
+  );
 });
 
 test("promotes valid source and reviewed AI commands while production execution remains fail-closed", async ({
