@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** Implementation active under the submitted goal. T001–T030 are complete; M5 distribution, served UI, documentation and completion gates remain. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
+**Status:** Implementation active under the submitted goal. T001–T031 are complete; M5 served UI, documentation and completion gates remain. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -66,7 +66,7 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 ## Phase 7 — Closure (M5)
 
 - [x] T030 Verify confinement, malicious/unbounded input, permission boundaries, duplicate concurrent invocation, cancellation/resource cleanup, trace propagation and output stability in `packages/workspace_service/tests/test_process_validation_security.py` and `tests/security/`; verify native reader ownership using `docs/mcp-catalog/mcp-server-testing-process.md`.
-- [ ] T031 Verify installed runtime resources/CLI/MCP without a source checkout, offline local evaluation and supported native/Docker boundaries; retain commands/results in `specs/082-output-content-validation/evidence/distribution.md` and update package metadata only as necessary. Do not add MCP-specific software to the base image.
+- [x] T031 Verify installed runtime resources/CLI/MCP without a source checkout, offline local evaluation and supported native/Docker boundaries; retain commands/results in `specs/082-output-content-validation/evidence/distribution.md` and update package metadata only as necessary. Do not add MCP-specific software to the base image.
 - [ ] T032 Complete component tests alongside changed process controls, mocked integration in `tests/ui-integration/process-validation.spec.ts`, and served-system evidence in `tests/e2e/test_process_validation.py`; enter through normal Workflow/Workflows, preserve authoring and demonstrate actual run diagnostics/evidence links.
 - [ ] T033 Document exact runnable examples, reader prerequisites, profile authoring, correction policy and report consumption in `docs/workflows/process-output-validation.md`; update `specs/082-output-content-validation/quickstart.md` with real commands after implementation and verify links/examples.
 - [ ] T034 Run applicable focused regressions/package gates and finish `specs/082-output-content-validation/completion.md` and `progress.md` with completed task IDs, actual demonstration evidence, capability limits and report-branch handoff. Claim completion only when all required initial slices work; keep push/merge/release separately authorized.

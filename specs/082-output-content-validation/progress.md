@@ -2,7 +2,7 @@
 
 **Updated:** 2026-09-16
 **Phase:** Implementation active; M0–M4 complete; closure M5 remains.
-**Implementation:** T001–T030 complete. T031–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Implementation:** T001–T031 complete. T032–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -151,3 +151,12 @@ M4 and T023–T029 are complete. Closure tasks T030–T034 remain; the capabilit
 - Full validator security boundary: **107 passed** using `.venv/Scripts/python.exe -m pytest packages/core/tests/test_process_validation.py packages/data_vault/tests/test_process_validation_repository.py packages/workspace_service/tests/test_process_validation_subjects.py packages/workspace_service/tests/test_process_validation.py packages/workspace_service/tests/test_process_validation_security.py packages/workspace_service/tests/test_process_validation_tools.py packages/workspace_service/tests/test_process_validation_reporting.py tests/security/test_process_validation_native_boundary.py tests/security/test_canonical_workflow_security.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-security-final`. Ruff and `git diff --check` passed.
 
 T030 is complete. Installed wheel/offline/native/Docker boundary verification remains T031; served workspace authoring verification remains T032.
+
+## M5 installed and Docker distribution — 2026-09-16
+
+- T031: a fresh 806-member `wright_engineering-0.1.9-py3-none-any.whl` includes all validator contracts, repository/service/readers, CLI/gateway adapters and structured/jig/heat/coverage resources. Its local qualifying build SHA-256 is `7b47c4f61ac576dbd4b9ee33ab3febf39063554485fd51874929fa1470e846c2`.
+- An isolated `python -I` smoke imported Wright modules only from the extracted wheel, blocked network and child-process APIs, loaded all three profiles plus coverage v2, ran the real CLI into SQLite, and retrieved the same assessment through the installed gateway provider. Distribution suite: **2 passed in 9.79s** using `.venv/Scripts/python.exe -m pytest tests/packaging/test_process_validation_distribution.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-distribution-final`.
+- Docker Server 28.5.1 ran the same installed wheel read-only under `wright-dev-gate:e2f018eb` / image `sha256:fc11b351d5f6ac259a8f64b6f9669f8b73d26d806cd39f3fc3241e9d7f1db3f8` (`linux/amd64`, Python 3.13.15), with `--network none` and no repository mount. The packaged service loaded structured/jig/heat profiles and produced a release-eligible offline assessment.
+- [Distribution evidence](evidence/distribution.md) records exact commands, results and boundaries. Existing Hatch recursive package inclusion and console metadata were sufficient. No MCP-specific dependency or host software was added to the wheel or base image.
+
+T031 is complete. T032 served authoring/run evidence, T033 final documentation and T034 completion audit remain.
