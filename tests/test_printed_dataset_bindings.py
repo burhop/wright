@@ -1,4 +1,5 @@
 """Structural binding tests, not CAD correctness or campaign run evidence."""
+import hashlib
 import importlib.util
 import json
 import os
@@ -11,6 +12,12 @@ import pytest
 from tool_registry.runners.stdio import StdioRunner
 
 ROOT = Path(__file__).resolve().parents[1]
+BLENDER_MCP_FIXTURE = ROOT / "tests/fixtures/blender_mcp_5f8ddaf6"
+BLENDER_MCP_SOURCE = BLENDER_MCP_FIXTURE / "src"
+BLENDER_SAFE_MODE = BLENDER_MCP_SOURCE / "blender_mcp/safe_mode.py"
+BLENDER_SAFE_MODE_SHA256 = (
+    "d3bc1f43f4707476e595efed111d514b3f81bf4358993b8accb18962c5c4bf35"
+)
 spec = importlib.util.spec_from_file_location("prepare_printed", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 prepare = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(prepare)
@@ -161,7 +168,7 @@ async def test_fixed_mesh_repair_is_a_separate_configured_mcp_tool(tmp_path):
     python_path = os.pathsep.join(
         [
             str(ROOT / "scripts"),
-            str(ROOT / ".local-run/feature-081-live/sources/blender-mcp/src"),
+            str(BLENDER_MCP_SOURCE),
         ]
     )
     runner = StdioRunner(
@@ -188,10 +195,13 @@ async def test_fixed_mesh_repair_is_a_separate_configured_mcp_tool(tmp_path):
 
 
 def test_diagnostic_mesh_code_clears_exact_pinned_guard(tmp_path):
+    assert (
+        hashlib.sha256(BLENDER_SAFE_MODE.read_bytes()).hexdigest()
+        == BLENDER_SAFE_MODE_SHA256
+    )
     safe_spec = importlib.util.spec_from_file_location(
         "pinned_blender_safe_mode",
-        ROOT
-        / ".local-run/feature-081-live/sources/blender-mcp/src/blender_mcp/safe_mode.py",
+        BLENDER_SAFE_MODE,
     )
     safe_mode = importlib.util.module_from_spec(safe_spec)
     safe_spec.loader.exec_module(safe_mode)
@@ -202,10 +212,13 @@ def test_diagnostic_mesh_code_clears_exact_pinned_guard(tmp_path):
 
 
 def test_fixed_mesh_repair_code_clears_exact_pinned_guard(tmp_path):
+    assert (
+        hashlib.sha256(BLENDER_SAFE_MODE.read_bytes()).hexdigest()
+        == BLENDER_SAFE_MODE_SHA256
+    )
     safe_spec = importlib.util.spec_from_file_location(
         "pinned_blender_safe_mode_fixed_repair",
-        ROOT
-        / ".local-run/feature-081-live/sources/blender-mcp/src/blender_mcp/safe_mode.py",
+        BLENDER_SAFE_MODE,
     )
     safe_mode = importlib.util.module_from_spec(safe_spec)
     safe_spec.loader.exec_module(safe_mode)
