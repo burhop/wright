@@ -344,6 +344,15 @@ def test_browser_gate_uses_isolated_configurable_ports() -> None:
         assert "localhost:5173" not in spec.read_text(encoding="utf-8"), spec
 
 
+def test_browser_contract_guidance_covers_cross_platform_persisted_identity() -> None:
+    runbook = _read("docs/contributing/dev-push-runbook.md")
+
+    assert "host-confirmed response" in runbook
+    assert "Git line-ending conversion" in runbook
+    assert "Wait for asynchronous digests" in runbook
+    assert "focused Windows pass does not replace the Linux CI check" in runbook
+
+
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
     workflow = _read(".github/workflows/frontend-quality.yml")
     playwright = _read("playwright.config.ts")
