@@ -50,6 +50,7 @@ Validation must follow the clean-container process in `docs/mcp-catalog/mcp-serv
 *   **`freecad-mcp` (sandraschi)**: Full-pipeline executor that connects FreeCAD geometry to CalculiX structural FEA and OpenFOAM CFD solvers.
 
 ### Code-Driven CAD
+*   **`agentcad`**: Planned community build123d authoring server with rendering, measurement, validation, version comparison, and STEP/mesh exports. Source and PyPI 0.6.0 metadata are reviewed; runtime and Wright gateway qualification have not started.
 *   **`openscad-mcp`**: Renders OpenSCAD geometries to Base64 PNG frames to complete the visual design feedback loop.
 *   **`zoo-mcp`**: Python/uv stdio MCP for Zoo.dev cloud CAD compute, file conversion, and KCL docs/samples. Linux x64 validation initialized MCP, listed tools, and searched KCL docs with a dummy token; full CAD compute remains credential-limited on `ZOO_API_TOKEN`.
 
@@ -78,6 +79,7 @@ Validation must follow the clean-container process in `docs/mcp-catalog/mcp-serv
 | **freecad-mcp (contextform)** | 3D CAD Copilot | contextform | Open Source | [GitHub Repository](https://github.com/contextform/freecad-mcp) |
 | **freecad-addon-robust** | 3D CAD / Macros | spkane | Open Source | [GitHub Repository](https://github.com/spkane/freecad-addon-robust-mcp-server) |
 | **openscad-mcp** | Code CAD | robertcoop | Open Source | [GitHub Repository](https://github.com/robertcoop/openscad-mcp) |
+| **agentcad** | Code CAD / build123d | James Edward Dillard | Open Source, planned qualification | [GitHub Repository](https://github.com/jdilla1277/agentcad) |
 | **RhinoMCP** | 3D NURBS / Scripting | jingcheng-chen (McNeel) | Enterprise (OSS) | [GitHub Repository](https://github.com/jingcheng-chen/rhinomcp) |
 | **blender-mcp** | 3D Mesh / Blender | ahujasid | Open Source | [GitHub Repository](https://github.com/ahujasid/blender-mcp) |
 | **zoo-mcp** | Cloud CAD API / KCL docs | Zoo.dev | Startup (OSS, credential-limited) | [GitHub Repository](https://github.com/KittyCAD/zoo-mcp) |

@@ -1754,6 +1754,22 @@ Known notes:
   lightweight `scikit-fem` backend; other backends remain optional and
   backend-specific.
 
+Campaign conduction setup, 12 September 2026:
+
+- A fresh selected container using the same pinned OASiS/scikit-fem recipe
+  executed actual 3D fixed-temperature and total-resistance Robin conduction
+  probes directly and through native Wright `GatewayService`. Nonempty raw
+  VTU/CSV fields, balance, mesh and selection files were retained; their
+  numerical correctness and a Hermes-facing proxy remain unqualified.
+- Run `scripts/qualification/qualify-oasis-conduction.py` only as an explicit
+  live probe. See
+  `specs/081-engineering-workflow-templates/dataset-campaign/heat-runtime-research.md`
+  for the exact selected local image, mount mapping, installation UUID and
+  full dataset preparer. Wright's base image and public qualification were
+  unchanged. Evidence: `evidence/campaign-2026-09-12/oasis-conduction.json`.
+- Keep `critic_approved:false` until an actual independent critic has reviewed
+  the exact setup; do not manufacture upstream verification attestation.
+
 ## SolidWorks API Docs (`solidworks-api-docs`)
 
 Source: https://github.com/kilwizac/solidworks-api-mcp
@@ -2649,3 +2665,90 @@ recipes; the final release action is:
 
 The decision matrix is
 `evidence/curation-2026-09-10/overnight-final-dispositions.json`.
+
+## 11 September planned CAD-authoring wave
+
+These are preflight recipes, not test results. No package was installed, no MCP
+process was started, and no CAD or Wright call was made while preparing them.
+Keep the execution hold in place until the parallel UI and workflow cycle is
+complete.
+
+Use one new Intel Linux Wright container per candidate. Mount the reviewed Wright
+checkout read-only at `/candidate`, a new writable workspace at `/workspace`, and
+evidence output at `/evidence`. Install candidate-specific OpenCascade, Node,
+Deno, browser, or rendering prerequisites only in that disposable container;
+do not change Wright's base image for this qualification. Before install,
+replace every mutable reference with a package archive hash, container digest,
+or exact source commit and record the complete resolved dependency set.
+
+The common artifact is a millimetre mounting bracket made from a 60 x 40 x 4 mm
+plate with two 5 mm through-holes whose centres are 40 mm apart. Preserve the
+authored source and request STEP and STL. Independently inspect units, bounding
+box, one solid, watertightness, 5 mm hole diameters, 40 mm centre spacing, and the
+expected volume of approximately 9442.9204 mm3, then reopen STEP and inspect STL
+triangle bounds and output hashes. A server's own measurement or validation is
+evidence to compare, not the independent oracle.
+
+For each candidate:
+
+1. Verify the frozen package/source hash and license, install in the disposable
+   container, run upstream tests when present, and record dependency advisories.
+2. Initialize MCP and record `tools/list` plus its schema hash in three fresh
+   direct sessions.
+3. Create the common bracket incrementally, render it, obtain the server's
+   measurements and validation result, and export STEP and STL under `/workspace`.
+4. Repeat the same bounded task through Wright `GatewayService` and the
+   Hermes-facing `wrightgateway` MCP, then compare result and artifact hashes.
+5. Submit syntactically invalid authoring code, an output path outside the
+   workspace, and a deliberate timeout. Require structured errors, no escaped
+   file, no surviving process, no occupied port, and clean uninstall/removal.
+
+Candidate launch plans:
+
+- **AgentCAD:** `uv run --isolated --python 3.12 --with
+  'agentcad[mcp]==0.6.0' python -m agentcad.mcp`. First confirm that package
+  resolution does not cross the documented Python 3.12 ceiling. Exercise
+  build123d only; CadQuery compatibility is a separate scope. Include version
+  comparison only after the base create/measure/export path passes.
+- **build123d-mcp:** replace the publisher's mutable `@latest` reference with
+  `build123d-mcp==0.3.84` under Python 3.12. Establish whether VTK or rendering
+  adds system libraries before protocol startup and preserve `last_error`
+  behavior during the controlled failure.
+- **CadQuery contrib MCP:** resolve and record an exact repository commit, then
+  install only `mcp-server/` with its reviewed CadQuery environment. Exercise
+  `render`, `inspect`, `get_parameters`, and `export`; compare its reported
+  volume, surface area, centre of mass, bounds, and topology with independent
+  STEP inspection.
+- **ShapeItUp:** run the integrity-pinned npm archive for
+  `@shapeitup/mcp-server@1.29.0` on Node 20 or newer. Exercise authoring,
+  `describe_geometry`, `verify_shape`, collision/sweep checks, preview, and
+  `export_shape`; keep the optional VS Code viewer outside the headless scope.
+- **vcad:** run the integrity-pinned archive for
+  `@vcad/mcp@0.10.0-main.87` on Node 20 or newer. Confirm the BRep WASM kernel is
+  inside the reviewed package and that no runtime download occurs. Treat the
+  prerelease version as a renewal risk even if the workflow passes.
+- **Casys build123d MCP:** resolve the immutable JSR archive and release image
+  digest for `@casys/mcp-build123d@0.6.3`; prefer the least-privilege runnable
+  path over the documented `deno run -A` example. Exercise
+  `build123d_execute`, `build123d_export`, resource reads, exact mass properties,
+  and content-addressed artifact behavior. Record arbitrary Python execution as
+  an explicit high-risk boundary.
+
+After AgentCAD, write a comparison decision before starting another candidate.
+Close duplicates with preserved reasons. A second CAD-authoring implementation
+enters the shortlist only when it proves a distinct workflow or materially better
+isolation, reproducibility, artifact verification, or maintenance.
+
+## Casys Modelica approved kit — 2026-09-12 contract preflight
+
+Current source0.6.5 and public AMD64 image exist, but the water-heater campaign is blocked by approved parameter bounds and missing solver timestep controls. No install or live qualification was claimed. See the [exact setup/preflight recipe and recovery](https://github.com/burhop/wright/blob/dev/specs/081-engineering-workflow-templates/dataset-campaign/modelica-prerequisite.md). Keep OpenModelica in the selected sidecar, never the Wright base image.
+
+## KiCad blwfish selected campaign runtime - 2026-09-12
+
+The selected image adds pinned KiCad 9.0.2, libraries, a hash-guarded stderr-only
+DRC history repair, native ERC/DRC report export, and FreeRouter 2.2.4 with Java
+25. Actual native rule checks, routing and BOM/fabrication exports passed.
+Normal local API discovery lists 18 tools; renewed canonical gateway
+qualification remains pending. Exact build, mount restrictions, probe evidence
+and staged bindings: [selected prerequisite recipe](https://github.com/burhop/wright/blob/dev/specs/081-engineering-workflow-templates/dataset-campaign/kicad-prerequisite.md).
+No Wright base-image additions or public catalog promotion.

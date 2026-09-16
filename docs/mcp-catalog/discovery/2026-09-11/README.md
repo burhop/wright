@@ -2,6 +2,18 @@
 
 **Found 44 missing projects with primary-source documentation of an MCP interface**, compared with the 70-entry checked-in Wright catalog. These are discovery candidates: no MCP package was installed, started, enabled, or runtime-qualified. A project can contain several servers; LLNL MADA is counted once, and individual tools are never counted as servers.
 
+## Current-catalog reconciliation
+
+The original 44-project result is preserved against its 70-entry baseline. A
+second review against the 78-entry catalog at commit `17f7a816e7be118e40d062f1cdb8d2508fd8e0f6`
+found that `kernelCAD` had already entered the catalog and had since been closed
+after two reviewed install failures. AgentCAD is now the 79th canonical record,
+with **In progress / planned** status and no runtime claim. The other 42 original
+omissions remain discovery records. Five of those are retained as the first
+comparison wave: CadQuery contrib, build123d-mcp, Casys build123d MCP, ShapeItUp,
+and vcad. See [the reconciliation record](reconciliation-2026-09-11.json) and
+[the qualification backlog](../../followups/curation-qualification-2026-09-08.md#11-september-cad-authoring-comparison-wave).
+
 **AgentCAD ranked #6** in the observed GitHub query `cad mcp in:name,description fork:false`, sorted by descending stars. Its repository was created on 2026-06-02. The creation date alone does not establish when MCP support first became public. See [saved GitHub results](github-search.json) and [AgentCAD's MCP documentation](https://github.com/jdilla1277/agentcad#mcp-integration).
 
 ## First candidates to qualify
@@ -135,4 +147,4 @@ No recurring automation was created by this search. The existing weekly catalog 
 - [Package metadata](package-checks.json), [README identity records](primary-source-checks.json), and [repository redirect checks](repository-alias-checks.json).
 - [Evidence manifest](evidence-manifest.json): file sizes and SHA-256 digests.
 
-Baseline Git HEAD: `0ca22cdd613c0feed3b66d224199abd752f75bfa`. Catalog SHA-256: `d76edd32a1a94c8755c225ab3bee071b09dfe8bb7bf618730d03ed365b7d9d7f`. The runtime catalog was not edited by this research.
+Baseline Git HEAD: `0ca22cdd613c0feed3b66d224199abd752f75bfa`. Catalog SHA-256: `d76edd32a1a94c8755c225ab3bee071b09dfe8bb7bf618730d03ed365b7d9d7f`. The discovery run did not edit the runtime catalog; the later reconciliation added AgentCAD as a separately reviewed planned record.

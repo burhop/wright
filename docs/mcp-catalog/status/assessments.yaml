@@ -524,3 +524,62 @@ assessments:
     limitations:
       - "No installable server, protocol session, or WinCC result was available; this is not a vendor prohibition."
       - "Re-entry condition: Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification."
+  agentcad:
+    category: in_progress
+    substatus: verification_incomplete
+    reason: AgentCAD 0.6.0 initialized locally, exposed 11 tools, and is active in the demo workspace; deterministic CAD construction and independent artifact checks remain pending.
+    reviewed_at: "2026-09-11"
+    priority: high
+    tests_completed:
+      - Primary repository README identity and MCP entrypoint review
+      - PyPI 0.6.0 metadata, Python range, dependency, license, and source-link review
+      - Reconciliation against the current canonical catalog and five CAD-authoring comparison candidates
+      - Local MCP initialization and 11-tool schema capture through the pinned package
+      - Wright install, activation, workspace enablement, and tool discovery
+    tests_remaining:
+      - Freeze package and transitive dependency hashes in a disposable clean-container plan
+      - Repeat initialization and hash tools/list in two fresh direct MCP sessions
+      - Create, validate, measure, render, and export a deterministic bracket
+      - Repeat the workflow through GatewayService and the Hermes-facing wrightgateway MCP
+      - Check invalid-code handling, out-of-workspace rejection, cancellation, process cleanup, and uninstall cleanup
+    limitations:
+      - No deterministic CAD model, CAD-kernel measurement, exported STEP or mesh, or independent geometry check has completed.
+      - Catalog inclusion means planned qualification, not a recommendation or adoption claim.
+  foam-agent-csml-rpi:
+    category: in_progress
+    substatus: verification_incomplete
+    reason: The published image initialized HTTP MCP on Windows and exposed six tools, but the missing immutable tag and absence of a model-backed solver result prevent qualification.
+    reviewed_at: "2026-09-11"
+    priority: high
+    tests_completed:
+      - Exact repository revision, MCP entrypoint, tool surface, Dockerfile, OpenFOAM version, and external-mesh contract review
+      - Published latest image pull at digest sha256:5c8bd752884b95b45c02d74a4b5e449fbf22aea8fa13a0eb1a40be851350ff1e
+      - Loopback-only Windows Docker startup with source auto-update disabled and an isolated empty scratch mount
+      - Direct Streamable HTTP initialization and six-tool schema capture for server version 2.0.0
+    tests_remaining:
+      - Build the exact source against Foundation OpenFOAM v10 in a disposable container
+      - Repeat initialization and list tools in two fresh MCP sessions and through Wright
+      - Run a bounded enclosure airflow case through Wright and independently verify geometry, boundaries, convergence, conservation, and computed fields
+    limitations:
+      - The documented v2.0.0 image tag is unavailable; latest omits the console script and otherwise auto-updates from an unpinned GitHub HEAD.
+      - The local protocol probe used a non-secret dummy provider key; no model request, OpenFOAM solve, Wright gateway call, or computed enclosure result completed.
+      - Catalog inclusion records a planned qualification and does not reinstate the rejected openfoam-mcp-webworn server.
+  bambu-p1s-mcp-marctheshark3:
+    category: in_progress
+    substatus: verification_incomplete
+    reason: Exact source initialized locally, exposed 11 tools, detected Bambu Studio, and sliced a bounded local fixture with exact packaged profiles; its safety-critical printer path remains unqualified.
+    reviewed_at: "2026-09-11"
+    priority: high
+    tests_completed:
+      - Exact repository revision, package metadata, stdio and HTTP launch contracts, P1S LAN protocol, slicing dependency, and confirmation-gate review
+      - Local Bambu Studio 2.8.2.61 portable runtime launch
+      - Direct stdio MCP initialization and 11-tool schema capture at digest a00ff5d6d9c4498834e89aac17c711f86141ccef6d90e4bce8818cdea96ca4aa
+      - Read-only printer_doctor call that detected the slicer and safely reported missing printer identity and LAN credentials
+      - Local 20 x 20 x 10 mm STL slice with packaged P1S 0.4 mm, 0.20 mm Standard, and Bambu PLA Basic profiles; output was 47,207 bytes with SHA-256 a3d37723b397b7be0c02f0a75a534d07a810e7e79b235c05c7e4334c3bb80c62
+      - Upstream Windows source suite with 17 of 18 tests passing; one POSIX /tmp path spelling assertion fails on Windows
+    tests_remaining:
+      - Fix or waive the POSIX-only test fixture and repeat two fresh no-printer protocol sessions
+      - Qualify read-only printer status and an explicitly approved transfer-only action without starting a print
+    limitations:
+      - P1S address, serial, LAN access code, and confirmation of the loaded material and nozzle are not configured in Wright.
+      - No printer command is authorized by catalog inclusion; Wright's exact one-shot external-action approval still applies.

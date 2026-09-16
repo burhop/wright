@@ -1,6 +1,6 @@
 # Status page implementation progress
 
-- [x] Reconcile all 78 canonical records across MCP, WebMCP, and hardware.
+- [x] Reconcile the original 78 canonical records across MCP, WebMCP, and hardware.
 - [x] Define six mutually exclusive customer/QA categories and evidence rules.
 - [x] Add reviewed assessment metadata and versioned schemas.
 - [x] Generate matching QA and public allowlist projections.
@@ -11,6 +11,19 @@
 - [x] Add focused automated tests and CI validation.
 - [x] Verify QA and public served builds and capture screenshots.
 - [x] Complete the final boundary audit and prepare reviewable local commits.
+
+## 11 September 2026 discovery intake
+
+- [x] Reconcile the 44-project discovery sweep against the newer 78-record
+  catalog; identify kernelCAD as already tracked and preserve its closed result.
+- [x] Add AgentCAD as canonical record 79 with In progress / planned status,
+  source and package evidence, owner, review date, and a concrete next action.
+- [x] Retain five CAD-authoring implementations as comparison candidates without
+  inflating the canonical shortlist or claiming they work.
+- [x] Write a clean-container preflight, deterministic artifact oracle, failure
+  checks, gateway checks, and stop conditions for the first comparison wave.
+- [ ] Release the execution hold after the parallel UI and workflow cycle is
+  complete, then qualify AgentCAD before selecting any comparison candidate.
 
 ## 10 September 2026 in-progress review
 

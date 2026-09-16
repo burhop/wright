@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "reconciled_on": "2026-09-11",
+  "reconciled_against_head": "17f7a816e7be118e40d062f1cdb8d2508fd8e0f6",
+  "catalog_entries_before_update": 78,
+  "catalog_entries_after_update": 79,
+  "original_discovery_candidates": 44,
+  "canonical_identity_changes": [
+    {
+      "discovery_id": "D001",
+      "catalog_id": "agentcad",
+      "result": "added_as_planned_qualification",
+      "runtime_status": "not_tested"
+    },
+    {
+      "discovery_id": "D008",
+      "catalog_id": "kernelcad-mcp",
+      "result": "already_cataloged_and_closed",
+      "runtime_status": "failed_before_mcp_initialization"
+    }
+  ],
+  "remaining_discovery_only_candidates": 42,
+  "first_comparison_wave": [
+    "agentcad",
+    "D003 build123d-mcp",
+    "D002 CadQuery contrib MCP",
+    "D005 ShapeItUp",
+    "D006 vcad",
+    "D004 Casys build123d MCP"
+  ],
+  "selection_rule": "Test AgentCAD first, then use its observed gaps to decide which comparison candidate adds a distinct useful workflow. Do not promote every implementation in the family.",
+  "runtime_hold": "Do not install, start, probe, or contact any candidate until the parallel UI and workflow cycle is complete.",
+  "runtime_testing_performed_during_reconciliation": false
+}

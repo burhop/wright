@@ -26,7 +26,37 @@ Repeat user adoption remains unknown for all ten. Repository stars, publisher
 demos, historical tests, and catalog labels are discovery signals rather than
 proof that Wright users rely on a server.
 
-## Ordered qualification queue
+## 11 September CAD-authoring comparison wave
+
+This is the current credential-free Linux queue. It supersedes completed or
+closed items in the 8 September ordering below. **Do not execute this wave until
+the parallel UI and workflow cycle is complete.** Desk review and catalog
+validation may continue while that hold is active.
+
+AgentCAD goes first because it is packaged, credential-free, headless, and
+documents creation, measurement, rendering, validation, version comparison, and
+manufacturing exports in one surface. The next five are comparisons within the
+same capability family. Test a later candidate only when AgentCAD evidence leaves
+a meaningful gap or the candidate offers a materially different security,
+artifact, or interaction model.
+
+| Order | Candidate | Frozen intake reference | Distinct question | State |
+|---:|---|---|---|---|
+| 1 | `agentcad` | PyPI `agentcad[mcp]==0.6.0`; README blob `d251454e...` | Can one headless package create, render, measure, validate, compare, and export an exact solid safely through Wright? | Cataloged; planned; execution held |
+| 2 | `build123d-mcp` (`D003`) | PyPI `0.3.84`; README blob `84f36178...` | Does its interactive construction and repair loop outperform the lead without weakening reproducibility or isolation? | Discovery record; compare after AgentCAD |
+| 3 | CadQuery contrib MCP (`D002`) | Repository subdirectory `mcp-server`; README blob `9954de2a...` | Does the CadQuery-owned contribution provide a smaller, more maintainable render/inspect/export surface? | Discovery record; resolve commit before install |
+| 4 | ShapeItUp (`D005`) | npm `@shapeitup/mcp-server@1.29.0`; README blob `1e1e4e28...` | Do its 25 headless TypeScript tools and verification loop add useful cross-runtime diversity? | Discovery record; compare if needed |
+| 5 | vcad (`D006`) | npm `@vcad/mcp@0.10.0-main.87` observed 11 September | Does its bundled BRep WASM kernel reduce setup and improve reproducibility enough to justify a prerelease dependency? | Discovery record; compare if needed |
+| 6 | Casys build123d MCP (`D004`) | JSR `@casys/mcp-build123d@0.6.3`; README blob `ac57e8ea...` | Do immutable MCP resources, exact mass properties, and MCP App output add a distinct artifact-provenance workflow? | Discovery record; resolve release digest before install |
+
+For every row, capture the exact package archive or source commit and SHA-256,
+the resolved dependency set, clean-container image digest, tool-schema hash, and
+the common bracket input before execution. Stop after source or package review if
+the license, immutable install path, workspace boundary, or arbitrary-code
+containment is unclear. The detailed recipe is in
+[`mcp-server-setup-recipes.md`](../mcp-server-setup-recipes.md#11-september-planned-cad-authoring-wave).
+
+## 8 September ordered queue (historical)
 
 Scores are relative planning judgments from 1 (weak) to 5 (strong). Confidence
 uses Wright's historical backend evidence plus current source availability;
