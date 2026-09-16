@@ -73,7 +73,10 @@ import { InputBlockEditor } from "./InputBlockEditor";
 import { PromptBlockEditor } from "./PromptBlockEditor";
 import { ValidatorBlockEditor } from "./ValidatorBlockEditor";
 import { isValidatorBlock } from "./validation-settings";
-import { validationRunPresentation } from "./validation-run-status";
+import {
+  validationEvidenceReference,
+  validationRunPresentation,
+} from "./validation-run-status";
 import {
   connectPromptCommands,
   isPromptBlock,
@@ -548,6 +551,11 @@ interface NativeRunEvent {
   readonly at: string;
   readonly label: string;
   readonly detail: string;
+  readonly validationEvidence?: {
+    readonly assessmentId?: string;
+    readonly path: string;
+    readonly completeResultRef?: string;
+  };
 }
 
 interface NativeRunInput {
@@ -964,6 +972,42 @@ function NativeRunPanel({
               <div>
                 <b>{event.label}</b>
                 <span>{event.detail}</span>
+                {event.validationEvidence &&
+                  (onOpenFile ? (
+                    <button
+                      type="button"
+                      className="recovery-button recovery-button--secondary"
+                      data-testid="workflow-recovery-open-validation-evidence"
+                      onClick={() => onOpenFile(event.validationEvidence!.path)}
+                    >
+                      Open validation assessment
+                      {event.validationEvidence.assessmentId
+                        ? ` ${event.validationEvidence.assessmentId}`
+                        : ""}
+                    </button>
+                  ) : workspaceSessionId ? (
+                    <a
+                      className="recovery-button recovery-button--secondary"
+                      data-testid="workflow-recovery-open-validation-evidence"
+                      href={workspaceContentUrl(
+                        event.validationEvidence.path,
+                        workspaceSessionId,
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open validation assessment
+                      {event.validationEvidence.assessmentId
+                        ? ` ${event.validationEvidence.assessmentId}`
+                        : ""}
+                    </a>
+                  ) : null)}
+                {event.validationEvidence?.completeResultRef && (
+                  <small>
+                    Complete result:{" "}
+                    {event.validationEvidence.completeResultRef}
+                  </small>
+                )}
               </div>
             </li>
           ))}
@@ -1801,6 +1845,10 @@ function WorkflowRecoveryReadyConcept({
                   observed.execution.last_progress.message ??
                   observed.execution.last_progress.kind.replaceAll("_", " "),
                 detail: observed.execution.last_progress.task_title ?? "",
+                validationEvidence:
+                  validationEvidenceReference(
+                    observed.execution.last_progress,
+                  ) ?? undefined,
               },
             ]
           : []
@@ -2797,6 +2845,8 @@ function WorkflowRecoveryReadyConcept({
                           tool_completed: "Tool result",
                         }[event.kind],
                 detail: `${event.task_title} · ${event.report ? event.report.corrections.join(" ") : (event.message ?? event.tool ?? event.output_path ?? validationRunPresentation(event)?.detail ?? "")}${event.arguments ? ` · ${JSON.stringify(event.arguments)}` : ""}${event.kind === "tool_completed" ? ` · ${event.status}: ${event.text ?? ""}` : ""}`,
+                validationEvidence:
+                  validationEvidenceReference(event) ?? undefined,
               },
             ]);
           },

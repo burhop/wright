@@ -262,6 +262,48 @@ it("does not assign an active badge to a different saved source", async () => {
   expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
 });
 
+it("restores validator hold diagnostics and opens the exact saved assessment", async () => {
+  const onOpenFile = vi.fn();
+  const held = snapshot();
+  held.execution = {
+    ...held.execution!,
+    last_progress: {
+      kind: "design_check",
+      at: "2026-09-08T10:00:03Z",
+      task_id: "document_2",
+      task_title: "Validate structured output",
+      status: "revise",
+      assessment_id: "assessment-held",
+      assessment_path: "validation/assessment-held.json",
+      complete_result_ref:
+        "wright://workspace/workspace/validation/assessment-held",
+    },
+  };
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([
+    held,
+  ]);
+  render(
+    <WorkflowRecoveryConcept
+      {...props}
+      onRun={vi.fn()}
+      onOpenFile={onOpenFile}
+    />,
+  );
+  await waitFor(() =>
+    expect(
+      screen.getByTestId("workflow-recovery-run-details-toggle"),
+    ).toHaveTextContent("Output held for correction"),
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-run-details-toggle"));
+  expect(screen.getByTestId("workflow-native-run-summary")).toHaveTextContent(
+    "Measured defects prevent release",
+  );
+  fireEvent.click(
+    screen.getByTestId("workflow-recovery-open-validation-evidence"),
+  );
+  expect(onOpenFile).toHaveBeenCalledWith("validation/assessment-held.json");
+});
+
 it("keeps the owned POST and richer result ahead of older observed history", async () => {
   const get = vi
     .spyOn(workspaceService, "getWorkspaceWorkflowRuns")

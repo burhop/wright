@@ -4,6 +4,38 @@ export interface ValidationProgress {
   readonly revision?: number;
   readonly remaining_revisions?: number;
   readonly assessment_id?: string;
+  readonly assessment_path?: string;
+  readonly complete_result_ref?: string;
+  readonly report?: {
+    readonly assessment_id?: string;
+    readonly assessment_path?: string;
+  };
+}
+
+export interface ValidationEvidenceReference {
+  readonly assessmentId?: string;
+  readonly path: string;
+  readonly completeResultRef?: string;
+}
+
+export function validationEvidenceReference(
+  progress: ValidationProgress | null | undefined,
+): ValidationEvidenceReference | null {
+  const raw = progress?.assessment_path ?? progress?.report?.assessment_path;
+  if (typeof raw !== "string" || !raw.trim()) return null;
+  const path = raw.trim().replaceAll("\\", "/");
+  const parts = path.split("/");
+  if (
+    path.startsWith("/") ||
+    /^[a-z]:\//i.test(path) ||
+    parts.some((part) => part === "" || part === "." || part === "..")
+  )
+    return null;
+  return {
+    assessmentId: progress?.assessment_id ?? progress?.report?.assessment_id,
+    path,
+    completeResultRef: progress?.complete_result_ref,
+  };
 }
 
 export function validationRunPresentation(

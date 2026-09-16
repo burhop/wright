@@ -230,6 +230,7 @@ export interface WorkspaceWorkflowExecutionSnapshot {
     revision?: number;
     remaining_revisions?: number;
     assessment_id?: string;
+    assessment_path?: string;
     assessment_digest?: string;
     feedback_digest?: string;
     complete_result_ref?: string;
@@ -291,10 +292,16 @@ export interface WorkspaceWorkflowStep {
   output_bytes: number;
 }
 export interface WorkspaceWorkflowRunEvent {
-  report?: { verdict: string; corrections: string[] };
+  report?: {
+    verdict: string;
+    corrections: string[];
+    assessment_id?: string;
+    assessment_path?: string;
+  };
   revision?: number;
   remaining_revisions?: number;
   assessment_id?: string;
+  assessment_path?: string;
   assessment_digest?: string;
   feedback_digest?: string;
   complete_result_ref?: string;

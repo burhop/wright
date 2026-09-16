@@ -2,7 +2,7 @@
 
 **Updated:** 2026-09-16
 **Phase:** Implementation active; M0–M4 complete; closure M5 remains.
-**Implementation:** T001–T031 complete. T032–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Implementation:** T001–T032 complete. T033–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Complete the geometry and thermal slices and their isolated demonstrations (T023–T029), then execute closure gates T030–T034. Complete all required demonstrations and gates before claiming the implementation finished.
+Complete the runnable documentation and final requirement-by-requirement closure audit in T033–T034. Complete all required examples and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -159,4 +159,14 @@ T030 is complete. Installed wheel/offline/native/Docker boundary verification re
 - Docker Server 28.5.1 ran the same installed wheel read-only under `wright-dev-gate:e2f018eb` / image `sha256:fc11b351d5f6ac259a8f64b6f9669f8b73d26d806cd39f3fc3241e9d7f1db3f8` (`linux/amd64`, Python 3.13.15), with `--network none` and no repository mount. The packaged service loaded structured/jig/heat profiles and produced a release-eligible offline assessment.
 - [Distribution evidence](evidence/distribution.md) records exact commands, results and boundaries. Existing Hatch recursive package inclusion and console metadata were sufficient. No MCP-specific dependency or host software was added to the wheel or base image.
 
-T031 is complete. T032 served authoring/run evidence, T033 final documentation and T034 completion audit remain.
+At this checkpoint, T031 was complete; served authoring/run evidence and final documentation/audit remained.
+
+## M5 served authoring and run evidence — 2026-09-16
+
+- T032: the existing workspace Workflow/Workflows surface now carries each validator event's authorized workspace-relative `assessment_path` into the run timeline. Live streams and recovered run summaries expose an **Open validation assessment** action while rejecting absolute, parent-relative and malformed paths. The existing held, repairing and exhausted status presentation remains the source of run-state language.
+- Component coverage verifies packaged profile selection, subject/revision authoring, save/source round-trip, Undo/Redo, read-only behavior, status labels, safe assessment paths and reopening a held run's exact assessment. Focused frontend selection: **21 passed** across four files.
+- `tests/ui-integration/process-validation.spec.ts` enters through the normal workspace **Workflows** control, opens the validator inspector, verifies its pinned profile, connected subject, producer correction target and two-revision budget, then consumes mocked canonical NDJSON for a measured 98 mm defect, delivered feedback, corrected revision and passing recheck. Both immutable assessment links are visible. The new test and the existing workspace-entry regression passed together in served Chromium: **2 passed**.
+- `tests/e2e/test_process_validation.py` executes the saved structured process through the canonical runner with deterministic model responses, producing a real fail → typed feedback → corrected pass loop. It then reads both immutable assessments, paged actionable findings, human-readable Markdown and RTM CSV through the FastAPI workspace routes: **1 passed**. This test uses a narrowly monkeypatched safe-path resolver because the managed pytest root is inside the source checkout; the production path guard remains covered by T030.
+- `npm run build --prefix apps/web`, Prettier, Ruff and `git diff --check` passed. The known Vite native-config/chunk-size notices and Starlette/httpx deprecation warning remain unrelated.
+
+T032 is complete. T033 runnable documentation and T034 final completion audit remain.
