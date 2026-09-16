@@ -2,7 +2,7 @@
 
 **Updated:** 2026-09-16
 **Phase:** Implementation active; M0–M4 complete; closure M5 remains.
-**Implementation:** T001–T029 complete. T030–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Implementation:** T001–T030 complete. T031–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -141,3 +141,13 @@ T028 is complete. T029 30-pack capability reconciliation and closure tasks T030�
 - Coverage integrity suite: **4 passed** using `.venv/Scripts/python.exe -m pytest packages/workspace_service/tests/test_process_validation_coverage.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-coverage-1`. Ruff and `git diff --check` passed.
 
 M4 and T023–T029 are complete. Closure tasks T030–T034 remain; the capability map explicitly does not claim whole-design, physical or all-30 output qualification.
+
+## M5 security boundary — 2026-09-16
+
+- T030: service-level concurrency now proves that two simultaneous calls with the same idempotency identity execute one reader pass. The duplicate observes the single running attempt without releasing work; after completion, repeated calls return the same immutable assessment.
+- Active cancellation is exercised inside a reader-owned resource scope. The resource closes, the attempt persists as terminal `cancelled`, every finding names `validation.cancelled`, and the attempt cannot be resumed as nonterminal work.
+- Provider readback receives the exact trace, provider and pinned revision for both measurement and post-read stability calls. Deep nesting and entity-heavy JSON stop at declared reader budgets, persist blocked evidence, and leave source bytes unchanged. Duplicate read/report projections retain the assessment digest and expose no absolute host artifact paths.
+- Following `docs/mcp-catalog/mcp-server-testing-process.md`, executable boundary tests prove that `agentcad`, `build123d`, CadQuery and OCP are absent from Wright runtime dependencies and active base/dev Docker instructions, and absent from packaged geometry/thermal reader imports. The engineering demonstration declares AgentCAD/build123d only on its selected `uv run --no-project --isolated` MCP command. T028 already retained successful direct protocol/gateway tool calls. This is reader/dependency ownership evidence; it does not label the demonstration MCP as a catalog-qualified production server.
+- Full validator security boundary: **107 passed** using `.venv/Scripts/python.exe -m pytest packages/core/tests/test_process_validation.py packages/data_vault/tests/test_process_validation_repository.py packages/workspace_service/tests/test_process_validation_subjects.py packages/workspace_service/tests/test_process_validation.py packages/workspace_service/tests/test_process_validation_security.py packages/workspace_service/tests/test_process_validation_tools.py packages/workspace_service/tests/test_process_validation_reporting.py tests/security/test_process_validation_native_boundary.py tests/security/test_canonical_workflow_security.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-security-final`. Ruff and `git diff --check` passed.
+
+T030 is complete. Installed wheel/offline/native/Docker boundary verification remains T031; served workspace authoring verification remains T032.
