@@ -207,9 +207,21 @@ function publicBlockConfiguration(
   delete configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];
   delete configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
   const retained = block.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
-  return typeof retained === "string"
-    ? { ...JSON.parse(retained), ...configuration }
-    : configuration;
+  const result: Record<string, unknown> =
+    typeof retained === "string"
+      ? { ...JSON.parse(retained), ...configuration }
+      : configuration;
+  if (
+    result.authoring_template === "process-validator" &&
+    typeof result.validation === "string"
+  ) {
+    try {
+      result.validation = JSON.parse(result.validation);
+    } catch {
+      /* Invalid drafts remain editable. */
+    }
+  }
+  return result;
 }
 
 const APPROVAL_OBJECT_FIELDS = new Set([
@@ -227,6 +239,20 @@ function isApprovalObject(
   return (
     settings.authoring_template === "external-action-approval" &&
     APPROVAL_OBJECT_FIELDS.has(key) &&
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
+function isValidatorObject(
+  settings: Record<string, unknown>,
+  key: string,
+  value: unknown,
+): boolean {
+  return (
+    settings.authoring_template === "process-validator" &&
+    key === "validation" &&
     value !== null &&
     typeof value === "object" &&
     !Array.isArray(value)
@@ -1295,14 +1321,15 @@ export function parseRecoveryAuthoringSource(
       Object.entries(settings as Record<string, unknown>).some(
         ([key, value]) =>
           !["string", "number", "boolean"].includes(typeof value) &&
-          !isApprovalObject(settings as Record<string, unknown>, key, value),
+          !isApprovalObject(settings as Record<string, unknown>, key, value) &&
+          !isValidatorObject(settings as Record<string, unknown>, key, value),
       )
     )
       diagnostics.push(
         diagnostic(
           "WFR-SOURCE-FIELD-TYPE",
-          `${section.kind} ${section.key}.settings must contain scalar values or documented external-action approval objects.`,
-          "Use scalar settings; approval_binding, approval_destination, approval_settings, and approval_action also accept JSON objects on external-action approvals.",
+          `${section.kind} ${section.key}.settings must contain scalar values or documented configuration objects.`,
+          "Use scalar settings, documented external-action approval objects, or a validation object on a process validator.",
           baseBlock?.id ?? null,
           section.startLine,
         ),
@@ -1423,6 +1450,10 @@ export function parseRecoveryAuthoringSource(
       settings && typeof settings === "object" && !Array.isArray(settings)
         ? structuredClone(settings as Record<string, string | number | boolean>)
         : {};
+    if (
+      isValidatorObject(configuration, "validation", configuration.validation)
+    )
+      configuration.validation = stableJson(configuration.validation);
     delete configuration[RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY];
     delete configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY];
     delete configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];

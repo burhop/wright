@@ -1,0 +1,23 @@
+[
+  {
+    "name": "structured-demo",
+    "title": "Structured Demo",
+    "profile_ref": {
+      "id": "structured-demo",
+      "version": "2",
+      "sha256": "d8f95a1b3511a30e97d410e51397fd410340a684a48704ca51a59f4e6efc534c"
+    },
+    "baseline_ref": {
+      "id": "structured-demo",
+      "version": "1",
+      "sha256": "709c8ed3b175034b161e062c1b2fae85d25061e170b2efaa94c2947d0cad3b04"
+    },
+    "roles": [
+      "result"
+    ],
+    "limitations": [],
+    "excluded_scope": [
+      "Geometry, manufacture and physical fit are not assessed."
+    ]
+  }
+]

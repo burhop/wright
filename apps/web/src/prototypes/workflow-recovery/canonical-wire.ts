@@ -99,7 +99,7 @@ export interface CanonicalWorkflowWire {
   }[];
 }
 
-function stableValue(value: unknown): unknown {
+export function stableValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(stableValue);
   if (value !== null && typeof value === "object") {
     return Object.fromEntries(

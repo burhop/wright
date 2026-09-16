@@ -2,6 +2,7 @@
 
 from typing import Annotated, Literal
 import re
+import json
 
 from pydantic import Field, model_validator
 
@@ -68,7 +69,10 @@ def compile_validator(block_id, fields, incoming, blocks):
 
     settings = fields["settings"]
     try:
-        config = ValidatorConfiguration.model_validate(settings.get("validation"))
+        raw = settings.get("validation")
+        config = ValidatorConfiguration.model_validate(
+            json.loads(raw) if isinstance(raw, str) else raw
+        )
     except ValueError as exc:
         raise _invalid(
             f"{fields['name']}: invalid validator configuration.", str(exc)

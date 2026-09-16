@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** Implementation active under the submitted goal. T001–T011 and T013 complete; M1 authoring integration next. This replaces the previous 74-task campaign plan.
+**Status:** Implementation active under the submitted goal. T001–T013 complete; M2 bounded feedback/correction next. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -29,7 +29,7 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 - [x] T009 [US1] Implement measurement/check evaluation and orchestration in `packages/workspace_service/src/workspace_service/process_validation/evaluation.py` and `service.py`; adapt existing registered predicates with explicit error mapping, scope/coverage, finite interval rules and immutable result finalization.
 - [x] T010 [US1] Add and document canonical local-validator configuration/ports and compile-time checks in `packages/workspace_service/src/workspace_service/workflow_source_execution.py` and `specs/082-output-content-validation/contracts/process-source.md`; update shared schema owners identified at T001, preserve legacy syntax and reject invalid/unsafe bindings.
 - [x] T011 [US1] Add thin BaseTool/MCP evaluation/read adapters in `packages/workspace_service/src/workspace_service/process_validation_tools.py` and a packaged `process_validation_cli.py`; register with the existing Wright MCP service, preserve authority and distinguish tool failure from a returned noncompliant result.
-- [ ] T012 [US1] Add profile/subject binding and validator state to existing authoring controls in `apps/web/src/prototypes/workflow-recovery/`, including `recovery-dsl.ts`, `model.ts` and `command-system.ts` where appropriate; preserve Diagram/Source round-trip, Undo/Redo and save/reopen. Follow `docs/contributing/workflow-ui-integration.md`.
+- [x] T012 [US1] Add profile/subject binding and validator state to existing authoring controls in `apps/web/src/prototypes/workflow-recovery/`, including `recovery-dsl.ts`, `model.ts` and `command-system.ts` where appropriate; preserve Diagram/Source round-trip, Undo/Redo and save/reopen. Follow `docs/contributing/workflow-ui-integration.md`.
 - [x] T013 [US1] Execute validators in the canonical runner, persist/publish verification or diagnostic evidence before gate failure, and bind release to the checked revision in `workflow_source_execution.py`, `workflow_results.py` and `workflow_run_record.py`; verify service/MCP/canonical parity and existing design-check regressions in `packages/workspace_service/tests/test_workflow_process_validation.py`.
 
 ## Phase 4 — US2: Actionable feedback and bounded correction (M2)

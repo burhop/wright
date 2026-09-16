@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M1 backend integration complete; authoring integration and bounded correction next.
-**Implementation:** T001–T011 and T013 complete. T012 and T014–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M1 implementation and focused checks complete; M2 bounded correction next.
+**Implementation:** T001–T013 complete. T014–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Add validator configuration to the established authoring controls (T012), then implement the bounded correction loop (T014–T018). Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
+Implement typed bounded feedback and the safe generic correction loop (T014–T018). Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -74,3 +74,14 @@ These checks establish evaluator behavior, not a running AI repair demonstration
 - API composition and authenticated MCP transport regression suite: **7 passed**, one existing Starlette/httpx deprecation warning, with `.venv/Scripts/python.exe -m pytest apps/api/tests/test_workspace_composition.py apps/api/tests/test_mcp_transport.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-api-m1-1`. Ruff passed; seven public contract schemas exported.
 
 Still open: authoring T012; bounded feedback/rework and real AI demonstration M2; readable exports/review routes M3; actual CAD/thermal readers and demonstrations M4; native/Docker/browser gates M5. Current backend tests do not establish these claims.
+
+## M1 authoring integration evidence — 2026-09-16
+
+- T012: added Review → Validate output to the existing palette/inspector. Profile selection loads generated pins from the same packaged profiles; subject controls connect exact producer outputs and retain compatible port types. The existing command, Source/Diagram, Undo/Redo and save/reopen paths are preserved. Technical references stay in disclosure. No report dashboard was added.
+- `validation-settings.ts`, `ValidatorBlockEditor.tsx`, generated `validation-profiles.json`, and corresponding tests own the new controls. Existing `authoring-objects.ts`, `recovery-authoring.ts`, `recovery-dsl.ts`, `canonical-wire.ts` and `WorkflowRecoveryConcept.tsx` extend the accepted model. No model/command schema replacement was needed: validation is serialized JSON internally and a documented object in public source.
+- First authoring tests caught the existing nonempty deterministic instructions rule and canonical JSON ordering. The validator now carries descriptive instructions (never executed as a prompt) and uses the established stable-value canonicalizer. Test controls were corrected to use an actual distinct producer and history-origin Undo/Redo commands.
+- **139 frontend tests passed** across the new settings/component tests, existing editor, authoring/source/instruction/command tests and workspace reopen suite. Command: `node ../../node_modules/vitest/vitest.mjs run src/prototypes/workflow-recovery/validation-settings.spec.ts src/prototypes/workflow-recovery/ValidatorBlockEditor.spec.tsx src/prototypes/workflow-recovery/WorkflowRecoveryConcept.spec.tsx src/prototypes/workflow-recovery/authoring-objects.spec.ts src/prototypes/workflow-recovery/recovery-authoring.spec.ts src/prototypes/workflow-recovery/recovery-instruction-fields.spec.ts src/prototypes/workflow-recovery/command-system.spec.ts src/components/pages/WorkflowRecoveryReopen.spec.tsx`, from `apps/web`.
+- TypeScript build check (`node node_modules/typescript/bin/tsc -b --pretty false`) and targeted ESLint passed. Python compiler/design-check regression selection: **73 passed** under `.local-run/process-validation-082/pytest-authoring-1`; Ruff passed. The existing Vite native-config warning remains unrelated.
+- Use installed local Node entry points for checks. The runtime fallback `pnpm exec` unexpectedly attempted installation, moved two local dependencies, and hit restricted network access. That owned process was stopped; the exact two moved directories were restored within `apps/web/node_modules`, and checks ran against the existing installation. No dependency/package version change was intended or needed.
+
+This is implementation/component evidence. Served workspace entry, responsive/visual evidence and installed native/Docker qualification remain M5; real AI repair and CAD/heat demonstrations remain M2/M4. No claim of user visual acceptance or full corpus validation.

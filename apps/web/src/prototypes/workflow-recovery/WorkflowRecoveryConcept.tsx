@@ -71,6 +71,8 @@ import {
 } from "./mcp-settings";
 import { InputBlockEditor } from "./InputBlockEditor";
 import { PromptBlockEditor } from "./PromptBlockEditor";
+import { ValidatorBlockEditor } from "./ValidatorBlockEditor";
+import { isValidatorBlock } from "./validation-settings";
 import {
   connectPromptCommands,
   isPromptBlock,
@@ -3613,11 +3615,13 @@ function WorkflowRecoveryReadyConcept({
                       ? "AI prompt"
                       : isMcpBlock(selectedBlock)
                         ? "MCP tool"
-                        : selectedBlock.executionKind === "ai_capable"
-                          ? "AI task"
-                          : selectedBlock.executionKind === "human"
-                            ? "Engineer review"
-                            : "Task"
+                        : isValidatorBlock(selectedBlock)
+                          ? "Output validator"
+                          : selectedBlock.executionKind === "ai_capable"
+                            ? "AI task"
+                            : selectedBlock.executionKind === "human"
+                              ? "Engineer review"
+                              : "Task"
                   : selectedPort
                     ? selectedOwner?.title
                     : "Connection between steps"}
@@ -3660,9 +3664,19 @@ function WorkflowRecoveryReadyConcept({
                   onApply={(commands) => applyCommands("form", commands)}
                 />
               )}
+              {selectedBlock && isValidatorBlock(selectedBlock) && (
+                <ValidatorBlockEditor
+                  key={selectedBlock.id}
+                  block={selectedBlock}
+                  workflow={inspectionWorkflow}
+                  readOnly={blockEditorReadOnly}
+                  onApply={(commands) => applyCommands("form", commands)}
+                />
+              )}
               {selectedBlock &&
                 !isPromptBlock(selectedBlock) &&
                 !isMcpBlock(selectedBlock) &&
+                !isValidatorBlock(selectedBlock) &&
                 recoveryAuthoringSectionKind(selectedBlock) !== "input" && (
                   <>
                     <AuthoringSettings

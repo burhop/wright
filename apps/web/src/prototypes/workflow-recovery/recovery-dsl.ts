@@ -858,8 +858,9 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
         sourceBlock?.kind === "component" &&
         sourceBlock.componentRef?.componentId === "component.review-cell";
       const isDesignCheck =
-        sourceBlock?.configuration.authoring_template === "mcp-task" &&
-        sourceBlock.configuration.design_check === true;
+        (sourceBlock?.configuration.authoring_template === "mcp-task" &&
+          sourceBlock.configuration.design_check === true) ||
+        sourceBlock?.configuration.authoring_template === "process-validator";
       if (
         (relationship.kind === "decision" ||
           relationship.kind === "feedback") &&

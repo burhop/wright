@@ -1,10 +1,11 @@
 # Canonical validator task source
 
-Status: compiler implemented; execution/authoring integration in progress.
+Status: compiler, canonical execution and authoring controls implemented; browser qualification and repair integration remain in progress.
 
 A validator is an ordinary `task` in the existing `.wflow` language. Use
-`step_type: work`, `performed_by: configured_tool`, an empty prompt, and null
-`tool`/`reusable_step`. Its settings are a closed object:
+`step_type: work`, `performed_by: configured_tool`, an empty/absent prompt, and null
+`tool`/`reusable_step`. Descriptive `instructions` metadata is allowed and never
+executed as a model prompt. Its settings are a closed object:
 
 ```json
 {
@@ -23,6 +24,12 @@ A validator is an ordinary `task` in the existing `.wflow` language. Use
   }
 }
 ```
+
+The editor's Review → Validate output control loads generated choices from the
+runtime profiles, creates distinct subject ports and preserves profile/baseline
+pins through commands, Undo/Redo and Source round-trip. Its internal scalar
+configuration stores serialized JSON; the public source writes a `validation`
+object. The compiler also accepts its equivalent serialized JSON string.
 
 The uppercase reference values are placeholders, not valid digests. Obtain exact
 references from the selected profile's `reference()` and

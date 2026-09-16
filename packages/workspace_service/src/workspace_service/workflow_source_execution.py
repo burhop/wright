@@ -2071,16 +2071,24 @@ async def execute_prompt_workflow(
                 )
             if check_report["verdict"] == "needs_input":
                 raise _error(
-                    "DESIGN_CHECK_NEEDS_INPUT",
-                    f"{step.title}: design decisions or inspection evidence are missing.",
+                    "PROCESS_VALIDATION_NEEDS_INPUT"
+                    if step.validation
+                    else "DESIGN_CHECK_NEEDS_INPUT",
+                    f"{step.title}: validation needs additional evidence, capability or review."
+                    if step.validation
+                    else f"{step.title}: design decisions or inspection evidence are missing.",
                     " ".join(check_report["corrections"]),
                 )
             target = plan.revisions.get(step.id)
             count = revision_counts.get(step.id, 0)
             if target is None or count >= step.max_revisions:
                 raise _error(
-                    "DESIGN_CHECK_REJECTED",
-                    f"{step.title}: the design has not passed.",
+                    "PROCESS_VALIDATION_REJECTED"
+                    if step.validation
+                    else "DESIGN_CHECK_REJECTED",
+                    f"{step.title}: the output has not passed validation."
+                    if step.validation
+                    else f"{step.title}: the design has not passed.",
                     " ".join(check_report["corrections"]),
                 )
             revision_counts[step.id] = count + 1

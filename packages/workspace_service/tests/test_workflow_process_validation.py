@@ -235,7 +235,7 @@ def test_canonical_gate_inspects_producer_output_and_publishes_evidence_before_h
     else:
         with pytest.raises(WorkflowSourceExecutionError) as error:
             asyncio.run(run())
-        assert error.value.code == "DESIGN_CHECK_REJECTED"
+        assert error.value.code == "PROCESS_VALIDATION_REJECTED"
         assert calls == ["json"] and not (tmp_path / "consume.txt").exists()
     report = next(e["report"] for e in events if e["kind"] == "design_check")
     path = tmp_path / report["assessment_path"]
@@ -301,7 +301,7 @@ def test_unavailable_reader_persists_blocked_assessment_and_holds_consumer(tmp_p
                 run_id="run",
             )
         )
-    assert error.value.code == "DESIGN_CHECK_NEEDS_INPUT"
+    assert error.value.code == "PROCESS_VALIDATION_NEEDS_INPUT"
     assert calls == ["json"]
     report = next(e["report"] for e in events if e["kind"] == "design_check")
     assessment = Assessment.model_validate_json(

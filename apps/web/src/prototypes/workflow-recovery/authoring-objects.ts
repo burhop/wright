@@ -22,6 +22,8 @@ export {
   hydrateAuthoringLayout,
 } from "./authoring-positioning";
 
+import { isValidatorBlock, validatorSettings } from "./validation-settings";
+
 export type AuthoringGroup =
   "input" | "document" | "tool" | "check3d" | "drawing" | "fdm" | "more";
 export const AUTHORING_GROUPS: readonly {
@@ -45,7 +47,7 @@ export const AUTHORING_GROUPS: readonly {
     description:
       "Add a task configured for an available application or service",
   },
-  { id: "more", label: "Review", description: "Engineer review and approval" },
+  { id: "more", label: "Review", description: "Output validation, engineer review and approval" },
 ];
 
 interface TemplatePort {
@@ -238,6 +240,18 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
     instructions:
       "Draft a work order from the supplied design text and reference document, naming deliverables, constraints, and review criteria.",
     ports: [textIn, fileIn, { ...documentOut, name: "Work order" }],
+  },
+  {
+    id: "process-validator",
+    group: "more",
+    label: "Validate output",
+    description:
+      "Inspect a previous step's output and provide correction findings",
+    executionKind: "deterministic",
+    instructions:
+      "Inspect connected outputs with the pinned validation profile.",
+    configuration: { output_format: "json", max_revisions: 0 },
+    ports: [{ ...documentOut, name: "Validation assessment" }],
   },
   {
     id: "mcp-task",
@@ -435,7 +449,8 @@ export function createAuthoringObject(
       input_text: "",
       workspace_file: "",
     });
-  else configuration.binding_state = "unbound";
+  else if (template.id !== "process-validator")
+    configuration.binding_state = "unbound";
   if (template.applicationHint)
     configuration.application_hint = template.applicationHint;
   const selectedPosition = options.selectedBlockId
@@ -517,6 +532,29 @@ export function validateAuthoringConfiguration(
       line: null,
     });
   const configuration = block.configuration;
+  if (
+    isValidatorBlock(block) &&
+    configuration.validation !== undefined &&
+    !validatorSettings(block)
+  )
+    fail(
+      "WFR-VALIDATION-CONFIGURATION-INVALID",
+      "The validation profile, requirement reference or subject roles are invalid.",
+      "Choose a pinned validation profile and bind each subject role once.",
+    );
+  if (
+    isValidatorBlock(block) &&
+    configuration.max_revisions !== undefined &&
+    (typeof configuration.max_revisions !== "number" ||
+      !Number.isInteger(configuration.max_revisions) ||
+      configuration.max_revisions < 0 ||
+      configuration.max_revisions > 3)
+  )
+    fail(
+      "WFR-VALIDATION-LIMIT-INVALID",
+      "The validator revision limit must be a whole number from zero to three.",
+      "Choose a finite revision limit; zero disables automatic correction.",
+    );
   if (
     configuration.authoring_template === "mcp-task" &&
     configuration.max_tool_calls !== undefined &&
