@@ -121,6 +121,37 @@ def test_revision_invalidates_completion_and_results_until_explicit_restart():
     assert s["active_task_id"] == "cad"
 
 
+def test_feedback_delivery_is_projected_without_inlining_findings():
+    feedback = event(
+        "validation_feedback_delivered",
+        task="produce",
+        target_step_id="produce",
+        assessment_id="assessment-1",
+        assessment_digest="a" * 64,
+        feedback_digest="b" * 64,
+        remaining_revisions=1,
+        complete_result_ref="wright://workspace/one/validation/assessment-1",
+        packet={"findings": ["private and potentially large"]},
+    )
+    snapshot, _, _ = _execution_snapshot({"events": [feedback]}, "running")
+    assert snapshot["last_progress"] == {
+        key: feedback[key]
+        for key in (
+            "kind",
+            "at",
+            "task_id",
+            "task_title",
+            "assessment_id",
+            "assessment_digest",
+            "target_step_id",
+            "feedback_digest",
+            "remaining_revisions",
+            "complete_result_ref",
+        )
+    }
+    assert "private" not in json.dumps(snapshot)
+
+
 def test_step_restart_removes_previous_artifact_without_inventing_completion():
     events = [
         event("step_completed"),

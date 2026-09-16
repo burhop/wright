@@ -501,6 +501,7 @@
       "items": {
         "$ref": "#/$defs/Finding"
       },
+      "maxItems": 20,
       "title": "Findings",
       "type": "array"
     },

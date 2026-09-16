@@ -1519,6 +1519,7 @@ async def execute_prompt_workflow(
         if step.external_action:
             break  # The recorder seals an exact durable approval checkpoint below.
         check_report = None
+        delivered_feedback = None
         if step.validation:
             from .process_validation.process import execute_validator
 
@@ -1716,10 +1717,30 @@ async def execute_prompt_workflow(
             if step.agent_task:
                 prompt += f"\n\nWorkspace directory: {workspace_dir}. File references are relative to this directory."
             if step.id in feedback:
-                prompt += (
-                    "\n\nPrevious design check — create a corrected new revision, preserving satisfied requirements:\n"
-                    + json.dumps(feedback[step.id])
-                )
+                feedback_state = feedback[step.id]
+                if feedback_state.get("kind") == "process_validation":
+                    from core.process_validation import RepairFeedback, canonical_digest
+                    from .process_validation.feedback import feedback_prompt
+
+                    packet = RepairFeedback.model_validate(feedback_state["packet"])
+                    delivered_feedback = packet.model_dump(mode="json")
+                    prompt += "\n\n" + feedback_prompt(packet)
+                    await emit(
+                        "validation_feedback_delivered",
+                        task_id=step.id,
+                        task_title=step.title,
+                        target_step_id=step.id,
+                        assessment_id=packet.assessment_id,
+                        assessment_digest=packet.assessment_digest,
+                        feedback_digest=canonical_digest(packet),
+                        remaining_revisions=packet.remaining_revisions,
+                        complete_result_ref=packet.complete_result_ref,
+                    )
+                else:
+                    prompt += (
+                        "\n\nPrevious design check — create a corrected new revision, preserving satisfied requirements:\n"
+                        + json.dumps(feedback_state)
+                    )
             if step.design_check:
                 from .workflow_design_check import CHECK_INSTRUCTIONS
 
@@ -2014,6 +2035,8 @@ async def execute_prompt_workflow(
             output_path=None,
             output_bytes=0,
         )
+        if delivered_feedback is not None:
+            record["repair_feedback"] = delivered_feedback
         if validation_application:
             record["producer_attempt"] = 1 + sum(
                 1 for item in attempts if item["task_id"] == step.id
@@ -2081,7 +2104,7 @@ async def execute_prompt_workflow(
                 )
             target = plan.revisions.get(step.id)
             count = revision_counts.get(step.id, 0)
-            if target is None or count >= step.max_revisions:
+            if target is None:
                 raise _error(
                     "PROCESS_VALIDATION_REJECTED"
                     if step.validation
@@ -2091,8 +2114,63 @@ async def execute_prompt_workflow(
                     else f"{step.title}: the design has not passed.",
                     " ".join(check_report["corrections"]),
                 )
+            feedback_state = feedback.get(target)
+            feedback_packet_digest = None
+            if step.validation:
+                from core.process_validation import canonical_digest
+                from .process_validation.feedback import (
+                    build_feedback,
+                    repair_fingerprint,
+                )
+
+                assessment = validation_application.repository.assessment(
+                    validation_application.workspace_id,
+                    check_report["assessment_id"],
+                )
+                fingerprint = repair_fingerprint(assessment)
+                if (
+                    feedback_state
+                    and feedback_state.get("kind") == "process_validation"
+                    and feedback_state.get("fingerprint") == fingerprint
+                ):
+                    raise _error(
+                        "PROCESS_VALIDATION_NO_PROGRESS",
+                        f"{step.title}: the corrected output and measured defects did not change.",
+                        "Inspect the complete assessment and revise the producer instructions or obtain the missing capability before starting a new run.",
+                    )
+            if count >= step.max_revisions:
+                raise _error(
+                    "PROCESS_VALIDATION_REJECTED"
+                    if step.validation
+                    else "DESIGN_CHECK_REJECTED",
+                    f"{step.title}: the output has not passed validation."
+                    if step.validation
+                    else f"{step.title}: the design has not passed.",
+                    "The configured revision budget is exhausted. "
+                    + " ".join(check_report["corrections"]),
+                )
             revision_counts[step.id] = count + 1
-            feedback[target] = check_report
+            if step.validation:
+                try:
+                    packet = build_feedback(
+                        assessment,
+                        target_step_id=target,
+                        remaining_revisions=step.max_revisions - count,
+                    )
+                except ValueError as exc:
+                    raise _error(
+                        "PROCESS_VALIDATION_REJECTED",
+                        f"{step.title}: findings cannot be routed safely to the configured producer.",
+                        str(exc),
+                    ) from exc
+                feedback[target] = {
+                    "kind": "process_validation",
+                    "packet": packet.model_dump(mode="json"),
+                    "fingerprint": fingerprint,
+                }
+                feedback_packet_digest = canonical_digest(packet)
+            else:
+                feedback[target] = check_report
             start = next(
                 i for i, candidate in enumerate(plan.steps) if candidate.id == target
             )
@@ -2120,8 +2198,14 @@ async def execute_prompt_workflow(
                 task_title=plan.steps[start].title,
                 revision=count + 1,
                 invalidated_task_ids=sorted(invalidated),
-                message="Design check requested a corrected CAD revision.",
+                message=(
+                    "Validation requested a corrected output revision."
+                    if step.validation
+                    else "Design check requested a corrected CAD revision."
+                ),
                 report=check_report,
+                remaining_revisions=step.max_revisions - count - 1,
+                feedback_digest=feedback_packet_digest,
             )
             cursor = start
             continue

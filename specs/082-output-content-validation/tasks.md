@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** Implementation active under the submitted goal. T001–T013 complete; M2 bounded feedback/correction next. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
+**Status:** Implementation active under the submitted goal. T001–T015 and T017 complete; M2 authoring and real-AI demonstration next. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -36,10 +36,10 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 
 **Independent acceptance:** A real configured AI receives measured findings for a structured output, writes a new revision, passes revalidation and releases the consumer. Exhaustion/no-progress/resume hold safely.
 
-- [ ] T014 [US2] Implement typed correction packets and concise readable explanations in `packages/workspace_service/src/workspace_service/process_validation/feedback.py`; include ownership, constraints to preserve, source/evidence refs, acceptance targets, routing, 20-finding/16-KiB inline bounds and complete-result paging references.
-- [ ] T015 [US2] Extend existing rework validation/scheduling in `workflow_design_check.py` and `workflow_source_execution.py` for one safe text/structured/indexed-file producer/check segment alongside existing create-new CAD; persist budgets, delivered feedback, invalidation and no-progress stops without permitting arbitrary back-edges or external actions.
+- [x] T014 [US2] Implement typed correction packets and concise readable explanations in `packages/workspace_service/src/workspace_service/process_validation/feedback.py`; include ownership, constraints to preserve, source/evidence refs, acceptance targets, routing, 20-finding/16-KiB inline bounds and complete-result paging references.
+- [x] T015 [US2] Extend existing rework validation/scheduling in `workflow_design_check.py` and `workflow_source_execution.py` for one safe text/structured/indexed-file producer/check segment alongside existing create-new CAD; persist budgets, delivered feedback, invalidation and no-progress stops without permitting arbitrary back-edges or external actions.
 - [ ] T016 [US2] Expose explicit revision target and 0–3 revision limit, default 0, through existing controls in `apps/web/src/prototypes/workflow-recovery/`; preserve canonical settings and show held/repairing/exhausted states using existing run diagnostics.
-- [ ] T017 [US2] Prove correction target/identity binding, new-output lineage, mixed failure/unknown behavior, error routing, wrong-owner rejection, no progress, budget persistence, cancellation and stale approval protection in `packages/workspace_service/tests/test_workflow_process_validation_rework.py`; retain existing design-check mixed-verdict and approval-resume tests.
+- [x] T017 [US2] Prove correction target/identity binding, new-output lineage, mixed failure/unknown behavior, error routing, wrong-owner rejection, no progress, budget persistence, cancellation and stale approval protection in `packages/workspace_service/tests/test_workflow_process_validation_rework.py`; retain existing design-check mixed-verdict and approval-resume tests.
 - [ ] T018 [US2] Save and run an isolated ordinary-AI structured-output → local-validator → bounded correction → consumer example under `tests/datasets/process-validation/processes/`; retain actual model/step/attempt/output/feedback evidence in `artifacts/process-validation/structured-loop/`. Mocked scheduling alone does not satisfy this task.
 
 ## Phase 5 — US3: Human-readable/report-consumable evidence (M3)

@@ -263,25 +263,64 @@ def validate_rework(steps, revisions):
                 "A revision path must return from a design check to an earlier task."
             )
         segment = steps[order[target_id] : order[check_id]]
-        if (
-            len(segment) != 1
-            or check.cad_from
-            not in {
+        target = segment[0] if len(segment) == 1 else None
+        local_validator_rework = bool(
+            target
+            and check.validation
+            and check.validation_sources
+            and {source.split(".", 1)[0] for _, source in check.validation_sources}
+            == {target_id}
+            and all(
+                source
+                in {f"{target_id}.{port}" for port, _ in target.output_ports}
+                for _, source in check.validation_sources
+            )
+            # Only a pure model-response producer is automatically replayable.
+            # Tool, application, review and external-action steps may have
+            # effects that cannot be safely inferred or repeated.
+            and not any(
+                (
+                    target.tool_name,
+                    target.agent_task,
+                    target.cad,
+                    target.application,
+                    target.design_check,
+                    target.human_review,
+                    target.external_action,
+                )
+            )
+            and target.output_ports
+            and all(
+                kind
+                in {
+                    "text",
+                    "workspace_file",
+                    "engineering_document",
+                    "design_specification",
+                    "structured_result",
+                }
+                for _, kind in target.output_ports
+            )
+            and target.file_policy == "indexed"
+        )
+        cad_rework = bool(
+            target
+            and not check.validation
+            and check.cad_from
+            in {
                 f"{target_id}.{key}"
-                for key, kind in segment[0].output_ports
+                for key, kind in target.output_ports
                 if kind == "cad_model"
             }
-            or any(
-                not s.agent_task
-                or not s.cad
-                or s.cad.get("source") != "new"
-                or s.cad.get("policy", "indexed") != "indexed"
-                for s in segment
-            )
-        ):
+            and target.agent_task
+            and target.cad
+            and target.cad.get("source") == "new"
+            and target.cad.get("policy", "indexed") == "indexed"
+        )
+        if not (local_validator_rework or cad_rework):
             raise _invalid(
-                "Automatic rework currently requires one preceding CAD creation task, its model connected to this check, and indexed files.",
-                "Use a create-new CAD task for the revision target. Existing/session edits require an explicit new run.",
+                "Automatic rework requires one preceding safe producer that owns every checked subject.",
+                "Use an ordinary AI text/structured producer with indexed files, or a create-new CAD task. Tool effects, reviews, existing/session edits and unrelated outputs require an explicit new run.",
             )
         if check.max_revisions < 1:
             raise _invalid("Set a revision limit before connecting a revision path.")

@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M1 implementation and focused checks complete; M2 bounded correction next.
-**Implementation:** T001–T013 complete. T014–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M1 complete and M2 runtime correction complete; M2 authoring/demonstration next.
+**Implementation:** T001–T015 and T017 complete. T016 and T018–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Implement typed bounded feedback and the safe generic correction loop (T014–T018). Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
+Expose correction target/limit authoring (T016), then run and retain the real configured ordinary-AI demonstration (T018). Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -85,3 +85,13 @@ Still open: authoring T012; bounded feedback/rework and real AI demonstration M2
 - Use installed local Node entry points for checks. The runtime fallback `pnpm exec` unexpectedly attempted installation, moved two local dependencies, and hit restricted network access. That owned process was stopped; the exact two moved directories were restored within `apps/web/node_modules`, and checks ran against the existing installation. No dependency/package version change was intended or needed.
 
 This is implementation/component evidence. Served workspace entry, responsive/visual evidence and installed native/Docker qualification remain M5; real AI repair and CAD/heat demonstrations remain M2/M4. No claim of user visual acceptance or full corpus validation.
+
+## M2 runtime correction evidence — 2026-09-16
+
+- T014: `RepairFeedback` now enforces ownership and a 20-finding maximum. `process_validation/feedback.py` builds a 16-KiB-bounded packet from the exact persisted assessment, prioritizes producer-owned measured defects, carries complete-result references, and lists passing requirement constraints to preserve. The prompt frame treats findings as data and requires a complete fresh recheck.
+- T015: the existing revision graph accepts one contiguous ordinary-AI text/structured producer directly owning all validator subjects, while retaining create-new CAD behavior. Tool calls, application edits, reviews, external actions, overwrite policy, unrelated subjects and arbitrary back-edges remain rejected. The canonical runner persists typed delivered feedback and revision counts, retains old attempts, invalidates the checked segment, detects identical output/defect no-progress, and releases only the current passing revision.
+- T017: focused tests cover measured feedback, owner/subject identity, new attempt lineage, mixed fail/unknown behavior, evaluator error routing, unsafe/wrong targets, no progress, exhaustion, cancellation, run-history projection and existing approval-continuation/stale guards. The delivery event exposes bounded identities and budget without copying full findings into the polling projection.
+- Feedback unit suite: **8 passed**. Expanded rework suite: **9 passed**. Focused design-check/runner/history selection: **104 passed**. Backend core/validator/compiler/runner/history/continuation regression set: **195 passed** using `.venv/Scripts/python.exe -m pytest ... -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-m2-backend2`.
+- Ruff and `git diff --check` passed. `RepairFeedback.schema.json` was regenerated with its public `maxItems: 20` bound.
+
+T016 controls and T018 real configured-model evidence remain open, so M2 is not complete. No mocked scheduling result is presented as the required AI demonstration.

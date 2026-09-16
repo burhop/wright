@@ -635,12 +635,24 @@ class RepairFeedback(Contract):
     subject_digests: tuple[Digest, ...]
     profile_ref: VersionReference
     target_step_id: Identifier
-    findings: tuple[Finding, ...]
+    findings: tuple[Finding, ...] = Field(max_length=20)
     preserve_requirement_ids: tuple[Identifier, ...]
     remaining_revisions: Annotated[int, Field(strict=True, ge=0, le=3)]
     total_findings: Annotated[int, Field(strict=True, ge=0)]
     omitted_findings: Annotated[int, Field(strict=True, ge=0)]
     complete_result_ref: Text
+
+    @model_validator(mode="after")
+    def valid_delivery(self):
+        if self.total_findings != len(self.findings) + self.omitted_findings:
+            raise ValueError("Feedback omitted-finding count is inconsistent")
+        if any(
+            f.correction.action == "revise_output"
+            and f.correction.target_step_id != self.target_step_id
+            for f in self.findings
+        ):
+            raise ValueError("Feedback contains a correction for another producer")
+        return self
 
 
 class AssessmentReference(Contract):

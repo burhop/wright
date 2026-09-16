@@ -138,8 +138,13 @@ def _execution_snapshot(record, state):
         "tool",
         "revision",
         "assessment_id",
+        "assessment_digest",
         "assessment_path",
         "release_eligible",
+        "target_step_id",
+        "feedback_digest",
+        "remaining_revisions",
+        "complete_result_ref",
     )
 
     def invalidate(ids):
@@ -208,6 +213,7 @@ def _execution_snapshot(record, state):
             "tool_started",
             "tool_completed",
             "design_check",
+            "validation_feedback_delivered",
             "design_revision",
             "review_requested",
             "approval_requested",
