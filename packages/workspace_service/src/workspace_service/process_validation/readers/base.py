@@ -48,6 +48,7 @@ class ReaderContext:
     deadline: float
     cancelled: Event
     trace_id: str
+    related_snapshots: tuple[SubjectSnapshot, ...] = ()
 
     @classmethod
     def create(cls, budget, trace_id, cancelled=None):

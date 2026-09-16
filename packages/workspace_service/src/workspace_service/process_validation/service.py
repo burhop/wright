@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -28,7 +28,9 @@ from data_vault.process_validation_repository import AttemptRecord
 
 from .evaluation import compare
 from .readers.base import ReaderContext, ReaderRegistry, ValidationIssue
+from .readers.geometry import StepSeatGeometryReader
 from .readers.structured import StructuredReader
+from .readers.thermal import ThermalFieldReader
 from .reporting import build_report, export_report
 
 logger = structlog.get_logger(__name__)
@@ -106,6 +108,8 @@ class ProcessValidationService:
         if registry is None:
             registry = ReaderRegistry()
             registry.register(StructuredReader())
+            registry.register(StepSeatGeometryReader())
+            registry.register(ThermalFieldReader())
         self.registry = registry
 
     def _outcome(self, attempt):
@@ -390,6 +394,28 @@ class ProcessValidationService:
         measurements, results, findings = [], [], []
         total_bytes = 0
         measurement_bytes = 0
+
+        def resolve(subject):
+            nonlocal total_bytes
+            if subject.id in snapshot_errors:
+                raise snapshot_errors[subject.id]
+            if subject.id not in snapshots:
+                try:
+                    snapshot = self.resolver.snapshot(request, subject, context)
+                    total_bytes += len(snapshot.content)
+                    if total_bytes > request.budget.max_bytes:
+                        raise ValidationIssue(
+                            "subject.total_byte_limit",
+                            "Combined inputs exceed the invocation byte budget.",
+                            category="capability_unavailable",
+                            action="restore_capability",
+                        )
+                    snapshots[subject.id] = snapshot
+                except ValidationIssue as exc:
+                    snapshot_errors[subject.id] = exc
+                    raise
+            return snapshots[subject.id]
+
         for check in profile.checks:
             subject, measurement = subjects.get(check.subject_role), None
             evidence = ()
@@ -430,26 +456,31 @@ class ProcessValidationService:
                         category="capability_unavailable",
                         action="restore_capability",
                     )
-                if subject.id in snapshot_errors:
-                    raise snapshot_errors[subject.id]
-                if subject.id not in snapshots:
-                    try:
-                        snapshot = self.resolver.snapshot(request, subject, context)
-                        total_bytes += len(snapshot.content)
-                        if total_bytes > request.budget.max_bytes:
-                            raise ValidationIssue(
-                                "subject.total_byte_limit",
-                                "Combined inputs exceed the invocation byte budget.",
-                                category="capability_unavailable",
-                                action="restore_capability",
-                            )
-                        snapshots[subject.id] = snapshot
-                    except ValidationIssue as exc:
-                        snapshot_errors[subject.id] = exc
-                        raise
-                snapshot = snapshots[subject.id]
+                snapshot = resolve(subject)
+                related_roles = check.parameters.get("related_roles", [])
+                if not isinstance(related_roles, list) or any(
+                    not isinstance(role, str) for role in related_roles
+                ):
+                    raise ValidationIssue(
+                        "profile.related_roles",
+                        "Related roles must be a list of bound subject-role names.",
+                        category="source_conflict",
+                    )
+                related = []
+                for role in related_roles:
+                    related_subject = subjects.get(role)
+                    if related_subject is None:
+                        raise ValidationIssue(
+                            "subject.related_role_missing",
+                            f"Bind the required related output role '{role}'.",
+                        )
+                    related.append(resolve(related_subject))
                 evidence = (f"subject:{subject.id}@{subject.sha256}#{check.selector}",)
-                measurement = self.registry.measure(snapshot, check, context)
+                measurement = self.registry.measure(
+                    snapshot,
+                    check,
+                    replace(context, related_snapshots=tuple(related)),
+                )
                 measurement_bytes += len(canonical_json(measurement).encode("utf-8"))
                 if measurement_bytes > min(
                     4 * 1024 * 1024, request.budget.memory_limit_mb * 1024 * 1024 // 8

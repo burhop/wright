@@ -1,0 +1,15 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('Incorrect radial use of a diametral clearance'),'2;1');
+ENDSEC;
+DATA;
+#1=CARTESIAN_POINT('',(30.,30.,0.));
+#2=DIRECTION('',(0.,0.,1.));
+#3=DIRECTION('',(1.,0.,0.));
+#4=AXIS2_PLACEMENT_3D('',#1,#2,#3);
+#5=CIRCLE('',#4,5.2);
+#6=CARTESIAN_POINT('',(170.,30.,0.));
+#7=AXIS2_PLACEMENT_3D('',#6,#2,#3);
+#8=CIRCLE('',#7,5.2);
+ENDSEC;
+END-ISO-10303-21;
