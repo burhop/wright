@@ -331,7 +331,9 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     run npx prettier --check apps/web/
   fi
   run npx tsc --noEmit -p apps/web/tsconfig.app.json
-  run npm run test --workspace=apps/web -- --changed "$BASE_REF"
+  # Keep jsdom integration tests below their per-test timeout when the fast gate
+  # also selects the large Python matrix on high-core developer hosts.
+  run npm run test --workspace=apps/web -- --changed "$BASE_REF" --maxWorkers=4
   run npm run build --workspace=apps/web
 
   if [[ "$CHECK_PYTHON" == "0" ]]; then

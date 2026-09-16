@@ -53,7 +53,10 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     assert "git ls-files --others --exclude-standard" in gate
     assert "symbolic-full-name '@{u}'" in gate
     assert "Selected scopes:" in gate
-    assert 'npm run test --workspace=apps/web -- --changed "$BASE_REF"' in gate
+    assert (
+        'npm run test --workspace=apps/web -- --changed "$BASE_REF" --maxWorkers=4'
+        in gate
+    )
     assert 'npx playwright test "${PLAYWRIGHT_TARGETS[@]}"' in gate
     assert "tests/ui-integration/workspace-surfaces/*.spec.ts" in gate
     assert "PLAYWRIGHT_ALL_PROJECTS=0" in gate
