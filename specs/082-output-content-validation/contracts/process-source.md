@@ -1,6 +1,6 @@
 # Canonical validator task source
 
-Status: compiler, canonical execution, bounded repair and authoring controls implemented; browser qualification and real demonstrations remain in progress.
+Status: compiler, canonical execution, bounded repair, authoring controls and served browser qualification implemented; structured, geometry and thermal process demonstrations retained.
 
 A validator is an ordinary `task` in the existing `.wflow` language. Use
 `step_type: work`, `performed_by: configured_tool`, an empty/absent prompt, and null

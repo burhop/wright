@@ -2,7 +2,7 @@
 
 **Updated:** 2026-09-16
 **Phase:** Implementation active; M0–M4 complete; closure M5 remains.
-**Implementation:** T001–T032 complete. T033–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Implementation:** T001–T033 complete. T034 remains. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -170,3 +170,12 @@ At this checkpoint, T031 was complete; served authoring/run evidence and final d
 - `npm run build --prefix apps/web`, Prettier, Ruff and `git diff --check` passed. The known Vite native-config/chunk-size notices and Starlette/httpx deprecation warning remain unrelated.
 
 T032 is complete. T033 runnable documentation and T034 final completion audit remain.
+
+## M5 runnable documentation — 2026-09-16
+
+- T033: `docs/workflows/process-output-validation.md` explains the runtime validator from the normal Workflows editor through immutable assessment/report consumption. It documents exact subject/profile/baseline binding, packaged and workspace profile authoring, the three current reader prerequisites and limits, safe correction policy, stopped states, authenticated API operations, effective current verdict and RTM rendering obligations. It explicitly separates declared-scope qualification from whole-design and physical acceptance.
+- `examples/process-output-validation/prepare_example.py` creates a fresh offline structured subject, registers its exact producer identity in the validator ledger and writes a pinned request. The documented pass path ran through `profile`, `evaluate`, `get`, paged `read`, Markdown export and RTM/CSV export. A 98 mm run produced one actionable finding and the documented CLI exit code `2`; a 100 mm run returned release eligible.
+- `quickstart.md` now describes the implemented state and contains current profile, offline CLI, demonstration, focused verification and report-branch handoff commands. Stale pre-implementation claims were removed. The product guide is present in the MkDocs User Guide navigation.
+- Strict documentation build passed with `uv --cache-dir .local-run/uv-cache run --with mkdocs-material mkdocs build --strict`. A local verifier resolved all **17 relative links** in the guide/quickstart. Ruff lint/format, Prettier for the new guide and `git diff --check` passed.
+
+T033 is complete. T034 full regression gates, requirement-by-requirement audit and final completion/progress record remain.

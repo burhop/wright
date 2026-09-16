@@ -1,67 +1,119 @@
-# Future-agent quickstart
+# Implementation and operator quickstart
 
 **Workspace:** `D:/repos/wright`
+
 **Branch:** `codex/082-output-content-validation`
-**Start:** [ready-to-paste /goal](implementation-goal.md)
-**Scope:** Runtime validator, AI correction loop and report data contract.
+
+**Approved goal:** [implementation-goal.md](implementation-goal.md)
+
+**Product guide:** [Process Output Validation](../../docs/workflows/process-output-validation.md)
+
+## Current state
+
+T001–T033 are implemented and recorded in [progress.md](progress.md). The runtime validator, bounded correction, report contract, structured/CAD/thermal demonstrations, security/distribution gates, authoring controls, run diagnostics, assessment links and runnable operator documentation exist. T034 final audit/closure is the remaining plan task at this checkpoint.
+
+The validator is a process step that checks one or more exact upstream output revisions. It is not a final QA campaign. The 30 input packs define a capability map; only the explicitly frozen and demonstrated slices are qualified.
 
 ## Read order
 
-1. [progress.md](progress.md), [scope-amendment.md](scope-amendment.md), [spec.md](spec.md), [plan.md](plan.md), [tasks.md](tasks.md).
-2. Repository AGENTS.md and `.specify/memory/constitution.md`.
-3. [research.md](research.md), [data-model.md](data-model.md), [validation contract](contracts/validation-contract.md), [acceptance cases](acceptance-cases.md).
-4. Earlier [30-pack engineering seeds](../081-engineering-workflow-templates/content-validation/acceptance-cases.md), jig center guidance and heat native-result notes linked from the acceptance file.
+1. [progress.md](progress.md), [scope-amendment.md](scope-amendment.md), [spec.md](spec.md), [plan.md](plan.md), and [tasks.md](tasks.md).
+2. Repository `AGENTS.md` and `.specify/memory/constitution.md`.
+3. The [product guide](../../docs/workflows/process-output-validation.md), [source contract](contracts/process-source.md), [report consumer contract](contracts/report-consumer.md), and [acceptance cases](acceptance-cases.md).
+4. [research.md](research.md), [data-model.md](data-model.md), and [validation contract](contracts/validation-contract.md) when changing internals.
 5. Before editor changes, `docs/contributing/workflow-ui-integration.md`; before native reader qualification, `docs/mcp-catalog/mcp-server-testing-process.md`.
 
-The old 081 and prior 082 campaign plans are historical references. The submitted revised goal explicitly replaces their all-30 implementation activation gate. Check each bound subject's readiness when evaluating it. Do not spend this implementation run recovering the corpus or auditing other branches.
+The earlier 081 analysis is reference material. Its all-30 activation gate and report-UI scope are superseded. Do not restart branch recovery, take over the generation campaign, or claim unsupported scenario qualification.
 
-## First useful result
-
-T001–T013 add a local process validator and durable evidence. T014–T018 prove the repair loop. Start with an ordinary AI task producing structured output so MCP/native dependencies do not block the core behavior. Then publish the report contract and complete the real jig/heat slices.
-
-Current design checks are CAD/MCP-only; do not assume generic repair already works. Extend existing compilation, feedback, revision checkpoints and invalidation deliberately. Existing run:task:port result IDs need attempt/revision/hash binding before a verdict is durable.
-
-Runtime profiles belong in the packaged service, not only under tests. Test fixtures and saved demonstrations remain separate from the original generation packs.
-
-## Demonstration isolation
-
-Use `artifacts/process-validation/` with distinct runtime/data roots and free ports. Reuse source artifacts read-only. Native readers use owned sessions or confined copies under existing lifecycle rules. Do not borrow another task's database, overwrite its artifacts or kill its services.
-
-Use a real configured AI for correction acceptance, save feedback consumption and new output evidence, and label controlled initial defects. If a needed credential/reader is unavailable, record a precise blocker while completing independent work. A mock is useful test evidence, not a substitute for required live demonstration.
-
-## Implemented commands
+## Inspect the installed profiles
 
 ```powershell
+$env:UV_CACHE_DIR = ".local-run/uv-cache"
 uv run python -m workspace_service.process_validation_cli --help
-uv run python -m pytest packages/core/tests/test_process_validation.py
-uv run python -m pytest packages/data_vault/tests/test_process_validation_repository.py
-uv run python -m pytest packages/workspace_service/tests/test_workflow_process_validation.py
-uv run python -m pytest packages/workspace_service/tests/test_workflow_process_validation_rework.py
+uv run python -m workspace_service.process_validation_cli profile `
+  --profile structured-demo
+uv run python -m workspace_service.process_validation_cli profile `
+  --profile parametric-drill-jig-01
+uv run python -m workspace_service.process_validation_cli profile `
+  --profile heat-spreader-sizing-01
 ```
 
-Reproduce the isolated live-model structured correction demonstration in a new
-directory (the command refuses to overwrite evidence):
+The profile operation prints the exact profile and baseline references needed in process source. Runtime profiles live in the packaged service. Test fixtures and demonstrations remain separate from original generation packs.
+
+## Run the offline CLI example
 
 ```powershell
-.venv\Scripts\python.exe scripts/run_process_validation_structured_loop.py `
-  --output-dir artifacts/process-validation/structured-loop/<UTC-run-id>
+$env:UV_CACHE_DIR = ".local-run/uv-cache"
+$root = ".local-run/process-validation-example"
+uv run python examples/process-output-validation/prepare_example.py `
+  --workspace $root --length-mm 100
+
+$result = uv run python -m workspace_service.process_validation_cli evaluate `
+  --workspace $root --workspace-id validator-example `
+  --db "$root/validation.sqlite3" --request request.json `
+  --profile structured-demo | ConvertFrom-Json
+
+uv run python -m workspace_service.process_validation_cli export `
+  --workspace $root --workspace-id validator-example `
+  --db "$root/validation.sqlite3" `
+  --assessment $result.assessment_id --format markdown
 ```
 
-Verify the retained canonical run without calling a model:
+The preparer registers an exact producer output before evaluation; the CLI does not accept an unregistered caller claim as canonical output. Use `--length-mm 98` for a measured noncompliant result. The full `get`, paged `read`, Markdown and RTM/CSV commands are in the product guide.
+
+## Reproduce isolated demonstrations
+
+The structured correction demonstration needs the configured Hermes-compatible model endpoint:
 
 ```powershell
-.venv\Scripts\python.exe -m pytest `
-  tests/external/process_validation/test_structured_loop_evidence.py -q
+$env:UV_CACHE_DIR = ".local-run/uv-cache"
+uv run python scripts/run_process_validation_structured_loop.py `
+  --output-dir artifacts/process-validation/structured-loop/<new-UTC-run-id>
 ```
 
-Confirm actual CLI help and repository suite isolation before use. Add reader/security/report/UI tests at their tasks. Exact push/merge/release gates remain in the contributor runbooks if those actions are separately authorized.
+The engineering demonstration also starts its explicitly isolated MCP dependencies and copies retained heat inputs read-only:
+
+```powershell
+$env:UV_CACHE_DIR = ".local-run/uv-cache"
+uv run python scripts/run_process_validation_engineering.py `
+  --output-dir artifacts/process-validation/engineering/<new-UTC-run-id>
+```
+
+Both commands refuse to overwrite their output root. Use a distinct runtime/data root and do not borrow another task's database, service, or port. These live demonstrations are already retained and independently verified; rerun them only when their runtime path changes or new evidence is required.
+
+## Focused verification
+
+```powershell
+$env:UV_CACHE_DIR = ".local-run/uv-cache"
+uv run pytest `
+  packages/core/tests/test_process_validation.py `
+  packages/data_vault/tests/test_process_validation_repository.py `
+  packages/workspace_service/tests/test_process_validation.py `
+  packages/workspace_service/tests/test_workflow_process_validation.py `
+  packages/workspace_service/tests/test_workflow_process_validation_rework.py `
+  packages/workspace_service/tests/test_process_validation_reporting.py `
+  tests/e2e/test_process_validation.py -q
+
+npm run test --prefix apps/web -- --run `
+  src/prototypes/workflow-recovery/validation-run-status.spec.ts `
+  src/prototypes/workflow-recovery/WorkflowRunObserverIntegration.spec.tsx `
+  src/prototypes/workflow-recovery/ValidatorBlockEditor.spec.tsx `
+  src/prototypes/workflow-recovery/validation-settings.spec.ts
+
+npm run build --prefix apps/web
+
+$env:WRIGHT_PLAYWRIGHT_PORT = "5186"
+node node_modules/@playwright/test/cli.js test `
+  tests/ui-integration/process-validation.spec.ts `
+  tests/ui-integration/workflow-composer.spec.ts `
+  --project=chromium --workers=1
+```
+
+Use a private `--basetemp` if the host's shared pytest cache is not writable. The exact distribution and Docker commands/results are in [distribution.md](evidence/distribution.md). Retained-evidence verifiers are under `tests/external/process_validation/`.
 
 ## Report branch handoff
 
-Publish contract schemas and representative records, JSON/Markdown/RTM projections, exact read/export operations and `contracts/report-consumer.md`. Keep the consumer independent of validator internals and engineering tool availability. Preserve explicit scope, currentness and evidence links. Do not edit the other branch or create its report UI.
+The other branch consumes `wright.process-validation-report/1` and must not import validator internals or rerun readers. It should validate the published schema and examples, calculate the effective verdict as `currentness.is_current AND assessment.summary.release_eligible`, preserve all RTM rows and scope limitations, and resolve evidence only through authorized workspace operations. The complete boundary is [contracts/report-consumer.md](contracts/report-consumer.md).
 
-## Progress and completion
+## Completion rule
 
-All 34 tasks must be complete for this goal. Record each milestone's evidence in progress.md; distinguish code implemented, process demonstrated, design compliant and human accepted. The saved goal, when submitted verbatim, supplies implementation authority across the listed milestones; it does not authorize external actions or invent engineering review decisions.
-
-No goal, workflow, solver or implementation was started by saving this handoff.
+All T001–T034 requirements, artifacts, examples and gates must be supported by current evidence before marking the goal complete. Distinguish implemented code, demonstrated process behavior, qualified reader scope, report compatibility, and human or physical acceptance. Push, merge and release remain separately authorized and governed by their contributor runbooks.
