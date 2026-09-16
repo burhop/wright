@@ -3,11 +3,14 @@ For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
 at specs/082-output-content-validation/plan.md
 
-Output-content validation adopts the earlier analysis under
-specs/081-engineering-workflow-templates/content-validation/.
-Use specs/082-output-content-validation/quickstart.md and implementation-goal.md.
-Implementation remains deferred until human plan review and the all-30-output G0
-gate pass. Preserve the separate generation campaign and read its data only.
+Feature 082 is a runtime process-output validator with actionable AI correction
+feedback and report-consumable results. Read its scope-amendment.md, quickstart.md
+and implementation-goal.md. Earlier 081 content-validation analysis is reference
+material. Submitting the revised goal approves replacing its all-30-output G0 gate
+with per-subject checks. Implementation starts after human plan approval. Preserve
+the separate generation campaign; use isolated runs for validator/rework
+demonstrations. The reporting UI
+belongs to another branch; publish a shared result contract here.
 <!-- SPECKIT END -->
 
 Before changing the workflow/process editor or its workspace entry point, read

@@ -1,38 +1,54 @@
-# Research and reconciliation
+# Research and scope reconciliation
 
-Prepared 2026-09-16 against merged dev `86ee835974970cd05913b58e306e537f6dfaf181`.
+**Updated:** 2026-09-16. Repository review for the process-validator scope; no new external product recommendations.
 
-## Adopted analysis
+## Decisions
 
-The [earlier research](../081-engineering-workflow-templates/content-validation/research.md) is incorporated: D01–D09, primary-source links, semantic rather than byte-equality checks, independent observations, metamorphic/defective controls, requirements matrices and qualified optional geometry tools. The [30-case seeds](acceptance-cases.md) preserve the concrete engineering analysis. No new claim that an optional package is installed or qualified is made here.
-
-## Current decisions
-
-| Decision | Rationale | Alternative rejected |
+| Decision | Rationale | Alternative considered |
 |---|---|---|
-| Separate 082 feature/worktree from fetched dev | Protect concurrent dirty checkout and give Spec Kit an unambiguous selector | Changing branches in the shared active directory |
-| Preserve adopted design by reference | Earlier seven-file bundle is already merged unchanged | Duplicate competing requirements or rewritten historical evidence |
-| T001 manual bounded audit before new CLI | Generation status mutates; new audit CLI does not exist | Invoke nonexistent tool or activate implementation from a counter |
-| Use read-only state_store connection and authorized roots | Source artifacts/databases are outside the new checkout | Implicit arbitrary paths or sharing writable runtime state |
-| Explicit error bridge | Existing workflow assertion handler maps TypeError/ValueError/ArithmeticError to fail | Mislabel evaluator faults as engineering design failures |
-| Authorized review identity | Existing review projection admits unauthenticated local-workspace attribution | Treat historical actor text as authenticated human acceptance |
-| Circular-center fixture | Jig guidance records point-on-curve versus arc-center distinction | Shift datum or enlarge tolerance to fit a wrong measurement |
-| Expand family tasks A–E | A profile or mock alone cannot establish a qualified real-file verdict | One large “implement family” task with hidden omissions |
+| Runtime validator, callable directly and inside canonical processes | User needs checks between steps, not a corpus QA gate | Keep only a post-run campaign CLI |
+| Replace global G0 on approval of the revised goal | One stable producer output can be checked while unrelated flows remain unfinished | Block all development on 30 completed outputs |
+| Extend existing design-check scheduler | It already routes feedback, preserves attempts and bounds rework | Build another graph runner |
+| Add explicit local validator mode | Current design checks require MCP/JSON/read-only CAD | Pretend existing CAD-only restrictions already support generic checks |
+| Reuse EngineeringResult with revision identity | Supports values/files/CAD/analysis and producer provenance | Use file paths or run:step:port IDs as immutable subjects |
+| Deterministic measurement plus attributed judgment | A fluent report does not establish geometry or numeric correctness | Let a critic AI invent authoritative numeric verdicts |
+| Typed repair packets with readable explanations | Both the producing AI and reporting users need the same facts | Free-text corrections or opaque test failures only |
+| One safe producer/check revision segment first | Bounds side effects and works with existing scheduler | Arbitrary multi-producer graph rewinds |
+| Report schema/Markdown/RTM contract here | Reporting UI is being built in another branch | Build a duplicate dashboard and report application |
+| Package runtime profiles | Native installed runtime must work without source/test checkout | Leave production profiles under tests only |
+| Three initial capabilities plus 30-pack support map | Establishes the process loop and shared geometry/numerics before expanding readers | Claim all 30 are supported by a generic schema checker |
 
 ## Repository evidence reviewed
 
-- `packages/data_vault/src/data_vault/state_store.py`: read_only and ensure_parent controls.
-- `scripts/engineering_dataset_campaign.py`: status constructs Campaign and exports.
-- `packages/workspace_service/src/workspace_service/workflow_engineering_assertions.py`: exception conversion.
-- `packages/workspace_service/src/workspace_service/workflow_artifact_review.py`: unauthenticated attribution.
-- `specs/081-engineering-workflow-templates/dataset-campaign/jig-circle-center-guidance.md`.
-- Existing assertion/normalizer registries, selected Modelica contract, Pi source evidence, and sheet-metal amendment references in the adopted bundle.
-- Independent read-only Spec Kit research agent checked these integration points; no workflow or native operation ran.
+- `packages/workspace_service/src/workspace_service/workflow_source_execution.py`: canonical compile/execution; design-check restrictions; producer prompt feedback; revision snapshots and result invalidation.
+- `workflow_design_check.py`: evidence guards and one CAD producer/check rework path.
+- `workflow_results.py`: provider-neutral EngineeringResult, representations, provenance and verification/diagnostic roles.
+- `workflow_run_record.py`: result projection and invalidation on design_revision.
+- `workflow_mcp_execution.py`: read-only check tooling and subject restrictions.
+- `workflow_async_operations.py`: materialization of remote operations.
+- `engineering_scenario_assertions.py`, `engineering_scenario_artifacts.py`: reusable plugins/normalization; summaries still require actual-file evidence.
+- `workflow_engineering_assertions.py`: legacy exception-to-fail conversion needs an explicit bridge.
+- `workflow_artifact_review.py`: local unauthenticated attribution is not proof of human acceptance.
+- `packages/core/src/core/tools.py`: BaseTool requirement.
+- `docs/contributing/workflow-ui-integration.md`: preserve the reviewed editor and verify served workspace entry.
+- Jig source CSV and retained heat-inspection notes confirm useful geometric/numerical pilot requirements.
 
-## Activation decisions still requiring evidence
+A bounded read-only Spec Kit research agent independently reviewed the runtime integration points. No process, solver, generation campaign or application takeover was performed.
 
-T001–T005 freeze then-current input/definition/receipt/artifact identities, exact reader formats and qualified hosts, source conflicts and tolerances. These cannot be honestly finalized while generation is incomplete. Dependent checks stay blocked until their evidence is resolved.
+## Earlier engineering analysis retained
+
+The [081 research](../081-engineering-workflow-templates/content-validation/research.md) preserves the original primary-source basis and D01–D09 decisions. Reuse independent measurements, semantic checks, source baselines, explicit outcome states, meaningful valid/defective controls, current model authority and requirements traceability. Its post-run activation, all-family delivery and dashboard sequencing are historical after approval of this amendment.
+
+The [30-case seeds](../081-engineering-workflow-templates/content-validation/acceptance-cases.md) remain requirement discovery material. Keep jig arc-center versus point-on-curve behavior, exact datum/clearance definitions, heat field/refinement evidence, Modelica derivative/thermostat semantics, Pi manufacturer-source authority and narrow sheet-metal amendments when their capabilities are implemented.
+
+## Implementation discovery, not unresolved design
+
+T001/T002 resolve exact transport registration and canonical source-schema extension locations, qualified local reader versions, pilot artifact formats and source hashes. These are bounded code/evidence discovery tasks. They do not authorize installing all native tools, replacing the editor, auditing other branches or rerunning the corpus. Missing required pilot dependencies receive concrete blockers while independent implementation continues.
 
 ## Spec Kit execution
 
-Sequential numbering allocated 082 using the installed Git hook once; the branch was renamed with the required codex/ prefix. Git Bash is available at `D:/Program Files/Git/bin/bash.exe`; this avoids the old WSL bootstrap issue. No template overrides or presets were found; core templates apply. The feature selector and managed AGENTS plan reference change only in the new worktree. Optional auto-commit hooks for specification/planning/tasks/analysis are disabled. Planning phases are authorized together by the current request; implementation remains gated by G0 and review.
+Read constitution v3.1.1, current feature selector, plan/tasks templates and installed skill instructions. Ran setup-plan.sh and setup-tasks.sh through Git Bash; both resolved feature 082 without overwriting existing templates.
+
+Before/after plan and tasks hooks are optional: `/speckit-git-commit`; after-plan also offers `/speckit-agent-context-update`. No mandatory hook applies. Automatic optional hook execution was skipped; the managed AGENTS section is updated explicitly as the plan workflow requires. A normal focused documentation commit may save the finished handoff.
+
+Planning review and task generation belong to this user-requested planning turn. Runtime implementation, deployment, a persistent goal and report-branch edits are not started.

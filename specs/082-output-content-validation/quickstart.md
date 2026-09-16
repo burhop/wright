@@ -1,49 +1,54 @@
 # Future-agent quickstart
 
-**Code worktree**: `D:/repos/wright`
-**Branch**: `codex/082-output-content-validation`
-**Base**: `6c0602a4300da38fa7db62026aff1bd984e4113e`, merged dev after PR #130; 082 rebased onto it.
-**Start**: [ready-to-paste /goal](implementation-goal.md).
+**Workspace:** `D:/repos/wright`
+**Branch:** `codex/082-output-content-validation`
+**Start:** [ready-to-paste /goal](implementation-goal.md)
+**Scope:** Runtime validator, AI correction loop and report data contract.
 
 ## Read order
 
-1. [progress.md](progress.md), [spec.md](spec.md), [plan.md](plan.md), [tasks.md](tasks.md).
+1. [progress.md](progress.md), [scope-amendment.md](scope-amendment.md), [spec.md](spec.md), [plan.md](plan.md), [tasks.md](tasks.md).
 2. Repository AGENTS.md and `.specify/memory/constitution.md`.
-3. [research.md](research.md), [data-model.md](data-model.md), [contract](contracts/validation-contract.md), [acceptance cases](acceptance-cases.md); read their incorporated 081 sources.
-4. Current [campaign execution state](../081-engineering-workflow-templates/dataset-campaign/execution-state.md), [campaign plan](../081-engineering-workflow-templates/dataset-campaign/plan.md), [native lifecycle contract](../081-engineering-workflow-templates/dataset-campaign/contracts/native-application-lifecycle.md), subsequent closeout evidence and selected bindings.
-5. [Modelica contract](../081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md), [heat inspection](../081-engineering-workflow-templates/dataset-campaign/heat-native-result-inspection.md), [jig center guidance](../081-engineering-workflow-templates/dataset-campaign/jig-circle-center-guidance.md) and current pack amendments.
-6. Before UI work, `docs/contributing/workflow-ui-integration.md`; before native reader qualification, `docs/mcp-catalog/mcp-server-testing-process.md`.
+3. [research.md](research.md), [data-model.md](data-model.md), [validation contract](contracts/validation-contract.md), [acceptance cases](acceptance-cases.md).
+4. Earlier [30-pack engineering seeds](../081-engineering-workflow-templates/content-validation/acceptance-cases.md), jig center guidance and heat native-result notes linked from the acceptance file.
+5. Before editor changes, `docs/contributing/workflow-ui-integration.md`; before native reader qualification, `docs/mcp-catalog/mcp-server-testing-process.md`.
 
-## First actions
+The old 081 and prior 082 campaign plans are historical references. The submitted revised goal explicitly replaces their all-30 implementation activation gate. Check each bound subject's readiness when evaluating it. Do not spend this implementation run recovering the corpus or auditing other branches.
 
-Confirm branch, feature selector and dirty work in this project folder. Branch 082 is now attached here; the former secondary worktree is detached. Review [readiness evidence](evidence/readiness-2026-09-16.json); it is a dated preliminary failure, not current authority or a complete cohort audit.
+## First useful result
 
-T001 must verify full G0 before T002 or validation implementation. When blocked, record exact facts and leave deferred without taking over generation. The current generation status CLI writes; direct source readers and read-only WAL-aware SQLite access are the initial audit method.
+T001–T013 add a local process validator and durable evidence. T014–T018 prove the repair loop. Start with an ordinary AI task producing structured output so MCP/native dependencies do not block the core behavior. Then publish the report contract and complete the real jig/heat slices.
 
-Once approved and eligible, perform the 74 tasks. The first useful slice is T001–T015. Family tasks are five-step A–E chains; each E needs actual retained artifacts. Treat task descriptions and the adopted design as joint acceptance criteria.
+Current design checks are CAD/MCP-only; do not assume generic repair already works. Extend existing compilation, feedback, revision checkpoints and invalidation deliberately. Existing run:task:port result IDs need attempt/revision/hash binding before a verdict is durable.
 
-## Concurrent task isolation
+Runtime profiles belong in the packaged service, not only under tests. Test fixtures and saved demonstrations remain separate from the original generation packs.
 
-Separate worktrees allow distinct branches and files, but do not isolate external runtimes automatically. Use this worktree's own validation state and temporary copies. Record distinct API/frontend ports and writable runtime/data roots. Treat the original corpus/runtime as authorized read-only sources. Serialize shared native resources and record exact owned processes/leases. No global cleanup, application takeover or branch switching in another task.
+## Demonstration isolation
 
-A future fetch/rebase is not required merely because dev advances. If integration is needed, preserve this branch's commits and recheck source/profile/runtime identities; do not silently redefine the frozen cohort.
+Use `artifacts/process-validation/` with distinct runtime/data roots and free ports. Reuse source artifacts read-only. Native readers use owned sessions or confined copies under existing lifecycle rules. Do not borrow another task's database, overwrite its artifacts or kill its services.
 
-## Verification
+Use a real configured AI for correction acceptance, save feedback consumption and new output evidence, and label controlled initial defects. If a needed credential/reader is unavailable, record a precise blocker while completing independent work. A mock is useful test evidence, not a substitute for required live demonstration.
 
-The CLI and validator tests are planned files. After T010 exists, inspect its real `--help` before using the target commands. Service operations and exit semantics are in the contract.
+## Commands after implementation
 
-Suggested focused checks once implemented:
+No new validator command exists yet. T011 adds the proposed packaged entry point:
+
 ```powershell
-uv run python scripts/run_engineering_content_validation.py --help
-uv run python -m pytest packages/core/tests/test_engineering_output_validation.py
-uv run python -m pytest packages/data_vault/tests/test_engineering_validation_repository.py
-uv run python -m pytest tests/test_engineering_content_validation_campaign.py
+uv run python -m workspace_service.process_validation_cli --help
+uv run python -m pytest packages/core/tests/test_process_validation.py
+uv run python -m pytest packages/data_vault/tests/test_process_validation_repository.py
+uv run python -m pytest packages/workspace_service/tests/test_workflow_process_validation.py
+uv run python -m pytest packages/workspace_service/tests/test_workflow_process_validation_rework.py
 ```
 
-Use repository suite-isolation conventions when combining packages. Add family/native checks and UI component/mock/served-system checks at their tasks. Exact required push/merge gates come from current contributor runbooks, not this example list.
+Confirm actual CLI help and repository suite isolation before use. Add reader/security/report/UI tests at their tasks. Exact push/merge/release gates remain in the contributor runbooks if those actions are separately authorized.
 
-## Progress discipline
+## Report branch handoff
 
-Update progress.md after material results, including exact subject/version, evidence paths, relevant commands, failures and next task. Preserve terminal evidence. Classify faults as source, generator, reader, oracle or report before changing code. Do not widen tolerances. At milestone review gates, show concrete tested evidence and observe current human authority.
+Publish contract schemas and representative records, JSON/Markdown/RTM projections, exact read/export operations and `contracts/report-consumer.md`. Keep the consumer independent of validator internals and engineering tool availability. Preserve explicit scope, currentness and evidence links. Do not edit the other branch or create its report UI.
 
-No goal, monitor, workflow, reader implementation, push or deployment was started by preparing this handoff.
+## Progress and completion
+
+All 34 tasks must be complete for this goal. Record each milestone's evidence in progress.md; distinguish code implemented, process demonstrated, design compliant and human accepted. The saved goal, when submitted verbatim, supplies implementation authority across the listed milestones; it does not authorize external actions or invent engineering review decisions.
+
+No goal, workflow, solver or implementation was started by saving this handoff.

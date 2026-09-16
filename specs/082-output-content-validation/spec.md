@@ -1,119 +1,110 @@
-# Feature Specification: Engineering Output Content Validation
+# Feature Specification: Process Output Validator
 
-**Feature Branch**: `codex/082-output-content-validation`
-**Created**: 2026-09-16
-**Status**: Prepared for implementation review; G0 not ready
-**Input**: Validate the content and requirements traceability of the 30 current engineering input packs after every process flow produces data. Preserve the earlier analysis and provide a future-agent implementation goal.
+**Branch:** `codex/082-output-content-validation`
+**Updated:** 2026-09-16
+**Status:** Revised planning package; implementation not started
+**Input:** Validate what a previous process step produced, return actionable feedback to its producing AI, and supply human-readable evidence to a separate reporting feature.
+
+## Scope and authority
+
+The [scope amendment](scope-amendment.md) proposes replacing the earlier all-30 campaign gate and report-UI scope. Submitting the revised goal approves this change. The 30 input packs inform reusable capabilities. Version 1 delivers a running process capability with structured-output, CAD and numerical examples; remaining family-specific readers form an explicit extension backlog.
+
+A validator checks a declared output and requirement scope. It does not infer that the whole process or physical product is valid. MCP and non-MCP producers and readers use the same contracts.
 
 ## User Scenarios & Testing
 
-### User Story 1 - Trust a measured output verdict (Priority: P1)
+### User Story 1 — Check a previous step inside a process (Priority: P1)
 
-An engineer independently checks retained heat-spreader and drill-jig outputs and can distinguish a correct analysis from a design that meets its requirements.
+An author connects an output to a process check, selects a requirement profile, and connects downstream work to the check's accepted outcome.
 
-**Why this priority**: These numerical and geometric pilots establish the shared evidence contract before extending it to harder families.
-**Independent Test**: Evaluate qualified positive, alternative and defective controls, then both retained pilots; follow each verdict back to an original requirement and measured artifact without starting a generation run.
+**Independent test:** Run a saved canonical process with a non-MCP producer, validator and downstream consumer. A correct structured result proceeds; a wrong value, missing required field or stale subject prevents release.
 
-**Acceptance Scenarios**:
-1. **Given** a completed generation cohort and frozen requirements, **when** an output is checked, **then** its actual content supplies the measured values, with source identity, method, units and uncertainty.
-2. **Given** a correct analysis that finds no feasible design, **when** results are assessed, **then** content can be verified while design compliance fails.
-3. **Given** a missing observation, reader crash or interval crossing a limit, **when** evaluated, **then** the result cannot pass and retains its distinct reason.
+**Acceptance scenarios:**
+1. Given a completed producer step, when its declared output is checked, then evaluation binds the exact producer attempt and output revision even while the rest of the process is incomplete.
+2. Given a required native reader is unavailable, when the check runs, then it identifies the missing capability and holds downstream work.
+3. Given no MCP dependency in the profile, when checking text, structured values or local files, then the process evaluates them locally.
+4. Given an MCP caller, when it invokes the validator with authorized bindings, then the same service and verdict semantics apply.
 
-### User Story 2 - Cover all engineering families (Priority: P1)
+### User Story 2 — Correct a failed output using the findings (Priority: P1)
 
-An engineer applies shared checks with case-specific requirements across the ten families and all 30 input packs.
+The producing AI receives evidence-backed correction instructions, creates a new revision and submits that revision for the same checks.
 
-**Why this priority**: A useful final validation campaign cannot omit difficult formats or entire families.
-**Independent Test**: Each family accepts a valid alternative, detects targeted defects at the intended check, and gives every required part, candidate and requirement a disposition for all three retained cases.
+**Independent test:** A process produces an intentionally defective structured output; a real configured AI consumes its correction packet, creates a corrected revision, and the validator releases the consumer only after a pass. Repeat with a CAD-producing AI/MCP task.
 
-**Acceptance Scenarios**:
-1. **Given** the 30 source packs, **when** requirements are frozen, **then** prose, tables, images and authorized amendments are accounted for with source locators.
-2. **Given** a changed datum, missing candidate or swapped net, **when** the affected output is checked, **then** the intended check detects it even if the report claims success.
-3. **Given** an unavailable required reader, **when** coverage is reported, **then** implementation remains incomplete and the case is blocked rather than accepted as not applicable.
+**Acceptance scenarios:**
+1. Given a measured defect, when feedback is delivered, then it includes requirement/check IDs, expected/observed values, tolerance, units/frame, evidence location, affected producer/output and an acceptance target.
+2. Given a permitted revision path, when correction succeeds, then old failures remain in history and the new result references the new output revision.
+3. Given only missing evidence with no repairable defect, a required evaluator fault, repeated unchanged output or exhausted revision budget, when the check cannot finish, then it stops automatic repair with a precise next action.
+4. Given multiple producing steps, when feedback is assembled, then findings identify their owners; only an explicitly configured safe revision target may run automatically.
 
-### User Story 3 - Inspect traceability in the workspace (Priority: P2)
+### User Story 3 — Reuse the result in user reports (Priority: P1)
 
-An engineer opens a run's validation evidence from the existing workspace and sees the requirements matrix, measured evidence and current versus historical outcomes.
+A report author consumes stable validation records containing readable explanations and a requirements traceability matrix without rerunning measurements.
 
-**Why this priority**: Reviewers need an accessible explanation of each verdict and its scope.
-**Independent Test**: Enter the served application through Workflow/Workflows, open evidence, and reconcile its values with exported reports while exercising existing authoring.
+**Independent test:** Consume exported JSON using only the published schema and render the supplied Markdown/traceability rows. Every displayed verdict and measurement reconciles with the stored result, including failed and incomplete checks.
 
-**Acceptance Scenarios**:
-1. **Given** a failed requirement, **when** the engineer opens its row, **then** the source, test, measured value, artifact and failure reason are accessible.
-2. **Given** a newer failed or incomplete evaluation, **when** the view refreshes, **then** an older pass stays historical and cannot mask it.
-3. **Given** original generation history, **when** content results appear, **then** execution, content, compliance and physical evidence remain distinct.
+**Acceptance scenarios:**
+1. Given a failed dimension, when rendered, then a user sees the requirement, observed dimension, allowed range, evidence-supported diagnosis and next action.
+2. Given a newer incomplete or failed revision, when reporting current status, then an older pass stays historical and cannot mask it.
+3. Given an honestly infeasible design, when assessed, then valid analysis and noncompliant design remain distinct.
+4. Given a required human judgment, when no authorized decision exists, then the result identifies pending review; an AI summary cannot substitute for it.
 
-### User Story 4 - Replay and review a complete campaign (Priority: P2)
+### User Story 4 — Reuse engineering checks across output families (Priority: P2)
 
-An authorized reviewer completes or disputes subject-bound judgments, and an engineer can reproduce all 30 evaluations without changing the original runs.
+An author selects reusable geometry, structured-data or numerical checks and supplies source-backed requirements instead of writing one validator per workflow.
 
-**Why this priority**: Results must survive interruption, changing inputs and later review.
-**Independent Test**: Replay a frozen cohort, interrupt a reader, retry a terminal attempt and append a late review; verify preserved originals and immutable prior reports.
+**Independent test:** Demonstrate the same engine on a non-MCP structured output, drill-jig geometry and heat-spreader results. Independently known good, alternative and targeted bad outputs exercise the intended checks.
 
-**Acceptance Scenarios**:
-1. **Given** a later authorized review, **when** recorded, **then** a new assessment references the exact subject and leaves earlier evidence unchanged.
-2. **Given** a known failure and a second blocked check, **when** aggregated, **then** noncompliance and incomplete evaluation are both visible.
-3. **Given** source changes during a read, **when** finalizing, **then** mixed revisions cannot earn a pass.
-4. **Given** a complete campaign with genuine design failures, **when** closed, **then** failures are retained with reproducible findings rather than removed to obtain 30 green results.
+**Acceptance scenarios:**
+1. Given jig seat coordinates, when measured from actual geometry, then checks use the workpiece datum, circular center and specified per-axis tolerances.
+2. Given heat-spreader candidates, when evaluated, then actual field/energy/refinement evidence is checked against independent calculations; a generator success report is insufficient.
+3. Given an unsupported family-specific check, when requested, then it returns a capability-specific blocked result, never a placeholder pass.
+4. Given any of the 30 source packs, when reviewing the capability inventory, then required capabilities and implemented/planned support are explicit.
 
-### Edge Cases
+### Edge cases
 
-- Foreign-run artifacts, stale source hashes, missing variants, empty arrays, invalid units, nonfinite numbers and unsupported file versions.
-- Tolerance boundaries, uncertainty intervals, symmetric geometry with a wrong key, and radial versus diametral clearance.
-- Correct report of infeasibility versus an incorrect success claim; mixed failure/error/blocked outcomes.
-- Unresolved source conflicts, narrowly scoped amendments and unperformed required reviews.
-- Late review of a stale subject, terminal retry versus nonterminal resume, and an older pass behind newer incomplete work.
-- Malicious archive paths, excessive parser resources, and native readers attempting to save original files.
+- Unsaved structured values, multiple files/parts, foreign-run evidence and provider resources with no stable revision.
+- Output changes during inspection; canceled/crashed native reader; concurrent duplicate requests.
+- Empty evidence, unsupported formats, nonfinite numbers, ambiguous units/datums and uncertainty crossing a threshold.
+- A failed requirement alongside a blocked check; informative warnings versus mandatory failures.
+- Mixed-producer findings, unsafe side effects, source conflicts and input changes during rework.
+- Feedback containing artifact-sourced instructions, excessive text, credentials or untrusted paths.
+- Direct invocation with no configured revision route: return feedback without scheduling work.
 
 ## Requirements
 
-### Functional Requirements
+- **FR-001:** Invoke validation as a canonical process check and through direct service/MCP interfaces; do not require the entire process or 30-case corpus to finish.
+- **FR-002:** Bind immutable producer attempt, output port, representation/revision/hash, baseline, profile and reader identities. Check readiness per subject.
+- **FR-003:** Version source-backed requirements, methods, tolerances and applicability independently of generated outputs. Record scope and unresolved requirements explicitly.
+- **FR-004:** Compose registered readers/checks by capability; case IDs select data rather than runtime branches. Package runtime resources outside test-only directories.
+- **FR-005:** Measure actual files/values or pinned native readback. Record method/evidence strength; a summary cannot prove unobserved geometry or physics.
+- **FR-006:** Return typed findings with expected/observed constraints, evidence selectors, ownership, correction target, routing category and readable explanation.
+- **FR-007:** Preserve pass/fail/blocked/inconclusive/error/justified-not-applicable states and separate content verification, design compliance, evaluation completeness and physical evidence.
+- **FR-008:** Gate downstream work on a conclusive current pass for the entire declared mandatory scope; informational checks cannot hide mandatory omissions.
+- **FR-009:** Route feedback to a configured upstream producer and support bounded safe revision followed by revalidation. Preserve satisfied constraints; never weaken the profile automatically.
+- **FR-010:** Persist revision budgets, feedback, attempts and invalidation across resume. Stop on no progress, stale identity, unknown side effects or exhausted budget.
+- **FR-011:** Keep validation read-only. The runner owns authorized producer execution; no evaluator edits originals, reruns manufacturing, submits orders or invents approval.
+- **FR-012:** Publish versioned JSON, readable Markdown and requirements traceability rows from the same immutable assessment; provide read/export operations for the reporting branch.
+- **FR-013:** Preserve historical assessments, fail-closed currentness and genuine reviewer identity; late authorized review creates a new assessment.
+- **FR-014:** Demonstrate structured-output, drill-jig and heat-spreader capabilities with real process evidence; map all 30 packs to capabilities without claiming all are implemented.
+- **FR-015:** Qualify checks with valid, alternative, defect and boundary controls; verify confinement, error routing and existing process compatibility.
+- **FR-016:** Preserve offline operation where dependencies permit, package boundaries, tracing, auth/RBAC, native resource ownership and established process authoring.
+- **FR-017:** Make configuration and results accessible in existing process authoring/run surfaces; keep the separate report application out of this feature.
 
-FR-001 through FR-016 retain the meaning of CVR-01 through CVR-16 in the [earlier plan](../081-engineering-workflow-templates/content-validation/plan.md).
+## Key Entities
 
-- **FR-001**: Require and freeze a cohort of exactly 30 current, completed generation attempts with all required stable same-attempt outputs and verified identities before validation implementation is activated.
-- **FR-002**: Record versioned atomic requirements from every authoritative input source and narrowly scoped amendment.
-- **FR-003**: Separate requirements, verification methods and observations; freeze limits before evaluation and prevent generated reports or execution approvals from amending them.
-- **FR-004**: Compose reusable checks by artifact capability, with case-specific data profiles rather than separate checking engines.
-- **FR-005**: Independently inspect actual artifacts and bind every observation to its artifact and measurement method.
-- **FR-006**: Verify semantic correspondence among native sources, exports, meshes, fields, reports and handoff bundles.
-- **FR-007**: Apply explicit units, frames, applicability, finite tolerances and uncertainty; document bound inclusivity and near-zero rules.
-- **FR-008**: Cover all ten families and 30 cases, including their required parts, alternatives, candidate grids and refinements.
-- **FR-009**: Qualify each hard-check mechanism with independent known-good references, valid alternatives, targeted defects, boundaries and applicable transformation relationships.
-- **FR-010**: Retain immutable attempts, findings, review decisions and assessment revisions separately from generation history.
-- **FR-011**: Distinguish pass, fail, inconclusive, blocked, justified not-applicable and error; known failure remains visible even when evaluation is incomplete.
-- **FR-012**: Produce machine-readable, tabular, human-readable and test-runner reports from the same results with requirement-to-test-to-measurement-to-artifact links.
-- **FR-013**: Display current content verification, design compliance, coverage and pending review separately from historical generation achievements.
-- **FR-014**: Support confined read-only replay, bounded resources, safe cancellation, identity-checked resume and terminal retries with new identities.
-- **FR-015**: Preserve workspace authority, original files, existing authoring, offline operation and supported distribution boundaries; review attribution must reflect the actual authorized actor.
-- **FR-016**: Deliver reproducible findings, limitations, qualification evidence and a final checkpoint for the whole corpus.
-- **FR-017**: Prevent evaluator defects from being mislabeled engineering failures and prevent unauthenticated attribution or automated judgments from impersonating human review.
-
-### Key Entities
-
-- **Cohort and artifact subject**: selected current case attempts, exact inputs and retained outputs, with provenance and stable identities.
-- **Source baseline, requirement and decision**: controlling source statements, classifications, limits and explicit resolution of conflicts or applicability.
-- **Acceptance profile and reader identity**: required verification methods, evidence capabilities, versions and qualification.
-- **Measurement and assertion result**: observed facts, method, uncertainty and check verdict linked to evidence.
-- **Validation attempt and finding**: independent evaluation history, diagnostic classification and reproducer.
-- **Review record and assessment revision**: authorized subject-bound judgment and immutable derived outcome.
+Validation request, subject binding, requirement baseline/profile, reader identity, measurement, check result, finding, repair feedback, immutable attempt, assessment, report projection and subject-bound review decision. See [data-model.md](data-model.md).
 
 ## Success Criteria
 
-### Measurable Outcomes
+- **SC-001:** A saved producer → validator → consumer process runs; valid output releases exactly its validated revision and invalid/unknown output does not.
+- **SC-002:** Real AI correction demonstrations succeed for non-MCP structured output and a CAD/MCP producer; wrong → findings → new revision → pass is retained, and bounded-stop behavior is proven.
+- **SC-003:** Every non-passing mandatory check has a source/evidence-linked finding and usable disposition; findings are readable without internal implementation knowledge.
+- **SC-004:** JSON, Markdown and traceability agree by assessment ID/digest and currentness; a consumer can use them without importing validator internals.
+- **SC-005:** Three initial capability slices are verified, all 30 packs are accounted for, and unsupported capabilities never pass.
+- **SC-006:** Existing design-check/review and authoring remain functional; focused contract/runtime/native tests and applicable three-tier UI checks pass.
+- **SC-007:** Original artifacts remain unchanged, prior failures stay accessible, and retries cannot reset correction budgets or reuse stale passes.
 
-- **SC-001**: All 30 selected cases have reproducible eligibility evidence and a source inventory; every mandatory requirement has a verification method and final disposition.
-- **SC-002**: Every in-scope hard-check mechanism accepts its qualified valid controls and detects its targeted defective controls at the intended check.
-- **SC-003**: Every verdict in every report and the workspace reconciles with the same persisted evidence, including mixed failures and incomplete reviews.
-- **SC-004**: Replay, interruption and review tests leave original run records and artifacts unchanged; no source change, skipped check or stale result earns a current pass.
-- **SC-005**: The final campaign covers 30/30 cases with conclusive outcomes or explicitly identified outstanding evidence; corpus completion is claimed only when mandatory measurements and reviews are complete. Design failures do not prevent honest completion.
-- **SC-006**: Normal offline checking and report inspection pass supported distribution tests, and workspace evidence access preserves existing authoring in all three required UI testing tiers.
+## Assumptions and exclusions
 
-## Assumptions
-
-- The user-confirmed scope is 30 current packs, not 300.
-- G0 remains mandatory. As of the preparation snapshot, 24 cases have current outputs; the three bracket and three sheet-metal cases do not.
-- This package reviews and operationalizes the saved plan. Implementation starts after its human review and G0; past instructions not to change the active 081 selector apply to that historical checkout.
-- Generation repair, physical qualification, public promotion, device dispatch, supplier submission and publication are separate work.
-- Existing authoritative source evidence is reused. New source conflicts remain explicit; no tolerance is inferred from a candidate merely to make it pass.
-- Tests of checker correctness, isolation, state semantics and UI behavior are explicitly required.
+Implementation does not start in this planning task. Use isolated demonstration runs; do not take over the generation campaign. Full 30-case evaluation, all specialized readers, arbitrary graph rewinds, a new report UI, physical qualification and publication are later work. The first automatic revision segment contains one safe producer and its validator; other affected owners receive findings and require an explicit later run or future supported route.

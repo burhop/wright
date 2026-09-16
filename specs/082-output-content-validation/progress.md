@@ -1,39 +1,34 @@
 # Progress checkpoint
 
-**Updated**: 2026-09-16
-**Phase**: implementation package prepared; awaiting human review and G0.
-**Implementation**: T001–T074 all unchecked. No runtime validation code exists from this task.
+**Updated:** 2026-09-16
+**Phase:** Revised planning package saved for user review.
+**Implementation:** T001–T034 are unstarted. No runtime validator code or process was created by this planning task.
 
-## Repository and ownership
+## Current objective
 
-- Branch: `codex/082-output-content-validation`.
-- Worktree: `D:/repos/wright`; 082 was moved here after the user encountered Git's already-checked-out branch restriction. The former secondary worktree is detached.
-- Base: `origin/dev` at `6c0602a4300da38fa7db62026aff1bd984e4113e`, following the PR #130 merge and successful 082 rebase. Local `dev` is also current.
-- Earlier seven-file analysis is already inherited from dev unchanged.
-- Selector: `specs/082-output-content-validation`. The 11 MCP recovery files are in dev and 082; identical leftover local edits were saved in a named recovery stash before switching this folder.
-- Original data root to inspect: `D:/repos/wright/artifacts/engineering-workflow-datasets`. Discover actual authorized runtime/artifact roots from retained records.
-- Future writable validation root: this worktree's `artifacts/engineering-workflow-validation`.
+Build a runtime process validator with evidence-backed findings that a producing AI can act on, bounded correction/revalidation, and readable results for the separate reporting branch.
 
-## Prerequisite observation
+The [scope amendment](scope-amendment.md) and [saved goal](implementation-goal.md) make the change explicit. Submitting the goal approves replacing global all-30 readiness with per-subject checks and the first three capability slices. Planning is not activation.
 
-At 2026-09-16T17:00:29Z, source status reported 30 created, 30 run, 24 output completions, 0 content-valid; 24 current completions. Missing:
-- lightweight-equipment-bracket-01/02/03: latest failed.
-- sheet-metal-supplier-handoff-01/03: latest not_run.
-- sheet-metal-supplier-handoff-02: latest failed.
+## Workspace and history
 
-[Readiness snapshot](evidence/readiness-2026-09-16.json) records the exact bytes' hash and observation time. This was an early prerequisite check, not a full per-artifact/run/lifecycle audit. T001 remains uncompleted. Do not infer the other 24 pass G0 solely from projection flags.
+Use `D:/repos/wright` on `codex/082-output-content-validation`. The earlier branch/dev recovery is complete; no further recovery task is implied. Previous planning documents are retained in Git history at `0a48f88f`.
 
-## Prepared work
+The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/30 outputs during earlier planning. It is not a current audit and does not gate the revised runtime implementation. The 081 analysis remains valuable source material; its old activation/dashboard scope is superseded on approval of the revised goal.
 
-- Separate numbered Spec Kit feature, specification checklist, plan and adopted source analysis.
-- Integration corrections for read-only audit, error semantics, review identity, CAD arc centers and exact scenario IDs.
-- 74 dependency-ordered tasks: setup 2, foundations 6, US1 7, US2 50, US3 3, US4 2, closure 4.
-- Saved [implementation goal](implementation-goal.md) and [quickstart](quickstart.md).
+## Reviewed and prepared
+
+- Reviewed earlier 081/082 plans, source-derived acceptance cases and current constitution.
+- Located existing canonical CAD design-check and feedback/revision mechanisms; identified their non-CAD restrictions and revision identity gaps.
+- Prepared runtime service, per-subject readiness, typed findings, bounded repair and report-consumer contracts.
+- Preserved all-30 capability mapping with a bounded initial structured/CAD/numerical delivery.
+- Replaced the 74-task campaign/UI plan with 34 tasks: setup 2, foundations 4, US1 7, US2 5, US3 4, US4 7, closure 5.
+- Updated spec, plan, research, data model, contract, acceptance map, quickstart, goal, managed AGENTS reference and checklist.
+- Kept report application/UI ownership in the other branch; only process authoring/status integration is planned here.
+- Verified document links, sequential task IDs/counts, the 30 distinct source manifest IDs and whitespace; see [planning review](evidence/planning-review-2026-09-16.md).
 
 ## Next action
 
-When the user submits the goal after generation progresses, perform T001 completely. If incomplete, record exact evidence and leave deferred. If eligible, freeze cohort then T002–T008; prove T009–T015 before family expansion. Follow human review milestones.
+When the user submits the saved goal, perform T001/T002 then foundations. Prove the local structured-output correction loop before native expansion. Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
 
-## Completion meanings
-
-Framework implemented, corpus evaluation complete, all designs compliant and physical validation are separate statements. None is claimed here.
+Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.

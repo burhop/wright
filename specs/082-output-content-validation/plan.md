@@ -1,121 +1,152 @@
-# Implementation Plan: Engineering Output Content Validation
+# Implementation Plan: Process Output Validator
 
-**Branch**: `codex/082-output-content-validation` | **Date**: 2026-09-16 | **Spec**: [spec.md](spec.md)
-**Base**: rebased onto `origin/dev` at `6c0602a4300da38fa7db62026aff1bd984e4113e` (PR #130). Initial planning used PR #129; its dated readiness evidence remains historical.
-**Status**: implementation package prepared; G0 not ready; no validation implementation started.
-**Input**: approved earlier 30-pack analysis and the request to prepare this work on a new branch.
+**Branch:** `codex/082-output-content-validation` | **Date:** 2026-09-16 | **Spec:** [spec.md](spec.md)
+**Status:** Revised plan for review; no implementation started.
+**Input:** Runtime process checks, actionable AI feedback, and report-consumable evidence.
 
 ## Summary
 
-Build independent post-run validation using shared artifact readers, versioned requirements and profiles, immutable evidence, and generated traceability. Validate real retained output content across ten families; distinguish execution completion, content verification, design compliance and physical validation.
+Extend the canonical process executor with a reusable validator. One service supports local readers, MCP-backed inspection and direct invocation. It binds a previous step's exact output, evaluates source-backed requirements, persists an assessment and returns typed correction feedback plus readable report data.
 
-This feature adopts the earlier [detailed plan](../081-engineering-workflow-templates/content-validation/plan.md), [research](../081-engineering-workflow-templates/content-validation/research.md) and [30 acceptance seeds](../081-engineering-workflow-templates/content-validation/acceptance-cases.md). They are already present in the merged base. This package supplies the separate feature selector, specification, executable task ordering and current handoff. Do not copy or fork the old normative details into a competing source.
+The runner routes correctable failures through a configured bounded revision path, then revalidates the new output before releasing downstream work. The validator itself never regenerates artifacts.
 
-**Precedence:** current user authority and constitution; this feature's explicit clarifications; adopted detailed design; historical campaign narratives. The old instructions to preserve the 081 selector and avoid branch creation described the September 13 planning session, not this newly authorized worktree. All technical G0, reader, outcome and evidence rules remain in force.
+The [scope amendment](scope-amendment.md) replaces the global G0 gate and 74-task campaign/UI plan upon submission of the revised goal. The [081 analysis](../081-engineering-workflow-templates/content-validation/research.md) and [30-case seeds](../081-engineering-workflow-templates/content-validation/acceptance-cases.md) remain reference material.
 
 ## Technical Context
 
-**Language/Version**: Python >=3.11 per current metadata; verify supported release lanes at T002. Existing TypeScript/React UI only for evidence integration.
-**Primary Dependencies**: existing core contracts, EngineeringAssertionRegistry, EngineeringArtifactNormalizerRegistry, data-vault state helpers, workspace/vault/run services, GatewayService lifecycle, structured logging and OpenTelemetry. Qualify optional CAD/field readers per capability; no new mandatory ALM service.
-**Storage**: data-vault-owned additive SQLite WAL ledger at a separate validation root; artifacts remain in the file vault; bounded materialized summaries.
-**Testing**: pytest contracts and negative controls, qualified native reader lanes, component tests, mocked Playwright journeys and served workspace E2E.
-**Target Platform**: existing supported native and Docker paths; explicitly qualified hosts for native readers. No engineering-server-specific additions to the base image.
-**Project Type**: existing modular monorepo service, thin CLI, additive workspace evidence view.
-**Performance Goals**: profile/status/report operations never synchronously load solver fields into UI requests. Every reader has tested byte/entity, wall-time, memory and concurrency bounds recorded at T005/T072. Numeric values depend on the qualified reader and frozen formats, not an invented universal timeout.
-**Constraints**: offline replay; original sources opened read-only; explicit source-root authority; no generation dispatch; no profile executable code; no arbitrary approval actor; no original artifact repair in place.
-**Scale/Scope**: 30 profiles, ten families, all required variants and refinements; 74 implementation checkpoints.
+**Language/Version:** Python >=3.11 in supported lanes; existing TypeScript/React for process configuration/status only.
+**Dependencies:** Canonical source compiler/runner, provider-neutral EngineeringResult, assertion/normalizer registries, gateway/native lifecycle, BaseTool, Pydantic, SQLite WAL, structured logging/OpenTelemetry. Qualify optional geometry/field readers.
+**Storage:** Additive data-vault validation tables and immutable vault artifacts in the current runtime; isolated data roots for demonstrations. No second production campaign database.
+**Testing:** Contract/runtime tests, real file/native integration, rework/resume tests, installed package/offline checks and applicable component/mocked/served-workspace UI checks.
+**Platform:** Shared native and Docker runtime; explicit native reader availability.
+**Constraints:** No code in profiles, candidate-derived tolerances, report UI replacement, reader edits to originals or second process executor.
+**Scope:** Three initial capability slices and an all-30 support inventory. Two real AI correction demonstrations and one numerical validation demonstration.
+**Performance:** Bound inline feedback by default to 20 findings and 16 KiB UTF-8; keep full findings by result reference with omitted count. Readers declare byte/entity/time/memory/concurrency limits. Gateway budgets remain controlling; cancellation and large-output paging are tested.
 
 ## Constitution Check
 
-Pre-design and post-contract review against v3.1.1: aligned by design. Implementation gates remain unexecuted.
+Pre-design and post-contract assessment against v3.1.1: aligned by design; implementation checks remain unexecuted.
 
-| Principle | Design and verification |
+| Principle | Planned compliance |
 |---|---|
-| 1 Architecture/offline | Pure contracts in core; storage in data_vault; readers/evaluation in workspace_service; thin FastAPI routes. Offline test lane at T072. |
-| 2 Distribution/runtime | Reuse shared native runtime and Docker; pin optional reader hosts and tool identities; no agent-manager hardcoding or special base-image additions. T002/T005/T072. |
-| 3 Embedded data/vault | Separate SQLite WAL ledger and confined file artifacts. No server database; existing in-process semantic storage unchanged. T007/T071. |
-| 4 Identity/security | Existing opaque local credential/session, origin and RBAC; explicit authorized source roots; authenticated subject-bound review. Existing unauthenticated review label is insufficient. T008/T010/T067/T070. |
-| 5 Engineering tools | Code-driven reader operations; existing BaseTool contracts for any exposed engineering tool; sourced external information uses cached offline evidence. T008/T072. |
-| 6 UI/testing | Existing tokens, primitives and test IDs; component/mocked/served-workspace checks preserving authoring. T066–T068. |
-| 7 Tracing | Trace IDs and structured logging through readers, evaluator, DB, reports and review; local existing OpenTelemetry/Jaeger boundary. T007–T011/T073. |
-| 8 Phases/branches/review | New feature worktree; this package ends at human review. Pasting the saved goal explicitly approves the package, but does not waive G0 or later constitution milestones. |
-| Governance | No amendment; exact dev push/merge and production runbooks apply only when those actions are authorized. |
+| 1 Architecture/offline | Contracts in core; storage in data_vault; logic in workspace_service; thin transports. Local structured checks work without MCP/network. |
+| 2 Shared distribution | Existing runtime/manager-neutral MCP service. Package installed resources. No MCP-specific base-image additions. |
+| 3 Embedded storage | SQLite WAL/vault, additive migrations, bounded materialized records. |
+| 4 Security/identity | Existing auth/origin/RBAC and authorized roots; review identity from actual context. |
+| 5 Tool protocol | LLM-facing engineering adapter inherits BaseTool; service/readers work without LLM or MCP. |
+| 6 UI/testing | Existing authoring/tokens/test IDs; changed controls verified in three tiers. Reporting UI is in another branch. |
+| 7 Observability | trace_id through producer, validator, reader, storage, repair and report operations. |
+| 8 Phase/review | Planning only now; submitted goal approves this package. Observe later human milestone reviews unless explicitly waived. |
+| Governance | No constitutional amendment. Runbooks apply when push/merge/release is separately authorized. |
 
-## Activation and source isolation
+## Repository findings and integration
 
-The [dated preliminary check](evidence/readiness-2026-09-16.json) reports 24 current completions and six missing cases. It is an early prerequisite failure, **not** a complete audit or a frozen cohort. T001 is still unchecked.
+- `workflow_source_execution.py` already compiles saved source, manages connected results, appends feedback to producer prompts and checkpoints revision state.
+- `workflow_design_check.py` permits one bounded revision path to one preceding create-new/indexed CAD task. Checks currently require an MCP task, JSON and read-only CAD input. Generalization needs explicit compiler, scheduler, contract and UI changes.
+- `workflow_results.py` provides provider-neutral kinds/representations/provenance. Result IDs alone do not identify corrected output; add producer attempt/revision/hash to subject identity.
+- `workflow_run_record.py` invalidates partial results on design revision. Preserve this behavior for downstream release and resume.
+- `workflow_engineering_assertions.py` converts some exceptions to fail. Preserve evaluator error in the new bridge without silently changing legacy contracts.
+- Publish through existing result events and MCP transport. Never route canonical .wflow processes through the legacy Rivet executor.
+- Keep native inspection guards, CAD session rules and native lease ownership.
 
-T001 must perform all six G0 conditions in the [adopted plan](../081-engineering-workflow-templates/content-validation/plan.md#g0-mandatory-start-gate): 30 canonical manifest IDs and retained inputs; selected current definition/binding full-run and step evidence; every required same-attempt nonempty artifact rehashed; stable outputs and reconciled native leases/unknown mutations; reconciled 30/30/30/0 generation conclusion; complete source/run/definition/binding/artifact/checkout identities. Content correctness is not part of G0.
+T001 records exact extension points and ownership; it is implementation reconnaissance, not a branch audit.
 
-Before the audit CLI exists, use bounded direct JSON/file inspection and read-only SQLite access through `connect_state_db(read_only=True, ensure_parent=False)` or equivalent snapshot-safe access. Do not run the current generation `status` CLI: it constructs Campaign and exports state. Do not copy an open SQLite main file while ignoring its WAL.
+## Architecture
 
-The implementation checkout, local inputs and campaign artifacts are in `D:/repos/wright`, now on 082. Keep source campaign data read-only and use the separate `artifacts/engineering-workflow-validation` root for new validation state. Resolve the actual runtime/receipt/artifact roots from authorized configuration. Freeze a manifest of permitted read-only roots and exact content; source outputs are untracked and are not supplied by Git. Do not point a writable application data root at another task's database.
+```text
+requirement profile + exact producer output revision
+                         |
+                validator service
+           local / native / MCP readers
+                         |
+               measurements and checks
+                         |
+               immutable assessment
+                /        |         \
+          process gate  feedback  JSON/Markdown/RTM
+                |        |              |
+          downstream  runner-owned   reporting branch
+                      bounded repair
+                         |
+                 new output -> revalidate
+```
 
-If G0 is not ready, write precise missing evidence and leave implementation deferred; no campaign recovery, repeated polling or partial activation. If it passes, freeze a cohort and continue T002. Later changed cases receive new subject identities; unaffected cases retain evidence.
+### Request and per-subject readiness
 
-## Architecture and changes from the earlier plan
+A request names run/check invocation, producer output bindings, pinned profile/baseline and idempotency key. Resolve authority and immutable identity at the boundary. Canonically hash inline values; snapshot files or verify stability before/after reading; pin provider resource revisions. Missing readiness blocks this invocation only.
 
-The adopted pipeline remains:
-requirements + frozen cohort → independent readers → measurements → assertions → immutable attempts/assessments → RTM and UI.
+A missing output from a completed producer is a correctable defect when its receipt proves that output was required. Unresolved bindings, in-flight writes and unavailable readers are prerequisites. None releases downstream work.
 
-The review added these concrete implementation obligations:
+### Readers and evaluation
 
-1. Adapt legacy states explicitly. `workflow_engineering_assertions.evaluate_assertion` catches predicate exceptions as failure; the validation adapter must preserve framework error separately from measured design failure.
-2. Existing artifact review reports `local_workspace_user_not_authenticated`. Reuse useful subject checks, but derive a permitted reviewer identity and type from the actual authority context. Never offer a caller-controlled “human” bypass.
-3. Qualify circular geometry measurement against the [jig center guidance](../081-engineering-workflow-templates/dataset-campaign/jig-circle-center-guidance.md). A point on a circular edge is not its center; original datum and tolerances remain controlling.
-4. Derive exact scenario IDs from all 30 `scenario.json` files; narrative `sheet-metal-part` aliases are not canonical IDs.
-5. Keep latest authorized Modelica derivative/thermostat semantics, Pi image/manufacturer source evidence, and narrowly scoped sheet-metal amendments. Re-extract requirements at activation, including subsequent legitimate source changes.
-6. All T016–T065 families have five explicit checkpoints: source/profile, reader/reference, assertions, qualified fixtures, retained evaluation. No family is done after only a profile or mock.
+Package runtime resources under `workspace_service/process_validation/profiles/`; keep test fixtures separate. Profiles declare required roles/checks, sources, selectors, units/frames, tolerance/uncertainty rules and allowed correction scope. Workspace-owned profiles use the same schema and authority controls.
 
-## Project Structure
+Readers supply source-bound measurements. Deterministic evaluators establish numeric outcomes; AI may explain findings and suggest repairs. Qualitative checks require explicit rubrics/method attribution. Pending human review stays pending. Generated output cannot alter limits or substitute a report for unobserved geometry/physics.
 
-### Documentation
+Retain the earlier interval-boundary, datum, source-amendment and artifact-correspondence rules. Reuse predicates through an explicit status bridge, not duplicate family engines.
 
-`specs/082-output-content-validation/` contains spec.md, plan.md, research.md, data-model.md, contracts/validation-contract.md, acceptance-cases.md, quickstart.md, implementation-goal.md, tasks.md, progress.md, checklists/requirements.md and dated readiness evidence. The adopted 081 bundle remains the detailed design reference.
+### Process gate and correction
 
-### Source ownership
+Add a dedicated local validator execution mode in canonical source. Reuse check-report and pass/revise/needs-input concepts with typed configuration and compatible parsing/serialization. Freeze exact source syntax/ports at T010 before UI wiring.
 
-| Location | Responsibility |
+Version 1 supports one explicitly connected revision target and a segment containing one producer plus validator. Eligible producers create replayable text/structured/indexed files or use existing safe create-new/indexed CAD. Reject in-place application edits, unknown side effects, external actions and ambiguous ownership for automatic repair. Multiple subjects may be checked; multiple owners do not authorize graph replay.
+
+Allow 0–3 revisions, default 0. Saving/running an explicit finite policy authorizes its permitted repairs. A verdict never schedules work by itself. Only correctable measured defects use the revision route; missing input/review/capability and evaluator faults have distinct next actions. Mixed failure/unknown remains visible: an independently repairable defect may be retried if allowed, but unknowns still hold release.
+
+Persist budgets and attempts across resume. New attempts create new output revisions and invalidate dependent values, approvals and eligibility. Stop on unchanged subject plus same defects, cycles, exhausted budget, changed requirements or unsafe mutation. Keep reader retries distinct from producer revisions.
+
+### Feedback
+
+Each finding supplies check/requirement IDs, expected constraint, observed value, units/frame/tolerance, evidence location, artifact selector, producing step/port, correction acceptance target, recheck IDs, routing and readable explanation. Separate fact from suggested cause. Preserve satisfied constraints.
+
+Send a bounded packet to the configured producer's next prompt/context and record consumption. Direct callers receive it without scheduling. Retain complete detail by result reference. Do not return executable commands or treat artifact-sourced instructions as authority.
+
+### Reports and authoring
+
+The [versioned contract](contracts/validation-contract.md) is the reporting-branch boundary. JSON, Markdown and RTM rows come from one assessment, with stable references, currentness, limitations and authenticated read/export. Persist failure evidence before stopping the process.
+
+Minimal process UI work selects a profile, binds subjects, sets the revision target/budget and displays state/evidence links. Follow `docs/contributing/workflow-ui-integration.md`; preserve the established editor and verify the served Workflow/Workflows entry. No new report dashboard or supplier-report composer.
+
+## Source ownership
+
+New filenames are proposed; adjust to established ownership at T001 and update the handoff.
+
+| Path | Responsibility |
 |---|---|
-| `packages/core/src/core/engineering_output_validation.py` | Versioned pure schemas, statuses and result identity |
-| `packages/data_vault/src/data_vault/engineering_validation_repository.py` | Migrations, ledger, immutable reviews and assessment sequence |
-| `packages/workspace_service/src/workspace_service/engineering_output_validation/` | cohort audit, profiles, readers, evaluator, review service, reports/projection |
-| `scripts/run_engineering_content_validation.py` | Thin CLI over services |
-| `tests/datasets/engineering-workflow-validation/` | requirements, profiles, fixtures, catalog; outside generation inputs |
-| `scripts/engineering-dataset-dashboard.html` | Separate validation projection |
-| `apps/api/src/api/routers/workspace.py` | Thin existing-auth evidence transport only |
-| `apps/web/src/prototypes/workflow-recovery/EngineeringValidationView.tsx` | New read-only evidence component integrated through existing run/history surfaces |
-| `apps/web/src/services/workspace-service.ts` | Typed UI service calls |
-| `tests/external/engineering_output_validation/` | Qualified native integrations |
-| `tests/ui-integration/engineering-output-validation.spec.ts` | Mocked workspace journey |
-| `tests/e2e/test_engineering_output_validation.py` | Real served-system evidence flow |
-| `artifacts/engineering-workflow-validation/` | Generated validation.sqlite3, report and evidence root, unique to this worktree |
+| `packages/core/src/core/process_validation.py` | Pure versioned request/result/profile/feedback contracts |
+| `packages/data_vault/src/data_vault/process_validation_repository.py` | Migrations, immutable ledger and currentness |
+| `packages/workspace_service/src/workspace_service/process_validation/` | Service, profiles, readers, evaluation, feedback, projection |
+| `packages/workspace_service/src/workspace_service/workflow_source_execution.py` | Canonical compilation, execution and revision scheduler |
+| `packages/workspace_service/src/workspace_service/workflow_design_check.py` | Compatibility and explicit rework constraints |
+| `packages/workspace_service/src/workspace_service/workflow_results.py` | Existing representation/result events |
+| `packages/workspace_service/src/workspace_service/process_validation_tools.py` | Thin BaseTool and existing MCP registration adapter |
+| `packages/workspace_service/src/workspace_service/process_validation_cli.py` | Packaged direct/replay/export CLI |
+| `apps/api/src/api/routers/workspace.py` | Thin existing-auth read/export transport |
+| `apps/web/src/prototypes/workflow-recovery/` | Existing authoring/status integration |
+| `tests/datasets/process-validation/` | Fixtures and saved process examples |
+| `artifacts/process-validation/` | Isolated demonstration evidence |
 
-Other proposed filenames are spelled out in tasks.md. Resolve transport/schema ownership during T002 without moving business logic into routes. Shared geometry and field readers must be reused across families.
+## Delivery sequence
 
-## Delivery and dependencies
-
-| Stage | Tasks | Required exit evidence |
+| Milestone | Tasks | Exit evidence |
 |---|---|---|
-| Setup | T001–T002 | Full G0 pass; exact source/code/runtime roots and dependencies |
-| Foundations | T003–T008 | 30 source inventories and frozen methods; schema, ledger and confined reader contracts |
-| US1 / first useful slice | T009–T015 | Two independently measured, fixture-qualified retained pilots with traceability and replay |
-| US2 / all families | T016–T065 | Ten A–E packages; no in-scope reader omitted; all 30 profiles evaluated |
-| US3 / evidence UI | T066–T068 | Current/historical projection and served-workspace access preserving authoring |
-| US4 / full corpus/review | T069–T070 | Frozen all-case report and authentic independent review |
-| Cross-cutting closure | T071–T074 | Reliability/platform/security/gate evidence and final handoff |
+| M0 contract/baseline | T001–T006 | Extension points, 30-pack inventory, contracts/storage/readers/profiles |
+| M1 process check | T007–T013 | Local process check gates consumer; direct/MCP calls share semantics |
+| M2 correction | T014–T018 | Real AI corrects structured output; stop/resume rules proven |
+| M3 report boundary | T019–T022 | Schema/examples/read API and reconciled Markdown/RTM consumer |
+| M4 engineering slices | T023–T029 | Real jig/MCP correction, heat/numerical checks, support map |
+| M5 closure | T030–T034 | Security/platform/package/UI evidence and reproducible handoff |
 
-US3 may begin after US1, using materialized records. US4 needs all family evaluations; final closure needs UI and review. Each family proceeds A→B→C→D→E, one case proved before siblings. Shared core/schema changes have one owner; concurrent readers need independent native leases. Parallel task markers describe potential work partitioning, not authority to spawn agents.
+The first runnable correction slice is M1+M2; the submitted goal completes through M5. M3 can proceed after result/feedback contracts stabilize. Missing extension readers do not stop unrelated work, but required initial capabilities must be finished to claim goal completion.
 
-## Completion and review boundaries
+## Verification and completion
 
-Preserve all three completion definitions from the adopted plan:
-- Framework complete: all in-scope readers, 30 profiles, qualified checks, ledger/report/UI implementation and required tests exist. Missing readers are unfinished work.
-- Corpus evaluation complete: no missing mandatory measurement/review or infrastructure error for the frozen cohort; conclusive design failures are allowed.
-- All designs compliant: every applicable mandatory design requirement passes. This is a separate outcome, never a forced target.
+Tests establish validator correctness; a QA campaign is not the delivered product. Prove gate behavior, precise corrections, durable rework, immutable lineage, parser confinement, real geometric/numerical measurements and report agreement. Run controlled defects only in isolated workspaces; preserve original packs/campaign.
 
-The saved goal approves this package only when the user submits it. At major lifecycle/milestone review gates, present concrete evidence and pause unless the user explicitly supplies broader authority. Report pending judgments precisely without inventing human acceptance. Do not start a persistent goal merely by saving the document.
+Two real AI correction demonstrations are required, not mocked scheduling alone. Save definition/profile hashes, run/step IDs, output identities, requests/findings, delivered correction, new revision, final gate and report references. The heat demonstration inspects actual output without forcing an infeasible design to pass.
+
+Separate implementation complete, demonstrated process behavior, assessed design compliance and human acceptance. Update progress with exact next work; do not call missing initial-slice capability complete.
 
 ## Complexity Tracking
 
-No constitutional exception. Reuse existing assertion predicates and lifecycle boundaries while adding independent measurement and immutable evidence semantics. Avoid an additional executor, disconnected manually edited RTM, broad tool installation or duplicated family engines.
+One evaluator and the existing runner. No second orchestrator, mandatory ALM service or arbitrary graph rewind. Readable reports project typed evidence. Reader support remains explicit. No constitutional exception.
