@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-16T20:28:19.710495+00:00",
+  "files": [
+    {
+      "path": "events.json",
+      "bytes": 26090,
+      "sha256": "f1d540571a43c92f2c81e5381f6a1bc00775d1479073e21c32fff09b6065dcd6"
+    },
+    {
+      "path": "evidence.json",
+      "bytes": 9591,
+      "sha256": "6330913683dcd21680402b9152ec893dd0fa73d6f620c69784c33a5364cf58e5"
+    },
+    {
+      "path": "result.json",
+      "bytes": 19911,
+      "sha256": "4a9905347e976f99994ab9eb31c377a2382a29a69fe38e8fe9f98c303c2a0e70"
+    },
+    {
+      "path": "workspace/.gitignore",
+      "bytes": 77,
+      "sha256": "0d8ce0ecef224db9712ebc1094f71bf387ad26b5768d457c005300f371fd32cc"
+    },
+    {
+      "path": "workspace/release-note.txt",
+      "bytes": 152,
+      "sha256": "452bac57b970920121016d7fcf266cad97d402a28cfd5fe4f095c9cf3e1ba807"
+    },
+    {
+      "path": "workspace/runs/structured-loop/20260916T202702Z-eef4d71ab8fb.json",
+      "bytes": 51211,
+      "sha256": "8ebac80f913f51e6df3552fa261f703d9a8276b7268a7386888033929f682a4b"
+    },
+    {
+      "path": "workspace/structured-loop.workflow.wflow",
+      "bytes": 3095,
+      "sha256": "8e7cce18581ebe0ed76c7cc603fb8e7fce4718117f91b0a25557c6d481e43a44"
+    },
+    {
+      "path": "workspace/structured-output-001.json",
+      "bytes": 40,
+      "sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c"
+    },
+    {
+      "path": "workspace/structured-output.json",
+      "bytes": 39,
+      "sha256": "14e0945dff0d53884f02b154fd2bcf425ae913419e741d3af766a7e7a268d03b"
+    },
+    {
+      "path": "workspace/validation/assessment-a867edfeee654ea9a2e196ea3ff740a2.json",
+      "bytes": 12493,
+      "sha256": "8b3ccf57426fd3d0cf751c0c3c1f649ca76cb5d3e451596b9d00daa99b10a29e"
+    },
+    {
+      "path": "workspace/validation/assessment-c15a88754bb042aeb37a84d3dfaad2bf.json",
+      "bytes": 14382,
+      "sha256": "f714bc9121b34a8ec7b9c52b72b34fec5f4cfa5c641b3ee6e41b465087d93cd0"
+    }
+  ]
+}

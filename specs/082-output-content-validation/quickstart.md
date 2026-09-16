@@ -29,9 +29,7 @@ Use `artifacts/process-validation/` with distinct runtime/data roots and free po
 
 Use a real configured AI for correction acceptance, save feedback consumption and new output evidence, and label controlled initial defects. If a needed credential/reader is unavailable, record a precise blocker while completing independent work. A mock is useful test evidence, not a substitute for required live demonstration.
 
-## Commands after implementation
-
-No new validator command exists yet. T011 adds the proposed packaged entry point:
+## Implemented commands
 
 ```powershell
 uv run python -m workspace_service.process_validation_cli --help
@@ -39,6 +37,21 @@ uv run python -m pytest packages/core/tests/test_process_validation.py
 uv run python -m pytest packages/data_vault/tests/test_process_validation_repository.py
 uv run python -m pytest packages/workspace_service/tests/test_workflow_process_validation.py
 uv run python -m pytest packages/workspace_service/tests/test_workflow_process_validation_rework.py
+```
+
+Reproduce the isolated live-model structured correction demonstration in a new
+directory (the command refuses to overwrite evidence):
+
+```powershell
+.venv\Scripts\python.exe scripts/run_process_validation_structured_loop.py `
+  --output-dir artifacts/process-validation/structured-loop/<UTC-run-id>
+```
+
+Verify the retained canonical run without calling a model:
+
+```powershell
+.venv\Scripts\python.exe -m pytest `
+  tests/external/process_validation/test_structured_loop_evidence.py -q
 ```
 
 Confirm actual CLI help and repository suite isolation before use. Add reader/security/report/UI tests at their tasks. Exact push/merge/release gates remain in the contributor runbooks if those actions are separately authorized.

@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "demonstration": "ordinary-ai-structured-output-correction",
+  "started_at": "2026-09-16T20:26:59.849487+00:00",
+  "finished_at": "2026-09-16T20:27:16.713382+00:00",
+  "run_id": "structured-loop-20260916T202659Z",
+  "workspace_id": "process-validation-structured-loop",
+  "workflow_source": "structured-loop.workflow.wflow",
+  "workflow_sha256": "8e7cce18581ebe0ed76c7cc603fb8e7fce4718117f91b0a25557c6d481e43a44",
+  "run_log_path": "runs/structured-loop/20260916T202702Z-eef4d71ab8fb.json",
+  "model_usage": [
+    {
+      "status": "reported",
+      "model": "hermes",
+      "input_tokens": 1544,
+      "cached_input_tokens": null,
+      "output_tokens": 32,
+      "reasoning_output_tokens": null,
+      "total_tokens": 1576,
+      "duration_ms": 4470
+    },
+    {
+      "status": "reported",
+      "model": "hermes",
+      "input_tokens": 2354,
+      "cached_input_tokens": null,
+      "output_tokens": 17,
+      "reasoning_output_tokens": null,
+      "total_tokens": 2371,
+      "duration_ms": 4792
+    },
+    {
+      "status": "reported",
+      "model": "hermes",
+      "input_tokens": 1501,
+      "cached_input_tokens": null,
+      "output_tokens": 33,
+      "reasoning_output_tokens": null,
+      "total_tokens": 1534,
+      "duration_ms": 4517
+    }
+  ],
+  "model_runtime": {
+    "adapter": "agent_adapters.generate_workflow_response",
+    "endpoint": "http://127.0.0.1:8642",
+    "configuration_source": "Hermes profile configuration",
+    "health": {
+      "status": "ok",
+      "platform": "hermes-agent",
+      "version": "0.20.0"
+    },
+    "models": [
+      "hermes-agent"
+    ]
+  },
+  "assessments": [
+    {
+      "id": "assessment-c15a88754bb042aeb37a84d3dfaad2bf",
+      "digest": "7452e73f926b513a1feee4602eff33da82e0c91fce7760f2c40ba083d17d0bb5",
+      "path": "validation/assessment-c15a88754bb042aeb37a84d3dfaad2bf.json",
+      "verdict": "revise",
+      "release_eligible": false,
+      "subject_current": true,
+      "subjects": [
+        {
+          "id": "output-978a7a8171ca87007e969fe78ff2a81a92a35d86ccdeed9d9ca195f4a407a854",
+          "sha256": "14e0945dff0d53884f02b154fd2bcf425ae913419e741d3af766a7e7a268d03b",
+          "producer": {
+            "run_id": "structured-loop-20260916T202659Z",
+            "step_id": "produce",
+            "attempt": 1,
+            "output_port": "result"
+          }
+        }
+      ],
+      "finding_codes": [
+        "requirement.out_of_bounds"
+      ]
+    },
+    {
+      "id": "assessment-a867edfeee654ea9a2e196ea3ff740a2",
+      "digest": "745b853645c8a347f1a40d5c0924a89d41b6a43c58bc82337772481bcc0bc91e",
+      "path": "validation/assessment-a867edfeee654ea9a2e196ea3ff740a2.json",
+      "verdict": "pass",
+      "release_eligible": true,
+      "subject_current": true,
+      "subjects": [
+        {
+          "id": "output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33",
+          "sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c",
+          "producer": {
+            "run_id": "structured-loop-20260916T202659Z",
+            "step_id": "produce",
+            "attempt": 2,
+            "output_port": "result"
+          }
+        }
+      ],
+      "finding_codes": []
+    }
+  ],
+  "feedback_delivery": [
+    {
+      "kind": "validation_feedback_delivered",
+      "at": "2026-09-16T20:27:06.992615+00:00",
+      "task_id": "produce",
+      "task_title": "Produce controlled structured output",
+      "target_step_id": "produce",
+      "assessment_id": "assessment-c15a88754bb042aeb37a84d3dfaad2bf",
+      "assessment_digest": "7452e73f926b513a1feee4602eff33da82e0c91fce7760f2c40ba083d17d0bb5",
+      "feedback_digest": "dfef84b673ca0f2471aa32f8df61dd80be2f563bbef0a8f25197248e7a50ec17",
+      "remaining_revisions": 2,
+      "complete_result_ref": "wright://workspace/process-validation-structured-loop/validation/assessment-c15a88754bb042aeb37a84d3dfaad2bf"
+    }
+  ],
+  "producer_attempts": [
+    {
+      "attempt": 1,
+      "response": {
+        "part_id": "demo-plate",
+        "length_mm": 98
+      },
+      "repair_feedback": null,
+      "saved_response": {
+        "task_id": "produce",
+        "task_title": "Produce controlled structured output",
+        "output_path": "structured-output.json",
+        "output_bytes": 39,
+        "output_format": "json",
+        "sha256": "14e0945dff0d53884f02b154fd2bcf425ae913419e741d3af766a7e7a268d03b"
+      }
+    },
+    {
+      "attempt": 2,
+      "response": {
+        "part_id": "demo-plate",
+        "length_mm": 100
+      },
+      "repair_feedback": {
+        "schema_version": "wright.process-validation/1",
+        "assessment_id": "assessment-c15a88754bb042aeb37a84d3dfaad2bf",
+        "assessment_digest": "7452e73f926b513a1feee4602eff33da82e0c91fce7760f2c40ba083d17d0bb5",
+        "subject_digests": [
+          "14e0945dff0d53884f02b154fd2bcf425ae913419e741d3af766a7e7a268d03b"
+        ],
+        "profile_ref": {
+          "id": "structured-demo",
+          "version": "2",
+          "sha256": "d8f95a1b3511a30e97d410e51397fd410340a684a48704ca51a59f4e6efc534c"
+        },
+        "target_step_id": "produce",
+        "findings": [
+          {
+            "id": "f-6455d50c1ab04ad2916a96a40c1b41a4",
+            "code": "requirement.out_of_bounds",
+            "check_id": "length",
+            "requirement_ids": [
+              "DEMO-001"
+            ],
+            "state": "fail",
+            "severity": "error",
+            "category": "output_defect",
+            "subject_id": "output-978a7a8171ca87007e969fe78ff2a81a92a35d86ccdeed9d9ca195f4a407a854",
+            "owner": {
+              "run_id": "structured-loop-20260916T202659Z",
+              "step_id": "produce",
+              "attempt": 1,
+              "output_port": "result"
+            },
+            "selector": "/length_mm",
+            "expected": {
+              "operator": "within",
+              "expected": null,
+              "target": 100.0,
+              "tolerance": 0.2,
+              "minimum": null,
+              "maximum": null,
+              "inclusive": true
+            },
+            "observed": 98,
+            "unit": "mm",
+            "frame": null,
+            "observed_unit": "mm",
+            "observed_frame": null,
+            "evidence_refs": [
+              "subject:output-978a7a8171ca87007e969fe78ff2a81a92a35d86ccdeed9d9ca195f4a407a854@14e0945dff0d53884f02b154fd2bcf425ae913419e741d3af766a7e7a268d03b#/length_mm"
+            ],
+            "source_refs": [
+              {
+                "artifact_ref": "baseline:structured-demo-v1",
+                "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+                "locator": "DEMO-001"
+              }
+            ],
+            "summary": "Observed output does not meet the requirement.",
+            "explanation": "Observed 98. Set /length_mm to 100 mm, within 0.2 mm.",
+            "suggested_cause": null,
+            "correction": {
+              "action": "revise_output",
+              "target_step_id": "produce",
+              "target": "Set /length_mm to 100 mm, within 0.2 mm.",
+              "preserve_requirement_ids": [
+                "DEMO-002",
+                "DEMO-003"
+              ],
+              "recheck_ids": [
+                "length",
+                "part-identity",
+                "object",
+                "length-present"
+              ]
+            }
+          }
+        ],
+        "preserve_requirement_ids": [
+          "DEMO-002",
+          "DEMO-003"
+        ],
+        "remaining_revisions": 2,
+        "total_findings": 1,
+        "omitted_findings": 0,
+        "complete_result_ref": "wright://workspace/process-validation-structured-loop/validation/assessment-c15a88754bb042aeb37a84d3dfaad2bf"
+      },
+      "saved_response": {
+        "task_id": "produce",
+        "task_title": "Produce controlled structured output",
+        "output_path": "structured-output-001.json",
+        "output_bytes": 40,
+        "output_format": "json",
+        "sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c"
+      }
+    }
+  ],
+  "consumer": {
+    "execution_kind": "ai",
+    "prompt": "State in one sentence that the connected structured result was released after the current revision passed its pinned validation profile. Include its part_id and length_mm exactly as supplied.\n\nReference material — Validated result:\n{\"part_id\":\"demo-plate\",\"length_mm\":100}",
+    "response": "The connected structured result for part_id \"demo-plate\" and length_mm 100 was released after the current revision passed its pinned validation profile.",
+    "task_id": "consume",
+    "task_title": "Consume validated structured output",
+    "output_format": "text",
+    "output_path": "release-note.txt",
+    "output_bytes": 152,
+    "producer_attempt": 1,
+    "saved_response": {
+      "task_id": "consume",
+      "task_title": "Consume validated structured output",
+      "output_path": "release-note.txt",
+      "output_bytes": 152,
+      "output_format": "text",
+      "sha256": "452bac57b970920121016d7fcf266cad97d402a28cfd5fe4f095c9cf3e1ba807"
+    }
+  },
+  "assertions": {
+    "controlled_initial_defect": true,
+    "typed_feedback_delivered": true,
+    "new_output_identity": true,
+    "new_output_digest": true,
+    "current_revision_passed": true,
+    "consumer_released": true
+  }
+}

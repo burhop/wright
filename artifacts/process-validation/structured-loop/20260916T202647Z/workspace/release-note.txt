@@ -1,0 +1,1 @@
+The connected structured result for part_id "demo-plate" and length_mm 100 was released after the current revision passed its pinned validation profile.

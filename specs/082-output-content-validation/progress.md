@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M1 and M2 code/test integration complete; M2 real-AI demonstration next.
-**Implementation:** T001–T017 complete. T018–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M0–M2 complete; M3 report projection and operations next.
+**Implementation:** T001–T018 complete. T019–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Run and retain the real configured ordinary-AI demonstration (T018). Then publish the report contract and operations (T019–T022). Complete all required demonstrations and gates before claiming the implementation finished.
+Publish the report contract and operations (T019–T022), then complete the geometry and thermal slices (T023–T029). Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -97,4 +97,8 @@ This is implementation/component evidence. Served workspace entry, responsive/vi
 - T016: the existing validator inspector exposes the exact eligible revision target and a zero-to-three limit. It only offers the ordinary-AI producer owning every bound subject, selects one revision atomically, disconnects at zero, and clears unsafe stale targets when subject/profile ownership changes. Source/Diagram round-trip retains the standard feedback edge and limit. Existing run diagnostics now label output held, repairing output and correction budget exhausted from canonical events; polling carries bounded identities rather than findings.
 - Validator settings/editor/status tests: **13 passed** within the broader frontend selection. Workflow component/observer selection: **61 passed** across five files. TypeScript build and targeted ESLint passed. Backend status/event regression selection: **71 passed**; Ruff and `git diff --check` passed.
 
-T018 real configured-model evidence remains open, so M2 is not complete. No mocked scheduling result is presented as the required AI demonstration.
+- T018: `structured-loop.workflow.wflow` ran through the production compiler, runner, validator and `agent_adapters.generate_workflow_response` against the configured Hermes endpoint. The model produced the seeded 98 mm defect, consumed the typed measured finding, wrote a distinct 100 mm revision, passed the pinned profile and released the consumer.
+- Retained evidence is under `artifacts/process-validation/structured-loop/20260916T202647Z/`: source and hash, three model-usage records, both output identities, two immutable assessments, feedback delivery, events, run log and final release note. Its manifest records every retained file by size and SHA-256; transient SQLite and nested Git state were removed after capture.
+- Independent retained-evidence and saved-process checks: **12 passed** using `.venv/Scripts/python.exe -m pytest tests/external/process_validation/test_structured_loop_evidence.py packages/workspace_service/tests/test_workflow_process_validation_rework.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-m2-evidence`. Ruff and `git diff --check` passed.
+
+M2 is complete. This evidence proves the bounded structured-output slice; it does not claim the still-open CAD correction or thermal validation demonstrations in M4.

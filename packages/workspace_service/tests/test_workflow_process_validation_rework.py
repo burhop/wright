@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+from pathlib import Path
 from threading import Event
 
 import pytest
@@ -258,3 +259,14 @@ def test_compile_rejects_revision_target_that_does_not_own_validator_subject():
     )
     with pytest.raises(WorkflowSourceExecutionError):
         compile_prompt_workflow(text)
+
+
+def test_saved_structured_loop_uses_the_canonical_bounded_revision_path():
+    source_path = (
+        Path(__file__).parents[3]
+        / "tests/datasets/process-validation/processes/structured-loop.workflow.wflow"
+    )
+    plan = compile_prompt_workflow(source_path.read_text(encoding="utf-8"))
+    assert [step.id for step in plan.steps] == ["produce", "inspect", "consume"]
+    assert plan.revisions == {"inspect": "produce"}
+    assert plan.steps[1].validation and plan.steps[1].max_revisions == 2
