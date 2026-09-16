@@ -7,6 +7,13 @@ docker/mcp/brep-mcp-launcher.cjs text eol=lf
 specs/053-workspace-surfaces/contracts/** text eol=lf
 packages/core/src/core/surfaces/schemas/** text eol=lf
 
+# Validator baselines are byte-hashed and copied into installed runtime profiles.
+packages/workspace_service/src/workspace_service/process_validation/profiles/*.md text eol=lf
+packages/workspace_service/src/workspace_service/process_validation/profiles/*.json text eol=lf
+tests/datasets/process-validation/**/*.md text eol=lf
+tests/datasets/process-validation/**/*.json text eol=lf
+specs/082-output-content-validation/contracts/schemas/*.json text eol=lf
+
 # Process-definition contracts are byte-hashed and installed byte-for-byte.
 specs/078-process-definition-view/contracts/*.json text eol=lf
 src/wright_engineering/static/process-definitions/*.json text eol=lf

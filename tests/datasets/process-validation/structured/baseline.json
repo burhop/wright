@@ -1,0 +1,50 @@
+{
+  "id": "structured-demo",
+  "version": "1",
+  "requirements": [
+    {
+      "id": "DEMO-001",
+      "text": "length_mm is 100.0 +/- 0.2 mm inclusive",
+      "scope": "design",
+      "sources": [
+        {
+          "artifact_ref": "baseline:structured-demo-v1",
+          "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+          "locator": "DEMO-001"
+        }
+      ],
+      "mandatory": true,
+      "review_required": false
+    },
+    {
+      "id": "DEMO-002",
+      "text": "part_id is demo-plate",
+      "scope": "content",
+      "sources": [
+        {
+          "artifact_ref": "baseline:structured-demo-v1",
+          "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+          "locator": "DEMO-002"
+        }
+      ],
+      "mandatory": true,
+      "review_required": false
+    },
+    {
+      "id": "DEMO-003",
+      "text": "Output is a JSON object with required fields",
+      "scope": "content",
+      "sources": [
+        {
+          "artifact_ref": "baseline:structured-demo-v1",
+          "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+          "locator": "DEMO-003"
+        }
+      ],
+      "mandatory": true,
+      "review_required": false
+    }
+  ],
+  "unresolved_decisions": [],
+  "amendments": []
+}

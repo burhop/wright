@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Revised planning package saved for user review.
-**Implementation:** T001–T034 are unstarted. No runtime validator code or process was created by this planning task.
+**Phase:** Implementation active; M0 foundations complete, M1 next.
+**Implementation:** T001–T006 complete. T007–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,6 +29,25 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-When the user submits the saved goal, perform T001/T002 then foundations. Prove the local structured-output correction loop before native expansion. Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
+Implement T007–T009: behavioral evaluator tests, structured readers and the application service over the new contracts/repository. Then connect the canonical validator mode and tools (T010–T013), followed by the actual correction loop. Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
+
+## M0 implementation evidence — 2026-09-16
+
+- T001: [runtime integration](evidence/runtime-integration.md) records the existing canonical compiler/scheduler, MCP composition, packaged resource paths and isolated runtime roots. Prerequisite/checklist checks passed (19/19); optional pre-commit hook skipped because tracked work was clean.
+- T002: `scripts/build_process_validation_coverage.py` generated 30 unique source inventories with per-file hashes, requirement/defect seeds and planned capabilities. Structured demonstration requirements were frozen before evaluation and copied into runtime resources.
+- T003: `core/process_validation.py` adds versioned source/profile/subject/request/measurement/check/finding/assessment/feedback/review models, canonical identities and conservative aggregation. Five generated JSON schemas are in `contracts/schemas/`; packaged profile validates against the exported schema.
+- T004: `data_vault/process_validation_repository.py` adds workspace-scoped SQLite WAL attempts, immutable terminal results, latest-attempt projection, idempotency, cancellation/resume and append-only subject-bound review. Review cannot remove measured checks or apply to a superseded attempt.
+- T005: subject resolver reuses a new public wrapper over the existing pinned-directory bounded file reader. Exact hash and runtime binding checks, unchanged-output recheck, reader capability/method/format identity, cancellation/deadline/entity bounds and native-readback extension contracts are implemented. Native reader qualification remains T024–T028/T030, not claimed here.
+- T006: runtime profile loader validates closed schemas and pinned digests, using packaged resources or confined workspace files. Missing registered reader support produces an explicit blocked capability result.
+
+Validation commands used `.venv/Scripts/python.exe` with `-p no:cacheprovider` and unique `--basetemp=.local-run/process-validation-082/...` directories. The shared old pytest cache is not writable; using a private test root avoids changing it.
+
+- Core/repository focused tests: **32 passed**.
+- Workspace profile/subject tests: **13 passed**.
+- Existing source-store bounded-read/confinement regression selection: **9 passed, 2 skipped** (host symlink support), 49 deselected.
+- Ruff check passed on all new Python files; formatter applied.
+- Exported JSON schemas, packaged profile schema and all 30 source inventory records verified.
+
+Initial test-first core collection failed as expected before the new model existed. The first repository test command failed because its private parent directory did not exist; creating that parent resolved setup, then all tests passed. No process/solver/AI demonstration has run yet. No pushes or merges.

@@ -953,6 +953,21 @@ class WorkspaceWorkflowSourceStore:
             if descriptor is not None:
                 os.close(descriptor)
 
+    def read_artifact_bytes(self, relative_path: str, *, max_bytes: int) -> bytes:
+        """Read an output through the existing pinned-directory capability.
+
+        Shared by process validation; this neither creates source history nor
+        acquires a writer lock or modifies the artifact.
+        """
+        if type(max_bytes) is not int or not 0 < max_bytes <= 256 * 1024 * 1024:
+            raise ValueError("Artifact read limit must be between 1 byte and 256 MiB")
+        path = self._paths.resolve(relative_path, must_exist=True)
+        return self._read_bounded_file(
+            path, max_bytes=max_bytes, label="artifact",
+            invalid_code="artifact_path_invalid", too_large_code="artifact_too_large",
+            too_large_message="Artifact exceeds the configured read limit",
+        )
+
     @staticmethod
     def _validate_bounded_read_stat(
         file_stat: os.stat_result,

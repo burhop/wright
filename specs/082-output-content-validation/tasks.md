@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** All tasks unstarted. This replaces the previous 74-task campaign plan.
+**Status:** Implementation active under the submitted goal. M0 foundations complete; M1 next. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -8,15 +8,15 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 
 ## Phase 1 — Setup (M0)
 
-- [ ] T001 Record exact canonical source/compiler/runner, result events, BaseTool/MCP registration, installed resource packaging and existing authoring integration points in `specs/082-output-content-validation/evidence/runtime-integration.md`; inspect only the relevant runtime, select isolated demonstration data roots, and avoid another branch/campaign audit.
-- [ ] T002 Inventory the 30 current scenario manifests and source requirements/capabilities into `packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json`; freeze the simple structured-output demonstration baseline separately; record source hashes and supported/planned status without modifying generation inputs or requiring all outputs.
+- [x] T001 Record exact canonical source/compiler/runner, result events, BaseTool/MCP registration, installed resource packaging and existing authoring integration points in `specs/082-output-content-validation/evidence/runtime-integration.md`; inspect only the relevant runtime, select isolated demonstration data roots, and avoid another branch/campaign audit.
+- [x] T002 Inventory the 30 current scenario manifests and source requirements/capabilities into `packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json`; freeze the simple structured-output demonstration baseline separately; record source hashes and supported/planned status without modifying generation inputs or requiring all outputs.
 
 ## Phase 2 — Foundations (M0)
 
-- [ ] T003 Implement versioned request/subject/profile/measurement/finding/feedback/assessment contracts and pure state rules in `packages/core/src/core/process_validation.py`; publish generated JSON Schema under `specs/082-output-content-validation/contracts/schemas/` and test identity, finite values, units, status aggregation and incompatible versions in `packages/core/tests/test_process_validation.py`.
-- [ ] T004 Add additive SQLite WAL migrations and immutable attempt/assessment/review persistence in `packages/data_vault/src/data_vault/process_validation_repository.py`; prove idempotency conflicts, latest-attempt selection, historical retention and terminal retry/resume semantics in `packages/data_vault/tests/test_process_validation_repository.py`.
-- [ ] T005 Implement exact subject resolution, stable snapshots/readback and bounded reader registry in `packages/workspace_service/src/workspace_service/process_validation/subjects.py` and `readers/base.py`; retain source/reader identities, authorized roots, cancellation and original-file protection.
-- [ ] T006 Implement packaged and workspace-owned profile loading/validation in `packages/workspace_service/src/workspace_service/process_validation/profiles.py` and resources in `profiles/`; reject executable predicates, unresolved hard-check limits and unsupported required capabilities; pin baseline/profile digests.
+- [x] T003 Implement versioned request/subject/profile/measurement/finding/feedback/assessment contracts and pure state rules in `packages/core/src/core/process_validation.py`; publish generated JSON Schema under `specs/082-output-content-validation/contracts/schemas/` and test identity, finite values, units, status aggregation and incompatible versions in `packages/core/tests/test_process_validation.py`.
+- [x] T004 Add additive SQLite WAL migrations and immutable attempt/assessment/review persistence in `packages/data_vault/src/data_vault/process_validation_repository.py`; prove idempotency conflicts, latest-attempt selection, historical retention and terminal retry/resume semantics in `packages/data_vault/tests/test_process_validation_repository.py`.
+- [x] T005 Implement exact subject resolution, stable snapshots/readback and bounded reader registry in `packages/workspace_service/src/workspace_service/process_validation/subjects.py` and `readers/base.py`; retain source/reader identities, authorized roots, cancellation and original-file protection.
+- [x] T006 Implement packaged and workspace-owned profile loading/validation in `packages/workspace_service/src/workspace_service/process_validation/profiles.py` and resources in `profiles/`; reject executable predicates, unresolved hard-check limits and unsupported required capabilities; pin baseline/profile digests.
 
 **Checkpoint:** Contract/schema, storage and subject/profile foundations are coherent. No corpus-wide gate.
 

@@ -1,0 +1,137 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "structured-demo",
+  "version": "1",
+  "baseline": {
+    "id": "structured-demo",
+    "version": "1",
+    "requirements": [
+      {
+        "id": "DEMO-001",
+        "text": "length_mm is 100.0 +/- 0.2 mm inclusive",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "baseline:structured-demo-v1",
+            "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+            "locator": "DEMO-001"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "DEMO-002",
+        "text": "part_id is demo-plate",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "baseline:structured-demo-v1",
+            "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+            "locator": "DEMO-002"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "DEMO-003",
+        "text": "Output is a JSON object with required fields",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "baseline:structured-demo-v1",
+            "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+            "locator": "DEMO-003"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      }
+    ],
+    "unresolved_decisions": [],
+    "amendments": []
+  },
+  "checks": [
+    {
+      "id": "length",
+      "version": "1",
+      "requirement_ids": [
+        "DEMO-001"
+      ],
+      "subject_role": "result",
+      "reader": "structured",
+      "selector": "/length_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 100.0,
+        "tolerance": 0.2,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "part-identity",
+      "version": "1",
+      "requirement_ids": [
+        "DEMO-002"
+      ],
+      "subject_role": "result",
+      "reader": "structured",
+      "selector": "/part_id",
+      "constraint": {
+        "operator": "equals",
+        "expected": "demo-plate",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "object",
+      "version": "1",
+      "requirement_ids": [
+        "DEMO-003"
+      ],
+      "subject_role": "result",
+      "reader": "structured",
+      "selector": "",
+      "constraint": {
+        "operator": "type",
+        "expected": "object",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    }
+  ],
+  "excluded_scope": [
+    "Geometry, manufacture and physical fit are not assessed."
+  ],
+  "limitations": [],
+  "supported_kinds": [
+    "value",
+    "file"
+  ]
+}
