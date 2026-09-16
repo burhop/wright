@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0185",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "INDEPENDENTLY_VERIFIED",
+  "to_state": "PUSH_AUTHORIZATION_PENDING",
+  "prior_revision": 185,
+  "new_revision": 186,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "3c5cf7650f36dfd9c2691946b44536562f427ddf5cfd1a38e58988b17cc6dab4",
+  "new_state_digest": "11d30ae33a7454b60422909e8da05c91736a393586c6faeac76656c04d1b177f",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex repository integration coordinator"
+  },
+  "action": "Bind the user's explicit merge-to-dev instruction to the corrected required feature-branch PR path.",
+  "started_at": "2026-09-16T02:09:00Z",
+  "finished_at": "2026-09-16T02:10:00Z",
+  "duration_ms": 60000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "915b816344309bd8012c75aa4be356fefb724a25",
+    "source_tree": "9033362d7d7903edba869be8a80ea73168548a16",
+    "source_program_tree": "e6c63f2254d5122cac2ddaaf38424d01fcf7bc5a",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0186.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0185.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0185.json",
+      "sha256": "177fdfc5f35a9940ae771cf060dcaa148df23e7aa22e8e7b0e3cfdc74bace6bd",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0186.json",
+      "sha256": "0c190316c408e4851138eacb8ec5b75fdb301d43c09f4a82217e9aea62f10260",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-FEATURE081-BLENDER-GUARD-FIXTURE",
+      "method": "Require the demonstrated three-case fixture fix before retrying the remaining gate.",
+      "environment": "Windows clean integration worktree",
+      "duration_ms": 2430,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "candidate:669c386a2a7a61988c630c3b7064b649511c500e",
+        "focused-test:3-passed",
+        "review:NATIVE-REVIEW-20260916-669C386A.json"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Corrected exact-candidate review attached; remaining gate slice and CI remain pending.",
+  "repair": {
+    "stable_cause_id": "EPP-N01-BLENDER-GUARD-FIXTURE-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Required local gate and remote CI remain pending.",
+    "Human study, content validation and deployed-browser verification remain pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0185.json",
+  "next_action": "OPEN_CURRENT_FEATURE_PR"
+}
