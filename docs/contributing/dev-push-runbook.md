@@ -163,6 +163,13 @@ non-mutating identity used by GitHub's synthetic merge checkout and prevents a
 locally named implementation worktree from hiding a lease/worktree mismatch that
 would fail pull-request validation.
 
+A `BLOCKED` state may be pushed only as a bounded recovery: every changed path
+must be program governance, the dev-push gate/runbook, or a test contract, the
+mutating lease must remain closed, and the exact committed validator must pass.
+Runtime and product paths are rejected in this state and must use the normal
+reviewed lifecycle. This exception exists so a post-merge CI failure can be
+recorded and corrected without fabricating a successful integration state.
+
 EPP-N01 may use the [prospective scoped implementation delivery rule](../programs/engineering-process-platform/coordinator-state-machine.md#prospective-native-implementation-delivery-revision-98-onward).
 It passes through these same states and gates with an exact-candidate independent
 technical review, a closed lease, and an explicit partition of delivered and

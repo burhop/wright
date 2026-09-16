@@ -231,6 +231,32 @@ def test_program_control_push_requires_closed_non_mutating_state() -> None:
     ):
         assert state in push
         assert state in runbook
+    assert "BLOCKED)" in push
+    assert "BLOCKED_RECOVERY_SAFE=1" in push
+    assert "BLOCKED_RECOVERY_SAFE=0" in push
+    assert "A `BLOCKED` state may be pushed only as a bounded recovery" in runbook
+    assert "Runtime and product paths are rejected" in runbook
+    recovery_zero = push.index("BLOCKED_RECOVERY_SAFE=0")
+    recovery_start = push.rfind('case "$changed_file" in', 0, recovery_zero)
+    recovery_end = push.index("  esac", recovery_start)
+    recovery_allowlist = push[recovery_start:recovery_end]
+    for path_pattern in (
+        "docs/programs/engineering-process-platform/*",
+        "docs/contributing/dev-push-runbook.md",
+        "scripts/check-dev-push.sh",
+        "scripts/check-dev-push.ps1",
+        "tests/program_control_plane/*",
+        "tests/release/test_dev_push_process.py",
+        "tests/ui-integration/*.spec.ts",
+    ):
+        assert path_pattern in recovery_allowlist
+    for forbidden_pattern in (
+        "apps/*",
+        "packages/*",
+        "src/*",
+        "hermes-plugin-wright/*",
+    ):
+        assert forbidden_pattern not in recovery_allowlist
     assert "active mutating lease" in push
     assert "synthetic" in runbook
     assert (
