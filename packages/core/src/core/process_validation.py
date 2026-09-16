@@ -672,6 +672,124 @@ class FindingPage(AssessmentReference):
     next_cursor: Annotated[int, Field(strict=True, ge=0)] | None = None
 
 
+class AssessmentCurrentness(Contract):
+    as_of: Text
+    selected_assessment_id: Identifier
+    selected_attempt_id: Identifier
+    selected_subject_ids: tuple[Identifier, ...]
+    latest_attempt_id: Identifier
+    latest_assessment_id: Identifier | None = None
+    superseded_by: tuple[Identifier, ...] = ()
+    is_current: StrictBool
+    stale_reason: Literal[
+        "newer_validation_attempt",
+        "superseded_by_review",
+        "subject_revision_changed",
+        "subject_changed_during_validation",
+        "subject_unavailable",
+    ] | None = None
+
+    @model_validator(mode="after")
+    def explains_staleness(self):
+        if self.is_current == (self.stale_reason is not None):
+            raise ValueError("Currentness and stale reason are inconsistent")
+        return self
+
+
+class RequirementTraceRow(Contract):
+    requirement_id: Identifier
+    requirement_text: Text
+    requirement_scope: Literal["content", "design"]
+    mandatory: StrictBool
+    review_required: StrictBool
+    source_refs: tuple[SourceReference, ...] = Field(min_length=1)
+    check_id: Identifier
+    check_version: Identifier
+    check_state: CheckState
+    reader: Identifier
+    evidence_method: EvidenceMethod
+    selector: Annotated[str, StringConstraints(max_length=2048)] = ""
+    expected: Constraint
+    expected_unit: Identifier | None = None
+    expected_frame: Identifier | None = None
+    observed: tuple[JsonValue, ...] = ()
+    observed_units: tuple[Identifier | None, ...] = ()
+    observed_frames: tuple[Identifier | None, ...] = ()
+    evidence_refs: tuple[Text, ...] = ()
+    subject_id: Identifier | None = None
+    subject_sha256: Digest | None = None
+    producer: ProducerIdentity | None = None
+    finding_ids: tuple[Identifier, ...] = ()
+    action: Literal[
+        "revise_output",
+        "supply_input",
+        "restore_capability",
+        "request_review",
+        "retry_validation",
+        "refresh_subject",
+    ] | None = None
+
+    @model_validator(mode="after")
+    def aligned_observations(self):
+        if not (
+            len(self.observed)
+            == len(self.observed_units)
+            == len(self.observed_frames)
+        ):
+            raise ValueError("Observed values, units and frames must align")
+        if self.subject_id is None and (
+            self.subject_sha256 is not None or self.producer is not None
+        ):
+            raise ValueError("Subject provenance requires a subject identity")
+        return self
+
+
+class ReportScope(Contract):
+    requirement_ids: tuple[Identifier, ...] = Field(min_length=1)
+    excluded_scope: tuple[Text, ...] = ()
+    limitations: tuple[Text, ...] = ()
+    physical_validation: Literal["not_assessed"] = "not_assessed"
+
+
+class ValidationReport(Contract):
+    schema_version: Literal["wright.process-validation-report/1"] = (
+        "wright.process-validation-report/1"
+    )
+    assessment_digest: Digest
+    currentness: AssessmentCurrentness
+    scope: ReportScope
+    reader_identities: tuple[ReaderIdentity, ...]
+    traceability: tuple[RequirementTraceRow, ...] = Field(min_length=1)
+    assessment: Assessment
+
+    @model_validator(mode="after")
+    def matches_assessment(self):
+        assessment = self.assessment
+        if self.assessment_digest != canonical_digest(assessment):
+            raise ValueError("Report assessment digest does not match its payload")
+        if (
+            self.currentness.selected_assessment_id != assessment.id
+            or self.currentness.selected_attempt_id != assessment.attempt_id
+            or self.currentness.selected_subject_ids
+            != tuple(subject.id for subject in assessment.request.subjects)
+        ):
+            raise ValueError("Report currentness does not identify its assessment")
+        required = tuple(item.id for item in assessment.profile.baseline.requirements)
+        if self.scope.requirement_ids != required:
+            raise ValueError("Report scope differs from the assessment baseline")
+        expected_rows = {
+            (requirement_id, check.id)
+            for check in assessment.profile.checks
+            for requirement_id in check.requirement_ids
+        }
+        actual_rows = {
+            (row.requirement_id, row.check_id) for row in self.traceability
+        }
+        if actual_rows != expected_rows or len(actual_rows) != len(self.traceability):
+            raise ValueError("Report traceability differs from profile coverage")
+        return self
+
+
 class ReviewDecision(Contract):
     id: Identifier
     workspace_id: Identifier

@@ -10,11 +10,16 @@ import structlog
 
 from core.process_validation import (
     Assessment,
+    AssessmentCurrentness,
+    AssessmentReference,
     CheckResult,
     Correction,
     Finding,
+    FindingPage,
+    ReviewDecision,
     ValidationProfile,
     ValidationRequest,
+    canonical_digest,
     canonical_json,
     summarize,
 )
@@ -24,6 +29,7 @@ from data_vault.process_validation_repository import AttemptRecord
 from .evaluation import compare
 from .readers.base import ReaderContext, ReaderRegistry, ValidationIssue
 from .readers.structured import StructuredReader
+from .reporting import build_report, export_report
 
 logger = structlog.get_logger(__name__)
 
@@ -123,6 +129,215 @@ class ProcessValidationService:
                 for subject in attempt.request.subjects
             )
         return EvaluationOutcome(attempt, assessment, is_current)
+
+    def currentness(self, assessment: Assessment) -> AssessmentCurrentness:
+        workspace_id = assessment.request.workspace_id
+        attempt = self.repository.get(workspace_id, assessment.attempt_id)
+        latest = self.repository.current(workspace_id, attempt.stream_key)
+        stale_reason = None
+        if latest is None or latest.id != attempt.id:
+            stale_reason = "newer_validation_attempt"
+        elif latest.assessment_id != assessment.id:
+            stale_reason = "superseded_by_review"
+        elif not assessment.subject_current:
+            stale_reason = "subject_changed_during_validation"
+        elif assessment.request.run_id and not all(
+            self.repository.output_is_current(workspace_id, subject)
+            for subject in assessment.request.subjects
+        ):
+            stale_reason = "subject_revision_changed"
+        elif assessment.request.subjects:
+            context = ReaderContext.create(
+                assessment.request.budget, assessment.request.trace_id
+            )
+            try:
+                for subject in assessment.request.subjects:
+                    self.resolver.snapshot(assessment.request, subject, context)
+            except (ValidationIssue, OSError):
+                stale_reason = "subject_unavailable"
+        return AssessmentCurrentness(
+            as_of=datetime.now(timezone.utc).isoformat(),
+            selected_assessment_id=assessment.id,
+            selected_attempt_id=assessment.attempt_id,
+            selected_subject_ids=tuple(
+                subject.id for subject in assessment.request.subjects
+            ),
+            latest_attempt_id=latest.id if latest else attempt.id,
+            latest_assessment_id=latest.assessment_id if latest else None,
+            superseded_by=self.repository.assessment_successors(
+                workspace_id, assessment.id
+            ),
+            is_current=stale_reason is None,
+            stale_reason=stale_reason,
+        )
+
+    @traced("workspace.process_validation.get_result")
+    def get_result(self, assessment_id: str):
+        assessment = self.repository.assessment(
+            self.resolver.workspace_id, assessment_id
+        )
+        return build_report(assessment, self.currentness(assessment))
+
+    @traced("workspace.process_validation.list_findings")
+    def list_findings(
+        self, assessment_id: str, *, cursor: int = 0, limit: int = 20
+    ) -> FindingPage:
+        if not 0 <= cursor or not 1 <= limit <= 20:
+            raise ValueError("Finding page requires cursor >= 0 and limit 1..20")
+        report = self.get_result(assessment_id)
+        items = []
+        for finding in report.assessment.findings[cursor : cursor + limit]:
+            candidate = finding.model_dump(mode="json")
+            if len(canonical_json([*items, candidate]).encode("utf-8")) > 64 * 1024:
+                if not items:
+                    raise ValueError(
+                        "Finding exceeds inline capacity; use the authorized JSON export"
+                    )
+                break
+            items.append(candidate)
+        end = cursor + len(items)
+        return FindingPage(
+            **self.reference(report.assessment, report.currentness).model_dump(),
+            findings=tuple(items),
+            next_cursor=end
+            if end < len(report.assessment.findings)
+            else None,
+        )
+
+    @staticmethod
+    def reference(
+        assessment: Assessment, currentness: AssessmentCurrentness
+    ) -> AssessmentReference:
+        return AssessmentReference(
+            assessment_id=assessment.id,
+            assessment_digest=canonical_digest(assessment),
+            attempt_id=assessment.attempt_id,
+            workspace_id=assessment.request.workspace_id,
+            is_current=currentness.is_current,
+            release_eligible=bool(
+                currentness.is_current and assessment.summary.release_eligible
+            ),
+            summary=assessment.summary,
+            finding_count=len(assessment.findings),
+        )
+
+    @traced("workspace.process_validation.export")
+    def export_result(self, assessment_id: str, format: str):
+        return export_report(self.get_result(assessment_id), format)
+
+    @traced("workspace.process_validation.review")
+    def record_review(
+        self,
+        assessment_id: str,
+        *,
+        requirement_id: str,
+        actor_id: str,
+        authority_ref: str,
+        decision: str,
+        rationale: str,
+        evidence_refs: tuple[str, ...],
+    ) -> Assessment:
+        original = self.repository.assessment(
+            self.resolver.workspace_id, assessment_id
+        )
+        if not self.currentness(original).is_current:
+            raise ValueError("Review requires the current validation assessment")
+        review = ReviewDecision(
+            id="review-" + uuid4().hex,
+            workspace_id=self.resolver.workspace_id,
+            assessment_id=original.id,
+            assessment_digest=canonical_digest(original),
+            requirement_id=requirement_id,
+            actor_id=actor_id,
+            actor_type="authenticated_human",
+            authority_ref=authority_ref,
+            decision=decision,
+            rationale=rationale,
+            evidence_refs=evidence_refs,
+            created_at=datetime.now(timezone.utc).isoformat(),
+        )
+        requirements = {
+            item.id: item for item in original.profile.baseline.requirements
+        }
+        requirement = requirements.get(requirement_id)
+        if requirement is None or not requirement.review_required:
+            raise ValueError("Requirement does not accept human review")
+        definitions = {item.id: item for item in original.profile.checks}
+        subjects = {item.role: item for item in original.request.subjects}
+        eligible = {
+            item.id
+            for item in original.profile.checks
+            if item.constraint.operator == "review"
+            and requirement_id in item.requirement_ids
+        }
+        if not eligible:
+            raise ValueError("Requirement has no pending review check")
+        checks, findings = [], [
+            item for item in original.findings if item.check_id not in eligible
+        ]
+        for check in original.checks:
+            if check.check_id not in eligible:
+                checks.append(check)
+                continue
+            definition = definitions[check.check_id]
+            evidence = tuple(dict.fromkeys((review.id, *review.evidence_refs)))
+            finding_ids = ()
+            if review.decision == "changes_requested":
+                subject = subjects.get(definition.subject_role)
+                finding = Finding(
+                    id="f-" + uuid4().hex,
+                    code="review.changes_requested",
+                    check_id=definition.id,
+                    requirement_ids=definition.requirement_ids,
+                    state="fail",
+                    category="review_required",
+                    subject_id=subject.id if subject else None,
+                    owner=subject.producer if subject else None,
+                    selector=definition.selector,
+                    expected=definition.constraint,
+                    unit=definition.unit,
+                    frame=definition.frame,
+                    evidence_refs=evidence,
+                    source_refs=requirement.sources,
+                    summary="Authenticated review requested changes.",
+                    explanation=review.rationale,
+                    correction=Correction(
+                        action="request_review",
+                        target="Address the authenticated review rationale and submit a new output for validation.",
+                        recheck_ids=tuple(item.id for item in original.profile.checks),
+                    ),
+                )
+                findings.append(finding)
+                finding_ids = (finding.id,)
+            checks.append(
+                CheckResult(
+                    check_id=check.check_id,
+                    requirement_ids=check.requirement_ids,
+                    state="pass"
+                    if review.decision == "approved"
+                    else "fail",
+                    evidence_refs=evidence,
+                    finding_ids=finding_ids,
+                )
+            )
+        revised = Assessment(
+            **{
+                **original.model_dump(),
+                "id": "assessment-" + uuid4().hex,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "checks": tuple(checks),
+                "findings": tuple(findings),
+                "review_ids": (*original.review_ids, review.id),
+                "supersedes": original.id,
+                "summary": summarize(
+                    original.profile,
+                    tuple(checks),
+                    subject_current=original.subject_current,
+                ),
+            }
+        )
+        self.repository.append_review(review, revised)
+        return revised
 
     @traced("workspace.process_validation.evaluate")
     def evaluate(

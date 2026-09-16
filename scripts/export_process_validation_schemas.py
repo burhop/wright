@@ -9,6 +9,7 @@ from core.process_validation import (
     FindingPage,
     RepairFeedback,
     ReviewDecision,
+    ValidationReport,
     ValidationProfile,
     ValidationRequest,
 )
@@ -24,6 +25,7 @@ def export(target: Path) -> None:
         FindingPage,
         RepairFeedback,
         ReviewDecision,
+        ValidationReport,
     ):
         schema = model.model_json_schema()
         schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"

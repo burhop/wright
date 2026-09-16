@@ -7,7 +7,6 @@ from .configuration import ProfileLocation
 from .profiles import load_profile
 from .service import ProcessValidationService
 from .subjects import SubjectResolver
-from .readers.base import ReaderContext, ValidationIssue
 
 
 class ValidationApplication:
@@ -51,29 +50,22 @@ class ValidationApplication:
         return self.service.evaluate(request, profile, cancelled=cancelled)
 
     def read(self, assessment_id):
-        assessment = self.repository.assessment(self.workspace_id, assessment_id)
-        attempt = self.repository.get(self.workspace_id, assessment.attempt_id)
-        current = self.repository.current(self.workspace_id, attempt.stream_key)
-        is_current = bool(
-            current
-            and current.id == attempt.id
-            and current.assessment_id == assessment.id
+        report = self.service.get_result(assessment_id)
+        return report.assessment, report.currentness.is_current
+
+    def get_result(self, assessment_id):
+        return self.service.get_result(assessment_id)
+
+    def list_findings(self, assessment_id, *, cursor=0, limit=20):
+        return self.service.list_findings(
+            assessment_id, cursor=cursor, limit=limit
         )
-        if assessment.request.run_id:
-            is_current = is_current and all(
-                self.repository.output_is_current(self.workspace_id, subject)
-                for subject in assessment.request.subjects
-            )
-        if is_current:
-            context = ReaderContext.create(
-                assessment.request.budget, assessment.request.trace_id
-            )
-            try:
-                for subject in assessment.request.subjects:
-                    self.service.resolver.snapshot(assessment.request, subject, context)
-            except (ValidationIssue, OSError):
-                is_current = False
-        return assessment, is_current
+
+    def export_result(self, assessment_id, format):
+        return self.service.export_result(assessment_id, format)
+
+    def record_review(self, assessment_id, **kwargs):
+        return self.service.record_review(assessment_id, **kwargs)
 
 
 def assessment_reference(assessment, is_current):

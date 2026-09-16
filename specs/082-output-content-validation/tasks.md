@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** Implementation active under the submitted goal. T001–T018 and M2 are complete; M3 report projection and operations are next. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
+**Status:** Implementation active under the submitted goal. T001–T022 and M3 are complete; M4 engineering capability slices are next. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -46,10 +46,10 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 
 **Independent acceptance:** A schema-only consumer renders JSON/Markdown/RTM with matching verdicts and links, including failures, pending review and stale revisions.
 
-- [ ] T019 [US3] Generate JSON, Markdown and RTM/CSV from one assessment in `packages/workspace_service/src/workspace_service/process_validation/reporting.py`; publish representative pass/fail/mixed/blocked/error/stale/repair records under `specs/082-output-content-validation/contracts/examples/` with assessment/profile/subject identity and scope.
-- [ ] T020 [US3] Add authorized get/list-findings/export and authority-backed review operations in `process_validation/service.py` with thin existing-auth routes in `apps/api/src/api/routers/workspace.py`; update MCP/CLI adapters, persist late review as a new assessment and expose query-time currentness without mutating history.
-- [ ] T021 [P] [US3] Write a report-branch integration handoff in `specs/082-output-content-validation/contracts/report-consumer.md` describing exact schema/versioning, read/export operations, stable artifact resolution, paging, currentness, Markdown and RTM fields. Do not edit the report branch or build its UI.
-- [ ] T022 [US3] Add an independent schema/example consumer and report consistency/security tests in `packages/workspace_service/tests/test_process_validation_reporting.py` and `apps/api/tests/test_process_validation_routes.py`; cover pending authenticated review, stale/latest selection, access control, escaped text and CSV formula injection.
+- [x] T019 [US3] Generate JSON, Markdown and RTM/CSV from one assessment in `packages/workspace_service/src/workspace_service/process_validation/reporting.py`; publish representative pass/fail/mixed/blocked/error/stale/repair records under `specs/082-output-content-validation/contracts/examples/` with assessment/profile/subject identity and scope.
+- [x] T020 [US3] Add authorized get/list-findings/export and authority-backed review operations in `process_validation/service.py` with thin existing-auth routes in `apps/api/src/api/routers/workspace.py`; update MCP/CLI adapters, persist late review as a new assessment and expose query-time currentness without mutating history.
+- [x] T021 [P] [US3] Write a report-branch integration handoff in `specs/082-output-content-validation/contracts/report-consumer.md` describing exact schema/versioning, read/export operations, stable artifact resolution, paging, currentness, Markdown and RTM fields. Do not edit the report branch or build its UI.
+- [x] T022 [US3] Add an independent schema/example consumer and report consistency/security tests in `packages/workspace_service/tests/test_process_validation_reporting.py` and `apps/api/tests/test_process_validation_routes.py`; cover pending authenticated review, stale/latest selection, access control, escaped text and CSV formula injection.
 
 ## Phase 6 — US4: Real reusable engineering capabilities (M4)
 

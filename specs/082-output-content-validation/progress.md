@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M0–M2 complete; M3 report projection and operations next.
-**Implementation:** T001–T018 complete. T019–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M0–M3 complete; M4 engineering capability slices next.
+**Implementation:** T001–T022 complete. T023–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Publish the report contract and operations (T019–T022), then complete the geometry and thermal slices (T023–T029). Complete all required demonstrations and gates before claiming the implementation finished.
+Complete the geometry and thermal slices and their isolated demonstrations (T023–T029), then execute closure gates T030–T034. Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -102,3 +102,13 @@ This is implementation/component evidence. Served workspace entry, responsive/vi
 - Independent retained-evidence and saved-process checks: **12 passed** using `.venv/Scripts/python.exe -m pytest tests/external/process_validation/test_structured_loop_evidence.py packages/workspace_service/tests/test_workflow_process_validation_rework.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-m2-evidence`. Ruff and `git diff --check` passed.
 
 M2 is complete. This evidence proves the bounded structured-output slice; it does not claim the still-open CAD correction or thermal validation demonstrations in M4.
+
+## M3 report boundary evidence — 2026-09-16
+
+- T019: `ValidationReport` is a closed public `wright.process-validation-report/1` envelope containing the exact immutable assessment, digest, query-time currentness, declared scope, reader identities and one RTM row per requirement/check pair. `reporting.py` projects JSON, escaped Markdown and formula-neutralized CSV from this single object. Contract-valid pass, fail, mixed, blocked, error, stale and repair examples plus repair Markdown/CSV are published under `contracts/examples/`.
+- T020: the shared service owns get, bounded finding paging, export and late review. Currentness distinguishes newer attempts, superseding review assessments, changed output revisions, mutation during validation and unavailable subjects. Review identity comes from the API control plane, applies only to an explicitly reviewable current requirement, and appends a new assessment. Existing-auth HTTP routes require the owning workspace session and engineer/admin role when enforced. MCP adds read-only get/export while retaining paged read; CLI adds get/export. Human review is not exposed to the model-facing gateway.
+- T021: `contracts/report-consumer.md` publishes exact schema/version, effective-verdict rule, routes, paging, artifact references, output safety and an independent consumer recipe for the separate report branch.
+- T022: tests cover shared JSON/Markdown/CSV verdicts, schema-only validation of every example, stale/latest selection, pass and changes-requested review, immutable history, cross-workspace denial, authenticated actor derivation, role denial, Markdown/HTML escaping and CSV formula neutralization.
+- Combined M3/core/repository/evaluator/tool/runner/API regression selection: **124 passed**, with one existing Starlette/httpx deprecation warning, using `.venv/Scripts/python.exe -m pytest ... --basetemp=.local-run/process-validation-082/pytest-m3-combined1`. Focused schema/example/API selection: **9 passed**. Ruff and `git diff --check` passed.
+
+M3 is complete. The report UI remains owned by the separate branch; this feature publishes its stable data and transport boundary only.

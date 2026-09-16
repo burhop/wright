@@ -18,7 +18,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Inspect process output and retain validation evidence"
     )
-    parser.add_argument("operation", choices=("evaluate", "read", "profile"))
+    parser.add_argument(
+        "operation", choices=("evaluate", "read", "get", "export", "profile")
+    )
     parser.add_argument("--profile", default="structured-demo")
     parser.add_argument(
         "--profile-source", choices=("packaged", "workspace"), default="packaged"
@@ -28,6 +30,9 @@ def main(argv=None):
     parser.add_argument("--db")
     parser.add_argument("--request", help="Workspace-relative validation request JSON")
     parser.add_argument("--assessment")
+    parser.add_argument("--cursor", type=int, default=0)
+    parser.add_argument("--limit", type=int, default=20)
+    parser.add_argument("--format", choices=("json", "markdown", "csv"), default="json")
     args = parser.parse_args(argv)
     try:
         if args.operation == "profile":
@@ -65,10 +70,20 @@ def main(argv=None):
                     },
                 }
                 context_id = request.invocation_id
-            else:
+            elif args.operation == "read":
                 if not args.assessment:
                     parser.error("Read requires --assessment")
+                arguments, context_id = {
+                    "assessment_id": args.assessment,
+                    "cursor": args.cursor,
+                    "limit": args.limit,
+                }, "cli-read"
+            else:
+                if not args.assessment:
+                    parser.error(f"{args.operation.title()} requires --assessment")
                 arguments, context_id = {"assessment_id": args.assessment}, "cli-read"
+                if args.operation == "export":
+                    arguments["format"] = args.format
             with redirect_stdout(sys.stderr):
                 result = asyncio.run(
                     ProcessValidationTool(application, args.operation).execute(
@@ -81,7 +96,10 @@ def main(argv=None):
                         ),
                     )
                 )
-        print(canonical_json(result))
+        if args.operation == "export":
+            print(result["content"], end="")
+        else:
+            print(canonical_json(result))
         return (
             2 if args.operation == "evaluate" and not result["release_eligible"] else 0
         )

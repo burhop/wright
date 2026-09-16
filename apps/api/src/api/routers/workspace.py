@@ -27,7 +27,7 @@ from fastapi import (
     File,
 )
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
-from typing import Optional
+from typing import Literal, Optional
 
 from agent_adapters import BaseAgentEngine
 from agent_adapters.report_generation import (
@@ -116,6 +116,7 @@ from api.schemas.workspace import (
     WorkflowSourceRunRequest,
     WorkflowSourceRunResponse,
     WorkflowArtifactReviewDecisionRequest,
+    ProcessValidationReviewRequest,
     WorkflowSourceUpdateRequest,
     WorkflowSourceResponse,
     EngineeringWorkflowTemplateListResponse,
@@ -642,6 +643,45 @@ def _workflow_source_scope(
     except OSError as error:
         raise _workflow_source_unavailable(error) from error
     return _WorkflowSourceScope(workspace_id, workspace_dir)
+
+
+def _require_process_validation_role(request: Request) -> None:
+    settings = request.app.state.security_settings
+    if not settings.enforced:
+        return
+    if getattr(request.state, "principal_role", None) not in {"engineer", "admin"}:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Engineer or administrator role required",
+        )
+
+
+def _process_validation_application(session_id: str, service: WorkspaceService):
+    from workspace_service.process_validation.application import ValidationApplication
+
+    scope = _workflow_source_scope(session_id, service)
+    return ValidationApplication(
+        DATABASE_PATH, scope.workspace_id, scope.workspace_dir
+    )
+
+
+def _process_validation_error(error: Exception) -> HTTPException:
+    from data_vault.process_validation_repository import ValidationConflict
+
+    if isinstance(error, KeyError):
+        return HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "code": "validation_assessment_unavailable",
+                "message": "Validation assessment was not found in this workspace",
+            },
+        )
+    return HTTPException(
+        status_code=status.HTTP_409_CONFLICT
+        if isinstance(error, ValidationConflict)
+        else status.HTTP_422_UNPROCESSABLE_ENTITY,
+        detail={"code": "validation_operation_rejected", "message": str(error)},
+    )
 
 
 def _scenario_entry_response(entry) -> EngineeringScenarioCatalogEntryResponse:
@@ -1188,6 +1228,105 @@ async def workflow_application_options(
         ) from error
     finally:
         await runtime.close()
+
+
+@router.get(
+    "/process-validations/{assessment_id}",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.get")
+def process_validation_result(
+    assessment_id: str,
+    session_id: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        return _process_validation_application(session_id, service).get_result(
+            assessment_id
+        )
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
+
+
+@router.get(
+    "/process-validations/{assessment_id}/findings",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.findings")
+def process_validation_findings(
+    assessment_id: str,
+    session_id: str,
+    cursor: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=20),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        return _process_validation_application(session_id, service).list_findings(
+            assessment_id, cursor=cursor, limit=limit
+        )
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
+
+
+@router.get(
+    "/process-validations/{assessment_id}/export",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.export")
+def process_validation_export(
+    assessment_id: str,
+    session_id: str,
+    format: Literal["json", "markdown", "csv"] = "json",
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        exported = _process_validation_application(
+            session_id, service
+        ).export_result(assessment_id, format)
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
+    return Response(
+        content=exported.content,
+        media_type=exported.media_type,
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": f'attachment; filename="{exported.filename}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.post(
+    "/process-validations/{assessment_id}/reviews",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.review")
+def process_validation_review(
+    assessment_id: str,
+    body: ProcessValidationReviewRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    application = _process_validation_application(body.session_id, service)
+    principal = str(getattr(request.state, "principal_id", "local-user"))
+    authority = (
+        "control-plane:" + str(getattr(request.state, "trace_id", "local-session"))
+        if request.app.state.security_settings.enforced
+        else "local-control-plane"
+    )
+    try:
+        revised = application.record_review(
+            assessment_id,
+            requirement_id=body.requirement_id,
+            actor_id=principal,
+            authority_ref=authority,
+            decision=body.decision,
+            rationale=body.rationale,
+            evidence_refs=tuple(body.evidence_refs),
+        )
+        return application.get_result(revised.id)
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
 
 
 @router.get(

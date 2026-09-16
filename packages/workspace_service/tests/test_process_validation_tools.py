@@ -193,6 +193,23 @@ def test_packaged_cli_returns_a_measured_failure_and_can_read_it(tmp_path, capsy
     assert not result["release_eligible"]
     assert main(["read", *common, "--assessment", result["assessment_id"]]) == 0
     assert json.loads(capsys.readouterr().out)["findings"][0]["observed"] == 98
+    assert main(["get", *common, "--assessment", result["assessment_id"]]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert report["assessment"]["id"] == result["assessment_id"]
+    assert (
+        main(
+            [
+                "export",
+                *common,
+                "--assessment",
+                result["assessment_id"],
+                "--format",
+                "csv",
+            ]
+        )
+        == 0
+    )
+    assert "requirement_id,requirement_text" in capsys.readouterr().out
 
 
 def test_raw_inline_json_keeps_duplicate_fields_visible_to_the_reader(tmp_path):
@@ -276,6 +293,8 @@ def test_real_gateway_policy_dispatch_audit_and_output_schema(tmp_path):
     assert {t.name for t in gateway.list_tools("session")} == {
         "wright_validation__evaluate",
         "wright_validation__read",
+        "wright_validation__get",
+        "wright_validation__export",
     }
     result = asyncio.run(
         gateway.call_tool("session", "request", "wright_validation__evaluate", args(98))
@@ -291,5 +310,30 @@ def test_real_gateway_policy_dispatch_audit_and_output_schema(tmp_path):
     )
     assert (
         not read.is_error and read.structured_content["findings"][0]["observed"] == 98
+    )
+    report = asyncio.run(
+        gateway.call_tool(
+            "session",
+            "get-request",
+            "wright_validation__get",
+            {"assessment_id": result.structured_content["assessment_id"]},
+        )
+    )
+    assert report.structured_content["assessment"]["id"] == result.structured_content[
+        "assessment_id"
+    ]
+    exported = asyncio.run(
+        gateway.call_tool(
+            "session",
+            "export-request",
+            "wright_validation__export",
+            {
+                "assessment_id": result.structured_content["assessment_id"],
+                "format": "markdown",
+            },
+        )
+    )
+    assert exported.structured_content["content"].startswith(
+        "# Process validation report"
     )
     assert any(item["server_id"] == "wright-process-validation" for item in audit)

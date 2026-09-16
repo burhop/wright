@@ -360,6 +360,23 @@ class ProcessValidationRepository:
                 raise KeyError("Validation assessment not found in this workspace")
             return Assessment.model_validate_json(row["payload_json"])
 
+    def assessment_successors(
+        self, workspace_id: str, assessment_id: str
+    ) -> tuple[str, ...]:
+        """Return the immutable supersession chain after an assessment."""
+        with connect_state_db(self.db_path, read_only=True) as db:
+            rows = db.execute(
+                "SELECT id,supersedes FROM process_validation_assessments WHERE workspace_id=? ORDER BY sequence",
+                (workspace_id,),
+            ).fetchall()
+        by_parent = {row["supersedes"]: row["id"] for row in rows if row["supersedes"]}
+        successors = []
+        current = assessment_id
+        while current in by_parent:
+            current = by_parent[current]
+            successors.append(current)
+        return tuple(successors)
+
     @traced("db.process_validation.review")
     def append_review(self, decision: ReviewDecision, revised: Assessment) -> None:
         decision = ReviewDecision.model_validate_json(_payload(decision))

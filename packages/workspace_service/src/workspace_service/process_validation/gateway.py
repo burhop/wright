@@ -14,7 +14,12 @@ from .application import ValidationApplication
 class ProcessValidationGatewayProvider:
     provider_id = "wright-process-validation"
     declared_tool_names = frozenset(
-        {"wright_validation__evaluate", "wright_validation__read"}
+        {
+            "wright_validation__evaluate",
+            "wright_validation__read",
+            "wright_validation__get",
+            "wright_validation__export",
+        }
     )
 
     def __init__(self, db_path):
@@ -30,7 +35,7 @@ class ProcessValidationGatewayProvider:
 
     def tools(self, session):
         projected = []
-        for operation in ("evaluate", "read"):
+        for operation in ("evaluate", "read", "get", "export"):
             # Schema discovery does not open/migrate the evidence database.
             base = ProcessValidationTool(None, operation)
             contract = base.contract()
@@ -39,14 +44,17 @@ class ProcessValidationGatewayProvider:
                     name=base.name,
                     server_id=self.provider_id,
                     tool_name=operation,
-                    title="Validate process output"
-                    if operation == "evaluate"
-                    else "Read validation evidence",
+                    title={
+                        "evaluate": "Validate process output",
+                        "read": "List validation findings",
+                        "get": "Get validation report",
+                        "export": "Export validation report",
+                    }[operation],
                     description=base.description,
                     input_schema=base.input_schema,
                     output_schema=base.output_schema,
                     annotations={
-                        "readOnlyHint": operation == "read",
+                        "readOnlyHint": operation != "evaluate",
                         "idempotentHint": True,
                         "destructiveHint": False,
                         "openWorldHint": False,

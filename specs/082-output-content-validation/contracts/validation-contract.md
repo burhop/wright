@@ -1,6 +1,6 @@
 # Process validation contract v1
 
-**Status:** Core/evaluator and canonical gate implemented. Direct Python, `wright-process-validate` CLI and existing-gateway `wright_validation__evaluate` / `wright_validation__read` adapters exist. Repair, report export/review routes and authoring integration remain in progress.
+**Status:** Core/evaluator, canonical gate, bounded repair, authoring controls and report/read/review boundary are implemented. Direct Python, `wright-process-validate` CLI and existing-gateway `wright_validation__evaluate`, `wright_validation__read`, `wright_validation__get` and `wright_validation__export` adapters exist.
 **Consumers:** canonical process runner, direct/CLI callers, MCP clients and the separate reporting feature.
 
 ## Operations
@@ -15,7 +15,7 @@ One application service owns these operations:
 | `export_result(id, format)` | JSON, Markdown or CSV traceability from that assessment; no new measurement. |
 | `record_review(subject, decision)` | Accept only authority-backed subject/profile-bound review; append a new assessment. Never accept a caller's claim to be human. |
 
-Direct Python and packaged CLI call the same service. A thin BaseTool exposes evaluation/read operations through the current Wright MCP transport, without a second daemon/executor. API reads/exports use current workspace auth/origin/RBAC. Choose exact transport names/routes at T011/T020 and publish them in the handoff. An asynchronous reader operation is not complete merely because submission succeeded.
+Direct Python and packaged CLI call the same service. Thin BaseTools expose evaluation, get, paged-read and export operations through the current Wright MCP transport, without a second daemon/executor. Human review is not model-facing. API reads, exports and review use current workspace auth/origin/RBAC at `/api/workspace/process-validations/{assessment_id}`; exact operations are published in [report-consumer.md](report-consumer.md). An asynchronous reader operation is not complete merely because submission succeeded.
 
 ## Request
 
@@ -145,7 +145,7 @@ The report envelope contains:
 - Readable Markdown using the same values/IDs, not independently inferred verdicts.
 - Currentness envelope with `as_of`, selected/latest revision, stale reason and supersession references.
 
-Schema major versions change for breaking changes; additive optional fields preserve v1 consumers. Unknown versions fail explicitly. Provide representative pass/fail/mixed/blocked/error/stale/repair examples and consumer tests. Markdown escapes untrusted content; CSV neutralizes formula injection. Export stable authorized artifact references, not private absolute host paths.
+Schema major versions change for breaking changes; additive optional fields preserve v1 consumers. Unknown versions fail explicitly. Representative pass/fail/mixed/blocked/error/stale/repair records are published under `contracts/examples/` and verified by a schema-only consumer. Markdown escapes untrusted content; CSV neutralizes formula injection. Export stable authorized artifact references, not private absolute host paths.
 
 Publish JSON/Markdown as existing verification/diagnostic results/events. The other branch owns report layout, report UI and aggregation into user deliverables. It must not need validator-private imports, a running solver or a new evaluation to render a stored result.
 

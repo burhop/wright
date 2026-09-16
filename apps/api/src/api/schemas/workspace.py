@@ -350,6 +350,22 @@ class WorkflowArtifactReviewDecisionRequest(BaseModel):
     reason: str = Field(default="", max_length=2000)
 
 
+class ProcessValidationReviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    session_id: str = Field(min_length=1, max_length=256)
+    requirement_id: str = Field(min_length=1, max_length=160)
+    decision: Literal["approved", "changes_requested"]
+    rationale: str = Field(min_length=1, max_length=8192)
+    evidence_refs: list[str] = Field(min_length=1, max_length=50)
+
+    @field_validator("evidence_refs")
+    @classmethod
+    def bounded_evidence_refs(cls, value: list[str]) -> list[str]:
+        if any(not item.strip() or len(item) > 8192 for item in value):
+            raise ValueError("Review evidence references must be bounded and nonempty")
+        return value
+
+
 class WorkflowInputFileResponse(BaseModel):
     path: str
     name: str
