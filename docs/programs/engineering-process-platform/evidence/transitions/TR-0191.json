@@ -1,0 +1,94 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0191",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "CANDIDATE_FROZEN",
+  "to_state": "INDEPENDENTLY_VERIFIED",
+  "prior_revision": 191,
+  "new_revision": 192,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "cabc5c4801eb15f4b56b1e8e5aff4388d1eb732c318e0dcd824dba6f31d317c9",
+  "new_state_digest": "4daf5d30f57fa2fa8bde8d1cb63011d6f0188728d22d7c65ae69de606cc896ca",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex repository integration coordinator"
+  },
+  "action": "Attach user-approved exact-candidate technical evidence for the baseline browser correction.",
+  "started_at": "2026-09-16T12:39:22Z",
+  "finished_at": "2026-09-16T12:39:23Z",
+  "duration_ms": 1000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "672959e0837d8d6b665ad455614c2b764c06e189",
+    "source_tree": "156f76fa655565713a0f407de11dfd512f9929f0",
+    "source_program_tree": "1b0dc6e72c82a952c580435d014bec9a91ff5a25",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0192.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0191.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0191.json",
+      "sha256": "8a0c401f41a5e0f683861d4e2f406c8777ea6c95c4bfbabfd8b92bc8800af90b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0192.json",
+      "sha256": "d130e55f1fc961afbd3b7736e2063a2262544bd26fdd6d8faaa1b23da4ebc192",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-FEATURE081-BASELINE-PLAYWRIGHT",
+      "method": "Combine prior independent base reviews, independent GitHub failure reproduction and deterministic focused correction proof.",
+      "environment": "Windows clean integration worktree with isolated API and UI",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "candidate:c9823548e9c4746eb232e61b19aa93bfb458a3e0",
+        "focused-playwright:5-passed",
+        "typescript:passed",
+        "scoped-eslint:passed",
+        "diff-check:passed",
+        "review:NATIVE-REVIEW-20260916-C9823548.json"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Prior independent base reviews plus GitHub-hosted failure reproduction and deterministic focused correction proof; corrected remote CI remains pending.",
+  "repair": {
+    "stable_cause_id": "EPP-N01-BASELINE-PLAYWRIGHT-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Corrected remote CI and required merge gate remain pending.",
+    "Human study, content validation and deployed-browser verification remain pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0191.json",
+  "next_action": "REQUEST_CURRENT_FEATURE_PUSH_AUTHORIZATION"
+}
