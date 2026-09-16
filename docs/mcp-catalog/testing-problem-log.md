@@ -2110,3 +2110,47 @@ Result:
   OpenSCAD is In progress until a real product-design workflow renews repeat
   direct and Wright gateway evidence; this follow-up does not block other
   workflows.
+
+## 12 September OASiS conduction campaign setup
+
+Problem:
+  The first real conduction probe wrote numerical fields but failed when a
+  NumPy mesh count entered JSON. The next gateway probe used a Pydantic adapter
+  for the actual GatewayToolResult dataclass. An isolated /workspace mount
+  also hid the clean image's editable Wright core path.
+Solution:
+  Serialize the actual count as int; use the response's content/is_error
+  attributes. Execute clean selected-container MCP through native Wright
+  StdioRunner and GatewayService, recording that the in-container Hermes proxy
+  remains outside this probe. Preserve earlier failed attempts.
+Result:
+  Fresh attempt-004 ran actual fixed-temperature and total-resistance Robin
+  3D conduction via direct MCP and GatewayService, listing 17 tools and
+  producing nonempty VTU/CSV, heat-balance, mesh-comparison and sizing files.
+  Selected campaign server was enabled only for the demo workspace. No full
+  dataset completion, numerical correctness or public qualification was
+  claimed. See evidence/campaign-2026-09-12/oasis-conduction.json and the
+  campaign heat-runtime-research.md for exact source/commands/mounts.
+
+### 2026-09-12 — Modelica heater approved-kit preflight
+
+Problem: Current Casys0.6.5 kit cannot represent required350/400W candidates,90J/K vessel, or tighter solver timestep reruns.
+Solution: Record exact source/hash evidence and require a separately reviewed kit extension; keep supplied requirements unchanged.
+Result: Distribution manifest verified only. No install, simulation, protocol/gateway qualification or campaign completion claimed. [Follow-up](followups/modelica-approved-kit-dataset-gaps-2026-09-12.md).
+
+### 2026-09-12 - KiCad native rule reports and routing
+
+Problem: Pinned blwfish 0.13.0 prints DRC-history diagnostics on MCP stdout;
+schematic.validate does not execute native KiCad ERC. FreeRouter 2.2.4 uses
+Java 25 bytecode despite older Java 17 installation guidance.
+
+Solution: The selected image redirects only those diagnostics to stderr, adds
+a confined native-rule JSON report operation, and installs verified
+FreeRouter/Java 25. Corrected an initial Windows newline issue in the selected
+diagnostic patch without changing rule evaluation.
+
+Result: Native ERC detected two intentional errors; DRC detected two
+unconnected items; actual FreeRouter routing then produced zero DRC violations.
+Native BOM and fabrication exports passed. Local registration lists 18 tools;
+no dataset dispatch or full gateway/correctness claim.
+[Evidence and recovery recipe](https://github.com/burhop/wright/blob/dev/specs/081-engineering-workflow-templates/dataset-campaign/kicad-prerequisite.md).

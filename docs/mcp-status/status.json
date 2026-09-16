@@ -1,16 +1,16 @@
 {
   "schema_version": 2,
-  "snapshot_id": "2026-09-11-d1975aa910df",
-  "generated_at": "2026-09-11T18:19:56.824285+00:00",
-  "assessed_as_of": "2026-09-11",
+  "snapshot_id": "2026-09-12-f0952d45add5",
+  "generated_at": "2026-09-12T01:50:17.845146+00:00",
+  "assessed_as_of": "2026-09-12",
   "policy_version": "engineering-integrations-v2",
-  "catalog_sha256": "22ffc90395840f72842f6b479d73718631820d214526b7f5c417e18f25f835cb",
-  "total": 78,
+  "catalog_sha256": "5a3e55a0d4b8d2986cc63fec172af4def821432736b3e6722088e0b48a15cba8",
+  "total": 81,
   "category_counts": {
     "works": 10,
     "preview": 6,
     "requires_login": 15,
-    "in_progress": 1,
+    "in_progress": 4,
     "abandoned": 46,
     "vendor_blocked": 0
   },
@@ -128,8 +128,11 @@
       "id": "in_progress",
       "label": "In progress",
       "color": "yellow",
-      "count": 1,
+      "count": 4,
       "server_ids": [
+        "agentcad",
+        "bambu-p1s-mcp-marctheshark3",
+        "foam-agent-csml-rpi",
         "openscad-mcp"
       ]
     },
@@ -199,7 +202,7 @@
     {
       "protocol": "mcp",
       "label": "MCP",
-      "known": 73,
+      "known": 75,
       "curated": 10,
       "passing": 10,
       "physical_operation_qualified": null,
@@ -217,7 +220,7 @@
     {
       "protocol": "hardware_mcp",
       "label": "Hardware MCP",
-      "known": 2,
+      "known": 3,
       "curated": 0,
       "passing": 0,
       "physical_operation_qualified": false,
@@ -242,6 +245,67 @@
   ],
   "audience": "public",
   "records": [
+    {
+      "server_id": "agentcad",
+      "name": "AgentCAD",
+      "vendor": "James Edward Dillard",
+      "source_url": "https://github.com/jdilla1277/agentcad",
+      "scope": "Execute build123d CAD scripts and retain versioned design outputs",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "manufacturing",
+        "mechanical"
+      ],
+      "engineering_stages": [
+        "concept",
+        "design",
+        "manufacturing",
+        "test_quality"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "in_progress",
+      "portfolio_category_reason": "AgentCAD 0.6.0 initialized locally, exposed 11 tools, and is active in the demo workspace; deterministic CAD construction and independent artifact checks remain pending.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "agentcad[mcp]==0.6.0",
+        "python==3.12.*"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Freeze resolved artifacts, repeat two fresh protocol sessions, then create, measure, render, export, and independently verify a deterministic bracket through Wright.",
+      "tests_completed": [
+        "Primary repository README identity and MCP entrypoint review",
+        "PyPI 0.6.0 metadata, Python range, dependency, license, and source-link review",
+        "Reconciliation against the current canonical catalog and five CAD-authoring comparison candidates",
+        "Local MCP initialization and 11-tool schema capture through the pinned package",
+        "Wright install, activation, workspace enablement, and tool discovery"
+      ],
+      "tests_remaining": [
+        "Freeze package and transitive dependency hashes in a disposable clean-container plan",
+        "Repeat initialization and hash tools/list in two fresh direct MCP sessions",
+        "Create, validate, measure, render, and export a deterministic bracket",
+        "Repeat the workflow through GatewayService and the Hermes-facing wrightgateway MCP",
+        "Check invalid-code handling, out-of-workspace rejection, cancellation, process cleanup, and uninstall cleanup"
+      ],
+      "limitations": [
+        "No deterministic CAD model, CAD-kernel measurement, exported STEP or mesh, or independent geometry check has completed.",
+        "Catalog inclusion means planned qualification, not a recommendation or adoption claim."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-11"
+    },
     {
       "server_id": "ansys-fluent-mcp",
       "name": "PyFluent MCP",
@@ -608,7 +672,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned headless qualification by 2026-10-08; evaluate Windows COM mode separately before making any live AutoCAD claim.",
@@ -813,7 +877,7 @@
       "prerequisites": [],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-07-10",
       "next_action": "Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation.",
@@ -875,6 +939,74 @@
       "assessment_reviewed_at": null
     },
     {
+      "server_id": "bambu-p1s-mcp-marctheshark3",
+      "name": "Bambu P1S MCP",
+      "vendor": "Marc Mailloux",
+      "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+      "scope": "Inspect P1S status, AMS inventory, and printer files over the local network",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "hardware_mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "additive-manufacturing",
+        "machine-control",
+        "slicing"
+      ],
+      "engineering_stages": [
+        "manufacturing",
+        "test_quality",
+        "operations"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "in_progress",
+      "portfolio_category_reason": "Exact source initialized locally, exposed 11 tools, detected Bambu Studio, and sliced a bounded local fixture with exact packaged profiles; its safety-critical printer path remains unqualified.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [
+        "BAMBU_IP",
+        "BAMBU_ACCESS_CODE",
+        "BAMBU_SERIAL",
+        "BAMBU_MODEL"
+      ],
+      "prerequisites": [
+        "Bambu Lab P1S on the same trusted LAN",
+        "Bambu Lab P1S with LAN access enabled",
+        "Bambu Studio 2.8.2.61",
+        "Bambu Studio 2.8.2.61 for slicing",
+        "bambu-p1s-mcp source revision 7b50d0288fb7b91af8af422b96c4df4db0f1110c"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Fix or waive the POSIX-only Windows test fixture, repeat two fresh protocol sessions, then qualify read-only printer status and an explicitly approved transfer-only action without starting a print.",
+      "tests_completed": [
+        "Exact repository revision, package metadata, stdio and HTTP launch contracts, P1S LAN protocol, slicing dependency, and confirmation-gate review",
+        "Local Bambu Studio 2.8.2.61 portable runtime launch",
+        "Direct stdio MCP initialization and 11-tool schema capture at digest a00ff5d6d9c4498834e89aac17c711f86141ccef6d90e4bce8818cdea96ca4aa",
+        "Read-only printer_doctor call that detected the slicer and safely reported missing printer identity and LAN credentials",
+        "Local 20 x 20 x 10 mm STL slice with packaged P1S 0.4 mm, 0.20 mm Standard, and Bambu PLA Basic profiles; output was 47,207 bytes with SHA-256 a3d37723b397b7be0c02f0a75a534d07a810e7e79b235c05c7e4334c3bb80c62",
+        "Upstream Windows source suite with 17 of 18 tests passing; one POSIX /tmp path spelling assertion fails on Windows"
+      ],
+      "tests_remaining": [
+        "Fix or waive the POSIX-only test fixture and repeat two fresh no-printer protocol sessions",
+        "Qualify read-only printer status and an explicitly approved transfer-only action without starting a print"
+      ],
+      "limitations": [
+        "P1S address, serial, LAN access code, and confirmation of the loaded material and nozzle are not configured in Wright.",
+        "No printer command is authorized by catalog inclusion; Wright's exact one-shot external-action approval still applies."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-11"
+    },
+    {
       "server_id": "blender-mcp",
       "name": "Blender 3D Mesh Copilot",
       "vendor": "ahujasid",
@@ -909,7 +1041,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned local-mesh workflow by 8 October; test Windows and macOS hosts, cancellation, and native add-on installation before broadening the recommendation.",
@@ -1004,7 +1136,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation.",
@@ -1504,6 +1636,68 @@
       "assessment_reviewed_at": null
     },
     {
+      "server_id": "foam-agent-csml-rpi",
+      "name": "Foam-Agent",
+      "vendor": "CSML Lab at RPI",
+      "source_url": "https://github.com/csml-rpi/Foam-Agent",
+      "scope": "Plan a CFD case from bounded engineering requirements",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "streamable_http",
+      "disciplines": [
+        "cfd",
+        "meshing",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "design",
+        "simulation",
+        "test_quality"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "in_progress",
+      "portfolio_category_reason": "The published image initialized HTTP MCP on Windows and exposed six tools, but the missing immutable tag and absence of a model-backed solver result prevent qualification.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Docker Desktop or Foundation OpenFOAM v10",
+        "Gmsh for external enclosure meshes",
+        "Gmsh for imported enclosure meshes",
+        "foamagent==2.0.0 source revision 9e3e253e76727036585ca6e88e6fc5a762cb62e0"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Build the exact source in a clean container, initialize MCP, run a bounded enclosure airflow case, and independently verify mesh identity, boundaries, convergence, conservation, and computed fields through Wright.",
+      "tests_completed": [
+        "Exact repository revision, MCP entrypoint, tool surface, Dockerfile, OpenFOAM version, and external-mesh contract review",
+        "Published latest image pull at digest sha256:5c8bd752884b95b45c02d74a4b5e449fbf22aea8fa13a0eb1a40be851350ff1e",
+        "Loopback-only Windows Docker startup with source auto-update disabled and an isolated empty scratch mount",
+        "Direct Streamable HTTP initialization and six-tool schema capture for server version 2.0.0"
+      ],
+      "tests_remaining": [
+        "Build the exact source against Foundation OpenFOAM v10 in a disposable container",
+        "Repeat initialization and list tools in two fresh MCP sessions and through Wright",
+        "Run a bounded enclosure airflow case through Wright and independently verify geometry, boundaries, convergence, conservation, and computed fields"
+      ],
+      "limitations": [
+        "The documented v2.0.0 image tag is unavailable; latest omits the console script and otherwise auto-updates from an unpinned GitHub HEAD.",
+        "The local protocol probe used a non-secret dummy provider key; no model request, OpenFOAM solve, Wright gateway call, or computed enclosure result completed.",
+        "Catalog inclusion records a planned qualification and does not reinstate the rejected openfoam-mcp-webworn server."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-11"
+    },
+    {
       "server_id": "freecad-addon-robust",
       "name": "FreeCAD Robust Server",
       "vendor": "spkane",
@@ -1689,7 +1883,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors.",
@@ -2162,7 +2356,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned PCB and fabrication-export qualification by 2026-10-08; recheck the DRC stdout defect and qualify FreeRouter separately before expanding scope.",
@@ -2771,7 +2965,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout.",
@@ -3276,7 +3470,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned solid 3DM qualification by 2026-10-08; recheck the mesh winding defect and qualify live Rhino/Grasshopper separately.",
@@ -3379,7 +3573,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 2,
+      "evidence_age_days": 3,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools.",
@@ -3679,7 +3873,7 @@
       ],
       "last_qualified_at": "2026-09-10",
       "expires_at": "2026-10-10",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-10",
       "next_action": "Keep the Windows qualification current and resolve the public distribution/source-access policy before customer release.",
