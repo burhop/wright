@@ -1,0 +1,109 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0194",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PR_READY",
+  "to_state": "BLOCKED",
+  "prior_revision": 194,
+  "new_revision": 195,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "1749929d480732f6aa5903556d2fb93dbf59d85b4fb3d73f77fa4672a60aed19",
+  "new_state_digest": "b463d14e1f41670f947f57b1e7c1a5bd375032025434dfcda0de092933582deb",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex dev CI repair coordinator"
+  },
+  "action": "Block EPP-N01 after PR 129 merged before required checks became terminal. Retain c9823548 as historical review evidence, record the stale lifecycle identity and cross-platform browser assertion failures, and require a corrected exact candidate with green checks before another integration claim.",
+  "started_at": "2026-09-16T19:56:04Z",
+  "finished_at": "2026-09-16T19:56:04Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "2c8eecd0f1f1f793faee110c9fbb45a88d4428b1",
+    "source_tree": "ab6dde661039c71dec8f3aeae3b06e4412b2f32a",
+    "source_program_tree": "5fc1d6763f3157c08220c4a3b6930895c6eff16e",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0195.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0194.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0194.json",
+      "sha256": "7ee1dd0a77b3ea10b557c0fe23cb2fb86b5d10106aa5c4a0ca3270c9b186a5ba",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0195.json",
+      "sha256": "1ed1d899d955aaab2d4434742382aeff2caa754d2ba650af943cc44516c75fda",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "DEV-CI-TERMINAL-FAILURE-CLASSIFICATION",
+      "method": "Inspect PR 129 merge metadata and the terminal checks for current dev commit 6c0602a4. Classify the Python and Windows failures as stale native lifecycle identity and the Playwright failure as an absolute revision assertion that differs after host line-ending conversion.",
+      "environment": "Committed Git history and read-only GitHub PR and Actions metadata",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "dev:6c0602a4300da38fa7db62026aff1bd984e4113e",
+        "merge:86ee835974970cd05913b58e306e537f6dfaf181",
+        "https://github.com/burhop/wright/pull/129",
+        "failed:python-quality,Backend Tests (Windows),Playwright E2E",
+        "root-causes:NATIVE_SCOPED_CANDIDATE_IDENTITY,cross-platform-host-revision"
+      ]
+    },
+    {
+      "check_id": "DEV-CI-LOCAL-CORRECTION-REPRODUCTION",
+      "method": "Run the complete workflow-recovery Chromium specification after binding revision assertions to the host-confirmed stored value and waiting for the asynchronous semantic digest, then build the frontend and check formatting.",
+      "environment": "Windows isolated dev correction worktree with isolated API and UI",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "candidate:bf8e1602210eafe8bbcb538783809b72e6ff8084",
+        "workflow-recovery:13-passed",
+        "frontend-build:passed",
+        "prettier:passed"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "No new independent verdict is claimed. The prior c9823548 exact-candidate review remains historical, and the current correction requires green CI and exact integration evidence.",
+  "repair": {
+    "stable_cause_id": "EPP-N01-DEV-CI-POSTMERGE-20260916",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "PR 129 merged before three required checks became terminal, and current dev remains red.",
+    "The exact correction branch requires full local gates, remote CI and integration evidence.",
+    "No deployment, human acceptance or whole-milestone completion is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0194.json",
+  "next_action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE"
+}
