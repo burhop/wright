@@ -1,12 +1,13 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/081-engineering-workflow-templates/plan.md
+at specs/082-output-content-validation/plan.md
 
-Deferred output-content validation is planned in
-specs/081-engineering-workflow-templates/content-validation/plan.md, with the
-future-agent handoff in specs/081-engineering-workflow-templates/content-validation/quickstart.md.
-Do not activate it until the user assigns it and its all-30-output G0 gate passes.
+Output-content validation adopts the earlier analysis under
+specs/081-engineering-workflow-templates/content-validation/.
+Use specs/082-output-content-validation/quickstart.md and implementation-goal.md.
+Implementation remains deferred until human plan review and the all-30-output G0
+gate pass. Preserve the separate generation campaign and read its data only.
 <!-- SPECKIT END -->
 
 Before changing the workflow/process editor or its workspace entry point, read

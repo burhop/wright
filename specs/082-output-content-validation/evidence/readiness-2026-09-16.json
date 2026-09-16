@@ -1,0 +1,58 @@
+{
+  "observed_at_utc": "2026-09-16T17:00:29.5429740Z",
+  "source": "D:/repos/wright/artifacts/engineering-workflow-datasets/status.json",
+  "source_sha256": "d167e5e41d6de04aa173fbca21918c6166ace23948bc340d4a1eb4f4b26628b8",
+  "code_base": "86ee835974970cd05913b58e306e537f6dfaf181",
+  "campaign_id": "081-engineering-datasets-v1",
+  "target": 30,
+  "metrics": {
+    "datasets_created": 30,
+    "combinations_run": 30,
+    "processes_with_outputs": 24,
+    "valid_data": 0
+  },
+  "current_complete_count": 24,
+  "missing": [
+    {
+      "scenario_id": "lightweight-equipment-bracket-01",
+      "latest_status": "failed",
+      "completed_current_revision": false
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-02",
+      "latest_status": "failed",
+      "completed_current_revision": false
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-03",
+      "latest_status": "failed",
+      "completed_current_revision": false
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-01",
+      "latest_status": "not_run",
+      "completed_current_revision": false
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-02",
+      "latest_status": "failed",
+      "completed_current_revision": false
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-03",
+      "latest_status": "not_run",
+      "completed_current_revision": false
+    }
+  ],
+  "content_validation_enabled": false,
+  "reconciliation": {
+    "state": "current",
+    "integrity_mode": "incremental",
+    "last_completed_at": "2026-09-16T13:00:27.391-04:00",
+    "duration_ms": 758,
+    "error": null
+  },
+  "gate_status": "not_ready",
+  "gate_scope": "Early prerequisite check only; no complete runtime/artifact/lifecycle audit performed",
+  "reason": "Six current scenarios lack completed output evidence. Full G0 remains required."
+}
