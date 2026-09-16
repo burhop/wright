@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0176",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED",
+  "to_state": "CANDIDATE_FROZEN",
+  "prior_revision": 176,
+  "new_revision": 177,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "5bae930f2000cfb9039c359bbd8628c2ae34f2ea3cf53362789a0893e80c3db4",
+  "new_state_digest": "e70f96602696f4f9e8195ea3986b805776ec73f5869085c599773578503f4778",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex repository integration coordinator"
+  },
+  "action": "Freeze exact PCB editable-input correction f86e83c4 for renewed verification.",
+  "started_at": "2026-09-16T00:53:00Z",
+  "finished_at": "2026-09-16T00:54:00Z",
+  "duration_ms": 60000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "361acdde1ac3075a78806790e8d50bf1ca6e851b",
+    "source_tree": "a6864a9562de1a6c130681fcbea0bf4597f60b39",
+    "source_program_tree": "7a7e999c910057592d0b0d33b6e82fe0bc1abfdb",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0177.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0176.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0176.json",
+      "sha256": "a18fe607fa606f0f18fc0bb14cb2c0b869a2496f8df5ddddb29822b032572edb",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0177.json",
+      "sha256": "57b2de0f999a8a5d07066c447a2aac6c7f4ece5d16e309b09f85e2a90196df06",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-FEATURE081-PCB-INPUT-BINDING",
+      "method": "Run only the three previously failing PCB stage-budget cases and focused Ruff check.",
+      "environment": "Windows clean integration worktree",
+      "duration_ms": 2040,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "candidate:f86e83c4721049c5d1cf98d645389d0d5fa67c22",
+        "focused-test:3-passed",
+        "ruff-check:passed"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-N01-PCB-INPUT-BINDING-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Required local gate and remote CI remain pending.",
+    "Human study, content validation and deployed-browser verification remain pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0176.json",
+  "next_action": "VERIFY_CURRENT_FEATURE_CANDIDATE"
+}
