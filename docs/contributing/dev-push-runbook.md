@@ -42,6 +42,18 @@ branch failure from hiding outside the latest incremental diff.
   a previously completed full local gate unless the correction changes product
   behavior, a public contract, dependency resolution, packaging output, security
   policy, or the merge gate's substantive coverage.
+- After a full gate has passed on the current pushed tip, one consolidated
+  Playwright test-contract correction may use the focused correction mode. It
+  requires a clean worktree, exactly one descendant commit, no product changes,
+  and explicit previously failing Playwright targets. The mode runs its own gate
+  regression plus those exact browser tests against an isolated API. It does not
+  replace pull-request CI or the full merge gate:
+
+  ```powershell
+  $env:WRIGHT_FOCUSED_CORRECTION_BASE_SHA = "<current-pushed-40-character-sha>"
+  $env:WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS = "tests/ui-integration/example.spec.ts:42;tests/ui-integration/other.spec.ts:88"
+  scripts/check-dev-push.ps1
+  ```
 - Scheduler-sensitive microbenchmarks marked `performance` are trend evidence,
   not PR correctness gates. They run in the scheduled/manual performance workflow;
   deterministic functional, security, compatibility, and customer-journey tests

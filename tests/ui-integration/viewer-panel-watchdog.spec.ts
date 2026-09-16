@@ -188,7 +188,7 @@ test.describe('Pluggable Viewer Panel Watchdog & Sandbox E2E', () => {
     expect(sandboxAttr).not.toContain('allow-same-origin');
   });
 
-  test('should trigger unresponsive watchdog overlay when iframe does not pong', async ({ page }) => {
+  test('should not require arbitrary workspace HTML to implement the host heartbeat', async ({ page }) => {
     await page.goto('/workspace/ws-1');
 
     // Expand root folder
@@ -201,19 +201,13 @@ test.describe('Pluggable Viewer Panel Watchdog & Sandbox E2E', () => {
     await expect(htmlFile).toBeVisible();
     await htmlFile.click();
 
-    // Verify watchdog overlay becomes visible after 5-6s (unresponsive trigger)
+    // Workspace HTML is not a host-aware app and must not be declared
+    // unresponsive merely because it does not implement the ping/pong protocol.
+    await expect(page.locator('[data-testid="iframe-sandbox"]')).toBeVisible();
     const overlay = page.locator('[data-testid="watchdog-overlay"]');
-    await expect(overlay).toBeVisible({ timeout: 10000 });
-
-    // Click Close Tab button on overlay
-    const closeBtn = page.locator('[data-testid="watchdog-close"]');
-    await expect(closeBtn).toBeVisible();
-    await closeBtn.click();
-
-    // Verify tab and overlay are closed/removed
-    await expect(overlay).not.toBeVisible();
-    const htmlTab = page.locator('[data-testid="editor-tab-/index.html"]');
-    await expect(htmlTab).not.toBeVisible();
+    await page.waitForTimeout(3500);
+    await expect(overlay).toHaveCount(0);
+    await expect(page.locator('[data-testid="editor-tab-/index.html"]')).toBeVisible();
   });
 
   test('should open, interact with, and close the Developer Tools diagnostics panel', async ({ page }) => {

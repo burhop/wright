@@ -124,17 +124,15 @@ const MOCK_CAPABILITIES = MOCK_SERVERS.map((server) => ({
 const MOCK_TOOLS: any[] = [];
 
 test.describe("UI Consistency and Theme Configuration", () => {
-  test("should propagate the backend-configured dark theme to the document element", async ({
+  test("should propagate the saved dark theme to the document element", async ({
     page,
   }) => {
-    // Mock setup status returning dark theme
-    await page.route("**/api/setup/status", async (route) => {
+    // Saved appearance is loaded from the settings endpoint at startup.
+    await page.route("**/api/settings", async (route) => {
       await route.fulfill({
         json: {
-          is_configured: true,
-          llm_api_url: "http://127.0.0.1:8000",
-          active_agent: "hermes",
           theme: "dark",
+          llm_provider: "hermes",
         },
       });
     });
@@ -147,24 +145,18 @@ test.describe("UI Consistency and Theme Configuration", () => {
     });
     await page.goto("/tool-registry");
 
-    // Confirm that the document root (html or body) contains the data-theme attribute
-    const themeAttr = await page.evaluate(() =>
-      document.documentElement.getAttribute("data-theme"),
-    );
-    expect(themeAttr).toBe("dark");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   });
 
-  test("should propagate the backend-configured light theme to the document element", async ({
+  test("should propagate the saved light theme to the document element", async ({
     page,
   }) => {
-    // Mock setup status returning light theme
-    await page.route("**/api/setup/status", async (route) => {
+    // Saved appearance is loaded from the settings endpoint at startup.
+    await page.route("**/api/settings", async (route) => {
       await route.fulfill({
         json: {
-          is_configured: true,
-          llm_api_url: "http://127.0.0.1:8000",
-          active_agent: "hermes",
           theme: "light",
+          llm_provider: "hermes",
         },
       });
     });
@@ -177,10 +169,7 @@ test.describe("UI Consistency and Theme Configuration", () => {
     });
     await page.goto("/tool-registry");
 
-    const themeAttr = await page.evaluate(() =>
-      document.documentElement.getAttribute("data-theme"),
-    );
-    expect(themeAttr).toBe("light");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   });
 
   test("should ensure cards do not overlap and elements align correctly", async ({

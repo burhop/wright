@@ -83,6 +83,112 @@ fi
 
 run git diff --check
 
+# A correction-only push may reuse the immediately preceding full-gate result.
+# This path is intentionally limited to one clean, test-only commit plus the
+# policy files that define and verify this exception. CI and the merge gate
+# still run their complete matrices on the pushed commit.
+FOCUSED_BASE_SHA="${WRIGHT_FOCUSED_CORRECTION_BASE_SHA:-}"
+FOCUSED_TARGETS_SPEC="${WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS:-}"
+if [[ -n "$FOCUSED_BASE_SHA" || -n "$FOCUSED_TARGETS_SPEC" ]]; then
+  if [[ -z "$FOCUSED_BASE_SHA" || -z "$FOCUSED_TARGETS_SPEC" ]]; then
+    echo "Focused correction mode requires both WRIGHT_FOCUSED_CORRECTION_BASE_SHA and WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS."
+    exit 1
+  fi
+  if [[ -n "$(git status --porcelain)" ]]; then
+    echo "Focused correction mode requires a clean worktree. Commit the bounded correction first."
+    exit 1
+  fi
+  FOCUSED_BASE_COMMIT="$(git rev-parse --verify "${FOCUSED_BASE_SHA}^{commit}")"
+  UPSTREAM_COMMIT="$(git rev-parse --verify '@{u}^{commit}' 2>/dev/null || true)"
+  if [[ -z "$UPSTREAM_COMMIT" || "$FOCUSED_BASE_COMMIT" != "$UPSTREAM_COMMIT" ]]; then
+    echo "Focused correction base must equal the branch's current pushed tip."
+    exit 1
+  fi
+  if ! git merge-base --is-ancestor "$FOCUSED_BASE_COMMIT" HEAD; then
+    echo "Focused correction base is not an ancestor of HEAD."
+    exit 1
+  fi
+  if [[ "$(git rev-list --count "${FOCUSED_BASE_COMMIT}..HEAD")" != "1" ]]; then
+    echo "Focused correction mode permits exactly one consolidated commit above the full-gate base."
+    exit 1
+  fi
+
+  mapfile -t FOCUSED_CHANGED_FILES < <(git diff --name-only "${FOCUSED_BASE_COMMIT}..HEAD")
+  FOCUSED_CHANGED_TESTS=()
+  for focused_changed_file in "${FOCUSED_CHANGED_FILES[@]}"; do
+    case "$focused_changed_file" in
+      tests/ui-integration/*.spec.ts)
+        FOCUSED_CHANGED_TESTS+=("$focused_changed_file")
+        ;;
+      docs/contributing/dev-push-runbook.md|scripts/check-dev-push.sh|tests/release/test_dev_push_process.py)
+        ;;
+      *)
+        echo "Focused correction mode rejects non-test change: $focused_changed_file"
+        exit 1
+        ;;
+    esac
+  done
+  if [[ "${#FOCUSED_CHANGED_TESTS[@]}" == "0" ]]; then
+    echo "Focused correction mode requires at least one changed Playwright test contract."
+    exit 1
+  fi
+
+  IFS=';' read -r -a FOCUSED_PLAYWRIGHT_TARGETS <<<"$FOCUSED_TARGETS_SPEC"
+  for target in "${FOCUSED_PLAYWRIGHT_TARGETS[@]}"; do
+    if [[ ! "$target" =~ ^tests/ui-integration/[A-Za-z0-9_./-]+\.spec\.ts(:[0-9]+)?$ ]]; then
+      echo "Invalid focused Playwright target: $target"
+      exit 1
+    fi
+  done
+
+  echo "Focused correction base: $FOCUSED_BASE_COMMIT"
+  printf 'Focused changed file: %s\n' "${FOCUSED_CHANGED_FILES[@]}"
+  printf 'Focused Playwright target: %s\n' "${FOCUSED_PLAYWRIGHT_TARGETS[@]}"
+  run bash -n scripts/check-dev-push.sh
+  run uv sync --all-packages --all-groups
+  run uv run python -m pytest -q tests/release/test_dev_push_process.py
+
+  GATE_API_PORT="${WRIGHT_GATE_API_PORT:-18001}"
+  GATE_UI_PORT="${WRIGHT_GATE_UI_PORT:-15174}"
+  assert_port_available "$GATE_API_PORT" API
+  assert_port_available "$GATE_UI_PORT" UI
+  TMP_DB="$(mktemp "${TMPDIR:-/tmp}/wright-dev-push.XXXXXX.db")"
+  BACKEND_LOG="$(mktemp "${TMPDIR:-/tmp}/wright-dev-push-api.XXXXXX.log")"
+  echo "==> Starting isolated API on port $GATE_API_PORT"
+  LLM_API_URL="${LLM_API_URL:-http://127.0.0.1:${GATE_API_PORT}/v1}" \
+  DATABASE_PATH="$TMP_DB" \
+  WRIGHT_AUTH_MODE=compat \
+  WRIGHT_API_MCP_AUTOSTART=0 \
+  WRIGHT_BIND_HOST=127.0.0.1 \
+    "$GATE_PYTHON" -m uvicorn api.main:app --host 127.0.0.1 --port "$GATE_API_PORT" >"$BACKEND_LOG" 2>&1 &
+  BACKEND_PID=$!
+  for attempt in {1..30}; do
+    if curl --fail --silent --show-error --max-time 2 "http://127.0.0.1:${GATE_API_PORT}/api/health" >/dev/null; then
+      echo "Isolated API is ready"
+      break
+    fi
+    if ! kill -0 "$BACKEND_PID" 2>/dev/null; then
+      echo "Isolated API exited before becoming ready. Log follows:"
+      cat "$BACKEND_LOG"
+      exit 1
+    fi
+    if [[ "$attempt" == "30" ]]; then
+      echo "Isolated API did not become ready. Log follows:"
+      cat "$BACKEND_LOG"
+      exit 1
+    fi
+    sleep 2
+  done
+  run env -u PLAYWRIGHT_BASE_URL \
+    CI=1 \
+    WRIGHT_PLAYWRIGHT_PORT="$GATE_UI_PORT" \
+    WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}" \
+    npx playwright test "${FOCUSED_PLAYWRIGHT_TARGETS[@]}" --project=chromium
+  echo
+  echo "Dev push focused correction gate passed."
+  exit 0
+fi
+
 if git show-ref --verify --quiet refs/remotes/origin/dev &&
   ! git merge-base --is-ancestor origin/dev HEAD; then
   echo "::warning::origin/dev is not an ancestor of HEAD. Refresh the branch before the full merge gate."

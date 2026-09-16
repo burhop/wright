@@ -78,6 +78,27 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     assert "tests/test_security_scanner_setup.py" in gate
 
 
+def test_focused_correction_reuses_only_the_current_pushed_full_gate_tip() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    runbook = _read(RUNBOOK)
+
+    for contract in (
+        "WRIGHT_FOCUSED_CORRECTION_BASE_SHA",
+        "WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS",
+        "Focused correction base must equal the branch's current pushed tip.",
+        "Focused correction mode permits exactly one consolidated commit",
+        "Focused correction mode rejects non-test change",
+        "tests/ui-integration/*.spec.ts",
+        "tests/release/test_dev_push_process.py",
+        'npx playwright test "${FOCUSED_PLAYWRIGHT_TARGETS[@]}" --project=chromium',
+    ):
+        assert contract in gate
+    assert "clean worktree" in runbook
+    assert "no product changes" in runbook
+    assert "does not" in runbook
+    assert "replace pull-request CI or the full merge gate" in runbook
+
+
 def test_fast_gate_routes_container_changes_to_image_contract_tests() -> None:
     gate = _read("scripts/check-dev-push.sh")
 
