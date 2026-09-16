@@ -234,6 +234,15 @@ def test_fast_gate_routes_changed_conftest_to_its_test_directory() -> None:
     assert 'PYTHON_TEST_TARGETS+=("$changed_file")' not in route
 
 
+def test_fast_gate_routes_blender_fixture_sources_to_their_contract_test() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("tests/fixtures/blender_mcp_5f8ddaf6/*)")
+    route = gate[start : gate.index(";;", start)]
+
+    assert "PYTHON_TEST_TARGETS+=(tests/test_printed_dataset_bindings.py)" in route
+    assert 'PYTHON_TEST_TARGETS+=("$changed_file")' not in route
+
+
 def test_full_gate_excludes_focused_roots_from_broad_tests_collection() -> None:
     gate = _read("scripts/check-dev-merge.sh")
 

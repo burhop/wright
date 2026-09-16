@@ -229,6 +229,10 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=("${changed_file%/conftest.py}")
       ;;
+    tests/fixtures/blender_mcp_5f8ddaf6/*)
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(tests/test_printed_dataset_bindings.py)
+      ;;
     tests/*.py|tests/*/*.py)
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=("$changed_file")
