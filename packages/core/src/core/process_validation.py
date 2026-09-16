@@ -41,6 +41,12 @@ def canonical_json(value: object) -> str:
     """wright-json-v1: sorted keys, compact UTF-8 JSON, finite numbers only."""
     if isinstance(value, BaseModel):
         value = value.model_dump(mode="python")
+
+    def model_value(item):
+        if isinstance(item, BaseModel):
+            return item.model_dump(mode="python")
+        raise TypeError("Unsupported JSON value")
+
     try:
         encoded = json.dumps(
             value,
@@ -48,6 +54,7 @@ def canonical_json(value: object) -> str:
             separators=(",", ":"),
             ensure_ascii=False,
             allow_nan=False,
+            default=model_value,
         )
         encoded.encode("utf-8")
         return encoded
@@ -395,6 +402,8 @@ class Finding(Contract):
     observed: JsonValue = None
     unit: Identifier | None = None
     frame: Identifier | None = None
+    observed_unit: Identifier | None = None
+    observed_frame: Identifier | None = None
     evidence_refs: tuple[Text, ...] = ()
     source_refs: tuple[SourceReference, ...] = Field(min_length=1)
     summary: Text
@@ -557,6 +566,7 @@ class Assessment(Contract):
     checks: tuple[CheckResult, ...] = ()
     findings: tuple[Finding, ...] = ()
     summary: Summary
+    subject_current: StrictBool = True
     review_ids: tuple[Identifier, ...] = ()
     supersedes: Identifier | None = None
 
@@ -569,7 +579,9 @@ class Assessment(Contract):
             raise ValueError(
                 "Assessment profile/baseline identity does not match request"
             )
-        if self.summary != summarize(self.profile, self.checks):
+        if self.summary != summarize(
+            self.profile, self.checks, subject_current=self.subject_current
+        ):
             raise ValueError("Assessment summary differs from check evidence")
         for label, items in (
             ("Measurement", self.measurements),

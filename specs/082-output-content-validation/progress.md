@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M0 foundations complete, M1 next.
-**Implementation:** T001–T006 complete. T007–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M0 foundations and M1 evaluator complete; process integration next.
+**Implementation:** T001–T009 complete. T010–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Implement T007–T009: behavioral evaluator tests, structured readers and the application service over the new contracts/repository. Then connect the canonical validator mode and tools (T010–T013), followed by the actual correction loop. Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
+Connect the canonical validator mode and tools (T010–T013), followed by the actual correction loop. Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -51,3 +51,14 @@ Validation commands used `.venv/Scripts/python.exe` with `-p no:cacheprovider` a
 - Exported JSON schemas, packaged profile schema and all 30 source inventory records verified.
 
 Initial test-first core collection failed as expected before the new model existed. The first repository test command failed because its private parent directory did not exist; creating that parent resolved setup, then all tests passed. No process/solver/AI demonstration has run yet. No pushes or merges.
+
+## M1 evaluator evidence — 2026-09-16
+
+- T007–T009: `process_validation/readers/structured.py`, `evaluation.py` and `service.py` inspect real inline values and bounded JSON/CSV/text files, compare independent observations, and finalize immutable assessments. Registered engineering numeric predicates are reused after observation. Units, finite values, uncertainty intervals and exact selectors are preserved.
+- `test_process_validation.py` adds 26 behavioral cases covering passing alternatives/boundaries, defects, malformed/ambiguous JSON, missing fields, stale snapshots, unsupported readers, evaluator errors, cancellation, mixed outcomes, units, uncertainty, CSV rows and source fixtures.
+- Findings distinguish expected units/frame from observed units/frame. Mutation during inspection retains measured facts, marks `subject_current=false`, and adds a readiness finding; it cannot release downstream work. A newer unfinished/failed attempt prevents an older passing invocation from becoming current.
+- Structured profile version 2 adds explicit required-length presence and required-identity coverage discovered during missing-field controls. The source baseline/digest and engineering limits remain unchanged.
+- Core/repository/subject/evaluator suite: **71 passed** using `.venv/Scripts/python.exe -m pytest packages/core/tests/test_process_validation.py packages/data_vault/tests/test_process_validation_repository.py packages/workspace_service/tests/test_process_validation_subjects.py packages/workspace_service/tests/test_process_validation.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-validation-5`.
+- Ruff check and formatter passed on changed Python files. Updated contract schemas exported with `scripts/export_process_validation_schemas.py`.
+
+These checks establish evaluator behavior, not a running AI repair demonstration. Canonical runner/tool/UI integration and real demonstrations remain open.

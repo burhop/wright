@@ -1,7 +1,7 @@
 {
   "schema_version": "wright.process-validation/1",
   "id": "structured-demo",
-  "version": "1",
+  "version": "2",
   "baseline": {
     "id": "structured-demo",
     "version": "1",
@@ -81,7 +81,8 @@
       "id": "part-identity",
       "version": "1",
       "requirement_ids": [
-        "DEMO-002"
+        "DEMO-002",
+        "DEMO-003"
       ],
       "subject_role": "result",
       "reader": "structured",
@@ -113,6 +114,30 @@
       "constraint": {
         "operator": "type",
         "expected": "object",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "length-present",
+      "version": "1",
+      "requirement_ids": [
+        "DEMO-003"
+      ],
+      "subject_role": "result",
+      "reader": "structured",
+      "selector": "/length_mm",
+      "constraint": {
+        "operator": "exists",
+        "expected": null,
         "target": null,
         "tolerance": null,
         "minimum": null,

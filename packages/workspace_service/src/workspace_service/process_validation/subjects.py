@@ -35,6 +35,9 @@ class SubjectResolver:
         context: ReaderContext,
     ) -> SubjectSnapshot:
         context.checkpoint()
+        byte_limit = min(
+            context.budget.max_bytes, context.budget.memory_limit_mb * 1024 * 1024 // 8
+        )
         if request.workspace_id != self.workspace_id or subject not in request.subjects:
             raise PermissionError(
                 "Validation subject is outside the authorized request"
@@ -53,7 +56,7 @@ class SubjectResolver:
         elif subject.kind == "file":
             try:
                 content = self.store.read_artifact_bytes(
-                    subject.locator, max_bytes=context.budget.max_bytes
+                    subject.locator, max_bytes=byte_limit
                 )
             except FileNotFoundError as exc:
                 raise ValidationIssue(
@@ -83,7 +86,7 @@ class SubjectResolver:
                     action="retry_validation",
                 )
         context.checkpoint()
-        if len(content) > context.budget.max_bytes:
+        if len(content) > byte_limit:
             raise ValidationIssue(
                 "subject.byte_limit",
                 "Bound output exceeds the configured byte limit.",

@@ -211,10 +211,13 @@ class ProcessValidationRepository:
                     "Initial finalization requires a running attempt"
                 )
             state = (
-                "error"
+                "cancelled"
+                if any(f.code == "validation.cancelled" for f in assessment.findings)
+                else "error"
                 if any(c.state == "error" for c in assessment.checks)
                 else "blocked"
-                if any(c.state == "blocked" for c in assessment.checks)
+                if not assessment.subject_current
+                or any(c.state == "blocked" for c in assessment.checks)
                 else "completed"
             )
             db.execute(

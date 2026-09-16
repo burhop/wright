@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** Implementation active under the submitted goal. M0 foundations complete; M1 next. This replaces the previous 74-task campaign plan.
+**Status:** Implementation active under the submitted goal. T001–T009 complete; M1 process integration next. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -24,9 +24,9 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 
 **Independent acceptance:** A non-MCP producer/check/consumer process releases only its current passing revision; direct and MCP invocation return equivalent assessments.
 
-- [ ] T007 [US1] Add meaningful pass/fail/missing/stale/error/mixed/empty-scope controls in `packages/workspace_service/tests/test_process_validation.py` using `tests/datasets/process-validation/structured/`; each defect must reach its intended check.
-- [ ] T008 [US1] Implement local inline-value, JSON/CSV and bounded text/file readers in `packages/workspace_service/src/workspace_service/process_validation/readers/structured.py`; support required fields/roles, types, ranges, units, table rows and explicit content selectors without inferring unsupported document semantics.
-- [ ] T009 [US1] Implement measurement/check evaluation and orchestration in `packages/workspace_service/src/workspace_service/process_validation/evaluation.py` and `service.py`; adapt existing registered predicates with explicit error mapping, scope/coverage, finite interval rules and immutable result finalization.
+- [x] T007 [US1] Add meaningful pass/fail/missing/stale/error/mixed/empty-scope controls in `packages/workspace_service/tests/test_process_validation.py` using `tests/datasets/process-validation/structured/`; each defect must reach its intended check.
+- [x] T008 [US1] Implement local inline-value, JSON/CSV and bounded text/file readers in `packages/workspace_service/src/workspace_service/process_validation/readers/structured.py`; support required fields/roles, types, ranges, units, table rows and explicit content selectors without inferring unsupported document semantics.
+- [x] T009 [US1] Implement measurement/check evaluation and orchestration in `packages/workspace_service/src/workspace_service/process_validation/evaluation.py` and `service.py`; adapt existing registered predicates with explicit error mapping, scope/coverage, finite interval rules and immutable result finalization.
 - [ ] T010 [US1] Add and document canonical local-validator configuration/ports and compile-time checks in `packages/workspace_service/src/workspace_service/workflow_source_execution.py` and `specs/082-output-content-validation/contracts/process-source.md`; update shared schema owners identified at T001, preserve legacy syntax and reject invalid/unsafe bindings.
 - [ ] T011 [US1] Add thin BaseTool/MCP evaluation/read adapters in `packages/workspace_service/src/workspace_service/process_validation_tools.py` and a packaged `process_validation_cli.py`; register with the existing Wright MCP service, preserve authority and distinguish tool failure from a returned noncompliant result.
 - [ ] T012 [US1] Add profile/subject binding and validator state to existing authoring controls in `apps/web/src/prototypes/workflow-recovery/`, including `recovery-dsl.ts`, `model.ts` and `command-system.ts` where appropriate; preserve Diagram/Source round-trip, Undo/Redo and save/reopen. Follow `docs/contributing/workflow-ui-integration.md`.

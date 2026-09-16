@@ -51,6 +51,14 @@ A repair packet includes the failing assessment/subject/profile digests, target 
 
 Artifact text and suggested causes are data, not instructions overriding requirements. No commands, arbitrary tool privileges, profile edits or approval grants belong in the correction packet. Local artifacts keep their original bytes; the producing step writes a new revision.
 
+Implemented v1 findings use `unit`/`frame` for the expected constraint and
+`observed_unit`/`observed_frame` for the actual observation. These may differ when
+a valid conversion is possible; a report must not relabel the raw observed value
+with the expected unit. After an output changes during inspection, the assessment
+retains checks against its captured snapshot, sets `subject_current=false` and
+adds an invocation-level readiness finding. Such a finding does not erase a
+measured defect, and the assessment cannot release downstream work.
+
 ## Illustrative finding
 
 This is a proposed example, **not a measured repository result**. The source jig H2 target is (170,30) mm with ±0.20 mm per axis. An illustrative observed x=169 mm should produce:
