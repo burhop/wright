@@ -10,7 +10,7 @@
 
 ## Current state
 
-T001–T033 are implemented and recorded in [progress.md](progress.md). The runtime validator, bounded correction, report contract, structured/CAD/thermal demonstrations, security/distribution gates, authoring controls, run diagnostics, assessment links and runnable operator documentation exist. T034 final audit/closure is the remaining plan task at this checkpoint.
+T001–T034 and M0–M5 are complete and audited in [completion.md](completion.md). The runtime validator, bounded correction, report contract, structured/CAD/thermal demonstrations, security/distribution gates, authoring controls, run diagnostics, assessment links and runnable operator documentation exist.
 
 The validator is a process step that checks one or more exact upstream output revisions. It is not a final QA campaign. The 30 input packs define a capability map; only the explicitly frozen and demonstrated slices are qualified.
 
@@ -116,4 +116,4 @@ The other branch consumes `wright.process-validation-report/1` and must not impo
 
 ## Completion rule
 
-All T001–T034 requirements, artifacts, examples and gates must be supported by current evidence before marking the goal complete. Distinguish implemented code, demonstrated process behavior, qualified reader scope, report compatibility, and human or physical acceptance. Push, merge and release remain separately authorized and governed by their contributor runbooks.
+The final requirement and success-criteria evidence is recorded in [completion.md](completion.md). Preserve the distinction between implemented code, demonstrated process behavior, qualified reader scope, report compatibility, and human or physical acceptance. Push, merge and release remain separately authorized and governed by their contributor runbooks.

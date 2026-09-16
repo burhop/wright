@@ -47,7 +47,11 @@ export const AUTHORING_GROUPS: readonly {
     description:
       "Add a task configured for an available application or service",
   },
-  { id: "more", label: "Review", description: "Output validation, engineer review and approval" },
+  {
+    id: "more",
+    label: "Review",
+    description: "Output validation, engineer review and approval",
+  },
 ];
 
 interface TemplatePort {

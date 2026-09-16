@@ -73,7 +73,9 @@ it("offers the exact connected safe producer and applies a bounded revision path
     initialLayout,
   );
   const workflow = cloneWorkflow(initialWorkflow);
-  const profile = validationProfiles.find((item) => item.name === "structured-demo")!;
+  const profile = validationProfiles.find(
+    (item) => item.name === "structured-demo",
+  )!;
   const input: RecoveryPort = {
     id: `port.${validator.block.id.slice(6)}-subject-result`,
     ownerBlockId: validator.block.id,
@@ -119,14 +121,16 @@ it("offers the exact connected safe producer and applies a bounded revision path
     screen.getByRole("combobox", { name: "Validation revision target" }),
     { target: { value: producer.block.id } },
   );
-  const commands = (apply.mock.calls[0] as unknown as [
-    Array<{
-      kind: string;
-      key?: string;
-      value?: number;
-      relationship?: Record<string, unknown>;
-    }>,
-  ])[0];
+  const commands = (
+    apply.mock.calls[0] as unknown as [
+      Array<{
+        kind: string;
+        key?: string;
+        value?: number;
+        relationship?: Record<string, unknown>;
+      }>,
+    ]
+  )[0];
   expect(commands).toContainEqual(
     expect.objectContaining({
       kind: "connect",

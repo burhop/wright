@@ -183,9 +183,9 @@ export function ValidatorBlockEditor({
             />
           </label>
           <p className="recovery-field-help">
-            Zero disables automatic correction. A correction creates a new output
-            revision and reruns the complete pinned profile; downstream steps stay
-            held until the current revision passes.
+            Zero disables automatic correction. A correction creates a new
+            output revision and reruns the complete pinned profile; downstream
+            steps stay held until the current revision passes.
           </p>
         </section>
       )}

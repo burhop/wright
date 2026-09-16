@@ -114,12 +114,12 @@ describe("validator authoring uses the accepted command/source model", () => {
     const selected = configured();
     const block = selected.workflow.blocks.find((b) => b.id === selected.id)!;
     const producer = selected.workflow.blocks.find(
-      (candidate) => candidate.id !== block.id && candidate.executionKind === "ai_capable",
+      (candidate) =>
+        candidate.id !== block.id && candidate.executionKind === "ai_capable",
     )!;
     const source = selected.workflow.ports.find(
       (port) =>
-        port.ownerBlockId === producer.id &&
-        port.direction === "output",
+        port.ownerBlockId === producer.id && port.direction === "output",
     )!;
     const connected = apply(
       selected.workflow,
@@ -140,7 +140,9 @@ describe("validator authoring uses the accepted command/source model", () => {
       connected.layout,
       validationRevisionCommands(current, connected.workflow, producer.id),
     );
-    const revisedBlock = revised.workflow.blocks.find((b) => b.id === block.id)!;
+    const revisedBlock = revised.workflow.blocks.find(
+      (b) => b.id === block.id,
+    )!;
     expect(revisedBlock.configuration.max_revisions).toBe(1);
     expect(revised.workflow.relationships).toContainEqual(
       expect.objectContaining({
@@ -199,7 +201,9 @@ describe("validator authoring uses the accepted command/source model", () => {
         source.id,
       ),
     );
-    const owner = connected.workflow.blocks.find((b) => b.id === source.ownerBlockId)!;
+    const owner = connected.workflow.blocks.find(
+      (b) => b.id === source.ownerBlockId,
+    )!;
     owner.configuration.file_policy = "overwrite";
     expect(validationRevisionTargets(block, connected.workflow)).toEqual([]);
     expect(() =>

@@ -41,9 +41,7 @@
       "version": "1",
       "sha256": "5fb63ff5fca47d189665efe2d22424743205a0c12812f193cd79b49fe4ebf2d8"
     },
-    "roles": [
-      "jig_step"
-    ],
+    "roles": ["jig_step"],
     "limitations": [
       "The bounded STEP reader qualifies circular body-seat axes and diameters only; it does not establish full topology correspondence.",
       "Synthetic bushing data are prototype inputs rather than supplier-certified dimensions."
@@ -67,9 +65,7 @@
       "version": "1",
       "sha256": "709c8ed3b175034b161e062c1b2fae85d25061e170b2efaa94c2947d0cad3b04"
     },
-    "roles": [
-      "result"
-    ],
+    "roles": ["result"],
     "limitations": [],
     "excluded_scope": [
       "Geometry, manufacture and physical fit are not assessed."

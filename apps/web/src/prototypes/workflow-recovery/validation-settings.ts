@@ -166,7 +166,9 @@ export function validationSubjectCommands(
   const revision = workflow.relationships.find(
     (edge) => edge.kind === "feedback" && edge.sourceId === block.id,
   );
-  const nextOwner = workflow.ports.find((port) => port.id === sourceId)?.ownerBlockId;
+  const nextOwner = workflow.ports.find(
+    (port) => port.id === sourceId,
+  )?.ownerBlockId;
   if (revision && revision.targetId !== nextOwner)
     commands.push(
       { kind: "disconnect", relationshipId: revision.id },
@@ -233,13 +235,17 @@ export function validationRevisionTargets(
     workflow.relationships
       .filter((edge) => edge.kind === "data" && inputIds.has(edge.targetId))
       .map(
-        (edge) => workflow.ports.find((port) => port.id === edge.sourceId)?.ownerBlockId,
+        (edge) =>
+          workflow.ports.find((port) => port.id === edge.sourceId)
+            ?.ownerBlockId,
       )
       .filter((id): id is string => Boolean(id)),
   );
   if (owners.size !== 1) return [];
   const ownerId = [...owners][0]!;
-  const validatorIndex = workflow.blocks.findIndex((item) => item.id === block.id);
+  const validatorIndex = workflow.blocks.findIndex(
+    (item) => item.id === block.id,
+  );
   const ownerIndex = workflow.blocks.findIndex((item) => item.id === ownerId);
   const owner = workflow.blocks[ownerIndex];
   if (
@@ -270,7 +276,11 @@ export function validationRevisionCommands(
     });
     return commands;
   }
-  if (!validationRevisionTargets(block, workflow).some((item) => item.id === targetId))
+  if (
+    !validationRevisionTargets(block, workflow).some(
+      (item) => item.id === targetId,
+    )
+  )
     throw new Error(
       "Automatic correction requires one earlier ordinary AI producer that owns every validated subject.",
     );
@@ -302,7 +312,9 @@ export function validationRevisionLimitCommands(
   limit: number,
 ): RecoveryCommand[] {
   if (!Number.isInteger(limit) || limit < 0 || limit > 3)
-    throw new Error("Choose a whole-number correction limit from zero to three.");
+    throw new Error(
+      "Choose a whole-number correction limit from zero to three.",
+    );
   const commands: RecoveryCommand[] = [
     {
       kind: "set_block_configuration",

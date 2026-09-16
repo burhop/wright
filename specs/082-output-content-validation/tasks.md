@@ -1,6 +1,6 @@
 # Tasks: Process Output Validator
 
-**Status:** Implementation active under the submitted goal. T001–T031 are complete; M5 served UI, documentation and completion gates remain. Served-browser qualification remains T032. This replaces the previous 74-task campaign plan.
+**Status:** Implementation complete under the submitted goal. T001–T034 and M0–M5 are complete. This replaces the previous 74-task campaign plan.
 **Authority:** [spec.md](spec.md), [plan.md](plan.md), [scope amendment](scope-amendment.md).
 **Implementation starts only when the revised goal/plan is approved.**
 
@@ -69,7 +69,7 @@ Paths below are repository-relative. Proposed files may be adjusted to establish
 - [x] T031 Verify installed runtime resources/CLI/MCP without a source checkout, offline local evaluation and supported native/Docker boundaries; retain commands/results in `specs/082-output-content-validation/evidence/distribution.md` and update package metadata only as necessary. Do not add MCP-specific software to the base image.
 - [x] T032 Complete component tests alongside changed process controls, mocked integration in `tests/ui-integration/process-validation.spec.ts`, and served-system evidence in `tests/e2e/test_process_validation.py`; enter through normal Workflow/Workflows, preserve authoring and demonstrate actual run diagnostics/evidence links.
 - [x] T033 Document exact runnable examples, reader prerequisites, profile authoring, correction policy and report consumption in `docs/workflows/process-output-validation.md`; update `specs/082-output-content-validation/quickstart.md` with real commands after implementation and verify links/examples.
-- [ ] T034 Run applicable focused regressions/package gates and finish `specs/082-output-content-validation/completion.md` and `progress.md` with completed task IDs, actual demonstration evidence, capability limits and report-branch handoff. Claim completion only when all required initial slices work; keep push/merge/release separately authorized.
+- [x] T034 Run applicable focused regressions/package gates and finish `specs/082-output-content-validation/completion.md` and `progress.md` with completed task IDs, actual demonstration evidence, capability limits and report-branch handoff. Claim completion only when all required initial slices work; keep push/merge/release separately authorized.
 
 ## Dependencies and parallel opportunities
 
@@ -79,18 +79,18 @@ T021 can be drafted from the frozen reporting contract while T020 transport wiri
 
 ## Requirement coverage
 
-| Requirements | Tasks |
-|---|---|
-| FR-001, FR-008 | T007–T013 |
-| FR-002, FR-010, FR-013 | T003–T005, T015, T017, T020, T030 |
-| FR-003, FR-004 | T002, T006, T023, T029 |
-| FR-005, FR-007 | T005, T007–T009, T024–T027 |
-| FR-006, FR-009 | T014–T018 |
-| FR-011 | T005, T015, T017, T030 |
-| FR-012 | T019–T022 |
-| FR-014 | T018, T023–T029 |
-| FR-015, FR-016 | T003–T007, T017, T022, T025, T027, T030–T032 |
-| FR-017 | T010, T012–T013, T016, T032 |
+| Requirements           | Tasks                                        |
+| ---------------------- | -------------------------------------------- |
+| FR-001, FR-008         | T007–T013                                    |
+| FR-002, FR-010, FR-013 | T003–T005, T015, T017, T020, T030            |
+| FR-003, FR-004         | T002, T006, T023, T029                       |
+| FR-005, FR-007         | T005, T007–T009, T024–T027                   |
+| FR-006, FR-009         | T014–T018                                    |
+| FR-011                 | T005, T015, T017, T030                       |
+| FR-012                 | T019–T022                                    |
+| FR-014                 | T018, T023–T029                              |
+| FR-015, FR-016         | T003–T007, T017, T022, T025, T027, T030–T032 |
+| FR-017                 | T010, T012–T013, T016, T032                  |
 
 Success criteria SC-001/002 map to M1/M2/M4; SC-003/004 to M2/M3; SC-005 to M4; SC-006/007 to M2/M5.
 

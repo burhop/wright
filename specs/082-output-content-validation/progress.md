@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M0–M4 complete; closure M5 remains.
-**Implementation:** T001–T033 complete. T034 remains. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation complete; M0–M5 complete.
+**Implementation:** T001–T034 complete. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,9 +29,9 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Complete the runnable documentation and final requirement-by-requirement closure audit in T033–T034. Complete all required examples and gates before claiming the implementation finished.
+Implementation is complete. Review [completion.md](completion.md) for the requirement audit, final gates, retained demonstrations, capability limits and report-branch handoff. Any push, pull request, merge or release is a separate action governed by the repository runbooks.
 
-Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
+The retained demonstrations establish measured passes only for their declared scopes. They do not claim whole-design or physical acceptance.
 
 ## M0 implementation evidence — 2026-09-16
 
@@ -179,3 +179,16 @@ T032 is complete. T033 runnable documentation and T034 final completion audit re
 - Strict documentation build passed with `uv --cache-dir .local-run/uv-cache run --with mkdocs-material mkdocs build --strict`. A local verifier resolved all **17 relative links** in the guide/quickstart. Ruff lint/format, Prettier for the new guide and `git diff --check` passed.
 
 T033 is complete. T034 full regression gates, requirement-by-requirement audit and final completion/progress record remain.
+
+## M5 completion audit — 2026-09-16
+
+- T034: [completion.md](completion.md) audits FR-001–FR-017 and SC-001–SC-007 against current code, tests, contracts, distribution evidence and retained process manifests. All requirements and success criteria are supported by direct evidence.
+- Final Python regressions passed: 22 core, 10 data-vault, 199 workspace/canonical/rework/design-check, 3 API, 34 retained-evidence/reader/security/E2E and 2 extracted-wheel distribution tests.
+- Final web gates passed: 130 affected component tests, targeted ESLint, production TypeScript/Vite build, and two served chromium journeys through the normal workspace **Workflows** entry.
+- Strict MkDocs, Ruff lint across feature Python files, targeted Prettier and `git diff --check` passed. The existing Starlette/httpx, Vite native-config and chunk-size notices remain informational.
+- Retained real demonstrations remain authoritative: structured run `structured-loop-20260916T202659Z`; jig run `engineering-jig-20260916T213904Z`; heat run `engineering-heat-20260916T214041Z`. Independent evidence verifiers passed.
+- Coverage schema version 2 accounts for exactly 30 packs: bounded jig-01 and heat-01 scopes are qualified; 28 packs remain explicitly unsupported. The generic `structured-demo` is separate from those engineering packs.
+- The report branch handoff remains `contracts/report-consumer.md` plus the versioned schema/examples. The effective verdict requires both currentness and release eligibility. No report UI was added here.
+- Push, merge, release, publication, supplier submission, device dispatch, engineering approval and physical acceptance remain outside this authorization.
+
+T001–T034 and M0–M5 are complete on `codex/082-output-content-validation`.
