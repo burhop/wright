@@ -10,6 +10,7 @@ from core.process_validation import (
     Assessment,
     Lifecycle,
     ReviewDecision,
+    SubjectBinding,
     ValidationRequest,
     canonical_digest,
     canonical_json,
@@ -42,6 +43,13 @@ CREATE TABLE IF NOT EXISTS process_validation_reviews (
  id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL,
  assessment_id TEXT NOT NULL REFERENCES process_validation_assessments(id),
  payload_json TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS process_validation_outputs (
+ workspace_id TEXT NOT NULL, id TEXT NOT NULL,
+ run_id TEXT NOT NULL, step_id TEXT NOT NULL, attempt INTEGER NOT NULL,
+ output_port TEXT NOT NULL, payload_json TEXT NOT NULL,
+ PRIMARY KEY(workspace_id,id),
+ UNIQUE(workspace_id,run_id,step_id,attempt,output_port)
 );
 """
 _TERMINAL = {"completed", "blocked", "error", "cancelled"}
@@ -106,6 +114,66 @@ class ProcessValidationRepository:
         self.db_path = db_path
         with connect_state_db(db_path, ensure_parent=True) as db:
             db.executescript(_SCHEMA)
+
+    def register_output(self, workspace_id: str, subject: SubjectBinding):
+        """Only the canonical runner registers an actual completed output revision."""
+        subject = SubjectBinding.model_validate_json(subject.model_dump_json())
+        raw = _payload(subject)
+        owner = subject.producer
+        with connect_state_db(self.db_path) as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT payload_json FROM process_validation_outputs WHERE workspace_id=? AND run_id=? AND step_id=? AND attempt=? AND output_port=?",
+                (
+                    workspace_id,
+                    owner.run_id,
+                    owner.step_id,
+                    owner.attempt,
+                    owner.output_port,
+                ),
+            ).fetchone()
+            if row:
+                if row["payload_json"] != raw:
+                    raise ValidationConflict(
+                        "Completed output revision cannot be replaced"
+                    )
+                return
+            db.execute(
+                "INSERT INTO process_validation_outputs VALUES (?,?,?,?,?,?,?)",
+                (
+                    workspace_id,
+                    subject.id,
+                    owner.run_id,
+                    owner.step_id,
+                    owner.attempt,
+                    owner.output_port,
+                    raw,
+                ),
+            )
+
+    def output(self, workspace_id: str, subject_id: str) -> SubjectBinding:
+        with connect_state_db(self.db_path, read_only=True) as db:
+            row = db.execute(
+                "SELECT payload_json FROM process_validation_outputs WHERE workspace_id=? AND id=?",
+                (workspace_id, subject_id),
+            ).fetchone()
+            if row is None:
+                raise KeyError("Producer output not found in this workspace")
+            return SubjectBinding.model_validate_json(row["payload_json"])
+
+    def output_is_current(self, workspace_id: str, subject: SubjectBinding) -> bool:
+        owner = subject.producer
+        with connect_state_db(self.db_path, read_only=True) as db:
+            row = db.execute(
+                "SELECT payload_json FROM process_validation_outputs WHERE workspace_id=? AND run_id=? AND step_id=? AND output_port=? ORDER BY attempt DESC LIMIT 1",
+                (workspace_id, owner.run_id, owner.step_id, owner.output_port),
+            ).fetchone()
+            if row is None:
+                return False
+            actual = SubjectBinding.model_validate_json(row["payload_json"])
+            # A profile assigns a semantic role; it cannot rewrite provenance,
+            # content, representation, revision or the registered output ID.
+            return actual.model_copy(update={"role": subject.role}) == subject
 
     @traced("db.process_validation.create")
     def create(self, request: ValidationRequest) -> tuple[AttemptRecord, bool]:

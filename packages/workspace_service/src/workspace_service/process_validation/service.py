@@ -116,9 +116,13 @@ class ProcessValidationService:
             if assessment_id
             else None
         )
-        return EvaluationOutcome(
-            attempt, assessment, bool(current and current.id == attempt.id)
-        )
+        is_current = bool(current and current.id == attempt.id)
+        if is_current and attempt.request.run_id:
+            is_current = bool(self.resolver.verify_binding) and all(
+                self.resolver.verify_binding(subject)
+                for subject in attempt.request.subjects
+            )
+        return EvaluationOutcome(attempt, assessment, is_current)
 
     @traced("workspace.process_validation.evaluate")
     def evaluate(

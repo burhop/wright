@@ -1,6 +1,6 @@
 # Process validation contract v1
 
-**Status:** Proposed implementation contract; no new command or endpoint exists yet.
+**Status:** Core/evaluator and canonical gate implemented. Direct Python, `wright-process-validate` CLI and existing-gateway `wright_validation__evaluate` / `wright_validation__read` adapters exist. Repair, report export/review routes and authoring integration remain in progress.
 **Consumers:** canonical process runner, direct/CLI callers, MCP clients and the separate reporting feature.
 
 ## Operations
@@ -22,6 +22,32 @@ Direct Python and packaged CLI call the same service. A thin BaseTool exposes ev
 Required: `schema_version`, `trace_id`, `workspace_id`, `invocation_id`, optional canonical `run_id/check_step_id`, `subjects[]`, pinned `profile_ref`, pinned `baseline_ref`, `idempotency_key` and bounded resource policy.
 
 Each subject identifies producer run/step/attempt/output port and a provider-neutral result representation with immutable digest/revision. Standalone imported files have an explicit import identity/authority and no automatic rework target. Require declared output roles; never scan arbitrary neighboring directories for likely files.
+
+Typed inline values use `encoding: wright-json-v1` and a canonical JSON digest.
+Original text responses (including JSON text) may instead use `raw-bytes`; their
+value is a UTF-8 string and the digest identifies its original encoded bytes.
+This preserves duplicate JSON fields and malformed content for inspection.
+An unavailable subject set can be empty: the profile's nonempty checks then
+produce missing-role findings, never an empty passing scope.
+
+External evaluation arguments are `{request, profile}`; `profile` uses the
+location/reference shape in [process-source.md](process-source.md). MCP/CLI
+callers cannot claim a canonical `run_id/check_step_id` gate stream. They can
+inspect current runner-registered subject bindings, or use explicit standalone
+imports with producer `step_id: import`, `run_id: invocation_id`, `attempt: 1`.
+The runner alone registers completed output revisions. A later producer attempt
+invalidates an older binding; caller-supplied producer names do not establish
+authority. The gateway supplies the actual workspace root and identity.
+
+Evaluation returns an `AssessmentReference`; read accepts
+`{assessment_id, cursor?, limit?}` and returns a `FindingPage` (1–20 findings,
+64-KiB inline finding payload maximum). Both have generated closed schemas.
+Noncompliance is successful tool data with `release_eligible: false`; invalid
+authority/arguments or unavailable result identity is a tool error. CLI exit
+codes are 0 for a passing evaluation/successful read, 2 for a completed held
+evaluation, and 1 for an operational error. Installed command verification
+remains a packaging gate; source execution also works with
+`python -m workspace_service.process_validation_cli`.
 
 A local validator process step accepts bound outputs and profile/baseline references. Its result port carries the assessment reference/check report. Pass routing releases the exact checked revision; revision routing is explicit and separately bounded. The compiler rejects incompatible bindings, missing required roles, unsupported source versions and unsafe revision paths before dispatch where possible. T010 documents the exact source grammar and migration behavior.
 

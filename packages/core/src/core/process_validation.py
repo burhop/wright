@@ -275,10 +275,13 @@ class SubjectBinding(Contract):
     @model_validator(mode="after")
     def exact_identity(self):
         if self.kind == "value":
-            if (
-                self.encoding != "wright-json-v1"
-                or canonical_digest(self.value) != self.sha256
-            ):
+            if self.encoding == "raw-bytes":
+                if not isinstance(self.value, str):
+                    raise ValueError("Raw inline output must contain UTF-8 text")
+                digest = hashlib.sha256(self.value.encode("utf-8")).hexdigest()
+            else:
+                digest = canonical_digest(self.value)
+            if digest != self.sha256:
                 raise ValueError(
                     "Inline value digest does not match its canonical content"
                 )
@@ -317,7 +320,7 @@ class ValidationRequest(Contract):
     invocation_id: Identifier
     run_id: Identifier | None = None
     check_step_id: Identifier | None = None
-    subjects: tuple[SubjectBinding, ...] = Field(min_length=1, max_length=100)
+    subjects: tuple[SubjectBinding, ...] = Field(max_length=100)
     profile_ref: VersionReference
     baseline_ref: VersionReference
     idempotency_key: Identifier
@@ -638,6 +641,23 @@ class RepairFeedback(Contract):
     total_findings: Annotated[int, Field(strict=True, ge=0)]
     omitted_findings: Annotated[int, Field(strict=True, ge=0)]
     complete_result_ref: Text
+
+
+class AssessmentReference(Contract):
+    schema_version: Literal["wright.process-validation/1"] = SCHEMA_VERSION
+    assessment_id: Identifier
+    assessment_digest: Digest
+    attempt_id: Identifier
+    workspace_id: Identifier
+    is_current: bool
+    release_eligible: bool
+    summary: Summary
+    finding_count: Annotated[int, Field(strict=True, ge=0)]
+
+
+class FindingPage(AssessmentReference):
+    findings: tuple[Finding, ...] = Field(max_length=20)
+    next_cursor: Annotated[int, Field(strict=True, ge=0)] | None = None
 
 
 class ReviewDecision(Contract):

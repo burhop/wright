@@ -1,0 +1,331 @@
+"""Canonical process checks inspect actual previous-step outputs without an LLM."""
+
+import json
+import asyncio
+from types import SimpleNamespace
+
+import pytest
+
+from workspace_service.process_validation.profiles import load_profile
+from workspace_service.workflow_source_execution import (
+    WorkflowSourceExecutionError,
+    compile_prompt_workflow,
+    execute_prompt_workflow,
+)
+from .test_workflow_source_execution import source, task, service
+
+
+def configuration():
+    profile = load_profile("structured-demo")
+    return {
+        "profile": {
+            "source": "packaged",
+            "name": "structured-demo",
+            "reference": profile.reference().model_dump(),
+        },
+        "baseline": profile.baseline.reference().model_dump(),
+        "subjects": {"result": "inspect_subject"},
+    }
+
+
+def validator(config=None, **settings):
+    return f"""task inspect
+  name: "Inspect produced output"
+  step_type: work
+  performed_by: configured_tool
+  inputs: [{{"key":"inspect_subject","name":"Produced output","kind":"engineering_document","required":true}}]
+  outputs: [{{"key":"inspect_assessment","name":"Assessment","kind":"engineering_document"}}]
+  prompt: ""
+  settings: {json.dumps({"authoring_template": "process-validator", "validation": configuration() if config is None else config, **settings})}
+  tool: null
+  reusable_step: null
+end
+"""
+
+
+def workflow(check=None, connection=True, consumer=False):
+    result = source(task("produce", fmt="json"), check or validator())
+    if consumer:
+        result += task("consume", fmt="text")
+        result += """connection release
+  type: approval
+  from: "inspect"
+  to: "consume"
+  label: "Validated output"
+  when: pass
+end
+"""
+    if connection:
+        result += """connection subject
+  type: item
+  from: "produce.produce_response"
+  to: "inspect.inspect_subject"
+  label: "Output to inspect"
+  when: null
+end
+"""
+    return result
+
+
+def test_compile_local_validator_without_mcp_or_model_prompt():
+    plan = compile_prompt_workflow(workflow(consumer=True))
+    check = plan.steps[1]
+    assert (
+        check.validation["profile"]["reference"]
+        == configuration()["profile"]["reference"]
+    )
+    assert check.validation_sources == (("result", "produce.produce_response"),)
+    assert check.design_check and not check.agent_task and not check.tool_name
+    assert check.max_revisions == 0 and not check.save
+    assert plan.steps[2].id == "consume"
+
+
+@pytest.mark.parametrize("fault", ["profile", "baseline", "roles"])
+def test_profile_preflight_rejects_changed_pins_and_missing_profile_roles(
+    tmp_path, fault
+):
+    from workspace_service.process_validation.configuration import (
+        ValidatorConfiguration,
+    )
+
+    config = configuration()
+    if fault == "profile":
+        config["profile"]["reference"]["sha256"] = "a" * 64
+    elif fault == "baseline":
+        config["baseline"]["sha256"] = "b" * 64
+    else:
+        config["subjects"] = {"wrong_role": "inspect_subject"}
+    with pytest.raises(ValueError):
+        ValidatorConfiguration.model_validate(config).load(str(tmp_path))
+
+
+def test_profile_preflight_accepts_the_exact_frozen_profile(tmp_path):
+    from workspace_service.process_validation.configuration import (
+        ValidatorConfiguration,
+    )
+
+    assert ValidatorConfiguration.model_validate(configuration()).load(
+        str(tmp_path)
+    ) == load_profile("structured-demo")
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "missing_pin",
+        "bad_digest",
+        "unknown_field",
+        "unknown_source",
+        "unsafe_path",
+        "missing_role",
+        "unknown_port",
+        "two_roles_one_port",
+        "too_many_bytes",
+        "missing_settings",
+        "executable",
+        "negative_revisions",
+        "unconnected",
+        "input_instead_of_producer",
+        "mixed_mcp",
+        "overwrite",
+        "wrong_performer",
+        "unexpected_output",
+        "collection",
+    ],
+)
+def test_compile_rejects_ambiguous_or_unsafe_validator_bindings(fault):
+    config, settings = configuration(), {}
+    if fault == "missing_pin":
+        del config["profile"]["reference"]
+    if fault == "bad_digest":
+        config["baseline"]["sha256"] = "unversioned"
+    if fault == "unknown_field":
+        config["ignore_failed_checks"] = True
+    if fault == "unknown_source":
+        config["profile"]["source"] = "url"
+    if fault == "unsafe_path":
+        config["profile"].update(source="workspace", name="../secret.json")
+    if fault == "missing_role":
+        config["subjects"] = {}
+    if fault == "unknown_port":
+        config["subjects"]["result"] = "missing"
+    if fault == "two_roles_one_port":
+        config["subjects"]["second"] = "inspect_subject"
+    if fault == "too_many_bytes":
+        config["budget"] = {"max_bytes": 10**12}
+    if fault == "missing_settings":
+        config = {}
+    if fault == "executable":
+        config["predicate"] = "eval(input)"
+    if fault == "negative_revisions":
+        settings["max_revisions"] = -1
+    if fault == "mixed_mcp":
+        settings["mcp_server"] = "some-server"
+    if fault == "overwrite":
+        settings["file_policy"] = "overwrite"
+    text = workflow(validator(config, **settings), connection=fault != "unconnected")
+    if fault == "input_instead_of_producer":
+        text = text.replace("task produce", "input produce")
+    if fault == "wrong_performer":
+        text = text.replace(
+            "performed_by: configured_tool", "performed_by: ai_assisted"
+        )
+    if fault == "unexpected_output":
+        text = text.replace(
+            '"key":"inspect_assessment"', '"key":"inspect_assessment","quantity":"many"'
+        )
+    if fault == "collection":
+        text = text.replace(
+            '"key":"inspect_subject"', '"key":"inspect_subject","quantity":"many"'
+        ).replace(
+            '"key":"produce_response"', '"key":"produce_response","quantity":"many"'
+        )
+    with pytest.raises(WorkflowSourceExecutionError):
+        compile_prompt_workflow(text)
+
+
+def runtime_service(tmp_path):
+    app = service(tmp_path)
+    app.db_path = str(tmp_path / "validation.db")
+    app.repository = SimpleNamespace(
+        get_by_path=lambda _: {"workspace_id": "workspace"}
+    )
+    return app
+
+
+@pytest.mark.parametrize("length,passing", [(100, True), (98, False)])
+def test_canonical_gate_inspects_producer_output_and_publishes_evidence_before_holding(
+    tmp_path, length, passing
+):
+    from core.process_validation import Assessment
+    from workspace_service.process_validation.application import ValidationApplication
+    from workspace_service.process_validation_tools import ProcessValidationTool
+    from core.tools import ToolContext
+
+    plan = compile_prompt_workflow(workflow(consumer=True))
+    app, calls, events = runtime_service(tmp_path), [], []
+
+    async def generate(prompt, fmt):
+        calls.append(fmt)
+        return (
+            json.dumps({"part_id": "demo-plate", "length_mm": length})
+            if fmt == "json"
+            else "Released after validation"
+        )
+
+    async def emit(event):
+        events.append(event)
+
+    async def run():
+        return await execute_prompt_workflow(
+            service=app,
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={},
+            response_generator=generate,
+            on_event=emit,
+            run_id="run",
+        )
+
+    if passing:
+        result = asyncio.run(run())
+        assert result["steps"][-1]["task_id"] == "consume"
+        assert result["steps"][1]["execution_kind"] == "validator"
+        assert calls == ["json", "text"]
+    else:
+        with pytest.raises(WorkflowSourceExecutionError) as error:
+            asyncio.run(run())
+        assert error.value.code == "DESIGN_CHECK_REJECTED"
+        assert calls == ["json"] and not (tmp_path / "consume.txt").exists()
+    report = next(e["report"] for e in events if e["kind"] == "design_check")
+    path = tmp_path / report["assessment_path"]
+    assert path.exists()
+    assessment = Assessment.model_validate_json(path.read_bytes())
+    assert assessment.summary.release_eligible is passing
+    assert assessment.request.subjects[0].producer.attempt == 1
+    assert assessment.request.subjects[0].producer.step_id == "produce"
+    assert assessment.request.subjects[0].value == json.dumps(
+        {"part_id": "demo-plate", "length_mm": length}
+    )
+    evidence_event = next(
+        e
+        for e in events
+        if e["kind"] == "result_ready" and e.get("task_id") == "inspect"
+    )
+    assert evidence_event["artifact_role"] == (
+        "verification" if passing else "diagnostic"
+    )
+    application = ValidationApplication(app.db_path, "workspace", str(tmp_path))
+    read = asyncio.run(
+        ProcessValidationTool(application, "read").execute(
+            {"assessment_id": assessment.id},
+            context=ToolContext("local", "workspace", "trace", "read"),
+        )
+    )
+    assert read["release_eligible"] is passing
+    assert read["assessment_digest"] == report["assessment_digest"]
+
+
+def test_unavailable_reader_persists_blocked_assessment_and_holds_consumer(tmp_path):
+    from core.process_validation import Assessment, ValidationProfile
+
+    raw = load_profile("structured-demo").model_dump(mode="json")
+    raw["checks"][0]["reader"] = "not-installed"
+    profile = ValidationProfile.model_validate(raw)
+    (tmp_path / "profile.json").write_text(profile.model_dump_json(), encoding="utf-8")
+    config = configuration()
+    config["profile"] = {
+        "source": "workspace",
+        "name": "profile.json",
+        "reference": profile.reference().model_dump(),
+    }
+    plan = compile_prompt_workflow(workflow(validator(config), consumer=True))
+    events, calls = [], []
+
+    async def generate(prompt, fmt):
+        calls.append(fmt)
+        return '{"part_id":"demo-plate","length_mm":100}'
+
+    async def emit(event):
+        events.append(event)
+
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        asyncio.run(
+            execute_prompt_workflow(
+                service=runtime_service(tmp_path),
+                workspace_dir=str(tmp_path),
+                plan=plan,
+                input_values={},
+                response_generator=generate,
+                on_event=emit,
+                run_id="run",
+            )
+        )
+    assert error.value.code == "DESIGN_CHECK_NEEDS_INPUT"
+    assert calls == ["json"]
+    report = next(e["report"] for e in events if e["kind"] == "design_check")
+    assessment = Assessment.model_validate_json(
+        (tmp_path / report["assessment_path"]).read_bytes()
+    )
+    assert not assessment.summary.release_eligible
+    assert any(f.category == "capability_unavailable" for f in assessment.findings)
+
+
+def test_no_available_subject_still_produces_a_blocked_assessment(tmp_path):
+    from core.process_validation import ValidationRequest
+    from workspace_service.process_validation.application import ValidationApplication
+
+    app = ValidationApplication(tmp_path / "state.db", "workspace", str(tmp_path))
+    profile = load_profile("structured-demo")
+    request = ValidationRequest(
+        trace_id="trace",
+        workspace_id="workspace",
+        invocation_id="missing-output",
+        subjects=(),
+        profile_ref=profile.reference(),
+        baseline_ref=profile.baseline.reference(),
+        idempotency_key="once",
+    )
+    result = app.service.evaluate(request, profile)
+    assert result.assessment and not result.release_eligible
+    assert all(f.code == "subject.role_missing" for f in result.assessment.findings)

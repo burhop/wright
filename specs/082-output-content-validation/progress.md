@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M0 foundations and M1 evaluator complete; process integration next.
-**Implementation:** T001–T009 complete. T010–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M1 backend integration complete; authoring integration and bounded correction next.
+**Implementation:** T001–T011 and T013 complete. T012 and T014–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Connect the canonical validator mode and tools (T010–T013), followed by the actual correction loop. Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
+Add validator configuration to the established authoring controls (T012), then implement the bounded correction loop (T014–T018). Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -62,3 +62,15 @@ Initial test-first core collection failed as expected before the new model exist
 - Ruff check and formatter passed on changed Python files. Updated contract schemas exported with `scripts/export_process_validation_schemas.py`.
 
 These checks establish evaluator behavior, not a running AI repair demonstration. Canonical runner/tool/UI integration and real demonstrations remain open.
+
+## M1 backend integration evidence — 2026-09-16
+
+- T010: closed `ValidatorConfiguration` / profile locations and exact input-role bindings compile as ordinary canonical tasks. Profile/baseline pins are checked before execution. Approval edges use existing ordering. Invalid/missing pins, unbound or duplicate subjects, collections, mixed MCP settings and unsafe policies are rejected. Grammar is in `contracts/process-source.md`.
+- T011: `ValidationApplication`, `ProcessValidationTool` (BaseTool), `ProcessValidationGatewayProvider` and packaged `wright-process-validate` CLI reuse the evaluator. Registered through the existing gateway capability-provider interface in API composition; no extra daemon or transport. Real GatewayService policy/schema/audit dispatch is exercised. A measured fail is returned data; invalid caller authority is a tool error.
+- T013: the canonical runner records exact completed producer outputs, executes the local validator without a model call, writes immutable assessment evidence before a held gate, and releases the consumer only after a current pass. Tests prove ordinary producer/check/consumer execution, missing capability, no-subject blocked evidence and direct/tool/read parity. Existing result roles/events and run-history projection are reused.
+- Raw inline response encoding preserves original UTF-8 bytes, so duplicate JSON members are visible to the reader instead of being lost during an adapter parse. Empty available-subject sets yield mandatory missing-role findings. Runner output registration is immutable and workspace/producer-attempt scoped; external callers cannot claim a canonical gate stream.
+- Core/repository/readers/tools/compiler/runner/design-check/run-history/resume suite: **181 passed** with `.venv/Scripts/python.exe -m pytest packages/core/tests/test_process_validation.py packages/data_vault/tests/test_process_validation_repository.py packages/workspace_service/tests/test_process_validation_subjects.py packages/workspace_service/tests/test_process_validation.py packages/workspace_service/tests/test_process_validation_tools.py packages/workspace_service/tests/test_workflow_process_validation.py packages/workspace_service/tests/test_workflow_source_execution.py packages/workspace_service/tests/test_workflow_design_check.py packages/workspace_service/tests/test_workflow_run_resume_record.py packages/workspace_service/tests/test_workflow_run_history.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-m1-1`.
+- Reviewed the required workflow integration runbook, recovered 080 north-star/plan and `image-redesign-delivery.json` before authoring edits. Preserve the existing canvas/inspector/source/command seam. Browser evidence for this feature remains T032.
+- API composition and authenticated MCP transport regression suite: **7 passed**, one existing Starlette/httpx deprecation warning, with `.venv/Scripts/python.exe -m pytest apps/api/tests/test_workspace_composition.py apps/api/tests/test_mcp_transport.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-api-m1-1`. Ruff passed; seven public contract schemas exported.
+
+Still open: authoring T012; bounded feedback/rework and real AI demonstration M2; readable exports/review routes M3; actual CAD/thermal readers and demonstrations M4; native/Docker/browser gates M5. Current backend tests do not establish these claims.

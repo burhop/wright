@@ -536,6 +536,10 @@ def build_api_gateway_service(
     )
     artifact_repository = WorkspaceArtifactRepository(db_path)
     document_artifacts = WorkspaceDocumentArtifactService(artifact_repository)
+    from workspace_service.process_validation.gateway import (
+        ProcessValidationGatewayProvider,
+    )
+
     gateway = GatewayService(
         workspaces=DatabaseGatewayWorkspace(repository),
         catalog=catalog,
@@ -551,6 +555,7 @@ def build_api_gateway_service(
         capability_providers=(
             EngineeringModelGatewayProvider(model_application),
             WorkspaceDocumentGatewayProvider(document_artifacts),
+            ProcessValidationGatewayProvider(db_path),
         ),
         operation_timeout=settings.operation_timeout_seconds,
         maximum_timeout=settings.maximum_timeout_seconds,

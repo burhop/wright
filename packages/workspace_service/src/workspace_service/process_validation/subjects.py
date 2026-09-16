@@ -52,7 +52,11 @@ class SubjectResolver:
                 action="refresh_subject",
             )
         if subject.kind == "value":
-            content = canonical_json(subject.value).encode("utf-8")
+            content = (
+                subject.value.encode("utf-8")
+                if subject.encoding == "raw-bytes"
+                else canonical_json(subject.value).encode("utf-8")
+            )
         elif subject.kind == "file":
             try:
                 content = self.store.read_artifact_bytes(

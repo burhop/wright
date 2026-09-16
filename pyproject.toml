@@ -63,6 +63,7 @@ Releases = "https://github.com/burhop/wright/releases"
 [project.scripts]
 wright = "wright_engineering.cli:main"
 wright-rivet-mcp = "workspace_service.rivet_mcp:main"
+wright-process-validate = "workspace_service.process_validation_cli:main"
 
 [tool.uv.sources]
 wright-engineering = { workspace = true }

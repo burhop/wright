@@ -296,7 +296,6 @@
         "$ref": "#/$defs/SubjectBinding"
       },
       "maxItems": 100,
-      "minItems": 1,
       "title": "Subjects",
       "type": "array"
     },

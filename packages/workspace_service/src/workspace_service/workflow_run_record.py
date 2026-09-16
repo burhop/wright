@@ -137,6 +137,9 @@ def _execution_snapshot(record, state):
         "status",
         "tool",
         "revision",
+        "assessment_id",
+        "assessment_path",
+        "release_eligible",
     )
 
     def invalidate(ids):

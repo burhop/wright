@@ -5,6 +5,8 @@ from pathlib import Path
 
 from core.process_validation import (
     Assessment,
+    AssessmentReference,
+    FindingPage,
     RepairFeedback,
     ReviewDecision,
     ValidationProfile,
@@ -18,6 +20,8 @@ def export(target: Path) -> None:
         ValidationRequest,
         ValidationProfile,
         Assessment,
+        AssessmentReference,
+        FindingPage,
         RepairFeedback,
         ReviewDecision,
     ):

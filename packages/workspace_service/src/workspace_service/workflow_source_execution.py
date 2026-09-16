@@ -134,6 +134,8 @@ class PromptStep:
     expected_file_ports: dict[str, str] = field(default_factory=dict)
     source_contract: str = ""
     reference_inline_max_bytes: int = 1_048_576
+    validation: dict | None = None
+    validation_sources: tuple[tuple[str, str], ...] = ()
 
 
 def _reference_prompt_context(
@@ -315,9 +317,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             ):
                 raise _invalid("A design-check path references a missing task.")
             settings = blocks[source_id]["fields"].get("settings", {})
-            if (
-                not isinstance(settings, dict)
-                or settings.get("design_check") is not True
+            if not isinstance(settings, dict) or (
+                settings.get("design_check") is not True
+                and settings.get("authoring_template") != "process-validator"
             ):
                 raise _invalid(
                     "Only an executable design check can release or revise this native run."
@@ -413,6 +415,11 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         settings = fields.get("settings", {})
         if not isinstance(settings, dict):
             raise _invalid(f"{title}: invalid settings.")
+        if settings.get("authoring_template") == "process-validator":
+            from .process_validation.configuration import compile_validator
+
+            steps.append(compile_validator(block_id, fields, incoming, blocks))
+            continue
         if settings.get("authoring_template") == "external-action-approval":
             action_kind = settings.get("action_kind")
 
@@ -1086,6 +1093,18 @@ async def prepare_prompt_workflow(
 
     paths = WorkspacePath(workspace_dir)
     for step in plan.steps:
+        if step.validation:
+            from .process_validation.configuration import ValidatorConfiguration
+
+            try:
+                ValidatorConfiguration.model_validate(step.validation).load(
+                    workspace_dir
+                )
+            except (OSError, ValueError) as exc:
+                raise _invalid(
+                    f"{step.title}: the pinned validation profile is unavailable or changed.",
+                    "Select and save a matching profile, baseline and subject roles before running.",
+                ) from exc
         if step.application:
             from .workflow_application_task import validate_application_connection
 
@@ -1277,13 +1296,21 @@ async def execute_prompt_workflow(
 
     run_id = run_id or uuid4().hex
     engineering_results = []
+    validation_application = None
+    if any(step.validation for step in plan.steps):
+        from .process_validation.process import application_for_workspace
+
+        validation_application = application_for_workspace(service, workspace_dir)
 
     async def emit(kind, **data):
         if on_event:
             await on_event(
                 {"kind": kind, "at": datetime.now(timezone.utc).isoformat(), **data}
             )
-            if kind == "output_saved" and data.get("artifact_role") == "diagnostic":
+            if kind == "output_saved" and data.get("artifact_role") in {
+                "diagnostic",
+                "verification",
+            }:
                 # The existing results panel consumes result_ready. Expose the
                 # verified report file there without adding it to execution
                 # results, accepted output ports, or downstream bindings.
@@ -1302,7 +1329,7 @@ async def execute_prompt_workflow(
                         "at": datetime.now(timezone.utc).isoformat(),
                         "task_id": data["task_id"],
                         "task_title": data["task_title"],
-                        "artifact_role": "diagnostic",
+                        "artifact_role": data["artifact_role"],
                         "engineering_result": diagnostic.to_dict(),
                     }
                 )
@@ -1492,7 +1519,30 @@ async def execute_prompt_workflow(
         if step.external_action:
             break  # The recorder seals an exact durable approval checkpoint below.
         check_report = None
-        if step.tool_name:
+        if step.validation:
+            from .process_validation.process import execute_validator
+
+            response, check_report, evidence = await execute_validator(
+                validation_application,
+                step,
+                records=records,
+                run_id=run_id,
+                revision=revision_counts.get(step.id, 0),
+                service=service,
+                workspace_dir=workspace_dir,
+                emit=emit,
+            )
+            record = {
+                "execution_kind": "validator",
+                "prompt": "",
+                "response": response,
+                "validation": check_report,
+                "produced_files": [evidence],
+            }
+            for key, _ in step.output_ports:
+                responses[f"{step.id}.{key}"] = response
+                artifacts_by_output[f"{step.id}.{key}"] = [evidence]
+        elif step.tool_name:
             if tool_runtime is None:
                 raise _invalid(f"{step.title}: MCP execution is unavailable.")
             tool_values = {
@@ -1964,6 +2014,10 @@ async def execute_prompt_workflow(
             output_path=None,
             output_bytes=0,
         )
+        if validation_application:
+            record["producer_attempt"] = 1 + sum(
+                1 for item in attempts if item["task_id"] == step.id
+            )
         records.append(record)
         if not step.cad and not step.application:
             # The response remains usable downstream without a file. Saved files
@@ -1981,7 +2035,20 @@ async def execute_prompt_workflow(
                         ),
                     ),
                     Provenance(run_id, step.id, key),
+                    artifact_role="verification" if step.validation else "deliverable",
                 )
+            )
+        if validation_application:
+            from .process_validation.process import register_outputs
+
+            register_outputs(
+                validation_application,
+                step,
+                record,
+                run_id,
+                responses,
+                artifacts_by_output,
+                engineering_results,
             )
         await emit(
             "step_completed",
@@ -1996,6 +2063,12 @@ async def execute_prompt_workflow(
         if step.save and step.file_policy == "indexed":
             await save_response(step, record)
         if check_report and check_report["verdict"] != "pass":
+            if check_report["verdict"] == "error":
+                raise _error(
+                    "PROCESS_VALIDATION_ERROR",
+                    f"{step.title}: validation could not complete because a reader or evaluator failed.",
+                    "Inspect the saved assessment and restore the validator before retrying the producer.",
+                )
             if check_report["verdict"] == "needs_input":
                 raise _error(
                     "DESIGN_CHECK_NEEDS_INPUT",
