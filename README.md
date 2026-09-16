@@ -60,6 +60,9 @@ engineering toolchains still require explicit configuration.
 ## What Works Today
 
 - Agent orchestration surfaces for engineering workflows.
+- Ten versioned engineering workflow templates that create editable workspace
+  workflows with recorded origins, readiness disclosures, and durable approval
+  checkpoints.
 - MCP tool registry metadata and selected-server validation paths.
 - Deterministic CAD, CAE, CAM, and calculation tool actuation through adapters.
 - Docker appliance for the Wright API, static web UI, Hermes profile/bootstrap,

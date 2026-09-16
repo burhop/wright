@@ -1,0 +1,12 @@
+quantity,value,unit,status
+water_mass,0.350,kg,supplied_assumption
+water_heat_capacity,4180,J_per_kg_K,supplied_assumption
+vessel_heat_capacity,90,J_per_K,supplied_assumption
+initial_temperature,20,degC,requirement
+target_temperature,90,degC,requirement
+ambient_temperature,20,degC,assumption
+linear_loss_coefficient,0.60,W_per_K,assumption
+electrical_to_thermal_efficiency,0.92,dimensionless,assumption
+heat_up_limit,180,s,requirement
+requested_stop_time,300,s,requested_kit_setting
+requested_output_interval,1,s,requested_kit_setting

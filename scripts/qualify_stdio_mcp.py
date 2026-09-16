@@ -129,6 +129,9 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--safe-arguments-json", default="{}")
     parser.add_argument("--expected-tool-count", type=int)
     parser.add_argument("--container-image", required=True)
+    parser.add_argument("--environment", default="clean-wright-container")
+    parser.add_argument("--platform", default="linux_x64")
+    parser.add_argument("--workspace", default="/tmp/wright-mcp-qualification")
     parser.add_argument("--package-integrity")
     parser.add_argument("--browser-url")
     parser.add_argument("--browser-wait-seconds", type=float, default=8.0)
@@ -153,8 +156,8 @@ async def _run(args: argparse.Namespace) -> dict[str, Any]:
         raise ValueError("--env-json must be a JSON string map")
 
     started = time.time()
-    workspace = Path("/tmp/wright-mcp-qualification")
-    workspace.mkdir(exist_ok=True)
+    workspace = Path(args.workspace)
+    workspace.mkdir(parents=True, exist_ok=True)
     now = int(time.time())
     server = McpServer(
         server_id=args.server_id,
@@ -273,8 +276,8 @@ async def _run(args: argparse.Namespace) -> dict[str, Any]:
             "observed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(started)),
             "finished_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "duration_seconds": round(time.time() - started, 3),
-            "environment": "clean-wright-container",
-            "platform": "linux_x64",
+            "environment": args.environment,
+            "platform": args.platform,
             "source_url": args.source_url,
             "source_revision": args.source_revision,
             "container_image": args.container_image,

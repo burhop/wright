@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "template_id": "heat-spreader-sizing",
+  "expected_outputs": [
+    {
+      "role": "plate_geometry",
+      "patterns": [
+        "**/*.step",
+        "**/*.stp"
+      ]
+    },
+    {
+      "role": "temperature_field",
+      "patterns": [
+        "**/*.vtu",
+        "**/*.vtk",
+        "**/*temperature*.csv",
+        "**/*temperature*.json",
+        "**/*field*.json"
+      ]
+    },
+    {
+      "role": "heat_balance",
+      "patterns": [
+        "**/*balance*.json",
+        "**/*balance*.csv"
+      ]
+    },
+    {
+      "role": "sizing_decision",
+      "patterns": [
+        "**/*decision*.json",
+        "**/*sizing*.json",
+        "**/*comparison*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "All users, businesses, heat loads, material constants, cooling conditions, and operating constraints are invented engineering test inputs. Original SVGs label input boundaries and are not solver results. Supplied constants are not manufacturer certifications. Actual workflow fields must be produced by the solver."
+  },
+  "input_bindings": {},
+  "scenario_id": "heat-spreader-sizing-03",
+  "title": "Copper heat link with an explicitly modeled contact resistance",
+  "summary": "A calibration-fixture team supplies width alternatives, a bounded interface resistance, and a mass objective for a copper conduction plate.",
+  "difficulty": "advanced",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "alternatives.csv",
+      "boundary-conditions.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  }
+}

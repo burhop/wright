@@ -1,0 +1,7 @@
+hole_id,x_mm,y_mm,z_surface_mm,drill_diameter_mm,workpiece_thickness_mm,center_tolerance_mm,bushing_id
+H1,50.000,0.000,0,6.6,10,0.10,B66R
+H2,25.000,43.301,0,6.6,10,0.10,B66R
+H3,-25.000,43.301,0,6.6,10,0.10,B66R
+H4,-50.000,0.000,0,6.6,10,0.10,B66R
+H5,-25.000,-43.301,0,6.6,10,0.10,B66R
+H6,25.000,-43.301,0,6.6,10,0.10,B66R

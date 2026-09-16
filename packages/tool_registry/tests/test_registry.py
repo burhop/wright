@@ -253,6 +253,29 @@ async def test_stdio_runner_uses_configured_operation_timeout(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_stdio_runner_uses_configured_startup_timeout(tmp_path) -> None:
+    server = tmp_path / "slow_initialize.py"
+    server.write_text(
+        "import json, sys, time\n"
+        "request = json.loads(sys.stdin.readline())\n"
+        "time.sleep(0.05)\n"
+        "print(json.dumps({'jsonrpc': '2.0', 'id': request['id'], "
+        "'result': {'protocolVersion': '2025-03-26', 'capabilities': {}, "
+        "'serverInfo': {'name': 'slow', 'version': '1'}}}), flush=True)\n",
+        encoding="utf-8",
+    )
+    runner = StdioRunner(
+        [sys.executable, str(server)],
+        startup_timeout=0.01,
+    )
+
+    with pytest.raises(RuntimeError, match=r"within 0\.01 seconds"):
+        await runner.start()
+
+    assert runner.is_running() is False
+
+
+@pytest.mark.asyncio
 async def test_mcp_engine(temp_db_path):
     mock_server_path = os.path.join(os.path.dirname(__file__), "mock_server.py")
     server_id = str(uuid.uuid4())

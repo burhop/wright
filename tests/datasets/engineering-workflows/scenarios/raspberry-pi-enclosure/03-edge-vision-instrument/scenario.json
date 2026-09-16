@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "template_id": "raspberry-pi-enclosure",
+  "expected_outputs": [
+    {
+      "role": "sourced_design_document",
+      "patterns": [
+        "**/*design*.md",
+        "**/*basis*.md"
+      ]
+    },
+    {
+      "role": "enclosure_cad",
+      "patterns": [
+        "**/*enclosure*.step",
+        "**/*enclosure*.stp"
+      ]
+    },
+    {
+      "role": "fluid_domain",
+      "patterns": [
+        "**/*domain*.step",
+        "**/*domain*.stp"
+      ]
+    },
+    {
+      "role": "cfd_comparison",
+      "patterns": [
+        "**/*comparison*.json",
+        "**/*cfd*.json"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "title": "Raspberry Pi 5 product and official documentation entry point",
+      "url": "https://www.raspberrypi.com/products/raspberry-pi-5/",
+      "kind": "manufacturer",
+      "verification": "not_retrieved"
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "People, organizations, heat loads, usage figures, concepts, and dimensions supplied by the customer are fictional. Manufacturer geometry is deliberately not represented as verified; the workflow must retrieve and attribute its primary evidence. No thermal field is provided as an expected answer."
+  },
+  "input_bindings": {},
+  "scenario_id": "raspberry-pi-enclosure-03",
+  "title": "Serviceable edge-vision computer with a constrained fan path",
+  "summary": "An automation integrator needs a low-profile Pi enclosure with separated cable service zones and two controlled airflow layouts for an assumed blower.",
+  "difficulty": "advanced",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "thermal-loads.csv",
+      "fan-curve.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  }
+}

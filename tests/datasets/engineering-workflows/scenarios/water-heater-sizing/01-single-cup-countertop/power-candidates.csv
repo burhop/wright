@@ -1,0 +1,4 @@
+case_id,electrical_power_W,selection_rule
+P350,350,lowest_power_that_meets_time
+P500,500,lowest_power_that_meets_time
+P700,700,lowest_power_that_meets_time

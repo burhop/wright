@@ -1,0 +1,8 @@
+# Bounded local campaign repair layered over the already qualified image.
+# The Wright base image and host remain unchanged.
+FROM wright:kicad-campaign-qualified-base-20260912
+USER root
+COPY repair_schematic_loaded_pins.py /opt/repair_schematic_loaded_pins.py
+RUN /opt/kicad-mcp/.venv/bin/python /opt/repair_schematic_loaded_pins.py /opt/kicad-mcp
+USER agent
+ENTRYPOINT ["/opt/kicad-mcp/.venv/bin/python", "/opt/wright-kicad/server.py"]

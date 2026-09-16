@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "source_contract_inspection",
+  "repository": "https://github.com/Casys-AI/mcp-modelica",
+  "commit": "62e26009a566d15b625493b0c3510bdd14b01c3b",
+  "package_version": "0.6.5",
+  "selected_model": "coffee-machine-v1",
+  "model_version": "0.1.0",
+  "scenario": {
+    "id": "heat-up-nominal",
+    "description": "Cold start at room temperature; measure warm-up, thermostat behaviour and energy.",
+    "start_time_s": 0,
+    "stop_time_s": 900,
+    "number_of_intervals": 900,
+    "solver": "dassl",
+    "target_temperature": {
+      "value": 90,
+      "unit": "degC"
+    }
+  },
+  "parameters": {
+    "initial_water_temperature": {
+      "unit": "degC",
+      "default": 20.0,
+      "minimum": 0.0,
+      "maximum": 45.0
+    },
+    "ambient_temperature": {
+      "unit": "degC",
+      "default": 20.0,
+      "minimum": -10.0,
+      "maximum": 50.0
+    },
+    "heater_power": {
+      "unit": "W",
+      "default": 1500.0,
+      "minimum": 500.0,
+      "maximum": 3000.0
+    },
+    "water_mass": {
+      "unit": "kg",
+      "default": 0.5,
+      "minimum": 0.1,
+      "maximum": 3.0
+    },
+    "boiler_heat_capacity": {
+      "unit": "J/K",
+      "default": 500.0,
+      "minimum": 100.0,
+      "maximum": 5000.0
+    },
+    "heat_loss_conductance": {
+      "unit": "W/K",
+      "default": 5.0,
+      "minimum": 0.1,
+      "maximum": 50.0
+    },
+    "setpoint_temperature": {
+      "unit": "degC",
+      "default": 93.0,
+      "minimum": 70.0,
+      "maximum": 110.0
+    },
+    "hysteresis": {
+      "unit": "K",
+      "default": 2.0,
+      "minimum": 0.1,
+      "maximum": 20.0
+    }
+  },
+  "snapshots": [
+    {
+      "path": "LICENSE",
+      "sha256": "39e2b3113a59350029abc4bcbad9e17e0b6c32efcd01a343fa7e72be58a3421a",
+      "bytes": 1086,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/LICENSE"
+    },
+    {
+      "path": "deno.json",
+      "sha256": "cf7b14c83003dd03a93015db40f7351c2404f96ff789f44f514983b759e0b173",
+      "bytes": 3331,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/deno.json"
+    },
+    {
+      "path": "src/kits/coffee-machine.ts",
+      "sha256": "ab6ce6e54a1400ba7c9beac077082cfe657d540706e60d48820cdd637587d305",
+      "bytes": 7581,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/src/kits/coffee-machine.ts"
+    },
+    {
+      "path": "src/tools/kit-input-schemas.ts",
+      "sha256": "4b950511aa86db8be1c8ce4b0b674c7bd6e4b02600547ffade6c5d813854dce7",
+      "bytes": 8337,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/src/tools/kit-input-schemas.ts"
+    },
+    {
+      "path": "models/CoffeeMachine.mo",
+      "sha256": "8104d939ba355dd97d700616db76b90cf44111fb6427e9d3eae14b721d4b79fc",
+      "bytes": 2633,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/models/CoffeeMachine.mo"
+    },
+    {
+      "path": "scenarios/heat-up-nominal.json",
+      "sha256": "9bbd9eaaf751cc237d5d7e3f9c5d975aa8723799987f4f2a517d6f28927b5472",
+      "bytes": 305,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/scenarios/heat-up-nominal.json"
+    },
+    {
+      "path": "docs/provider-and-runtime.md",
+      "sha256": "37ddbdba7985faaab3e74c40c5babc45afaee72dba5bf7a25841011565f3c712",
+      "bytes": 5215,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/docs/provider-and-runtime.md"
+    },
+    {
+      "path": "docs/contracts-and-evidence.md",
+      "sha256": "d328556aa0f4488d0d34f00925b576fd8c8f28a1d7d68c724352ac9b6475c9df",
+      "bytes": 7880,
+      "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/62e26009a566d15b625493b0c3510bdd14b01c3b/docs/contracts-and-evidence.md"
+    }
+  ],
+  "cases": [
+    {
+      "dataset_directory": "01-single-cup-countertop",
+      "compatible": false,
+      "gaps": [
+        {
+          "code": "timestep_override_unavailable",
+          "detail": "The approved scenario fixes stop time and output intervals; the public closed schema has no solver step/tolerance override for required tighter-timestep verification.",
+          "requested_stop_time_s": 300.0,
+          "approved_stop_time_s": 900,
+          "approved_intervals": 900
+        },
+        {
+          "code": "efficiency_not_exposed",
+          "requested_efficiency": 0.92,
+          "detail": "Kit heater power drives an ideal thermal source directly; no independent electrical efficiency parameter is exposed. A reviewed input/output conversion would be needed before calling energy electrical."
+        },
+        {
+          "code": "power_out_of_bounds",
+          "requested_W": [
+            350.0
+          ],
+          "minimum_W": 500.0,
+          "maximum_W": 3000.0
+        },
+        {
+          "code": "vessel_capacity_out_of_bounds",
+          "requested_J_per_K": 90.0,
+          "bounds": {
+            "unit": "J/K",
+            "default": 500.0,
+            "minimum": 100.0,
+            "maximum": 5000.0
+          }
+        }
+      ]
+    },
+    {
+      "dataset_directory": "02-mobile-field-brewer",
+      "compatible": false,
+      "gaps": [
+        {
+          "code": "timestep_override_unavailable",
+          "detail": "The approved scenario fixes stop time and output intervals; the public closed schema has no solver step/tolerance override for required tighter-timestep verification.",
+          "requested_stop_time_s": 600.0,
+          "approved_stop_time_s": 900,
+          "approved_intervals": 900
+        },
+        {
+          "code": "efficiency_not_exposed",
+          "requested_efficiency": 0.93,
+          "detail": "Kit heater power drives an ideal thermal source directly; no independent electrical efficiency parameter is exposed. A reviewed input/output conversion would be needed before calling energy electrical."
+        },
+        {
+          "code": "power_out_of_bounds",
+          "requested_W": [
+            400.0
+          ],
+          "minimum_W": 500.0,
+          "maximum_W": 3000.0
+        }
+      ]
+    },
+    {
+      "dataset_directory": "03-pilot-batch-dispensing",
+      "compatible": false,
+      "gaps": [
+        {
+          "code": "timestep_override_unavailable",
+          "detail": "The approved scenario fixes stop time and output intervals; the public closed schema has no solver step/tolerance override for required tighter-timestep verification.",
+          "requested_stop_time_s": 700.0,
+          "approved_stop_time_s": 900,
+          "approved_intervals": 900
+        },
+        {
+          "code": "efficiency_not_exposed",
+          "requested_efficiency": 0.94,
+          "detail": "Kit heater power drives an ideal thermal source directly; no independent electrical efficiency parameter is exposed. A reviewed input/output conversion would be needed before calling energy electrical."
+        }
+      ]
+    }
+  ],
+  "simulation_executed": false,
+  "canonical_workflow_dispatched": false,
+  "full_clean_container_qualification": false
+}

@@ -1,0 +1,7 @@
+{
+  "$schema": "../../schemas/native-candidate-review.schema.json", "schema_version": "1.0", "feature_id": "EPP-N01", "review_type": "independent_technical", "review_scope": "entire_candidate",
+  "candidate_commit": "5f1f7c00250b8ef1ffb0cce5710e421a60d866fc", "candidate_tree": "85bf4682c292c145c19b26be5d970cec45005406",
+  "task_ids": ["T001", "T002", "T003", "T004", "T005", "T006", "T007", "T008", "T009", "T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T020", "T021", "T022", "T023", "T024", "T025", "T026", "T027", "T029", "T030"],
+  "reviewer_identity": "/root/epp_n01_independent_review", "implementation_authors": ["Test User <test@example.com>", "/root"], "reviewed_at": "2026-09-15T17:34:00Z", "result": "passed", "open_actionable_findings": 0, "human_study_evidence": false,
+  "evidence": "Immediate read-only delta review passed with no actionable finding. Exact candidate 5f1f7c00250b8ef1ffb0cce5710e421a60d866fc changes exactly the two test files named by Ruff. git diff --ignore-all-space returned zero; assertions, fixtures, values, control flow and semantics are unchanged. The prior full technical PASS therefore remains valid. Per user instruction, no tests or broad checks were rerun for this formatting-only review. This does not establish integration-gate, CI, deployment, human-study, content-validation or whole-feature completion."
+}

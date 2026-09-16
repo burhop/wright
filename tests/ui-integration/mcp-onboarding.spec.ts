@@ -328,30 +328,35 @@ test.describe("Guided MCP onboarding", () => {
     for (const journey of journeys) {
       await page.goto("/tool-registry");
       await page.getByRole("button", { name: "Add custom MCP server" }).click();
-      await page.getByLabel("Source").selectOption(journey.source);
+      const dialog = page.getByRole("dialog", {
+        name: "Add custom MCP server",
+      });
+      await dialog
+        .getByTestId("onboarding-source-kind")
+        .selectOption(journey.source);
       if ("capability" in journey) {
-        await page.getByLabel("MCP server ID").fill(journey.capability);
+        await dialog.getByLabel("MCP server ID").fill(journey.capability);
       } else if (journey.source === "import") {
-        await page
+        await dialog
           .getByLabel("MCP configuration JSON")
           .fill('{"name":"safe","command":"python","args":["server.py"]}');
       } else {
-        await page
+        await dialog
           .getByLabel("HTTPS MCP endpoint")
           .fill("https://example.invalid/mcp");
       }
 
-      await page.getByRole("button", { name: "Review install plan" }).click();
-      await expect(page.getByTestId("onboarding-plan-review")).toContainText(
+      await dialog.getByRole("button", { name: "Review install plan" }).click();
+      await expect(dialog.getByTestId("onboarding-plan-review")).toContainText(
         journey.connection,
       );
-      await page
+      await dialog
         .getByRole("button", { name: "Continue to installation" })
         .click();
-      await expect(page.getByText("Credential boundary")).toBeVisible();
-      await page.getByRole("button", { name: "Install MCP server" }).click();
-      await expect(page.getByText("Onboarding completed")).toBeVisible();
-      await page.getByRole("button", { name: "Done" }).click();
+      await expect(dialog.getByText("Credential boundary")).toBeVisible();
+      await dialog.getByRole("button", { name: "Install MCP server" }).click();
+      await expect(dialog.getByText("Onboarding completed")).toBeVisible();
+      await dialog.getByRole("button", { name: "Done" }).click();
     }
   });
 

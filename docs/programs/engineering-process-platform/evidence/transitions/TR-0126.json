@@ -1,0 +1,107 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0126",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "DEV_INTEGRATED",
+  "to_state": "BLOCKED",
+  "prior_revision": 126,
+  "new_revision": 127,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "5c051eacee85b01e3ba96d600514a84cb2711a592148e243042d56cbbb3651c6",
+  "new_state_digest": "b92a3c6246ee8b632f3c554d73809920ec1624ae236dae02aa695f39eb54c3b5",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex repository reconciliation coordinator"
+  },
+  "action": "Block EPP-N01 rather than rewrite its reviewed baseline. PR125 changed protected native paths after PR121 integration and merged without review while four checks were failing. Retain the historical checkpoint and require a new exact candidate, full gates and independent review. The separate feature-081 candidate f64bfb92 receives no approval from this transition.",
+  "started_at": "2026-09-15T11:52:06.0863780Z",
+  "finished_at": "2026-09-15T11:52:06.0863780Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "f64bfb92b6e53359a6695d7a79994940fe5d15cb",
+    "source_tree": "3ee1082ce52cb0db7a0c62804520a6331bc8b2b0",
+    "source_program_tree": "9674c0b0adb8a10bc3130568b9429f3dd7c750bf",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": false,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0127.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0126.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0126.json",
+      "sha256": "bb2b7dab8efa659fdad8bc1e02596e658a52910062e9b157a984f10a74129618",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0127.json",
+      "sha256": "e2b24e8a2b116860a2758d723a0a511ec41dafd7d3dc1da3bdcc5e69e5732352",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-POST-INTEGRATION-INVALIDATION",
+      "method": "Compare the retained EPP-N01 delivery scope with commits after the recorded PR121 dev baseline, then inspect PR125 review and terminal check metadata. Twenty-nine paths overlapped before permitted governance metadata was excluded; PR125 had no reviews and four failed checks.",
+      "environment": "Committed Git history and read-only GitHub PR metadata",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "baseline:211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
+        "candidate:28efd6ccdc4a9e7900a4e50f9f323fd0865b9211",
+        "merge:422ec0ab15c7fdc5cf14551ae74c449c4fde1944",
+        "https://github.com/burhop/wright/pull/125",
+        "failed:leak-scan,python-quality,Backend Tests (Windows),Playwright E2E"
+      ]
+    },
+    {
+      "check_id": "BLOCKED-CHECKPOINT-RETENTION",
+      "method": "Require DEV_INTEGRATED to continue rejecting post-review implementation changes while allowing BLOCKED to preserve the invalidated independently reviewed checkpoint as historical evidence.",
+      "environment": "Focused program-control pytest fixture",
+      "duration_ms": 48780,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "tests/program_control_plane/test_native_scoped_delivery.py",
+        "41 passed"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "No new independent verdict is claimed. The prior exact-candidate review remains historical, and a fresh independent review is required before any successor integration claim.",
+  "repair": {
+    "stable_cause_id": "EPP-N01-POST-INTEGRATION-INVALIDATION-PR125",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "PR125 changed reviewed native paths after the recorded dev integration and merged with no review while four checks were failing.",
+    "Feature-081 candidate f64bfb92 requires exact full gates and review; this transition does not approve it.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01 and no deployment or whole-milestone acceptance is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0126.json",
+  "next_action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE"
+}

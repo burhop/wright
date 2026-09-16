@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/native-candidate-review.schema.json",
+  "schema_version": "1.0",
+  "feature_id": "EPP-N01",
+  "review_type": "independent_technical",
+  "review_scope": "entire_candidate",
+  "candidate_commit": "991d9fdeba64943f9fcb380094c001576346344d",
+  "candidate_tree": "cfb4ea1cdabfceb3eb818c3b9167591f41308297",
+  "task_ids": ["T001", "T002", "T003", "T004", "T005", "T006", "T007", "T008", "T009", "T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T020", "T021", "T022", "T023", "T024", "T025", "T026", "T027", "T029", "T030"],
+  "reviewer_identity": "/root/epp_n01_independent_review",
+  "implementation_authors": ["Test User <test@example.com>", "/root"],
+  "reviewed_at": "2026-09-15T17:11:00Z",
+  "result": "passed",
+  "open_actionable_findings": 0,
+  "human_study_evidence": false,
+  "evidence": "Independent review covered exact candidate 991d9fdeba64943f9fcb380094c001576346344d and tree cfb4ea1cdabfceb3eb818c3b9167591f41308297 against origin/dev. The reviewer verified the nine explicit Debian package installs, full-clone linked-worktree normalization with nonzero-history enforcement, and two AND-scoped historical Gitleaks exclusions bound to exact commit, path, rule and anchored match shape. Reruns passed 7 security-scanner tests and git diff --check. Retained author evidence binds six negative contexts with six findings, a 1,221-commit linked-worktree scan with zero findings, and the digest-pinned image scan with zero blocking findings. No actionable technical finding remained. This review does not establish push/full-gate or CI clearance, human study, content validation, deployment, or whole-feature completion."
+}

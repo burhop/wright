@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "scenario_id": "sensor-fan-harness-02",
+  "template_id": "sensor-fan-harness",
+  "title": "Growth-rack long-branch ventilation harness",
+  "summary": "Select conductor sizes for two remote 24 V fans and a humidity transmitter with shared-trunk startup drop.",
+  "difficulty": "intermediate",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "allowed-wire.csv",
+      "wiring-schedule.csv",
+      "connector-requirements.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  },
+  "expected_outputs": [
+    {
+      "role": "harness_plan",
+      "patterns": [
+        "**/*harness*plan*.svg",
+        "**/*harness*plan*.pdf",
+        "**/*harness*plan*.json"
+      ]
+    },
+    {
+      "role": "pin_schedule",
+      "patterns": [
+        "**/*pin*schedule*.csv"
+      ]
+    },
+    {
+      "role": "wire_cut_list",
+      "patterns": [
+        "**/*cut*list*.csv"
+      ]
+    },
+    {
+      "role": "bill_of_materials",
+      "patterns": [
+        "**/*bom*.csv"
+      ]
+    },
+    {
+      "role": "assembly_instructions",
+      "patterns": [
+        "**/*assembly*.md",
+        "**/*assembly*.pdf"
+      ]
+    },
+    {
+      "role": "voltage_drop_report",
+      "patterns": [
+        "**/*voltage*drop*.csv",
+        "**/*voltage*drop*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "Original fictional people, companies, sketches, wiring schedules and customer design constraints. Ratings listed here are requirements or calculation assumptions; exact manufacturer evidence is still required."
+  },
+  "input_bindings": {}
+}

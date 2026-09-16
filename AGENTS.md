@@ -1,7 +1,12 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/079-wright-native-authoring/plan.md
+at specs/081-engineering-workflow-templates/plan.md
+
+Deferred output-content validation is planned in
+specs/081-engineering-workflow-templates/content-validation/plan.md, with the
+future-agent handoff in specs/081-engineering-workflow-templates/content-validation/quickstart.md.
+Do not activate it until the user assigns it and its all-30-output G0 gate passes.
 <!-- SPECKIT END -->
 
 Before changing the workflow/process editor or its workspace entry point, read

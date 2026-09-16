@@ -1,0 +1,75 @@
+{
+  "name": "@casys/mcp-modelica",
+  "version": "0.6.5",
+  "license": "MIT",
+  "exports": {
+    ".": "./mod.ts",
+    "./server": "./server.ts",
+    "./view-app-manifest": "./src/ui/view-app-manifest.json"
+  },
+  "publish": {
+    "include": [
+      "mod.ts",
+      "server.ts",
+      "src/**/*.ts",
+      "src/ui/view-app-manifest.json",
+      "src/ui/dist/**/*.html",
+      "docs/**/*.md",
+      "docs/**/*.png",
+      "models/**/*.mo",
+      "models/**/*.json",
+      "scenarios/**/*.json",
+      "README.md",
+      "CHANGELOG.md",
+      "CITATION.cff",
+      "SECURITY.md",
+      "LICENSE",
+      "Dockerfile"
+    ],
+    "exclude": [
+      "tests/",
+      "**/*_test.ts",
+      "**/*.test.ts"
+    ]
+  },
+  "minimumDependencyAge": {
+    "age": "P1D",
+    "exclude": ["jsr:@casys/mcp-server", "jsr:@casys/mcp-view-contracts"]
+  },
+  "tasks": {
+    "serve": "deno run --allow-read=models,scenarios,src,mcp-server.yaml --allow-write=runs --allow-run --allow-env --allow-net=127.0.0.1:3016 server.ts --port=3016",
+    "serve:stdio": "deno run --allow-read=models,scenarios,src,runs,mcp-server.yaml --allow-write=runs --allow-run=omc,perl --allow-env=MODELICA_RUN_DIR,OPENMODELICALIBRARY server.ts --stdio",
+    "test": "deno test --allow-read --allow-write --allow-run --allow-env --allow-net=127.0.0.1 tests/ src/ui/results-viewer/src/model_test.ts",
+    "build:ui": "deno run --allow-read --allow-write --allow-run --allow-env --allow-net src/ui/results-viewer/build.ts",
+    "capture:docs": "deno run -A scripts/capture-mcs01-viewer.ts",
+    "test:omc": "RUN_OMC_INTEGRATION=1 deno test --allow-read --allow-write --allow-run --allow-env tests/omc_integration_test.ts tests/stdio_e2e_test.ts",
+    "model-schema:generate": "deno run --allow-read=models --allow-write=models --allow-run=omc scripts/derive-modelica-parameter-schema.ts",
+    "model-schema:check": "deno run --allow-read=models --allow-run=omc scripts/derive-modelica-parameter-schema.ts --check",
+    "kit-assets:generate": "deno run --allow-read=models,scenarios --allow-write=src/kits/generated-kit-assets.ts scripts/generate-kit-assets.ts",
+    "kit-assets:check": "deno run --allow-read=models,scenarios,src/kits/generated-kit-assets.ts scripts/generate-kit-assets.ts --check",
+    "verify:published": "deno run --allow-net --allow-env --allow-read scripts/verify-published-release.ts",
+    "check": "deno task kit-assets:check && deno check mod.ts server.ts scripts/capture-mcs01-viewer.ts scripts/derive-modelica-parameter-schema.ts scripts/generate-kit-assets.ts scripts/verify-published-release.ts",
+    "fmt": "deno fmt --check deno.json mod.ts server.ts src tests scripts models/CoffeeMachine.parameters.json",
+    "lint": "deno lint mod.ts server.ts src tests scripts"
+  },
+  "imports": {
+    "@casys/mcp-server": "jsr:@casys/mcp-server@0.26.1",
+    "@casys/mcp-view-contracts": "jsr:@casys/mcp-view-contracts@0.1.0",
+    "@std/assert": "jsr:@std/assert@^1.0.14",
+    "@std/path": "jsr:@std/path@^1.1.0"
+  },
+  "fmt": {
+    "exclude": ["src/ui/dist", "src/kits/generated-kit-assets.ts"],
+    "lineWidth": 100,
+    "semiColons": true,
+    "singleQuote": false
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "compilerOptions": {
+    "strict": true
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "status": "passed_production_transport_gateway_pipeline",
+  "scope": "Selected local companion production transport and real independent CAD-derived prerequisite execution. Not complete public catalog or Pi campaign qualification.",
+  "image_digest": "sha256:7a18a458e0d8e38e165b0126525b4fdf8337ff6a80f223b13ea9c47d0a1ac7cb",
+  "container": "wright-081-pi-runtime",
+  "added_selected_dependencies": {
+    "gmsh": "4.15.1",
+    "pypdf": "6.9.1"
+  },
+  "base_image_modified": false,
+  "tools": {
+    "4592ee69-a60c-4601-8674-8619083dc7ba": [
+      "retrieve_pi_manufacturer_references",
+      "read_pi_reference_page"
+    ],
+    "d044179a-bf3d-4086-b7c4-b00e8fd97f71": [
+      "prepare_pi_cfd_comparison",
+      "collect_pi_cfd_comparison"
+    ]
+  },
+  "actual_exercised": [
+    "Native GatewayService discovery and bounded primary PDF retrieval/page reads",
+    "OCC STEP import, conformal Gmsh tetrahedral mesh, gmshToFoam, splitMeshRegions, checkMesh",
+    "Native Foam-Agent HTTP run dispatching actual OpenFOAM10 chtMultiRegionFoam for passive and tabulated-fan prerequisites",
+    "Real computed VTK field and hash collection, temperature and boundary pressure/flow extraction, two-variant field archive"
+  ],
+  "source_sha256": {
+    "scripts/pi_reference_mcp.py": "d30ce5eaeb807529b487d0c7102a32cb2d940cc96e023bd47a72a86bcf155999",
+    "scripts/pi_cfd_operations.py": "0ddd044c994f5d2dc0b2333a7512dc2711da10b37892b1734c45745c25f61cfa",
+    "scripts/pi_cfd_mcp.py": "775fc83215c4bb827d432dcdd7806790594c05bd5baed9ebb822def2f57aa045",
+    "scripts/pi_foam_boundary/wrightPrghFanPressure.C": "e2265a7c7be859b72e74e923a95207a3d8da237712ff60984c06c33fb95ec184"
+  },
+  "raw_evidence": ".local-run/feature-081-live/pi-fixed-production-gateway.json",
+  "raw_evidence_sha256": "2007b9ef4c75fc162b9e7c85e536b9a383fcfddf99d31981d91a32c165953091",
+  "completed_solver_replay": {
+    "status": "passed",
+    "actual_completed_cases": 2,
+    "native_solver_calls": 0,
+    "all_recorded_file_mtimes_unchanged": true
+  },
+  "focused_tests": {
+    "passed": 20,
+    "failed": 0
+  },
+  "ruff": "passed",
+  "engineering_validation_complete": false,
+  "steady_state_convergence_claimed": false,
+  "campaign_credit": 0,
+  "content_validity_credit": 0,
+  "limitations": [
+    "Independent tiny prerequisite geometry is not customer Pi enclosure geometry.",
+    "Laminar ideal-gas air, explicitly prescribed ambient exterior temperatures and pressure-boundary fan model require accepted design assumptions.",
+    "Full Pi workflow retains actual AgentCAD geometry and sourced design review; no full Pi campaign run is claimed.",
+    "Native source-bound operations and generated fields are evidence of execution only, not engineering correctness."
+  ]
+}

@@ -412,12 +412,13 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     const htmlTab = page.locator('[data-testid="editor-tab-/sandbox.html"]');
     await expect(htmlTab).toBeVisible();
 
-    // Verify iframe sandbox inside the viewer-container
+    // Workspace HTML is rendered inline so the preview never navigates to an
+    // API response envelope or exposes its session identity in a URL.
     const iframeSandbox = page.locator('[data-testid="iframe-sandbox"]');
     await expect(iframeSandbox).toBeVisible();
-    const src = await iframeSandbox.getAttribute("src");
-    expect(src).toContain("path=%2Fsandbox.html");
-    expect(src).toContain("session_id=session-1");
+    await expect(iframeSandbox).not.toHaveAttribute("src", /.+/);
+    const srcdoc = await iframeSandbox.getAttribute("srcdoc");
+    expect(srcdoc).toContain("Hello HTML Sandbox");
   });
 
   test("should show fix button on error output and trigger agent chat on click", async ({

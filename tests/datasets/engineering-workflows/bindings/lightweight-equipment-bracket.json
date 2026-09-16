@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "template_id": "lightweight-equipment-bracket",
+  "status": "prerequisites_probed_full_graph_not_dispatched",
+  "selected_geometry": "Available AgentCAD0.6.0 build123d replaces unavailable BREP; actual measured baseline/revised single-volume STEP required",
+  "selected_solver": "Casys CalculiX0.8.6 f92ac31e4a2a35f023522946b7aa81bac1ce4808",
+  "image": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+  "solver_server_id": "91ae7c8e-9b16-45fb-ae96-b08bee1e0d02",
+  "field_server_id": "ef468fc1-cf00-4551-8cc7-0425b8d7052d",
+  "actual_solver_tools": ["calculix_mesh_preflight", "calculix_solve_static_recorded", "calculix_run_get"],
+  "field_tool": "export_recorded_fields_and_reactions",
+  "field_operation_source": "scripts/engineering/calculix_recorded_fields.py",
+  "scenarios": {
+    "lightweight-equipment-bracket-01": {"force_n": [0, 0, -100], "mass_reduction_target_percent": 20, "fixed_holes": 2, "load_centroid_mm": [72.5, 0, 60]},
+    "lightweight-equipment-bracket-02": {"force_n": [60, 0, -80], "mass_reduction_target_percent": 15, "fixed_holes": 4, "load_centroid_mm": [86, 0, 72]},
+    "lightweight-equipment-bracket-03": {"force_n": [0, 100, 0], "mass_reduction_target_percent": 25, "fixed_holes": 4, "load_centroid_mm": [0, -22, 80]}
+  },
+  "mesh_sizes_mm": {"coarse": 3, "fine": 2},
+  "element_order": 2,
+  "material": {"e_mpa": 69000, "nu": 0.33, "density_kg_m3": 2700},
+  "limits": {"stress_mpa": 120, "displacement_mm": 0.5, "mesh_change_percent": 5},
+  "modeling_contract": "Imprint exact load pad into complete CAD faces and an exact centroid vertex without partitioning single solid. Fixed hole cylindrical surfaces selected by tightly bounded boxes. Reject empty/overlapping fixture/load selections; preserve recorded actual mesh and selection counts.",
+  "load_approximation": "Casys distributes the total vector equally over selected nodes; this approximates uniform patch traction. State this explicitly in design and results and retain total force/patch geometry. Optional gravity remains excluded because provider does not support body loads.",
+  "reaction_contract": "Separate explicit native solve after sealed original run; copy/hash all nine original resources, add RF/FRD output directives only, retain exact diff and native command/digests. Never relabel second-run outputs as sealed original Casys outputs.",
+  "qualification": "Private operation readiness only; original numerical/mesh/mass comparison remains in workflow, campaign content correctness stays unmeasured"
+}

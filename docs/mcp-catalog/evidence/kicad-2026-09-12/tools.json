@@ -1,0 +1,2132 @@
+{
+  "meta": null,
+  "nextCursor": null,
+  "tools": [
+    {
+      "name": "pcb",
+      "title": null,
+      "description": "PCB domain router — board lifecycle, footprints, nets, routing, zones, silkscreen.\n\nOperations:\n\nLIFECYCLE\n  create(pcb_path)\n      -> {status, file}   Create a new empty .kicad_pcb file.\n\n  load(pcb_path)\n      -> {status, file, footprint_count, track_count, footprints}\n         Load a PCB file and return a summary.\n\n  finalize(pcb_path, fix_silkscreen=True, fill_zones_flag=True)\n      -> {status, silkscreen, zones}\n         Fix silkscreen overlaps and fill copper zones in one step.\n\nBOARD\n  set_outline(pcb_path, x_mm, y_mm, width_mm, height_mm)\n      -> {status, previous_edge_cuts_removed, outline}\n         Set a rectangular board outline on Edge.Cuts (replaces existing).\n\n  set_design_rules(pcb_path, min_track_width_mm=0.2, min_clearance_mm=0.2,\n                   min_via_diameter_mm=0.6, min_via_drill_mm=0.3,\n                   min_hole_to_hole_mm=0.25, min_through_hole_diameter_mm=0.3,\n                   min_copper_edge_clearance_mm=0.5)\n      -> {status, design_rules, project_rules_updated}\n         Set PCB design rules in the PCB file and .kicad_pro.\n\n  get_constraints(pcb_path)\n      -> {status, board_outline, keepout_zones, design_rules,\n          existing_footprints_count, total_keepout_area_mm2}\n         Board outline + keepouts + design rules. Shared with audit.constraints.\n\nFOOTPRINTS\n  place_footprint(pcb_path, library, footprint_name, reference, value,\n                  x_mm, y_mm, rotation_deg=0, layer=\"F.Cu\",\n                  check_keepouts=True)\n      -> {status, placed, bounding_box, placement_warnings?}\n\n  move_footprint(pcb_path, reference, x_mm, y_mm, rotation_deg=None)\n      -> {status, reference, x_mm, y_mm, rotation}\n\n  list_footprints(pcb_path)\n      -> {status, footprint_count, footprints}\n\n  get_pad_positions(pcb_path, reference)\n      -> {status, reference, pad_count, pads}\n\n  get_footprint_dimensions(library, footprint_name, rotation_deg=0)\n      -> {status, body_bbox, courtyard?, pad_span, keepout_zones?}\n         Query footprint dimensions WITHOUT placing it on a PCB.\n\nNETS\n  add_net(pcb_path, net_name)\n      -> {status, net, net_code}\n\n  rename_net(pcb_path, old_name, new_name)\n      -> {status, old_name, new_name, net_code, replacements}\n\n  list_nets(pcb_path)\n      -> {status, net_count, nets}\n\n  set_net_class(pcb_path, class_name, nets, track_width_mm=0.25,\n                clearance_mm=0.2, via_diameter_mm=0.6, via_drill_mm=0.3)\n      -> {status, class_name, action, nets_assigned}\n\n  assign_pad_net(pcb_path, reference, pad_number, net_name)\n      -> {status, reference, pad, net}\n\n  bulk_assign_pad_nets(pcb_path, assignments)\n      -> {status, assigned, error_count, nets_created, errors}\n\nROUTING\n  add_trace(pcb_path, start_x_mm, start_y_mm, end_x_mm, end_y_mm,\n            trace_width_mm=0.25, layer=\"F.Cu\", net_name=\"\")\n      -> {status, trace}\n\n  add_via(pcb_path, x_mm, y_mm, drill_mm=0.3, size_mm=0.6,\n          net_name=\"\", via_type=\"through\")\n      -> {status, via}\n\n  clear_routing(pcb_path, clear_tracks=True, clear_vias=True,\n                clear_zones_flag=False)\n      -> {status, tracks_removed, vias_removed, zones_removed}\n\n  edit_trace_width(pcb_path, new_width_mm, net_filter=\"\", layer_filter=\"\")\n      -> {status, updated, skipped}\n\nZONES\n  add_zone(pcb_path, net_name, layer=\"F.Cu\", corners=[], clearance_mm=0.3,\n           min_width_mm=0.2, connect_pads=\"thermal\", priority=0)\n      -> {status, zone}   corners=[] auto-derives from board outline.\n\n  fill_zones(pcb_path)\n      -> {status, fill_success, zones_filled, zones}\n\nSILKSCREEN + TEXT\n  add_text(pcb_path, text, x_mm, y_mm, layer=\"F.SilkS\",\n           text_size_mm=1.0, thickness_mm=0.15, rotation_deg=0)\n      -> {status, text, x_mm, y_mm, layer}\n\n  list_silkscreen(pcb_path)\n      -> {status, item_count, items}\n\n  update_silkscreen(pcb_path, reference, silk_field=\"reference\",\n                    visible=None, x_mm=None, y_mm=None, rel_x_mm=None,\n                    rel_y_mm=None, silk_size_mm=None, silk_thickness_mm=None,\n                    angle_deg=None, silk_layer=None)\n      -> {status, reference, field, text, visible, ...}\n\n  edit_text(pcb_path, text, new_text=None, x_mm=None, y_mm=None,\n            layer=None, edit_size_mm=None, edit_thickness_mm=None,\n            edit_rotation_deg=None, near_x_mm=None, near_y_mm=None)\n      -> {status, text, x_mm, y_mm, layer, size_mm, thickness_mm, rotation_deg}\n         Edits a standalone PCB text item in place. If multiple items\n         share the same text, supply near_x_mm/near_y_mm to disambiguate.\n\n  auto_fix_silkscreen(pcb_path)\n      -> {status, already_ok, moved, hidden, fixes}\n\n  check_silkscreen_overlaps(pcb_path)\n      -> {status, silk_items_checked, pads_checked, overlap_count, overlaps,\n          text_overlap_count, text_overlaps}\n         Shared impl with audit.check_silkscreen_overlaps.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "pcb_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "x_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "y_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "width_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "height_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "min_track_width_mm": {
+            "default": 0.2,
+            "type": "number"
+          },
+          "min_clearance_mm": {
+            "default": 0.2,
+            "type": "number"
+          },
+          "min_via_diameter_mm": {
+            "default": 0.6,
+            "type": "number"
+          },
+          "min_via_drill_mm": {
+            "default": 0.3,
+            "type": "number"
+          },
+          "min_hole_to_hole_mm": {
+            "default": 0.25,
+            "type": "number"
+          },
+          "min_through_hole_diameter_mm": {
+            "default": 0.3,
+            "type": "number"
+          },
+          "min_copper_edge_clearance_mm": {
+            "default": 0.5,
+            "type": "number"
+          },
+          "fix_silkscreen": {
+            "default": true,
+            "type": "boolean"
+          },
+          "fill_zones_flag": {
+            "default": true,
+            "type": "boolean"
+          },
+          "library": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "footprint_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "rotation_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "layer": {
+            "default": "F.Cu",
+            "type": "string"
+          },
+          "check_keepouts": {
+            "default": true,
+            "type": "boolean"
+          },
+          "net_name": {
+            "default": "",
+            "type": "string"
+          },
+          "old_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "new_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "class_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "nets": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "track_width_mm": {
+            "default": 0.25,
+            "type": "number"
+          },
+          "clearance_mm": {
+            "default": 0.2,
+            "type": "number"
+          },
+          "via_diameter_mm": {
+            "default": 0.6,
+            "type": "number"
+          },
+          "via_drill_mm": {
+            "default": 0.3,
+            "type": "number"
+          },
+          "pad_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "assignments": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_x_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_y_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "end_x_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "end_y_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "trace_width_mm": {
+            "default": 0.25,
+            "type": "number"
+          },
+          "drill_mm": {
+            "default": 0.3,
+            "type": "number"
+          },
+          "size_mm": {
+            "default": 0.6,
+            "type": "number"
+          },
+          "via_type": {
+            "default": "through",
+            "type": "string"
+          },
+          "clear_tracks": {
+            "default": true,
+            "type": "boolean"
+          },
+          "clear_vias": {
+            "default": true,
+            "type": "boolean"
+          },
+          "clear_zones_flag": {
+            "default": false,
+            "type": "boolean"
+          },
+          "new_width_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "net_filter": {
+            "default": "",
+            "type": "string"
+          },
+          "layer_filter": {
+            "default": "",
+            "type": "string"
+          },
+          "corners": {
+            "anyOf": [
+              {
+                "items": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "zone_clearance_mm": {
+            "default": 0.3,
+            "type": "number"
+          },
+          "min_width_mm": {
+            "default": 0.2,
+            "type": "number"
+          },
+          "connect_pads": {
+            "default": "thermal",
+            "type": "string"
+          },
+          "priority": {
+            "default": 0,
+            "type": "integer"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "text_size_mm": {
+            "default": 1.0,
+            "type": "number"
+          },
+          "thickness_mm": {
+            "default": 0.15,
+            "type": "number"
+          },
+          "silk_field": {
+            "default": "reference",
+            "type": "string"
+          },
+          "visible": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "rel_x_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "rel_y_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "silk_size_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "silk_thickness_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "angle_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "silk_layer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "new_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "near_x_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "near_y_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "edit_size_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "edit_thickness_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "edit_rotation_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "audit",
+      "title": null,
+      "description": "Audit domain router — placement, clearance, and constraint verification.\n\nOperations:\n  all(pcb_path, min_clearance_mm=0, detail=\"summary\"|\"full\")\n      -> combined audit of footprint overlaps, keepout violations, and\n         silkscreen overlaps. detail=\"summary\" returns abridged counts\n         (one subprocess call). detail=\"full\" calls each sub-op\n         independently and returns their complete output under\n         \"placement\", \"footprint_overlaps\", \"pad_clearances\", \"keepouts\".\n\n  placement(pcb_path)\n      -> {total_footprints, violations_count, clean_count, violations}\n         Audit every placed footprint against keepout zones and board edge.\n         Returns per-footprint issue list with bbox, severity, overlap_mm2.\n\n  footprint_overlaps(pcb_path, min_clearance_mm=0, use_courtyard=True)\n      -> {total_footprints, pairs_checked, overlap_count, error_count,\n          warning_count, overlaps}\n         Check every pair of footprints for body collision or clearance\n         violation. use_courtyard=True uses courtyard/pad bounds (fewer\n         false positives for large modules like ESP32).\n\n  pad_clearances(pcb_path, min_clearance_mm=0)\n      -> {total_pads, min_clearance_mm, violation_count,\n          footprint_pairs_affected, footprint_pair_summary, violations}\n         Check individual pad geometries for clearance violations.\n         min_clearance_mm=0 uses the board's design-rule minimum.\n\n  validate_one(pcb_path, library, footprint_name, x_mm, y_mm,\n               rotation_deg=0)\n      -> {valid, violations, warnings, footprint_bbox_mm, board_outline_mm}\n         Check if placing a specific footprint at a proposed position would\n         violate keepout zones or board boundaries. Read-only — does NOT\n         modify the PCB file.\n\n  auto_fix_placement(pcb_path, spacing_mm=0.5, max_passes=3)\n      -> {moves, move_count, unfixed, unfixed_count, passes_used}\n         Resolve courtyard overlaps by nudging footprints apart. Moves\n         the less-connected component (fewer signal nets). Respects board\n         outline — will not push components outside the board.\n\n  keepouts(pcb_path)\n      -> {keepout_count, keepouts}\n         List all keepout/rule areas with boundaries and constraints.\n         Includes footprint-embedded keepouts (e.g. ESP32 antenna).\n\n  pre_route_check(pcb_path, min_clearance_mm=0)\n      -> {route_ready, total_footprints, total_pads, error_count,\n          warning_count, courtyard_overlaps, keepout_violations,\n          pad_violations, errors, warnings}\n         Combined readiness check before autorouting: courtyard overlaps +\n         keepout violations + pad clearances. route_ready=True only when\n         there are zero errors (warnings OK).\n\n  constraints(pcb_path)\n      -> {board_outline, keepout_zones, design_rules,\n          existing_footprints_count, total_keepout_area_mm2,\n          effective_placement_area_mm2?}\n         Board outline + keepouts + design rules in one call. Use before\n         placement decisions to understand available area.\n\n  check_silkscreen_overlaps(pcb_path)\n      -> {status, silk_items_checked, pads_checked, overlap_count, overlaps,\n          text_overlap_count, text_overlaps}\n         Shared implementation with pcb.check_silkscreen_overlaps.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "pcb_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "library": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "footprint_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "x_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "y_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "rotation_deg": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "min_clearance_mm": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "use_courtyard": {
+            "default": true,
+            "type": "boolean"
+          },
+          "spacing_mm": {
+            "default": 0.5,
+            "type": "number"
+          },
+          "max_passes": {
+            "default": 3,
+            "type": "integer"
+          },
+          "detail": {
+            "default": "summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "autoroute",
+      "title": null,
+      "description": "PCB autorouting via FreeRouter (Specctra DSN/SES pipeline).\n\nOperations:\n  run(pcb_path, freerouter_jar=\"\", passes=1, remove_zones=True,\n      net_classes=None)\n      -> {status, pcb_path, tracks_after, vias_after, unconnected_after_routing,\n          passes_run, best_unconnected, note, net_classes_applied?, preflight?}\n      Synchronous autoroute — waits for completion. Use for short\n      routes. FreeRouter is non-deterministic; set passes > 1 to\n      run multiple times and keep the best (fewest unconnected) result.\n\n  start(pcb_path, freerouter_jar=\"\", passes=1, remove_zones=True)\n      -> {job_id, status, pcb_path, passes, note}\n      Start autorouting in the background. Returns immediately.\n      Use poll(job_id) to check progress.\n\n  poll(job_id)\n      -> {status: \"running\"|\"done\"|\"error\"|\"cancelled\",\n          elapsed_s, phase?, result?}\n      Check the status of an async autoroute job. Completed/failed\n      jobs are removed from tracking after retrieval.\n\n  cancel(job_id)\n      -> {status: \"cancelled\", job_id, elapsed_s}\n      Cancel a running async autoroute job. Kills the FreeRouter\n      subprocess if it is still running.\n\n  list_jobs()\n      -> {jobs: {job_id: {...}}, count}\n      List all tracked autoroute jobs and their current status.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "pcb_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "freerouter_jar": {
+            "default": "",
+            "type": "string"
+          },
+          "passes": {
+            "default": 1,
+            "type": "integer"
+          },
+          "remove_zones": {
+            "default": true,
+            "type": "boolean"
+          },
+          "net_classes": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "panelize_pcb",
+      "title": null,
+      "description": "Panelize a PCB into a manufacturing panel using KiKit.\n\nCreates a panel with multiple copies of the input board arranged in\na grid, with configurable cut lines, framing, tooling holes, and\nfiducials. The output is a new .kicad_pcb file.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "pcb_path": {
+            "type": "string",
+            "description": "Path to the input .kicad_pcb file."
+          },
+          "output_path": {
+            "default": "",
+            "type": "string",
+            "description": "Output panel PCB path. Default: input name with\n         \"-panel\" suffix."
+          },
+          "rows": {
+            "default": 2,
+            "type": "integer",
+            "description": "Number of rows in the grid (default 2)."
+          },
+          "cols": {
+            "default": 5,
+            "type": "integer",
+            "description": "Number of columns in the grid (default 5)."
+          },
+          "space": {
+            "default": 2.0,
+            "type": "number",
+            "description": "Spacing between boards in mm (default 2)."
+          },
+          "cut_type": {
+            "default": "vcuts",
+            "type": "string",
+            "description": "Cut type: \"vcuts\" or \"mousebites\" (default \"vcuts\")."
+          },
+          "framing": {
+            "default": "railstb",
+            "type": "string",
+            "description": "Framing type: \"none\", \"railstb\", \"railslr\", or \"frame\"\n     (default \"railstb\")."
+          },
+          "rail_width": {
+            "default": 5.0,
+            "type": "number",
+            "description": "Rail/frame width in mm (default 5)."
+          },
+          "tooling": {
+            "default": "3hole",
+            "type": "string",
+            "description": "Tooling holes: \"none\", \"3hole\", or \"4hole\"\n     (default \"3hole\")."
+          },
+          "fiducials": {
+            "default": "3fid",
+            "type": "string",
+            "description": "Fiducial marks: \"none\", \"3fid\", or \"4fid\"\n       (default \"3fid\")."
+          },
+          "mill_radius": {
+            "default": 1.0,
+            "type": "number",
+            "description": "Mill radius in mm for post-processing (default 1)."
+          },
+          "preset": {
+            "default": "",
+            "type": "string",
+            "description": "Path to a KiKit preset JSON file. When provided,\n    overrides all other layout parameters."
+          }
+        },
+        "required": [
+          "pcb_path"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "estimate_board_size",
+      "title": null,
+      "description": "Estimate minimum board dimensions from a list of footprints.\n\nLoads each footprint from KiCad libraries to measure its bounding box,\nsums the total component area, applies a routing factor (components\ntypically need 2-3x their area for routing), and suggests board\ndimensions. Use this BEFORE creating the PCB to choose the right\nboard size and avoid resize iterations.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "footprints": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "description": "List of {\"library\": \"...\", \"footprint_name\": \"...\"} dicts.\nExample: [{\"library\": \"Package_QFP\", \"footprint_name\": \"LQFP-48_7x7mm_P0.5mm\"}]"
+          },
+          "padding_mm": {
+            "default": 2.0,
+            "type": "number",
+            "description": "Edge clearance around board perimeter in mm (default 2.0)."
+          },
+          "routing_factor": {
+            "default": 2.5,
+            "type": "number",
+            "description": "Multiplier for total component area to account for\nrouting space (default 2.5). Use 2.0 for simple boards, 3.0 for\ndense designs with many nets."
+          }
+        },
+        "required": [
+          "footprints"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "suggest_placement",
+      "title": null,
+      "description": "Suggest component positions based on net connectivity.\n\nAnalyzes the netlist connections between footprints already placed on\nthe PCB and suggests optimized positions that minimize total trace\nlength. The most-connected component (usually the MCU) is placed\ncentrally, and other components are arranged around it based on\nconnectivity strength.\n\nDoes NOT modify the PCB. Returns suggested positions that can be\napplied with move_footprint.\n\nRespects board outline and keepout zones. Components with embedded\nkeepout zones (like ESP32 antenna keepouts) are placed to keep\ntheir keepout areas within the board boundary.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "pcb_path": {
+            "type": "string",
+            "description": "Path to the .kicad_pcb file with footprints placed\nand nets assigned (run build_pcb_from_schematic first, or\nuse pcb(operation=\"add_net\") + pcb(operation=\"bulk_assign_pad_nets\"))."
+          },
+          "spacing_mm": {
+            "default": 1.0,
+            "type": "number",
+            "description": "Minimum gap between component courtyards in mm (default 1.0)."
+          }
+        },
+        "required": [
+          "pcb_path"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "build_pcb_from_schematic",
+      "title": null,
+      "description": "Build a complete routed PCB from a KiCad schematic in one step.\n\nRuns the full pipeline: extract netlist → create PCB → load\nfootprints → assign nets → smart placement → autoroute →\nadd ground planes → fill zones → silk legends → (optionally)\nexport Gerbers.\n\nRequires a KiCad project with a schematic (.kicad_sch) that has\nfootprints assigned to all components.  Creates the PCB file\n(.kicad_pcb) from scratch.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "project_path": {
+            "type": "string",
+            "description": "Path to the KiCad project file (.kicad_pro)."
+          },
+          "board_width_mm": {
+            "default": 0,
+            "type": "number",
+            "description": "Board width in mm. 0 = auto-estimate from\ncomponent footprints. Use explicit dimensions for boards\nthat must fit specific enclosures."
+          },
+          "board_height_mm": {
+            "default": 0,
+            "type": "number",
+            "description": "Board height in mm. 0 = auto-estimate."
+          },
+          "ground_net": {
+            "default": "GND",
+            "type": "string",
+            "description": "Net name for copper pour zones (default \"GND\")."
+          },
+          "autoroute_passes": {
+            "default": 1,
+            "type": "integer",
+            "description": "Number of FreeRouter passes (default 1).\nHigher = better routing but slower. FreeRouter is\nnon-deterministic; best result is kept."
+          },
+          "export_gerbers": {
+            "default": false,
+            "type": "boolean",
+            "description": "Generate Gerber/drill files and ZIP for\nfabrication upload (default False)."
+          },
+          "intent_path": {
+            "default": "",
+            "type": "string",
+            "description": "Optional path to the design-intent YAML. When given,\nits connector legends drive a silk-legend pass that labels each\nsynthesized terminal's positions (the field-wiring documentation)\n— the firmware front end passes the same intent it generated from.\nIts ``source.board_size_mm`` (if any) sizes the board when no\nexplicit dimensions are given, and its ``placement_hints`` feed\nthe per-ref placement overrides below."
+          },
+          "placement_hints": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Per-ref PCB placement overrides, keyed by KiCad\nreference. Each value is a subset of ``{edge, rotation, fixed}``\n— ``edge`` ∈ {top,bottom,left,right,none}, ``rotation`` ∈\n{0,90,180,270}, ``fixed`` = [x,y] mm. Invalid keys/values are\nreported (events) and ignored, never crash. Merged over any\nhints carried in the design intent (these win — explicit caller)."
+          },
+          "add_mounting_holes": {
+            "default": true,
+            "type": "boolean",
+            "description": "Add corner M3 mounting holes (default True). The\ncount/drill/inset/keepout come from the design intent's\n``source.mounting_holes`` (board.yaml) or default to 4 × M3; pass\nFalse to suppress holes without a board.yaml (or set\n``mounting_holes.count: 0`` there)."
+          },
+          "approved": {
+            "default": true,
+            "type": "boolean",
+            "description": "When False, the APPROVAL GATE (spec §7): run the pipeline\nthrough placement (which produces the real terminal-edge layout)\nbut STOP before the expensive autoroute, returning\n``status=\"pending_approval\"`` and a ``proposal`` (board size,\nantenna edge, per-terminal edge/positions table, hole positions,\na tweakable ``proposed_board_yaml``, and a best-effort SVG render).\nRe-run with ``approved=True`` once the layout looks right."
+          }
+        },
+        "required": [
+          "project_path"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "library",
+      "title": null,
+      "description": "Symbol/footprint library operations.\n\nOperations:\n  search(query, type=\"footprint\"|\"symbol\", library=None, limit=20)\n      -> {status, count, results, truncated}\n      Search KiCad libraries via the SQLite FTS5 index. Results are\n      suitable for use with add_component (symbols) or place_footprint\n      (footprints). The index auto-rebuilds when stale.\n\n  rebuild_index(kind=\"symbols\"|\"footprints\"|\"both\")\n      -> {status, symbols_indexed?, footprints_indexed?}\n      Force-rebuild the index. Use when the staleness check misses an\n      edit (e.g. you edited a .kicad_mod without bumping mtime in a\n      way the scanner noticed), or after installing/updating a\n      third-party library.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "default": "footprint",
+            "type": "string"
+          },
+          "library": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "limit": {
+            "default": 20,
+            "type": "integer"
+          },
+          "kind": {
+            "default": "both",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "analyze",
+      "title": null,
+      "description": "Read-only analysis of schematics and projects.\n\nOperations:\n  netlist(path)\n      -> {success, components, nets, analysis, ...}\n      Extract netlist from a .kicad_sch or .kicad_pro file.\n\n  connections(schematic_path)\n      -> {success, analysis: {power_nets, signal_nets, potential_issues, ...}}\n      Analyze schematic connections, including floating-net detection\n      and power/signal net classification.\n\n  circuit_patterns(schematic_path)\n      -> {success, identified_patterns: {power_supply_circuits, ...}}\n      Identify common circuit blocks (regulators, amplifiers, filters,\n      digital interfaces, microcontrollers, etc.) in a schematic.\n\n  project_patterns(project_path)\n      -> {success, identified_patterns: {...}}\n      Same as circuit_patterns, but resolves the schematic from a\n      project file first.\n\n  bom(project_path, column_map=None)\n      -> {success, bom_files, component_summary, ...}\n      Analyze the project's BOM file(s) — counts, categories, cost,\n      supplier metadata. column_map overrides heuristic column-name\n      detection per canonical field.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "schematic_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "column_map": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "export",
+      "title": null,
+      "description": "Manufacturing and output-file exports.\n\nOperations:\n  gerbers(pcb_path, output_dir=\"\", create_zip=True)\n      -> {status, gerber_files, drill_files, zip_path?, ...}\n      Export Gerber + Excellon drill files for fabrication. ZIP is\n      ready for JLCPCB / PCBWay / OSH Park upload.\n\n  bom_csv(project_path)\n      -> {success, output_file, file_size, ...}\n      Export a CSV BOM from the project's schematic via kicad-cli.\n\n  thumbnail(project_path)\n      -> {status, thumbnail_path, size_bytes}\n      Render an SVG thumbnail of the PCB using kicad-cli.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "pcb_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "output_dir": {
+            "default": "",
+            "type": "string"
+          },
+          "create_zip": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "project",
+      "title": null,
+      "description": "KiCad project management operations.\n\nOperations:\n  list()\n      -> [{name, path, ...}, ...]\n      Find and list all KiCad projects on this system.\n\n  get_structure(project_path)\n      -> {name, path, directory, files, metadata}\n      Get the structure and files of a KiCad project.\n\n  open(project_path)\n      -> {success, command, ...}\n      Open a KiCad project in KiCad.\n\n  validate(project_path)\n      -> {success, project_path, files_found, issues}\n      Basic validation of a KiCad project — checks that schematic\n      and PCB files are present.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "project_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": null,
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "drc",
+      "title": null,
+      "description": "Design Rule Check operations for KiCad PCB files.\n\nOperations:\n  run(project_path)\n      -> {success, violations, violation_categories, comparison?, ...}\n      Run a full DRC check on a project's PCB via kicad-cli. Saves\n      the result to history so subsequent runs can show a trend.\n\n  autofix(pcb_path, project_path=\"\", fix_routing=True,\n          fix_silkscreen=True, fix_placement=True, autoroute_passes=2)\n      -> {status, before, after, actions_taken, improvement}\n      Automatically fix common DRC violations. Runs DRC, categorizes\n      violations, and applies fixes in order: placement (courtyard\n      overlaps), routing (clearance/crossing/shorts), silkscreen\n      (silk over copper/pads), zone fill. Re-runs DRC afterward to\n      verify improvement and returns a before/after comparison.\n\n  history(project_path)\n      -> {success, history_entries, entry_count, trend}\n      Get the DRC check history for a KiCad project. trend is\n      \"improving\"|\"degrading\"|\"stable\"|null (null if < 2 entries).",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "project_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pcb_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "fix_routing": {
+            "default": true,
+            "type": "boolean"
+          },
+          "fix_silkscreen": {
+            "default": true,
+            "type": "boolean"
+          },
+          "fix_placement": {
+            "default": true,
+            "type": "boolean"
+          },
+          "autoroute_passes": {
+            "default": 2,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "schematic",
+      "title": null,
+      "description": "Schematic domain router — file lifecycle, components, wires, labels, sheets.\n\nOperations:\n\n# File lifecycle\n  create(name) -> {status, name}\n      Create a new KiCad schematic.\n  load(schematic_path) -> {status, file_path, components}\n      Load an existing .kicad_sch file.\n  save(schematic_path?) -> {status, file_path}\n      Save current schematic; omit schematic_path to save in place.\n  validate() -> {status, issues, errors, warnings, details}\n      Validate schematic for ERC issues.\n  info() -> {status, components, wires, junctions, modified, ...}\n      Summary of current schematic state. (was: get_schematic_info)\n  clone(new_name?) -> {status, name, components}\n      Clone the current schematic (does NOT load the clone).\n  backup(suffix=\".backup\") -> {status, backup_path}\n      Create a timestamped backup of the current schematic file.\n  check_pin_collisions() -> {status, collision_count, collisions, summary}\n      Detect pin-position collisions that cause silent net merges.\n\n# Components — CRUD\n  add_component(lib_id, reference, value, position, footprint?, properties?)\n      -> {status, reference, lib_id, value, position}\n  add_multi_unit_component(lib_id, reference, value, position,\n                           units?, footprint?, unit_spacing=15)\n      -> {status, reference, total_units, units}   for multi-unit symbols\n  remove_component(reference) -> {status, reference}\n  move_component(reference, position) -> {status, reference, old_position, new_position}\n  list_components() -> {status, count, components}\n  filter_components(lib_id?, value?, reference?, footprint?) -> {status, count, components}\n  components_in_area(x1, y1, x2, y2) -> {status, count, components}\n  bulk_update_components(criteria, updates) -> {status, updated}\n\n# Component pins (read-only queries)\n  get_component_pin_position(reference, pin_number) -> {status, reference, pin_number, x, y}\n  list_component_pins(reference) -> {status, reference, count, pins}\n  find_component_connections(project_path, component_ref) -> {success, connections, ...}\n      Netlist-based query; reads .kicad_pro + extracts schematic netlist.\n\n# Wires (verb-overlap pair — pick by what you have)\n  add_wire(start_pos, end_pos) -> {status, wire_uuid, start, end}\n      Add wire by absolute [x, y] coordinates.\n  add_wire_between_pins(comp1_ref, pin1, comp2_ref, pin2)\n      -> {status, pins, segments, segment_count}\n      Add wire by component+pin refs — preferred when you have refs.\n  remove_wire(wire_uuid) -> {status, wire_uuid}\n  add_junction(position, diameter=0) -> {status, junction_uuid, position}\n\n# Labels (verb-overlap family — pick by intent)\n  add_label(text, position, rotation=0, size=1.27)\n      -> {status, label_uuid, text, position}\n      Net label placed at absolute coordinates.\n  add_label_to_pin(reference, pin_number, text, offset=0)\n      -> {status, label_uuid, text, reference, pin_number, position}\n      Net label attached directly to a pin — preferred when labeling a pin.\n  add_hierarchical_label(text, position, shape=\"input\", rotation=0, size=1.27)\n      -> {status, label_uuid, text, shape, position}\n      For hierarchical sheet pins, not ordinary net labels.\n  connect_pins_with_labels(comp1_ref, pin1, comp2_ref, pin2, net_name)\n      -> {status, net_name, labels_created, label_uuids}\n      High-level: places matching labels on two pins to connect them via a net.\n  remove_label(label_uuid) -> {status, label_uuid}\n  edit_label(label_uuid, new_text?, position?, rotation?, size?)\n      -> {status, label_uuid, text, position, rotation, size}\n\n# Text annotations\n  add_text(text, position, rotation=0, size=1.27)\n      -> {status, text_uuid, text, position}\n  add_text_box(text, position, sheet_size, rotation=0, font_size=1.27)\n      -> {status, textbox_uuid, text, position, size}\n\n# Hierarchical sheets\n  add_sheet(name, filename, position, sheet_size) -> {status, sheet_uuid, name, filename, position, size}\n  add_sheet_pin(sheet_uuid, name, pin_type, edge, position_along_edge)\n      -> {status, pin_uuid, name, pin_type, edge, position_along_edge, sheet_uuid}\n      edge: right|bottom|left|top; position_along_edge: mm from reference corner",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "schematic_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "new_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "suffix": {
+            "default": ".backup",
+            "type": "string"
+          },
+          "lib_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "position": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "footprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "properties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "units": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "unit_spacing": {
+            "default": 15.0,
+            "type": "number"
+          },
+          "criteria": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "updates": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "x1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "y1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "x2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "y2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pin_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "component_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_pos": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "end_pos": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "wire_uuid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "comp1_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pin1": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "comp2_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pin2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "diameter": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "rotation": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "size": {
+            "default": 1.27,
+            "type": "number"
+          },
+          "label_uuid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "new_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "offset": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "shape": {
+            "default": "input",
+            "type": "string"
+          },
+          "net_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "sheet_size": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "sheet_uuid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pin_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "edge": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "position_along_edge": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "ctx": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "analyze_placement_telemetry",
+      "title": null,
+      "description": "Read telemetry data for calibration and convergence analysis.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "One of `calibration_table`, `convergence_stats`, `system_events`."
+          },
+          "filters": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Query-specific filter dict (see below). All filters optional."
+          },
+          "verbosity": {
+            "default": "minimal",
+            "type": "string",
+            "description": "`minimal` (default) for terse rows, `full` for additional\nprovenance fields."
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "lcsc",
+      "title": null,
+      "description": "Search, resolve, and assign LCSC/JLCPCB components.\n\nOperations:\n  search           — keyword search for components\n  resolve          — exact lookup by LCSC part number (e.g., 'C6186')\n  assign           — apply a resolved part to a schematic component\n  accept_tos       — accept the catalog download terms of service\n  refresh_snapshot — re-download the jlcparts component catalog\n\nFor 'search':\n  description    : functional description (e.g., '3.3V LDO regulator')\n  package        : package filter (e.g., 'SOT-23') — optional\n  assembly_tier  : 'basic' | 'extended' | 'preferred' | 'any' (default 'basic')\n  max_results    : maximum results to return (default 3)\n  include_unresolvable : if True, include parts with no KiCad footprint mapping\n\nFor 'resolve':\n  part_number    : LCSC part number (e.g., 'C6186')\n\nFor 'assign':\n  reference      : schematic reference (e.g., 'U1')\n  part_number    : LCSC part number to assign\n  schematic_path : optional path override (defaults to currently-loaded schematic)",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "package": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "assembly_tier": {
+            "default": "basic",
+            "type": "string"
+          },
+          "max_results": {
+            "default": 3,
+            "type": "integer"
+          },
+          "include_unresolvable": {
+            "default": false,
+            "type": "boolean"
+          },
+          "part_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "schematic_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "schematic_layout",
+      "title": null,
+      "description": "Topology-aware automatic placement of schematic components.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "schematic_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "verbosity": {
+            "default": "minimal",
+            "type": "string"
+          },
+          "hints": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "column_pitch_mm": {
+            "default": 25.4,
+            "type": "number"
+          },
+          "row_pitch_mm": {
+            "default": 12.7,
+            "type": "number"
+          },
+          "state_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "refs": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "design",
+      "title": null,
+      "description": "Firmware-spec front end: firmware -> design-intent -> partial schematic.\n\nSee the module docstring for operations and arguments.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "firmware_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "intent_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "schematic_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "out_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    },
+    {
+      "name": "native_rule_check",
+      "title": null,
+      "description": "Run real KiCad ERC/DRC and retain its complete JSON report under /work. Issues remain failures for the engineering review; report creation alone is not a clean-design verdict.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "erc",
+              "drc"
+            ],
+            "type": "string"
+          },
+          "source_path": {
+            "type": "string"
+          },
+          "report_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "source_path",
+          "report_path"
+        ],
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": null,
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "execution": null
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "scenario_id": "sensor-fan-harness-01",
+  "template_id": "sensor-fan-harness",
+  "title": "Desktop incubator fan and sensor harness",
+  "summary": "Design a serviceable 24 V fan/PWM/tach and temperature-transmitter harness for a small benchtop chamber.",
+  "difficulty": "basic",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "allowed-wire.csv",
+      "wiring-schedule.csv",
+      "connector-requirements.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  },
+  "expected_outputs": [
+    {
+      "role": "harness_plan",
+      "patterns": [
+        "**/*harness*plan*.svg",
+        "**/*harness*plan*.pdf",
+        "**/*harness*plan*.json"
+      ]
+    },
+    {
+      "role": "pin_schedule",
+      "patterns": [
+        "**/*pin*schedule*.csv"
+      ]
+    },
+    {
+      "role": "wire_cut_list",
+      "patterns": [
+        "**/*cut*list*.csv"
+      ]
+    },
+    {
+      "role": "bill_of_materials",
+      "patterns": [
+        "**/*bom*.csv"
+      ]
+    },
+    {
+      "role": "assembly_instructions",
+      "patterns": [
+        "**/*assembly*.md",
+        "**/*assembly*.pdf"
+      ]
+    },
+    {
+      "role": "voltage_drop_report",
+      "patterns": [
+        "**/*voltage*drop*.csv",
+        "**/*voltage*drop*.json"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "Original fictional people, companies, sketches, wiring schedules and customer design constraints. Ratings listed here are requirements or calculation assumptions; exact manufacturer evidence is still required."
+  },
+  "input_bindings": {}
+}

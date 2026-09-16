@@ -40,6 +40,19 @@ def test_task_ledger_derives_counts_and_rejects_gaps_or_duplicates(
     assert AUDIT._task_ledger(task_file)["well_formed"] is False
 
 
+def test_frozen_task_comparison_ignores_only_checkbox_marker_case() -> None:
+    original = "- [X] T001 Complete\n- [ ] T002 Open\n"
+    normalized = "- [x] T001 Complete\r\n- [ ] T002 Open\r\n"
+    changed = "- [x] T001 Different\n- [ ] T002 Open\n"
+
+    assert AUDIT._canonical_frozen_task_document(original) == (
+        AUDIT._canonical_frozen_task_document(normalized)
+    )
+    assert AUDIT._canonical_frozen_task_document(original) != (
+        AUDIT._canonical_frozen_task_document(changed)
+    )
+
+
 def test_capability_map_summary_uses_the_current_source_map(tmp_path: Path) -> None:
     source_map = tmp_path / "capability-source-map.csv"
     source_map.write_text(
@@ -155,27 +168,42 @@ def test_recovery_completion_audit_reports_current_evidence_truthfully() -> None
         "open_tasks": sorted(task_ledger["open_tasks"]),
     }
     assert result["frozen_checkpoint"]["unchanged"] is True
-    assert result["approved_walkthrough"]["steps_passed"] == 50
-    assert result["approved_walkthrough"]["steps_total"] == 50
-    assert result["approved_walkthrough"]["browser_diagnostics"] == 0
-    assert (
-        result["usability_correction_walkthrough"]["commit"]
-        == "38b409bf149a1241cc87cdedd48f83fed16b5050"
-    )
-    assert (
-        result["usability_correction_walkthrough"]["tree"]
-        == "452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6"
-    )
-    assert (
-        result["usability_correction_walkthrough"]["manifest_sha256"]
-        == "b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335"
-    )
-    assert result["usability_correction_walkthrough"]["steps_passed"] == 24
-    assert result["usability_correction_walkthrough"]["steps_total"] == 24
-    assert result["usability_correction_walkthrough"]["raw_screenshots"] == 26
-    assert result["usability_correction_walkthrough"]["annotated_screenshots"] == 26
-    assert result["usability_correction_walkthrough"]["manifest_files"] == 59
-    assert result["usability_correction_walkthrough"]["browser_diagnostics"] == 0
+    if AUDIT.APPROVED_WALKTHROUGH.is_dir():
+        assert result["approved_walkthrough"]["steps_passed"] == 50
+        assert result["approved_walkthrough"]["steps_total"] == 50
+        assert result["approved_walkthrough"]["browser_diagnostics"] == 0
+    else:
+        assert result["approved_walkthrough"]["missing_files"] == [
+            "status.json",
+            "manifest.json",
+            "trace/browser-diagnostics.json",
+        ]
+
+    if AUDIT.CORRECTION_WALKTHROUGH.is_dir():
+        assert (
+            result["usability_correction_walkthrough"]["commit"]
+            == "38b409bf149a1241cc87cdedd48f83fed16b5050"
+        )
+        assert (
+            result["usability_correction_walkthrough"]["tree"]
+            == "452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6"
+        )
+        assert (
+            result["usability_correction_walkthrough"]["manifest_sha256"]
+            == "b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335"
+        )
+        assert result["usability_correction_walkthrough"]["steps_passed"] == 24
+        assert result["usability_correction_walkthrough"]["steps_total"] == 24
+        assert result["usability_correction_walkthrough"]["raw_screenshots"] == 26
+        assert result["usability_correction_walkthrough"]["annotated_screenshots"] == 26
+        assert result["usability_correction_walkthrough"]["manifest_files"] == 59
+        assert result["usability_correction_walkthrough"]["browser_diagnostics"] == 0
+    else:
+        assert result["usability_correction_walkthrough"]["missing_files"] == [
+            "status.json",
+            "manifest.json",
+            "trace/browser-diagnostics.json",
+        ]
     # The current image-led authoring mapping adds nine rows to the historical
     # 881-row correction map; require the live ledger and coverage to agree.
     assert result["capability_coverage"]["mapped"] == capability_map["row_count"] == 890

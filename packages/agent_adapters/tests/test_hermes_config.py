@@ -1,4 +1,5 @@
 import subprocess
+from pathlib import Path
 
 from agent_adapters.hermes_config import (
     hermes_config_path,
@@ -20,6 +21,21 @@ def test_official_hermes_cli_path_finds_windows_installer_layout(tmp_path):
     assert official_hermes_cli_path({"LOCALAPPDATA": str(tmp_path)}) == str(executable)
 
 
+def test_official_hermes_cli_path_ignores_inaccessible_optional_candidate(
+    monkeypatch, tmp_path
+):
+    original_is_file = Path.is_file
+
+    def inaccessible_installer_path(path):
+        if path.name == "hermes.exe":
+            raise PermissionError("host policy blocks executable metadata")
+        return original_is_file(path)
+
+    monkeypatch.setattr(Path, "is_file", inaccessible_installer_path)
+
+    assert official_hermes_cli_path({"LOCALAPPDATA": str(tmp_path)}) is None
+
+
 def test_hermes_config_path_uses_official_installer_cli(monkeypatch, tmp_path):
     executable = (
         tmp_path / "hermes" / "hermes-agent" / "venv" / "Scripts" / "hermes.exe"
@@ -37,6 +53,22 @@ def test_hermes_config_path_uses_official_installer_cli(monkeypatch, tmp_path):
     monkeypatch.setattr(subprocess, "run", fake_run)
 
     assert hermes_config_path({"LOCALAPPDATA": str(tmp_path)}) == str(config_file)
+
+
+def test_hermes_config_path_ignores_inaccessible_optional_config(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "agent_adapters.hermes_config._hermes_config_command", lambda *_args: None
+    )
+    original_is_file = Path.is_file
+
+    def inaccessible_config(path):
+        if path.name == "config.yaml":
+            raise PermissionError("host policy blocks config metadata")
+        return original_is_file(path)
+
+    monkeypatch.setattr(Path, "is_file", inaccessible_config)
+
+    assert hermes_config_path({"HERMES_HOME": str(tmp_path)}) is None
 
 
 def test_parse_env_file_reads_api_server_values(tmp_path):

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "template_id": "parametric-drill-jig",
+  "status": "prepared_requires_runtime_preflight",
+  "selected_substitution": {
+    "declared_candidates": ["BREP MCP", "AutoCAD MCP"],
+    "selected": "AgentCAD 0.6.0 build123d kernel plus explicit CAD-derived DXF operation",
+    "reason": "The live workspace has AgentCAD and recorded script/file operations; BREP and AutoCAD are uninstalled. The substitution retains editable parametric source, actual STEP/STL, hole-location DXF, and actual geometric alignment/clearance checks.",
+    "qualification": "integration execution only; no public qualification promotion"
+  },
+  "allowed_tools": {
+    "wright-workspace-files": ["write_text_document", "inspect_file"],
+    "agentcad": ["context", "docs", "run", "measure", "inspect", "export"]
+  },
+  "native_prerequisite": "Initialize a fresh project with pinned AgentCAD 0.6.0 CLI before dispatch. The preparer's explicit --initialize-agentcad option records command and result; default staging does not execute it. Runtime context checks real state. No Blender script bridge is required.",
+  "scenarios": {
+    "parametric-drill-jig-01": {"shape": "top plate with two datum fences and clamp cutouts", "controlling_holes": 2, "nominal_plate_thickness_mm": 12},
+    "parametric-drill-jig-02": {"shape": "two bridges linked outside the central chip window", "controlling_holes": 4, "nominal_plate_thickness_mm": 15},
+    "parametric-drill-jig-03": {"shape": "annular plate with keyed notch tab and asymmetric clamp cutouts", "controlling_holes": 6, "nominal_plate_thickness_mm": 16}
+  },
+  "expected_generated_files": ["jig.step", "jig.stl", "hole-layout.dxf", "cad-lineage.json"],
+  "expected_checked_files": ["dimension-report.json"],
+  "scope": "All profiles, workpieces, bushing data and process capabilities are synthetic user inputs. Preserve the uploaded CSV coordinates exactly; no supplier rating, machining safety, physical fit or manufacturing dispatch is claimed."
+}

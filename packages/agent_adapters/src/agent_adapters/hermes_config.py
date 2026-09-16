@@ -13,6 +13,14 @@ class HermesApiSettings:
     source: str
 
 
+def _is_accessible_file(path: Path) -> bool:
+    """Return false when host policy prevents probing an optional CLI path."""
+    try:
+        return path.is_file()
+    except OSError:
+        return False
+
+
 def official_hermes_cli_path(
     env: Mapping[str, str] | None = None,
 ) -> str | None:
@@ -24,7 +32,7 @@ def official_hermes_cli_path(
     """
     env = os.environ if env is None else env
     explicit = (env.get("HERMES_CLI_PATH") or "").strip()
-    if explicit and Path(explicit).is_file():
+    if explicit and _is_accessible_file(Path(explicit)):
         return explicit
 
     local_app_data = (env.get("LOCALAPPDATA") or "").strip()
@@ -39,7 +47,7 @@ def official_hermes_cli_path(
             Path(local_app_data) / "hermes" / "bin" / "hermes.exe",
         )
         for candidate in candidates:
-            if candidate.is_file():
+            if _is_accessible_file(candidate):
                 return str(candidate)
     return None
 
@@ -139,7 +147,7 @@ def hermes_config_path(env: Mapping[str, str] | None = None) -> str | None:
     candidates.append(hermes_home / "config.yaml")
 
     for candidate in candidates:
-        if candidate.exists():
+        if _is_accessible_file(candidate):
             return str(candidate)
     return None
 
@@ -168,7 +176,7 @@ def hermes_env_path(env: Mapping[str, str] | None = None) -> str | None:
     candidates.append(hermes_home / ".env")
 
     for candidate in candidates:
-        if candidate.exists():
+        if _is_accessible_file(candidate):
             return str(candidate)
     return None
 

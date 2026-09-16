@@ -1,0 +1,3 @@
+We need a neat cable trough along the side of a tabletop test stand. Please use my folded cross-section and mounting table to create a one-piece, open-ended steel trough with two upright walls and outward return flanges. Keep the harness serviceable; there should be no sharp tabs or trapped cable loops.
+
+Before CAD, check which proposed stock, bends, slots, and finish the supplier actually supports and put the result in a design document. Build the Solid Edge PSM, verify folded dimensions and mounting slots, then export STEP and a true flat-pattern DXF. Prepare a simulated quote preview for six parts and stop at local handoff. This prototype is not an electrical enclosure or certified machine guard.

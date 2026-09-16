@@ -1,0 +1,8 @@
+reference,value,footprint_requirement,prototype_requirement,source_status
+J1,24V_input,1x02_3.5mm_THT_terminal,1A_min_30V_min,exact_manufacturer_datasheet_required
+J2;J3,fan_header,1x03_2.54mm_vertical_THT,0.5A_min_30V_min,exact_manufacturer_datasheet_required
+J4,logic_header,1x04_2.54mm_vertical_THT,3.3V_signal_only,exact_manufacturer_datasheet_required
+R1;R2,10k_1_percent,R_0603_1608Metric,0.1W_min,assumed_design_requirement
+R3;R4,1k_1_percent,R_0603_1608Metric,0.1W_min,assumed_design_requirement
+C1;C2,1nF,C_0603_1608Metric,10V_min,assumed_design_requirement
+TP1;TP2;TP3;TP4;TP5,test_pad,1.5mm_exposed_pad,probe_access_2.5mm,internal_layout_requirement

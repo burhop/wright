@@ -201,7 +201,13 @@ def test_migration_retains_verified_predecessor_and_forward_native_work(tmp_path
     upgrade_database(original, migrations=MIGRATIONS[:16])
     register(original)
     result = upgrade_database(original)
-    assert result.applied == ({"version": 17, "name": "native_engineering_processes"},)
+    assert result.applied == (
+        {"version": 17, "name": "native_engineering_processes"},
+        {"version": 18, "name": "terminal_workflow_artifact_reviews"},
+        {"version": 19, "name": "workspace_document_artifacts"},
+        {"version": 20, "name": "workflow_continuation_checkpoints"},
+        {"version": 21, "name": "native_application_lifecycle"},
+    )
     assert result.backup_manifest
     native = NativeProcessRepository(str(original))
     saved = save(native)
@@ -251,4 +257,4 @@ def test_interrupted_migration_does_not_leave_partial_native_tables(tmp_path):
             ).fetchone()
             is None
         )
-    assert upgrade_database(path).ending_version == 19
+    assert upgrade_database(path).ending_version == len(MIGRATIONS)

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "scenario_id": "lightweight-equipment-bracket-01",
+  "template_id": "lightweight-equipment-bracket",
+  "title": "Conveyor vision-camera cantilever",
+  "summary": "Lighten a bolted right-angle camera mount while keeping optical-head displacement within its supplied budget.",
+  "difficulty": "basic",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "dimensions.csv",
+      "load-case.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  },
+  "expected_outputs": [
+    {
+      "role": "baseline_cad",
+      "patterns": [
+        "**/*baseline*.step",
+        "**/*baseline*.stp"
+      ]
+    },
+    {
+      "role": "revised_cad",
+      "patterns": [
+        "**/*revised*.step",
+        "**/*revised*.stp"
+      ]
+    },
+    {
+      "role": "solver_deck",
+      "patterns": [
+        "**/*.inp"
+      ]
+    },
+    {
+      "role": "displacement_and_stress_fields",
+      "patterns": [
+        "**/*.frd",
+        "**/*.vtu",
+        "**/*.vtk"
+      ]
+    },
+    {
+      "role": "mass_comparison",
+      "patterns": [
+        "**/*mass*comparison*.csv"
+      ]
+    },
+    {
+      "role": "analysis_report",
+      "patterns": [
+        "**/*analysis*report*.md",
+        "**/*analysis*report*.pdf"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "All people, organizations, designs, data and images in this pack are fictional original test inputs. Engineering values are supplied design assumptions, not certified ratings or measured production results."
+  },
+  "input_bindings": {}
+}

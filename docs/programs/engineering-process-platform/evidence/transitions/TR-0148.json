@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0148", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED", "to_state": "CANDIDATE_FROZEN", "prior_revision": 148, "new_revision": 149,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "027071ca397784f1ccdd5ac5b6a9582b4f9bcde87957978e98d1f514eaff72d0", "new_state_digest": "ed81fdf76d98200b32ec7919dd261fca747ecc9e55a0c8b60c2244a3f07a3c33",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Freeze exact formatting-only successor 5f1f7c00250b8ef1ffb0cce5710e421a60d866fc for the completed read-only delta review; no test rerun is requested.",
+  "started_at": "2026-09-15T18:07:00Z", "finished_at": "2026-09-15T18:08:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "5f0653785bb86b8f681427d5547e62973b75cd95", "source_tree": "b810344fe312db9e2ff7660ab8f832be169b852a", "source_program_tree": "47bed06486d608f693faa3abcd796c75aa409e61", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0149.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0148.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0148.json", "sha256": "d9ca19b01155894d09ae861a57e45556fd4466bb654c82c91e0218572eac2cbe", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0149.json", "sha256": "787d4d82096cc9d61ebee0a7d0aebb586dea460690a77f825f6e4995b002b8d5", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-EXACT-FORMAT-FREEZE", "method": "Resolve exact candidate/tree and retain the unchanged 29-task scoped checkpoint.", "environment": "Committed Git", "duration_ms": 0, "result": "passed", "failure_class": null, "evidence": ["candidate:5f1f7c00250b8ef1ffb0cce5710e421a60d866fc", "tree:85bf4682c292c145c19b26be5d970cec45005406"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": "Immediate formatting-only delta review is ready to attach.", "repair": {"stable_cause_id": "EPP-N01-RUFF-FORMAT-GATE-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Attach the exact-candidate review and run required integration gates.", "CI and dev integration remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0148.json", "next_action": "VERIFY_CURRENT_FEATURE_CANDIDATE"
+}

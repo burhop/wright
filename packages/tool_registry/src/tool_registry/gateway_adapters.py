@@ -75,6 +75,9 @@ class DatabaseGatewayAudit:
     def record(self, event: Mapping[str, Any]) -> None:
         self.repository.record_audit(event)
 
+    def record_many(self, events: Sequence[Mapping[str, Any]]) -> None:
+        self.repository.record_audits(events)
+
 
 class DatabaseGatewayCatalog:
     def __init__(self, db_path: str) -> None:

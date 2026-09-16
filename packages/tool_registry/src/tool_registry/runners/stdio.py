@@ -47,10 +47,13 @@ class StdioRunner(BaseRunner):
         env: Optional[Dict[str, str]] = None,
         cwd: Optional[str] = None,
         operation_timeout: float = 60.0,
+        startup_timeout: float = 60.0,
         ui_enabled: bool = False,
     ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
+        if startup_timeout <= 0:
+            raise ValueError("startup_timeout must be positive")
         if isinstance(command, str):
             self.command = shlex.split(command)
         else:
@@ -58,6 +61,7 @@ class StdioRunner(BaseRunner):
         self.env = env
         self.cwd = cwd
         self.operation_timeout = operation_timeout
+        self.startup_timeout = startup_timeout
         self.process: Optional[asyncio.subprocess.Process] = None
         self._read_task: Optional[asyncio.Task] = None
         self._stderr_task: Optional[asyncio.Task] = None
@@ -119,9 +123,11 @@ class StdioRunner(BaseRunner):
             self._read_task = asyncio.create_task(self._read_stdout())
             self._stderr_task = asyncio.create_task(self._read_stderr())
 
-        # Enforce handshake within 60 seconds (done outside lock to prevent deadlock)
+        # Startup is separate from normal tool-operation deadlines. Selected
+        # native runtimes can need the lifecycle contract's full cold-start
+        # budget before they begin reading MCP stdin.
         try:
-            await asyncio.wait_for(self._handshake(), timeout=60.0)
+            await asyncio.wait_for(self._handshake(), timeout=self.startup_timeout)
         except Exception as e:
             logger.error(
                 "mcp_server_handshake_failed",
@@ -129,7 +135,9 @@ class StdioRunner(BaseRunner):
                 error=redact_text(e, self._secret_values()),
             )
             await self.stop()
-            raise RuntimeError(f"MCP handshake failed: {e}") from e
+            raise RuntimeError(
+                f"MCP handshake failed within {self.startup_timeout:g} seconds: {e}"
+            ) from e
 
     async def stop(self) -> None:
         async with self._lock:

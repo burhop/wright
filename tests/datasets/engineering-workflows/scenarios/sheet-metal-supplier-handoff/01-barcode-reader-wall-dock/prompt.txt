@@ -1,0 +1,3 @@
+Please turn my attached wall-dock sketch into a sheet-metal design for our handheld barcode reader. Start with an intent document and check current supplier stock and bending capabilities before treating my proposed 1.5 mm 5052 aluminum as available. I want a flat shelf, a tall back, and a short front retaining lip, with the cable free to fall through the center notch.
+
+After the design review, make the native Solid Edge sheet-metal part and verify the dimensions. Export the PSM, folded STEP, and a real developed flat-pattern DXF. Prepare a local simulated SendCutSend preview showing the exact files, stock, quantity, and assumptions. Save it for my review; do not upload files or buy anything.

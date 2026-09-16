@@ -1,0 +1,2 @@
+request_id,electrical_power_W,loss_W_per_K,time_to_90C_s,time_limit_s,meets_time,refined_request_id,refined_delta_time_s,refined_relative_energy_difference,energy_consistent,numerically_stable
+water-heater-sizing-02-attempt-qualification-baseline,800,0.85,263.5897141453984,360,true,water-heater-sizing-02-attempt-qualification-refined,0.00004039225524365975,1.2752326783091718e-7,true,true

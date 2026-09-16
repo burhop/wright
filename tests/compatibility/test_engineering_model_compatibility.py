@@ -51,7 +51,7 @@ def test_upgrade_from_15_is_additive_and_preserves_existing_settings(
     after = _table_names(database)
 
     assert result.starting_version == 15
-    assert result.ending_version == 19
+    assert result.ending_version == len(MIGRATIONS)
     assert before <= after
     assert {
         "model_install_plans",
@@ -285,7 +285,6 @@ def test_native_and_docker_package_manifests_include_model_registry_without_payl
         assert ".onnx" not in text
         assert ".safetensors" not in text
 
-    assert (
-        database_status(REPO_ROOT / ".nonexistent-compatibility.db").target_version
-        == 19
-    )
+    assert database_status(
+        REPO_ROOT / ".nonexistent-compatibility.db"
+    ).target_version == len(MIGRATIONS)

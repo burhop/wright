@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0177",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "CANDIDATE_FROZEN",
+  "to_state": "INDEPENDENTLY_VERIFIED",
+  "prior_revision": 177,
+  "new_revision": 178,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "e70f96602696f4f9e8195ea3986b805776ec73f5869085c599773578503f4778",
+  "new_state_digest": "449720445c04a5b15bc55642e9ea5d2dbfb4cc60a294496decdd8ac1456b2083",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex repository integration coordinator"
+  },
+  "action": "Attach renewed exact-candidate technical review for the PCB input-binding correction.",
+  "started_at": "2026-09-16T00:55:00Z",
+  "finished_at": "2026-09-16T00:56:00Z",
+  "duration_ms": 60000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "a359bccb1530057e6ae610e0946180620693a6a6",
+    "source_tree": "a1d8e16f801a63c3bc2fb859324d6eeb4a2d2670",
+    "source_program_tree": "3d7975041b23dfec782d70e38c788552e1c13feb",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0178.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0177.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0177.json",
+      "sha256": "57b2de0f999a8a5d07066c447a2aac6c7f4ece5d16e309b09f85e2a90196df06",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0178.json",
+      "sha256": "39e8a1a456cf47a7cca4f7beee91143f5f6681fd83e98299bf9c50a59e38678a",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-FEATURE081-PCB-INPUT-BINDING",
+      "method": "Combine the prior independent base-candidate review with the mandatory gate's incremental finding and exact focused rerun.",
+      "environment": "Windows clean integration worktree",
+      "duration_ms": 2040,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "candidate:f86e83c4721049c5d1cf98d645389d0d5fa67c22",
+        "focused-test:3-passed",
+        "review:NATIVE-REVIEW-20260916-F86E83C4.json"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Prior independent base review plus deterministic mandatory-gate incremental review; no full-gate completion inferred.",
+  "repair": {
+    "stable_cause_id": "EPP-N01-PCB-INPUT-BINDING-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Required local gate and remote CI remain pending.",
+    "Human study, content validation and deployed-browser verification remain pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0177.json",
+  "next_action": "REQUEST_CURRENT_FEATURE_PUSH_AUTHORIZATION"
+}

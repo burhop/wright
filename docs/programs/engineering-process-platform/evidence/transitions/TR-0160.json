@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0160", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "REPAIRING", "to_state": "IMPLEMENTING", "prior_revision": 160, "new_revision": 161,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "3d2e42b7982be3ef4f786f1ad8c2a778bd0fd0dd2042e300d0f774e342253e79", "new_state_digest": "0ef181a5e6b750080fdef27a5bc5f12f204d686ec7e90884492397a3a8db5c22",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Bind the exact test-only line-ending fix after its focused regression test passed.",
+  "started_at": "2026-09-15T20:33:00Z", "finished_at": "2026-09-15T20:34:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "bfed314d563f892bbaded2ac82ed6e012389cbdb", "source_tree": "828c371943125c6c235ee99036c86e65e4325f97", "source_program_tree": "0703ba1f3a8d46c358d38161cff7c8217e982b93", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0161.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0160.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0160.json", "sha256": "3b71d1910c5be6e84efd3067440b93b227bc6941c4b56495d2e75c638ff57c12", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0161.json", "sha256": "268008441b99e22e145b6c0bbc7065c9224a626f9f22f420c5dfdd6da6615ac7", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-TEMPLATE-CRLF-REPAIR", "method": "Run the exact previously failing test before returning to the required broad gate.", "environment": "Windows focused pytest", "duration_ms": 130, "result": "passed", "failure_class": null, "evidence": ["candidate:c8eed26b58bb925f510bc17993ccf2a146f06eef", "focused-test:1-passed", "duration:0.13s"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": null, "repair": {"stable_cause_id": "EPP-N01-TEMPLATE-CRLF-TEST-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Close the lease and attach exact-candidate review before integration.", "Required gates, CI and dev integration remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0160.json", "next_action": "AUTHOR_VERIFY_CURRENT_FEATURE"
+}

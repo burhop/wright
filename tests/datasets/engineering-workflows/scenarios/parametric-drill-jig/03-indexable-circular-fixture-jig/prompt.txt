@@ -1,0 +1,3 @@
+Please build a drill jig for the six-hole bolt circle on our circular fixture plate. Use the attached Cartesian hole table as the authority, and use the notch at the positive-X rim to key the jig rotation. The sketch only shows the intended annular style and access windows.
+
+Keep both clamp zones clear, preserve a large center opening for cleaning, and use the supplied flange-bushing geometry with the stated slip clearance. I need a STEP or STL jig, a hole-location DXF, and a JSON dimension report that includes the datum transform and bushing clearances. Do not add a new index hole to the workpiece or change its existing notch.

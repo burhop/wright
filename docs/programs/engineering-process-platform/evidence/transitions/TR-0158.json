@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0158", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "PUSH_AUTHORIZATION_PENDING", "to_state": "PR_READY", "prior_revision": 158, "new_revision": 159,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "2211a26dab2d538677518dbf4d97fd20252cf95a7272fc6a987ae3dfda7370b3", "new_state_digest": "6b41251387382278a2fb7d6dccbc1099e34bb72c4aaaae492af49b277eb084f3",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Prepare the exact independently reviewed scoped delivery for required local gates and a feature-branch PR targeting dev. Direct push to dev remains prohibited.",
+  "started_at": "2026-09-15T19:03:00Z", "finished_at": "2026-09-15T19:04:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "c2bdec65e4974d2efed96b1fe3cb3b67c10789b4", "source_tree": "7ea4b8d49b80670526765db4f6103cd081948a22", "source_program_tree": "18e102f52f4f0f48e5bc2dbeeed1253fe875c83c", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0159.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0158.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0158.json", "sha256": "ac8b2b023409baa0aeead663264bcf541a6db7fe7037d9a5e0e22ae8fda06fcc", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0159.json", "sha256": "2eb002cdb83de16d212427ba9b586961ba7d552ccbf5d1003fd668124063a033", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-PR-READY", "method": "Verify exact candidate review, closed lease, unchanged candidate and user-authorized PR path while retaining repository gates as mandatory next checks.", "environment": "Committed local Git and typed program records", "duration_ms": 0, "result": "passed", "failure_class": null, "evidence": ["candidate:ffada082c18b0f14defbe710ea24a4a6db9eccd1", "review:NATIVE-REVIEW-20260915-FFADA082.json", "docs/contributing/dev-push-runbook.md"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": "Exact candidate review passed and remains attached; no local-gate or CI result is inferred.",
+  "repair": {"stable_cause_id": "EPP-N01-STATUS-CATALOG-DIGEST-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Required local gates, feature-branch push, PR creation and remote CI remain pending.", "Human study, content validation and deployed-browser verification remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0158.json", "next_action": "VERIFY_CURRENT_FEATURE_CI"
+}

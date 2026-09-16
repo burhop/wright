@@ -1,0 +1,30 @@
+{
+  "kit_id": "wright-water-heater-v1",
+  "kit_version": "0.1.0",
+  "upstream_commit": "62e26009a566d15b625493b0c3510bdd14b01c3b",
+  "overlay_sha256": {
+    "models/WrightWaterHeater.mo": "172bc5f3eb26679d2905eea4e9e70788703c04be863568d292d9698c90a2bda4",
+    "src/kits/wright-water-heater.ts": "9f8d0960bd088134db63f688c427f722732a5d5b60a0ed51d870a49507b823d6",
+    "scenarios/wright-300-baseline.json": "63db7d159a461da3f67d169abcf66fd9aa4e890b4830531a43b01480c2848cad",
+    "scenarios/wright-300-refined.json": "d8fc5a508f7d03674362c4903b4e92147cdd6bebd026867ace25313a1120ed45",
+    "scenarios/wright-600-baseline.json": "6b5fdc88c3f89cbb6baeb1f821d8e2a65a74ad100fa898528a885c12b47a8ca3",
+    "scenarios/wright-600-refined.json": "45e4398ede71f40bdc48c63f1c7ad93127f5f0574a7bbb54c80f3cec12f22d52",
+    "scenarios/wright-700-baseline.json": "fb92af4365f687b8df54f24ecb8b4591716fdcdc202bedf6e0de17cc7a758073",
+    "scenarios/wright-700-refined.json": "c85ea84e7a82c360cf1beb0cec35b8d23bc2ae76f523655c5df5ef47cb4a58cd",
+    "scripts/derive-wright-parameter-schema.ts": "43995dbed316721fd3134aa4afc6ab6acae0cf9feb73634c2a8b2db9741f68f8",
+    "src/kits/registry.ts": "032d3a4e2b25397008c5086687fbabaf359dcbedc76d02aa97d0871b9b0a1ad6",
+    "src/domain/runtime-compatibility.ts": "c93aa17b913a4128ecbd71fa44f809012c84c6b5cdc315f05d02b7230ab1e6df",
+    "src/domain/wright-numerical-controls.ts": "ea5f5c561c5e0540f34d307f9372e9e1e26b7df656b28b62eac996cb007fb023",
+    "src/domain/types.ts": "ea2695812a50289b4ac621f8ef63be99f8abbc8125d14998ddb0f95ef3547d54",
+    "src/domain/simulation-manifest.ts": "5a6b509a06619d81ff7c4d1ab923c81f214a82deb4c490beb68b7ebbc084dc93",
+    "src/domain/service.ts": "b380273d734fd2e344f9f695ec947c4184cf8789c873b54aa6650b6e38f2f811",
+    "src/application/resumable-simulation-service.ts": "f89811d4a824010a11fe5881239f8d942fc5c20f13fb27f7c3e38de322f3328e",
+    "src/tools/resumable-results.ts": "426a15c52b970fe95dbf2b169ee23c7e4218e2220bebd9793e368912531d9c44",
+    "src/tools/results.ts": "7c946a5cce86d89636126f51b554fc2cdcccf1f5d362d039aa6bae65d67bfcc4",
+    "server.ts": "4698b3e7478c235c05677781b5d506f2a966153af3e476dff42ed00d938e55be",
+    "src/recorded-export.ts": "ba479a92a411155c21baa296f99941b2622290fbb53f81982dd2ff65655612e6",
+    "src/study-summary.ts": "7793d71303b20e5492771fa039f6a7757aaae51b5f56ae16512d243c83230bc7",
+    "src/release-identity.ts": "e025c0dbfda1ee61f792d57f37c517020e74ed05f2ee983fa7963614b46a1cf1",
+    "LICENSE": "431d4e7fdea0ade85f955845d590df1288a1d1dd47dac6bccb2f8e1305119d2b"
+  }
+}

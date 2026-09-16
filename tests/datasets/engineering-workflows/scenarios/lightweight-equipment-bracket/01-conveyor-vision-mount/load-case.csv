@@ -1,0 +1,2 @@
+case_id,load_patch,fx_N,fy_N,fz_N,restraint,deflection_limit_mm,stress_limit_MPa
+service_100N,"top pad x60..85 y-20..20 z60",0,0,-100,"wall-hole cylindrical surfaces",0.5,120

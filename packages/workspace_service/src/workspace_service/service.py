@@ -22,6 +22,7 @@ from core.logging import get_logger
 from core.redaction import redact_command, redact_text
 from core.tracing import traced
 from data_vault import (
+    WorkflowContinuationRepository,
     WorkflowRepository,
     WorkflowReviewRepository,
     WorkflowRunRepository,
@@ -73,6 +74,9 @@ from .workflow_graph import WorkspaceWorkflowGraphOperations
 from .workflow_operations import WorkspaceWorkflowOperations
 from .workflow_catalog import WorkflowTemplateCatalog
 from .engineering_scenario_service import EngineeringScenarioService
+from .engineering_workflow_template_service import EngineeringWorkflowTemplateService
+from .workflow_external_actions import WorkflowExternalActionService
+from .workflow_integration_policy import WorkflowIntegrationPolicyService
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -235,6 +239,16 @@ class WorkspaceService:
             self.executor, WorkflowRepository(db_path)
         )
         self.workflow_sources = WorkspaceWorkflowSourceUseCases(self.executor)
+        self.engineering_workflow_templates = EngineeringWorkflowTemplateService(
+            self.workflow_sources
+        )
+        self.workflow_external_actions = WorkflowExternalActionService(
+            WorkflowContinuationRepository(db_path)
+        )
+        self.workflow_integration_policies = WorkflowIntegrationPolicyService(db_path)
+        from .workflow_demo_capture import WorkflowDemoCaptureService
+
+        self.workflow_demo_captures = WorkflowDemoCaptureService(self.files)
         self.workflow_templates = WorkflowTemplateCatalog()
         self.workflow_graph = WorkspaceWorkflowGraphOperations(self.workflows)
         self.workflow_editor = WorkspaceWorkflowEditor(self.workflows)

@@ -343,7 +343,7 @@ def test_mutated_input_during_generation_never_creates_pending_authority(tmp_pat
     assert (tmp_path / "draft.html").exists()
 
 
-def test_review_requires_indexed_saved_document_and_rejects_mid_graph_and_mcp():
+def test_review_requires_indexed_saved_document_rejects_cycles_and_supports_mcp():
     with pytest.raises(WorkflowSourceExecutionError, match="indexed"):
         compile_prompt_workflow(
             source().replace('"file_policy": "indexed"', '"file_policy": "overwrite"')
@@ -362,8 +362,9 @@ def test_review_requires_indexed_saved_document_and_rejects_mid_graph_and_mcp():
         '"output_format": "json"',
         '"authoring_template": "mcp-task", "mcp_server":"cad", "output_format": "json"',
     )
-    with pytest.raises(WorkflowSourceExecutionError, match="MCP/CAD"):
-        compile_prompt_workflow(text)
+    plan = compile_prompt_workflow(text)
+    assert plan.steps[-1].external_action["action_kind"] == "local_review"
+    assert not plan.steps[-1].human_review
 
 
 def test_concurrent_conflicting_decisions_have_one_winner(tmp_path):

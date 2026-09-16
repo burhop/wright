@@ -69,9 +69,9 @@ def traced(span_name: str, attributes: dict[str, Any] | None = None):
 
         import asyncio
 
-        if asyncio.iscoroutinefunction(func):
-            return async_wrapper
-        return sync_wrapper
+        wrapper = async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+        wrapper.__wright_span_name__ = span_name
+        return wrapper
 
     return decorator
 

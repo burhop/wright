@@ -1,0 +1,59 @@
+workflow __instance__
+  name: "Sensor-and-Fan Wiring Harness"
+  purpose: "Create a 24 V harness plan and independently verify nets, part ratings, and branch voltage drop."
+  discipline: "electrical.integration"
+  reviewed_ai_suggestions: true
+end
+task define_harness___instance__
+  name: "Define harness nets and constraints"
+  purpose: "Bind wiring schedule, connector pins, branch lengths, currents, wire constraints, and voltage-drop limit."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Create an exact pin-to-pin net table and separate sourced ratings from assumptions."
+  settings: {"nominal_voltage_v":24,"example_voltage_drop_limit_percent":3}
+  tool: null
+  reusable_step: null
+end
+task generate_harness___instance__
+  name: "Select parts and generate harness assembly"
+  purpose: "Create a structural harness plan, pin schedule, cut list, and assembly documentation."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Search exact connector and wire records, validate the plan, and generate the assembly without treating structural validation as electrical proof."
+  settings: {"candidate":"Splice CAD D031"}
+  tool: null
+  reusable_step: null
+end
+task verify_harness___instance__
+  name: "Verify netlist, ratings, and voltage drop"
+  purpose: "Independently reject opens, shorts, mismatched pins, underrated parts, and excessive voltage drop."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Compare exact netlists, cite sourced connector ratings, and calculate every loaded branch voltage drop."
+  settings: {"unexpected_open_or_short_allowed":false}
+  tool: null
+  reusable_step: null
+end
+connection basis_to_generation___instance__
+  type: order
+  from: "define_harness___instance__"
+  to: "generate_harness___instance__"
+  label: "approved net table"
+  when: null
+end
+connection generation_to_verify___instance__
+  type: order
+  from: "generate_harness___instance__"
+  to: "verify_harness___instance__"
+  label: "generated assembly"
+  when: null
+end

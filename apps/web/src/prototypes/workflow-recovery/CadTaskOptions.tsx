@@ -205,7 +205,7 @@ export function CadTaskOptions({
       );
       if (!r.ok)
         throw new Error(
-          "Could not list open models. Start Solid Edge and refresh.",
+          "Could not list open models. Start the configured CAD application and refresh.",
         );
       setCaps(await r.json());
     } catch (e) {

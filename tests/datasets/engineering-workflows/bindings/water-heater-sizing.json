@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "template_id": "water-heater-sizing",
+  "binding_kind": "canonical_input_bound_selected_native_kit",
+  "original_stages": ["define_requirement", "run_allowed_settings", "verify_selection"],
+  "selected_kit": {"id": "wright-water-heater-v1", "version": "0.1.0", "model_source_sha256": "172bc5f3eb26679d2905eea4e9e70788703c04be863568d292d9698c90a2bda4"},
+  "selected_image": "sha256:e5dc37e5cde7722fa9547962b438548122def738019b85f380f9cb84d4b2bc47",
+  "allowed_tools": ["modelica_simulation_manifest_get", "modelica_simulation_request_template_get", "modelica_simulation_submit", "modelica_simulation_request_get", "modelica_export_recorded_result", "modelica_summarize_recorded_study"],
+  "human_sources": ["user-profile.md", "prompt.txt", "context.md", "parameters.csv", "power-candidates.csv", "kit-mapping.md", "concept.png"],
+  "optional_human_sources": ["loss-cases.csv", "energy-budget.csv"],
+  "baseline": {"max_solver_step_s": 1, "tolerance": 0.000001, "output_interval_s": 1},
+  "refined": {"max_solver_step_s": 0.25, "tolerance": 0.00000001, "output_interval_s": 1},
+  "required_study_files": ["temperature-time.csv", "power-comparison.csv", "energy-summary.csv", "temperature-curve.svg", "heater-selection.md", "kit-run-parameters.json"],
+  "required_native_files_per_request": ["request.json", "resolved-parameters.json", "WrightWaterHeater.mo", "scenario.json", "parameter-schema.json", "run.mos", "omc.log", "result.csv", "evidence.json", "run.json"],
+  "external_effects": "none",
+  "approval": "original requirement review uses scoped local_review; automatic mode only through an enrolled integration grant",
+  "selection": "lowest demonstrated candidate from actual completed baseline results; no fixed winning power",
+  "validation_scope": "artifact presence plus native prerequisite numerical screening; campaign output-content validation remains unmeasured"
+}

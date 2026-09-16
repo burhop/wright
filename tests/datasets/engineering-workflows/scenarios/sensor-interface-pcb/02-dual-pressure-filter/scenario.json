@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "scenario_id": "sensor-interface-pcb-02",
+  "template_id": "sensor-interface-pcb",
+  "title": "Dual pressure-sensor filter board",
+  "summary": "Route two 0\u20135 V sensor channels with independent RC filters, test points and keyed pin assignments.",
+  "difficulty": "intermediate",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "netlist.csv",
+      "component-library.csv"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  },
+  "expected_outputs": [
+    {
+      "role": "editable_schematic",
+      "patterns": [
+        "**/*.kicad_sch"
+      ]
+    },
+    {
+      "role": "editable_board",
+      "patterns": [
+        "**/*.kicad_pcb"
+      ]
+    },
+    {
+      "role": "bill_of_materials",
+      "patterns": [
+        "**/*bom*.csv"
+      ]
+    },
+    {
+      "role": "fabrication_copper",
+      "patterns": [
+        "**/*F_Cu*.gbr",
+        "**/*F.Cu*.gbr",
+        "**/*.gtl"
+      ]
+    },
+    {
+      "role": "fabrication_outline",
+      "patterns": [
+        "**/*Edge_Cuts*.gbr",
+        "**/*Edge.Cuts*.gbr",
+        "**/*.gko",
+        "**/*Edge_Cuts.gm1"
+      ]
+    },
+    {
+      "role": "drill_file",
+      "patterns": [
+        "**/*.drl"
+      ]
+    },
+    {
+      "role": "electrical_rule_report",
+      "patterns": [
+        "**/*erc*.rpt",
+        "**/*erc*.json",
+        "**/*erc*.txt"
+      ]
+    },
+    {
+      "role": "design_rule_report",
+      "patterns": [
+        "**/*drc*.rpt",
+        "**/*drc*.json",
+        "**/*drc*.txt"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "Original fictional users, companies, schematics and supplied design requirements. Component requirements are internal assumptions and are not manufacturer-certified ratings."
+  },
+  "input_bindings": {}
+}

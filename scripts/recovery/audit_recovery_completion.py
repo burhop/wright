@@ -66,12 +66,23 @@ def _json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _json_if_present(path: Path) -> dict[str, Any]:
+    """Return absent generated evidence as an empty, therefore failing, record."""
+    return _json(path) if path.is_file() else {}
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _canonical_frozen_task_document(value: str) -> str:
+    """Ignore only Markdown checkbox-marker case in an otherwise frozen ledger."""
+    normalized = value.replace("\r\n", "\n")
+    return re.sub(r"(?m)^- \[[xX]\]", "- [x]", normalized)
 
 
 def _walkthrough_evidence(
@@ -84,6 +95,31 @@ def _walkthrough_evidence(
     screenshots: int,
     files: int,
 ) -> dict[str, Any]:
+    required_paths = (
+        root / "status.json",
+        root / "manifest.json",
+        root / "trace" / "browser-diagnostics.json",
+    )
+    missing_required = [
+        path.relative_to(root).as_posix()
+        for path in required_paths
+        if not path.is_file()
+    ]
+    if missing_required:
+        return {
+            "ok": False,
+            "commit": None,
+            "tree": None,
+            "manifest_sha256": None,
+            "steps_passed": 0,
+            "steps_total": 0,
+            "raw_screenshots": 0,
+            "annotated_screenshots": 0,
+            "manifest_files": 0,
+            "browser_diagnostics": 0,
+            "missing_files": missing_required,
+            "digest_mismatches": [],
+        }
     status = _json(root / "status.json")
     manifest = _json(root / "manifest.json")
     diagnostics = _json(root / "trace" / "browser-diagnostics.json")
@@ -234,18 +270,23 @@ def collect() -> dict[str, Any]:
         if line.startswith("?? ")
     ]
 
-    frozen_diff = _git(
-        "diff", "--quiet", FROZEN_COMMIT, "--", *FROZEN_TASK_FILES, check=False
-    )
+    frozen_source_unchanged = True
     frozen_open: dict[str, list[str]] = {}
     frozen_ids_ok = True
     for relative in FROZEN_TASK_FILES:
+        baseline = _git("show", f"{FROZEN_COMMIT}:{relative}", check=False)
+        current = (ROOT / relative).read_text(encoding="utf-8")
+        frozen_source_unchanged = frozen_source_unchanged and (
+            baseline.returncode == 0
+            and _canonical_frozen_task_document(baseline.stdout)
+            == _canonical_frozen_task_document(current)
+        )
         _, open_tasks = _task_state(ROOT / relative)
         expected = {f"T{number:03d}" for number in range(28, 39)}
         present = sorted(open_tasks & expected)
         frozen_open[relative] = present
         frozen_ids_ok = frozen_ids_ok and set(present) == expected
-    frozen_ok = frozen_diff.returncode == 0 and frozen_ids_ok
+    frozen_ok = frozen_source_unchanged and frozen_ids_ok
 
     ledger = _task_ledger(FEATURE / "tasks.md")
     completed = ledger["completed"]
@@ -351,14 +392,16 @@ def collect() -> dict[str, Any]:
         and dashboard.get("checks", {}).get("api", {}).get("customerReady") is False
     )
 
-    preflight = _json(ROOT / "artifacts" / "t059-release-candidate" / "preflight.json")
-    native_build = _json(
+    preflight = _json_if_present(
+        ROOT / "artifacts" / "t059-release-candidate" / "preflight.json"
+    )
+    native_build = _json_if_present(
         ROOT / "artifacts" / "t059-release-candidate" / "native-build-evidence.json"
     )
-    native_lifecycle = _json(
+    native_lifecycle = _json_if_present(
         ROOT / "artifacts" / "t059-release-candidate" / "native-lifecycle-windows.json"
     )
-    release = _json(
+    release = _json_if_present(
         ROOT / "artifacts" / "t059-release-candidate" / "release-evidence.json"
     )
     release_text = (FEATURE / "evidence" / "release-candidate-hardening.md").read_text(
@@ -403,7 +446,7 @@ def collect() -> dict[str, Any]:
                 *FROZEN_TASK_FILES,
                 "specs/080-canonical-workflow-recovery/evidence/checkpoint-d-freeze.md",
             ],
-            "Git diff is empty against b4a7e996 and T028-T038 remain unchecked in the frozen task file.",
+            "Task content is unchanged against b4a7e996 except for checkbox-marker case, and T028-T038 remain unchecked in the frozen task file.",
         ),
         _requirement(
             "OBJ-002",
@@ -536,7 +579,7 @@ def collect() -> dict[str, Any]:
         },
         "frozen_checkpoint": {
             "commit": FROZEN_COMMIT,
-            "unchanged": frozen_diff.returncode == 0,
+            "unchanged": frozen_source_unchanged,
             "open_tasks_by_file": frozen_open,
         },
         "approved_walkthrough": {

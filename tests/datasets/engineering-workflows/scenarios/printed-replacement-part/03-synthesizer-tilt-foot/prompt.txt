@@ -1,0 +1,3 @@
+I want to replace the left tilt foot on our small desktop synthesizer. Please make the shape in my sketch into a smooth, pebble-sided wedge with two through-screws and a recessed rubber pad. The front-to-back length is 38 mm, and the side-view dimensions are written on the sketch. Keep the cable exit keepout at the back-right clear.
+
+The original foot is missing, so the dimensions in context.md are my prototype specification, not a traced manufacturer part. Please give me a mesh that I can inspect, a repaired printable STL, a support-aware P1S PETG slice package, and a simulated transfer receipt. Don't automatically mirror it for the other side, and don't claim it is load-tested.

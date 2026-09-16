@@ -1,0 +1,14 @@
+# AgentCAD 0.6.0 installed source excerpts; AST-only, no CAD imports/execution.
+# runners/build123d.py SHA256 1abfae4a3a6a5d57ebc46574536a5713f7a7ce565c622ce74374e7fcbb427e8f
+# Signature lines 90-94; globals line 231. Function body below retains only this seam.
+def execute(
+    user_source: str,
+    params: dict[str, Any] | None = None,
+    filename: str = "<script>",
+) -> ExecutionResult:
+    script_globals: dict[str, Any] = {
+        "__file__": filename,
+    }
+# commands/run.py SHA256 c3b31369601a481b92569060a81def76e109cb7a2440f3a302ba24f2aa814911
+# Exact invocation line 1112, which omits filename:
+result = runner.execute(raw_source, parsed_params)

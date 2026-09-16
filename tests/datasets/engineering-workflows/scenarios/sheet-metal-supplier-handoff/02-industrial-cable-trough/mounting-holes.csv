@@ -1,0 +1,5 @@
+feature_id,x_mm,y_mm,width_mm,overall_length_mm,major_axis,frame
+S1,90,20,6.5,15,X,exterior_bottom_plan
+S2,90,60,6.5,15,X,exterior_bottom_plan
+S3,310,20,6.5,15,X,exterior_bottom_plan
+S4,310,60,6.5,15,X,exterior_bottom_plan

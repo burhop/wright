@@ -1,0 +1,59 @@
+workflow __instance__
+  name: "Conduction Heat-Spreader Sizing"
+  purpose: "Compare plate widths using computed temperature fields, an analytical baseline, heat balance, and mesh sensitivity."
+  discipline: "thermal.analysis"
+  reviewed_ai_suggestions: true
+end
+task define_thermal_case___instance__
+  name: "Define geometry, material, load, and boundaries"
+  purpose: "Record a complete conduction model and target temperature before geometry or solving."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Record supplied geometry, conductivity, heat input, cooled boundary, insulation assumptions, and maximum temperature."
+  settings: {"example_conductivity_w_mk":200,"example_heat_w":4,"example_sink_temperature_c":25}
+  tool: null
+  reusable_step: null
+end
+task create_plate_geometry___instance__
+  name: "Create measured plate alternatives"
+  purpose: "Generate exact geometries for each candidate heat-spreader width."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Create and measure the baseline and revised plates; export their geometry manifests."
+  settings: {"example_length_mm":100,"example_thickness_mm":2}
+  tool: null
+  reusable_step: null
+end
+task solve_and_verify___instance__
+  name: "Solve and verify thermal sizing"
+  purpose: "Use computed fields to compare analytical agreement, heat balance, mesh sensitivity, and the temperature requirement."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Require two-percent analytical agreement and mesh stability, one-percent heat balance, and a revised maximum at or below the declared limit."
+  settings: {"candidate":"OASiS","example_limit_c":45}
+  tool: null
+  reusable_step: null
+end
+connection basis_to_geometry___instance__
+  type: order
+  from: "define_thermal_case___instance__"
+  to: "create_plate_geometry___instance__"
+  label: "accepted thermal basis"
+  when: null
+end
+connection geometry_to_solver___instance__
+  type: order
+  from: "create_plate_geometry___instance__"
+  to: "solve_and_verify___instance__"
+  label: "measured alternatives"
+  when: null
+end

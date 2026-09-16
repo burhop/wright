@@ -1,0 +1,4 @@
+connector,pins,min_contact_current_A,min_operating_voltage_V,min_ambient_C,requirement_source
+J0,6,1,30,35,fictional_customer_interface
+JF,4,1,30,35,fictional_customer_interface
+JS,3,0.1,30,35,fictional_customer_interface

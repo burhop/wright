@@ -1,0 +1,20 @@
+# AST-only excerpt from build123d 0.10.0 topology/shape_core.py:1682-1697.
+# Selected environment: D:/Caches/uv/archive-v0/CH7zs18YY8_rd5sZ/Lib/site-packages.
+# Full source SHA256: 49b9afabf26fbcede5cad1e2f9fca3f3ff516adaf72af14a382511a070c28cc8.
+# This fixture is parsed for the Python call signature; no CAD code is executed.
+def rotate(self, axis: Axis, angle: float) -> Self:
+    """rotate a copy
+
+    Rotates a shape around an axis.
+
+    Args:
+        axis (Axis): rotation Axis
+        angle (float): angle to rotate, in degrees
+
+    Returns:
+        a copy of the shape, rotated
+    """
+    transformation = gp_Trsf()
+    transformation.SetRotation(axis.wrapped, angle * DEG2RAD)
+
+    return self._apply_transform(transformation)

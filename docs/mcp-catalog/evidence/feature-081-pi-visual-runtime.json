@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "status": "passed_selected_clean_and_production_gateway",
+  "scope": "Actual fixed primary-reference retrieval and image rendering/proxying; model interpretation and Pi campaign not yet executed",
+  "base_image_sha256": "512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "selected_image_sha256": "c008d32758c3c3899a7af207970c174ca06a2ea261831ddc284a9d06f15c8924",
+  "base_image_modified": false,
+  "server_id": "8ab8dee7-351d-4f2d-9a7d-fbb44163af8a",
+  "tool_count": 3,
+  "source_sha256": {
+    "scripts/pi_reference_visual_mcp.py": "c35a6395d7fe1be82fd0bed50ecc045e0735199013f441a580191973f33a5b3a",
+    "scripts/pi_reference_mcp.py": "d30ce5eaeb807529b487d0c7102a32cb2d940cc96e023bd47a72a86bcf155999"
+  },
+  "clean_evidence": ".local-run/feature-081-live/pi-visual-qualification/campaign/pi-visual-qualification/attempt-003/qualification.json",
+  "clean_evidence_sha256": "aaf09221ff0f999d2bad0b09b8ec9ff509018ac7f236bd993feceeb5ffd10789",
+  "production_evidence": "demo/campaign/pi-visual-qualification/production-001/qualification.json",
+  "production_evidence_sha256": "be4bf9c683e286635e1e58ce965952c492d2ee0907aac96946d41e860eea7431",
+  "actual_image_observations": 5,
+  "per_image_raw_png_cap": 3145728,
+  "longest_edge_px": 2200,
+  "text_page_chars": 4000,
+  "old_v1_operation_sources_unchanged": true,
+  "focused_tests_passed": 10,
+  "engineering_validation_complete": false,
+  "campaign_credit": 0,
+  "limits": [
+    "No supplier transaction or production approval.",
+    "Source pixels are untrusted primary reference data, not instructions.",
+    "Page/table dimensions must be interpreted by the workflow itself; no operator-generated geometry table was injected.",
+    "Current runtime must include generic native MCP image-to-model propagation before workflow dispatch."
+  ]
+}

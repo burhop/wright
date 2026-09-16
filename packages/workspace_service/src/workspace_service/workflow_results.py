@@ -8,6 +8,14 @@ from dataclasses import asdict, dataclass
 from typing import Literal
 
 ResultKind = Literal["text", "image", "file", "structured", "cad_model", "analysis"]
+ArtifactRole = Literal[
+    "source",
+    "intermediate",
+    "deliverable",
+    "verification",
+    "diagnostic",
+    "external_action_receipt",
+]
 
 
 @dataclass(frozen=True)
@@ -56,6 +64,8 @@ class Provenance:
     task_id: str
     output_port: str
     input_revisions: tuple[tuple[str, str | None], ...] = ()
+    definition_digest: str | None = None
+    binding_digest: str | None = None
 
 
 @dataclass(frozen=True)
@@ -67,6 +77,7 @@ class EngineeringResult:
     provenance: Provenance
     # Named export results retain their own IDs, formats and connection targets.
     exports: tuple["EngineeringResult", ...] = ()
+    artifact_role: ArtifactRole = "deliverable"
 
     def __post_init__(self):
         if self.kind not in {
@@ -82,6 +93,15 @@ class EngineeringResult:
             raise ValueError(
                 "A result needs an identity and at least one verified representation."
             )
+        if self.artifact_role not in {
+            "source",
+            "intermediate",
+            "deliverable",
+            "verification",
+            "diagnostic",
+            "external_action_receipt",
+        }:
+            raise ValueError("Unknown engineering artifact role.")
 
     @property
     def persistent(self):
@@ -168,4 +188,5 @@ def file_result(output: dict, provenance: Provenance) -> EngineeringResult:
         output["output_path"],
         (file_representation(output),),
         provenance,
+        artifact_role=output.get("artifact_role", "deliverable"),
     )

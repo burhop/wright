@@ -7,6 +7,7 @@ from tool_registry.lifecycle_adapters import (
     DatabaseLifecycleAdapter,
     EngineMcpUiResourceReader,
 )
+from tool_registry.runners.sse import SseRunner
 from tool_registry.runners.stdio import StdioRunner
 
 
@@ -116,6 +117,78 @@ def test_stdio_runner_inherits_adapter_operation_timeout(tmp_path, monkeypatch) 
 
     assert isinstance(runner, StdioRunner)
     assert runner.operation_timeout == 47.5
+    assert runner.startup_timeout == 60.0
+
+
+def test_stdio_runner_caps_cold_start_at_native_lifecycle_budget(
+    tmp_path, monkeypatch
+) -> None:
+    adapter = DatabaseLifecycleAdapter(
+        str(tmp_path / "state.db"),
+        operation_timeout=600,
+    )
+    server = SimpleNamespace(
+        server_id="stdio-server",
+        name="Example MCP",
+        source_url="https://example.test",
+        type="stdio",
+        command=["example-mcp"],
+        env_vars={},
+        launch_env={},
+        category=None,
+    )
+    monkeypatch.setattr(
+        "tool_registry.lifecycle_adapters.required_credentials", lambda server: []
+    )
+    monkeypatch.setattr(
+        "tool_registry.lifecycle_adapters.McpSafetyPolicy.can_start",
+        lambda *args, **kwargs: SimpleNamespace(allowed=True, reason="allowed"),
+    )
+    monkeypatch.setattr(
+        "tool_registry.lifecycle_adapters.get_server",
+        lambda db_path, server_id: server,
+    )
+
+    runner = adapter.build_runner("stdio-server", None, None)
+
+    assert isinstance(runner, StdioRunner)
+    assert runner.operation_timeout == 600
+    assert runner.startup_timeout == 120.0
+
+
+def test_streamable_http_runner_inherits_adapter_operation_timeout(
+    tmp_path, monkeypatch
+) -> None:
+    adapter = DatabaseLifecycleAdapter(
+        str(tmp_path / "state.db"),
+        operation_timeout=600,
+    )
+    server = SimpleNamespace(
+        server_id="remote-server",
+        name="Remote solver MCP",
+        source_url="https://example.test",
+        type="sse",
+        command="https://example.test/mcp",
+        env_vars={},
+        launch_env={},
+        category="simulation",
+    )
+    monkeypatch.setattr(
+        "tool_registry.lifecycle_adapters.required_credentials", lambda server: []
+    )
+    monkeypatch.setattr(
+        "tool_registry.lifecycle_adapters.McpSafetyPolicy.can_start",
+        lambda *args, **kwargs: SimpleNamespace(allowed=True, reason="allowed"),
+    )
+    monkeypatch.setattr(
+        "tool_registry.lifecycle_adapters.get_server",
+        lambda db_path, server_id: server,
+    )
+
+    runner = adapter.build_runner("remote-server", None, None)
+
+    assert isinstance(runner, SseRunner)
+    assert runner.operation_timeout == 600
 
 
 @pytest.mark.asyncio

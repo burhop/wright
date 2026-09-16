@@ -1,0 +1,9 @@
+from_connector,from_pin,to_connector,to_pin,net,route_mm,current_cont_A,current_start_A,color_requirement
+J0,1,B1,POWER,24V,400,0.38,0.73,red
+B1,POWER,JF,1,24V,500,0.35,0.70,red
+B1,POWER,JS,1,24V,350,0.03,0.03,red
+J0,2,JF,2,FAN_GND,900,0.35,0.70,black
+J0,3,JF,3,PWM,900,0.005,0.005,blue
+JF,4,J0,4,TACH,900,0.005,0.005,yellow
+JS,3,J0,5,TEMP_SIGNAL,750,0.002,0.002,white
+J0,6,JS,2,SIGNAL_RETURN,750,0.03,0.03,gray

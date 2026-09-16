@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0145", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "PR_READY", "to_state": "REPAIRING", "prior_revision": 145, "new_revision": 146,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "fe65020e0d158737d770fef54c77535ae0bd22d039d7f69fb939120a5cc62704", "new_state_digest": "8474df04c205532a029b57c49360bf4d97da03157f602060a09a8ba20fea6ff4",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Enter one bounded repair to bind formatting-only commit 5f1f7c00250b8ef1ffb0cce5710e421a60d866fc after the fast gate named two Ruff findings. Per user instruction, perform no dedicated test rerun.",
+  "started_at": "2026-09-15T18:04:00Z", "finished_at": "2026-09-15T18:05:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "5f1f7c00250b8ef1ffb0cce5710e421a60d866fc", "source_tree": "85bf4682c292c145c19b26be5d970cec45005406", "source_program_tree": "cfad7888dd202794120a66f34708b30129d0190f", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0146.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0145.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0145.json", "sha256": "1ab000fa9c12cd6b12a24ca00e9fae5ef769f6b05c013ff171d15f1c9e5f5403", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0146.json", "sha256": "577d5aae43278535a012b96cbc16d6b5debbd099ad7f2c393b9d626c52910102", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-FORMAT-REPAIR", "method": "Confirm the exact successor changes only the two Ruff-formatted test files and preserves all prior reviewed product and security changes.", "environment": "Committed Git", "duration_ms": 0, "result": "passed", "failure_class": null, "evidence": ["candidate:5f1f7c00250b8ef1ffb0cce5710e421a60d866fc", "changed-files:2", "git-diff-ignore-all-space:zero"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": null, "repair": {"stable_cause_id": "EPP-N01-RUFF-FORMAT-GATE-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Close the lease and refresh exact-candidate review before integration.", "Required gates, CI and dev integration remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0145.json", "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}

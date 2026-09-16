@@ -1,0 +1,93 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0187",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PR_READY",
+  "to_state": "REPAIRING",
+  "prior_revision": 187,
+  "new_revision": 188,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "5bcb23c1eef8368aceb417a9f46784c83ea55e6a2e35aa14f830993e6640d7a7",
+  "new_state_digest": "bd14394d2481af46cec8a1771a95abb9d3908ffecaa2f0c13948b6f00c3ba74c",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex repository integration coordinator"
+  },
+  "action": "Enter bounded repair for the five baseline browser failures.",
+  "started_at": "2026-09-16T12:39:19Z",
+  "finished_at": "2026-09-16T12:39:20Z",
+  "duration_ms": 1000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "c9823548e9c4746eb232e61b19aa93bfb458a3e0",
+    "source_tree": "5084eb658d72a5a90b76c6630ffde90b456ccf3c",
+    "source_program_tree": "094e85af4b766db33dfce59b72dc1ad5f3ed8b34",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0188.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0187.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0187.json",
+      "sha256": "63d51f69df65367e2d388e48eee51f549bc099bbc8de13e012d9c20286e2b9d3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0188.json",
+      "sha256": "90cd78ec5b6325ff231dccb690992e1c94ade76b89a6963843473140e47141e3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-FEATURE081-BASELINE-PLAYWRIGHT",
+      "method": "Reproduce the five late browser failures on dev and PR 129, apply one consolidated correction, then rerun only those failures.",
+      "environment": "Windows clean integration worktree with isolated API and UI",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "candidate:c9823548e9c4746eb232e61b19aa93bfb458a3e0",
+        "focused-playwright:5-passed",
+        "typescript:passed",
+        "scoped-eslint:passed",
+        "diff-check:passed"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-N01-BASELINE-PLAYWRIGHT-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Corrected remote CI and required merge gate remain pending.",
+    "Human study, content validation and deployed-browser verification remain pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0187.json",
+  "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}

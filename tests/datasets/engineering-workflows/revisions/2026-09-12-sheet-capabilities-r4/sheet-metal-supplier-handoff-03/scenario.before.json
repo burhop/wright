@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "template_id": "sheet-metal-supplier-handoff",
+  "expected_outputs": [
+    {
+      "role": "base_native_sheet_metal",
+      "patterns": [
+        "**/*base*.psm",
+        "**/*tray*.psm"
+      ]
+    },
+    {
+      "role": "lid_native_sheet_metal",
+      "patterns": [
+        "**/*lid*.psm",
+        "**/*cover*.psm"
+      ]
+    },
+    {
+      "role": "base_folded_model",
+      "patterns": [
+        "**/*base*.step",
+        "**/*tray*.step",
+        "**/*base*.stp",
+        "**/*tray*.stp"
+      ]
+    },
+    {
+      "role": "lid_folded_model",
+      "patterns": [
+        "**/*lid*.step",
+        "**/*cover*.step",
+        "**/*lid*.stp",
+        "**/*cover*.stp"
+      ]
+    },
+    {
+      "role": "base_flat_pattern",
+      "patterns": [
+        "**/*base*.dxf",
+        "**/*tray*.dxf"
+      ]
+    },
+    {
+      "role": "lid_flat_pattern",
+      "patterns": [
+        "**/*lid*.dxf",
+        "**/*cover*.dxf"
+      ]
+    },
+    {
+      "role": "supplier_preview",
+      "patterns": [
+        "**/*preview*.json",
+        "**/*quote*.json"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "title": "SendCutSend design guidelines and capability research starting point",
+      "url": "https://sendcutsend.com/guidelines/",
+      "kind": "manufacturer",
+      "verification": "not_retrieved"
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "All people, businesses, load/volume assumptions, internal policies, and drawings are fictional. No supplied sketch is a flat pattern or supplier-approved drawing. Supplier facts require current primary-source retrieval. A test supplier receipt must declare simulation; no upload, order, payment, or production release is authorized."
+  },
+  "input_bindings": {},
+  "scenario_id": "sheet-metal-supplier-handoff-03",
+  "title": "Styled two-piece instrumentation chassis for industrial data acquisition",
+  "summary": "A product team supplies an industrial styling brief and multi-bend tray/lid interfaces for a serviceable custom instrumentation enclosure.",
+  "difficulty": "advanced",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "manufacturing-policy.md",
+      "panel-cutouts.csv",
+      "stock-selection-revision-r1.md",
+      "cad-design-choices-revision-r3.md"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  }
+}

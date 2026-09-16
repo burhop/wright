@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "scenario_id": "robot-tracking-diagnosis-03",
+  "template_id": "robot-tracking-diagnosis",
+  "title": "Figure-eight run with external-pose dropout",
+  "summary": "Separate missing visual-tracker evidence from accumulating wheel-odometry disagreement on a curved route.",
+  "difficulty": "advanced",
+  "files": {
+    "user_profile": "user-profile.md",
+    "prompt": "prompt.txt",
+    "context": [
+      "context.md",
+      "planned-path.csv",
+      "external-pose.csv",
+      "odometry.csv",
+      "velocity-command.csv",
+      "telemetry.csv",
+      "events.csv",
+      "bag-conversion.md"
+    ],
+    "images": [
+      "concept.svg",
+      "concept.png"
+    ]
+  },
+  "expected_outputs": [
+    {
+      "role": "aligned_timeline",
+      "patterns": [
+        "**/*timeline*.csv"
+      ]
+    },
+    {
+      "role": "trajectory_overlay",
+      "patterns": [
+        "**/*trajectory*overlay*.svg",
+        "**/*trajectory*overlay*.png"
+      ]
+    },
+    {
+      "role": "tracking_metrics",
+      "patterns": [
+        "**/*tracking*metrics*.csv",
+        "**/*tracking*metrics*.json"
+      ]
+    },
+    {
+      "role": "evidence_diagnosis",
+      "patterns": [
+        "**/*diagnosis*.md",
+        "**/*diagnosis*.pdf"
+      ]
+    }
+  ],
+  "references": [],
+  "provenance": {
+    "kind": "synthetic",
+    "rights": "Original fictional test inputs; CC0-1.0",
+    "notes": "Original synthetic personas, companies, engineering briefs, sketches and numerical input records. No values are represented as observed customer data, certified ratings, production approvals or validated workflow outputs."
+  },
+  "input_bindings": {}
+}

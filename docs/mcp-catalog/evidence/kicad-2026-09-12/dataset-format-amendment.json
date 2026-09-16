@@ -1,0 +1,21 @@
+{
+  "reason": "Recognize actual KiCad Protel Edge_Cuts.gm1 output without removing any legitimate existing alternative; before first PCB enrollment",
+  "actual_probe": ".local-run/feature-081-live/kicad-prerequisite/probe-04/probe.json",
+  "changes": [
+    {
+      "scenario": "sensor-interface-pcb-01",
+      "before": "8741a763fdf2018e77f708b6ca8a5fd01366b0dbea5bdab89432b4d02c52024b",
+      "after": "7e6ca1ae045e61813357037a28652a633cf19a99a572e42e05ab8de71b3dc61b"
+    },
+    {
+      "scenario": "sensor-interface-pcb-02",
+      "before": "e49879bf47150fc587c8c139f0610048b9b6bc5817dad7771df9ffc94531c939",
+      "after": "114acb14a26acfcc1c22b2a83d7694daa38314e9c728482acb6306d54d423cee"
+    },
+    {
+      "scenario": "sensor-interface-pcb-03",
+      "before": "004fe5e2ddc08853ad85d7253e71e54c6da7a1ec85bf43e788129ae8ceac3ebe",
+      "after": "71cf89052a11dcf367c15de87102345cec8c8e939ec26e6bb1707012149b6509"
+    }
+  ]
+}

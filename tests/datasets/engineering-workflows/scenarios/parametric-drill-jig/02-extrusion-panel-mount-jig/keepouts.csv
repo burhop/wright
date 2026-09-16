@@ -1,0 +1,4 @@
+keepout_id,x_min_mm,x_max_mm,y_min_mm,y_max_mm,z_min_mm,z_max_mm,purpose
+FRONT_CLAMP,0,18,0,80,0,30,external_clamp_occupancy
+REAR_CLAMP,162,180,0,80,0,30,external_clamp_occupancy
+CHIP_WINDOW,65,115,15,65,0,35,exclude_jig_material_for_chip_access

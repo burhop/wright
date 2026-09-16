@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "template_id": "sensor-fan-harness",
+  "implementation": "WireViz 0.4.1 + Graphviz + source-bound selected engineering operations; explicit Splice alternative",
+  "server_alias": "wright-campaign-harness",
+  "allowed_tools": ["retrieve_harness_component_records", "generate_harness_package", "verify_harness_package"],
+  "scenarios": {
+    "sensor-fan-harness-01": {"ambient_c":35,"voltage_v":24,"drop_limit_v":0.72,"service_mm":50,"zone_pigtail_route_mm":50,"minimum_bend_radius_mm":25,"shield_pairs":[],"physical_cross_connection_control":"Independent connector sizes: J0 six, JF four, JS three"},
+    "sensor-fan-harness-02": {"ambient_c":45,"voltage_v":24,"drop_limit_v":0.72,"service_mm":50,"zone_pigtail_route_mm":50,"minimum_bend_radius_mm":25,"shield_pairs":[],"physical_cross_connection_control":"Route branches captive in separate sleeves/clips; label fan A/B and verify measured service reach cannot reach alternate connector before release"},
+    "sensor-fan-harness-03": {"ambient_c":50,"voltage_v":24,"drop_limit_v":0.72,"service_mm":50,"zone_pigtail_route_mm":50,"minimum_bend_radius_mm":40,"shield_pairs":[["PRESSURE_X","SENSOR_RETURN_X"],["PRESSURE_Y","SENSOR_RETURN_Y"]],"physical_cross_connection_control":"Zone X blue and Zone Y orange; captive independently routed sleeves must prevent alternate-zone mating; measured reach approval remains required"}
+  }
+}

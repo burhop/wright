@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-09-12T15:08:05+0000",
+    "kicad_version": "9.0.2",
+    "schematic_parity": [],
+    "source": "probe.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [A] of R1 on F.Cu",
+                    "pos": {
+                        "x": 9.175,
+                        "y": 15.0
+                    },
+                    "uuid": "2aa98dc9-3664-4f07-9993-de2d0eb0f899"
+                },
+                {
+                    "description": "Pad 1 [A] of R2 on F.Cu",
+                    "pos": {
+                        "x": 24.175,
+                        "y": 15.0
+                    },
+                    "uuid": "9bedd525-d744-4f9e-b887-4ad7f79b1323"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [B] of R1 on F.Cu",
+                    "pos": {
+                        "x": 10.825,
+                        "y": 15.0
+                    },
+                    "uuid": "8b9f8b9e-04ae-4364-9564-db0a3445e5b1"
+                },
+                {
+                    "description": "Pad 2 [B] of R2 on F.Cu",
+                    "pos": {
+                        "x": 25.825,
+                        "y": 15.0
+                    },
+                    "uuid": "a4cc76de-459a-4d65-a5bd-c5da50cb0e5c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": []
+}

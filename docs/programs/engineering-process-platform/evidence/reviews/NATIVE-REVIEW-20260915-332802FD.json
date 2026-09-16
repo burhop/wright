@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/native-candidate-review.schema.json",
+  "schema_version": "1.0",
+  "feature_id": "EPP-N01",
+  "review_type": "independent_technical",
+  "review_scope": "entire_candidate",
+  "candidate_commit": "332802fdd828a3880b1e3bcbec71a42931a052e8",
+  "candidate_tree": "a55b8bded489ea526dd4f824f34aa0573d8ddb14",
+  "task_ids": ["T001", "T002", "T003", "T004", "T005", "T006", "T007", "T008", "T009", "T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T020", "T021", "T022", "T023", "T024", "T025", "T026", "T027", "T029", "T030"],
+  "reviewer_identity": "/root/epp_n01_independent_review",
+  "implementation_authors": ["Test User <test@example.com>", "/root"],
+  "reviewed_at": "2026-09-15T14:45:00Z",
+  "result": "passed",
+  "open_actionable_findings": 0,
+  "human_study_evidence": false,
+  "evidence": "Independent Sol High review covered the entire exact candidate against origin/dev and the bounded feature-081 requirements. The initial c7adeb80 review failed on unsafe null-response completion, unbound retry evidence and missing response-format usage. Two bounded product corrections produced exact candidate 332802fdd828a3880b1e3bcbec71a42931a052e8. The reviewer then reproduced blocked null-response recovery with preserved successful call evidence, rejection of nonexistent retry evidence, and three model decisions with three usage events. The corrected focused suite passed 79 tests; Ruff and diff checks passed; the committed-subject validator passed with zero blockers. No other actionable finding remained in dashboard startup/scanning, compact contracts, completion handling or persistent retry/usage tracking. This is technical review only: campaign content validation, human study, full push/merge gates, CI and deployed-browser verification remain pending, and no whole-feature or deployment completion is claimed."
+}

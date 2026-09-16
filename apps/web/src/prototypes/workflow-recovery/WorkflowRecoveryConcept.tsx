@@ -77,13 +77,15 @@ import {
   promptSourceCandidates,
   sourceKey,
 } from "./prompt-settings";
-import type {
-  WorkspaceWorkflowOutput,
-  WorkspaceWorkflowRunEvent,
-  WorkspaceWorkflowStep,
-  WorkspaceEngineeringResult,
-  WorkspaceWorkflowReview,
-  WorkspaceWorkflowRunSummary,
+import {
+  workspaceService,
+  type WorkflowApprovalCheckpoint,
+  type WorkspaceWorkflowOutput,
+  type WorkspaceWorkflowRunEvent,
+  type WorkspaceWorkflowStep,
+  type WorkspaceEngineeringResult,
+  type WorkspaceWorkflowReview,
+  type WorkspaceWorkflowRunSummary,
 } from "../../services/workspace-service";
 import { WorkflowReviewPanel, useWorkflowReviews } from "./WorkflowReviewPanel";
 import { WorkflowRunHistory } from "./WorkflowRunHistory";
@@ -179,8 +181,22 @@ export interface WorkflowRunOptions {
 }
 
 export interface WorkflowRecoveryRunResult {
-  readonly status?: "completed" | "pending_review";
+  readonly status?:
+    | "completed"
+    | "pending_review"
+    | "awaiting_approval"
+    | "awaiting_external_outcome"
+    | "external_action_not_dispatched"
+    | "external_action_outcome_unknown"
+    | "changes_requested";
   readonly review?: WorkspaceWorkflowReview;
+  readonly approval?: WorkflowApprovalCheckpoint;
+  readonly runId?: string;
+  readonly verification?: {
+    status?: string;
+    assertions?: Array<Record<string, unknown>>;
+  };
+  readonly captureRights?: Record<string, unknown>;
   readonly runLogPath?: string;
   readonly outputPath: string;
   readonly outputBytes: number;
@@ -190,6 +206,339 @@ export interface WorkflowRecoveryRunResult {
   readonly outputs?: WorkspaceWorkflowOutput[];
   readonly results?: WorkspaceEngineeringResult[];
   readonly steps?: WorkspaceWorkflowStep[];
+}
+
+function captureCandidates(
+  results: readonly WorkspaceEngineeringResult[],
+): WorkspaceEngineeringResult[] {
+  return results.flatMap((result) => [
+    result,
+    ...captureCandidates(result.exports ?? []),
+  ]);
+}
+
+function WorkflowDemoCapturePanel({
+  result,
+  sessionId,
+  onOpenFile,
+}: {
+  readonly result: WorkflowRecoveryRunResult;
+  readonly sessionId?: string;
+  readonly onOpenFile?: (path: string) => void;
+}) {
+  const candidates = captureCandidates(result.results ?? []).filter((item) =>
+    item.representations.some(
+      (representation) =>
+        representation.kind === "workspace_file" &&
+        representation.durability === "persistent" &&
+        Boolean(representation.sha256),
+    ),
+  );
+  const [selected, setSelected] = useState<ReadonlySet<string>>(
+    () => new Set(candidates.slice(0, 12).map((item) => item.id)),
+  );
+  const [caption, setCaption] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [createdPath, setCreatedPath] = useState("");
+  const eligible =
+    result.verification?.status === "verified" &&
+    Boolean(
+      result.runId && result.runLogPath && sessionId && candidates.length,
+    );
+  const create = async () => {
+    if (!eligible || !result.runId || !result.runLogPath || !sessionId) return;
+    setBusy(true);
+    setError("");
+    try {
+      const capture = await workspaceService.createWorkflowDemoCapture(
+        sessionId,
+        result.runId,
+        result.runLogPath,
+        [...selected],
+        caption,
+      );
+      setCreatedPath(capture.path);
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "The local demonstration package could not be created.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <details
+      className="recovery-technical-details"
+      data-testid="workflow-demo-capture"
+    >
+      <summary data-testid="workflow-demo-capture-toggle">
+        Demonstration capture
+      </summary>
+      {!eligible ? (
+        <p data-testid="workflow-demo-capture-ineligible">
+          A local capture becomes available after this exact run has verified
+          engineering assertions, approved input rights, and persistent
+          artifacts.
+        </p>
+      ) : (
+        <>
+          <p>
+            Select verified artifacts and draft a caption. Wright creates a
+            local lineage package and does not publish it.
+          </p>
+          <fieldset>
+            <legend>Artifacts</legend>
+            {candidates.slice(0, 12).map((item) => (
+              <label key={item.id}>
+                <input
+                  type="checkbox"
+                  data-testid={`workflow-demo-capture-artifact-${item.id}`}
+                  checked={selected.has(item.id)}
+                  onChange={(event) =>
+                    setSelected((current) => {
+                      const next = new Set(current);
+                      if (event.target.checked) next.add(item.id);
+                      else next.delete(item.id);
+                      return next;
+                    })
+                  }
+                />
+                {item.name}
+              </label>
+            ))}
+          </fieldset>
+          <label htmlFor="workflow-demo-capture-caption">Caption draft</label>
+          <textarea
+            id="workflow-demo-capture-caption"
+            data-testid="workflow-demo-capture-caption"
+            value={caption}
+            maxLength={8000}
+            onChange={(event) => setCaption(event.target.value)}
+          />
+          <button
+            type="button"
+            className="recovery-button recovery-button--primary"
+            data-testid="workflow-demo-capture-create"
+            disabled={busy || !caption.trim() || selected.size === 0}
+            onClick={() => void create()}
+          >
+            Create local capture package
+          </button>
+        </>
+      )}
+      {createdPath && (
+        <p role="status">
+          <b>{createdPath}</b> was created locally. No post was published.{" "}
+          {onOpenFile && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-demo-capture-open"
+              onClick={() => onOpenFile(createdPath)}
+            >
+              Open capture package
+            </button>
+          )}
+        </p>
+      )}
+      {error && <p role="alert">{error}</p>}
+    </details>
+  );
+}
+
+function WorkflowExternalApprovalPanel({
+  initial,
+  sessionId,
+}: {
+  readonly initial: WorkflowApprovalCheckpoint;
+  readonly sessionId: string;
+}) {
+  const [checkpoint, setCheckpoint] = useState(initial);
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => setCheckpoint(initial), [initial]);
+  const requestId = () =>
+    globalThis.crypto?.randomUUID?.() ??
+    `workflow-approval-${Date.now().toString(36)}`;
+  const refresh = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      setCheckpoint(
+        await workspaceService.getWorkflowApprovalCheckpoint(
+          sessionId,
+          checkpoint.run_id,
+          checkpoint.checkpoint_id,
+        ),
+      );
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "The approval state could not be refreshed.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const decide = async (decision: "approved" | "changes_requested") => {
+    if (decision === "changes_requested" && !reason.trim()) {
+      setError("Describe the required change before returning this action.");
+      return;
+    }
+    setBusy(true);
+    setError("");
+    try {
+      setCheckpoint(
+        await workspaceService.decideWorkflowApproval(
+          sessionId,
+          checkpoint,
+          decision,
+          reason.trim() || null,
+          requestId(),
+        ),
+      );
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "The decision was not saved.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const resume = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      setCheckpoint(
+        await workspaceService.resumeWorkflowApproval(
+          sessionId,
+          checkpoint,
+          requestId(),
+        ),
+      );
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "The approved action was not resumed.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const outcome = checkpoint.external_action?.outcome;
+  return (
+    <section
+      className="recovery-review-panel"
+      data-testid="workflow-external-approval"
+      aria-labelledby={`workflow-approval-${checkpoint.checkpoint_id}`}
+    >
+      <h3 id={`workflow-approval-${checkpoint.checkpoint_id}`}>
+        External action approval
+      </h3>
+      <p>
+        <b>{checkpoint.action_kind.replaceAll("_", " ")}</b> ·{" "}
+        {checkpoint.state.replaceAll("_", " ")}
+        {typeof outcome === "string"
+          ? ` · ${outcome.replaceAll("_", " ")}`
+          : ""}
+      </p>
+      <p>
+        This decision covers the exact definition, inputs, artifacts, binding,
+        destination, settings, and proposed action shown below.
+      </p>
+      <dl className="recovery-native-run__metadata">
+        <dt>Subject digest</dt>
+        <dd>
+          <code>{checkpoint.subject_digest}</code>
+        </dd>
+        {Object.entries(checkpoint.subject).map(([name, value]) => (
+          <div key={name}>
+            <dt>{name.replaceAll("_", " ")}</dt>
+            <dd>
+              <pre>{JSON.stringify(value, null, 2)}</pre>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {checkpoint.state === "pending" && (
+        <>
+          <label
+            htmlFor={`workflow-approval-reason-${checkpoint.checkpoint_id}`}
+          >
+            Decision note
+          </label>
+          <textarea
+            id={`workflow-approval-reason-${checkpoint.checkpoint_id}`}
+            data-testid="workflow-external-approval-reason"
+            value={reason}
+            maxLength={2000}
+            onChange={(event) => setReason(event.target.value)}
+          />
+          <div className="recovery-review-panel__actions">
+            <button
+              type="button"
+              className="recovery-button recovery-button--primary"
+              data-testid="workflow-external-approval-approve"
+              disabled={busy}
+              onClick={() => void decide("approved")}
+            >
+              Approve exact action
+            </button>
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-external-approval-changes"
+              disabled={busy}
+              onClick={() => void decide("changes_requested")}
+            >
+              Request changes
+            </button>
+          </div>
+        </>
+      )}
+      {checkpoint.state === "approved" && (
+        <button
+          type="button"
+          className="recovery-button recovery-button--primary"
+          data-testid="workflow-external-approval-resume"
+          disabled={busy}
+          onClick={() => void resume()}
+        >
+          Resume with one-shot authority
+        </button>
+      )}
+      {checkpoint.state === "consumed" && outcome === "not_dispatched" && (
+        <p role="status">
+          One-shot dispatch authority was issued. Wright is waiting for the
+          qualified adapter to reconcile the external outcome.
+        </p>
+      )}
+      {outcome === "outcome_unknown" && (
+        <p role="alert">
+          The external outcome is unknown. Inspect the destination before any
+          new attempt; this approval cannot be reused.
+        </p>
+      )}
+      <button
+        type="button"
+        className="recovery-button recovery-button--secondary"
+        data-testid="workflow-external-approval-refresh"
+        disabled={busy}
+        onClick={() => void refresh()}
+      >
+        Refresh approval state
+      </button>
+      {error && <p role="alert">{error}</p>}
+    </section>
+  );
 }
 
 interface NativeRunEvent {
@@ -285,6 +634,41 @@ function NativeRunPanel({
     result,
     error,
   );
+  const actionPresentations: Partial<
+    Record<
+      NonNullable<WorkflowRecoveryRunResult["status"]>,
+      { label: string; detail: string }
+    >
+  > = {
+    awaiting_approval: {
+      label: "Awaiting external action approval",
+      detail:
+        "Review the exact action subject before issuing one-shot authority.",
+    },
+    awaiting_external_outcome: {
+      label: "Awaiting external action outcome",
+      detail:
+        "One-shot authority was issued. Wright is waiting for the qualified adapter to reconcile its outcome.",
+    },
+    external_action_not_dispatched: {
+      label: "External action was not dispatched",
+      detail:
+        "The consumed authority did not dispatch the action. A new attempt requires a fresh checkpoint.",
+    },
+    external_action_outcome_unknown: {
+      label: "External action outcome unknown",
+      detail:
+        "Inspect the destination before retrying because the prior action may have occurred.",
+    },
+    changes_requested: {
+      label: "Changes requested",
+      detail:
+        "The exact action was returned for changes and was not authorized.",
+    },
+  };
+  const actionPresentation = result?.approval
+    ? actionPresentations[result.status ?? "completed"]
+    : undefined;
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
     if (!pending) return;
@@ -315,13 +699,15 @@ function NativeRunPanel({
               ? "Workflow running"
               : reviewPresentation
                 ? reviewPresentation.label
-                : result
-                  ? "Workflow completed"
-                  : error
-                    ? error.startsWith("Workflow cancelled.")
-                      ? "Workflow cancelled"
-                      : "Workflow failed"
-                    : "Ready to run"}
+                : actionPresentation
+                  ? actionPresentation.label
+                  : result
+                    ? "Workflow completed"
+                    : error
+                      ? error.startsWith("Workflow cancelled.")
+                        ? "Workflow cancelled"
+                        : "Workflow failed"
+                      : "Ready to run"}
         </b>
         <span>
           {statusPresentation
@@ -330,12 +716,14 @@ function NativeRunPanel({
               ? `${taskTitle}: ${events.at(-1)?.label ?? "Starting"}.`
               : reviewPresentation
                 ? reviewPresentation.detail
-                : result
-                  ? result.results?.length
-                    ? `${result.results.length} engineering result(s) ready.`
-                    : `${result.outputs?.length ?? 1} output file(s) ready in this workspace.`
-                  : error ||
-                    "Run the saved workflow to create its responses and output files."}
+                : actionPresentation
+                  ? actionPresentation.detail
+                  : result
+                    ? result.results?.length
+                      ? `${result.results.length} engineering result(s) ready.`
+                      : `${result.outputs?.length ?? 1} output file(s) ready in this workspace.`
+                    : error ||
+                      "Run the saved workflow to create its responses and output files."}
         </span>
       </div>
       {refreshError && (
@@ -399,6 +787,12 @@ function NativeRunPanel({
             onRefresh={reviews.refresh}
           />
         ))}
+      {result?.approval && workspaceSessionId && (
+        <WorkflowExternalApprovalPanel
+          initial={result.approval}
+          sessionId={workspaceSessionId}
+        />
+      )}
       {result?.results?.length ? (
         <EngineeringResults results={result.results} onOpenFile={onOpenFile} />
       ) : (
@@ -485,6 +879,13 @@ function NativeRunPanel({
               </small>
             </p>
           ))}
+      {result && (
+        <WorkflowDemoCapturePanel
+          result={result}
+          sessionId={workspaceSessionId}
+          onOpenFile={onOpenFile}
+        />
+      )}
       {startedAt && !observed && (
         <section
           className="recovery-native-run__input"
@@ -1329,15 +1730,27 @@ function WorkflowRecoveryReadyConcept({
         ? { ...workflowRun, review: observer.record.review }
         : workflowRun;
     if (
-      !["completed", "pending_review", "changes_requested"].includes(
-        observed.status,
-      )
+      ![
+        "completed",
+        "pending_review",
+        "changes_requested",
+        "awaiting_approval",
+        "awaiting_external_outcome",
+        "external_action_not_dispatched",
+        "external_action_outcome_unknown",
+      ].includes(observed.status)
     )
       return null;
     const output = observed.execution?.outputs.at(-1);
     return {
-      status: observed.review ? "pending_review" : "completed",
+      status: observed.review
+        ? "pending_review"
+        : (observed.status as WorkflowRecoveryRunResult["status"]),
       review: observed.review,
+      approval: observed.approval,
+      runId: observed.run_id ?? undefined,
+      verification: observed.verification,
+      captureRights: observed.capture_rights,
       runLogPath: observed.path,
       outputPath: output?.output_path ?? "",
       outputBytes: output?.output_bytes ?? 0,
@@ -2343,6 +2756,7 @@ function WorkflowRecoveryReadyConcept({
                       ? `Using ${event.tool}`
                       : {
                           review_requested: "Awaiting your review",
+                          approval_requested: "Awaiting exact action approval",
                           design_check: `Design check: ${event.report?.verdict ?? "reviewed"}`,
                           design_revision: `Correcting design · revision ${event.revision}`,
                           run_started: "Run log opened",
@@ -2369,7 +2783,9 @@ function WorkflowRecoveryReadyConcept({
             label:
               result.status === "pending_review"
                 ? "Awaiting your review"
-                : "Run completed",
+                : result.status === "awaiting_approval"
+                  ? "Awaiting exact action approval"
+                  : "Run completed",
             detail: result.outputPath
               ? `${result.outputPath} was saved in this workspace (${result.outputBytes.toLocaleString("en-US")} bytes).`
               : `${result.results?.length ?? 0} engineering result(s) produced; open the results to review them.`,

@@ -238,4 +238,6 @@ def test_repository_rejects_secret_and_oversized_json(tmp_path) -> None:
 
 
 def test_schema_version_matches_migration_count() -> None:
-    assert len(MIGRATIONS) == 19
+    assert [migration.version for migration in MIGRATIONS] == list(
+        range(1, len(MIGRATIONS) + 1)
+    )

@@ -64,6 +64,7 @@ nav:
       - Wright for Codex: getting-started/codex.md
       - Capability Library: getting-started/capability-library.md
   - User Guide:
+      - Engineering Workflow Templates: workflows/engineering-workflow-templates.md
       - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
       - Open Web Applications: workspace-surfaces/opening-surfaces.md
       - Rivet MCP Workflows: rivet/mcp-gateway.md

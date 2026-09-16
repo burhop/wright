@@ -30,6 +30,7 @@ import {
   workspaceSurfacesEnabled,
 } from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
+import { initializeSavedTheme } from "./services/ui-preferences";
 
 const NativeProcessPage = lazy(
   () => import("./components/pages/NativeProcessPage"),
@@ -38,18 +39,7 @@ const NativeProcessPage = lazy(
 function App() {
   useDesktopIntegration();
 
-  useEffect(() => {
-    hostAdapter
-      .fetch(`${hostAdapter.getApiBaseUrl()}/api/setup/status`)
-      .then((res) => res.json())
-      .then((data) => {
-        const activeTheme = data.theme || "dark";
-        document.documentElement.setAttribute("data-theme", activeTheme);
-      })
-      .catch(() => {
-        document.documentElement.setAttribute("data-theme", "dark");
-      });
-  }, []);
+  useEffect(() => initializeSavedTheme(), []);
 
   const Router =
     hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;

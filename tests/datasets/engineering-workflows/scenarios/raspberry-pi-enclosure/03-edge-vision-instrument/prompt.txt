@@ -1,0 +1,3 @@
+Build a design study for the Pi 5 computer in our tabletop inspection station. This is a prototype electronics enclosure, not a machine-safety function. Research the board mechanical drawing first and keep source dimensions separate from the synthetic fan data I uploaded.
+
+The case has a tight 145 x 110 x 48 mm envelope and a rear cable channel. Compare a straight front-to-rear flow path against a curved internal guide that directs air over the heat source. Use the same fan assumption and vent free area for both. I want a reviewable design document, AgentCAD models, enclosure and fluid-domain STEP files, then CFD fields and a comparison JSON. The outer design should have a precise charcoal instrument look with aligned slots and a restrained status-light bar.

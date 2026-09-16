@@ -220,7 +220,7 @@ test.describe("UI Navigation Redesign E2E", () => {
     await page.goto("/");
     await expect(page.getByTestId("nav-dashboard")).toBeVisible();
     await expect(page.getByTestId("nav-tool-registry")).toBeVisible();
-    await expect(page.getByTestId("nav-logs")).toHaveCount(0);
+    await expect(page.getByTestId("nav-logs")).toBeVisible();
     await expect(page.getByTestId("nav-settings")).toBeVisible();
 
     // 2. Click Settings link

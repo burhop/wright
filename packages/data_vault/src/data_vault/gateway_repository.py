@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import time
 import uuid
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 from core.redaction import redact_mapping  # type: ignore[import-untyped]
@@ -71,6 +71,29 @@ class GatewayRepository:
         return {str(item) for item in value} if isinstance(value, list) else None
 
     def record_audit(self, event: Mapping[str, Any]) -> str:
+        return self.record_audits([event])[0]
+
+    def record_audits(self, events: Sequence[Mapping[str, Any]]) -> list[str]:
+        """Persist one discovery's complete audit trail in a single transaction."""
+        values = [self._audit_values(event) for event in events]
+        if not values:
+            return []
+        with connect_state_db(self.db_path) as connection:
+            # State connections use autocommit. Explicitly begin so a discovery
+            # commits once and an invalid/duplicate row cannot leave a partial batch.
+            connection.execute("BEGIN IMMEDIATE")
+            connection.executemany(
+                """INSERT INTO gateway_audit_events (
+                    event_id, occurred_at, correlation_id, request_id, session_id,
+                    principal_id, workspace_id, operation, server_id, target_name,
+                    allowed, reason_code, outcome, duration_ms, metadata_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                values,
+            )
+        return [row[0] for row in values]
+
+    @staticmethod
+    def _audit_values(event: Mapping[str, Any]) -> tuple[Any, ...]:
         required = (
             "correlation_id",
             "session_id",
@@ -88,32 +111,23 @@ class GatewayRepository:
         safe_metadata = (
             redact_mapping(metadata) if isinstance(metadata, Mapping) else {}
         )
-        with connect_state_db(self.db_path) as connection:
-            connection.execute(
-                """INSERT INTO gateway_audit_events (
-                    event_id, occurred_at, correlation_id, request_id, session_id,
-                    principal_id, workspace_id, operation, server_id, target_name,
-                    allowed, reason_code, outcome, duration_ms, metadata_json
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                (
-                    event_id,
-                    int(event.get("occurred_at") or time.time_ns()),
-                    str(event["correlation_id"]),
-                    _optional(event.get("request_id")),
-                    str(event["session_id"]),
-                    str(event["principal_id"]),
-                    str(event["workspace_id"]),
-                    str(event["operation"]),
-                    _optional(event.get("server_id")),
-                    _optional(event.get("target_name")),
-                    int(bool(event.get("allowed"))),
-                    str(event["reason_code"]),
-                    str(event["outcome"]),
-                    max(0, int(event.get("duration_ms") or 0)),
-                    json.dumps(safe_metadata, sort_keys=True),
-                ),
-            )
-        return event_id
+        return (
+            event_id,
+            int(event.get("occurred_at") or time.time_ns()),
+            str(event["correlation_id"]),
+            _optional(event.get("request_id")),
+            str(event["session_id"]),
+            str(event["principal_id"]),
+            str(event["workspace_id"]),
+            str(event["operation"]),
+            _optional(event.get("server_id")),
+            _optional(event.get("target_name")),
+            int(bool(event.get("allowed"))),
+            str(event["reason_code"]),
+            str(event["outcome"]),
+            max(0, int(event.get("duration_ms") or 0)),
+            json.dumps(safe_metadata, sort_keys=True),
+        )
 
     def list_audit(self, session_id: str) -> list[dict[str, Any]]:
         with connect_state_db(self.db_path) as connection:

@@ -1,0 +1,59 @@
+workflow __instance__
+  name: "Robot Tracking Diagnosis"
+  purpose: "Align planned and observed motion from a recorded ROS 2 run and produce evidence-linked tracking metrics and diagnosis."
+  discipline: "robotics.diagnostics"
+  reviewed_ai_suggestions: true
+end
+task inspect_bag___instance__
+  name: "Inspect bag and topic schemas"
+  purpose: "Identify exact time bases, message types, path, pose, odometry, command, and annotated event inputs."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Read bag metadata and schemas before bounded range retrieval."
+  settings: {"candidate":"rosbag-mcp-pypi"}
+  tool: null
+  reusable_step: null
+end
+task align_and_measure___instance__
+  name: "Align samples and calculate tracking metrics"
+  purpose: "Compute trajectory overlay, RMSE, velocity disagreement, and event timing independently."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Record interpolation and alignment method; require independent metrics within one percent and event time within one sample."
+  settings: {"metric_tolerance_percent":1}
+  tool: null
+  reusable_step: null
+end
+task evidence_diagnosis___instance__
+  name: "Write evidence-linked diagnosis"
+  purpose: "Explain supported observations and keep candidate causes separate from proof."
+  step_type: review
+  group: null
+  performed_by: ai_then_engineer
+  inputs: []
+  outputs: []
+  prompt: "Cite time ranges and metrics. Do not claim wheel slip from command and velocity disagreement alone."
+  settings: {"causal_overclaiming":false}
+  tool: null
+  reusable_step: null
+end
+connection inspect_to_measure___instance__
+  type: order
+  from: "inspect_bag___instance__"
+  to: "align_and_measure___instance__"
+  label: "bounded typed samples"
+  when: null
+end
+connection measure_to_diagnosis___instance__
+  type: order
+  from: "align_and_measure___instance__"
+  to: "evidence_diagnosis___instance__"
+  label: "verified metrics"
+  when: null
+end

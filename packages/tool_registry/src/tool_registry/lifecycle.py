@@ -80,6 +80,37 @@ class LifecycleSlot:
     runner: Runner | None = None
     desired_state: DesiredState = DesiredState.STOPPED
     owned_tasks: set[asyncio.Task[Any]] = field(default_factory=set)
+    active_calls: int = 0
+    native_quarantined: bool = False
+    native_unknown_operation: bool = False
+    native_receipt: dict[str, Any] | None = None
+
+
+class NativeLifecycleBlocked(RuntimeError):
+    """The native resource needs reconciliation; its transport is retained."""
+
+
+class NativeLifecycleHooks(Protocol):
+    """Injected native resource service; callbacks persist their own receipts.
+
+    These hooks must use an independent native control channel or the supplied
+    runner directly, rather than re-entering the coordinator's per-server lock.
+    The unresolved callback records quarantine without mutating the application.
+    """
+
+    def manages(self, server_id: str) -> bool: ...
+
+    async def reconcile(
+        self, server_id: str, runner: Runner | None, generation: int
+    ) -> Mapping[str, Any]: ...
+
+    async def cleanup(
+        self, server_id: str, runner: Runner, generation: int, reason: str
+    ) -> Mapping[str, Any]: ...
+
+    async def unresolved(
+        self, server_id: str, runner: Runner, generation: int, reason: str
+    ) -> Mapping[str, Any]: ...
 
 
 RunnerFactory = Callable[[str, str | None, Any], Awaitable[Runner] | Runner]
@@ -96,6 +127,8 @@ class McpLifecycleCoordinator:
         publish_status: StatusPublisher | None = None,
         operation_timeout: float = 30.0,
         shutdown_timeout: float = 10.0,
+        native_hooks: NativeLifecycleHooks | None = None,
+        native_timeout: float = 120.0,
     ) -> None:
         self._runner_factory = runner_factory
         self._publish_tools = publish_tools or _noop_tools
@@ -105,6 +138,8 @@ class McpLifecycleCoordinator:
         self._slots: dict[str, LifecycleSlot] = {}
         self._slots_lock = asyncio.Lock()
         self._closing = False
+        self._native_hooks = native_hooks
+        self._native_timeout = native_timeout
 
     async def start(
         self,
@@ -116,6 +151,14 @@ class McpLifecycleCoordinator:
         slot = await self._slot(server_id)
         async with slot.lock:
             self._ensure_open()
+            if self._native_managed(server_id) and (
+                slot.runner is None or slot.native_quarantined
+            ):
+                if slot.active_calls:
+                    raise NativeLifecycleBlocked(
+                        "Native application still has an active operation"
+                    )
+                await self._reconcile_native(slot)
             # Starting is an idempotent desire, not an implicit restart. Status
             # refreshes and gateway observation may race with a long remote MCP
             # call; replacing a healthy runner here used to cancel that call by
@@ -130,9 +173,14 @@ class McpLifecycleCoordinator:
             slot.generation = generation
             slot.desired_state = DesiredState.RUNNING
             previous = slot.runner
-            slot.runner = None
             if previous is not None:
-                await self._bounded_stop(previous, server_id, generation)
+                if not await self._stop_with_native(
+                    slot, previous, generation, "replace"
+                ):
+                    raise NativeLifecycleBlocked(
+                        "Native cleanup blocked transport replacement"
+                    )
+            slot.runner = None
 
             candidate = self._runner_factory(
                 server_id, workspace_path, approval_context
@@ -147,7 +195,10 @@ class McpLifecycleCoordinator:
                     runner.list_tools(), self._operation_timeout
                 )
             except BaseException as exc:
-                await self._bounded_stop(runner, server_id, generation)
+                if not await self._stop_with_native(
+                    slot, runner, generation, "startup_failed"
+                ):
+                    slot.runner = runner
                 if self._current(slot, generation):
                     slot.desired_state = DesiredState.STOPPED
                     await self._publish_status(
@@ -156,7 +207,10 @@ class McpLifecycleCoordinator:
                 raise
 
             if not self._current(slot, generation) or self._closing:
-                await self._bounded_stop(runner, server_id, generation)
+                if not await self._stop_with_native(
+                    slot, runner, generation, "startup_superseded"
+                ):
+                    slot.runner = runner
                 return generation
 
             slot.runner = runner
@@ -168,11 +222,16 @@ class McpLifecycleCoordinator:
         slot = await self._slot(server_id)
         async with slot.lock:
             generation = slot.generation + 1
+            runner = slot.runner
+            if runner is not None and not await self._stop_with_native(
+                slot, runner, generation, "stop"
+            ):
+                raise NativeLifecycleBlocked(
+                    "Native cleanup blocked; control channel retained"
+                )
             slot.generation = generation
             slot.desired_state = DesiredState.STOPPED
-            runner, slot.runner = slot.runner, None
-            if runner is not None:
-                await self._bounded_stop(runner, server_id, generation)
+            slot.runner = None
             await self._publish_tools(server_id, (), generation)
             await self._publish_status(server_id, "inactive", None, generation)
             return generation
@@ -206,6 +265,11 @@ class McpLifecycleCoordinator:
             generation = slot.generation
             if runner is None or not runner.is_running():
                 raise RuntimeError(f"MCP server '{server_id}' is not active")
+            if slot.native_quarantined:
+                raise NativeLifecycleBlocked(
+                    "Native resource is quarantined pending reconciliation"
+                )
+            slot.active_calls += 1
         operation = (
             runner.call_tool(tool_name, arguments)
             if progress_callback is None
@@ -230,6 +294,23 @@ class McpLifecycleCoordinator:
         except TimeoutError:
             await self._retire_runner(slot, runner, generation)
             raise
+        except asyncio.CancelledError:
+            if self._native_managed(server_id):
+                async with slot.lock:
+                    await self._mark_native_unknown(
+                        slot, runner, generation, "tool_cancelled"
+                    )
+            raise
+        except Exception:
+            if self._native_managed(server_id):
+                async with slot.lock:
+                    await self._mark_native_unknown(
+                        slot, runner, generation, "tool_transport_failed"
+                    )
+            raise
+        finally:
+            async with slot.lock:
+                slot.active_calls -= 1
         if not self._current(slot, generation):
             raise asyncio.CancelledError("MCP server generation was superseded")
         return result
@@ -269,6 +350,10 @@ class McpLifecycleCoordinator:
             generation = slot.generation
             if runner is None or not runner.is_running():
                 raise RuntimeError(f"MCP server '{server_id}' is not active")
+            if slot.native_quarantined:
+                raise NativeLifecycleBlocked(
+                    "Native resource is quarantined pending reconciliation"
+                )
         operation = getattr(runner, method)
         result = await asyncio.wait_for(
             operation(argument),
@@ -303,21 +388,28 @@ class McpLifecycleCoordinator:
 
         async def close_slot(slot: LifecycleSlot) -> None:
             async with slot.lock:
-                slot.generation += 1
+                generation = slot.generation + 1
+                runner = slot.runner
+                if runner is not None and not await self._stop_with_native(
+                    slot, runner, generation, "shutdown"
+                ):
+                    return
+                slot.generation = generation
                 slot.desired_state = DesiredState.STOPPED
-                runner, slot.runner = slot.runner, None
+                slot.runner = None
                 tasks = list(slot.owned_tasks)
                 for task in tasks:
                     task.cancel()
                 if tasks:
                     await asyncio.gather(*tasks, return_exceptions=True)
-                if runner is not None:
-                    await self._bounded_stop(runner, slot.server_id, slot.generation)
 
         try:
+            shutdown_budget = self._shutdown_timeout
+            if any(self._native_managed(slot.server_id) for slot in slots):
+                shutdown_budget = max(shutdown_budget, self._native_timeout)
             await asyncio.wait_for(
                 asyncio.gather(*(close_slot(slot) for slot in slots)),
-                self._shutdown_timeout,
+                shutdown_budget,
             )
         except TimeoutError:
             logger.error("mcp_lifecycle_shutdown_timed_out")
@@ -325,6 +417,106 @@ class McpLifecycleCoordinator:
     def runner_for(self, server_id: str) -> Runner | None:
         slot = self._slots.get(server_id)
         return slot.runner if slot else None
+
+    def native_status_for(self, server_id: str) -> dict[str, Any] | None:
+        slot = self._slots.get(server_id)
+        if slot is None or slot.native_receipt is None:
+            return None
+        return {
+            **slot.native_receipt,
+            "quarantined": slot.native_quarantined,
+            "unknown_operation": slot.native_unknown_operation,
+            "transport_retained": slot.runner is not None,
+        }
+
+    def _native_managed(self, server_id: str) -> bool:
+        return self._native_hooks is not None and self._native_hooks.manages(server_id)
+
+    async def _reconcile_native(self, slot: LifecycleSlot) -> None:
+        assert self._native_hooks is not None
+        try:
+            receipt = await asyncio.wait_for(
+                self._native_hooks.reconcile(
+                    slot.server_id, slot.runner, slot.generation
+                ),
+                self._native_timeout,
+            )
+            slot.native_receipt = dict(receipt)
+            if receipt.get("status") not in ("ready", "not_managed"):
+                raise NativeLifecycleBlocked("Native reconciliation is incomplete")
+            slot.native_quarantined = False
+            slot.native_unknown_operation = False
+        except BaseException as exc:
+            slot.native_quarantined = True
+            slot.native_receipt = {
+                "status": "cleanup_blocked",
+                "blocker": redact_text(exc),
+            }
+            raise NativeLifecycleBlocked(
+                "Native startup reconciliation blocked"
+            ) from exc
+
+    async def _mark_native_unknown(
+        self, slot: LifecycleSlot, runner: Runner, generation: int, reason: str
+    ) -> None:
+        assert self._native_hooks is not None
+        slot.native_quarantined = True
+        slot.native_unknown_operation = True
+        try:
+            receipt = await asyncio.wait_for(
+                self._native_hooks.unresolved(
+                    slot.server_id, runner, generation, reason
+                ),
+                self._native_timeout,
+            )
+            slot.native_receipt = {
+                **receipt,
+                "status": "cleanup_blocked",
+                "reason": reason,
+            }
+        except BaseException as exc:
+            slot.native_receipt = {
+                "status": "cleanup_blocked",
+                "reason": reason,
+                "blocker": redact_text(exc),
+            }
+
+    async def _stop_with_native(
+        self, slot: LifecycleSlot, runner: Runner, generation: int, reason: str
+    ) -> bool:
+        if self._native_managed(slot.server_id):
+            assert self._native_hooks is not None
+            if slot.active_calls or slot.native_unknown_operation:
+                slot.native_quarantined = True
+                slot.native_receipt = {
+                    "status": "cleanup_blocked",
+                    "reason": reason,
+                    "blocker": "Active or unknown native operation retains its control channel",
+                }
+                return False
+            try:
+                receipt = await asyncio.wait_for(
+                    self._native_hooks.cleanup(
+                        slot.server_id, runner, generation, reason
+                    ),
+                    self._native_timeout,
+                )
+                slot.native_receipt = dict(receipt)
+                if receipt.get("status") not in ("completed", "not_managed"):
+                    slot.native_quarantined = True
+                    return False
+                slot.native_quarantined = False
+            except BaseException as exc:
+                await self._mark_native_unknown(
+                    slot, runner, generation, "native_cleanup_interrupted"
+                )
+                slot.native_receipt = {
+                    **(slot.native_receipt or {}),
+                    "blocker": redact_text(exc),
+                }
+                return False
+        await self._bounded_stop(runner, slot.server_id, generation)
+        return True
 
     def generation_for(self, server_id: str) -> int:
         slot = self._slots.get(server_id)
@@ -369,6 +561,11 @@ class McpLifecycleCoordinator:
 
         async with slot.lock:
             if slot.runner is not runner or slot.generation != generation:
+                return
+            if self._native_managed(slot.server_id):
+                await self._mark_native_unknown(
+                    slot, runner, generation, "tool_timeout"
+                )
                 return
             slot.generation += 1
             slot.runner = None

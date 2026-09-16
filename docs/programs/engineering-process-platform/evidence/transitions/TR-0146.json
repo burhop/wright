@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json", "schema_version": "2.0", "transition_id": "TR-0146", "program_id": "EPP-2026", "feature_id": "EPP-N01", "state_domain": "feature", "event_kind": "lifecycle_transition",
+  "from_state": "REPAIRING", "to_state": "IMPLEMENTING", "prior_revision": 146, "new_revision": 147,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256", "prior_state_digest": "8474df04c205532a029b57c49360bf4d97da03157f602060a09a8ba20fea6ff4", "new_state_digest": "4f245e4565e0a0aff9f0be2d24ac028e76d17f813185fc27ed1c3f534616bde1",
+  "actor": {"role": "coordinator", "identity": "Codex repository integration coordinator"}, "action": "Bind the already-committed formatting-only successor as the complete repair implementation; no further code or dedicated test rerun is performed.",
+  "started_at": "2026-09-15T18:05:00Z", "finished_at": "2026-09-15T18:06:00Z", "duration_ms": 60000, "classification": "passed",
+  "git": {"source_commit": "c58164b149f2b425091be1a55467e201baa3876d", "source_tree": "ab436a3c406aeec93315a8b8e559ce069b4af6cf", "source_program_tree": "32850f3e575f2ceefe8c247b7e8a2ca88ae72703", "containing_commit": null, "containing_commit_rule": "transition_blob_container", "worktree_clean_before": true, "worktree_clean_after": false, "diff_check_passed": true, "changed_paths_manifest": ["docs/programs/engineering-process-platform/evidence/states/program-state-revision-0147.json", "docs/programs/engineering-process-platform/program-state.json"], "transition_path": "evidence/transitions/TR-0146.json"},
+  "inputs": [{"path": "evidence/states/program-state-revision-0146.json", "sha256": "577d5aae43278535a012b96cbc16d6b5debbd099ad7f2c393b9d626c52910102", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "outputs": [{"path": "evidence/states/program-state-revision-0147.json", "sha256": "2232d891fae569f695a8d7c311511f0180d38b14d848616c226b4082f7f882de", "schema_version": "2.0", "role": "append_only_evidence"}],
+  "checks": [{"check_id": "NATIVE-FEATURE081-FORMAT-IMPLEMENTATION", "method": "Confirm the exact formatting commit is present and no additional code change follows it.", "environment": "Committed Git", "duration_ms": 0, "result": "passed", "failure_class": null, "evidence": ["commit:5f1f7c00250b8ef1ffb0cce5710e421a60d866fc", "git-diff-ignore-all-space:zero"]}],
+  "authority": {"authority_kind": "standing_user_scope", "status": "authorized_scope", "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json", "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca", "exact_subject_approval": false},
+  "independent_verifier": null, "repair": {"stable_cause_id": "EPP-N01-RUFF-FORMAT-GATE-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": ["Close the lease and refresh exact-candidate review.", "Required gates, CI and dev integration remain pending."],
+  "rollback_subject": "evidence/states/program-state-revision-0146.json", "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}

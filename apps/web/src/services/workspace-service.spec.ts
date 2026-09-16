@@ -16,6 +16,191 @@ import {
 
 const digest = "d".repeat(64);
 
+describe("engineering workflow templates", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+
+  const template = {
+    template_id: "printed-replacement-part",
+    version: "1.0.0",
+    title: "3D Printed Replacement Part",
+    summary: "Create a replacement part.",
+    discipline: "Additive manufacturing",
+    preview: { asset: "previews/part.svg", alt: "Part workflow" },
+    provided_inputs: [],
+    requested_inputs: [],
+    expected_outputs: [],
+    external_effects: ["printer_transfer"],
+    source_digest: digest,
+    readiness: {
+      state: "setup_required" as const,
+      definition_valid: true,
+      configured: false,
+      qualified: false,
+      available: false,
+      verified_run: false,
+      facts: [],
+      blocking_reasons: ["Configure adapters."],
+    },
+  };
+
+  it("loads exactly ten ordered catalog entries without workspace mutation", async () => {
+    const templates = Array.from({ length: 10 }, (_, index) => ({
+      ...template,
+      template_id: `template-${index}`,
+    }));
+    mocks.fetch.mockResolvedValue(
+      response({ catalog_version: "1.0.0", templates }),
+    );
+    await expect(
+      workspaceService.getEngineeringWorkflowTemplates(),
+    ).resolves.toEqual(templates);
+    expect(mocks.fetch.mock.calls[0][1]).toEqual({ cache: "no-store" });
+  });
+
+  it("binds instance creation to version, preview digest, path, and request id", async () => {
+    mocks.fetch.mockResolvedValue(response({ workspace_id: "workspace" }, 201));
+    await workspaceService.instantiateEngineeringWorkflowTemplate(
+      "session",
+      template,
+      "workflows/part.workflow.wflow",
+      "request-0001",
+    );
+    expect(JSON.parse(mocks.fetch.mock.calls[0][1].body)).toEqual({
+      session_id: "session",
+      template_version: "1.0.0",
+      expected_source_digest: digest,
+      workflow_path: "workflows/part.workflow.wflow",
+      request_id: "request-0001",
+    });
+  });
+
+  it("maps collision and stale-preview conflicts to a corrective message", async () => {
+    mocks.fetch.mockResolvedValue(response({}, 409));
+    await expect(
+      workspaceService.instantiateEngineeringWorkflowTemplate(
+        "session",
+        template,
+        "workflows/part.workflow.wflow",
+        "request-0001",
+      ),
+    ).rejects.toThrow("already exists");
+  });
+});
+
+describe("workflow external action approvals", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+
+  const checkpoint = {
+    checkpoint_id: "checkpoint-1",
+    workspace_id: "workspace",
+    workflow_id: "workflow",
+    run_id: "run-1",
+    step_id: "transfer",
+    action_kind: "printer_transfer" as const,
+    subject: { action: { kind: "printer_transfer" } },
+    subject_digest: "a".repeat(64),
+    state: "pending" as const,
+    continuation: {},
+    actor: null,
+    reason: null,
+    created_at: 1,
+    updated_at: 1,
+    expires_at: null,
+    external_action: null,
+  };
+
+  it("scopes approval detail to the active workspace session", async () => {
+    mocks.fetch.mockResolvedValue(response(checkpoint));
+    await workspaceService.getWorkflowApprovalCheckpoint(
+      "session-1",
+      checkpoint.run_id,
+      checkpoint.checkpoint_id,
+    );
+    expect(mocks.fetch.mock.calls[0][0]).toContain("session_id=session-1");
+  });
+
+  it("sends an exact-subject approval decision and one-shot resume request", async () => {
+    mocks.fetch
+      .mockResolvedValueOnce(response({ ...checkpoint, state: "approved" }))
+      .mockResolvedValueOnce(response({ ...checkpoint, state: "consumed" }));
+    const approved = await workspaceService.decideWorkflowApproval(
+      "session-1",
+      checkpoint,
+      "approved",
+      "Checked package",
+      "decision-0001",
+    );
+    await workspaceService.resumeWorkflowApproval(
+      "session-1",
+      approved,
+      "resume-0001",
+    );
+    expect(JSON.parse(mocks.fetch.mock.calls[0][1].body)).toEqual({
+      session_id: "session-1",
+      subject_digest: checkpoint.subject_digest,
+      decision: "approved",
+      reason: "Checked package",
+      request_id: "decision-0001",
+    });
+    expect(JSON.parse(mocks.fetch.mock.calls[1][1].body)).toEqual({
+      session_id: "session-1",
+      checkpoint_id: checkpoint.checkpoint_id,
+      subject_digest: checkpoint.subject_digest,
+      request_id: "resume-0001",
+    });
+  });
+
+  it("explains stale approval conflicts without retrying", async () => {
+    mocks.fetch.mockResolvedValue(response({}, 409));
+    await expect(
+      workspaceService.decideWorkflowApproval(
+        "session-1",
+        checkpoint,
+        "approved",
+        null,
+        "decision-0001",
+      ),
+    ).rejects.toThrow("changed or expired");
+    expect(mocks.fetch).toHaveBeenCalledOnce();
+  });
+});
+
+describe("verified workflow demo capture", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+
+  it("requests a local package bound to one run and selected artifacts", async () => {
+    mocks.fetch.mockResolvedValue(
+      response(
+        {
+          path: "captures/run-1.demo-capture.zip",
+          size_bytes: 1024,
+          sha256: "a".repeat(64),
+          manifest_digest: "b".repeat(64),
+          artifact_count: 2,
+          published: false,
+        },
+        201,
+      ),
+    );
+    await workspaceService.createWorkflowDemoCapture(
+      "session-1",
+      "run-1",
+      "runs/example/run.json",
+      ["result-1", "result-2"],
+      "Verified engineering result.",
+    );
+    expect(mocks.fetch.mock.calls[0][0]).toContain(
+      "/workflow-runs/run-1/capture",
+    );
+    expect(JSON.parse(mocks.fetch.mock.calls[0][1].body)).toEqual({
+      session_id: "session-1",
+      run_log_path: "runs/example/run.json",
+      artifact_ids: ["result-1", "result-2"],
+      caption: "Verified engineering result.",
+    });
+  });
+});
+
 describe("scoped latest execution snapshot", () => {
   beforeEach(() => mocks.fetch.mockReset());
   it("uses bounded GET and carries only its read cancellation signal", async () => {

@@ -53,7 +53,10 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     assert "git ls-files --others --exclude-standard" in gate
     assert "symbolic-full-name '@{u}'" in gate
     assert "Selected scopes:" in gate
-    assert 'npm run test --workspace=apps/web -- --changed "$BASE_REF"' in gate
+    assert (
+        'npm run test --workspace=apps/web -- --changed "$BASE_REF" --maxWorkers=4'
+        in gate
+    )
     assert 'npx playwright test "${PLAYWRIGHT_TARGETS[@]}"' in gate
     assert "tests/ui-integration/workspace-surfaces/*.spec.ts" in gate
     assert "PLAYWRIGHT_ALL_PROJECTS=0" in gate
@@ -67,12 +70,40 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     )
     assert "tests/ui-integration/navigation.spec.ts" in gate
     assert "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts" in gate
-    assert "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts" in gate
-    assert "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts" in gate
-    assert "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts" in gate
+    assert "tests/ui-integration/workflow-composer.spec.ts" in gate
+    assert "tests/ui-integration/workflow-recovery.spec.ts" in gate
+    assert "rivet-ai.spec.ts" not in gate
+    assert "rivet-run-inspector.spec.ts" not in gate
+    assert "rivet2-canvas.spec.ts" not in gate
     assert "tests/test_alpha_release_readiness.py" in gate
     assert "tests/test_release_engineering_scripts.py" in gate
     assert "tests/test_security_scanner_setup.py" in gate
+
+
+def test_focused_correction_reuses_only_the_current_pushed_full_gate_tip() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    runbook = _read(RUNBOOK)
+
+    for contract in (
+        "WRIGHT_FOCUSED_CORRECTION_BASE_SHA",
+        "WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS",
+        "WRIGHT_FOCUSED_VALIDATOR_CORRECTION",
+        "Focused correction base must equal the branch's current pushed tip.",
+        "Focused correction mode permits exactly one consolidated commit",
+        "Focused correction mode rejects non-test change",
+        "tests/ui-integration/*.spec.ts",
+        "tests/ui-integration/workspace-surfaces/fixtures/*.ts",
+        "playwright.config.ts",
+        "tests/release/test_dev_push_process.py",
+        'npx playwright test "${FOCUSED_PLAYWRIGHT_TARGETS[@]}" --project=chromium',
+        "test_native_scoped_delivery.py",
+        "validate-engineering-process-program.py validate --source HEAD",
+    ):
+        assert contract in gate
+    assert "clean worktree" in runbook
+    assert "no product changes" in runbook
+    assert "does not" in runbook
+    assert "replace pull-request CI or the full merge gate" in runbook
 
 
 def test_fast_gate_routes_container_changes_to_image_contract_tests() -> None:
@@ -225,6 +256,24 @@ def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection(
     assert "--import-mode=importlib" not in gate
 
 
+def test_fast_gate_routes_changed_conftest_to_its_test_directory() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("tests/conftest.py|tests/*/conftest.py)")
+    route = gate[start : gate.index(";;", start)]
+
+    assert 'PYTHON_TEST_TARGETS+=("${changed_file%/conftest.py}")' in route
+    assert 'PYTHON_TEST_TARGETS+=("$changed_file")' not in route
+
+
+def test_fast_gate_routes_blender_fixture_sources_to_their_contract_test() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("tests/fixtures/blender_mcp_5f8ddaf6/*)")
+    route = gate[start : gate.index(";;", start)]
+
+    assert "PYTHON_TEST_TARGETS+=(tests/test_printed_dataset_bindings.py)" in route
+    assert 'PYTHON_TEST_TARGETS+=("$changed_file")' not in route
+
+
 def test_full_gate_excludes_focused_roots_from_broad_tests_collection() -> None:
     gate = _read("scripts/check-dev-merge.sh")
 
@@ -297,9 +346,11 @@ def test_browser_gate_uses_isolated_configurable_ports() -> None:
 
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
     workflow = _read(".github/workflows/frontend-quality.yml")
+    playwright = _read("playwright.config.ts")
 
     assert "needs: frontend-quality" not in workflow
     assert "cancel-in-progress: true" in workflow
+    assert "maxFailures: undefined" in playwright
 
 
 def test_full_merge_gate_does_not_reinstall_live_frontend_dependencies() -> None:

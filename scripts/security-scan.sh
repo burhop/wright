@@ -17,6 +17,43 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) DOCKER_ROOT_DIR="$(cygpath -w "$ROOT_DIR")" ;;
 esac
 
+SCAN_ROOT_DIR="$ROOT_DIR"
+DOCKER_SCAN_ROOT_DIR="$DOCKER_ROOT_DIR"
+TEMP_SCAN_PARENT=""
+
+cleanup() {
+  if [ -n "$TEMP_SCAN_PARENT" ] && [ -d "$TEMP_SCAN_PARENT" ]; then
+    rm -rf -- "$TEMP_SCAN_PARENT"
+  fi
+}
+trap cleanup EXIT
+
+prepare_history_scan_root() {
+  # Docker cannot resolve a linked worktree's .git file because it names the
+  # host-only common Git directory. Normalize only history scans into a local
+  # full clone; the public-alpha scan above still covers the live worktree and
+  # its optional untracked files.
+  if [ -f "$ROOT_DIR/.git" ]; then
+    TEMP_SCAN_PARENT="$(mktemp -d "${TMPDIR:-/tmp}/wright-security-scan.XXXXXX")"
+    SCAN_ROOT_DIR="$TEMP_SCAN_PARENT/repo"
+    git clone --no-hardlinks --no-checkout "$ROOT_DIR" "$SCAN_ROOT_DIR" >/dev/null
+    HEAD_COMMIT="$(git -C "$ROOT_DIR" rev-parse --verify HEAD)"
+    git -C "$SCAN_ROOT_DIR" checkout --detach "$HEAD_COMMIT" >/dev/null
+  fi
+
+  SCAN_COMMIT_COUNT="$(git -C "$SCAN_ROOT_DIR" rev-list --count HEAD)"
+  if ! [[ "$SCAN_COMMIT_COUNT" =~ ^[1-9][0-9]*$ ]]; then
+    echo "History scan root contains no commits; refusing a false-green scan." >&2
+    exit 1
+  fi
+
+  DOCKER_SCAN_ROOT_DIR="$SCAN_ROOT_DIR"
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*) DOCKER_SCAN_ROOT_DIR="$(cygpath -w "$SCAN_ROOT_DIR")" ;;
+  esac
+  echo "History scan coverage: $SCAN_COMMIT_COUNT commits reachable from HEAD."
+}
+
 usage() {
   cat <<'USAGE'
 Usage: scripts/security-scan.sh [--include-untracked] [--skip-gitleaks] [--skip-trufflehog]
@@ -71,11 +108,15 @@ else
   "${PYTHON_CMD[@]}" scripts/check-public-alpha-leaks.py
 fi
 
+if [ "$SKIP_GITLEAKS" != "1" ] || [ "$SKIP_TRUFFLEHOG" != "1" ]; then
+  prepare_history_scan_root
+fi
+
 if [ "$SKIP_GITLEAKS" != "1" ]; then
   echo
   echo "== Gitleaks history scan =="
   MSYS_NO_PATHCONV=1 docker run --rm \
-    -v "$DOCKER_ROOT_DIR:/repo" \
+    -v "$DOCKER_SCAN_ROOT_DIR:/repo" \
     "$GITLEAKS_IMAGE" \
     git /repo \
     --config /repo/.gitleaks.toml \
@@ -88,7 +129,7 @@ if [ "$SKIP_TRUFFLEHOG" != "1" ]; then
   echo
   echo "== TruffleHog history scan =="
   MSYS_NO_PATHCONV=1 docker run --rm \
-    -v "$DOCKER_ROOT_DIR:/repo" \
+    -v "$DOCKER_SCAN_ROOT_DIR:/repo" \
     -w /repo \
     "$TRUFFLEHOG_IMAGE" \
     git file:///repo \

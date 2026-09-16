@@ -1,0 +1,7 @@
+reference,value,footprint_requirement,prototype_requirement,source_status
+J1,controller,1x04_2.54mm_vertical_THT,100mA_total_5V,exact_manufacturer_datasheet_required
+J2;J3,sensor,1x03_2.54mm_vertical_THT,20mA_each_5V,exact_manufacturer_datasheet_required
+R1;R2,1k_1_percent,R_0603_1608Metric,0.1W_min_internal_requirement,assumed_design_requirement
+C1;C2;C4,100nF,C_0603_1608Metric,16V_min_X7R_internal_requirement,assumed_design_requirement
+C3,1uF,C_0805_2012Metric,16V_min_X7R_internal_requirement,assumed_design_requirement
+TP1;TP2;TP3;TP4;TP5,test_pad,1.5mm_min_exposed_pad,probe_access_2.5mm,internal_layout_requirement

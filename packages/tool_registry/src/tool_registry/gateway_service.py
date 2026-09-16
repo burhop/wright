@@ -301,6 +301,25 @@ class GatewayService:
         return active
 
     def list_tools(self, session_id: str) -> tuple[GatewayTool, ...]:
+        events: list[dict[str, Any]] = []
+        try:
+            return self._list_tools(session_id, events)
+        finally:
+            # Keep all per-tool decisions, including those preceding a failed
+            # catalog/provider enumeration, durable before returning to a caller.
+            # Older/custom audit ports retain their individual-record contract.
+            record_many = getattr(self.audit, "record_many", None)
+            if events and callable(record_many):
+                record_many(events)
+            else:
+                for event in events:
+                    self.audit.record(event)
+
+    def _list_tools(
+        self,
+        session_id: str,
+        audit_events: list[dict[str, Any]],
+    ) -> tuple[GatewayTool, ...]:
         session = self._session(session_id)
         enabled = self.workspaces.enabled_server_ids(session)
         result: list[GatewayTool] = []
@@ -324,6 +343,7 @@ class GatewayService:
                     "listed" if decision.allowed else "hidden",
                     0,
                     operation="tool.list",
+                    batch=audit_events,
                 )
                 if decision.allowed:
                     result.append(tool)
@@ -339,6 +359,7 @@ class GatewayService:
                     "listed" if decision.allowed else "hidden",
                     0,
                     operation="tool.list",
+                    batch=audit_events,
                 )
                 if decision.allowed:
                     result.append(tool)
@@ -366,6 +387,7 @@ class GatewayService:
                     "listed" if decision.allowed else "hidden",
                     0,
                     operation="tool.list",
+                    batch=audit_events,
                 )
                 if decision.allowed:
                     result.append(tool)
@@ -1278,25 +1300,28 @@ class GatewayService:
         *,
         operation: str = "tool.call",
         metadata: Mapping[str, Any] | None = None,
+        batch: list[dict[str, Any]] | None = None,
     ) -> None:
         duration = 0 if started == 0 else int((time.monotonic() - started) * 1000)
-        self.audit.record(
-            {
-                "correlation_id": str(uuid.uuid4()),
-                "request_id": request_id,
-                "session_id": session.session_id,
-                "principal_id": session.principal_id,
-                "workspace_id": session.workspace_id,
-                "operation": operation,
-                "server_id": tool.server_id,
-                "target_name": tool.tool_name,
-                "allowed": allowed,
-                "reason_code": reason_code,
-                "outcome": outcome,
-                "duration_ms": duration,
-                "metadata": dict(metadata or {}),
-            }
-        )
+        event = {
+            "correlation_id": str(uuid.uuid4()),
+            "request_id": request_id,
+            "session_id": session.session_id,
+            "principal_id": session.principal_id,
+            "workspace_id": session.workspace_id,
+            "operation": operation,
+            "server_id": tool.server_id,
+            "target_name": tool.tool_name,
+            "allowed": allowed,
+            "reason_code": reason_code,
+            "outcome": outcome,
+            "duration_ms": duration,
+            "metadata": dict(metadata or {}),
+        }
+        if batch is None:
+            self.audit.record(event)
+        else:
+            batch.append(event)
 
 
 def _result_text(result: Mapping[str, Any]) -> str:

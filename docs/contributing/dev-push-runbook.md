@@ -42,6 +42,18 @@ branch failure from hiding outside the latest incremental diff.
   a previously completed full local gate unless the correction changes product
   behavior, a public contract, dependency resolution, packaging output, security
   policy, or the merge gate's substantive coverage.
+- After a full gate has passed on the current pushed tip, one consolidated
+  Playwright test-contract correction may use the focused correction mode. It
+  requires a clean worktree, exactly one descendant commit, no product changes,
+  and explicit previously failing Playwright targets. The mode runs its own gate
+  regression plus those exact browser tests against an isolated API. It does not
+  replace pull-request CI or the full merge gate:
+
+  ```powershell
+  $env:WRIGHT_FOCUSED_CORRECTION_BASE_SHA = "<current-pushed-40-character-sha>"
+  $env:WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS = "tests/ui-integration/example.spec.ts:42;tests/ui-integration/other.spec.ts:88"
+  scripts/check-dev-push.ps1
+  ```
 - Scheduler-sensitive microbenchmarks marked `performance` are trend evidence,
   not PR correctness gates. They run in the scheduled/manual performance workflow;
   deterministic functional, security, compatibility, and customer-journey tests
@@ -107,7 +119,9 @@ lock a native Node binding that the merge gate tries to replace.
 Before starting its long checks, the full gate verifies that both configured
 browser-test ports can actually be bound. A conflict fails immediately with
 the environment-variable override instead of surfacing after the test matrix.
-The fast browser slice is normally a Chromium smoke. When the changed target is
+The fast browser slice always includes the canonical workspace-entry smoke in
+addition to directly changed browser contracts; detecting one changed spec must
+not silently drop that baseline. It is normally a Chromium smoke. When the changed target is
 a `tests/ui-integration/workspace-surfaces/*.spec.ts` contract, the fast gate
 runs that selected spec across Chromium, Firefox, WebKit, and the desktop
 profile because directory, iframe, and surface interactions are
@@ -196,6 +210,8 @@ authoritative in CI when a local Docker host is unavailable.
 ## CI failure protocol
 
 - Collect every failed job and its first actionable error before editing.
+- Let the complete CI browser run report its full failure set; do not cap the run
+  after an arbitrary number of failures that forces serial discovery pushes.
 - Classify the failure as product behavior, test contract, test isolation,
   platform/profile drift, packaging, or infrastructure.
 - Reproduce the failing command locally or in the matching clean container.

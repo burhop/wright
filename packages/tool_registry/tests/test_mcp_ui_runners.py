@@ -44,6 +44,26 @@ async def test_streamable_http_direct_rpc_error_is_not_discarded() -> None:
         await runner.client.aclose()
 
 
+@pytest.mark.asyncio
+async def test_streamable_http_tool_call_uses_configured_operation_timeout(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    runner = SseRunner(
+        "https://example.test/mcp",
+        oauth_enabled=False,
+        operation_timeout=0.01,
+    )
+
+    async def never_finishes(method: str, params: dict[str, Any]) -> dict:
+        await asyncio.sleep(1)
+        return {}
+
+    monkeypatch.setattr(runner, "_send_request", never_finishes)
+
+    with pytest.raises(TimeoutError, match="timed out after 0.01 seconds"):
+        await runner.call_tool("solve", {})
+
+
 def test_child_initialize_uses_current_version_and_negotiates_ui_only_when_enabled() -> (
     None
 ):

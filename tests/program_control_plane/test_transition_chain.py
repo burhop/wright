@@ -99,6 +99,35 @@ LEASE_CHECKPOINT_DIGEST_TARGETS = frozenset(
     }
 )
 
+N01_DIGEST_CORRECTION_ID = "COR-EPP-N01-TR0126-WORKTREE-DIGEST-001"
+N01_DIGEST_CORRECTION_PATH = (
+    f"{PROGRAM_ROOT}/evidence/corrections/{N01_DIGEST_CORRECTION_ID}.json"
+)
+N01_DIGEST_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0126.json",
+            "/inputs/0/sha256",
+        ),
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0126.json",
+            "/outputs/0/sha256",
+        ),
+    }
+)
+N01_RECOVERY_DIGEST_CORRECTION_ID = "COR-EPP-N01-TR0127-WORKTREE-DIGEST-001"
+N01_RECOVERY_DIGEST_CORRECTION_PATH = (
+    f"{PROGRAM_ROOT}/evidence/corrections/{N01_RECOVERY_DIGEST_CORRECTION_ID}.json"
+)
+N01_RECOVERY_DIGEST_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0127.json",
+            "/inputs/0/sha256",
+        ),
+    }
+)
+
 
 def load(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -1422,3 +1451,53 @@ def test_v2_transition_blob_is_append_only_after_its_container(git_builder) -> N
     findings = []
     _validate_transition_history(reader, current, [transition], PROGRAM_ROOT, findings)
     assert "TRANSITION_BLOB_CHANGED" in codes(findings)
+
+
+def test_n01_transition_digest_correction_is_exact_and_closed(
+    repository_root: Path,
+) -> None:
+    reader = GitReader(repository_root)
+    profile = json.loads(
+        (repository_root / N01_DIGEST_CORRECTION_PATH).read_text(encoding="utf-8")
+    )
+    findings, targets = validation_module.validate_n01_transition_digest_correction(
+        reader, reader.resolve_commit("HEAD"), PROGRAM_ROOT, profile
+    )
+    assert findings == []
+    assert targets == N01_DIGEST_TARGETS
+
+    changed = copy.deepcopy(profile)
+    changed["claims"][0]["authoritative_value"] = "0" * 64
+    findings, targets = validation_module.validate_n01_transition_digest_correction(
+        reader, reader.resolve_commit("HEAD"), PROGRAM_ROOT, changed
+    )
+    assert targets == frozenset()
+    assert {finding.code for finding in findings} == {
+        "N01_TRANSITION_DIGEST_CORRECTION_INVALID"
+    }
+
+
+def test_n01_recovery_digest_correction_is_exact_and_closed(
+    repository_root: Path,
+) -> None:
+    reader = GitReader(repository_root)
+    profile = json.loads(
+        (repository_root / N01_RECOVERY_DIGEST_CORRECTION_PATH).read_text(
+            encoding="utf-8"
+        )
+    )
+    findings, targets = validation_module.validate_n01_recovery_digest_correction(
+        reader, reader.resolve_commit("HEAD"), PROGRAM_ROOT, profile
+    )
+    assert findings == []
+    assert targets == N01_RECOVERY_DIGEST_TARGETS
+
+    changed = copy.deepcopy(profile)
+    changed["claims"][0]["authoritative_value"] = "0" * 64
+    findings, targets = validation_module.validate_n01_recovery_digest_correction(
+        reader, reader.resolve_commit("HEAD"), PROGRAM_ROOT, changed
+    )
+    assert targets == frozenset()
+    assert {finding.code for finding in findings} == {
+        "N01_RECOVERY_DIGEST_CORRECTION_INVALID"
+    }

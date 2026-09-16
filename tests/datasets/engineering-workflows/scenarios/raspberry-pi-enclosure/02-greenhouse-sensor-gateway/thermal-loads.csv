@@ -1,0 +1,3 @@
+source_id,center_x_mm,center_y_mm,center_z_mm,size_x_mm,size_y_mm,heat_w,provenance
+pi_surrogate,45,28,8,18,18,6,synthetic_customer_assumption
+sensor_interface,45,28,24,25,20,2,synthetic_customer_assumption

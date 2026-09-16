@@ -1,0 +1,3 @@
+request_id,electrical_energy_J,thermal_energy_J,independent_integral_electrical_J,independent_integral_thermal_J,stored_heat_J,ambient_loss_J,thermal_balance_residual_J
+water-heater-sizing-01-attempt-qualification-baseline,105000,96599.99999999999,105000,96600,91211.96419786208,5388.034745278725,0.001056859182426706
+water-heater-sizing-01-attempt-qualification-refined,105000,96600.00000000001,105000,96600,91211.96412854051,5388.034736874284,0.0011345852217345964

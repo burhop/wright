@@ -27,7 +27,7 @@ for named native PMI or annotations unless the specification requests them.
 def _native_evidence_allows_pass(value):
     """Honor explicit provider verdicts; do not infer acceptance from prose.
 
-    Solid Edge's inspection-verification tool can complete successfully while
+    A provider inspection-verification tool can complete successfully while
     allCriticalRequirementsPass is false. Its transport status is not a gate.
     Evidence numbers cite whole calls, so a mixed verification report cannot
     establish a passing check by silently dropping its rejected observations.

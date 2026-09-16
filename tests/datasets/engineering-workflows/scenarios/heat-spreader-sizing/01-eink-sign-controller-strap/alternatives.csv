@@ -1,0 +1,3 @@
+case_id,length_mm,width_mm,thickness_mm,conductivity_w_mk,density_kg_m3,heat_input_w,cold_face_temperature_c,limit_c
+baseline_40,100,40,2,200,2700,4,25,45
+revision_60,100,60,2,200,2700,4,25,45

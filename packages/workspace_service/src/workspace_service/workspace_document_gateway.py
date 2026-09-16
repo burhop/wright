@@ -21,11 +21,15 @@ from .workspace_document_artifacts import (
     document_producer_declaration,
     document_producer_declaration_digest,
 )
+from .workspace_file_inspection import INSPECT_TOOL_NAME, inspection_tool
+from .workspace_file_copy import COPY_TOOL_NAME, copy_tool
 
 
 class WorkspaceDocumentGatewayProvider:
     provider_id = WORKSPACE_DOCUMENT_PROVIDER_ID
-    declared_tool_names = frozenset({WORKSPACE_DOCUMENT_TOOL_NAME})
+    declared_tool_names = frozenset(
+        {WORKSPACE_DOCUMENT_TOOL_NAME, INSPECT_TOOL_NAME, COPY_TOOL_NAME}
+    )
 
     def __init__(self, artifacts: WorkspaceDocumentArtifactService) -> None:
         self.artifacts = artifacts
@@ -93,7 +97,7 @@ class WorkspaceDocumentGatewayProvider:
             },
             required_approvals=frozenset({WORKSPACE_WRITE_APPROVAL}),
             provenance={
-                "server_revision": "wright-workspace-document-v1",
+                "server_revision": "wright-workspace-document-v2-integration-source",
                 "capability_digest": declaration_digest,
                 "validation_evidence_id": "wright-reviewed:workspace-document-v1",
                 "artifact_producer": declaration,
@@ -102,7 +106,7 @@ class WorkspaceDocumentGatewayProvider:
         )
 
     def tools(self, _session: GatewaySessionContext) -> tuple[GatewayTool, ...]:
-        return (self._tool(),)
+        return (self._tool(), inspection_tool(), copy_tool())
 
     async def call(
         self,
@@ -114,6 +118,28 @@ class WorkspaceDocumentGatewayProvider:
         approval_context: Any,
         progress_callback,
     ) -> Mapping[str, Any]:
+        if tool.name == COPY_TOOL_NAME:
+            import json
+
+            value = self.artifacts.file_copier.copy(session, arguments, request_id)
+            return {
+                "structuredContent": value,
+                "content": [
+                    {"type": "text", "text": json.dumps(value, ensure_ascii=False)}
+                ],
+            }
+        if tool.name == INSPECT_TOOL_NAME:
+            import json
+
+            value = self.artifacts.file_inspector.inspect(
+                session, arguments, request_id
+            )
+            return {
+                "structuredContent": value,
+                "content": [
+                    {"type": "text", "text": json.dumps(value, ensure_ascii=False)}
+                ],
+            }
         if tool.name != WORKSPACE_DOCUMENT_TOOL_NAME:
             raise GatewayError(GatewayErrorCode.NOT_FOUND, "Document tool not found")
         approvals = (

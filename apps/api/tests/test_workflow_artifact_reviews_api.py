@@ -98,6 +98,9 @@ def test_native_stream_terminates_pending_review_without_waiting_or_autoapproval
         )
 
     monkeypatch.setattr(router, "generate_workflow_response", generate)
+    from unittest.mock import AsyncMock
+
+    svc.workflow_sources.read_template_origin = AsyncMock(return_value=None)
     request = SimpleNamespace(headers={"accept": "application/x-ndjson"})
     body = WorkflowSourceRunRequest(
         session_id="s",

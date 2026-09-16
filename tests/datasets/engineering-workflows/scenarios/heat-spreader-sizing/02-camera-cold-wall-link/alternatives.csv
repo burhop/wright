@@ -1,0 +1,4 @@
+case_id,length_mm,width_mm,thickness_mm,conductivity_w_mk,density_kg_m3,heat_input_w,cold_face_temperature_c,limit_c
+narrow_30,80,30,3,167,2700,9,30,56
+middle_45,80,45,3,167,2700,9,30,56
+wide_60,80,60,3,167,2700,9,30,56

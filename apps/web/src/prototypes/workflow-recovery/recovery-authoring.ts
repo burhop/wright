@@ -5,6 +5,9 @@ import {
 } from "./authoring-objects";
 import {
   RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY,
+  RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY,
+  RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY,
+  RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
   cloneWorkflow,
   initialWorkflow,
   recoveryAuthoringSectionKind,
@@ -197,10 +200,49 @@ function providedBy(block: RecoveryBlock): string {
 
 function publicBlockConfiguration(
   block: RecoveryBlock,
-): Record<string, string | number | boolean> {
+): Record<string, unknown> {
   const configuration = structuredClone(block.configuration);
   delete configuration[RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY];
-  return configuration;
+  delete configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY];
+  delete configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];
+  delete configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
+  const retained = block.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
+  return typeof retained === "string"
+    ? { ...JSON.parse(retained), ...configuration }
+    : configuration;
+}
+
+const APPROVAL_OBJECT_FIELDS = new Set([
+  "approval_binding",
+  "approval_destination",
+  "approval_settings",
+  "approval_action",
+]);
+
+function isApprovalObject(
+  settings: Record<string, unknown>,
+  key: string,
+  value: unknown,
+): boolean {
+  return (
+    settings.authoring_template === "external-action-approval" &&
+    APPROVAL_OBJECT_FIELDS.has(key) &&
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
+function instructionFields(block: RecoveryBlock): [string, unknown][] {
+  const active =
+    block.configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] ??
+    (block.executionKind === "ai_capable" ? "prompt" : "instructions");
+  const fields: [string, unknown][] = [[String(active), block.instructions]];
+  const secondary =
+    block.configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];
+  if (typeof secondary === "string")
+    fields.push([active === "prompt" ? "instructions" : "prompt", secondary]);
+  return fields;
 }
 
 function sourceStepType(kind: RecoveryBlock["kind"]): string {
@@ -349,10 +391,7 @@ function formattedSections(workflow: RecoveryWorkflow): FormattedSection[] {
         "outputs",
         block.outputPortIds.map((portId) => sourcePort(workflow, portId)),
       ],
-      [
-        block.executionKind === "ai_capable" ? "prompt" : "instructions",
-        block.instructions,
-      ],
+      ...instructionFields(block),
       ["settings", publicBlockConfiguration(block)],
       [
         "tool",
@@ -1153,22 +1192,40 @@ export function parseRecoveryAuthoringSource(
           section.startLine,
         ),
       );
-    const instructionField =
-      section.fields.prompt !== undefined ? "prompt" : "instructions";
+    const actorField =
+      section.kind === "input" ? "provided_by" : "performed_by";
+    const isAi =
+      executionKindForActor(String(section.fields[actorField])) ===
+      "ai_capable";
+    const defaultInstructionField = isAi ? "prompt" : "instructions";
+    const instructionField = Object.hasOwn(
+      section.fields,
+      defaultInstructionField,
+    )
+      ? defaultInstructionField
+      : defaultInstructionField === "prompt"
+        ? "instructions"
+        : "prompt";
+    const secondaryInstructionField =
+      instructionField === "prompt" ? "instructions" : "prompt";
     diagnostics.push(
-      ...requireFields(section, [
-        "name",
-        "purpose",
-        "step_type",
-        "group",
-        section.kind === "input" ? "provided_by" : "performed_by",
-        "inputs",
-        "outputs",
-        instructionField,
-        "settings",
-        "tool",
-        "reusable_step",
-      ]),
+      ...requireFields(
+        section,
+        [
+          "name",
+          "purpose",
+          "step_type",
+          "group",
+          section.kind === "input" ? "provided_by" : "performed_by",
+          "inputs",
+          "outputs",
+          instructionField,
+          "settings",
+          "tool",
+          "reusable_step",
+        ],
+        [secondaryInstructionField],
+      ),
     );
     const name = stringField(section, "name", diagnostics);
     const purpose = stringField(section, "purpose", diagnostics);
@@ -1183,6 +1240,16 @@ export function parseRecoveryAuthoringSource(
       typeof section.fields[instructionField] === "string"
         ? (section.fields[instructionField] as string)
         : stringField(section, instructionField, diagnostics);
+    const hasSecondaryInstruction = Object.hasOwn(
+      section.fields,
+      secondaryInstructionField,
+    );
+    const secondaryInstruction = hasSecondaryInstruction
+      ? secondaryInstructionField === "prompt" &&
+        typeof section.fields.prompt === "string"
+        ? section.fields.prompt
+        : stringField(section, secondaryInstructionField, diagnostics)
+      : null;
     const groupKey = nullableStringField(section, "group", diagnostics);
     const stepType = stepTypeValue ? recoveryStepType(stepTypeValue) : null;
     const executionKind = actor ? executionKindForActor(actor) : null;
@@ -1225,15 +1292,17 @@ export function parseRecoveryAuthoringSource(
       settings === null ||
       typeof settings !== "object" ||
       Array.isArray(settings) ||
-      Object.values(settings as Record<string, unknown>).some(
-        (value) => !["string", "number", "boolean"].includes(typeof value),
+      Object.entries(settings as Record<string, unknown>).some(
+        ([key, value]) =>
+          !["string", "number", "boolean"].includes(typeof value) &&
+          !isApprovalObject(settings as Record<string, unknown>, key, value),
       )
     )
       diagnostics.push(
         diagnostic(
           "WFR-SOURCE-FIELD-TYPE",
-          `${section.kind} ${section.key}.settings must be a JSON object of string, number, or boolean values.`,
-          'Use settings: {"name":"value"}.',
+          `${section.kind} ${section.key}.settings must contain scalar values or documented external-action approval objects.`,
+          "Use scalar settings; approval_binding, approval_destination, approval_settings, and approval_action also accept JSON objects on external-action approvals.",
           baseBlock?.id ?? null,
           section.startLine,
         ),
@@ -1242,13 +1311,18 @@ export function parseRecoveryAuthoringSource(
       settings !== null &&
       typeof settings === "object" &&
       !Array.isArray(settings) &&
-      Object.hasOwn(settings, RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY)
+      [
+        RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY,
+        RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY,
+        RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY,
+        RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
+      ].some((key) => Object.hasOwn(settings, key))
     )
       diagnostics.push(
         diagnostic(
           "WFR-SOURCE-FIELD-MANAGED",
-          `${section.kind} ${section.key}.settings contains a Wright-managed authoring classification.`,
-          "Remove the managed setting; use the input or task section keyword.",
+          `${section.kind} ${section.key}.settings contains Wright-managed authoring metadata.`,
+          "Remove the managed setting; author section keywords, prompt, and instructions directly.",
           baseBlock?.id ?? null,
           section.startLine,
         ),
@@ -1350,6 +1424,25 @@ export function parseRecoveryAuthoringSource(
         ? structuredClone(settings as Record<string, string | number | boolean>)
         : {};
     delete configuration[RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY];
+    delete configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY];
+    delete configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];
+    delete configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
+    const approvalObjects = Object.fromEntries(
+      Object.entries(configuration).filter(([key, value]) =>
+        isApprovalObject(configuration, key, value),
+      ),
+    );
+    if (Object.keys(approvalObjects).length) {
+      for (const key of Object.keys(approvalObjects)) delete configuration[key];
+      configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY] =
+        stableJson(approvalObjects);
+    }
+    if (instructionField !== defaultInstructionField)
+      configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] =
+        instructionField;
+    if (hasSecondaryInstruction && secondaryInstruction !== null)
+      configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY] =
+        secondaryInstruction;
     if (
       section.kind === "input" &&
       (baseBlock === undefined ||

@@ -1,0 +1,106 @@
+# Built-in engineering example. Live execution requires the readiness checks shown by Wright.
+workflow __instance__
+  name: "3D Printed Replacement Part"
+  purpose: "Create and verify a dimensioned printable replacement from an original image, then stop for exact printer-transfer authorization."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+input image_and_scale___instance__
+  name: "Provide original image and reference dimension"
+  purpose: "Bind the visual reference to an explicit physical scale and retain its rights record."
+  step_type: work
+  group: null
+  provided_by: engineer
+  inputs: []
+  outputs: [{"key":"replacement_image_out","name":"Original image","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Attributed source image with a declared scale reference."}]
+  instructions: "Provide the attributed source image, identify one measurable reference, and state its value in millimetres."
+  settings: {"input_mode":"workspace-file","workspace_file":"__input_root__/replacement-knob-source.svg","rights_file":"__input_root__/rights.json","required_reference_dimension":true,"reference_dimension_mm":24.0,"units":"mm"}
+  tool: null
+  reusable_step: null
+end
+
+task create_mesh___instance__
+  name: "Create source mesh"
+  purpose: "Generate a mesh from the image without treating visual interpretation as dimensional proof."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: [{"key":"mesh_source_image_in","name":"Scaled source image","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Image and scale reference used to generate this mesh."}]
+  outputs: []
+  instructions: "Generate a source mesh and record the image, model, tool, schema, and scale transform."
+  settings: {"artifact_role":"source_mesh","live_output_required":true}
+  tool: null
+  reusable_step: null
+end
+
+task repair_measure_orient___instance__
+  name: "Repair, measure, and orient mesh"
+  purpose: "Produce a manifold, correctly scaled mesh that fits the P1S build volume."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Repair topology, apply the explicit scale, choose orientation, and record independent dimensions and build-volume checks."
+  settings: {"artifact_role":"repaired_mesh","printer":"Bambu P1S"}
+  tool: null
+  reusable_step: null
+end
+
+task supports_and_slice___instance__
+  name: "Generate supports and slice"
+  purpose: "Create support-bearing toolpaths and retain process, machine, and material profiles."
+  step_type: work
+  group: null
+  performed_by: configured_tool
+  inputs: []
+  outputs: []
+  instructions: "Slice for the selected P1S profile, preserve the support preview and final 3MF, and verify valid toolpaths and declared material compatibility."
+  settings: {"supports":"required_when_needed","package":"3mf"}
+  tool: null
+  reusable_step: null
+end
+
+task authorize_transfer___instance__
+  name: "Authorize exact package transfer"
+  purpose: "Pause before transfer and bind the engineer decision to the package, printer, material, and process profile."
+  step_type: review
+  group: null
+  performed_by: engineer
+  inputs: []
+  outputs: []
+  instructions: "Review exact digests and destination identity. Transfer authorization does not claim that the physical print succeeded."
+  settings: {"authoring_template":"external-action-approval","action_kind":"printer_transfer","one_shot":true,"approval_server":"qualified-bambu-adapter","approval_tool":"transfer_package","approval_schema":"qualification-required","approval_destination_kind":"printer","approval_destination_id":"configured-bambu-p1s","approval_settings":"{\"material\":\"configured-material\",\"process_profile\":\"configured-p1s-profile\"}","approval_action":"{\"kind\":\"printer_transfer\",\"mode\":\"transfer_only\"}"}
+  tool: null
+  reusable_step: null
+end
+
+connection image_to_mesh___instance__
+  type: item
+  from: "image_and_scale___instance__.replacement_image_out"
+  to: "create_mesh___instance__.mesh_source_image_in"
+  label: "scaled source approved"
+  when: null
+end
+connection mesh_to_repair___instance__
+  type: order
+  from: "create_mesh___instance__"
+  to: "repair_measure_orient___instance__"
+  label: "source mesh retained"
+  when: null
+end
+connection repair_to_slice___instance__
+  type: order
+  from: "repair_measure_orient___instance__"
+  to: "supports_and_slice___instance__"
+  label: "geometry checks pass"
+  when: null
+end
+connection slice_to_transfer___instance__
+  type: order
+  from: "supports_and_slice___instance__"
+  to: "authorize_transfer___instance__"
+  label: "exact package ready"
+  when: null
+end

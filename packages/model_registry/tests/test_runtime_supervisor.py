@@ -109,6 +109,8 @@ async def test_supervisor_uses_clean_environment_and_confined_read_only_artifact
             "COMSPEC",
             "TEMP",
             "TMP",
+            "PROCESSOR_ARCHITECTURE",
+            "PROCESSOR_ARCHITEW6432",
             "PYTHONIOENCODING",
             "PYTHONUNBUFFERED",
         }

@@ -1,0 +1,5 @@
+awg,area_mm2,resistance_ohm_per_m_at_20C,insulation_requirement,min_voltage_requirement_V,source_status
+22,0.326,0.0535,stranded_copper_80C_min,60,assumed_design_value
+20,0.518,0.0339,stranded_copper_80C_min,60,assumed_design_value
+18,0.823,0.0213,stranded_copper_80C_min,60,assumed_design_value
+16,1.31,0.0134,stranded_copper_80C_min,60,assumed_design_value

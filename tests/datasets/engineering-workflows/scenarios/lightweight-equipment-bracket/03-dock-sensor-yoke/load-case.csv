@@ -1,0 +1,2 @@
+case_id,fx_N,fy_N,fz_N,application,deflection_limit_mm,stress_limit_MPa
+cable_snag,0,100,0,"crossbar x-20..20 y-22 z74..86",0.5,120

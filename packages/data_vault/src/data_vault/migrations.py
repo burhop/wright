@@ -21,7 +21,9 @@ from .models import (
     UpgradeResult,
 )
 from .state_store import connect_state_db
+from .native_application_repository import NATIVE_APPLICATION_SCHEMA
 from .workflow_artifact_review_repository import REVIEW_SCHEMA
+from .workflow_continuation_repository import WORKFLOW_CONTINUATION_SCHEMA
 
 PRODUCT_VERSION = "0.1.0"
 LEDGER_TABLE = "wright_schema_migrations"
@@ -1237,6 +1239,28 @@ MIGRATIONS += (
             sql("""CREATE INDEX IF NOT EXISTS idx_workspace_run_artifacts_run
                 ON workspace_run_artifacts(run_id, linked_at, artifact_id)"""),
         ),
+    ),
+)
+
+MIGRATIONS += (
+    Migration(
+        20,
+        "workflow_continuation_checkpoints",
+        (
+            sql(WORKFLOW_CONTINUATION_SCHEMA),
+            sql(
+                "CREATE INDEX IF NOT EXISTS idx_workflow_continuation_run ON workflow_continuation_checkpoints(workspace_id, run_id, updated_at)"
+            ),
+        ),
+    ),
+)
+
+
+MIGRATIONS += (
+    Migration(
+        21,
+        "native_application_lifecycle",
+        tuple(sql(statement) for statement in NATIVE_APPLICATION_SCHEMA),
     ),
 )
 

@@ -1,0 +1,13 @@
+# Conveyor camera arm brief
+All inputs are original fictional engineering data.
+## Business and fabrication
+Fieldline builds short-run conveyor stations. We can 3-axis mill aluminum plate with a minimum pocket-tool diameter of 6 mm, minimum internal radius 3 mm, and minimum residual wall 3 mm. Prototype quantity: 4; target machining time under 45 minutes per bracket. Cosmetic finish is irrelevant.
+## Geometry and coordinate convention
+Coordinates are mm: x reaches away from the wall, y is bracket width, z is vertical. Wall leg occupies x=0..6, y=-25..25, z=0..60. Horizontal shelf occupies x=0..90, y=-25..25, z=54..60. Union the volumes. The two wall M6 clearance holes are 6.6 mm diameter, axis x, centers y=0, z=15 and 45. Camera mounting holes are 4.5 mm diameter, axis z, centers (x,y)=(70,-15) and (70,15). Keep 10 mm clear around mounting-hole centers and retain the top camera contact surface x=60..85, y=-20..20, z=60.
+## Fixture and load
+Restrain cylindrical surfaces of the two wall holes for this initial conservative comparison; record that this idealizes joint compliance. Distribute -100 N in z on top pad x=60..85, y=-20..20. Include gravity as a separate optional case, not merged silently with the supplied 100 N case. Aim for at least 20% mass reduction by pocketing or ribs without changing envelope or mounting coordinates.
+## Material and analysis basis
+Use an explicitly homogeneous, isotropic linear-elastic aluminum design material: density 2700 kg/m³, Young's modulus 69 GPa, Poisson ratio 0.33. These are customer-supplied simulation assumptions, not a mill certificate or an assertion of a particular alloy temper. Maximum evaluated von Mises stress: 120 MPa; load-point displacement: 0.50 mm. Apply a 100 N static force distributed across the stated load patch. No fatigue, impact, bolt preload, joint slip or production certification is included.
+Model the stated bolt-bearing restraint, document simplifications, and report reaction forces. Do not use a point-force maximum at a sharp corner as a meaningful design stress. State the stress-evaluation region and preserve the unfiltered field. Compare two meshes with less than 5% change in declared response metrics before choosing the lighter design. Preserve baseline and revised geometries and field files.
+## Test output request
+Export baseline.step, revised.step, at least one CalculiX-compatible .inp deck, displacement/stress fields, mass-comparison.csv, and analysis-report.md or PDF. The test harness initially checks output-file presence only. Engineering validity remains unmeasured and these results are not authorized for production release.

@@ -17,10 +17,11 @@ def offline_api_client(tmp_path, monkeypatch):
     monkeypatch.setenv("WRIGHT_SECRETS_PATH", str(tmp_path / "secrets.json"))
     monkeypatch.setenv("WRIGHT_LEGACY_GATEWAY", "1")
 
-    from api import main
+    from api import composition, main
     from api.database import migrate
 
     monkeypatch.setattr(main, "DATABASE_PATH", db_path)
+    monkeypatch.setattr(composition, "DATABASE_PATH", db_path)
     monkeypatch.setattr(migrate, "DATABASE_PATH", db_path)
 
     with TestClient(main.app) as client:

@@ -82,3 +82,21 @@ regexes = [
   '''^test_native_process_execution_api\.py": "8a719d23c560baabd4f8c9038765effd434aca71250dfdd6c20664904e6078ed"$''',
   '''^test_program_status_api\.py": "e0b8a13da4296378531d686f46b0eee7fc263813ff436325d40b3a1c36f4c40d"$''',
 ]
+
+[[allowlists]]
+description = "Historical Playwright list captured a generated local Wright bearer token that was scrubbed in its successor; exact introducing commit, evidence path, rule and field shape only."
+targetRules = ["generic-api-key"]
+condition = "AND"
+commits = ["c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba"]
+paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list\.json\.txt$''']
+regexTarget = "match"
+regexes = ['''^WRIGHT_API_TOKEN": "[0-9a-f]{64}"$''']
+
+[[allowlists]]
+description = "Historical EPP transition observation is a SHA-256 response-body digest, not a credential; exact introducing commit, evidence path, rule and key shape only."
+targetRules = ["generic-api-key"]
+condition = "AND"
+commits = ["80e7e19d53e42c6c01990731d7cc111cef3009d8"]
+paths = ['''^docs/programs/engineering-process-platform/evidence/transitions/TR-0091\.json$''']
+regexTarget = "match"
+regexes = ['''^api_body_sha256:[0-9a-f]{64}"$''']

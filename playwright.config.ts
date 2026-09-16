@@ -17,7 +17,7 @@ export default defineConfig({
   outputDir: testOutputDir,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  maxFailures: process.env.CI ? 5 : undefined,
+  maxFailures: undefined,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
     ? [["line"], ["html", { outputFolder: "playwright-report", open: "never" }]]

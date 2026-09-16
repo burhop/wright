@@ -29,9 +29,104 @@ export interface WorkspaceWorkflowSourceDocument {
   layout_status?: "missing" | "current" | "stale";
 }
 
+export type EngineeringTemplateReadinessState =
+  "reference" | "setup_required" | "ready" | "verified";
+
+export interface EngineeringTemplateReadiness {
+  state: EngineeringTemplateReadinessState;
+  definition_valid: boolean;
+  configured: boolean;
+  qualified: boolean;
+  available: boolean;
+  verified_run: boolean;
+  facts: Array<{
+    code: string;
+    label: string;
+    satisfied: boolean;
+    evidence: string[];
+  }>;
+  blocking_reasons: string[];
+}
+
+export interface EngineeringWorkflowTemplate {
+  template_id: string;
+  version: string;
+  title: string;
+  summary: string;
+  discipline: string;
+  preview: { asset: string; alt: string };
+  provided_inputs: Array<Record<string, unknown>>;
+  requested_inputs: Array<Record<string, unknown>>;
+  expected_outputs: Array<Record<string, unknown>>;
+  external_effects: string[];
+  source_digest: string;
+  readiness: EngineeringTemplateReadiness;
+}
+
+export interface EngineeringWorkflowTemplateDetail extends EngineeringWorkflowTemplate {
+  source: string;
+  layout: RecoveryLayout;
+  capability_requirements: Array<Record<string, unknown>>;
+  acceptance_profile: string;
+  definition_status: "reviewed" | "deprecated" | "withdrawn";
+  rights: Record<string, unknown>;
+  layout_digest: string;
+}
+
+export interface EngineeringWorkflowTemplateInstance extends WorkspaceWorkflowSourceDocument {
+  workflow_id: string;
+  template: {
+    template_id: string;
+    version: string;
+    source_digest: string;
+    layout_digest: string;
+  };
+}
+
+export interface WorkflowApprovalCheckpoint {
+  checkpoint_id: string;
+  workspace_id: string;
+  workflow_id: string;
+  run_id: string;
+  step_id: string;
+  action_kind:
+    "printer_transfer" | "supplier_upload_preview" | "cart_quote_handoff";
+  subject: Record<string, unknown>;
+  subject_digest: string;
+  state:
+    | "pending"
+    | "approved"
+    | "changes_requested"
+    | "expired"
+    | "stale"
+    | "consumed";
+  continuation: Record<string, unknown>;
+  actor: string | null;
+  reason: string | null;
+  created_at: number;
+  updated_at: number;
+  expires_at: number | null;
+  external_action: Record<string, unknown> | null;
+}
+
+export interface WorkflowDemoCapture {
+  path: string;
+  size_bytes: number;
+  sha256: string;
+  manifest_digest: string;
+  artifact_count: number;
+  published: false;
+}
+
 export interface WorkspaceWorkflowSourceRun {
-  status?: "completed" | "pending_review";
+  status?: "completed" | "pending_review" | "awaiting_approval";
   review?: WorkspaceWorkflowReview;
+  approval?: WorkflowApprovalCheckpoint;
+  verification?: {
+    status?: string;
+    assertions?: Array<Record<string, unknown>>;
+  };
+  capture_rights?: Record<string, unknown>;
   run_id?: string;
   results?: WorkspaceEngineeringResult[];
   run_log_path?: string;
@@ -51,6 +146,13 @@ export interface WorkspaceEngineeringResult {
   id: string;
   kind: "text" | "image" | "file" | "structured" | "cad_model" | "analysis";
   name: string;
+  artifact_role?:
+    | "source"
+    | "intermediate"
+    | "deliverable"
+    | "verification"
+    | "diagnostic"
+    | "external_action_receipt";
   representations: Array<{
     kind:
       "value" | "workspace_file" | "application_document" | "cloud_resource";
@@ -68,6 +170,8 @@ export interface WorkspaceEngineeringResult {
     task_id: string;
     output_port: string;
     input_revisions: Array<[string, string | null]>;
+    definition_digest?: string | null;
+    binding_digest?: string | null;
   };
   exports: WorkspaceEngineeringResult[];
 }
@@ -79,6 +183,10 @@ export interface WorkspaceWorkflowRunSummary {
     | "completed"
     | "changes_requested"
     | "pending_review"
+    | "awaiting_approval"
+    | "awaiting_external_outcome"
+    | "external_action_not_dispatched"
+    | "external_action_outcome_unknown"
     | "failed"
     | "cancelled"
     | "interrupted"
@@ -90,6 +198,12 @@ export interface WorkspaceWorkflowRunSummary {
   results: WorkspaceEngineeringResult[];
   last_event?: { kind: string; task_title?: string; message?: string } | null;
   review?: WorkspaceWorkflowReview;
+  approval?: WorkflowApprovalCheckpoint;
+  verification?: {
+    status?: string;
+    assertions?: Array<Record<string, unknown>>;
+  };
+  capture_rights?: Record<string, unknown>;
   run_id?: string | null;
   execution_ended_at?: string | null;
   source_matches_current?: boolean;
@@ -186,6 +300,7 @@ export interface WorkspaceWorkflowRunEvent {
   result?: unknown;
   kind:
     | "review_requested"
+    | "approval_requested"
     | "design_check"
     | "design_revision"
     | "run_started"
@@ -861,6 +976,203 @@ export class WorkspaceService {
     }>
   >();
 
+  async getEngineeringWorkflowTemplates(): Promise<
+    EngineeringWorkflowTemplate[]
+  > {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-source-templates`,
+      { cache: "no-store" },
+    );
+    if (!response.ok)
+      throw new Error("Unable to load the built-in engineering workflows.");
+    const result = (await response.json()) as {
+      catalog_version?: unknown;
+      templates?: unknown;
+    };
+    if (
+      result.catalog_version !== "1.0.0" ||
+      !Array.isArray(result.templates) ||
+      result.templates.length !== 10
+    )
+      throw new Error(
+        "Wright returned an invalid engineering template catalog.",
+      );
+    return result.templates as EngineeringWorkflowTemplate[];
+  }
+
+  async getEngineeringWorkflowTemplate(
+    templateId: string,
+    version: string,
+  ): Promise<EngineeringWorkflowTemplateDetail> {
+    const query = new URLSearchParams({ version });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-source-templates/${encodeURIComponent(templateId)}?${query.toString()}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok)
+      throw new Error("Unable to load this engineering workflow template.");
+    const result = (await response.json()) as { template?: unknown };
+    if (!result.template || typeof result.template !== "object")
+      throw new Error(
+        "Wright returned an invalid engineering workflow template.",
+      );
+    return result.template as EngineeringWorkflowTemplateDetail;
+  }
+
+  async instantiateEngineeringWorkflowTemplate(
+    sessionId: string,
+    template: EngineeringWorkflowTemplate,
+    workflowPath: string,
+    requestId: string,
+  ): Promise<EngineeringWorkflowTemplateInstance> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-source-templates/${encodeURIComponent(template.template_id)}/instances`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          template_version: template.version,
+          expected_source_digest: template.source_digest,
+          workflow_path: workflowPath,
+          request_id: requestId,
+        }),
+      },
+    );
+    if (response.status === 409) {
+      throw new Error(
+        "A workflow already exists with that name, or the selected template changed. Choose another name or reopen the template list.",
+      );
+    }
+    if (!response.ok)
+      throw new Error(
+        "Unable to create this engineering workflow in the workspace.",
+      );
+    return response.json();
+  }
+
+  async refreshEngineeringWorkflowTemplateReadiness(
+    sessionId: string,
+    template: EngineeringWorkflowTemplate,
+  ): Promise<EngineeringTemplateReadiness> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-source-templates/${encodeURIComponent(template.template_id)}/readiness`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          template_version: template.version,
+        }),
+      },
+    );
+    if (!response.ok)
+      throw new Error(
+        "Unable to refresh template readiness for this workspace.",
+      );
+    return response.json();
+  }
+
+  async getWorkflowApprovalCheckpoint(
+    sessionId: string,
+    runId: string,
+    checkpointId: string,
+  ): Promise<WorkflowApprovalCheckpoint> {
+    const query = new URLSearchParams({ session_id: sessionId });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-runs/${encodeURIComponent(runId)}/approvals/${encodeURIComponent(checkpointId)}?${query.toString()}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Unable to load this workflow approval.");
+    return response.json();
+  }
+
+  async decideWorkflowApproval(
+    sessionId: string,
+    checkpoint: WorkflowApprovalCheckpoint,
+    decision: "approved" | "changes_requested",
+    reason: string | null,
+    requestId: string,
+  ): Promise<WorkflowApprovalCheckpoint> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-runs/${encodeURIComponent(checkpoint.run_id)}/approvals/${encodeURIComponent(checkpoint.checkpoint_id)}/decisions`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          subject_digest: checkpoint.subject_digest,
+          decision,
+          reason,
+          request_id: requestId,
+        }),
+      },
+    );
+    if (response.status === 409)
+      throw new Error(
+        "This approval changed or expired. Reload the exact action before deciding.",
+      );
+    if (!response.ok)
+      throw new Error("Unable to save this workflow approval decision.");
+    return response.json();
+  }
+
+  async resumeWorkflowApproval(
+    sessionId: string,
+    checkpoint: WorkflowApprovalCheckpoint,
+    requestId: string,
+  ): Promise<WorkflowApprovalCheckpoint> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-runs/${encodeURIComponent(checkpoint.run_id)}/resume`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          checkpoint_id: checkpoint.checkpoint_id,
+          subject_digest: checkpoint.subject_digest,
+          request_id: requestId,
+        }),
+      },
+    );
+    if (response.status === 409)
+      throw new Error(
+        "The approved action no longer matches the current workflow state.",
+      );
+    if (!response.ok)
+      throw new Error("This workflow approval cannot be resumed.");
+    return response.json();
+  }
+
+  async createWorkflowDemoCapture(
+    sessionId: string,
+    runId: string,
+    runLogPath: string,
+    artifactIds: string[],
+    caption: string,
+  ): Promise<WorkflowDemoCapture> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-runs/${encodeURIComponent(runId)}/capture`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          run_log_path: runLogPath,
+          artifact_ids: artifactIds,
+          caption,
+        }),
+      },
+    );
+    if (response.status === 409)
+      throw new Error(
+        "This run or its selected evidence is not currently eligible for capture.",
+      );
+    if (!response.ok)
+      throw new Error("The local demonstration package could not be created.");
+    return response.json();
+  }
+
   async getWorkspaceWorkflowSource(
     sessionId: string,
     path: string,
@@ -1190,7 +1502,11 @@ export class WorkspaceService {
       const consume = (line: string) => {
         if (!line.trim()) return;
         const event = JSON.parse(line);
-        if (event.kind === "completed" || event.kind === "pending_review")
+        if (
+          event.kind === "completed" ||
+          event.kind === "pending_review" ||
+          event.kind === "awaiting_approval"
+        )
           run = event.result;
         else if (event.kind === "failed")
           throw new Error(`${event.message} ${event.correction ?? ""}`);
