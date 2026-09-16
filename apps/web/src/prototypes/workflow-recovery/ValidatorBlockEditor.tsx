@@ -10,6 +10,9 @@ import {
   validationProfiles,
   validatorSettings,
   validationProfileCommands,
+  validationRevisionCommands,
+  validationRevisionLimitCommands,
+  validationRevisionTargets,
   validationSubjectCommands,
 } from "./validation-settings";
 
@@ -29,6 +32,10 @@ export function ValidatorBlockEditor({
   const selected = validationProfiles.find(
     (p) => p.name === settings?.profile.name,
   );
+  const revision = workflow.relationships.find(
+    (edge) => edge.kind === "feedback" && edge.sourceId === block.id,
+  );
+  const revisionTargets = validationRevisionTargets(block, workflow);
   const apply = (build: () => RecoveryCommand[]) => {
     try {
       if (onApply(build())) setError("");
@@ -132,6 +139,55 @@ export function ValidatorBlockEditor({
             ? `Excludes ${selected.excluded_scope.join(", ")}.`
             : "The checks declared in this profile."}
         </p>
+      )}
+      {settings && (
+        <section aria-label="Automatic correction">
+          <label>
+            If validation finds a correctable defect
+            <select
+              aria-label="Validation revision target"
+              value={revision?.targetId ?? ""}
+              disabled={readOnly}
+              onChange={(e) =>
+                apply(() =>
+                  validationRevisionCommands(block, workflow, e.target.value),
+                )
+              }
+            >
+              <option value="">Hold the process and report findings</option>
+              {revisionTargets.map((item) => (
+                <option key={item.id} value={item.id}>
+                  Return findings to {item.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Maximum corrected revisions
+            <input
+              aria-label="Maximum corrected revisions"
+              type="number"
+              min={0}
+              max={3}
+              disabled={readOnly || !revision}
+              value={Number(block.configuration.max_revisions ?? 0)}
+              onChange={(e) =>
+                apply(() =>
+                  validationRevisionLimitCommands(
+                    block,
+                    workflow,
+                    Number(e.target.value),
+                  ),
+                )
+              }
+            />
+          </label>
+          <p className="recovery-field-help">
+            Zero disables automatic correction. A correction creates a new output
+            revision and reruns the complete pinned profile; downstream steps stay
+            held until the current revision passes.
+          </p>
+        </section>
       )}
       {error && <p role="alert">{error}</p>}
       {settings && (

@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M1 complete and M2 runtime correction complete; M2 authoring/demonstration next.
-**Implementation:** T001–T015 and T017 complete. T016 and T018–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M1 and M2 code/test integration complete; M2 real-AI demonstration next.
+**Implementation:** T001–T017 complete. T018–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -29,7 +29,7 @@ The dated [readiness snapshot](evidence/readiness-2026-09-16.json) recorded 24/3
 
 ## Next action
 
-Expose correction target/limit authoring (T016), then run and retain the real configured ordinary-AI demonstration (T018). Publish the report contract early. Complete all required demonstrations and gates before claiming the implementation finished.
+Run and retain the real configured ordinary-AI demonstration (T018). Then publish the report contract and operations (T019–T022). Complete all required demonstrations and gates before claiming the implementation finished.
 
 Implementation progress entries should state completed task IDs, exact files/commands, evidence paths, blockers and next work. Nothing in this checkpoint claims a measured output pass, live process demonstration or human engineering acceptance.
 
@@ -94,4 +94,7 @@ This is implementation/component evidence. Served workspace entry, responsive/vi
 - Feedback unit suite: **8 passed**. Expanded rework suite: **9 passed**. Focused design-check/runner/history selection: **104 passed**. Backend core/validator/compiler/runner/history/continuation regression set: **195 passed** using `.venv/Scripts/python.exe -m pytest ... -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-m2-backend2`.
 - Ruff and `git diff --check` passed. `RepairFeedback.schema.json` was regenerated with its public `maxItems: 20` bound.
 
-T016 controls and T018 real configured-model evidence remain open, so M2 is not complete. No mocked scheduling result is presented as the required AI demonstration.
+- T016: the existing validator inspector exposes the exact eligible revision target and a zero-to-three limit. It only offers the ordinary-AI producer owning every bound subject, selects one revision atomically, disconnects at zero, and clears unsafe stale targets when subject/profile ownership changes. Source/Diagram round-trip retains the standard feedback edge and limit. Existing run diagnostics now label output held, repairing output and correction budget exhausted from canonical events; polling carries bounded identities rather than findings.
+- Validator settings/editor/status tests: **13 passed** within the broader frontend selection. Workflow component/observer selection: **61 passed** across five files. TypeScript build and targeted ESLint passed. Backend status/event regression selection: **71 passed**; Ruff and `git diff --check` passed.
+
+T018 real configured-model evidence remains open, so M2 is not complete. No mocked scheduling result is presented as the required AI demonstration.

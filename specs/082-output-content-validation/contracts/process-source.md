@@ -1,6 +1,6 @@
 # Canonical validator task source
 
-Status: compiler, canonical execution and authoring controls implemented; browser qualification and repair integration remain in progress.
+Status: compiler, canonical execution, bounded repair and authoring controls implemented; browser qualification and real demonstrations remain in progress.
 
 A validator is an ordinary `task` in the existing `.wflow` language. Use
 `step_type: work`, `performed_by: configured_tool`, an empty/absent prompt, and null
@@ -35,7 +35,7 @@ The uppercase reference values are placeholders, not valid digests. Obtain exact
 references from the selected profile's `reference()` and
 `baseline.reference()`; never fill them from candidate output. `output_format`
 and `budget` may be omitted for their defaults. `max_revisions` is an integer
-0â€“3, default 0. A nonzero limit alone never schedules a producer.
+0–3, default 0. A nonzero limit alone never schedules a producer.
 
 `subjects` maps each profile subject **role** to a distinct task input port key.
 Every such port needs exactly one `item` connection from a producing task's
@@ -56,9 +56,13 @@ An `approval` connection from validator task ID to consumer task ID uses
 `when: pass` and establishes the same canonical gate ordering as legacy design
 checks. A consumer that also needs the original output keeps its ordinary data
 connection from that producer. A `revision` connection uses `when: revise`;
-the existing bounded-rework compiler validates its safety. Generic repair
-eligibility is implemented separately in T015; a nonzero setting is not proof
-of an accepted replay path.
+the bounded-rework compiler validates its safety. For a local validator, it may
+target only the one preceding ordinary-AI text/structured producer that owns all
+checked subjects. The producer must use indexed policy. MCP/tool effects,
+application edits, reviews, external actions, overwrite policy, unrelated
+outputs, multi-step segments and arbitrary back-edges are rejected. Selecting a
+target in the editor sets an initial limit of one; selecting zero disconnects the
+revision path. A nonzero limit alone never schedules a producer.
 
 Canonical document and port fields (`purpose`, `group`, `item`, `description`,
 etc.) remain required by the normal authoring validator. Settings remain the

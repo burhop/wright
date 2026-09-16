@@ -89,9 +89,26 @@ export function validationProfileCommands(
     );
   const commands: RecoveryCommand[] = [];
   const subjects: Record<string, string> = {};
-  if (!reuse)
+  if (!reuse) {
+    commands.push(
+      ...workflow.relationships
+        .filter(
+          (edge) => edge.kind === "feedback" && edge.sourceId === block.id,
+        )
+        .map((edge) => ({
+          kind: "disconnect" as const,
+          relationshipId: edge.id,
+        })),
+      {
+        kind: "set_block_configuration" as const,
+        blockId: block.id,
+        key: "max_revisions",
+        value: 0,
+      },
+    );
     for (const id of block.inputPortIds)
       commands.push({ kind: "delete_port", portId: id });
+  }
   for (const role of roles) {
     const id = `port.${block.id.slice(6)}-subject-${role.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
     subjects[role] = reuse ? existing.subjects[role]! : sourceKey(id);
@@ -146,6 +163,20 @@ export function validationSubjectCommands(
   const commands: RecoveryCommand[] = workflow.relationships
     .filter((edge) => edge.kind === "data" && edge.targetId === target.id)
     .map((edge) => ({ kind: "disconnect", relationshipId: edge.id }));
+  const revision = workflow.relationships.find(
+    (edge) => edge.kind === "feedback" && edge.sourceId === block.id,
+  );
+  const nextOwner = workflow.ports.find((port) => port.id === sourceId)?.ownerBlockId;
+  if (revision && revision.targetId !== nextOwner)
+    commands.push(
+      { kind: "disconnect", relationshipId: revision.id },
+      {
+        kind: "set_block_configuration",
+        blockId: block.id,
+        key: "max_revisions",
+        value: 0,
+      },
+    );
   if (sourceId) {
     const source = workflow.ports.find(
       (port) =>
@@ -171,5 +202,125 @@ export function validationSubjectCommands(
       },
     });
   }
+  return commands;
+}
+
+function safeValidatorProducer(block: RecoveryBlock): boolean {
+  const template = block.configuration.authoring_template;
+  return (
+    block.executionKind === "ai_capable" &&
+    !["mcp-task", "mcp-tool"].includes(String(template)) &&
+    !block.configuration.cad &&
+    !block.configuration.application_resource &&
+    template !== "external-action-approval" &&
+    template !== "manual-review" &&
+    block.configuration.file_policy !== "overwrite"
+  );
+}
+
+export function validationRevisionTargets(
+  block: RecoveryBlock,
+  workflow: RecoveryWorkflow,
+): RecoveryBlock[] {
+  const settings = validatorSettings(block);
+  if (!settings) return [];
+  const inputIds = new Set(
+    block.inputPortIds.filter((id) =>
+      Object.values(settings.subjects).includes(sourceKey(id)),
+    ),
+  );
+  const owners = new Set(
+    workflow.relationships
+      .filter((edge) => edge.kind === "data" && inputIds.has(edge.targetId))
+      .map(
+        (edge) => workflow.ports.find((port) => port.id === edge.sourceId)?.ownerBlockId,
+      )
+      .filter((id): id is string => Boolean(id)),
+  );
+  if (owners.size !== 1) return [];
+  const ownerId = [...owners][0]!;
+  const validatorIndex = workflow.blocks.findIndex((item) => item.id === block.id);
+  const ownerIndex = workflow.blocks.findIndex((item) => item.id === ownerId);
+  const owner = workflow.blocks[ownerIndex];
+  if (
+    !owner ||
+    ownerIndex < 0 ||
+    validatorIndex < 0 ||
+    ownerIndex >= validatorIndex ||
+    !safeValidatorProducer(owner)
+  )
+    return [];
+  return [owner];
+}
+
+export function validationRevisionCommands(
+  block: RecoveryBlock,
+  workflow: RecoveryWorkflow,
+  targetId: string,
+): RecoveryCommand[] {
+  const commands: RecoveryCommand[] = workflow.relationships
+    .filter((edge) => edge.kind === "feedback" && edge.sourceId === block.id)
+    .map((edge) => ({ kind: "disconnect", relationshipId: edge.id }));
+  if (!targetId) {
+    commands.push({
+      kind: "set_block_configuration",
+      blockId: block.id,
+      key: "max_revisions",
+      value: 0,
+    });
+    return commands;
+  }
+  if (!validationRevisionTargets(block, workflow).some((item) => item.id === targetId))
+    throw new Error(
+      "Automatic correction requires one earlier ordinary AI producer that owns every validated subject.",
+    );
+  commands.push(
+    {
+      kind: "connect",
+      relationship: {
+        id: `rel.validation-revision-${block.id.replaceAll(".", "-")}`,
+        kind: "feedback",
+        sourceId: block.id,
+        targetId,
+        label: "Correct output",
+        condition: "revise",
+      },
+    },
+    {
+      kind: "set_block_configuration",
+      blockId: block.id,
+      key: "max_revisions",
+      value: Math.max(1, Number(block.configuration.max_revisions ?? 0)),
+    },
+  );
+  return commands;
+}
+
+export function validationRevisionLimitCommands(
+  block: RecoveryBlock,
+  workflow: RecoveryWorkflow,
+  limit: number,
+): RecoveryCommand[] {
+  if (!Number.isInteger(limit) || limit < 0 || limit > 3)
+    throw new Error("Choose a whole-number correction limit from zero to three.");
+  const commands: RecoveryCommand[] = [
+    {
+      kind: "set_block_configuration",
+      blockId: block.id,
+      key: "max_revisions",
+      value: limit,
+    },
+  ];
+  if (limit === 0)
+    commands.unshift(
+      ...workflow.relationships
+        .filter(
+          (edge) => edge.kind === "feedback" && edge.sourceId === block.id,
+        )
+        .map((edge) => ({
+          kind: "disconnect" as const,
+          relationshipId: edge.id,
+        })),
+    );
   return commands;
 }

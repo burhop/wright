@@ -73,6 +73,7 @@ import { InputBlockEditor } from "./InputBlockEditor";
 import { PromptBlockEditor } from "./PromptBlockEditor";
 import { ValidatorBlockEditor } from "./ValidatorBlockEditor";
 import { isValidatorBlock } from "./validation-settings";
+import { validationRunPresentation } from "./validation-run-status";
 import {
   connectPromptCommands,
   isPromptBlock,
@@ -1694,6 +1695,8 @@ function WorkflowRecoveryReadyConcept({
   const [nativeRunStartedAt, setNativeRunStartedAt] = useState("");
   const [nativeRunCompletedAt, setNativeRunCompletedAt] = useState("");
   const [nativeRunEvents, setNativeRunEvents] = useState<NativeRunEvent[]>([]);
+  const [nativeValidationProgress, setNativeValidationProgress] =
+    useState<WorkspaceWorkflowRunEvent | null>(null);
   const [nativePartialResults, setNativePartialResults] = useState<
     WorkspaceEngineeringResult[]
   >([]);
@@ -1793,6 +1796,8 @@ function WorkflowRecoveryReadyConcept({
               {
                 at: observed.execution.last_progress.at ?? observed.started_at,
                 label:
+                  validationRunPresentation(observed.execution.last_progress)
+                    ?.label ??
                   observed.execution.last_progress.message ??
                   observed.execution.last_progress.kind.replaceAll("_", " "),
                 detail: observed.execution.last_progress.task_title ?? "",
@@ -1837,6 +1842,12 @@ function WorkflowRecoveryReadyConcept({
                 detail: "Refresh status before starting another run.",
               }
             : null;
+  const validationStatus = validationRunPresentation(
+    observed?.execution?.last_progress ?? nativeValidationProgress,
+  );
+  const presentedStatus =
+    observedStatus ??
+    (presentedPending || presentedError ? validationStatus : null);
   useEffect(() => {
     if (!simulationPreview) {
       setRunStage(0);
@@ -2656,6 +2667,7 @@ function WorkflowRecoveryReadyConcept({
       }
       setWorkflowRun(null);
       setWorkflowRunError("");
+      setNativeValidationProgress(null);
       // Source `prompt` maps to canonical block.instructions. Capture the saved
       // subject now so later edits cannot rewrite the input shown for this run.
       const savedBlock = subject.workflow.blocks.find(
@@ -2694,6 +2706,15 @@ function WorkflowRecoveryReadyConcept({
           signal: runAbort.current?.signal,
           expectedStorageDigest: subject.storageDigest,
           onEvent: (event) => {
+            if (
+              [
+                "design_check",
+                "design_revision",
+                "validation_feedback_delivered",
+                "validation_exhausted",
+              ].includes(event.kind)
+            )
+              setNativeValidationProgress(event);
             if (event.kind === "run_started")
               setNativeRunLogPath(event.run_log_path ?? "");
             if (event.kind === "result_ready" && event.engineering_result) {
@@ -2759,8 +2780,13 @@ function WorkflowRecoveryReadyConcept({
                       : {
                           review_requested: "Awaiting your review",
                           approval_requested: "Awaiting exact action approval",
-                          design_check: `Design check: ${event.report?.verdict ?? "reviewed"}`,
-                          design_revision: `Correcting design · revision ${event.revision}`,
+                          design_check:
+                            validationRunPresentation(event)?.label ??
+                            `Design check: ${event.report?.verdict ?? "reviewed"}`,
+                          design_revision: `Repairing output${event.revision === undefined ? "" : ` · revision ${event.revision}`}`,
+                          validation_feedback_delivered:
+                            "Correction feedback delivered",
+                          validation_exhausted: "Correction budget exhausted",
                           run_started: "Run log opened",
                           result_ready: "Result ready",
                           step_started: "Step started",
@@ -2770,7 +2796,7 @@ function WorkflowRecoveryReadyConcept({
                           tool_started: "Tool started",
                           tool_completed: "Tool result",
                         }[event.kind],
-                detail: `${event.task_title} · ${event.report ? event.report.corrections.join(" ") : (event.message ?? event.tool ?? event.output_path ?? "")}${event.arguments ? ` · ${JSON.stringify(event.arguments)}` : ""}${event.kind === "tool_completed" ? ` · ${event.status}: ${event.text ?? ""}` : ""}`,
+                detail: `${event.task_title} · ${event.report ? event.report.corrections.join(" ") : (event.message ?? event.tool ?? event.output_path ?? validationRunPresentation(event)?.detail ?? "")}${event.arguments ? ` · ${JSON.stringify(event.arguments)}` : ""}${event.kind === "tool_completed" ? ` · ${event.status}: ${event.text ?? ""}` : ""}`,
               },
             ]);
           },
@@ -3909,8 +3935,8 @@ function WorkflowRecoveryReadyConcept({
           <b>▷ Run details</b>
           <span>
             {onRun
-              ? observedStatus
-                ? observedStatus.label
+              ? presentedStatus
+                ? presentedStatus.label
                 : presentedPending
                   ? `Running saved workflow…${observer.error ? " · Status not refreshed" : ""}`
                   : reviewPresentation
@@ -3963,7 +3989,7 @@ function WorkflowRecoveryReadyConcept({
                 partialResults={observed?.results ?? nativePartialResults}
                 runLogPath={presentedRunLogPath}
                 observed={observed}
-                statusPresentation={observedStatus}
+                statusPresentation={presentedStatus}
                 sourceMismatch={observedSourceMismatch}
                 refreshError={observer.error}
                 onRefresh={observer.refresh}

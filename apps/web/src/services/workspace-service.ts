@@ -228,6 +228,11 @@ export interface WorkspaceWorkflowExecutionSnapshot {
     status?: string;
     tool?: string;
     revision?: number;
+    remaining_revisions?: number;
+    assessment_id?: string;
+    assessment_digest?: string;
+    feedback_digest?: string;
+    complete_result_ref?: string;
   } | null;
   truncated: boolean;
 }
@@ -288,6 +293,11 @@ export interface WorkspaceWorkflowStep {
 export interface WorkspaceWorkflowRunEvent {
   report?: { verdict: string; corrections: string[] };
   revision?: number;
+  remaining_revisions?: number;
+  assessment_id?: string;
+  assessment_digest?: string;
+  feedback_digest?: string;
+  complete_result_ref?: string;
   invalidated_task_ids?: string[];
   engineering_result?: WorkspaceEngineeringResult;
   run_log_path?: string;
@@ -303,6 +313,8 @@ export interface WorkspaceWorkflowRunEvent {
     | "approval_requested"
     | "design_check"
     | "design_revision"
+    | "validation_feedback_delivered"
+    | "validation_exhausted"
     | "run_started"
     | "result_ready"
     | "operation_progress"

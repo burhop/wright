@@ -214,6 +214,7 @@ def _execution_snapshot(record, state):
             "tool_completed",
             "design_check",
             "validation_feedback_delivered",
+            "validation_exhausted",
             "design_revision",
             "review_requested",
             "approval_requested",

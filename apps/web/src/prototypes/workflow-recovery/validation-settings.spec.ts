@@ -19,6 +19,9 @@ import {
 } from "./recovery-authoring";
 import {
   validationProfileCommands,
+  validationRevisionCommands,
+  validationRevisionLimitCommands,
+  validationRevisionTargets,
   validationSubjectCommands,
   validatorSettings,
 } from "./validation-settings";
@@ -105,6 +108,103 @@ describe("validator authoring uses the accepted command/source model", () => {
     expect(validateRecoveryAuthoringRoundTrip(connected.workflow).ok).toBe(
       true,
     );
+  });
+
+  it("adds one bounded correction path to the exact safe subject producer and round-trips it", () => {
+    const selected = configured();
+    const block = selected.workflow.blocks.find((b) => b.id === selected.id)!;
+    const producer = selected.workflow.blocks.find(
+      (candidate) => candidate.id !== block.id && candidate.executionKind === "ai_capable",
+    )!;
+    const source = selected.workflow.ports.find(
+      (port) =>
+        port.ownerBlockId === producer.id &&
+        port.direction === "output",
+    )!;
+    const connected = apply(
+      selected.workflow,
+      selected.layout,
+      validationSubjectCommands(
+        block,
+        selected.workflow,
+        block.inputPortIds[0]!,
+        source.id,
+      ),
+    );
+    const current = connected.workflow.blocks.find((b) => b.id === block.id)!;
+    expect(validationRevisionTargets(current, connected.workflow)).toEqual([
+      expect.objectContaining({ id: producer.id }),
+    ]);
+    const revised = apply(
+      connected.workflow,
+      connected.layout,
+      validationRevisionCommands(current, connected.workflow, producer.id),
+    );
+    const revisedBlock = revised.workflow.blocks.find((b) => b.id === block.id)!;
+    expect(revisedBlock.configuration.max_revisions).toBe(1);
+    expect(revised.workflow.relationships).toContainEqual(
+      expect.objectContaining({
+        kind: "feedback",
+        sourceId: block.id,
+        targetId: producer.id,
+        condition: "revise",
+      }),
+    );
+    expect(validateRecoveryAuthoringRoundTrip(revised.workflow).ok).toBe(true);
+    const reopened = parseRecoveryAuthoringSource(
+      formatRecoveryAuthoringSource(revised.workflow).text,
+      initialWorkflow,
+    );
+    expect(reopened.ok).toBe(true);
+    expect(reopened.workflow!.relationships).toContainEqual(
+      expect.objectContaining({
+        kind: "feedback",
+        sourceId: block.id,
+        targetId: producer.id,
+      }),
+    );
+
+    const disabled = apply(
+      revised.workflow,
+      revised.layout,
+      validationRevisionLimitCommands(revisedBlock, revised.workflow, 0),
+    );
+    expect(
+      disabled.workflow.blocks.find((b) => b.id === block.id)!.configuration
+        .max_revisions,
+    ).toBe(0);
+    expect(
+      disabled.workflow.relationships.some(
+        (edge) => edge.kind === "feedback" && edge.sourceId === block.id,
+      ),
+    ).toBe(false);
+  });
+
+  it("does not offer tool or overwrite producers for automatic correction", () => {
+    const selected = configured();
+    const block = selected.workflow.blocks.find((b) => b.id === selected.id)!;
+    const source = selected.workflow.ports.find(
+      (port) =>
+        port.direction === "output" &&
+        port.ownerBlockId !== block.id &&
+        port.typeId === "type.document.engineering",
+    )!;
+    const connected = apply(
+      selected.workflow,
+      selected.layout,
+      validationSubjectCommands(
+        block,
+        selected.workflow,
+        block.inputPortIds[0]!,
+        source.id,
+      ),
+    );
+    const owner = connected.workflow.blocks.find((b) => b.id === source.ownerBlockId)!;
+    owner.configuration.file_policy = "overwrite";
+    expect(validationRevisionTargets(block, connected.workflow)).toEqual([]);
+    expect(() =>
+      validationRevisionCommands(block, connected.workflow, owner.id),
+    ).toThrow(/ordinary AI producer/);
   });
 
   it("undoes and redoes profile selection through the existing history commands", () => {

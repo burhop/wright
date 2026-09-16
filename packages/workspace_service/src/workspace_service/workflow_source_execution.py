@@ -2139,6 +2139,19 @@ async def execute_prompt_workflow(
                         "Inspect the complete assessment and revise the producer instructions or obtain the missing capability before starting a new run.",
                     )
             if count >= step.max_revisions:
+                if step.validation:
+                    await emit(
+                        "validation_exhausted",
+                        task_id=step.id,
+                        task_title=step.title,
+                        status="exhausted",
+                        revision=count,
+                        remaining_revisions=0,
+                        assessment_id=check_report["assessment_id"],
+                        assessment_digest=check_report["assessment_digest"],
+                        complete_result_ref=f"wright://workspace/{validation_application.workspace_id}/validation/{check_report['assessment_id']}",
+                        message="The configured correction budget is exhausted; downstream work remains held.",
+                    )
                 raise _error(
                     "PROCESS_VALIDATION_REJECTED"
                     if step.validation

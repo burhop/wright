@@ -126,6 +126,9 @@ def test_revision_budget_is_persisted_and_exhaustion_holds_consumer(tmp_path):
     assert error.value.code == "PROCESS_VALIDATION_REJECTED"
     delivered = [e for e in events if e["kind"] == "validation_feedback_delivered"]
     assert len(delivered) == 1 and delivered[0]["remaining_revisions"] == 1
+    exhausted = next(e for e in events if e["kind"] == "validation_exhausted")
+    assert exhausted["remaining_revisions"] == 0
+    assert exhausted["assessment_id"]
     assert not (tmp_path / "consume.txt").exists()
 
 
