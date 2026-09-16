@@ -247,6 +247,7 @@ def test_program_control_push_requires_closed_non_mutating_state() -> None:
         "scripts/check-dev-push.ps1",
         "tests/program_control_plane/*",
         "tests/release/test_dev_push_process.py",
+        "tests/test_alpha_release_readiness.py",
         "tests/ui-integration/*.spec.ts",
     ):
         assert path_pattern in recovery_allowlist
