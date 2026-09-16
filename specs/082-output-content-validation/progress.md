@@ -1,8 +1,8 @@
 # Progress checkpoint
 
 **Updated:** 2026-09-16
-**Phase:** Implementation active; M0–M3 complete; M4 engineering capability slices next.
-**Implementation:** T001–T022 complete. T023–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
+**Phase:** Implementation active; M0–M3 complete; M4 capability and process slices complete through T028.
+**Implementation:** T001–T028 complete. T029–T034 remain. The user submitted the revised goal and authorized implementation/verification through M0–M5.
 
 ## Current objective
 
@@ -120,4 +120,14 @@ M3 is complete. The report UI remains owned by the separate branch; this feature
 - T026/T027: `thermal-field@1` independently parses finite coordinate/temperature CSVs, checks source dimensions, computes analytical rise and heat balance, compares bound coarse/fine lineage and derives the narrowest passing candidate from the actual bound fields. Controls cover exact references, wrong load, omitted candidate, fabricated decision, wrong unit headers, the inclusive 45 C boundary and valid-but-infeasible output. The retained attempt-008 baseline/revision coarse/fine fields and decision passed all 15 checks.
 - Engineering reader qualification: **17 passed**. Full process-validation core/repository/service/tool/report/runner and engineering-reader selection: **153 passed** using `.venv/Scripts/python.exe -m pytest ... -q -p no:cacheprovider --basetemp .tmp-082-m4-regression`. Ruff, Python compileall and `git diff --check` passed.
 
-T023–T027 are complete. The canonical CAD correction and heat process evidence (T028), 30-pack reconciliation (T029), and closure work remain open; these reader tests alone do not claim the process demonstrations.
+T023–T027 are complete. At this checkpoint their reader tests alone did not claim the process demonstrations.
+
+## M4 engineering process evidence — 2026-09-16
+
+- T028: `jig-validation-loop.workflow.wflow` ran through the production compiler, canonical run recorder, real Hermes action/response generators, Wright MCP gateway, isolated FastMCP server and packaged geometry validator. The model first called `create_jig_step` with H1/H2 x positions 31/171 mm. Independent STEP readback produced two out-of-tolerance findings, the runner delivered the typed packet to `produce`, and the model called the tool again with 30/170 mm. The second STEP had a distinct subject ID and SHA-256, passed all six checks and released the consumer.
+- T028: `heat-validation.workflow.wflow` copied five retained attempt-008 files into an isolated workspace without changing their source hashes, staged them through the real MCP tool, measured 15 numerical facts with `thermal-field@1`, selected `revision_60`, passed the frozen profile and released its consumer. This validates retained generation output; it does not modify or rerun the generation campaign.
+- Qualifying evidence is `artifacts/process-validation/engineering/20260916T213859Z/`. Its manifest covers 35 retained files, including real tool discovery/calls, model usage, events, run logs, old/new STEP snapshots, all immutable assessments and final consumer outputs. Assessment IDs are `assessment-784aa83e624c471daf66cf8d9c2247bb` (revise), `assessment-e629d4174e524959a9191a22ba596d31` (pass) and `assessment-dadcac109d70423992bd47228ca54d45` (thermal pass).
+- The saved MCP producer opts into `revision_policy=create_new_files`; compile/design checks require an MCP task, indexed expected files, one mapping for every declared file output and exact validator ownership. This permits the isolated new-file correction segment without authorizing session/application edits or arbitrary tool replay.
+- Independent retained-evidence and saved-process checks: **17 passed** using `.venv/Scripts/python.exe -m pytest tests/external/process_validation/test_engineering_process_evidence.py packages/workspace_service/tests/test_workflow_process_validation_rework.py -q -p no:cacheprovider --basetemp=.local-run/process-validation-082/pytest-m4-evidence-2`. Ruff and `git diff --check` passed.
+
+T028 is complete. T029 30-pack capability reconciliation and closure tasks T030–T034 remain. Failed exploratory evidence directories are local diagnostics and are not retained as qualifying artifacts.

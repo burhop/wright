@@ -264,17 +264,28 @@ def validate_rework(steps, revisions):
             )
         segment = steps[order[target_id] : order[check_id]]
         target = segment[0] if len(segment) == 1 else None
-        local_validator_rework = bool(
+        validation_sources = {
+            source.split(".", 1)[0] for _, source in check.validation_sources
+        }
+        target_validation_ports = {
+            source.split(".", 1)[1]
+            for _, source in check.validation_sources
+            if source.startswith(target_id + ".")
+        }
+        owns_validation_subjects = bool(
             target
             and check.validation
             and check.validation_sources
-            and {source.split(".", 1)[0] for _, source in check.validation_sources}
-            == {target_id}
+            and validation_sources == {target_id}
             and all(
                 source
                 in {f"{target_id}.{port}" for port, _ in target.output_ports}
                 for _, source in check.validation_sources
             )
+        )
+        local_validator_rework = bool(
+            target
+            and owns_validation_subjects
             # Only a pure model-response producer is automatically replayable.
             # Tool, application, review and external-action steps may have
             # effects that cannot be safely inferred or repeated.
@@ -303,6 +314,37 @@ def validate_rework(steps, revisions):
             )
             and target.file_policy == "indexed"
         )
+        local_validator_cad_rework = bool(
+            target
+            and owns_validation_subjects
+            and target.agent_task
+            and target.cad
+            and target.cad.get("source") == "new"
+            and target.cad.get("policy", "indexed") == "indexed"
+            and not target.application
+            and not target.design_check
+            and target_validation_ports
+            <= {port for port, _ in target.output_ports}
+        )
+        local_validator_file_mcp_rework = bool(
+            target
+            and owns_validation_subjects
+            and target.agent_task
+            and target.revision_policy == "create_new_files"
+            and not target.cad
+            and not target.application
+            and not target.design_check
+            and not target.tool_name
+            and target.file_policy == "indexed"
+            and target.expected_files
+            and target_validation_ports
+            and target_validation_ports <= set(target.expected_file_ports)
+            and all(
+                kind == "workspace_file"
+                for port, kind in target.output_ports
+                if port in target_validation_ports
+            )
+        )
         cad_rework = bool(
             target
             and not check.validation
@@ -317,10 +359,15 @@ def validate_rework(steps, revisions):
             and target.cad.get("source") == "new"
             and target.cad.get("policy", "indexed") == "indexed"
         )
-        if not (local_validator_rework or cad_rework):
+        if not (
+            local_validator_rework
+            or local_validator_cad_rework
+            or local_validator_file_mcp_rework
+            or cad_rework
+        ):
             raise _invalid(
                 "Automatic rework requires one preceding safe producer that owns every checked subject.",
-                "Use an ordinary AI text/structured producer with indexed files, or a create-new CAD task. Tool effects, reviews, existing/session edits and unrelated outputs require an explicit new run.",
+                "Use an ordinary AI text/structured producer with indexed files, a create-new CAD task, or an explicitly isolated create-new workspace-file MCP task. Reviews, existing/session edits and unrelated outputs require an explicit new run.",
             )
         if check.max_revisions < 1:
             raise _invalid("Set a revision limit before connecting a revision path.")

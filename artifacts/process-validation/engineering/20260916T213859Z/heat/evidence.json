@@ -1,0 +1,455 @@
+{
+  "schema_version": 1,
+  "demonstration": "mcp-heat-output-validation",
+  "started_at": "2026-09-16T21:40:41.898729+00:00",
+  "finished_at": "2026-09-16T21:41:00.092239+00:00",
+  "run_id": "engineering-heat-20260916T214041Z",
+  "workspace_id": "process-validation-engineering-heat",
+  "workflow_source": "heat-validation.workflow.wflow",
+  "workflow_sha256": "f6ef1657a0a9d84f6b9f66cac2fa01aabbda181db7adb7f202820b6ad4ada0d5",
+  "mcp_server_source_sha256": "5cfba8982a92391de5f46da3178b63c8071bde896a367af1f055f2b8a81128b8",
+  "mcp_command": [
+    "uv",
+    "run",
+    "--no-project",
+    "--isolated",
+    "--python",
+    "3.12.11",
+    "--with",
+    "agentcad[mcp]==0.6.0",
+    "--with",
+    "numpy==2.5.2",
+    "--with",
+    "build123d==0.10.0",
+    "python",
+    "-B",
+    "D:\\repos\\wright\\artifacts\\process-validation\\engineering\\20260916T213859Z\\heat\\workspace\\engineering_validation_mcp.py"
+  ],
+  "model_runtime": {
+    "adapter": "agent_adapters real workflow response/action generators",
+    "endpoint": "http://127.0.0.1:8642",
+    "configuration_source": "Hermes profile configuration",
+    "health": {
+      "status": "ok",
+      "platform": "hermes-agent",
+      "version": "0.20.0"
+    },
+    "models": [
+      "hermes-agent"
+    ]
+  },
+  "model_usage": [
+    {
+      "status": "reported",
+      "model": "hermes",
+      "input_tokens": 3267,
+      "cached_input_tokens": null,
+      "output_tokens": 35,
+      "reasoning_output_tokens": null,
+      "total_tokens": 3302,
+      "duration_ms": 8837
+    }
+  ],
+  "staged_inputs": [
+    {
+      "retained_path": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-coarse-temperature.csv",
+      "workspace_path": "inputs/baseline-coarse-temperature.csv",
+      "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+      "bytes": 13526
+    },
+    {
+      "retained_path": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-fine-temperature.csv",
+      "workspace_path": "inputs/baseline-fine-temperature.csv",
+      "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "bytes": 76526
+    },
+    {
+      "retained_path": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-coarse-temperature.csv",
+      "workspace_path": "inputs/revision-coarse-temperature.csv",
+      "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+      "bytes": 13526
+    },
+    {
+      "retained_path": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-fine-temperature.csv",
+      "workspace_path": "inputs/revision-fine-temperature.csv",
+      "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "bytes": 76526
+    },
+    {
+      "retained_path": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/sizing-decision.json",
+      "workspace_path": "inputs/sizing-decision.json",
+      "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+      "bytes": 5943
+    }
+  ],
+  "assessments": [
+    {
+      "id": "assessment-dadcac109d70423992bd47228ca54d45",
+      "digest": "100e3ee29b093c96f2fa1a49111ace5cff516a9e0e84e54d4f366269b79d3f03",
+      "path": "validation/assessment-dadcac109d70423992bd47228ca54d45.json",
+      "verdict": "pass",
+      "release_eligible": true,
+      "subjects": [
+        {
+          "id": "output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115",
+          "role": "baseline_coarse",
+          "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+          "producer": {
+            "run_id": "engineering-heat-20260916T214041Z",
+            "step_id": "produce",
+            "attempt": 1,
+            "output_port": "baseline_coarse"
+          }
+        },
+        {
+          "id": "output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14",
+          "role": "baseline_fine",
+          "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+          "producer": {
+            "run_id": "engineering-heat-20260916T214041Z",
+            "step_id": "produce",
+            "attempt": 1,
+            "output_port": "baseline_fine"
+          }
+        },
+        {
+          "id": "output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a",
+          "role": "revision_coarse",
+          "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+          "producer": {
+            "run_id": "engineering-heat-20260916T214041Z",
+            "step_id": "produce",
+            "attempt": 1,
+            "output_port": "revision_coarse"
+          }
+        },
+        {
+          "id": "output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e",
+          "role": "revision_fine",
+          "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+          "producer": {
+            "run_id": "engineering-heat-20260916T214041Z",
+            "step_id": "produce",
+            "attempt": 1,
+            "output_port": "revision_fine"
+          }
+        },
+        {
+          "id": "output-5fc24bed46074517d2e166941d108991daf8fac600dfe7922318abaf4eb172f9",
+          "role": "decision",
+          "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+          "producer": {
+            "run_id": "engineering-heat-20260916T214041Z",
+            "step_id": "produce",
+            "attempt": 1,
+            "output_port": "decision"
+          }
+        }
+      ],
+      "measurements": [
+        {
+          "selector": "field/node_count",
+          "value": 135,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field/node_count"
+          ]
+        },
+        {
+          "selector": "field/analytical_relative_rise_error",
+          "value": 6.252776074688882e-14,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field/analytical_relative_rise_error"
+          ]
+        },
+        {
+          "selector": "field/node_count",
+          "value": 765,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/node_count"
+          ]
+        },
+        {
+          "selector": "field/analytical_relative_rise_error",
+          "value": 3.5339553505764344e-12,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/analytical_relative_rise_error"
+          ]
+        },
+        {
+          "selector": "field/relative_heat_imbalance",
+          "value": 3.5339509096843358e-12,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/relative_heat_imbalance"
+          ]
+        },
+        {
+          "selector": "field/refinement_relative_sensitivity",
+          "value": 3.4714275898418134e-12,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/refinement_relative_sensitivity",
+            "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field"
+          ]
+        },
+        {
+          "selector": "field/maximum_temperature_c",
+          "value": 49.99999999991165,
+          "unit": "degC",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/maximum_temperature_c"
+          ]
+        },
+        {
+          "selector": "field/node_count",
+          "value": 135,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field/node_count"
+          ]
+        },
+        {
+          "selector": "field/analytical_relative_rise_error",
+          "value": 1.3557155398302708e-13,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field/analytical_relative_rise_error"
+          ]
+        },
+        {
+          "selector": "field/node_count",
+          "value": 765,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/node_count"
+          ]
+        },
+        {
+          "selector": "field/analytical_relative_rise_error",
+          "value": 5.026379312766947e-12,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/analytical_relative_rise_error"
+          ]
+        },
+        {
+          "selector": "field/relative_heat_imbalance",
+          "value": 5.026090654780546e-12,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/relative_heat_imbalance"
+          ]
+        },
+        {
+          "selector": "field/refinement_relative_sensitivity",
+          "value": 4.890807758808503e-12,
+          "unit": "1",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/refinement_relative_sensitivity",
+            "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field"
+          ]
+        },
+        {
+          "selector": "field/maximum_temperature_c",
+          "value": 41.6666666665829,
+          "unit": "degC",
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/maximum_temperature_c"
+          ]
+        },
+        {
+          "selector": "decision/selected_case_id",
+          "value": "revision_60",
+          "unit": null,
+          "reader": {
+            "id": "thermal-field",
+            "version": "1",
+            "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+            "method": "independent_measurement",
+            "tool_identity": "wright bounded thermal field reader v1",
+            "formats": [
+              "csv",
+              "json"
+            ]
+          },
+          "evidence_refs": [
+            "subject:output-5fc24bed46074517d2e166941d108991daf8fac600dfe7922318abaf4eb172f9@6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a#decision/selected_case_id",
+            "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field",
+            "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field"
+          ]
+        }
+      ],
+      "findings": []
+    }
+  ],
+  "feedback_delivery": [],
+  "snapshots": [],
+  "result_path": "result.json",
+  "events_path": "events.json",
+  "run_log_path": "runs/heat-validation/20260916T214050Z-bc54d4d37243.json",
+  "gateway_audit_events": 14,
+  "assertions": {
+    "retained_outputs_copied_read_only": true,
+    "actual_fields_measured": true,
+    "current_outputs_passed": true,
+    "consumer_released": true
+  }
+}

@@ -10,9 +10,12 @@ packages/core/src/core/surfaces/schemas/** text eol=lf
 # Validator baselines are byte-hashed and copied into installed runtime profiles.
 packages/workspace_service/src/workspace_service/process_validation/profiles/*.md text eol=lf
 packages/workspace_service/src/workspace_service/process_validation/profiles/*.json text eol=lf
-tests/datasets/process-validation/**/*.md text eol=lf
-tests/datasets/process-validation/**/*.json text eol=lf
+tests/datasets/process-validation/** text eol=lf
 specs/082-output-content-validation/contracts/schemas/*.json text eol=lf
+
+# Retained process-validation demonstrations carry their own byte manifests.
+# Store and check out every evidence file exactly as hashed by the runner.
+artifacts/process-validation/** -text -whitespace
 
 # Process-definition contracts are byte-hashed and installed byte-for-byte.
 specs/078-process-definition-view/contracts/*.json text eol=lf

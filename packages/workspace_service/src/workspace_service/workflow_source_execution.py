@@ -136,6 +136,7 @@ class PromptStep:
     reference_inline_max_bytes: int = 1_048_576
     validation: dict | None = None
     validation_sources: tuple[tuple[str, str], ...] = ()
+    revision_policy: str = ""
 
 
 def _reference_prompt_context(
@@ -648,6 +649,22 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             raise _invalid(
                 f"{title}: use 1–32 tool calls and a 30–600 second task limit."
             )
+        revision_policy = settings.get("revision_policy", "")
+        if revision_policy not in {"", "create_new_files"} or (
+            revision_policy and not agent_task
+        ):
+            raise _invalid(
+                f"{title}: use the create-new file revision policy only for an MCP task."
+            )
+        if revision_policy and (
+            not expected_files
+            or not file_ports
+            or set(file_ports) != declared_file_ports
+            or len(set(file_ports.values())) != len(file_ports)
+        ):
+            raise _invalid(
+                f"{title}: map every declared workspace-file output to one expected file before enabling correction."
+            )
         if (
             type(reference_inline_max_bytes) is not int
             or not 1_024 <= reference_inline_max_bytes <= 1_048_576
@@ -849,6 +866,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 expected_file_ports=file_ports,
                 source_contract=source_contract,
                 reference_inline_max_bytes=reference_inline_max_bytes,
+                revision_policy=revision_policy,
             )
         )
     from .workflow_design_check import validate_rework

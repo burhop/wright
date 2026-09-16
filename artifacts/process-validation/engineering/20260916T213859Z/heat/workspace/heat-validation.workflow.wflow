@@ -1,0 +1,95 @@
+workflow heat_validation
+  name: "Heat field output validation"
+end
+
+task produce
+  name: "Stage retained heat analysis outputs"
+  step_type: work
+  performed_by: configured_tool
+  inputs: []
+  outputs: [{"key":"baseline_coarse","name":"Baseline coarse field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"baseline_fine","name":"Baseline fine field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"revision_coarse","name":"Revision coarse field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"revision_fine","name":"Revision fine field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"decision","name":"Sizing decision","kind":"workspace_file","required":true,"quantity":"one"}]
+  prompt: ""
+  settings: {"authoring_template":"mcp-tool","mcp_server":"process-validation-engineering","mcp_tool":"process-validation-engineering__stage_heat_outputs","mcp_schema_digest":"e8d75321d5c1cc226273c3d9fb8d365a77cbb43f70a4aba050a3077216004922","mcp_arguments":"{}","output_format":"json","file_policy":"indexed","expected_files":"baseline-coarse.csv\nbaseline-fine.csv\nrevision-coarse.csv\nrevision-fine.csv\nsizing-decision.json","expected_file_ports":{"baseline_coarse":"baseline-coarse.csv","baseline_fine":"baseline-fine.csv","revision_coarse":"revision-coarse.csv","revision_fine":"revision-fine.csv","decision":"sizing-decision.json"}}
+  tool: null
+  reusable_step: null
+end
+
+task inspect
+  name: "Validate thermal sizing evidence"
+  step_type: work
+  performed_by: configured_tool
+  inputs: [{"key":"baseline_coarse","name":"Baseline coarse field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"baseline_fine","name":"Baseline fine field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"revision_coarse","name":"Revision coarse field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"revision_fine","name":"Revision fine field","kind":"workspace_file","required":true,"quantity":"one"},{"key":"decision","name":"Sizing decision","kind":"workspace_file","required":true,"quantity":"one"}]
+  outputs: [{"key":"assessment","name":"Validation assessment","kind":"engineering_document","required":true,"quantity":"one"}]
+  prompt: ""
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"packaged","name":"heat-spreader-sizing-01","reference":{"id":"heat-spreader-sizing-01-fields","version":"1","sha256":"28c7cbd9811fe2423715b7c485195a5cafd53cbc7118a66492fa0995036bdc82"}},"baseline":{"id":"heat-spreader-sizing-01-basis","version":"1","sha256":"3f6464140ae741a0ef9ecd8dabcde8bcbbe3cc1f9755955d7ec12b1cac89e564"},"subjects":{"baseline_coarse":"baseline_coarse","baseline_fine":"baseline_fine","revision_coarse":"revision_coarse","revision_fine":"revision_fine","decision":"decision"}}}
+  tool: null
+  reusable_step: null
+end
+
+task consume
+  name: "Release validated thermal disposition"
+  step_type: work
+  performed_by: ai_assisted
+  inputs: [{"key":"validated_decision","name":"Validated sizing decision","kind":"workspace_file","required":true,"quantity":"one"}]
+  outputs: [{"key":"release_note","name":"Release note","kind":"engineering_document","required":true,"quantity":"one"}]
+  prompt: "State in one sentence that the current heat analysis outputs passed the pinned simplified-conduction validation profile and that revision_60 is the selected candidate. Do not claim physical thermal qualification."
+  settings: {"output_format":"text","output_filename":"heat-release-note.txt","file_policy":"indexed","save_output":true}
+  tool: null
+  reusable_step: null
+end
+
+connection baseline_coarse_subject
+  type: item
+  from: "produce.baseline_coarse"
+  to: "inspect.baseline_coarse"
+  label: "Baseline coarse field"
+  when: null
+end
+
+connection baseline_fine_subject
+  type: item
+  from: "produce.baseline_fine"
+  to: "inspect.baseline_fine"
+  label: "Baseline fine field"
+  when: null
+end
+
+connection revision_coarse_subject
+  type: item
+  from: "produce.revision_coarse"
+  to: "inspect.revision_coarse"
+  label: "Revision coarse field"
+  when: null
+end
+
+connection revision_fine_subject
+  type: item
+  from: "produce.revision_fine"
+  to: "inspect.revision_fine"
+  label: "Revision fine field"
+  when: null
+end
+
+connection decision_subject
+  type: item
+  from: "produce.decision"
+  to: "inspect.decision"
+  label: "Sizing decision"
+  when: null
+end
+
+connection current_decision
+  type: item
+  from: "produce.decision"
+  to: "consume.validated_decision"
+  label: "Current validated decision"
+  when: null
+end
+
+connection release
+  type: approval
+  from: "inspect"
+  to: "consume"
+  label: "Release current passing analysis"
+  when: pass
+end

@@ -49,6 +49,70 @@ end
     return text
 
 
+def mcp_file_rework_source(*, revision_policy="create_new_files"):
+    from workspace_service.process_validation.profiles import load_profile
+
+    profile = load_profile("parametric-drill-jig-01")
+    producer_settings = {
+        "authoring_template": "mcp-task",
+        "mcp_server": "agentcad",
+        "output_format": "json",
+        "file_policy": "indexed",
+        "expected_files": "jig.step",
+        "expected_file_ports": {"jig_step": "jig.step"},
+        "revision_policy": revision_policy,
+    }
+    validation = {
+        "profile": {
+            "source": "packaged",
+            "name": "parametric-drill-jig-01",
+            "reference": profile.reference().model_dump(),
+        },
+        "baseline": profile.baseline.reference().model_dump(),
+        "subjects": {"jig_step": "jig"},
+    }
+    return f'''workflow mcp_file_rework
+  name: "MCP file correction"
+end
+task produce
+  name: "Create isolated jig"
+  step_type: work
+  performed_by: ai_assisted
+  inputs: []
+  outputs: [{{"key":"jig_step","name":"Jig STEP","kind":"workspace_file","required":true}}]
+  prompt: "Create a new jig STEP file."
+  settings: {json.dumps(producer_settings)}
+  tool: null
+  reusable_step: null
+end
+task inspect
+  name: "Inspect jig"
+  step_type: work
+  performed_by: configured_tool
+  inputs: [{{"key":"jig","name":"Jig STEP","kind":"workspace_file","required":true}}]
+  outputs: [{{"key":"assessment","name":"Assessment","kind":"engineering_document"}}]
+  prompt: ""
+  settings: {json.dumps({"authoring_template": "process-validator", "validation": validation, "max_revisions": 1, "output_format": "json"})}
+  tool: null
+  reusable_step: null
+end
+connection subject
+  type: item
+  from: "produce.jig_step"
+  to: "inspect.jig"
+  label: "Jig to inspect"
+  when: null
+end
+connection repair
+  type: revision
+  from: "inspect"
+  to: "produce"
+  label: "Correct measured geometry"
+  when: revise
+end
+'''
+
+
 def run(tmp_path, plan, generate, events):
     async def emit(event):
         events.append(event)
@@ -270,3 +334,36 @@ def test_saved_structured_loop_uses_the_canonical_bounded_revision_path():
     assert [step.id for step in plan.steps] == ["produce", "inspect", "consume"]
     assert plan.revisions == {"inspect": "produce"}
     assert plan.steps[1].validation and plan.steps[1].max_revisions == 2
+
+
+def test_compile_accepts_explicit_isolated_create_new_mcp_file_rework():
+    plan = compile_prompt_workflow(mcp_file_rework_source())
+
+    producer = plan.steps[0]
+    assert producer.agent_task and producer.server_id == "agentcad"
+    assert producer.revision_policy == "create_new_files"
+    assert producer.expected_file_ports == {"jig_step": "jig.step"}
+    assert plan.revisions == {"inspect": "produce"}
+
+
+def test_compile_rejects_mcp_file_rework_without_explicit_create_new_policy():
+    with pytest.raises(WorkflowSourceExecutionError, match="safe producer"):
+        compile_prompt_workflow(mcp_file_rework_source(revision_policy=""))
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["jig-validation-loop.workflow.wflow", "heat-validation.workflow.wflow"],
+)
+def test_saved_engineering_processes_pin_loadable_profiles(tmp_path, filename):
+    from workspace_service.process_validation.configuration import ValidatorConfiguration
+
+    source_path = (
+        Path(__file__).parents[3]
+        / "tests/datasets/process-validation/processes"
+        / filename
+    )
+    plan = compile_prompt_workflow(source_path.read_text(encoding="utf-8"))
+    check = next(step for step in plan.steps if step.validation)
+
+    ValidatorConfiguration.model_validate(check.validation).load(str(tmp_path))
