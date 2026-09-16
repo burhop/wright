@@ -246,7 +246,7 @@ while IFS= read -r changed_file; do
       ;;
   esac
   case "$changed_file" in
-    docs/programs/engineering-process-platform/*|docs/contributing/dev-push-runbook.md|scripts/check-dev-push.sh|scripts/check-dev-push.ps1|tests/program_control_plane/*|tests/release/test_dev_push_process.py|tests/test_alpha_release_readiness.py|tests/ui-integration/*.spec.ts)
+    .gitattributes|docs/programs/engineering-process-platform/*|docs/contributing/dev-push-runbook.md|scripts/check-dev-push.sh|scripts/check-dev-push.ps1|tests/program_control_plane/*|tests/release/test_dev_push_process.py|tests/test_alpha_release_readiness.py|tests/test_printed_dataset_bindings.py|tests/test_sheet_company_capabilities.py|tests/ui-integration/*.spec.ts)
       ;;
     *)
       BLOCKED_RECOVERY_SAFE=0

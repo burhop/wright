@@ -1,4 +1,5 @@
 """Structural binding tests, not CAD correctness or campaign run evidence."""
+
 import hashlib
 import importlib.util
 import json
@@ -18,7 +19,16 @@ BLENDER_SAFE_MODE = BLENDER_MCP_SOURCE / "blender_mcp/safe_mode.py"
 BLENDER_SAFE_MODE_SHA256 = (
     "d3bc1f43f4707476e595efed111d514b3f81bf4358993b8accb18962c5c4bf35"
 )
-spec = importlib.util.spec_from_file_location("prepare_printed", ROOT / "scripts/prepare-printed-dataset-campaign.py")
+
+
+def text_sha256(path: Path) -> str:
+    """Hash Git text content independently of checkout line-ending policy."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
+spec = importlib.util.spec_from_file_location(
+    "prepare_printed", ROOT / "scripts/prepare-printed-dataset-campaign.py"
+)
 prepare = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(prepare)
 probe_spec = importlib.util.spec_from_file_location(
@@ -35,12 +45,26 @@ repair_spec.loader.exec_module(repair_operation)
 
 @pytest.mark.parametrize("number", [1, 2, 3])
 def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
-    folder = next((ROOT / "tests/datasets/engineering-workflows/scenarios/printed-replacement-part").glob(f"0{number}-*"))
-    source = prepare.TEMPLATE.read_text().replace("__instance__", "api_created_identity")
+    folder = next(
+        (
+            ROOT
+            / "tests/datasets/engineering-workflows/scenarios/printed-replacement-part"
+        ).glob(f"0{number}-*")
+    )
+    source = prepare.TEMPLATE.read_text().replace(
+        "__instance__", "api_created_identity"
+    )
     instance = tmp_path / "api-instance.wflow"
     instance.write_text(source)
     blender_server = "runtime-blender-id" if number == 3 else prepare.SERVER
-    args = SimpleNamespace(attempt="isolated", campaign_id="test-campaign", workspace_root=str(tmp_path / "workspace"), draft_root=str(tmp_path / "drafts"), instance_source=str(instance), blender_server=blender_server)
+    args = SimpleNamespace(
+        attempt="isolated",
+        campaign_id="test-campaign",
+        workspace_root=str(tmp_path / "workspace"),
+        draft_root=str(tmp_path / "drafts"),
+        instance_source=str(instance),
+        blender_server=blender_server,
+    )
     names = json.loads(prepare.BINDING.read_text())["allowed_tools"]
     tools = {
         (blender_server, name): {
@@ -71,7 +95,9 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     assert all(step.expected_files for step in plan.steps[:3])
     assert plan.steps[0].server_id == blender_server
     assert plan.steps[1].server_id == "wright-printed-part-mesh-repair"
-    assert plan.steps[1].tool_name == "wright-printed-part-mesh-repair__repair_model_file"
+    assert (
+        plan.steps[1].tool_name == "wright-printed-part-mesh-repair__repair_model_file"
+    )
     assert plan.steps[1].schema_digest == "fixed-repair-schema"
     assert not plan.steps[1].agent_task
     assert plan.steps[2].server_id == "wright-printed-part-slicer"
@@ -88,28 +114,42 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/repaired_mesh.stl",
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/mesh-preview.png",
     )
-    assert plan.steps[1].arguments["configuration_document"].endswith(
-        "/mesh-repair-operation.json"
+    assert (
+        plan.steps[1]
+        .arguments["configuration_document"]
+        .endswith("/mesh-repair-operation.json")
     )
-    assert plan.steps[1].arguments["operation_source_document"].endswith(
-        "/mesh-repair-operation.py"
+    assert (
+        plan.steps[1]
+        .arguments["operation_source_document"]
+        .endswith("/mesh-repair-operation.py")
     )
     assert plan.steps[1].timeout_seconds == 600
     assert plan.steps[1].max_tool_calls == 8
     assert "do not repeat submitted source code" in plan.steps[0].prompt
-    assert "do not pass lambda functions or helper-function parameters" in plan.steps[0].task_guidance
+    assert (
+        "do not pass lambda functions or helper-function parameters"
+        in plan.steps[0].task_guidance
+    )
     assert "Explicitly import mathutils" in plan.steps[0].task_guidance
     assert "Call bpy.ops.wm.stl_export(...) directly" in plan.steps[0].task_guidance
     assert "never inspect bpy.ops" in plan.steps[0].task_guidance
     assert "Never rebuild already-watertight geometry" in plan.steps[0].task_guidance
     assert "zero boundary/non-manifold edges" in plan.steps[0].task_guidance
-    assert plan.steps[-1].external_action["destination"] == {"kind":"integration_test", "id":f"test://test-campaign/printer/printed-replacement-part-0{number}"}
+    assert plan.steps[-1].external_action["destination"] == {
+        "kind": "integration_test",
+        "id": f"test://test-campaign/printer/printed-replacement-part-0{number}",
+    }
     assert plan.steps[-1].external_action["settings"]["nozzle_mm"] == "0.4"
     sections = prepare._parse(bound)
     image = next(s for s in sections if s["id"].startswith("image_and_scale_"))
     assert image["fields"]["settings"]["workspace_file"].endswith("/concept.png")
-    assert len(plan.steps[0].references) == 3  # PNG, natural prompt, assembled human context.
-    record = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text())
+    assert (
+        len(plan.steps[0].references) == 3
+    )  # PNG, natural prompt, assembled human context.
+    record = json.loads(
+        Path(result["draft"]).with_name("staging-manifest.json").read_text()
+    )
     output_directory = Path(args.workspace_root) / record["output_root"]
     assert output_directory.is_dir()
     assert not any(output_directory.iterdir())
@@ -195,10 +235,7 @@ async def test_fixed_mesh_repair_is_a_separate_configured_mcp_tool(tmp_path):
 
 
 def test_diagnostic_mesh_code_clears_exact_pinned_guard(tmp_path):
-    assert (
-        hashlib.sha256(BLENDER_SAFE_MODE.read_bytes()).hexdigest()
-        == BLENDER_SAFE_MODE_SHA256
-    )
+    assert text_sha256(BLENDER_SAFE_MODE) == BLENDER_SAFE_MODE_SHA256
     safe_spec = importlib.util.spec_from_file_location(
         "pinned_blender_safe_mode",
         BLENDER_SAFE_MODE,
@@ -212,10 +249,7 @@ def test_diagnostic_mesh_code_clears_exact_pinned_guard(tmp_path):
 
 
 def test_fixed_mesh_repair_code_clears_exact_pinned_guard(tmp_path):
-    assert (
-        hashlib.sha256(BLENDER_SAFE_MODE.read_bytes()).hexdigest()
-        == BLENDER_SAFE_MODE_SHA256
-    )
+    assert text_sha256(BLENDER_SAFE_MODE) == BLENDER_SAFE_MODE_SHA256
     safe_spec = importlib.util.spec_from_file_location(
         "pinned_blender_safe_mode_fixed_repair",
         BLENDER_SAFE_MODE,

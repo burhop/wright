@@ -11,6 +11,16 @@ packages/core/src/core/surfaces/schemas/** text eol=lf
 specs/078-process-definition-view/contracts/*.json text eol=lf
 src/wright_engineering/static/process-definitions/*.json text eol=lf
 
+# Dataset manifests and text inputs below are protected by recorded SHA-256
+# identities. Prevent checkout policy from changing their bytes on Windows.
+tests/fixtures/blender_mcp_5f8ddaf6/src/blender_mcp/safe_mode.py text eol=lf
+tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.csv text eol=lf
+tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.json text eol=lf
+tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.md text eol=lf
+tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.svg text eol=lf
+tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.txt text eol=lf
+tests/datasets/engineering-workflows/revisions/2026-09-12-sheet-capabilities-r4/**/*.json text eol=lf
+
 # Qualification evidence is byte-addressed by the catalog. Preserve the
 # canonical UTF-8/LF bytes used to calculate each recorded evidence digest.
 docs/mcp-catalog/evidence/** text eol=lf

@@ -241,6 +241,7 @@ def test_program_control_push_requires_closed_non_mutating_state() -> None:
     recovery_end = push.index("  esac", recovery_start)
     recovery_allowlist = push[recovery_start:recovery_end]
     for path_pattern in (
+        ".gitattributes",
         "docs/programs/engineering-process-platform/*",
         "docs/contributing/dev-push-runbook.md",
         "scripts/check-dev-push.sh",
@@ -248,6 +249,8 @@ def test_program_control_push_requires_closed_non_mutating_state() -> None:
         "tests/program_control_plane/*",
         "tests/release/test_dev_push_process.py",
         "tests/test_alpha_release_readiness.py",
+        "tests/test_printed_dataset_bindings.py",
+        "tests/test_sheet_company_capabilities.py",
         "tests/ui-integration/*.spec.ts",
     ):
         assert path_pattern in recovery_allowlist
@@ -378,6 +381,21 @@ def test_browser_contract_guidance_covers_cross_platform_persisted_identity() ->
     assert "Git line-ending conversion" in runbook
     assert "Wait for asynchronous digests" in runbook
     assert "focused Windows pass does not replace the Linux CI check" in runbook
+
+
+def test_digest_protected_dataset_text_pins_lf_checkout_bytes() -> None:
+    attributes = _read(".gitattributes")
+
+    for pattern in (
+        "tests/fixtures/blender_mcp_5f8ddaf6/src/blender_mcp/safe_mode.py",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.csv",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.json",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.md",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.svg",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.txt",
+        "tests/datasets/engineering-workflows/revisions/2026-09-12-sheet-capabilities-r4/**/*.json",
+    ):
+        assert f"{pattern} text eol=lf" in attributes
 
 
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:

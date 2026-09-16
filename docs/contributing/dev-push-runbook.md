@@ -136,6 +136,13 @@ Windows. Wait for asynchronous digests to reach their final value before
 capturing them. A focused Windows pass does not replace the Linux CI check for
 these portability-sensitive contracts.
 
+Digest assertions over Git-managed text fixtures must likewise canonicalize
+checkout CRLF to committed LF before hashing. Keep binary fixture hashing byte
+exact; never apply text normalization to binary artifacts. This ensures the
+Windows merge gate and Linux CI verify one recorded content identity. Pin
+digest-protected repository text to `text eol=lf` in `.gitattributes`; test-side
+normalization is a defensive check, not a substitute for stable checkout bytes.
+
 Engineering-process control-plane changes have an explicit focused route. Changes under `docs/programs/engineering-process-platform/**`, `specs/076-control-plane-validator/**`, `scripts/program_control/**`, the `scripts/validate-engineering-process-program.py` entrypoint, or `tests/program_control_plane/**` select `tests/program_control_plane`. Python source and tests also enter Ruff/format/MyPy scope. The full merge gate and Linux/Windows CI run the focused suite before broader test roots so contract failures remain attributable. On either Windows or POSIX, the repeatable focused command is:
 
 ```text
