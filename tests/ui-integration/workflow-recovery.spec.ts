@@ -602,6 +602,7 @@ test("uses real typed handles and preserves source across a layout save", async 
   await expect(page.getByTestId("workflow-recovery-save-status")).toHaveText(
     "Saved",
   );
+  await expect.poll(() => state.current()?.layout_revision).toBe(1);
   expect(state.current()?.source.replace(/\r\n/g, "\n")).toBe(
     publicWorkflowSource.replace(/\r\n/g, "\n"),
   );

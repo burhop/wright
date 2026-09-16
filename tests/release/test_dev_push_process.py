@@ -70,9 +70,11 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     )
     assert "tests/ui-integration/navigation.spec.ts" in gate
     assert "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts" in gate
-    assert "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts" in gate
-    assert "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts" in gate
-    assert "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts" in gate
+    assert "tests/ui-integration/workflow-composer.spec.ts" in gate
+    assert "tests/ui-integration/workflow-recovery.spec.ts" in gate
+    assert "rivet-ai.spec.ts" not in gate
+    assert "rivet-run-inspector.spec.ts" not in gate
+    assert "rivet2-canvas.spec.ts" not in gate
     assert "tests/test_alpha_release_readiness.py" in gate
     assert "tests/test_release_engineering_scripts.py" in gate
     assert "tests/test_security_scanner_setup.py" in gate
@@ -85,12 +87,17 @@ def test_focused_correction_reuses_only_the_current_pushed_full_gate_tip() -> No
     for contract in (
         "WRIGHT_FOCUSED_CORRECTION_BASE_SHA",
         "WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS",
+        "WRIGHT_FOCUSED_VALIDATOR_CORRECTION",
         "Focused correction base must equal the branch's current pushed tip.",
         "Focused correction mode permits exactly one consolidated commit",
         "Focused correction mode rejects non-test change",
         "tests/ui-integration/*.spec.ts",
+        "tests/ui-integration/workspace-surfaces/fixtures/*.ts",
+        "playwright.config.ts",
         "tests/release/test_dev_push_process.py",
         'npx playwright test "${FOCUSED_PLAYWRIGHT_TARGETS[@]}" --project=chromium',
+        "test_native_scoped_delivery.py",
+        "validate-engineering-process-program.py validate --source HEAD",
     ):
         assert contract in gate
     assert "clean worktree" in runbook
@@ -339,9 +346,11 @@ def test_browser_gate_uses_isolated_configurable_ports() -> None:
 
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
     workflow = _read(".github/workflows/frontend-quality.yml")
+    playwright = _read("playwright.config.ts")
 
     assert "needs: frontend-quality" not in workflow
     assert "cancel-in-progress: true" in workflow
+    assert "maxFailures: undefined" in playwright
 
 
 def test_full_merge_gate_does_not_reinstall_live_frontend_dependencies() -> None:

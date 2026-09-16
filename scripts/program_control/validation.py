@@ -4704,6 +4704,8 @@ def validate_roadmap_approval_and_lease(
                 "tests/program_control_plane/test_program_status_publisher.py",
                 "tests/program_control_plane/test_transition_chain.py",
                 "tests/release/test_dev_push_process.py",
+                "playwright.config.ts",
+                "tests/ui-integration/",
             )
 
             def is_governance_tooling(path: str) -> bool:

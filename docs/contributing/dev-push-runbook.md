@@ -119,7 +119,9 @@ lock a native Node binding that the merge gate tries to replace.
 Before starting its long checks, the full gate verifies that both configured
 browser-test ports can actually be bound. A conflict fails immediately with
 the environment-variable override instead of surfacing after the test matrix.
-The fast browser slice is normally a Chromium smoke. When the changed target is
+The fast browser slice always includes the canonical workspace-entry smoke in
+addition to directly changed browser contracts; detecting one changed spec must
+not silently drop that baseline. It is normally a Chromium smoke. When the changed target is
 a `tests/ui-integration/workspace-surfaces/*.spec.ts` contract, the fast gate
 runs that selected spec across Chromium, Firefox, WebKit, and the desktop
 profile because directory, iframe, and surface interactions are
@@ -208,6 +210,8 @@ authoritative in CI when a local Docker host is unavailable.
 ## CI failure protocol
 
 - Collect every failed job and its first actionable error before editing.
+- Let the complete CI browser run report its full failure set; do not cap the run
+  after an arbitrary number of failures that forces serial discovery pushes.
 - Classify the failure as product behavior, test contract, test isolation,
   platform/profile drift, packaging, or infrastructure.
 - Reproduce the failing command locally or in the matching clean container.
