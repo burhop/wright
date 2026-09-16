@@ -373,6 +373,14 @@ def test_browser_gate_uses_isolated_configurable_ports() -> None:
     for spec in (ROOT / "tests/ui-integration/workspace-surfaces").glob("*.spec.ts"):
         assert "localhost:5173" not in spec.read_text(encoding="utf-8"), spec
 
+    for relative_spec in (
+        "tests/ui-integration/capture-screenshot.spec.ts",
+        "tests/ui-integration/dashboard-real.spec.ts",
+    ):
+        spec = _read(relative_spec)
+        assert "127.0.0.1:8000" not in spec
+        assert '"/api/workspace/' in spec
+
 
 def test_browser_contract_guidance_covers_cross_platform_persisted_identity() -> None:
     runbook = _read("docs/contributing/dev-push-runbook.md")

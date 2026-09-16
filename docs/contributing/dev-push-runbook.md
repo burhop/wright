@@ -136,6 +136,11 @@ Windows. Wait for asynchronous digests to reach their final value before
 capturing them. A focused Windows pass does not replace the Linux CI check for
 these portability-sensitive contracts.
 
+Browser tests running against the managed frontend must send application API
+requests through same-origin `/api/...` paths. Do not hard-code the default
+backend port: both local gates intentionally support configurable API and UI
+ports, and Vite routes same-origin requests to the selected backend.
+
 Digest assertions over Git-managed text fixtures must likewise canonicalize
 checkout CRLF to committed LF before hashing. Keep binary fixture hashing byte
 exact; never apply text normalization to binary artifacts. This ensures the

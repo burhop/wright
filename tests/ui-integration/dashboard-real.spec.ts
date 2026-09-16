@@ -40,9 +40,7 @@ test.describe("Dashboard Page - Real Backend Integration @live", () => {
     // 2. Test clicking an existing workspace
     console.log("Looking for existing workspaces in the list...");
     // We wait for the list to load. If there are no workspaces, we skip the card click test.
-    const workspaceResponse = await page.request.get(
-      "http://127.0.0.1:8000/api/workspace/recent",
-    );
+    const workspaceResponse = await page.request.get("/api/workspace/recent");
     const workspaceData = workspaceResponse.ok()
       ? await workspaceResponse.json()
       : { workspaces: [] };
