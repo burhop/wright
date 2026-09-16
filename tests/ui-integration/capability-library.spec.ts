@@ -314,7 +314,8 @@ test.describe("Offline Capability Library", () => {
       }
     });
     await page.goto("/tool-registry");
-    await page.getByRole("button", { name: "Check for updates" }).click();
+    await page.getByText("Catalog settings", { exact: true }).click();
+    await page.getByTestId("catalog-check-updates").click();
     await expect(page.getByText("Verified signed update")).toBeVisible();
     await page.getByRole("button", { name: "Activate update" }).click();
     await expect(page.getByTestId("catalog-active-source")).toContainText(
