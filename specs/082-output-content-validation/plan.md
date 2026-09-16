@@ -1,7 +1,7 @@
 # Implementation Plan: Engineering Output Content Validation
 
 **Branch**: `codex/082-output-content-validation` | **Date**: 2026-09-16 | **Spec**: [spec.md](spec.md)
-**Base**: fetched `origin/dev` at `86ee835974970cd05913b58e306e537f6dfaf181` (PR #129).
+**Base**: rebased onto `origin/dev` at `6c0602a4300da38fa7db62026aff1bd984e4113e` (PR #130). Initial planning used PR #129; its dated readiness evidence remains historical.
 **Status**: implementation package prepared; G0 not ready; no validation implementation started.
 **Input**: approved earlier 30-pack analysis and the request to prepare this work on a new branch.
 
@@ -49,7 +49,7 @@ T001 must perform all six G0 conditions in the [adopted plan](../081-engineering
 
 Before the audit CLI exists, use bounded direct JSON/file inspection and read-only SQLite access through `connect_state_db(read_only=True, ensure_parent=False)` or equivalent snapshot-safe access. Do not run the current generation `status` CLI: it constructs Campaign and exports state. Do not copy an open SQLite main file while ignoring its WAL.
 
-Current local inputs and campaign artifacts are in `D:/repos/wright`; this implementation worktree is `D:/repos/wright/.local-run/output-content-validation`. These are different source and code roots. Resolve the actual runtime/receipt/artifact roots from authorized configuration. Freeze a manifest of permitted read-only roots and exact content; source outputs are untracked and are not supplied by Git. Do not point a writable application data root at another task's database.
+The implementation checkout, local inputs and campaign artifacts are in `D:/repos/wright`, now on 082. Keep source campaign data read-only and use the separate `artifacts/engineering-workflow-validation` root for new validation state. Resolve the actual runtime/receipt/artifact roots from authorized configuration. Freeze a manifest of permitted read-only roots and exact content; source outputs are untracked and are not supplied by Git. Do not point a writable application data root at another task's database.
 
 If G0 is not ready, write precise missing evidence and leave implementation deferred; no campaign recovery, repeated polling or partial activation. If it passes, freeze a cohort and continue T002. Later changed cases receive new subject identities; unaffected cases retain evidence.
 

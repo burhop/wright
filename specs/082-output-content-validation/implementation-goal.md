@@ -1,11 +1,11 @@
 # Ready-to-paste implementation goal
 
-Open a task in the existing worktree `D:/repos/wright/.local-run/output-content-validation` on `codex/082-output-content-validation`. Select Sol in that task if desired. Copy the complete block below. Saving this file does not start a goal.
+Use the main project folder `D:/repos/wright`, now on `codex/082-output-content-validation`. Select Sol in the implementation task if desired. Copy the complete block below. Saving this file does not start a goal.
 
 The package is ready for review. Its current prerequisite snapshot is **not ready: 24/30 outputs**. The goal deliberately checks G0 again before implementation. Do not paste it expecting generation recovery to run.
 
 ```text
-/goal Implement feature 082, engineering output content validation for the 30 current input packs, in the existing D:/repos/wright/.local-run/output-content-validation worktree on codex/082-output-content-validation. This submission approves the saved 082 specification, plan and task package. Follow AGENTS.md and constitution v3.1.1 or its current approved successor. Do not create another branch or change the original D:/repos/wright checkout.
+/goal Implement feature 082, engineering output content validation for the 30 current input packs, in D:/repos/wright on codex/082-output-content-validation. This submission approves the saved 082 specification, plan and task package. Follow AGENTS.md and constitution v3.1.1 or its current approved successor. Continue on this branch in this project folder.
 
 Read specs/082-output-content-validation/progress.md, quickstart.md, spec.md, plan.md, tasks.md, research.md, data-model.md, contracts/validation-contract.md and acceptance-cases.md. Follow their links into the adopted 081 content-validation analysis and current campaign/model/lifecycle evidence. The earlier seven-file analysis is incorporated, not discarded. Use the separate 082 feature selector.
 
@@ -13,7 +13,7 @@ Start with T001/CV01: perform all six G0 conditions from the adopted plan in a b
 
 The current readiness snapshot showed all three lightweight-equipment-bracket and sheet-metal-supplier-handoff cases incomplete. If any G0 prerequisite remains missing, record exact cases and evidence in progress.md and stop implementation as deferred. Do not repair/take over generation, poll endlessly, fabricate a cohort or mark this goal achieved. Follow goal lifecycle rules for blocked status.
 
-The retained inputs, output files and runtime data may be in D:/repos/wright or other authorized roots outside this worktree. Resolve those roots explicitly and read them only. The existing generation campaign status command writes state; use direct files and read-only, WAL-aware SQLite access for the bootstrap audit. Do not copy an open main database without its WAL. Put all writable validation state, logs, working copies and reports under this worktree's separate artifacts/engineering-workflow-validation root. Allocate independent runtime roots and ports if needed; never reuse another task's writable database or native application lease.
+The retained inputs, output files and runtime data are in this project or other authorized roots. Resolve those roots explicitly and read them only. The existing generation campaign status command writes state; use direct files and read-only, WAL-aware SQLite access for the bootstrap audit. Do not copy an open main database without its WAL. Put all writable validation state, logs, working copies and reports under the separate artifacts/engineering-workflow-validation root. Allocate independent runtime roots and ports if needed; never reuse another task's writable database or native application lease.
 
 After G0 passes, freeze the cohort and implement T002–T074 in dependency order. Freeze all 30 source requirements, amendments, methods, tolerances, units/frames, uncertainty and review rubrics before candidate evaluation. Retain source images/tables and precise evidence locators. Compose shared capability readers and assertions; case IDs select profiles, never bespoke runtime logic. Keep domain contracts in core, persistence in data_vault, evaluation/readers/review in workspace_service, and CLI/routes thin. Reuse existing registry predicates only with explicit state and error mapping.
 

@@ -7,10 +7,10 @@
 ## Repository and ownership
 
 - Branch: `codex/082-output-content-validation`.
-- Worktree: `D:/repos/wright/.local-run/output-content-validation`.
-- Base: fetched `origin/dev` at `86ee835974970cd05913b58e306e537f6dfaf181`.
+- Worktree: `D:/repos/wright`; 082 was moved here after the user encountered Git's already-checked-out branch restriction. The former secondary worktree is detached.
+- Base: `origin/dev` at `6c0602a4300da38fa7db62026aff1bd984e4113e`, following the PR #130 merge and successful 082 rebase. Local `dev` is also current.
 - Earlier seven-file analysis is already inherited from dev unchanged.
-- New selector: `specs/082-output-content-validation`; original checkout selector and unrelated MCP edits preserved.
+- Selector: `specs/082-output-content-validation`. The 11 MCP recovery files are in dev and 082; identical leftover local edits were saved in a named recovery stash before switching this folder.
 - Original data root to inspect: `D:/repos/wright/artifacts/engineering-workflow-datasets`. Discover actual authorized runtime/artifact roots from retained records.
 - Future writable validation root: this worktree's `artifacts/engineering-workflow-validation`.
 

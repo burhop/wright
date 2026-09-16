@@ -1,8 +1,8 @@
 # Future-agent quickstart
 
-**Code worktree**: `D:/repos/wright/.local-run/output-content-validation`
+**Code worktree**: `D:/repos/wright`
 **Branch**: `codex/082-output-content-validation`
-**Base**: `86ee835974970cd05913b58e306e537f6dfaf181`, fetched merged dev.
+**Base**: `6c0602a4300da38fa7db62026aff1bd984e4113e`, merged dev after PR #130; 082 rebased onto it.
 **Start**: [ready-to-paste /goal](implementation-goal.md).
 
 ## Read order
@@ -16,7 +16,7 @@
 
 ## First actions
 
-Confirm branch, feature selector and dirty work in this worktree. Do not switch branches in the original shared checkout. Review [readiness evidence](evidence/readiness-2026-09-16.json); it is a dated preliminary failure, not current authority or a complete cohort audit.
+Confirm branch, feature selector and dirty work in this project folder. Branch 082 is now attached here; the former secondary worktree is detached. Review [readiness evidence](evidence/readiness-2026-09-16.json); it is a dated preliminary failure, not current authority or a complete cohort audit.
 
 T001 must verify full G0 before T002 or validation implementation. When blocked, record exact facts and leave deferred without taking over generation. The current generation status CLI writes; direct source readers and read-only WAL-aware SQLite access are the initial audit method.
 
