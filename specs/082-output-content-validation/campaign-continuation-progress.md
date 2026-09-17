@@ -63,8 +63,15 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   cut as installed route plus documented allowance, and refuses copper-only drop
   summaries whose total contact/splice-inclusive drop is null. Reader and service
   regression tests: `29 passed in 5.35s`; Ruff passed.
+- All three harness profiles are now frozen and implemented. They bind original
+  wiring-schedule connectivity through explicit splice nodes, reserve pins,
+  cut/drop evidence, required deliverables and authenticated engineering reviews.
+  Each retained case reaches the same actionable `voltage-drop` finding because
+  its copper-only result leaves `total_drop_v` null; those cases correctly remain
+  invalid rather than receiving credit from their producer success flags.
+  Profile/coverage tests: `11 passed in 4.24s`; Ruff passed.
 
 ## Next action
 
-C010–C012: finish the three sensor-fan harness profiles against source wiring
-schedules and retained outputs, then record their exact actionable failures.
+C010–C012: implement the next reusable three-case family and keep the nine full
+robot, heat and harness profiles pending their exact review/correction evidence.

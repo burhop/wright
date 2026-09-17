@@ -1927,27 +1927,75 @@
           "size_bytes": 421
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sensor-fan-harness-01",
+        "profile_ref": {
+          "id": "sensor-fan-harness-01-full",
+          "version": "1",
+          "sha256": "585eb8e5b0d72bce2f82de8a515354548e8e23eb821ef0fd80f120f5ec821621"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-01-basis",
+          "version": "1",
+          "sha256": "2bb18ff7bab8624f21dea88b8df297ea42a9fe7e144a75373d5f46903cc8efed"
+        },
+        "reader_ids": [
+          "harness@1",
+          "structured@1"
+        ],
+        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_harness.py",
+          "tests/external/process_validation/test_harness_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sensor-fan-harness-01",
+        "profile_ref": {
+          "id": "sensor-fan-harness-01-full",
+          "version": "1",
+          "sha256": "585eb8e5b0d72bce2f82de8a515354548e8e23eb821ef0fd80f120f5ec821621"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-01-basis",
+          "version": "1",
+          "sha256": "2bb18ff7bab8624f21dea88b8df297ea42a9fe7e144a75373d5f46903cc8efed"
+        },
+        "reader_ids": [
+          "harness@1",
+          "structured@1"
+        ],
+        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_harness.py",
+          "tests/external/process_validation/test_harness_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "structured",
           "support": "implemented",
-          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
-          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+          "limitation": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
           "extension_recipe": "structured",
           "evidence": [
-            "packages/workspace_service/tests/test_process_validation.py"
+            "tests/external/process_validation/test_harness.py",
+            "tests/external/process_validation/test_harness_profiles.py"
           ]
         },
         {
           "id": "electrical.network",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+          "limitation": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
           "extension_recipe": "electrical.network",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_harness.py",
+            "tests/external/process_validation/test_harness_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -2005,27 +2053,75 @@
           "size_bytes": 572
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sensor-fan-harness-02",
+        "profile_ref": {
+          "id": "sensor-fan-harness-02-full",
+          "version": "1",
+          "sha256": "6108bfcac945ff3018c19a581e72aef2dcf615dba62295a5b5d2ebc6ffb26578"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-02-basis",
+          "version": "1",
+          "sha256": "81b536a099781344aef35d76d34c9b3128c44f8f88ea508809af0aafefdbce9e"
+        },
+        "reader_ids": [
+          "harness@1",
+          "structured@1"
+        ],
+        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_harness.py",
+          "tests/external/process_validation/test_harness_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sensor-fan-harness-02",
+        "profile_ref": {
+          "id": "sensor-fan-harness-02-full",
+          "version": "1",
+          "sha256": "6108bfcac945ff3018c19a581e72aef2dcf615dba62295a5b5d2ebc6ffb26578"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-02-basis",
+          "version": "1",
+          "sha256": "81b536a099781344aef35d76d34c9b3128c44f8f88ea508809af0aafefdbce9e"
+        },
+        "reader_ids": [
+          "harness@1",
+          "structured@1"
+        ],
+        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_harness.py",
+          "tests/external/process_validation/test_harness_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "structured",
           "support": "implemented",
-          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
-          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+          "limitation": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
           "extension_recipe": "structured",
           "evidence": [
-            "packages/workspace_service/tests/test_process_validation.py"
+            "tests/external/process_validation/test_harness.py",
+            "tests/external/process_validation/test_harness_profiles.py"
           ]
         },
         {
           "id": "electrical.network",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+          "limitation": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
           "extension_recipe": "electrical.network",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_harness.py",
+            "tests/external/process_validation/test_harness_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -2083,27 +2179,75 @@
           "size_bytes": 1120
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sensor-fan-harness-03",
+        "profile_ref": {
+          "id": "sensor-fan-harness-03-full",
+          "version": "1",
+          "sha256": "08a75a770bf113319b42c3190930877285758762cf068f4c51b25e2975e46ff9"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-03-basis",
+          "version": "1",
+          "sha256": "b1083fac47ba76119e11185808a18c5ceb552950de3260f341d6566ed81e7648"
+        },
+        "reader_ids": [
+          "harness@1",
+          "structured@1"
+        ],
+        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_harness.py",
+          "tests/external/process_validation/test_harness_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sensor-fan-harness-03",
+        "profile_ref": {
+          "id": "sensor-fan-harness-03-full",
+          "version": "1",
+          "sha256": "08a75a770bf113319b42c3190930877285758762cf068f4c51b25e2975e46ff9"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-03-basis",
+          "version": "1",
+          "sha256": "b1083fac47ba76119e11185808a18c5ceb552950de3260f341d6566ed81e7648"
+        },
+        "reader_ids": [
+          "harness@1",
+          "structured@1"
+        ],
+        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_harness.py",
+          "tests/external/process_validation/test_harness_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "structured",
           "support": "implemented",
-          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
-          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+          "limitation": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
           "extension_recipe": "structured",
           "evidence": [
-            "packages/workspace_service/tests/test_process_validation.py"
+            "tests/external/process_validation/test_harness.py",
+            "tests/external/process_validation/test_harness_profiles.py"
           ]
         },
         {
           "id": "electrical.network",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+          "limitation": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
           "extension_recipe": "electrical.network",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_harness.py",
+            "tests/external/process_validation/test_harness_profiles.py"
+          ]
         }
       ],
       "initial_slice": false

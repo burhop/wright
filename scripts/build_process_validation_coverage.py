@@ -307,6 +307,21 @@ IMPLEMENTED_PROFILES = {
     },
 }
 
+for _scenario_id, _profile_sha, _baseline_sha in (
+    ("sensor-fan-harness-01", "585eb8e5b0d72bce2f82de8a515354548e8e23eb821ef0fd80f120f5ec821621", "2bb18ff7bab8624f21dea88b8df297ea42a9fe7e144a75373d5f46903cc8efed"),
+    ("sensor-fan-harness-02", "6108bfcac945ff3018c19a581e72aef2dcf615dba62295a5b5d2ebc6ffb26578", "81b536a099781344aef35d76d34c9b3128c44f8f88ea508809af0aafefdbce9e"),
+    ("sensor-fan-harness-03", "08a75a770bf113319b42c3190930877285758762cf068f4c51b25e2975e46ff9", "b1083fac47ba76119e11185808a18c5ceb552950de3260f341d6566ed81e7648"),
+):
+    IMPLEMENTED_PROFILES[_scenario_id] = {
+        "profile_resource": _scenario_id,
+        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
+        "reader_ids": ["harness@1", "structured@1"],
+        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
+        "evidence": ["tests/external/process_validation/test_harness.py", "tests/external/process_validation/test_harness_profiles.py"],
+    }
+
 FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
