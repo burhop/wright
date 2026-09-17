@@ -1,8 +1,13 @@
 # Implementation Plan: Process Output Validator
 
 **Branch:** `codex/082-output-content-validation` | **Date:** 2026-09-16 | **Spec:** [spec.md](spec.md)
-**Status:** Revised plan for review; no implementation started.
+**Status:** Initial implementation complete; see [completion.md](completion.md).
 **Input:** Runtime process checks, actionable AI feedback, and report-consumable evidence.
+
+The [2026-09-17 campaign continuation plan](campaign-continuation-plan.md) proposes
+expanding the delivered validator to all 30 cases and resuming campaign execution.
+Its [saved goal](campaign-continuation-goal.md) is the approval/start boundary for
+that follow-on. The original design and milestone history below remain intact.
 
 ## Summary
 

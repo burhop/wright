@@ -14,6 +14,12 @@ T001–T034 and M0–M5 are complete and audited in [completion.md](completion.m
 
 The validator is a process step that checks one or more exact upstream output revisions. It is not a final QA campaign. The 30 input packs define a capability map; only the explicitly frozen and demonstrated slices are qualified.
 
+For the proposed all-30 campaign expansion, use the
+[campaign continuation plan](campaign-continuation-plan.md) and
+[ready-to-paste goal](campaign-continuation-goal.md). Submitting that goal authorizes
+the follow-on generation/validation work and supersedes the original instruction
+below to leave the generation campaign alone. Saving it does not start execution.
+
 ## Read order
 
 1. [progress.md](progress.md), [scope-amendment.md](scope-amendment.md), [spec.md](spec.md), [plan.md](plan.md), and [tasks.md](tasks.md).
