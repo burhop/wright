@@ -668,6 +668,25 @@ def serve(campaign: Campaign, port: int, *, runner_root=None, native_database=No
                     return self.send(200, page.read_bytes(), "text/html; charset=utf-8")
                 if path == "/api/status":
                     return self.send(200, json.dumps(campaign.published_status()).encode())
+                if path == "/api/retained-validation":
+                    pointer = campaign.root / "retained-validation.json"
+                    if not pointer.is_file():
+                        return self.send(200, b'{"cases":[],"report_root":null}')
+                    selected = json.loads(pointer.read_text(encoding="utf-8"))
+                    reports = campaign.root.parent / "process-validation"
+                    summary = safe_file(reports, selected["report_root"] + "/summary.json")
+                    data = json.loads(summary.read_text(encoding="utf-8"))
+                    return self.send(200, json.dumps({
+                        "report_root": selected["report_root"],
+                        "cases": [{key: row[key] for key in (
+                            "scenario_id", "retained_attempt", "automated_checks", "review_checks"
+                        )} for row in data["cases"]],
+                    }).encode())
+                if path.startswith("/validation-reports/"):
+                    file = safe_file(campaign.root.parent / "process-validation", path[len("/validation-reports/"):])
+                    if file.name not in {"summary.md", "summary.json", "report.md", "report.json", "rtm.csv"}:
+                        raise ValueError("Not a published validation report")
+                    return self.send(200, file.read_bytes(), "application/json" if file.suffix == ".json" else "text/plain; charset=utf-8")
                 if path == "/api/diagnostics":
                     diagnostic = build_diagnostics(
                         campaign, runner_root=runner_root,

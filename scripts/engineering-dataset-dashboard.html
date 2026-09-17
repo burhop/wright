@@ -35,6 +35,13 @@
     <div class="approval-control"><label for="approval-mode">Approval steps</label><select id="approval-mode" data-testid="campaign-approval-mode" disabled><option value="manual">Manual — wait for a person</option><option value="auto">Auto — integration tests</option></select><p class="approval-note">Auto applies to test destinations. It does not authorize physical printing or supplier orders.</p><p class="config-message" id="config-message" role="status"></p></div>
   </section>
   <details class="issues" id="issues" hidden><summary id="issues-summary">Input packs need attention</summary><ul id="issues-list" data-testid="campaign-issues"></ul></details>
+  <section class="panel chart-panel" id="retained-validation" aria-labelledby="retained-title" hidden>
+    <h2 id="retained-title">Validation of existing outputs</h2>
+    <p class="subheading">Full validators applied to retained output files. Automated passes still require human review and current-run provenance before campaign credit.</p>
+    <p id="retained-counts" style="margin:16px 0;font-size:18px"></p>
+    <p id="retained-error" role="status"></p>
+    <details><summary>Results and correction reports for each case</summary><div class="table-scroll"><table><thead><tr><th>Case / retained attempt</th><th>Automated checks</th><th>Human review</th><th>Reports</th></tr></thead><tbody id="retained-rows"></tbody></table></div></details>
+  </section>
   <section class="panel chart-panel" aria-label="Campaign progress by update">
     <div class="section-top"><div><h2>Progress by update</h2><p class="subheading">Each persisted campaign update gets one equally spaced step, even when the counts stay unchanged.</p></div><span id="last-updated" class="timestamp">Waiting for history</span></div>
     <div class="legend" id="legend" aria-label="Chart series"></div>
@@ -145,6 +152,35 @@ function renderDiagnostics(){
 }
 async function pollDiagnostics(){if(diagnosticPolling)return;diagnosticPolling=true;try{const response=await fetch('/api/diagnostics',{cache:'no-store',credentials:'same-origin'});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();if(!Array.isArray(data.scenarios)||!Array.isArray(data.families))throw new Error('Incomplete diagnostics');diagnostics=data;renderDiagnostics();}catch(error){$('diagnostic-error').hidden=false;$('diagnostic-error').textContent='Diagnostics unavailable ('+error.message+'). Progress counts continue to use the campaign ledger; displayed diagnostics may be stale.';}finally{diagnosticPolling=false;}}
 pollDiagnostics();setInterval(pollDiagnostics,2000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pollDiagnostics();});
+let retainedRevision='';
+async function pollRetainedValidation(){
+  try{
+    const response=await fetch('/api/retained-validation',{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const data=await response.json();
+    if(!Array.isArray(data.cases))throw new Error('Incomplete inspection results');
+    $('retained-error').textContent='';
+    const revision=JSON.stringify(data);if(revision===retainedRevision)return;retainedRevision=revision;
+    $('retained-validation').hidden=!data.cases.length;
+    let passed=0,failed=0,blocked=0,reviews=0;
+    $('retained-rows').replaceChildren();
+    for(const item of data.cases){
+      const c=item.automated_checks||{},r=item.review_checks||{};
+      if(c.fail)failed++;else if(Object.keys(c).length===1&&c.pass)passed++;else blocked++;
+      if(Object.entries(r).some(([key,value])=>key!=='pass'&&value>0))reviews++;
+      const row=el('tr');row.append(el('td',null,item.scenario_id+' / '+item.retained_attempt));
+      row.append(el('td',null,Object.entries(c).map(([key,value])=>value+' '+key).join(', ')));
+      row.append(el('td',null,Object.entries(r).map(([key,value])=>value+' '+(key==='blocked'?'pending':key)).join(', ')));
+      const links=el('td');
+      for(const [label,file] of [['Findings','report.md'],['JSON','report.json'],['RTM','rtm.csv']]){
+        const link=el('a',null,label);link.href='/validation-reports/'+encodeURIComponent(data.report_root)+'/'+encodeURIComponent(item.scenario_id)+'/'+file;link.target='_blank';link.rel='noopener';links.append(link,document.createTextNode(' '));
+      }
+      row.append(links);$('retained-rows').append(row);
+    }
+    $('retained-counts').textContent=data.cases.length+' checked · '+passed+' automated pass · '+failed+' with failures · '+blocked+' blocked · '+reviews+' awaiting human review';
+  }catch(error){$('retained-validation').hidden=false;$('retained-error').textContent='Inspection results unavailable: '+error.message+'. Any displayed results are from the previous refresh.';}
+}
+pollRetainedValidation();setInterval(pollRetainedValidation,10000);
 </script>
 </body>
 </html>
