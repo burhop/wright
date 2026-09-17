@@ -19,6 +19,7 @@ from workspace_service.workflow_integration_policy import LOCAL_REVIEW_BINDING, 
 ROOT = Path(__file__).resolve().parents[1]
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/sheet-metal-supplier-handoff.json"
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/sheet-metal-supplier-handoff.workflow.wflow"
+VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 SERVER = "solid-edge-mcp-burhop"
 MATERIAL_PAGES = {
     "sheet-metal-supplier-handoff-01": "https://sendcutsend.com/materials/5052-aluminum/",
@@ -37,6 +38,18 @@ def prepare(args, directory, available):
         raise ValueError("Publish the explicit R3 CAD design-choice input revision before preparing a fresh sheet-metal attempt")
     scenario = manifest["scenario_id"]
     scenario_config = config["scenarios"][scenario]
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(row for row in coverage["scenarios"] if row["scenario_id"] == scenario)
+    validation_profile = support.get("full_profile")
+    if not validation_profile:
+        raise ValueError("The sheet-metal full validator profile is unavailable")
+    profile_document = json.loads(
+        (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+            / (validation_profile["profile_resource"] + ".json")
+        ).read_text(encoding="utf-8")
+    )
     native_requirement_id = "SHEET" + scenario[-2:] + "-NATIVE"
     company_capabilities = "company-fabrication-capabilities-r4.md" in manifest["files"]["context"]
     # Keep the seven specific process references and the original eight-page
@@ -138,6 +151,34 @@ def prepare(args, directory, available):
         "Return only the exact selected stock row and relevant bounded rule excerpts/citations, not whole pages or every material row. "
         "Keep the report below 12000 characters, including source index, evidence hash and excerpt offsets for each decision."
     )
+    supplier_evidence = new_task("seal_supplier_evidence", "Seal exact supplier evidence for validation")
+    supplier_evidence["fields"].update(
+        performed_by="configured_tool",
+        instructions="Copy the exact same-run supplier evidence to an immutable validation path and retain its copy-time hash lineage.",
+        outputs=[helpers.port("supplier_evidence", "workspace_file")],
+        settings={
+            "authoring_template": "mcp-tool",
+            "mcp_server": "wright-workspace-files",
+            "mcp_tool": "wright-workspace-files__copy_file",
+            "mcp_schema_digest": next(
+                tool["schema_digest"]
+                for tool in available
+                if tool["server_id"] == "wright-workspace-files" and tool["tool_name"] == "copy_file"
+            ),
+            "mcp_arguments": json.dumps({
+                "sourcePath": output_root + "/supplier-evidence.json",
+                "destinationPath": output_root + "/sealed/supplier-evidence.json",
+            }),
+            "output_format": "json",
+            "save_output": True,
+            "output_filename": output_root + "/supplier-evidence-copy.json",
+            "file_policy": "indexed",
+            "timeout_seconds": 180,
+            "expected_files": output_root + "/sealed/supplier-evidence.json",
+            "expected_file_ports": {"supplier_evidence": output_root + "/sealed/supplier-evidence.json"},
+        },
+    )
+    order(research, supplier_evidence, "seal retrieved supplier evidence")
     materials = new_task("installed_materials", "Read installed Solid Edge material identities")
     material_ref = bind(materials,
         "Call cad.get_status and cad.list_materials using query " + json.dumps(scenario_config["material_query"]) + ". "
@@ -146,7 +187,7 @@ def prepare(args, directory, available):
         "Apply any explicit uploaded native-label mapping only when the unique fresh inventory supports it. Missing density/strength/temper metadata is not a geometry blocker when the human revision explicitly allows the mapping and no property-dependent analysis was requested; do not claim those properties. "
         "Missing or ambiguous required alloy/class remains an unresolved design decision; never invent a library entry.",
         "installed-materials.json", SERVER)
-    order(research, intent, "current supplier facts precede intent")
+    order(supplier_evidence, intent, "sealed supplier facts precede intent")
     order(materials, intent, "installed material evidence precedes intent")
     intent_ref = bind(intent,
         "Create the complete sheet-metal manufacturing intent document from the original human uploads/image, supplier research and installed CAD material evidence. "
@@ -212,6 +253,8 @@ def prepare(args, directory, available):
     order(intent, review, "intent exact file review")
     order(review, cad, "approved intent before native mutation")
 
+    part_sources = {}
+
     def bind_part(create, inspect, export_task, part_name, revision_limit):
         model_key = create["id"] + "_model"
         native_key = create["id"] + "_native"
@@ -271,6 +314,14 @@ def prepare(args, directory, available):
             exports.append({"format": fmt, "path": output_root + "/" + part_name + "." + extension, "port": key, "policy": "indexed"})
         export_task["fields"]["settings"]["cad"] = json.dumps({"source": "upstream", "from_port": export_task["id"] + "_model",
             "save_native": False, "edit_mode": "in_place", "exports": exports})
+        token = part_name.replace("-", "_")
+        part_sources[token] = {
+            "native": (create, native_key, "workspace_file"),
+            "check": (inspect, inspect["id"] + "_report", "engineering_document"),
+            "step": (export_task, export_task["id"] + "_step", "workspace_file"),
+            "dxf": (export_task, export_task["id"] + "_dxf", "workspace_file"),
+            "screenshot": (export_task, export_task["id"] + "_jpg", "workspace_file"),
+        }
         return create_ref
 
     bind_part(cad, check, export, scenario_config["parts"][0], 2)
@@ -284,7 +335,11 @@ def prepare(args, directory, available):
         order(lid_check, lid_export, "checked lid before export")
         order(lid_export, preview, "both parts before supplier preview")
     destination = f"test://{args.campaign_id}/supplier/{scenario}"
-    for task, kind, filename in ((preview, "supplier_upload_preview", "supplier-preview.json"), (handoff, "cart_quote_handoff", "cart-quote-handoff.json")):
+    for task, kind, filename, receipt_key in (
+        (preview, "supplier_upload_preview", "supplier-preview.json", "preview_receipt"),
+        (handoff, "cart_quote_handoff", "cart-quote-handoff.json", "cart_receipt"),
+    ):
+        task["fields"]["outputs"] = [helpers.port(receipt_key, "workspace_file")]
         task["fields"]["settings"] = {"authoring_template": "external-action-approval", "action_kind": kind,
             "approval_binding": TEST_HANDOFF_BINDING, "approval_destination": {"kind": "integration_test", "id": destination},
             "approval_settings": {"receipt_path": output_root + "/" + filename,
@@ -299,16 +354,94 @@ def prepare(args, directory, available):
          "Supplier preview/cart receipts are labeled simulations, no live quotation, order or acceptance. Retain manufacturing_release=HOLD and supplier_acceptance=unverified, the actual selected stock/rule/source evidence, exact native identity and all old-versus-new input decisions. A HOLD never waives a failed or unknown mandatory DFM gate. Do not claim content correctness qualification or certification. "
          f"Call collect_artifact_manifest(operation_source_document={operation_path!r}, output_root={output_root!r}, files=[...]). "
          "Each entry has path (workspace-relative) and role (including part label). Include both actual supplier receipt JSONs, installed-materials.json, manufacturing intent, every part's measured-check JSON and every required native PSM, STEP, DXF and inspection view using the exact indexed paths from upstream outputs. "
-         f"Also include {output_root}/supplier-evidence.json and all sixteen supplier-source HTML/text files; their exact names/hashes come from the source-bound research evidence. "
+         f"Also include {output_root}/sealed/supplier-evidence.json and all sixteen supplier-source HTML/text files; their exact names/hashes come from the source-bound research evidence. "
          f"The source-bound operation saves actual byte counts/SHA256/role labels to {output_root}/final-artifact-manifest.json. "
          "Do not copy source inputs into engineering outputs or invent missing file entries.",
          "engineering-handoff.md", evidence_server, ("final-artifact-manifest.json",), fmt="markdown")
+    final["fields"]["outputs"].append(helpers.port("final_manifest", "workspace_file"))
+    final["fields"]["settings"]["expected_file_ports"] = {
+        "final_manifest": output_root + "/final-artifact-manifest.json"
+    }
     helpers.add_reference(sections, operation_ref, final, "executed_operation_source")
     helpers.add_reference(sections, intent_ref, final, "approved_intent")
+    helpers.add_reference(sections, material_ref, final, "installed_materials")
+    helpers.add_reference(sections, supplier_evidence["id"] + ".supplier_evidence", final, "supplier_evidence")
+    helpers.add_reference(sections, preview["id"] + ".preview_receipt", final, "preview_receipt")
+    helpers.add_reference(sections, handoff["id"] + ".cart_receipt", final, "cart_receipt")
     helpers.add_reference(sections, export["id"] + "." + export["id"] + "_report", final, "base_exports")
     if len(scenario_config["parts"]) == 2:
         helpers.add_reference(sections, lid_export["id"] + "." + lid_export["id"] + "_report", final, "lid_exports")
     order(handoff, final, "final report only after second handoff checkpoint")
+    final_review = new_task("review_sheet_outputs", "Review exact sheet-metal outputs")
+    final_review["fields"].update(
+        step_type="review",
+        performed_by="engineer",
+        instructions="Review the exact manufacturing intent, native measured checks and engineering handoff against every frozen material, geometry, development, correspondence, scope and handoff requirement.",
+        settings={
+            "authoring_template": "external-action-approval",
+            "action_kind": "local_review",
+            "approval_binding": LOCAL_REVIEW_BINDING,
+            "approval_destination": LOCAL_REVIEW_DESTINATION,
+            "approval_settings": {
+                "review_task_id": final_review["id"],
+                "validation_review": {
+                    "profile_ref": validation_profile["profile_ref"],
+                    "requirement_ids": sorted(
+                        requirement["id"]
+                        for requirement in profile_document["baseline"]["requirements"]
+                        if requirement["review_required"]
+                    ),
+                },
+            },
+            "approval_action": {"kind": "local_review", "mode": "review_only"},
+        },
+    )
+    helpers.add_reference(sections, intent_ref, final_review, "manufacturing_intent")
+    for token, sources in part_sources.items():
+        producer, producer_port, _ = sources["check"]
+        helpers.add_reference(sections, producer["id"] + "." + producer_port, final_review, token + "_check")
+    helpers.add_reference(sections, final["id"] + "." + final["id"] + "_report", final_review, "engineering_handoff")
+
+    validation_sources = {
+        "installed_materials": (materials, materials["id"] + "_report", "engineering_document"),
+        "manufacturing_intent": (intent, intent["id"] + "_report", "engineering_document"),
+        "supplier_evidence": (supplier_evidence, "supplier_evidence", "workspace_file"),
+        "preview_receipt": (preview, "preview_receipt", "workspace_file"),
+        "cart_receipt": (handoff, "cart_receipt", "workspace_file"),
+        "final_manifest": (final, "final_manifest", "workspace_file"),
+        "engineering_handoff": (final, final["id"] + "_report", "engineering_document"),
+    }
+    for token, sources in part_sources.items():
+        validation_sources.update({token + "_" + role: source for role, source in sources.items()})
+    validator = new_task("validate_sheet_content", "Validate current sheet-metal outputs")
+    validator["fields"].update(
+        performed_by="configured_tool",
+        inputs=[helpers.port("validate_" + role, kind) for role, (_, _, kind) in validation_sources.items()],
+        outputs=[helpers.port("assessment")],
+        prompt="",
+        settings={
+            "authoring_template": "process-validator",
+            "output_format": "json",
+            "max_revisions": 0,
+            "validation": {
+                "profile": {
+                    "source": "packaged",
+                    "name": validation_profile["profile_resource"],
+                    "reference": validation_profile["profile_ref"],
+                },
+                "baseline": validation_profile["baseline_ref"],
+                "subjects": {role: "validate_" + role for role in validation_sources},
+            },
+        },
+    )
+    for role, (producer, producer_port, _) in validation_sources.items():
+        sections.append({"kind": "connection", "id": "bind_" + validator["id"] + "_" + role, "fields": {
+            "type": "item", "from": producer["id"] + "." + producer_port,
+            "to": validator["id"] + ".validate_" + role,
+            "label": "current sheet-metal output to validate", "when": None,
+        }})
+    order(final, final_review, "review exact completed sheet-metal outputs")
+    order(final_review, validator, "validate only after exact output review")
     result = helpers.render(sections)
     validate_workspace_authoring_shape(result)
     plan = compile_prompt_workflow(result)

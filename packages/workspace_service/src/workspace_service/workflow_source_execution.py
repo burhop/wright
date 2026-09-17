@@ -462,7 +462,8 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 and isinstance(action_settings, dict)
                 and isinstance(action_settings.get("receipt_path"), str)
                 and len(receipt_outputs) == 1
-                and receipt_outputs == (("receipt", "workspace_file"),)
+                and receipt_outputs[0][1] == "workspace_file"
+                and receipt_outputs[0][0].endswith("receipt")
             )
             if (
                 action_kind
@@ -1484,21 +1485,27 @@ async def execute_prompt_workflow(
                     raise _invalid(
                         "The completed handoff receipt changed before continuation."
                     )
+                declared_receipt_ports = [
+                    port
+                    for port, kind in released.output_ports
+                    if kind == "workspace_file"
+                ]
+                port = receipt.get("output_port") or "receipt"
+                if port not in declared_receipt_ports and len(declared_receipt_ports) == 1:
+                    port = declared_receipt_ports[0]
                 output = {
                     **receipt,
+                    "output_port": port,
                     "task_id": released.id,
                     "task_title": released.title,
                     "artifact_role": "external_action_receipt",
                 }
                 receipt_result = file_result(
                     output,
-                    Provenance(
-                        run_id, released.id, receipt.get("output_port") or "receipt"
-                    ),
+                    Provenance(run_id, released.id, port),
                 )
                 engineering_results.append(receipt_result)
                 verified_receipts.append(output)
-                port = receipt.get("output_port") or "receipt"
                 if (port, "workspace_file") in released.output_ports:
                     address = f"{released.id}.{port}"
                     responses[address] = receipt_result

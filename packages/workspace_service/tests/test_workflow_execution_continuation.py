@@ -381,7 +381,7 @@ def test_verified_handoff_receipt_output_can_feed_a_downstream_step(tmp_path):
 
     text = source().replace(
         "outputs: []",
-        'outputs: [{"key":"receipt","kind":"workspace_file","name":"Receipt"}]',
+        'outputs: [{"key":"handoff_receipt","kind":"workspace_file","name":"Receipt"}]',
     ).replace(
         '"approval_settings": {"material": "PLA", "profile": "0.20-standard"}',
         '"approval_settings": {"receipt_path": "receipt.json"}',
@@ -389,7 +389,7 @@ def test_verified_handoff_receipt_output_can_feed_a_downstream_step(tmp_path):
     text += task("after", fmt="text")
     text += '''connection receipt_to_after
   type: item
-  from: "approve.receipt"
+  from: "approve.handoff_receipt"
   to: "after.after_prompt"
   label: "verified receipt"
   when: null
@@ -443,4 +443,4 @@ end
         for item in result["results"]
         if item["artifact_role"] == "external_action_receipt"
     )
-    assert receipt["provenance"]["output_port"] == "receipt"
+    assert receipt["provenance"]["output_port"] == "handoff_receipt"

@@ -202,7 +202,7 @@ all dashboard counts and row selections reconcile to the persisted evidence.
 
 ### C3 — Connect findings to safe producer correction
 
-- [ ] C013 Extend the existing canonical preparers and explicit validator bindings
+- [x] C013 Extend the existing canonical preparers and explicit validator bindings
   rather than introducing another process runner. Preserve every required production
   stage, source input, native/tool grant and simulated approval. Remove obsolete
   preparer instructions that force `valid_data=0`. Use direct/local validation where

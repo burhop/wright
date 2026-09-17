@@ -32,7 +32,7 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
     text = Path(result["draft"]).read_text(encoding="utf-8")
     plan = compile_prompt_workflow(text)
     report = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text(encoding="utf-8"))
-    assert len(plan.steps) == (13 if directory.name.startswith("03") else 10)
+    assert len(plan.steps) == (16 if directory.name.startswith("03") else 13)
     assert len(report["preserved_original_stages"]) == len(report["preserved_original_edges"]) == 6
     assert set(report["preserved_original_stages"]).issubset({step.id for step in plan.steps})
     workspace = Path(args.workspace_root)
@@ -64,7 +64,7 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
         assert len(creators) == (2 if directory.name.startswith("03") else 1)
         assert all("ready_for_geometry_verification" in step.prompt for step in creators)
         assert all("override an explicit needs_input" in step.prompt for step in creators)
-        checks = [step for step in plan.steps if step.design_check]
+        checks = [step for step in plan.steps if step.design_check and not step.validation]
         assert all("missing observations cannot pass" in step.prompt for step in checks)
         assert all("known supplier hard-limit conflict" in step.prompt for step in checks)
         assert all("development discrepancy and die-width cautions" in step.prompt for step in checks)
@@ -80,10 +80,40 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
     assert "read_reference_text" in research.prompt
     assert "ordinary channel ratio before its optional thin-sheet exceptions" in research.prompt
     assert "A passing channel ratio alone does not verify full box-forming tool access" in research.prompt
+    sealed = next(step for step in plan.steps if step.id.startswith("seal_supplier_evidence_"))
+    assert sealed.tool_name == "wright-workspace-files__copy_file"
+    assert set(sealed.expected_file_ports) == {"supplier_evidence"}
     final = next(step for step in plan.steps if step.id.startswith("collect_handoff_"))
-    assert report["output_root"] + "/supplier-evidence.json" in final.prompt
+    assert report["output_root"] + "/sealed/supplier-evidence.json" in final.prompt
+    assert set(final.expected_file_ports) == {"final_manifest"}
+    validator = next(step for step in plan.steps if step.id.startswith("validate_sheet_content_"))
+    expected_roles = {
+        "installed_materials", "manufacturing_intent", "supplier_evidence",
+        "preview_receipt", "cart_receipt", "final_manifest", "engineering_handoff",
+    }
+    for part in binding["scenarios"][report["scenario_id"]]["parts"]:
+        token = part.replace("-", "_")
+        expected_roles.update(token + "_" + role for role in ("native", "check", "step", "dxf", "screenshot"))
+    assert {role for role, _ in validator.validation_sources} == expected_roles
+    assert validator.validation["profile"]["name"] == report["scenario_id"]
+    validation_review = next(
+        step.external_action["settings"]["validation_review"]
+        for step in plan.steps
+        if step.id.startswith("review_sheet_outputs_")
+    )
+    assert validation_review["profile_ref"] == validator.validation["profile"]["reference"]
+    assert validation_review["requirement_ids"]
     actions = [step.external_action for step in plan.steps if step.external_action]
-    assert len(actions) == 3
+    assert len(actions) == 4
+    receipts = {
+        port
+        for step in plan.steps
+        if step.external_action
+        and step.external_action.get("action_kind") != "local_review"
+        for port, kind in step.output_ports
+        if kind == "workspace_file"
+    }
+    assert receipts == {"preview_receipt", "cart_receipt"}
     for action in actions:
         if action["action_kind"] != "local_review":
             assert action["destination"]["id"].startswith("test://fixture-campaign/")
@@ -154,5 +184,5 @@ def test_fresh_research_retains_material_identity_and_complete_table_contract(
         "supplier_acceptance=unverified",
     ]:
         assert requirement in intent.prompt
-    assert len([step for step in plan.steps if step.external_action]) == 3
+    assert len([step for step in plan.steps if step.external_action]) == 4
     assert preparer.BINDING.read_bytes() == binding_before

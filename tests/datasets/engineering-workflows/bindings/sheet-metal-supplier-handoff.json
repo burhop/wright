@@ -14,6 +14,7 @@
     "https://sendcutsend.com/materials/processing-min-max/"
   ],
   "allowed_tools": {
+    "wright-workspace-files": ["copy_file"],
     "wright-engineering-evidence": ["retrieve_public_references", "read_reference_text", "collect_artifact_manifest"],
     "solid-edge-mcp-burhop": [
       "cad.list_providers", "cad.get_status", "cad.list_materials", "cad.list_documents",

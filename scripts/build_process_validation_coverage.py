@@ -412,9 +412,9 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sheet-metal-supplier-handoff-01", "c5e22a3977cf99d01eb080ea37e6d7119323e5ae4cbb64e8d41cf686e21c1e8a", "efdfe67c2abba893af484c8412163b863fb39b20aef3d2c5be58b17b6e81643a"),
-    ("sheet-metal-supplier-handoff-02", "813ffd775c73f888f14df5803e3f86e5bf06a9fe5fa5a9f3bbd54033f125f8d3", "ef692463cafec8fee996bcd53ec00d0556b1d9d1e77f745316536f0fa7676818"),
-    ("sheet-metal-supplier-handoff-03", "5900909c4af2d7a60d96355d40f223f21c6472f5391e26e96b714fe1b1a4985e", "0b12b72d01a9e54b720b54d5a35f94f9b014eef2a532e16f307352a24175784f"),
+    ("sheet-metal-supplier-handoff-01", "68383082bc607ccbe1c34bd2ac99bce51656620391cda4cedc06eb0c9a3a89d2", "efdfe67c2abba893af484c8412163b863fb39b20aef3d2c5be58b17b6e81643a"),
+    ("sheet-metal-supplier-handoff-02", "e7ddabb706322ddc35a14bc84ebd83533f9a2a23d4a1a0a5be52050c009ca991", "ef692463cafec8fee996bcd53ec00d0556b1d9d1e77f745316536f0fa7676818"),
+    ("sheet-metal-supplier-handoff-03", "6cd2d25ff58fbc103f6816a0ff78cbba17dcf70c61ffc305aee80aa2168407ba", "0b12b72d01a9e54b720b54d5a35f94f9b014eef2a532e16f307352a24175784f"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,

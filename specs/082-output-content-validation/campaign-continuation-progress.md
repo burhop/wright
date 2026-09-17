@@ -213,8 +213,8 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   digest; the terminal validator consumes the independently created native
   artifacts. PCB/preparer/profile/runtime regression: `44 passed in 7.78s`;
   Ruff passed.
-- External integration checkpoints can now declare one exact `receipt`
-  workspace-file output when their approval settings name the receipt path.
+- External integration checkpoints can now declare one exact, uniquely named
+  `*receipt` workspace-file output when their approval settings name the receipt path.
   Continuation verifies the persisted bytes, restores the receipt as a normal
   provenance-bearing result and registers it for downstream validation. Local
   reviews retain their prior no-output semantics. A focused continuation test
@@ -242,9 +242,21 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   report their absent roles explicitly; recovered runs can be evaluated without
   changing the graph. Bracket/preparer/profile/runtime regression:
   `52 passed in 9.76s`; Ruff passed.
+- All three sheet-metal workflows now expose installed-material and manufacturing-
+  intent values, every native/check/STEP/DXF/screenshot part artifact, both exact
+  simulated supplier receipts, the source-bound final manifest and engineering
+  handoff to their full profiles. The supplier evidence is sealed through the
+  enrolled same-run copy tool so the original eight HTML/text pairs remain within
+  the compiler's 16-file retrieval limit. A final engineer checkpoint pins every
+  review-required obligation before validation. The external-action receipt
+  contract now permits distinct receipt port names, allowing both supplier gates
+  in one canonical graph while continuation maps each verified receipt to its
+  declared port. Sheet/profile/coverage/runtime regression: `62 passed in 12.50s`;
+  Ruff passed.
 
 ## Next action
 
-C012–C014: integrate the sheet-metal workflows, completing all ten family
-preparers, then prove an actionable retained-output defect through the canonical
-gate when the provider resumes.
+C012 and C014–C016: all ten family preparers now contain their full-profile gates.
+Use the first available provider window to run an isolated canonical case through
+review, targeted defect, actionable correction packet and recheck; then resume the
+current campaign without resetting its retry ledger.

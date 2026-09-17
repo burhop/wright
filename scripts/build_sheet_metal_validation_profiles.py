@@ -217,7 +217,7 @@ def build(scenario_id: str, values: dict) -> ValidationProfile:
                 "The reader validates native-inspection evidence, developed-DXF structure, exact artifact lineage and simulated handoff safety; it does not parse proprietary PSM feature history.",
                 "Bend feasibility, reliefs, detailed feature correspondence, supplier acceptance and physical fabrication remain behind authenticated engineering review and the declared HOLD boundary.",
             ],
-            "supported_kinds": ["file"],
+            "supported_kinds": ["file", "value"],
         }
     )
 
