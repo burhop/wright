@@ -29,7 +29,7 @@ def test_public_launch_checklist_covers_release_blockers() -> None:
         "history secret scan",
         "gitleaks",
         "trufflehog",
-        "uv run pytest",
+        "uv run --extra runtime --extra engineering-models python -m pytest",
         "npm run test --workspace=apps/web",
         "npm run build --workspace=apps/web",
         "mkdocs build --strict",

@@ -50,6 +50,9 @@ software to the base Docker image just to make catalog validation pass.
 - Do not commit directly to `main` or `dev`.
 - Keep pull requests focused and explain user-visible behavior, tests, and
   documentation changes.
+- Use a full-history clone for repository-wide and release checks. In a shallow
+  checkout, run `git fetch --unshallow` before those checks; history-dependent
+  results from a shallow clone are not equivalent to CI.
 
 ## Quality Gates
 
@@ -98,7 +101,7 @@ section in the same fix.
 Run the relevant checks before opening a pull request:
 
 ```bash
-uv run pytest
+uv run --extra runtime --extra engineering-models python -m pytest
 uv run ruff check apps/api/ packages/
 uv run ruff format --check apps/api/ packages/
 npm ci

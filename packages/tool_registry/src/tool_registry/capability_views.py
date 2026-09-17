@@ -406,8 +406,6 @@ def _matches(view: CapabilityView, filters: CapabilityFilters) -> bool:
         return False
     if filters.protocols and view.protocol_family not in filters.protocols:
         return False
-    if filters.search and filters.search.casefold() not in _search_text(view):
-        return False
     if filters.domains and not filters.domains.intersection(view.domains):
         return False
     if filters.platforms:

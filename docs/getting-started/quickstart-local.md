@@ -113,7 +113,7 @@ http://127.0.0.1:5173/
 Use the same commands CI relies on for this alpha slice:
 
 ```bash
-uv run pytest
+uv run --extra runtime --extra engineering-models python -m pytest
 npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 uv run --with mkdocs-material mkdocs build --strict
@@ -122,7 +122,7 @@ uv run --with mkdocs-material mkdocs build --strict
 For a smaller docs-only check while editing getting-started pages:
 
 ```bash
-uv run pytest tests/test_getting_started_paths.py
+uv run python -m pytest tests/test_getting_started_paths.py
 ```
 
 ## Hermes on the Same PC

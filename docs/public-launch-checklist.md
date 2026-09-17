@@ -38,7 +38,7 @@ Dockerized gitleaks and trufflehog history scans.
 
 ## 2. Build and Test Gates
 
-- [ ] `uv run pytest`
+- [ ] `uv run --extra runtime --extra engineering-models python -m pytest`
 - [ ] `npm run test --workspace=apps/web`
 - [ ] `npm run build --workspace=apps/web`
 - [ ] `uv run --with mkdocs-material mkdocs build --strict`

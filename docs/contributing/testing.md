@@ -105,7 +105,7 @@ gate for the slice being released:
 
 ```bash
 # Python packages, API routes, and registry logic
-uv run pytest
+uv run --extra runtime --extra engineering-models python -m pytest
 
 # Frontend component/state tests
 npm run test --workspace=apps/web

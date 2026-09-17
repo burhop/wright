@@ -30,7 +30,7 @@ def test_ci_cd_docs_list_current_workflows_and_pr_gates() -> None:
         "release-drafter.yml",
         "test-windows.yml",
         "uv sync --all-packages --all-groups",
-        "uv run pytest",
+        "uv run --extra runtime --extra engineering-models python -m pytest",
         "npm run test --workspace=apps/web",
         "npm run build --workspace=apps/web",
         "mkdocs build --strict",

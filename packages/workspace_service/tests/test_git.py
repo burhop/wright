@@ -53,6 +53,56 @@ async def test_git_use_cases_status_commit_history_branch_and_diff(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_git_commit_uses_non_persistent_identity_fallback(tmp_path, monkeypatch):
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    monkeypatch.setenv("GIT_CONFIG_GLOBAL", str(tmp_path / "missing-gitconfig"))
+    monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "1")
+    for name in (
+        "GIT_AUTHOR_NAME",
+        "GIT_AUTHOR_EMAIL",
+        "GIT_COMMITTER_NAME",
+        "GIT_COMMITTER_EMAIL",
+    ):
+        monkeypatch.delenv(name, raising=False)
+
+    WorkspaceManager(str(workspace))
+    (workspace / "part.txt").write_text("content", encoding="utf-8")
+    executor = BoundedExecutor(max_workers=1)
+    db_path = str(tmp_path / "state.db")
+    upgrade_database(db_path)
+    repository = WorkspaceRepository(db_path, secrets=default_secret_provider())
+    use_cases = WorkspaceGitUseCases(
+        executor,
+        repository,
+        lambda path: LocalWorkspaceGit(
+            path, process=LocalProcessRunner(), timeout_seconds=30
+        ),
+    )
+
+    committed = await use_cases.commit(str(workspace), "initial")
+
+    assert committed["commit_hash"]
+    author = subprocess.run(
+        ["git", "show", "-s", "--format=%an|%ae", "HEAD"],
+        cwd=workspace,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert author.stdout.strip() == "Wright Workspace|wright@localhost"
+    assert (
+        subprocess.run(
+            ["git", "config", "--local", "--get", "user.name"],
+            cwd=workspace,
+            capture_output=True,
+        ).returncode
+        == 1
+    )
+    await executor.close()
+
+
+@pytest.mark.asyncio
 async def test_git_use_cases_reject_option_like_branch(tmp_path):
     workspace = tmp_path / "workspace"
     workspace.mkdir()

@@ -81,7 +81,7 @@ Gaps and release risks:
 Existing gates:
 
 - `python-quality.yml`: uv sync, Ruff lint, Ruff format check, warning-mode mypy,
-  and `uv run pytest`.
+  and segmented `python -m pytest` runs with the required extras.
 - `frontend-quality.yml`: npm install, ESLint, Prettier, TypeScript, Vitest,
   production build, and Linux Playwright against a live API.
 - `docker-pr.yml`: path-scoped PR image build, strict dependency reconciliation,

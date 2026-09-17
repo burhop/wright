@@ -401,7 +401,7 @@ describe("WorkflowRecoveryConcept component states", () => {
       "Use the connected design requirements.",
     );
     expect(onSave.mock.calls[0]![0]).toContain('"thickness_mm":3');
-  }, 15000);
+  });
 
   it("blocks disconnected processes before saving or running, but permits draft saves and repair", async () => {
     const onSave = vi.fn(async (source: string) => ({
