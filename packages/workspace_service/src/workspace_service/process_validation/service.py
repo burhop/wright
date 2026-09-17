@@ -29,6 +29,7 @@ from data_vault.process_validation_repository import AttemptRecord
 from .evaluation import compare
 from .readers.base import ReaderContext, ReaderRegistry, ValidationIssue
 from .readers.geometry import StepSeatGeometryReader
+from .readers.harness import HarnessReader
 from .readers.structured import StructuredReader
 from .readers.step_box import StepBoundingBoxReader
 from .readers.thermal import ThermalFieldReader
@@ -111,6 +112,7 @@ class ProcessValidationService:
             registry = ReaderRegistry()
             registry.register(StructuredReader())
             registry.register(StepSeatGeometryReader())
+            registry.register(HarnessReader())
             registry.register(StepBoundingBoxReader())
             registry.register(ThermalFieldReader())
             registry.register(TrackingTimelineReader())

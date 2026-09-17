@@ -57,9 +57,14 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   These full profiles remain implemented pending authenticated reviews; heat-01's
   earlier bounded field profile remains separately qualified. Focused reader,
   profile, coverage and service tests: `47 passed in 12.87s`; Ruff passed.
+- C011–C012 began the sensor-fan harness family with a reusable independent
+  connectivity/cut/drop reader. It checks required paths through explicit splice
+  nodes, rejects cross-net shorts and connected reserve pins, verifies each unique
+  cut as installed route plus documented allowance, and refuses copper-only drop
+  summaries whose total contact/splice-inclusive drop is null. Reader and service
+  regression tests: `29 passed in 5.35s`; Ruff passed.
 
 ## Next action
 
-C010–C012: implement the next reusable three-case family profile, preserving the
-robot and heat full profiles as implemented checkpoints until their review and
-corrected-output evidence can qualify them.
+C010–C012: finish the three sensor-fan harness profiles against source wiring
+schedules and retained outputs, then record their exact actionable failures.
