@@ -30,6 +30,8 @@ HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORE
 GENERIC_SESSION_PATTERN = re.compile(r"^session(?:[-_]?.*)?$", re.IGNORECASE)
 RIVET_WORKFLOWS_SERVER_ID = "rivet-workflows"
 RIVET_WORKFLOWS_SERVER_NAME = "Rivet Workflows"
+DEFAULT_GIT_AUTHOR_NAME = "Wright Workspace"
+DEFAULT_GIT_AUTHOR_EMAIL = "wright@localhost"
 
 
 def _with_builtin_workspace_tools(tools: list[str]) -> list[str]:
@@ -1384,8 +1386,34 @@ class WorkspaceManager:
             subprocess.run(
                 ["git", "add", "-A"], cwd=self.base_dir, capture_output=True, check=True
             )
+            identity_args: list[str] = []
+            identity_settings = (
+                (
+                    "user.name",
+                    ("GIT_AUTHOR_NAME", "GIT_COMMITTER_NAME"),
+                    DEFAULT_GIT_AUTHOR_NAME,
+                ),
+                (
+                    "user.email",
+                    ("GIT_AUTHOR_EMAIL", "GIT_COMMITTER_EMAIL"),
+                    DEFAULT_GIT_AUTHOR_EMAIL,
+                ),
+            )
+            for key, environment_names, fallback in identity_settings:
+                configured = subprocess.run(
+                    ["git", "config", "--get", key],
+                    cwd=self.base_dir,
+                    capture_output=True,
+                    text=True,
+                )
+                if configured.returncode != 0 and not all(
+                    os.environ.get(name, "").strip() for name in environment_names
+                ):
+                    # Keep the fallback local to this command. A later user or
+                    # container configuration therefore remains authoritative.
+                    identity_args.extend(["-c", f"{key}={fallback}"])
             subprocess.run(
-                ["git", "commit", "-m", message],
+                ["git", *identity_args, "commit", "-m", message],
                 cwd=self.base_dir,
                 capture_output=True,
                 check=True,

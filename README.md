@@ -236,7 +236,7 @@ core project engineering standards.
 Run the main local quality gates:
 
 ```bash
-uv run pytest
+uv run --extra runtime --extra engineering-models python -m pytest
 uv run ruff check apps/api/ packages/
 uv run ruff format --check apps/api/ packages/
 npm ci
@@ -247,6 +247,11 @@ npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 mkdocs build --strict
 ```
+
+Run repository-wide and history-sensitive checks from a full clone. If an
+existing checkout is shallow, fetch the missing history first with
+`git fetch --unshallow` (or use `git fetch --depth=<larger-number>` when a full
+history download is impractical).
 
 Helper scripts live in [scripts/](scripts), including public-alpha leak scans,
 Docker smoke tests, CI failure log fetching, and release checks.

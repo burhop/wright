@@ -11,7 +11,7 @@ Docker Hub as a required byte-identical distribution target.
 
 | Workflow                        | Trigger                                                                  | What it checks or publishes                                                                                                                                                                                                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `python-quality.yml`            | Push or pull request to `main` or `dev`                                  | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and `uv run pytest`.                                                                                                                                                                                |
+| `python-quality.yml`            | Push or pull request to `main` or `dev`                                  | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and segmented `python -m pytest` runs with the required extras.                                                                                                                                      |
 | `frontend-quality.yml`          | Push or pull request to `main` or `dev`                                  | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`.                                                                                                                                                           |
 | `test-windows.yml`              | Push or pull request to `main` or `dev`, or manual run                   | Runs backend pytest and frontend Vitest on `windows-latest`; live Playwright remains in the Linux frontend workflow.                                                                                                                                                                         |
 | `public-alpha-safety.yml`       | Push, pull request, or manual run                                        | Repo-native public-alpha leak scan, locked Python runtime and npm dependency audits with expiring exceptions, Gitleaks history scan, and TruffleHog history scan. |
@@ -34,7 +34,7 @@ change, `docker-pr.yml` builds and validates the exact standard PR image, while
 amd64 and arm64 runners:
 
 ```bash
-uv run pytest
+uv run --extra runtime --extra engineering-models python -m pytest
 npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 mkdocs build --strict
@@ -176,7 +176,7 @@ Pull requests never publish images or sync registry descriptions.
 Before asking for release review, run the same commands locally when practical:
 
 ```bash
-uv run pytest
+uv run --extra runtime --extra engineering-models python -m pytest
 npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 uv run --with mkdocs-material mkdocs build --strict

@@ -374,6 +374,10 @@ export default defineConfig(({ command, mode }) => {
     test: {
       globals: true,
       environment: "jsdom",
+      // The workflow recovery interaction suite performs several complete
+      // user-event sequences. Keep the timeout bounded but realistic on
+      // shared and Windows CI runners where JSDOM workers contend for CPU.
+      testTimeout: 30_000,
       environmentOptions: {
         jsdom: {
           url: "http://localhost/",
