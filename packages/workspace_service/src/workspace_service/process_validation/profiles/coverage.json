@@ -2422,25 +2422,75 @@
           "size_bytes": 296
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sensor-interface-pcb-01",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-01-full",
+          "version": "1",
+          "sha256": "bb2524c35af414900992f39d3330387316187fa7217c082d68b17bbe719e8007"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-01-basis",
+          "version": "1",
+          "sha256": "e24d15c8f27361632e58b9dcb3e3687e97446d95de21905cef1792dbc59ddb79"
+        },
+        "reader_ids": [
+          "kicad@1",
+          "structured@1"
+        ],
+        "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+        "limitations": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_kicad.py",
+          "tests/external/process_validation/test_pcb_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sensor-interface-pcb-01",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-01-full",
+          "version": "1",
+          "sha256": "bb2524c35af414900992f39d3330387316187fa7217c082d68b17bbe719e8007"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-01-basis",
+          "version": "1",
+          "sha256": "e24d15c8f27361632e58b9dcb3e3687e97446d95de21905cef1792dbc59ddb79"
+        },
+        "reader_ids": [
+          "kicad@1",
+          "structured@1"
+        ],
+        "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+        "limitations": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_kicad.py",
+          "tests/external/process_validation/test_pcb_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "electrical.netlist",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+          "limitation": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
           "extension_recipe": "electrical.netlist",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_kicad.py",
+            "tests/external/process_validation/test_pcb_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.ecad",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+          "limitation": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
           "extension_recipe": "manufacturing.ecad",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_kicad.py",
+            "tests/external/process_validation/test_pcb_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -2493,25 +2543,75 @@
           "size_bytes": 293
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sensor-interface-pcb-02",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-02-full",
+          "version": "1",
+          "sha256": "f574687e600949f5b33887ab97ac14b02c7d0e5f251ac494c93d390614009f7a"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-02-basis",
+          "version": "1",
+          "sha256": "e538f38efa35d709ee8c2b53bdf33c0f50ebdd316ecdb68830979cf3bb8260b3"
+        },
+        "reader_ids": [
+          "kicad@1",
+          "structured@1"
+        ],
+        "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+        "limitations": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_kicad.py",
+          "tests/external/process_validation/test_pcb_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sensor-interface-pcb-02",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-02-full",
+          "version": "1",
+          "sha256": "f574687e600949f5b33887ab97ac14b02c7d0e5f251ac494c93d390614009f7a"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-02-basis",
+          "version": "1",
+          "sha256": "e538f38efa35d709ee8c2b53bdf33c0f50ebdd316ecdb68830979cf3bb8260b3"
+        },
+        "reader_ids": [
+          "kicad@1",
+          "structured@1"
+        ],
+        "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+        "limitations": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_kicad.py",
+          "tests/external/process_validation/test_pcb_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "electrical.netlist",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+          "limitation": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
           "extension_recipe": "electrical.netlist",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_kicad.py",
+            "tests/external/process_validation/test_pcb_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.ecad",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+          "limitation": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
           "extension_recipe": "manufacturing.ecad",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_kicad.py",
+            "tests/external/process_validation/test_pcb_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -2564,25 +2664,75 @@
           "size_bytes": 336
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sensor-interface-pcb-03",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-03-full",
+          "version": "1",
+          "sha256": "c0964bd98e92480c3c8e2bc1d258fdf72ff504ee26268355c53d8f4f52b62855"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-03-basis",
+          "version": "1",
+          "sha256": "eac0a5621632de48fd80a2aec4cbf38dd01021f9c48fd95106e4bcc46015bcfe"
+        },
+        "reader_ids": [
+          "kicad@1",
+          "structured@1"
+        ],
+        "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+        "limitations": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_kicad.py",
+          "tests/external/process_validation/test_pcb_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sensor-interface-pcb-03",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-03-full",
+          "version": "1",
+          "sha256": "c0964bd98e92480c3c8e2bc1d258fdf72ff504ee26268355c53d8f4f52b62855"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-03-basis",
+          "version": "1",
+          "sha256": "eac0a5621632de48fd80a2aec4cbf38dd01021f9c48fd95106e4bcc46015bcfe"
+        },
+        "reader_ids": [
+          "kicad@1",
+          "structured@1"
+        ],
+        "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+        "limitations": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_kicad.py",
+          "tests/external/process_validation/test_pcb_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "electrical.netlist",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+          "limitation": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
           "extension_recipe": "electrical.netlist",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_kicad.py",
+            "tests/external/process_validation/test_pcb_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.ecad",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+          "limitation": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
           "extension_recipe": "manufacturing.ecad",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_kicad.py",
+            "tests/external/process_validation/test_pcb_profiles.py"
+          ]
         }
       ],
       "initial_slice": false

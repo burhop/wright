@@ -104,7 +104,16 @@ class StructuredReader:
         version="1",
         config_digest=canonical_digest({"parser": "json-csv-text", "version": 1}),
         method="structured_value",
-        formats=("json", "csv", "text", "markdown", "html", "svg", "dxf"),
+        formats=(
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch",
+        ),
     )
 
     def measure(self, snapshot, check, context):

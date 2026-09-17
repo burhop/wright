@@ -84,8 +84,18 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   automated checks. DXF/report inventory is bound, while stackup, keepouts, keys,
   access, marking and claim scope require authenticated design review. Jig reader
   and full-profile tests: `13 passed in 6.61s`.
+- All three sensor-interface PCB profiles are now frozen and implemented. A
+  bounded native KiCad/fabrication reader checks exact pin-to-net mapping,
+  source component values and footprints, required placements, the board
+  outline and holes, BOM rows, zero ERC/DRC errors or unconnected items,
+  required fabrication members and case-03 power-net widths. All three retained
+  boards pass the automated checks, while a clean-board connector-pin mutation
+  is rejected by the frozen netlist check. Warning disposition, compatibility,
+  full design/export correspondence and release claims remain behind
+  authenticated engineering review. Focused reader/profile/coverage tests:
+  `11 passed in 2.28s`; Ruff passed.
 
 ## Next action
 
-C010–C012: implement the next reusable three-case family and keep the fifteen full
+C010–C012: implement the next reusable three-case family and keep the eighteen full
 profiles pending exact review/correction evidence.

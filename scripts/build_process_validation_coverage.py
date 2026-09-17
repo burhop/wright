@@ -351,6 +351,21 @@ for _scenario_id, _profile_sha, _baseline_sha in (
         "evidence": ["tests/external/process_validation/test_geometry.py", "tests/external/process_validation/test_jig_profiles.py"],
     }
 
+for _scenario_id, _profile_sha, _baseline_sha in (
+    ("sensor-interface-pcb-01", "bb2524c35af414900992f39d3330387316187fa7217c082d68b17bbe719e8007", "e24d15c8f27361632e58b9dcb3e3687e97446d95de21905cef1792dbc59ddb79"),
+    ("sensor-interface-pcb-02", "f574687e600949f5b33887ab97ac14b02c7d0e5f251ac494c93d390614009f7a", "e538f38efa35d709ee8c2b53bdf33c0f50ebdd316ecdb68830979cf3bb8260b3"),
+    ("sensor-interface-pcb-03", "c0964bd98e92480c3c8e2bc1d258fdf72ff504ee26268355c53d8f4f52b62855", "eac0a5621632de48fd80a2aec4cbf38dd01021f9c48fd95106e4bcc46015bcfe"),
+):
+    IMPLEMENTED_PROFILES[_scenario_id] = {
+        "profile_resource": _scenario_id,
+        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
+        "reader_ids": ["kicad@1", "structured@1"],
+        "scope": "Native PCB pin-to-net mapping, values/footprints, required placements, board outline and holes, BOM, ERC/DRC errors, fabrication inventory and case-03 power widths, plus required engineering review.",
+        "limitations": "Warning disposition, source compatibility, full native-to-fabrication correspondence, physical qualification and release authorization require authenticated engineering review.",
+        "evidence": ["tests/external/process_validation/test_kicad.py", "tests/external/process_validation/test_pcb_profiles.py"],
+    }
+
 FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
