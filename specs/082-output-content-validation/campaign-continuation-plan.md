@@ -181,7 +181,7 @@ all dashboard counts and row selections reconcile to the persisted evidence.
   parse/structure checks, geometry/physics checks, requirements and cross-artifact
   correspondence. A generator's description, success flag, or passing ERC/DRC alone
   cannot establish content correctness. Keep runtime resources out of test-only paths.
-- [ ] C012 Qualify each added capability with independent valid and alternative
+- [x] C012 Qualify each added capability with independent valid and alternative
   outputs, targeted valid-file defects, and relevant boundary/unit/frame controls.
   Wrong content must reach the intended check, not merely cause a parsing error.
   Register full-scope coverage only after retained qualification and canonical

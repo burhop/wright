@@ -1,9 +1,10 @@
 # Campaign continuation progress
 
 **Updated:** 2026-09-17. **Branch:** `codex/082-output-content-validation`.
-**Model:** `openai-codex::gpt-5.6-sol`; usage telemetry is unavailable. The fresh
-gateway preflight is blocked by the provider usage limit, with retained reset
-estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
+**Model:** `openai-codex::gpt-5.6-sol`; usage telemetry is unavailable. A fresh
+registered-session inference probe at `2026-09-17T19:10:49Z` was rejected before
+generation with `The usage limit has been reached`. The retained reset estimate
+is `2026-09-19T11:09:44Z`. The runner pause remains in force.
 
 ## Completed
 
@@ -253,10 +254,21 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   in one canonical graph while continuation maps each verified receipt to its
   declared port. Sheet/profile/coverage/runtime regression: `62 passed in 12.50s`;
   Ruff passed.
+- C012 capability qualification is complete. The complete independent reader and
+  profile suite passed `100` checks in `34.87s`. It exercises valid and alternative
+  geometry/data, targeted parseable defects, missing evidence, lineage/hash
+  mismatches, boundary conditions, units and frames across all ten families.
+  This qualifies the reusable checks; it does not create campaign pass credit.
+- The resumed provider check used the exact registered campaign session and
+  configured `openai-codex::gpt-5.6-sol` route. The API returned HTTP 503 with the
+  explicit backend reason `The usage limit has been reached`. The preliminary
+  newly-created-session probe failed earlier at workspace registration and is not
+  treated as quota evidence. No workflow attempt or retry episode was consumed,
+  and the pause sentinel was preserved.
 
 ## Next action
 
-C012 and C014–C016: all ten family preparers now contain their full-profile gates.
-Use the first available provider window to run an isolated canonical case through
+C014–C016: all ten family preparers now contain qualified full-profile gates.
+At the first available provider window, run an isolated canonical case through
 review, targeted defect, actionable correction packet and recheck; then resume the
 current campaign without resetting its retry ledger.
