@@ -386,6 +386,24 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   receipt creation or any POST. At `2026-09-17T20:42:25Z`, the service still reported the
   exact Sol model, the pause sentinel was present, and no readiness, pilot state or worker
   receipt existed.
+- A pre-dispatch credit audit found and fixed a stale activation boundary: the campaign
+  inventory still exposed the two original bounded profiles as its primary credit scope,
+  even though all 30 prepared workflows already bind the qualified full profiles. The
+  reproducible coverage builder now activates all 30 full-profile references and their
+  exact baselines, 315 mandatory requirement IDs and 304 bound subject roles while
+  retaining the two original bounded profiles as historical `bounded_profile` metadata.
+  Candidate success is still separate: a row earns no fourth-counter credit without
+  current exact outputs, authenticated reviews and a passing immutable assessment.
+- The read-only batch preflight now fails any enrolled source that lacks exactly one
+  process validator or whose validator profile, baseline or complete subject-role set
+  differs from the declared campaign-credit scope. The fresh 27-case audit has one exact
+  full-profile validator per workflow, with `24 pass / 3 review / 0 fail`; the reviews are
+  the same conservative Modelica basename warnings. Coverage/campaign/preflight tests pass
+  `54` checks and Ruff passes. After an owned dashboard restart, its API reports
+  `30 qualified / 30 full scope / 0 unsupported`, while actual counters remain historical
+  `30/30/24/0` and current `0/0/0`. The read-only browser audit passes 30 rows, 30 input
+  images, four update-driven series, 17,971 history points, narrow layout and zero browser
+  errors. No provider request or workflow attempt was consumed.
 
 ## Next action
 

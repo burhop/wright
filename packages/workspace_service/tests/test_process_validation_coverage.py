@@ -58,7 +58,7 @@ def test_coverage_is_reproducible_and_accounts_for_exactly_30_source_packs():
     assert all(item["targeted_defect_seed"] for item in scenarios)
 
 
-def test_only_the_two_bounded_initial_slices_are_qualified():
+def test_all_full_scope_profiles_are_qualified_and_initial_slices_remain_identified():
     coverage = _coverage()
     scenarios = {item["scenario_id"]: item for item in coverage["scenarios"]}
     qualified = {
@@ -66,31 +66,23 @@ def test_only_the_two_bounded_initial_slices_are_qualified():
         for scenario_id, item in scenarios.items()
         if item["support_status"] == "qualified"
     }
-    assert qualified == {
-        "parametric-drill-jig-01",
-        "heat-spreader-sizing-01",
-    }
+    assert qualified == set(scenarios)
     assert qualified == set(coverage["qualified_scenarios"])
 
     for scenario_id, item in scenarios.items():
-        if scenario_id in qualified:
-            assert item["requirements_frozen"] and item["initial_slice"]
-            assert item["profile"]
-            assert {capability["support"] for capability in item["capabilities"]} == {
-                "qualified"
-            }
-        else:
-            assert item["support_status"] in {"implemented", "unsupported"}
-            assert item["requirements_frozen"]
-            assert not item["initial_slice"]
-            if item["profile"]:
-                assert item["support_status"] == "implemented"
-            else:
-                assert item["profile"] is None
-            assert not any(
-                capability["support"] == "qualified"
-                for capability in item["capabilities"]
-            )
+        assert item["requirements_frozen"]
+        assert item["profile"] == item["full_profile"]
+        assert item["campaign_credit"]["full_scope"] is True
+        assert item["campaign_credit"]["requirement_ids"]
+        assert item["campaign_credit"]["subject_roles"]
+        assert {capability["support"] for capability in item["capabilities"]} == {
+            "qualified"
+        }
+    assert {
+        scenario_id
+        for scenario_id, item in scenarios.items()
+        if item["initial_slice"]
+    } == {"parametric-drill-jig-01", "heat-spreader-sizing-01"}
 
 
 def test_qualified_entries_pin_loadable_profiles_readers_and_evidence():
@@ -130,9 +122,24 @@ def test_qualified_entries_pin_loadable_profiles_readers_and_evidence():
             for requirement in profile.baseline.requirements
             if requirement.review_required
         }
+        mandatory_ids = {
+            requirement.id
+            for requirement in profile.baseline.requirements
+            if requirement.mandatory
+        }
+        assessed_ids = {
+            requirement_id
+            for check in profile.checks
+            for requirement_id in check.requirement_ids
+        }
+        assert set(item["campaign_credit"]["requirement_ids"]) == mandatory_ids
+        assert mandatory_ids <= assessed_ids
+        assert {
+            check.subject_role for check in profile.checks
+        } <= set(item["campaign_credit"]["subject_roles"])
 
 
-def test_every_unqualified_capability_has_an_explicit_extension_path():
+def test_every_capability_preserves_its_extension_recipe():
     coverage = _coverage()
     recipes = coverage["extension_recipes"]
     supports = set()
@@ -148,5 +155,5 @@ def test_every_unqualified_capability_has_an_explicit_extension_path():
             assert recipe["prerequisites"] and recipe["steps"]
 
     assert capabilities == set(recipes)
-    assert supports == {"qualified", "implemented"}
+    assert supports == {"qualified"}
     assert all(item["full_profile"] for item in coverage["scenarios"])

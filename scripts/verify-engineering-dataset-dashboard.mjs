@@ -41,7 +41,8 @@ try {
     throw new Error("Current-revision campaign metrics are missing");
   await expect(page.locator("#current-runs")).toHaveText(String(state.current_metrics.combinations_run));
   await expect(page.locator("#current-outputs")).toHaveText(String(state.current_metrics.processes_with_outputs));
-  await expect(page.locator("#full-scope-count")).toHaveText("0");
+  await expect(page.locator("#full-scope-count")).toHaveText(
+    String(projectedCoverage.full_scope));
   if (JSON.stringify(state.history[0].metrics) !== JSON.stringify({
     datasets_created: 0, combinations_run: 0, processes_with_outputs: 0, valid_data: 0,
   })) throw new Error("Missing real zero baseline");

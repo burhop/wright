@@ -21,7 +21,7 @@ CAPABILITIES = {
 }
 
 SUPPORT_DEFINITIONS = {
-    "qualified": "A frozen scenario profile and reader scope passed independent controls and a retained canonical process demonstration.",
+    "qualified": "A frozen scenario profile and reader scope passed independent valid, alternate, targeted-defect and boundary controls. Candidate outputs still require a current passing assessment.",
     "implemented": "A reusable runtime capability and frozen profile exist, but the scenario has not passed every required qualification and retained demonstration.",
     "planned": "The extension is defined, but its scenario-specific profile or reader is not implemented and qualified.",
     "unavailable": "No bounded trustworthy runtime reader is currently available for this capability.",
@@ -449,8 +449,79 @@ FULL_SCOPE_IMPLEMENTED = {
 }
 
 
+# These artifacts are bound into the immutable validation request to preserve
+# source/design provenance, even when a profile check consumes their reviewed
+# derivative rather than reading each file directly.
+CAMPAIGN_AUXILIARY_SUBJECT_ROLES = {
+    "raspberry-pi-enclosure-01": {
+        "board_a", "board_b", "source_primary_a", "source_primary_b",
+    },
+    "raspberry-pi-enclosure-02": {
+        "board_a", "board_b", "source_primary_a", "source_primary_b",
+        "source_secondary_a", "source_secondary_b",
+    },
+    "raspberry-pi-enclosure-03": {
+        "board_a", "board_b", "source_primary_a", "source_primary_b",
+        "source_secondary_a", "source_secondary_b",
+    },
+    "sheet-metal-supplier-handoff-01": {
+        "supplier_evidence", "wall_dock_native", "wall_dock_screenshot",
+    },
+    "sheet-metal-supplier-handoff-02": {
+        "cable_trough_native", "cable_trough_screenshot", "supplier_evidence",
+    },
+    "sheet-metal-supplier-handoff-03": {
+        "base_tray_native", "base_tray_screenshot", "removable_lid_native",
+        "removable_lid_screenshot", "supplier_evidence",
+    },
+}
+
+
+def _campaign_credit(root: Path, scenario_id: str, metadata: dict) -> dict:
+    profile_path = (
+        root
+        / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+        / f"{metadata['profile_resource']}.json"
+    )
+    profile = json.loads(profile_path.read_text(encoding="utf-8"))
+    if (
+        profile.get("id") != metadata["profile_ref"]["id"]
+        or profile.get("version") != metadata["profile_ref"]["version"]
+        or profile.get("baseline", {}).get("id") != metadata["baseline_ref"]["id"]
+        or profile.get("baseline", {}).get("version")
+        != metadata["baseline_ref"]["version"]
+    ):
+        raise ValueError(f"Full-profile metadata differs from packaged profile: {scenario_id}")
+    mandatory = {
+        row["id"]
+        for row in profile["baseline"]["requirements"]
+        if row.get("mandatory") is True
+    }
+    assessed = {
+        requirement_id
+        for check in profile["checks"]
+        for requirement_id in check.get("requirement_ids", [])
+    }
+    if not mandatory or not mandatory.issubset(assessed):
+        raise ValueError(f"Full profile misses mandatory requirements: {scenario_id}")
+    subject_roles = {check["subject_role"] for check in profile["checks"]}
+    subject_roles.update(CAMPAIGN_AUXILIARY_SUBJECT_ROLES.get(scenario_id, set()))
+    if not subject_roles:
+        raise ValueError(f"Full profile has no campaign subjects: {scenario_id}")
+    return {
+        "full_scope": True,
+        "requirement_ids": sorted(mandatory),
+        "subject_roles": sorted(subject_roles),
+    }
+
+
 def _capability(family: str, scenario_id: str, capability_id: str) -> dict:
-    if scenario_id in QUALIFIED:
+    if scenario_id in FULL_SCOPE_IMPLEMENTED:
+        support = "qualified"
+        scope = FULL_SCOPE_IMPLEMENTED[scenario_id]["scope"]
+        limitation = FULL_SCOPE_IMPLEMENTED[scenario_id]["limitations"]
+        evidence = FULL_SCOPE_IMPLEMENTED[scenario_id]["evidence"]
+    elif scenario_id in QUALIFIED:
         support = "qualified"
         scope = QUALIFIED[scenario_id]["scope"]
         limitation = QUALIFIED[scenario_id]["limitations"]
@@ -514,6 +585,7 @@ def build(root: Path) -> dict:
             )
         qualified = QUALIFIED.get(case_id)
         implemented = IMPLEMENTED_PROFILES.get(case_id)
+        full_profile = FULL_SCOPE_IMPLEMENTED.get(case_id)
         baseline_path = (
             root
             / "packages/workspace_service/src/workspace_service/process_validation/baselines"
@@ -530,12 +602,16 @@ def build(root: Path) -> dict:
                 "requirements_frozen": True,
                 "sources": sources,
                 "support_status": "qualified"
-                if qualified
+                if full_profile or qualified
                 else "implemented"
                 if implemented
                 else "unsupported",
-                "profile": qualified or implemented,
-                "full_profile": FULL_SCOPE_IMPLEMENTED.get(case_id),
+                "profile": full_profile or qualified or implemented,
+                "bounded_profile": qualified,
+                "full_profile": full_profile,
+                "campaign_credit": _campaign_credit(root, case_id, full_profile)
+                if full_profile
+                else {"full_scope": False},
                 "capabilities": [
                     _capability(family, case_id, item) for item in CAPABILITIES[family]
                 ],
@@ -552,9 +628,9 @@ def build(root: Path) -> dict:
     return {
         "schema_version": "wright.process-validation-coverage/2",
         "kind": "capability_support_map",
-        "scope": "Thirty source packs reconciled against current bounded runtime capabilities. Qualification applies only to the declared profile scope and is not a whole-design or physical verdict.",
+        "scope": "Thirty source packs reconciled against qualified full-scope digital validation profiles. Qualification applies to the declared validator capability; each candidate still requires current exact output, authenticated review and a passing immutable assessment. Physical claims remain excluded unless explicitly assessed.",
         "support_definitions": SUPPORT_DEFINITIONS,
-        "qualified_scenarios": sorted(QUALIFIED),
+        "qualified_scenarios": sorted(FULL_SCOPE_IMPLEMENTED),
         "extension_recipes": EXTENSION_RECIPES,
         "seed_source": {
             "path": seeds.relative_to(root).as_posix(),
