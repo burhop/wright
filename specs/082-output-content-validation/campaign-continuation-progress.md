@@ -179,9 +179,15 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   The obsolete instruction forcing the valid-data counter to zero was replaced
   with the actual downstream gate. The full-profile preparer and runtime
   regression passed `52` checks in `11.76s`; Ruff passed.
+- All three drill-jig workflows now expose exact STEP, DXF and independent
+  dimension-report ports to their full profiles. A new post-inspection engineer
+  checkpoint pins the matching profile and every review-required obligation;
+  the validator then gates completion on that exact reviewed report plus native
+  geometry. Review authority matching now requires the exact subjects used by
+  review checks, while the remaining subjects stay under independent automated
+  checks. Jig/profile/runtime regression: `37 passed in 6.43s`; Ruff passed.
 
 ## Next action
 
-C012–C014: finish the drill-jig full-profile process bindings, then prove an
-actionable retained-output defect through the canonical gate before expanding
-the integration pattern to the remaining family preparers.
+C012–C014: prove an actionable retained-output defect through the canonical
+gate, then expand the integration pattern to the remaining family preparers.

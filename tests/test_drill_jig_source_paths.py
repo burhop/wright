@@ -75,14 +75,16 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     inspected = next(step for step in plan.steps if step.id.startswith("check_alignment_"))
     assert {Path(path).name for path in generated.expected_files} == set(config["expected_generated_files"])
     validators = [step for step in plan.steps if step.validation]
-    if ordinal == 1:
-        assert len(validators) == 1
-        assert validators[0].validation["profile"]["name"] == "parametric-drill-jig-01"
-        assert validators[0].validation["subjects"] == {"jig_step": "jig"}
-        assert generated.expected_file_ports["jig_step"].endswith("/jig.step")
-    else:
-        assert validators == []
+    assert len(validators) == 1
+    validator = validators[0]
+    scenario_id = f"parametric-drill-jig-{ordinal:02d}"
+    expected_resource = scenario_id + ("-full" if ordinal == 1 else "")
+    assert validator.validation["profile"]["name"] == expected_resource
+    assert set(validator.validation["subjects"]) == {"jig_step", "dxf", "report"}
+    assert generated.expected_file_ports["jig_step"].endswith("/jig.step")
+    assert generated.expected_file_ports["dxf"].endswith("/hole-layout.dxf")
     assert {Path(path).name for path in inspected.expected_files} == {"dimension-report.json"}
+    assert inspected.expected_file_ports["report"].endswith("/dimension-report.json")
     observer = next(step for step in plan.steps if step.id.startswith("inspect_jig_exports_"))
     assert not observer.references
     observer_section = next(node for node in _parse(source) if node.get("id") == observer.id)
@@ -90,6 +92,12 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     assert any(node["kind"] == "connection" and node["fields"].get("type") == "order"
         and node["fields"].get("from") == inspected.id and node["fields"].get("to") == observer.id
         for node in _parse(source))
+    final_review = next(
+        step for step in plan.steps if step.id.startswith("review_jig_outputs_")
+    )
+    assert final_review.external_action["settings"]["validation_review"][
+        "profile_ref"
+    ] == validator.validation["profile"]["reference"]
     for filename in (*config["expected_generated_files"], "dimension-report.json"):
         assert report["output_root"] + "/" + filename in observer.prompt
     assert "includeText=true,maxTextBytes=8192" in observer.prompt and "includeText=false" in observer.prompt

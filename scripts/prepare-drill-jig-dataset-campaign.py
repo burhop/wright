@@ -171,50 +171,14 @@ def prepare(args, directory, tools):
     helpers.add_reference(sections, basis, author, "accepted_design")
     helpers.add_reference(sections, init_result, author, "project_initialized")
     generated = bind_native_run(stages["generate_jig"], code_path, "jig", config["expected_generated_files"])
-    validator = None
-    if identity == "parametric-drill-jig-01":
-        coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
-        support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
-        if support["support_status"] != "qualified" or not support.get("profile"):
-            raise ValueError("The drill-jig validator profile is not qualified")
-        profile = support["profile"]
-        stages["generate_jig"]["fields"]["outputs"].append(
-            helpers.port("jig_step", "workspace_file")
-        )
-        stages["generate_jig"]["fields"]["settings"]["expected_file_ports"] = {
-            "jig_step": output + "/jig.step"
-        }
-        validator = task("validate_jig_content", "Validate actual jig seat geometry")
-        validator["fields"].update(
-            performed_by="configured_tool",
-            inputs=[helpers.port("jig", "workspace_file")],
-            outputs=[helpers.port("assessment")],
-            prompt="",
-            settings={
-                "authoring_template": "process-validator",
-                "output_format": "json",
-                "max_revisions": 0,
-                "validation": {
-                    "profile": {
-                        "source": "packaged",
-                        "name": profile["profile_resource"],
-                        "reference": profile["profile_ref"],
-                    },
-                    "baseline": profile["baseline_ref"],
-                    "subjects": {"jig_step": "jig"},
-                },
-            },
-        )
-        sections.append(dict(
-            kind="connection", id="bind_" + validator["id"] + "_jig",
-            fields={
-                "type": "item",
-                "from": stages["generate_jig"]["id"] + ".jig_step",
-                "to": validator["id"] + ".jig",
-                "label": "actual jig STEP to validate",
-                "when": None,
-            },
-        ))
+    generated_files = {
+        "jig_step": output + "/jig.step",
+        "dxf": output + "/hole-layout.dxf",
+    }
+    stages["generate_jig"]["fields"]["outputs"].extend(
+        helpers.port(role, "workspace_file") for role in generated_files
+    )
+    stages["generate_jig"]["fields"]["settings"]["expected_file_ports"] = generated_files
     # Fixed native arguments read the just-authored file. The explicit sequence
     # below retains approval/authoring dependencies without JSON argument edges.
     checker = task("author_jig_inspection", "Author inspection of actual exported jig")
@@ -234,15 +198,58 @@ def prepare(args, directory, tools):
     helpers.add_reference(sections, generated, checker, "actual_model_result")
     helpers.add_reference(sections, basis, checker, "accepted_requirements")
     bind_native_run(stages["check_alignment"], check_path, "inspection", config["expected_checked_files"])
+    stages["check_alignment"]["fields"]["outputs"].append(
+        helpers.port("report", "workspace_file")
+    )
+    stages["check_alignment"]["fields"]["settings"]["expected_file_ports"] = {
+        "report": output + "/dimension-report.json"
+    }
     stages["check_alignment"]["fields"]["settings"]["output_filename"] = output + "/inspection-execution.json"
     observe = task("inspect_jig_exports", "Read actual independent jig inspection and native file identities")
     bind(observe, f"Call inspect_file(includeText=true,maxTextBytes=8192,offsetBytes=0) for {output}/dimension-report.json and {output}/cad-lineage.json, following nextOffsetBytes until complete with maxTextBytes=8192 on every page. Do not request larger pages or embed native execution JSON; retain the complete files and observe every page. Call inspect_file(includeText=false) for {output}/jig.step, {output}/jig.stl and {output}/hole-layout.dxf. Preserve the actual independent dimensional failures, unresolved evidence and file hashes in the observation report. Never infer physical-fit qualification from successful execution or file presence.", "wright-workspace-files", filename="cad-file-observations.json", customer_context=False)
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
+    profile = support.get("full_profile")
+    if not profile:
+        raise ValueError("The drill-jig full validator profile is unavailable")
+    profile_document = json.loads(
+        (ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles" / (profile["profile_resource"] + ".json")).read_text(encoding="utf-8")
+    )
+    final_review = task("review_jig_outputs", "Review exact jig geometry and inspection evidence")
+    final_review["fields"].update(
+        step_type="review", performed_by="engineer", inputs=[], outputs=[],
+        instructions="Review the exact dimension report against the frozen datum, stackup, keepout, access, marking, material and claim-scope requirements. Approve only the current report and referenced output revision.",
+        settings={"authoring_template": "external-action-approval", "action_kind": "local_review",
+            "approval_binding": {"server": "wright", "tool": "review_artifacts", "schema": helpers.digest(b"wright.local_review.v1")},
+            "approval_destination": {"kind": "local_review", "id": "workspace"},
+            "approval_settings": {"review_task_id": final_review["id"], "validation_review": {
+                "profile_ref": profile["profile_ref"],
+                "requirement_ids": sorted(req["id"] for req in profile_document["baseline"]["requirements"] if req["review_required"])}},
+            "approval_action": {"kind": "local_review", "mode": "review_only"}},
+    )
+    helpers.add_reference(sections, stages["check_alignment"]["id"] + ".report", final_review, "dimension_report", "workspace_file")
+    validator = task("validate_jig_content", "Validate current jig geometry and evidence")
+    validation_sources = {
+        "jig_step": (stages["generate_jig"], "jig_step"),
+        "dxf": (stages["generate_jig"], "dxf"),
+        "report": (stages["check_alignment"], "report"),
+    }
+    validator["fields"].update(
+        performed_by="configured_tool",
+        inputs=[helpers.port("validate_" + role, "workspace_file") for role in validation_sources],
+        outputs=[helpers.port("assessment")], prompt="",
+        settings={"authoring_template": "process-validator", "output_format": "json", "max_revisions": 0,
+            "validation": {"profile": {"source": "packaged", "name": profile["profile_resource"], "reference": profile["profile_ref"]},
+                "baseline": profile["baseline_ref"], "subjects": {role: "validate_" + role for role in validation_sources}}},
+    )
+    for role, (producer, producer_port) in validation_sources.items():
+        sections.append({"kind": "connection", "id": "bind_" + validator["id"] + "_" + role,
+            "fields": {"type": "item", "from": producer["id"] + "." + producer_port,
+                "to": validator["id"] + ".validate_" + role, "label": "current jig output to validate", "when": None}})
     # This task reads the sealed files directly. Order edges below require both
     # native runs to finish without embedding their redundant response bodies.
-    chain = [stages["validate_inputs"], review, init, author, stages["generate_jig"]]
-    if validator:
-        chain.append(validator)
-    chain.extend([checker, stages["check_alignment"], observe])
+    chain = [stages["validate_inputs"], review, init, author, stages["generate_jig"],
+             checker, stages["check_alignment"], observe, final_review, validator]
     for earlier, later in zip(chain, chain[1:]):
         sections.append(dict(kind="connection", id="sequence_" + later["id"], fields={"type": "order",
             "from": earlier["id"], "to": later["id"], "label": "full jig engineering sequence", "when": None}))
