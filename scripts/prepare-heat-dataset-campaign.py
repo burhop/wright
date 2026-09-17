@@ -65,6 +65,9 @@ def prepare(args, directory, tools):
     brief = h.add_file_input(sections, suffix, "human_context", inputs + "/assembled-context.md")
     image = h.add_file_input(sections, suffix, "thermal_sketch", inputs + "/concept.png")
     next(s for s in sections if s["id"] == image.split(".")[0])["fields"]["outputs"][0]["kind"] = "reference_images"
+    vector = h.add_file_input(
+        sections, suffix, "thermal_vector_sketch", inputs + "/concept.svg"
+    )
 
     def task(prefix, title):
         value = {"kind": "task", "id": prefix + "_" + suffix, "fields": {"name": title, "purpose": title,
@@ -87,6 +90,9 @@ def prepare(args, directory, tools):
 
     basis = bind(original["define_thermal_case"], "Produce the thermal basis from all original human inputs and sketch. Preserve every CSV candidate, SI conversion, conductivity, density, heat flux, cold temperature, insulation and limit. For the copper case preserve total interface resistance0.15K/W, converted separately using each actual interface area. Do not invent material certifications or extra physics. Record that the supplied numerical source is a real FE operation and analytical comparison is separate.", filename="thermal-basis.md", format="markdown")
     h.add_reference(sections, image, original["define_thermal_case"], "input_sketch", "reference_images")
+    h.add_reference(
+        sections, vector, original["define_thermal_case"], "input_vector_sketch", "workspace_file"
+    )
     review = task("review_thermal_basis", "Review exact thermal boundaries and units")
     review["fields"].update(step_type="review", performed_by="engineer", instructions="Review the exact original thermal basis, interface units and candidate list.",
         settings={"authoring_template": "external-action-approval", "action_kind": "local_review",

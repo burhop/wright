@@ -38,6 +38,13 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text(encoding="utf-8")
     report = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text())
+    binding = json.loads(
+        Path(report["input_binding_evidence"]["path"]).read_text(encoding="utf-8")
+    )
+    assert binding["complete"] is True
+    assert next(row for row in binding["bindings"] if row["raw_file"] == "concept.svg")[
+        "status"
+    ] == "mapped"
     plan = compile_prompt_workflow(source)
     original = _parse(preparer.TEMPLATE.read_text().replace("__instance__", report["scenario_id"].replace("-", "_") + "_path_contract_unit"))
     assert all(edge in _parse(source) for edge in original if edge["kind"] == "connection")

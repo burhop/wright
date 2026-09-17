@@ -66,3 +66,10 @@ def test_only_qualified_heat_case_compiles_with_validator(tmp_path):
             Path(result["draft"]).with_name("staging-manifest.json").read_text()
         )
         assert manifest["scenario_id"].endswith(f"-{ordinal:02d}")
+        binding = json.loads(
+            Path(manifest["input_binding_evidence"]["path"]).read_text(encoding="utf-8")
+        )
+        assert binding["complete"] is True
+        assert next(
+            row for row in binding["bindings"] if row["raw_file"] == "concept.svg"
+        )["status"] == "mapped"

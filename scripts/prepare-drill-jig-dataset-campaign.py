@@ -83,6 +83,9 @@ def prepare(args, directory, tools):
     brief = helpers.add_file_input(sections, suffix, "human_context", context_path)
     image = helpers.add_file_input(sections, suffix, "jig_sketch", inputs_root + "/concept.png")
     next(s for s in sections if s["id"] == image.split(".")[0])["fields"]["outputs"][0]["kind"] = "reference_images"
+    vector = helpers.add_file_input(
+        sections, suffix, "jig_vector_sketch", inputs_root + "/concept.svg"
+    )
 
     def task(prefix, title):
         value = dict(kind="task", id=prefix + "_" + suffix, fields={"name": title, "purpose": title,
@@ -129,6 +132,9 @@ def prepare(args, directory, tools):
         "Record unresolved physical retention/fit/machining matters without altering holes or guessing tolerances. Preserve each specific rail, tube or keyed annular design intent.",
         filename="jig-design-basis.md", format="markdown")
     helpers.add_reference(sections, image, stages["validate_inputs"], "original_sketch", "reference_images")
+    helpers.add_reference(
+        sections, vector, stages["validate_inputs"], "original_vector_sketch", "workspace_file"
+    )
     review = task("review_jig_basis", "Review exact jig design basis")
     review["fields"].update(step_type="review", performed_by="engineer", instructions="Review exact coordinate, fit and keepout decisions before generating CAD.",
         settings={"authoring_template": "external-action-approval", "action_kind": "local_review",
