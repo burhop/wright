@@ -38,8 +38,19 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   the Modelica selected-kit amendment, validate against the closed runtime
   `Baseline` model, and are reproducible from the reviewed definitions. Baseline
   checks remain green; the initial baseline/distribution check passed 6 tests.
+- C010–C012 advanced for the robot-tracking family: three full frozen profiles
+  now bind conversion lineage, frame/clock alignment, retained sample scope,
+  independently recomputed RMSE/time/gap/yaw observations, event correspondence,
+  deliverable presence and authenticated plot/diagnosis reviews. The reusable
+  timeline reader rejects malformed, nonfinite, inconsistent and unwrapped data.
+  Retained cases 01 and 03 pass every automated check. Case 02 is correctly
+  rejected for two false gap records caused by floating-point comparisons.
+  All three remain `implemented`, not `qualified`, pending required human review;
+  case 02 also needs corrected producer output. Focused validation/resource tests:
+  `44 passed in 9.53s`; Ruff passed.
 
 ## Next action
 
-C010: add explicit executable acceptance metadata—method, selector, unit/frame,
-tolerance/uncertainty, subject role and correction owner—to all 315 requirements.
+C010–C012: implement the next reusable three-case family profile, preserving the
+robot family as an implemented checkpoint until its review and corrected-output
+evidence can qualify it.

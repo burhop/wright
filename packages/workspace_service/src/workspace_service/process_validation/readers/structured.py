@@ -104,7 +104,7 @@ class StructuredReader:
         version="1",
         config_digest=canonical_digest({"parser": "json-csv-text", "version": 1}),
         method="structured_value",
-        formats=("json", "csv", "text", "markdown", "html"),
+        formats=("json", "csv", "text", "markdown", "html", "svg"),
     )
 
     def measure(self, snapshot, check, context):
@@ -163,6 +163,15 @@ class StructuredReader:
             )
         _check_structure(value, context)
         observed = _pointer(value, check.selector)
+        if not check.selector and check.constraint.operator in {"exists", "review"}:
+            # Presence and review checks bind the complete artifact by its subject
+            # digest. Keep the inline observation bounded so large reports and SVGs
+            # remain reviewable without duplicating their content into the result.
+            observed = {
+                "present": True,
+                "bytes": len(snapshot.content),
+                "sha256": snapshot.subject.sha256,
+            }
         if len(canonical_json(observed).encode("utf-8")) > 64 * 1024:
             raise ValidationIssue(
                 "reader.observation_limit",

@@ -80,10 +80,14 @@ def test_only_the_two_bounded_initial_slices_are_qualified():
                 "qualified"
             }
         else:
-            assert item["support_status"] == "unsupported"
-            assert not item["requirements_frozen"]
+            assert item["support_status"] in {"implemented", "unsupported"}
+            assert item["requirements_frozen"]
             assert not item["initial_slice"]
-            assert item["profile"] is None
+            if scenario_id.startswith("robot-tracking-diagnosis-"):
+                assert item["support_status"] == "implemented"
+                assert item["profile"]
+            else:
+                assert item["profile"] is None
             assert not any(
                 capability["support"] == "qualified"
                 for capability in item["capabilities"]

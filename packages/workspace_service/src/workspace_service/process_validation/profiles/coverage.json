@@ -4,7 +4,7 @@
   "scope": "Thirty source packs reconciled against current bounded runtime capabilities. Qualification applies only to the declared profile scope and is not a whole-design or physical verdict.",
   "support_definitions": {
     "qualified": "A frozen scenario profile and reader scope passed independent controls and a retained canonical process demonstration.",
-    "implemented": "A reusable runtime capability exists, but this scenario has no frozen and qualified profile for it.",
+    "implemented": "A reusable runtime capability and frozen profile exist, but the scenario has not passed every required qualification and retained demonstration.",
     "planned": "The extension is defined, but its scenario-specific profile or reader is not implemented and qualified.",
     "unavailable": "No bounded trustworthy runtime reader is currently available for this capability."
   },
@@ -272,10 +272,6 @@
           "artifacts/process-validation/engineering/20260916T213859Z/heat/evidence.json"
         ]
       },
-      "campaign_credit": {
-        "full_scope": false,
-        "reason": "The qualified profile intentionally excludes required CAD, manufacturing, interface and physical scope, so it cannot establish whole-case compliance."
-      },
       "capabilities": [
         {
           "id": "thermal.conduction",
@@ -307,7 +303,7 @@
       "family": "heat-spreader-sizing",
       "source_requirements_seed": "Three widths 30/45/60 mm; 9 W, k=167, 80 mm length, 3 mm thickness; choose 60 mm against 56°C",
       "targeted_defect_seed": "Reuse case 01 material or heat load",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/02-camera-cold-wall-link/alternatives.csv",
@@ -372,7 +368,7 @@
       "family": "heat-spreader-sizing",
       "source_requirements_seed": "Three widths 60/80/100 mm; 18 W, k=385; retain total interface resistance 0.15 K/W and candidate-specific boundary conversion; choose 80 mm against 75°C",
       "targeted_defect_seed": "Treat 0.15 K/W as area-specific resistance or omit it",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/03-calibration-lamp-copper-link/alternatives.csv",
@@ -442,7 +438,7 @@
       "family": "lightweight-equipment-bracket",
       "source_requirements_seed": "Protected holes and envelope; distributed downward 100 N load; current restraint; 20% mass-reduction goal; displacement/stress limits and mesh sensitivity",
       "targeted_defect_seed": "Use a different load patch or remove a protected mounting feature",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/01-conveyor-vision-mount/concept.png",
@@ -512,7 +508,7 @@
       "family": "lightweight-equipment-bracket",
       "source_requirements_seed": "Vector (60,0,-80) N and eccentric loading; protected geometry; 15% mass-reduction target; reactions and common response limits",
       "targeted_defect_seed": "Replace the vector with vertical loading of the same magnitude",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/02-pump-instrument-outrigger/concept.png",
@@ -582,7 +578,7 @@
       "family": "lightweight-equipment-bracket",
       "source_requirements_seed": "+Y 100 N cable-snag load with torsion; pivot bearing annuli and service-access keepout; 25% mass-reduction goal; common limits",
       "targeted_defect_seed": "Analyze only vertical weight or obstruct the service box",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/03-dock-sensor-yoke/concept.png",
@@ -723,10 +719,6 @@
           "artifacts/process-validation/engineering/20260916T213859Z/jig/evidence.json"
         ]
       },
-      "campaign_credit": {
-        "full_scope": false,
-        "reason": "The qualified profile covers only H1/H2 seat geometry and excludes other mandatory jig, fit and manufacturing requirements."
-      },
       "capabilities": [
         {
           "id": "geometry",
@@ -758,7 +750,7 @@
       "family": "parametric-drill-jig",
       "source_requirements_seed": "Four coordinates with ±0.15 mm tolerance; bushing bridges; chip window and end clamps; flange/body stackup; top-wall-only drilling intent",
       "targeted_defect_seed": "Fill the chip window or imply drilling the opposite tube wall",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
@@ -833,7 +825,7 @@
       "family": "parametric-drill-jig",
       "source_requirements_seed": "Six controlling CSV coordinates with ±0.10 mm tolerance; +X notch key; annular opening ≥55 mm; clamp exclusions and radial collar clearance",
       "targeted_defect_seed": "Rotate the symmetric pattern while leaving its orientation key incorrect",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/03-indexable-circular-fixture-jig/bushings.csv",
@@ -908,7 +900,7 @@
       "family": "printed-replacement-part",
       "source_requirements_seed": "38 mm maximum wheel diameter; six scallops; D-socket shape, specified round/flat clearances and 10 mm blind depth; material above socket; actual PETG/P1S package or explicitly classified alternative",
       "targeted_defect_seed": "Round bore replacing D-socket; label a PLA package as PETG",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.png",
@@ -968,7 +960,7 @@
       "family": "printed-replacement-part",
       "source_requirements_seed": "96 mm mounting centers; 4.5 mm through holes; flat pads; 25 mm finger clearance over the central 65 mm span; label keepout; compare support/orientation decisions",
       "targeted_defect_seed": "Correct overall envelope with wrong mounting centers or blocked finger space",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/concept.png",
@@ -1028,7 +1020,7 @@
       "family": "printed-replacement-part",
       "source_requirements_seed": "26 × 38 mm mounting rectangle; 8-to-17 mm wedge; hole positions; cylindrical counterbores; recess normal to the sloped sole; rear-right cable notch",
       "targeted_defect_seed": "Mirror the foot or substitute conical countersinks",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/concept.png",
@@ -1088,7 +1080,7 @@
       "family": "raspberry-pi-enclosure",
       "source_requirements_seed": "Manufacturer-derived board interfaces; two-part 112 × 86 × 39 mm envelope; underside fastening and plug access; comparable 6 W vent alternatives; declared source-patch target below 65°C",
       "targeted_defect_seed": "Use the nominal sketch rectangle as verified manufacturer geometry",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/concept.png",
@@ -1156,7 +1148,7 @@
       "family": "raspberry-pi-enclosure",
       "source_requirements_seed": "130 × 95 × 60 mm body envelope distinguished from external ears; 145 mm ear centers; service/drip-loop clearance; two heat sources totaling 8 W; 35°C ambient; target 70°C",
       "targeted_defect_seed": "Include ears in the body-envelope test incorrectly, or silently model the wrong heat load",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/concept.png",
@@ -1229,7 +1221,7 @@
       "family": "raspberry-pi-enclosure",
       "source_requirements_seed": "145 × 110 × 48 mm envelope; service channel and guide clearances; 11 W heat load; actual synthetic fan-curve condition; matched alternatives; source-patch target below 68°C",
       "targeted_defect_seed": "Replace the fan curve with constant velocity while presenting the original case",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/03-edge-vision-instrument/concept.png",
@@ -1307,7 +1299,7 @@
       "family": "robot-tracking-diagnosis",
       "source_requirements_seed": "Common valid sample interval; independently recomputed position/lateral RMSE and velocity disagreement; seam event at 15 s; evidence-linked hypotheses",
       "targeted_defect_seed": "Change the metric while leaving the report plausible, or claim proven wheel slip",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/01-aisle-floor-seam/bag-conversion.md",
@@ -1375,26 +1367,52 @@
           "size_bytes": 1363
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "robot-tracking-diagnosis-01",
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-01-full",
+          "version": "1",
+          "sha256": "0d3704713b050507ce0cdc1d54288eadac617fd54601362fdd4bd281144c582c"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-01-basis",
+          "version": "1",
+          "sha256": "17d6451a1e12dad10f74c8b095c996bad312ba27fa9763c69c7e6ad82491227b"
+        },
+        "reader_ids": [
+          "structured@1",
+          "tracking-timeline@1"
+        ],
+        "scope": "Traceable conversion, alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "limitations": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_tracking.py",
+          "tests/external/process_validation/test_tracking_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "structured",
           "support": "implemented",
-          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
-          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "scope": "Traceable conversion, alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+          "limitation": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
           "extension_recipe": "structured",
           "evidence": [
-            "packages/workspace_service/tests/test_process_validation.py"
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py"
           ]
         },
         {
           "id": "timeseries.frames",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Traceable conversion, alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+          "limitation": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
           "extension_recipe": "timeseries.frames",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -1404,7 +1422,7 @@
       "family": "robot-tracking-diagnosis",
       "source_requirements_seed": "Survey translation and +0.150 s header offset applied exactly once; retain unaligned/aligned plots; 12 s event correspondence",
       "targeted_defect_seed": "Correct acquisition times a second time",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/02-corner-time-alignment/bag-conversion.md",
@@ -1472,26 +1490,52 @@
           "size_bytes": 1374
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "robot-tracking-diagnosis-02",
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-02-full",
+          "version": "1",
+          "sha256": "6c7f0759d057cd6389c933d74bfbed1341e6df8cd5a2e3803dbe98e109c83db8"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-02-basis",
+          "version": "1",
+          "sha256": "d2855eaa739e67fe4a8df94c50d47abc4b538ff7753a5230f3a314ebbfb388a2"
+        },
+        "reader_ids": [
+          "structured@1",
+          "tracking-timeline@1"
+        ],
+        "scope": "Traceable conversion, spatial/time alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "limitations": "The retained output contains false gap records and required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_tracking.py",
+          "tests/external/process_validation/test_tracking_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "structured",
           "support": "implemented",
-          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
-          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "scope": "Traceable conversion, spatial/time alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+          "limitation": "The retained output contains false gap records and required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
           "extension_recipe": "structured",
           "evidence": [
-            "packages/workspace_service/tests/test_process_validation.py"
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py"
           ]
         },
         {
           "id": "timeseries.frames",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Traceable conversion, spatial/time alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+          "limitation": "The retained output contains false gap records and required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
           "extension_recipe": "timeseries.frames",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -1501,7 +1545,7 @@
       "family": "robot-tracking-diagnosis",
       "source_requirements_seed": "Exclude invalid visual poses from 14–16 s; accurate retained count and denominator; wrapped yaw residuals; expose uncertainty",
       "targeted_defect_seed": "Zero-fill the missing poses and include them in RMSE",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
@@ -1569,26 +1613,52 @@
           "size_bytes": 1598
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "robot-tracking-diagnosis-03",
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-03-full",
+          "version": "1",
+          "sha256": "19f58fd4bb6351737ae733c5610b0db9107594386dfa3caf8ed76cefa61628cc"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-03-basis",
+          "version": "1",
+          "sha256": "200605741a81745b82408656a1d12bdae388e74b5e3a86dbfbe0beb457976656"
+        },
+        "reader_ids": [
+          "structured@1",
+          "tracking-timeline@1"
+        ],
+        "scope": "Traceable conversion, missing-sample preservation, retained timeline metrics, wrapped yaw, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "limitations": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_tracking.py",
+          "tests/external/process_validation/test_tracking_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "structured",
           "support": "implemented",
-          "scope": "Generic bounded structured JSON/CSV/text inspection only.",
-          "limitation": "This pack has no frozen profile or qualified domain semantics, so requests remain blocked.",
+          "scope": "Traceable conversion, missing-sample preservation, retained timeline metrics, wrapped yaw, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+          "limitation": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
           "extension_recipe": "structured",
           "evidence": [
-            "packages/workspace_service/tests/test_process_validation.py"
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py"
           ]
         },
         {
           "id": "timeseries.frames",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Traceable conversion, missing-sample preservation, retained timeline metrics, wrapped yaw, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+          "limitation": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
           "extension_recipe": "timeseries.frames",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -1598,7 +1668,7 @@
       "family": "sensor-fan-harness",
       "source_requirements_seed": "Exact pin/net topology and controller-only star point; fan and sensor returns separated; startup case; ≤0.72 V drop; cut lengths with correct allowances",
       "targeted_defect_seed": "Join returns at the branch or omit return-path voltage drop",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/01-desktop-incubator/allowed-wire.csv",
@@ -1675,7 +1745,7 @@
       "family": "sensor-fan-harness",
       "source_requirements_seed": "Sum trunk currents for simultaneous fan starts; temperature-adjusted wire resistance; 45°C connector-rating evidence; correct branch lengths and ≤0.72 V drop",
       "targeted_defect_seed": "Size common trunk from only one fan current",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/allowed-wire.csv",
@@ -1752,7 +1822,7 @@
       "family": "sensor-fan-harness",
       "source_requirements_seed": "Distinct zone returns; reserve pin 6 disconnected; shield bonded only at controller; shared-current calculations; justified splice/crimp arrangements; ≤0.72 V drop",
       "targeted_defect_seed": "Ground the spare pin or use the shield as a load return",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/03-dual-zone-air-sampler/allowed-wire.csv",
@@ -1829,7 +1899,7 @@
       "family": "sensor-interface-pcb",
       "source_requirements_seed": "Exact divider/filter netlist and values; J1/J2 positions and component-side pin order; shared ground; common board/fab rules",
       "targeted_defect_seed": "Swap connector pins while leaving ERC clean",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/component-library.csv",
@@ -1899,7 +1969,7 @@
       "family": "sensor-interface-pcb",
       "source_requirements_seed": "Separate A/B filter networks; correct test-pad nets and clearance; pin-1 orientation; board/fab rules",
       "targeted_defect_seed": "Bridge channels through a capacitor or swap test-pad mapping",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/component-library.csv",
@@ -1969,7 +2039,7 @@
       "family": "sensor-interface-pcb",
       "source_requirements_seed": "Separate 24 V/3.3 V connectivity; pull-ups/series filters; specified power branch/trunk widths and 0.8 mm power/logic separation; correct BOM/exports",
       "targeted_defect_seed": "Pull the tach signal up to 24 V or use signal-width power trunks",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/component-library.csv",
@@ -2039,17 +2109,17 @@
       "family": "sheet-metal-supplier-handoff",
       "source_requirements_seed": "Current R1/R3/R4 decisions; eligible sourced stock and exact native material mapping; mounting slots and U-notch through lip; bends/reliefs; genuinely developed flat; simulated quantity four",
       "targeted_defect_seed": "Use original nominal stock after a reviewed selection, or export a folded projection as a flat",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/cad-design-choices-revision-r3.md",
-          "sha256": "7d9b5f7002701586d4914952e41569032f1bf9c9490b6075644c776fba809fd8",
-          "size_bytes": 6856
+          "sha256": "9b11da64a3a2152d9eef9c5166292ce81999abd300d62b7c9333a4fe751536d3",
+          "size_bytes": 6754
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/company-fabrication-capabilities-r4.md",
-          "sha256": "d85bd9ada5ea8be6b59c2da868a15f926ddb2e5cd084bb9717144b4fc1414c98",
-          "size_bytes": 11119
+          "sha256": "ed73ef7775bcfe77c5c6f998036cc64791b9bbe9eaecbf9c72730f49da447bd1",
+          "size_bytes": 10954
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/concept.png",
@@ -2058,38 +2128,38 @@
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/concept.svg",
-          "sha256": "d6908c403814a97bce660ea558afbb482277245f30c325663b94c61e5e469ed9",
-          "size_bytes": 1884
+          "sha256": "82304379ad96430d7f7f09b5a09cd33952b38d2c7711ecbe03486c56a53b9c8a",
+          "size_bytes": 1880
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md",
-          "sha256": "73562be510dd84d8a182a360bea74ec117829780a18fe4fd3fdf190a0226792f",
-          "size_bytes": 2616
+          "sha256": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+          "size_bytes": 2601
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/manufacturing-policy.md",
-          "sha256": "08a2e5b00692a7946ca2fcb22b0c33538c348fae00eead5c63abdd2557334e94",
-          "size_bytes": 959
+          "sha256": "a2ca35182be5025ad85062d272d49c5945cfe4bae6e5762063fb7a799166b58e",
+          "size_bytes": 949
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/prompt.txt",
-          "sha256": "955aa224aa49e086a599c0a026e3bb33c16248ce68551b59f2ed4e53cbfb1978",
-          "size_bytes": 705
+          "sha256": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+          "size_bytes": 702
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/scenario.json",
-          "sha256": "e20048dbfe199a222247a0aac56f81fc4c52582dd74ec31accc378f548f743d2",
-          "size_bytes": 1979
+          "sha256": "09883fe369edf3b6f838856acfa8ad226e2f354ed46b1bf4d8bc3fa4e7a0eecc",
+          "size_bytes": 1914
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/stock-selection-revision-r1.md",
-          "sha256": "ca8a5e59c4ee38b1ed41948dae08161504aa11709dcae12b96ca63b5aa9327b1",
-          "size_bytes": 4449
+          "sha256": "a8dd81c8a20f03e62e50976c7ad07dce36a3062657d0ec670620a110842cecaf",
+          "size_bytes": 4385
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/user-profile.md",
-          "sha256": "a934f69ae4195a507e60068d9f0dc1a14eab4c48558c44dd4bd86e60f27a1d32",
-          "size_bytes": 452
+          "sha256": "b1416c18cc2fcddfb0a0609e88ce2e60fe647800de3a74c0a49d51bb81235f00",
+          "size_bytes": 447
         }
       ],
       "support_status": "unsupported",
@@ -2127,17 +2197,17 @@
       "family": "sheet-metal-supplier-handoff",
       "source_requirements_seed": "Four-bend 400 mm trough; mounting-slot coordinates; interior/service-loop clearance after thickness offsets; allowed material mapping; current bend sequence and capability assumptions; quantity six",
       "targeted_defect_seed": "Check only exterior dimensions while interior clearance fails",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/cad-design-choices-revision-r3.md",
-          "sha256": "d13a8ed28469c28649a382482284435e8821ec5bc74690096261325427055d55",
-          "size_bytes": 7051
+          "sha256": "a089cb35a863cf2140ddafc7536a5de2a29eb7e146266c8f3ff3ef24034e2ccf",
+          "size_bytes": 6942
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/company-fabrication-capabilities-r4.md",
-          "sha256": "6a89413a86c6e57dcf78dec1b6b806d834c45170df4c914d6882eae300fdfaf3",
-          "size_bytes": 7533
+          "sha256": "ef1e6ca2f154a5fd9b901b91106c35eb5c78d88a038e4f2bf75821d65607d4be",
+          "size_bytes": 7412
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/concept.png",
@@ -2146,48 +2216,48 @@
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/concept.svg",
-          "sha256": "994a042b4f4c8dac370a70d04c787f21eeb206980e501d64ac1dc0cd7e3a0267",
-          "size_bytes": 1900
+          "sha256": "e9ebe78f11c291c298b5ee7cd52f4501fb1cf5f964ddcf3a5d596c57881053c0",
+          "size_bytes": 1896
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/context.md",
-          "sha256": "c530b63cb7500b8b5f6004d3b0cd4dcd147f0839eba381ce6ebb7e4d979dacf7",
-          "size_bytes": 2828
+          "sha256": "f2e3755db8a6af65b5bb9f75f7994a4327821dceae583b5b38edfda4ad33a94f",
+          "size_bytes": 2813
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/manufacturing-policy.md",
-          "sha256": "9e38999bc23a403ebce7a984eb2e46af5e72d7143b487454e8ca19f44827af67",
-          "size_bytes": 969
+          "sha256": "3c8f317bc290fbd340880acd91e176836c2e2652301212b4ff139bc08741ee44",
+          "size_bytes": 959
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/mounting-holes.csv",
-          "sha256": "3a2d7dcb1eb8ace12d672059625508382ee1152010acff83d523d197546619b4",
-          "size_bytes": 228
+          "sha256": "5bbebc8e8fb10bacaa4109c2a98513037961ab5894eade03ea8cdb191e5fd194",
+          "size_bytes": 223
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/native-label-revision-r2.md",
-          "sha256": "7d05b99242033318342e8e23d3eb010ba401c4a16627b9d305a0e4134806f7ac",
-          "size_bytes": 2751
+          "sha256": "67d0f1fc6beacb361b9d8df771d1e1890f326122e486f72456615c4602536a60",
+          "size_bytes": 2710
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/prompt.txt",
-          "sha256": "8abeef2b6be9fbcc4018feb0981702a26cf17cb53a55188f26a66668e7e8a290",
-          "size_bytes": 712
+          "sha256": "9838bd40b7fc0a828122427c179724fab1b3448ca910ba325e695598795e6de4",
+          "size_bytes": 709
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/scenario.json",
-          "sha256": "08f636fc6d6f3c96dd79cb788c4bd333b671c85d50e0ad961bbe33159df0a993",
-          "size_bytes": 2063
+          "sha256": "f5551c17e8f5f8423f6f771687d3118f47bff1331a485c1ceb31d1021ddd1ac2",
+          "size_bytes": 1996
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/stock-selection-revision-r1.md",
-          "sha256": "b987a438384789bce303fe06d9e02cf2fc5f57970fe37012044ffbacd031ce3f",
-          "size_bytes": 3948
+          "sha256": "d2710a429873629d2674027efffc85037d07c5312f86ef172636c4ea2f2875ea",
+          "size_bytes": 3889
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/user-profile.md",
-          "sha256": "f3742b186fc79603209928cd9ea2af3e89b7845f8fb3614a92414cf055fa397f",
-          "size_bytes": 456
+          "sha256": "dde5d36a88ed2c83c1efab130773133104052c151ad865a60f0614bc0388715d",
+          "size_bytes": 451
         }
       ],
       "support_status": "unsupported",
@@ -2225,17 +2295,17 @@
       "family": "sheet-metal-supplier-handoff",
       "source_requirements_seed": "Separate base and lid with six native/neutral/flat artifacts; 75 mm approved electronics keepout decision; panel CSV authority; slot banks, lid clearance and current forming assumptions; two bases plus two lids",
       "targeted_defect_seed": "Claim both original conflicting heights were satisfied unchanged, or omit one lid",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/cad-design-choices-revision-r3.md",
-          "sha256": "c7a03bbdffa9b1a2031975a9ee80efa9de4a702b417769b4a07d96d6b2653c50",
-          "size_bytes": 9065
+          "sha256": "93834f042a22ae3a7dffc153569342765a225790e4edb3e30d6c2adb4a60fba9",
+          "size_bytes": 8926
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/company-fabrication-capabilities-r4.md",
-          "sha256": "8b918e1b67255bbc0d6f47d7c6cbd2ca70e4a7148301e76b75020669e3176d88",
-          "size_bytes": 9283
+          "sha256": "09cbeb4ab2af24c9a6aea41a39956aaf363e616f4d1fd8f2c5f9b4f3cc6e5b6a",
+          "size_bytes": 9144
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/concept.png",
@@ -2244,43 +2314,43 @@
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/concept.svg",
-          "sha256": "3c7c3382194a813f6d66afb81d78e36c990c3fbfe1ea35302261406bc476c64b",
-          "size_bytes": 2082
+          "sha256": "f8f601e342d3517a826b28b809ef92b1061455ca7f41c0b7f1c369143269c0ed",
+          "size_bytes": 2078
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/context.md",
-          "sha256": "5f704f9a5381eb4724654e409c881c31613b0fb261f9bd724ef5f92b1ea88309",
-          "size_bytes": 3827
+          "sha256": "0f0ebff83000dc09576c5dcbb9d908860dba7616ba920270445a622c5a495a63",
+          "size_bytes": 3808
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/manufacturing-policy.md",
-          "sha256": "9f16ca062ad776fcdc775f0c9aa71e6c292eac69b966686413aa0a20b5b38f6c",
-          "size_bytes": 1271
+          "sha256": "0628d9fd0a61beceac289618ba7b211083a10f8946966f65aebea9c7ab0d2413",
+          "size_bytes": 1260
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/panel-cutouts.csv",
-          "sha256": "3788100efad2d94e19037c8be467ab6e6d23c0e180f60c972edb70b70a23733b",
-          "size_bytes": 265
+          "sha256": "1115a7ba81f85f7789fbb157cf7b3b0897c94ecb88b8322b05620365bab24885",
+          "size_bytes": 260
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/prompt.txt",
-          "sha256": "c84b0ac497ef38ced0287fc76a3ae51212199faade8df55e39e145052217ad60",
-          "size_bytes": 909
+          "sha256": "db96a9d00158b392542ceaf312df13b184114696892496ff5d9fb32bd768050a",
+          "size_bytes": 906
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/scenario.json",
-          "sha256": "f5c5f3d098f4584ca123563c2cdad84690185aa80a5c7f0d3a001c2fd665064d",
-          "size_bytes": 2612
+          "sha256": "de40b08d4ef47c2301db33dc6efe470135365d6117beb3c913f03b4e8cade2f8",
+          "size_bytes": 2519
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/stock-selection-revision-r1.md",
-          "sha256": "ba179bbd20b2e7e0bd84234e2b99a2a50ad3615aeced7a5f10269f39578af4d7",
-          "size_bytes": 4195
+          "sha256": "e32b985922ee5fb6758a8cae9d2275d0b3fb54ed91a150e5ae74f39853191e23",
+          "size_bytes": 4133
         },
         {
           "path": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/user-profile.md",
-          "sha256": "13aa7def1cd296ac59ba2e66c24efe3e03aad1b2b3b6253b43b206fcb957e7cd",
-          "size_bytes": 554
+          "sha256": "16afc2f8b6988f6b1b89250e269bdcd9b384b3df3013198aac5a319c74dcbee2",
+          "size_bytes": 549
         }
       ],
       "support_status": "unsupported",
@@ -2318,7 +2388,7 @@
       "family": "water-heater-sizing",
       "source_requirements_seed": "Actual approved kit schema/accepted values; 0.350 kg, 90 J/K vessel, declared losses/efficiency; full candidate set; lowest candidate meeting 180 s; refined integration",
       "targeted_defect_seed": "Return a correct calculation for the kit's default mass instead",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/concept.png",
@@ -2393,7 +2463,7 @@
       "family": "water-heater-sizing",
       "source_requirements_seed": "0.600 kg thermal model; 360 s and 800 W bounds; AC-side vs battery-side energy with 0.88 inverter efficiency; 70 Wh target",
       "targeted_defect_seed": "Compare heater energy directly against the battery-side limit",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/02-mobile-field-brewer/concept.png",
@@ -2473,7 +2543,7 @@
       "family": "water-heater-sizing",
       "source_requirements_seed": "1.500 kg model; all nine power/loss combinations where supported; select lowest candidate meeting 400 s in every case",
       "targeted_defect_seed": "Select from nominal losses only or silently drop an unsupported case",
-      "requirements_frozen": false,
+      "requirements_frozen": true,
       "sources": [
         {
           "path": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/03-pilot-batch-dispensing/concept.png",

@@ -22,7 +22,7 @@ CAPABILITIES = {
 
 SUPPORT_DEFINITIONS = {
     "qualified": "A frozen scenario profile and reader scope passed independent controls and a retained canonical process demonstration.",
-    "implemented": "A reusable runtime capability exists, but this scenario has no frozen and qualified profile for it.",
+    "implemented": "A reusable runtime capability and frozen profile exist, but the scenario has not passed every required qualification and retained demonstration.",
     "planned": "The extension is defined, but its scenario-specific profile or reader is not implemented and qualified.",
     "unavailable": "No bounded trustworthy runtime reader is currently available for this capability.",
 }
@@ -226,6 +226,69 @@ QUALIFIED = {
     },
 }
 
+IMPLEMENTED_PROFILES = {
+    "robot-tracking-diagnosis-01": {
+        "profile_resource": "robot-tracking-diagnosis-01",
+        "profile_ref": {
+            "id": "robot-tracking-diagnosis-01-full",
+            "version": "1",
+            "sha256": "0d3704713b050507ce0cdc1d54288eadac617fd54601362fdd4bd281144c582c",
+        },
+        "baseline_ref": {
+            "id": "robot-tracking-diagnosis-01-basis",
+            "version": "1",
+            "sha256": "17d6451a1e12dad10f74c8b095c996bad312ba27fa9763c69c7e6ad82491227b",
+        },
+        "reader_ids": ["structured@1", "tracking-timeline@1"],
+        "scope": "Traceable conversion, alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "limitations": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
+        "evidence": [
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py",
+        ],
+    },
+    "robot-tracking-diagnosis-02": {
+        "profile_resource": "robot-tracking-diagnosis-02",
+        "profile_ref": {
+            "id": "robot-tracking-diagnosis-02-full",
+            "version": "1",
+            "sha256": "6c7f0759d057cd6389c933d74bfbed1341e6df8cd5a2e3803dbe98e109c83db8",
+        },
+        "baseline_ref": {
+            "id": "robot-tracking-diagnosis-02-basis",
+            "version": "1",
+            "sha256": "d2855eaa739e67fe4a8df94c50d47abc4b538ff7753a5230f3a314ebbfb388a2",
+        },
+        "reader_ids": ["structured@1", "tracking-timeline@1"],
+        "scope": "Traceable conversion, spatial/time alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "limitations": "The retained output contains false gap records and required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
+        "evidence": [
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py",
+        ],
+    },
+    "robot-tracking-diagnosis-03": {
+        "profile_resource": "robot-tracking-diagnosis-03",
+        "profile_ref": {
+            "id": "robot-tracking-diagnosis-03-full",
+            "version": "1",
+            "sha256": "19f58fd4bb6351737ae733c5610b0db9107594386dfa3caf8ed76cefa61628cc",
+        },
+        "baseline_ref": {
+            "id": "robot-tracking-diagnosis-03-basis",
+            "version": "1",
+            "sha256": "200605741a81745b82408656a1d12bdae388e74b5e3a86dbfbe0beb457976656",
+        },
+        "reader_ids": ["structured@1", "tracking-timeline@1"],
+        "scope": "Traceable conversion, missing-sample preservation, retained timeline metrics, wrapped yaw, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "limitations": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
+        "evidence": [
+            "tests/external/process_validation/test_tracking.py",
+            "tests/external/process_validation/test_tracking_profiles.py",
+        ],
+    },
+}
+
 
 def _capability(family: str, scenario_id: str, capability_id: str) -> dict:
     if scenario_id in QUALIFIED:
@@ -233,6 +296,11 @@ def _capability(family: str, scenario_id: str, capability_id: str) -> dict:
         scope = QUALIFIED[scenario_id]["scope"]
         limitation = QUALIFIED[scenario_id]["limitations"]
         evidence = QUALIFIED[scenario_id]["evidence"]
+    elif scenario_id in IMPLEMENTED_PROFILES:
+        support = "implemented"
+        scope = IMPLEMENTED_PROFILES[scenario_id]["scope"]
+        limitation = IMPLEMENTED_PROFILES[scenario_id]["limitations"]
+        evidence = IMPLEMENTED_PROFILES[scenario_id]["evidence"]
     elif (family, capability_id) in GENERIC_IMPLEMENTED:
         support = "implemented"
         scope = "Generic bounded structured JSON/CSV/text inspection only."
@@ -286,16 +354,28 @@ def build(root: Path) -> dict:
                 }
             )
         qualified = QUALIFIED.get(case_id)
+        implemented = IMPLEMENTED_PROFILES.get(case_id)
+        baseline_path = (
+            root
+            / "packages/workspace_service/src/workspace_service/process_validation/baselines"
+            / f"{case_id}.json"
+        )
+        if not baseline_path.is_file():
+            raise ValueError(f"Missing frozen baseline: {case_id}")
         entries.append(
             {
                 "scenario_id": case_id,
                 "family": family,
                 "source_requirements_seed": requirements,
                 "targeted_defect_seed": defect,
-                "requirements_frozen": qualified is not None,
+                "requirements_frozen": True,
                 "sources": sources,
-                "support_status": "qualified" if qualified else "unsupported",
-                "profile": qualified,
+                "support_status": "qualified"
+                if qualified
+                else "implemented"
+                if implemented
+                else "unsupported",
+                "profile": qualified or implemented,
                 "capabilities": [
                     _capability(family, case_id, item) for item in CAPABILITIES[family]
                 ],
