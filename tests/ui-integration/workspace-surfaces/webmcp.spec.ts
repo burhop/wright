@@ -38,9 +38,8 @@ async function installFakeSocket(page: Page): Promise<void> {
 async function register(page: Page, surfaceId: string): Promise<void> {
   await page.goto("/");
   await page.evaluate(async (selectedSurface) => {
-    const module = await import(
-      "/src/services/surfaces/webmcp/wright-surface-sdk.ts"
-    );
+    const module =
+      await import("/src/services/surfaces/webmcp/wright-surface-sdk.ts");
     const sdk = new module.WrightSurfaceSdk({ origin: location.origin });
     const controller = new AbortController();
     (window as any).__webmcp = { sdk, controller, calls: [] as unknown[] };
@@ -97,17 +96,25 @@ async function register(page: Page, surfaceId: string): Promise<void> {
 test("scopes identical tools, falls back without native WebMCP, denies stale scope, and tears down", async ({
   browser,
 }) => {
+  test.setTimeout(60_000);
   const first = await browser.newPage();
   const second = await browser.newPage();
   await installFakeSocket(first);
   await installFakeSocket(second);
-  await Promise.all([register(first, "surface-a"), register(second, "surface-b")]);
+  // Keep both registrations active, but load the Vite-served SDK serially. Two
+  // simultaneous cold imports can starve WebKit's page evaluation on Windows.
+  await register(first, "surface-a");
+  await register(second, "surface-b");
 
   expect(await first.evaluate(() => "modelContext" in document)).toBe(false);
   expect(await second.evaluate(() => "modelContext" in document)).toBe(false);
   const bindings = await Promise.all([
-    first.evaluate(() => JSON.parse((window as any).__webmcp.socket.sent[0]).binding),
-    second.evaluate(() => JSON.parse((window as any).__webmcp.socket.sent[0]).binding),
+    first.evaluate(
+      () => JSON.parse((window as any).__webmcp.socket.sent[0]).binding,
+    ),
+    second.evaluate(
+      () => JSON.parse((window as any).__webmcp.socket.sent[0]).binding,
+    ),
   ]);
   expect(bindings.map((value) => value.surfaceId)).toEqual([
     "surface-a",
@@ -131,14 +138,18 @@ test("scopes identical tools, falls back without native WebMCP, denies stale sco
       payload: { partId: "stale" },
     });
   });
-  expect(await first.evaluate(() => (window as any).__webmcp.calls)).toEqual([]);
+  expect(await first.evaluate(() => (window as any).__webmcp.calls)).toEqual(
+    [],
+  );
 
   await first.evaluate(() => (window as any).__webmcp.controller.abort());
   await expect
     .poll(() =>
       first.evaluate(() => {
         const sent = (window as any).__webmcp.socket.sent.map(JSON.parse);
-        return sent.some((message: any) => message.operation === "webmcp.unregister");
+        return sent.some(
+          (message: any) => message.operation === "webmcp.unregister",
+        );
       }),
     )
     .toBe(true);
