@@ -322,6 +322,21 @@ for _scenario_id, _profile_sha, _baseline_sha in (
         "evidence": ["tests/external/process_validation/test_harness.py", "tests/external/process_validation/test_harness_profiles.py"],
     }
 
+for _scenario_id, _profile_sha, _baseline_sha in (
+    ("water-heater-sizing-01", "50cbd44da2968007256b4826d4aa4b4f7ca0783f001ac6372c58143ef4e2705c", "6f83a7235a75361b4fc8168f288d6d4277601dce31d88949bf8c7294c8b1f741"),
+    ("water-heater-sizing-02", "bb1998684bf64f76a576fb101a434e3297caeab6f881a9386d7e48317b667cc5", "5e2ab52fe2ca956a0e207e7f1d93601a9ed0ab88a03d8759955d791dbedd9e66"),
+    ("water-heater-sizing-03", "e4ea406d1eb765a967c5405f075e2f670ba39586f7f353fca2057b3715e4785a", "84ba8e72f5de5df5f687a9bbb112da23b89fd71f2aeb037fa784d00d1495eae0"),
+):
+    IMPLEMENTED_PROFILES[_scenario_id] = {
+        "profile_resource": _scenario_id,
+        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
+        "reader_ids": ["structured@1", "water-heater-timeline@1"],
+        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
+        "evidence": ["tests/external/process_validation/test_water_heater.py", "tests/external/process_validation/test_water_heater_profiles.py"],
+    }
+
 FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {

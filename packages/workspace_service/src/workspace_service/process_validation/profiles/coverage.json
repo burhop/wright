@@ -2800,25 +2800,75 @@
           "size_bytes": 286
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "water-heater-sizing-01",
+        "profile_ref": {
+          "id": "water-heater-sizing-01-full",
+          "version": "1",
+          "sha256": "50cbd44da2968007256b4826d4aa4b4f7ca0783f001ac6372c58143ef4e2705c"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-01-basis",
+          "version": "1",
+          "sha256": "6f83a7235a75361b4fc8168f288d6d4277601dce31d88949bf8c7294c8b1f741"
+        },
+        "reader_ids": [
+          "structured@1",
+          "water-heater-timeline@1"
+        ],
+        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_water_heater.py",
+          "tests/external/process_validation/test_water_heater_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "water-heater-sizing-01",
+        "profile_ref": {
+          "id": "water-heater-sizing-01-full",
+          "version": "1",
+          "sha256": "50cbd44da2968007256b4826d4aa4b4f7ca0783f001ac6372c58143ef4e2705c"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-01-basis",
+          "version": "1",
+          "sha256": "6f83a7235a75361b4fc8168f288d6d4277601dce31d88949bf8c7294c8b1f741"
+        },
+        "reader_ids": [
+          "structured@1",
+          "water-heater-timeline@1"
+        ],
+        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_water_heater.py",
+          "tests/external/process_validation/test_water_heater_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "numerical.timeseries",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+          "limitation": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
           "extension_recipe": "numerical.timeseries",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_water_heater.py",
+            "tests/external/process_validation/test_water_heater_profiles.py"
+          ]
         },
         {
           "id": "modelica.model",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+          "limitation": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
           "extension_recipe": "modelica.model",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_water_heater.py",
+            "tests/external/process_validation/test_water_heater_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -2881,25 +2931,75 @@
           "size_bytes": 301
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "water-heater-sizing-02",
+        "profile_ref": {
+          "id": "water-heater-sizing-02-full",
+          "version": "1",
+          "sha256": "bb1998684bf64f76a576fb101a434e3297caeab6f881a9386d7e48317b667cc5"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-02-basis",
+          "version": "1",
+          "sha256": "5e2ab52fe2ca956a0e207e7f1d93601a9ed0ab88a03d8759955d791dbedd9e66"
+        },
+        "reader_ids": [
+          "structured@1",
+          "water-heater-timeline@1"
+        ],
+        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_water_heater.py",
+          "tests/external/process_validation/test_water_heater_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "water-heater-sizing-02",
+        "profile_ref": {
+          "id": "water-heater-sizing-02-full",
+          "version": "1",
+          "sha256": "bb1998684bf64f76a576fb101a434e3297caeab6f881a9386d7e48317b667cc5"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-02-basis",
+          "version": "1",
+          "sha256": "5e2ab52fe2ca956a0e207e7f1d93601a9ed0ab88a03d8759955d791dbedd9e66"
+        },
+        "reader_ids": [
+          "structured@1",
+          "water-heater-timeline@1"
+        ],
+        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_water_heater.py",
+          "tests/external/process_validation/test_water_heater_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "numerical.timeseries",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+          "limitation": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
           "extension_recipe": "numerical.timeseries",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_water_heater.py",
+            "tests/external/process_validation/test_water_heater_profiles.py"
+          ]
         },
         {
           "id": "modelica.model",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+          "limitation": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
           "extension_recipe": "modelica.model",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_water_heater.py",
+            "tests/external/process_validation/test_water_heater_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -2962,25 +3062,75 @@
           "size_bytes": 338
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "water-heater-sizing-03",
+        "profile_ref": {
+          "id": "water-heater-sizing-03-full",
+          "version": "1",
+          "sha256": "e4ea406d1eb765a967c5405f075e2f670ba39586f7f353fca2057b3715e4785a"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-03-basis",
+          "version": "1",
+          "sha256": "84ba8e72f5de5df5f687a9bbb112da23b89fd71f2aeb037fa784d00d1495eae0"
+        },
+        "reader_ids": [
+          "structured@1",
+          "water-heater-timeline@1"
+        ],
+        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_water_heater.py",
+          "tests/external/process_validation/test_water_heater_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "water-heater-sizing-03",
+        "profile_ref": {
+          "id": "water-heater-sizing-03-full",
+          "version": "1",
+          "sha256": "e4ea406d1eb765a967c5405f075e2f670ba39586f7f353fca2057b3715e4785a"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-03-basis",
+          "version": "1",
+          "sha256": "84ba8e72f5de5df5f687a9bbb112da23b89fd71f2aeb037fa784d00d1495eae0"
+        },
+        "reader_ids": [
+          "structured@1",
+          "water-heater-timeline@1"
+        ],
+        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
+        "evidence": [
+          "tests/external/process_validation/test_water_heater.py",
+          "tests/external/process_validation/test_water_heater_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "numerical.timeseries",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+          "limitation": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
           "extension_recipe": "numerical.timeseries",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_water_heater.py",
+            "tests/external/process_validation/test_water_heater_profiles.py"
+          ]
         },
         {
           "id": "modelica.model",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+          "limitation": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
           "extension_recipe": "modelica.model",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_water_heater.py",
+            "tests/external/process_validation/test_water_heater_profiles.py"
+          ]
         }
       ],
       "initial_slice": false

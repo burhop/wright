@@ -34,6 +34,7 @@ from .readers.structured import StructuredReader
 from .readers.step_box import StepBoundingBoxReader
 from .readers.thermal import ThermalFieldReader
 from .readers.tracking import TrackingTimelineReader
+from .readers.water_heater import WaterHeaterTimelineReader
 from .reporting import build_report, export_report
 
 logger = structlog.get_logger(__name__)
@@ -116,6 +117,7 @@ class ProcessValidationService:
             registry.register(StepBoundingBoxReader())
             registry.register(ThermalFieldReader())
             registry.register(TrackingTimelineReader())
+            registry.register(WaterHeaterTimelineReader())
         self.registry = registry
 
     def _outcome(self, attempt):

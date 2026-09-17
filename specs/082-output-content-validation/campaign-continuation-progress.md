@@ -70,8 +70,16 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   its copper-only result leaves `total_drop_v` null; those cases correctly remain
   invalid rather than receiving credit from their producer success flags.
   Profile/coverage tests: `11 passed in 4.24s`; Ruff passed.
+- All three water-heater profiles are now frozen and implemented. A reusable
+  timeline reader validates the exact candidate/loss grid, initial conditions,
+  electrical-to-thermal efficiency, complete one-second baseline grid, Modelica
+  event-time duplicates, interpolated first 90 °C crossings and lowest feasible
+  selection. Retained trajectories pass those independent checks but each
+  parameter summary omits the required `wright-water-heater-v1@0.1.0` identity,
+  producing targeted `kit-id` and `kit-version` findings. Focused tests:
+  `34 passed in 5.17s`; Ruff passed.
 
 ## Next action
 
-C010–C012: implement the next reusable three-case family and keep the nine full
-robot, heat and harness profiles pending their exact review/correction evidence.
+C010–C012: implement the next reusable three-case family and keep the twelve full
+robot, heat, harness and water profiles pending exact review/correction evidence.
