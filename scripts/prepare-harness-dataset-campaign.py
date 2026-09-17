@@ -12,6 +12,7 @@ from workspace_service.workflow_integration_policy import LOCAL_REVIEW_BINDING, 
 ROOT=Path(__file__).resolve().parents[1]
 BINDING=ROOT/"tests/datasets/engineering-workflows/bindings/sensor-fan-harness.json"
 TEMPLATE=ROOT/"packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/sensor-fan-harness.workflow.wflow"
+VALIDATION_COVERAGE=ROOT/"packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 spec=importlib.util.spec_from_file_location("harness_prepare_helpers",ROOT/"scripts/prepare-printed-dataset-campaign.py")
 helpers=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
@@ -78,14 +79,55 @@ def prepare(args,directory,available):
         counts={int(row["pins"]) for row in csv.DictReader(stream) if not row["connector"].endswith("_power_splices")}
     extras=["generated/shield-termination.json"]+[f"generated/manufacturer-mating-view-{side}{count}.png" for count in sorted(counts) for side in ("plug","socket")]
     stages["generate_harness"]["fields"]["settings"]["expected_files"] += "\n"+"\n".join(output+"/"+name for name in extras)
+    generated_files={
+        "plan":output+"/generated/harness-plan.svg",
+        "pin_schedule":output+"/generated/pin-schedule.csv",
+        "cut_list":output+"/generated/cut-list.csv",
+        "bom":output+"/generated/bom.csv",
+        "assembly":output+"/generated/assembly.md",
+    }
+    if identity.endswith("03"):
+        generated_files["shield"]=output+"/generated/shield-termination.json"
+    stages["generate_harness"]["fields"]["outputs"].extend(helpers.port(role,"workspace_file") for role in generated_files)
+    stages["generate_harness"]["fields"]["settings"]["expected_file_ports"]=generated_files
     helpers.add_reference(sections,research_ref,stages["generate_harness"],"retrieved_parts")
     verified=bind(stages["verify_harness"],f"Call verify_harness_package once with input_directory={inputs!r}, research_directory={output+'/research'!r}, generated_directory={output+'/generated'!r}, output_directory={output+'/verified'!r}, operation_source_document={inputs+'/harness_engineering_operations.py'!r}. Inspect the actual emitted native netlist independently, compare original customer nets/reserves, solve shared startup and continuous currents and calculate both initial assumed-wire and sourced-wire copper drops. Unknown contact resistance must remain unknown, never zero. Report rejected nets/underrated parts/excessive copper drop; missing application derating or fan data is explicit release HOLD, never electrical approval.","verification-report.json",["verified/verification.json","verified/voltage-drop.json","verified/independent-netlist.csv"])
+    verified_files={"netlist":output+"/verified/independent-netlist.csv","voltage_drop":output+"/verified/voltage-drop.json"}
+    stages["verify_harness"]["fields"]["outputs"].extend(helpers.port(role,"workspace_file") for role in verified_files)
+    stages["verify_harness"]["fields"]["settings"]["expected_file_ports"]=verified_files
     helpers.add_reference(sections,generated,stages["verify_harness"],"actual_native_package")
     final=new_task("collect_harness","Collect generated harness documents and engineering findings")
-    bind(final,"Write the final engineering handoff index for this real attempt, with exact links to native diagram/YAML/BOM, pins/cuts, assembly, source records and independent voltage/net checks. Address original human prompt/context and preserve all release HOLD/rejected findings; never claim total voltage drop or electrical release was validated. Include missing exact device/chassis/derating evidence as next engineering actions. No correctness-validation dashboard credit is authorized.","harness-handoff.md",tool=False)
+    handoff=bind(final,"Write the final engineering handoff index for this real attempt, with exact links to native diagram/YAML/BOM, pins/cuts, assembly, source records and independent voltage/net checks. Address original human prompt/context and preserve all release HOLD/rejected findings; never claim total voltage drop or electrical release was validated. Include missing exact device/chassis/derating evidence as next engineering actions. The following process validator determines requirements-compliance credit from the exact current outputs.","harness-handoff.md",tool=False)
     helpers.add_reference(sections,verified,final,"independent_findings")
     helpers.add_reference(sections,generated,final,"native_package")
-    for left,right in ((research["id"],gate["id"]),(stages["verify_harness"]["id"],final["id"])):
+    coverage=json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support=next(row for row in coverage["scenarios"] if row["scenario_id"]==identity)
+    profile=support.get("full_profile")
+    if not profile:
+        raise ValueError("The harness full validator profile is unavailable")
+    profile_document=json.loads((ROOT/"packages/workspace_service/src/workspace_service/process_validation/profiles"/(profile["profile_resource"]+".json")).read_text(encoding="utf-8"))
+    final_review=new_task("review_harness_outputs","Review exact harness package and handoff")
+    final_review["fields"].update(step_type="review",performed_by="engineer",inputs=[],outputs=[],instructions="Review the exact basis, native harness plan, assembly/shield evidence and final handoff against every frozen review requirement. Preserve all release HOLD findings; approval is not physical electrical qualification.",
+        settings={"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":LOCAL_REVIEW_BINDING,"approval_destination":LOCAL_REVIEW_DESTINATION,
+            "approval_settings":{"review_task_id":final_review["id"],"validation_review":{"profile_ref":profile["profile_ref"],"requirement_ids":sorted(req["id"] for req in profile_document["baseline"]["requirements"] if req["review_required"])}},
+            "approval_action":{"kind":"local_review","mode":"review_only"}})
+    review_sources={"basis":research_ref,"plan":stages["generate_harness"]["id"]+".plan","handoff":handoff}
+    if identity.endswith("03"):
+        review_sources.update(shield=stages["generate_harness"]["id"]+".shield",assembly=stages["generate_harness"]["id"]+".assembly")
+    for role,source_ref in review_sources.items():
+        helpers.add_reference(sections,source_ref,final_review,"review_"+role,"workspace_file" if role not in {"basis","handoff"} else "engineering_document")
+    validation_sources={
+        "basis":(research,research["fields"]["outputs"][0]["key"],"engineering_document"),
+        **{role:(stages["generate_harness"],role,"workspace_file") for role in generated_files},
+        **{role:(stages["verify_harness"],role,"workspace_file") for role in verified_files},
+        "handoff":(final,final["fields"]["outputs"][0]["key"],"engineering_document"),
+    }
+    validator=new_task("validate_harness_content","Validate current harness outputs")
+    validator["fields"].update(performed_by="configured_tool",inputs=[helpers.port("validate_"+role,kind) for role,(_,_,kind) in validation_sources.items()],outputs=[helpers.port("assessment")],prompt="",
+        settings={"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"packaged","name":profile["profile_resource"],"reference":profile["profile_ref"]},"baseline":profile["baseline_ref"],"subjects":{role:"validate_"+role for role in validation_sources}}})
+    for role,(producer,producer_port,_) in validation_sources.items():
+        sections.append({"kind":"connection","id":"bind_"+validator["id"]+"_"+role,"fields":{"type":"item","from":producer["id"]+"."+producer_port,"to":validator["id"]+".validate_"+role,"label":"current harness output to validate","when":None}})
+    for left,right in ((research["id"],gate["id"]),(stages["verify_harness"]["id"],final["id"]),(final["id"],final_review["id"]),(final_review["id"],validator["id"])):
         sections.append({"kind":"connection","id":"order_"+left+"_"+right,"fields":{"type":"order","from":left,"to":right,"label":"same canonical execution","when":None}})
     result=helpers.render(sections)
     validate_workspace_authoring_shape(result)

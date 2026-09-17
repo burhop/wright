@@ -308,9 +308,9 @@ IMPLEMENTED_PROFILES = {
 }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sensor-fan-harness-01", "eddd68314f61e6ac107009d923cc2c80ef5956cdd0f529a3b77dffbed15f5ca5", "0a17c7a175b00f57d758068762bc76bf294dfe19028b400bedaf893a24c68eb1"),
-    ("sensor-fan-harness-02", "39feee2cbf5cd848bc8f43087073f166b1d186fd18670761169399c88928c66a", "f2d5bbbddc28104471bd5ee9da4434fe18288e082f3f3ed145c0549cef091c6c"),
-    ("sensor-fan-harness-03", "a483f3c85cf24565d29580c20c97d55c96e8d79ab7e0d058d2a0b8b75be1dd86", "fa7d92b76771ed1305ef37510c65b4756a16ae6541291d9bdd67aaeb1eec7d87"),
+    ("sensor-fan-harness-01", "97a33702f0b514d708acc230b9050b4fe008e26b07cfd971bcce319a3c4fa361", "0a17c7a175b00f57d758068762bc76bf294dfe19028b400bedaf893a24c68eb1"),
+    ("sensor-fan-harness-02", "c69a16f21c8186de0c9d5d2ae00f1a2b8ef7e8624584be7e61372874eebbd547", "f2d5bbbddc28104471bd5ee9da4434fe18288e082f3f3ed145c0549cef091c6c"),
+    ("sensor-fan-harness-03", "f7ecf7d518f54d2269dd9cdbe550c69601d2c310d80911f3af7a8785ab5bb88e", "fa7d92b76771ed1305ef37510c65b4756a16ae6541291d9bdd67aaeb1eec7d87"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,

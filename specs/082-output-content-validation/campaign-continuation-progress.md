@@ -190,8 +190,16 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   geometry. Review authority matching now requires the exact subjects used by
   review checks, while the remaining subjects stay under independent automated
   checks. Jig/profile/runtime regression: `37 passed in 6.43s`; Ruff passed.
+- All three sensor-fan harness workflows now expose the generated plan, pin
+  schedule, cut list, BOM, assembly instructions, case-03 shield record,
+  independent netlist, voltage-drop result, design basis and handoff to their
+  full profiles. A post-output engineer checkpoint pins every matching review
+  requirement and the exact reviewed subjects before validation. The retained
+  null total-drop defect can therefore reach the canonical gate as an actionable
+  failure once the provider resumes. Harness/profile/runtime regression:
+  `44 passed in 6.83s`; Ruff passed.
 
 ## Next action
 
-C012–C014: prove an actionable retained-output defect through the canonical
-gate, then expand the integration pattern to the remaining family preparers.
+C012–C014: integrate the water-heater workflows, then prove an actionable
+retained-output defect through the canonical gate when the provider resumes.

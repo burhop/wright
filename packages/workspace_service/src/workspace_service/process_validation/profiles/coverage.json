@@ -2526,7 +2526,7 @@
         "profile_ref": {
           "id": "sensor-fan-harness-01-full",
           "version": "1",
-          "sha256": "eddd68314f61e6ac107009d923cc2c80ef5956cdd0f529a3b77dffbed15f5ca5"
+          "sha256": "97a33702f0b514d708acc230b9050b4fe008e26b07cfd971bcce319a3c4fa361"
         },
         "baseline_ref": {
           "id": "sensor-fan-harness-01-basis",
@@ -2549,7 +2549,7 @@
         "profile_ref": {
           "id": "sensor-fan-harness-01-full",
           "version": "1",
-          "sha256": "eddd68314f61e6ac107009d923cc2c80ef5956cdd0f529a3b77dffbed15f5ca5"
+          "sha256": "97a33702f0b514d708acc230b9050b4fe008e26b07cfd971bcce319a3c4fa361"
         },
         "baseline_ref": {
           "id": "sensor-fan-harness-01-basis",
@@ -2652,7 +2652,7 @@
         "profile_ref": {
           "id": "sensor-fan-harness-02-full",
           "version": "1",
-          "sha256": "39feee2cbf5cd848bc8f43087073f166b1d186fd18670761169399c88928c66a"
+          "sha256": "c69a16f21c8186de0c9d5d2ae00f1a2b8ef7e8624584be7e61372874eebbd547"
         },
         "baseline_ref": {
           "id": "sensor-fan-harness-02-basis",
@@ -2675,7 +2675,7 @@
         "profile_ref": {
           "id": "sensor-fan-harness-02-full",
           "version": "1",
-          "sha256": "39feee2cbf5cd848bc8f43087073f166b1d186fd18670761169399c88928c66a"
+          "sha256": "c69a16f21c8186de0c9d5d2ae00f1a2b8ef7e8624584be7e61372874eebbd547"
         },
         "baseline_ref": {
           "id": "sensor-fan-harness-02-basis",
@@ -2778,7 +2778,7 @@
         "profile_ref": {
           "id": "sensor-fan-harness-03-full",
           "version": "1",
-          "sha256": "a483f3c85cf24565d29580c20c97d55c96e8d79ab7e0d058d2a0b8b75be1dd86"
+          "sha256": "f7ecf7d518f54d2269dd9cdbe550c69601d2c310d80911f3af7a8785ab5bb88e"
         },
         "baseline_ref": {
           "id": "sensor-fan-harness-03-basis",
@@ -2801,7 +2801,7 @@
         "profile_ref": {
           "id": "sensor-fan-harness-03-full",
           "version": "1",
-          "sha256": "a483f3c85cf24565d29580c20c97d55c96e8d79ab7e0d058d2a0b8b75be1dd86"
+          "sha256": "f7ecf7d518f54d2269dd9cdbe550c69601d2c310d80911f3af7a8785ab5bb88e"
         },
         "baseline_ref": {
           "id": "sensor-fan-harness-03-basis",

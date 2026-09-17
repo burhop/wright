@@ -199,7 +199,7 @@ def build(scenario_id, directory):
             "limitations": [
                 "Physical fabrication, energizing, purchasing and production certification remain outside this digital validation gate."
             ],
-            "supported_kinds": ["file"],
+            "supported_kinds": ["file", "value"],
         }
     )
 
