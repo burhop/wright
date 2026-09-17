@@ -25,6 +25,10 @@ TEMPLATE = (
 CONFIG = (
     ROOT / "tests/datasets/engineering-workflows/bindings/sensor-interface-pcb.json"
 )
+VALIDATION_COVERAGE = (
+    ROOT
+    / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
+)
 spec = importlib.util.spec_from_file_location(
     "pcb_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py"
 )
@@ -36,6 +40,20 @@ def prepare(args, directory):
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
     manifest = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
     identity = manifest["scenario_id"]
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(
+        row for row in coverage["scenarios"] if row["scenario_id"] == identity
+    )
+    profile = support.get("full_profile")
+    if not profile:
+        raise ValueError("The PCB full validator profile is unavailable")
+    profile_document = json.loads(
+        (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+            / (profile["profile_resource"] + ".json")
+        ).read_text(encoding="utf-8")
+    )
     suffix = identity.replace("-", "_") + "_" + args.attempt.replace("-", "_")
     workspace = Path(args.workspace_root).resolve()
     draft = Path(args.draft_root).resolve() / identity / args.attempt
@@ -191,7 +209,16 @@ def prepare(args, directory):
                     "schema": h.digest(b"wright.local_review.v1"),
                 },
                 "approval_destination": {"kind": "local_review", "id": "workspace"},
-                "approval_settings": {},
+                "approval_settings": {
+                    "validation_review": {
+                        "profile_ref": profile["profile_ref"],
+                        "requirement_ids": sorted(
+                            requirement["id"]
+                            for requirement in profile_document["baseline"]["requirements"]
+                            if requirement["review_required"]
+                        ),
+                    }
+                },
                 "approval_action": {"kind": "local_review", "mode": "review_only"},
             },
         },
@@ -356,12 +383,33 @@ def prepare(args, directory):
         "design.kicad_sch",
         seal=True,
     )
+    final_native = {
+        "board": (copy_final_pcb, "design.kicad_pcb"),
+        "schematic": (copy_final_sch, "design.kicad_sch"),
+    }
+    for role, (producer, filename) in final_native.items():
+        producer["fields"]["outputs"].append(h.port(role, "workspace_file"))
+        producer["fields"]["settings"]["expected_file_ports"] = {
+            role: output + "/" + filename
+        }
     bind(
         stages["verify_and_export"],
         f"The final native PCB, project and schematic are immutable copies. Use only read-only inspection and native CLI checks/exports here; never call board save, finalize, autofix, project rule edits or any native geometry/routing mutation. Independently inspect actual schematic and board with analyze/pcb read operations and compare exact nets, pinout, dimensions and constraints against original CSVs. Run native_rule_check(kind='erc',source_path='{native}/design.kicad_sch',report_path='{native}/erc.json') and kind='drc' on design.kicad_pcb to '{native}/drc.json'. Use actual native results, not schematic.validate alone. Block fabrication export on any unreviewed ERC/DRC error; do not downgrade severities or waive input errors. Once clear, export(operation='bom_csv',project_path='{native}/design.kicad_sch') producing design_bom.csv and export(operation='gerbers',pcb_path='{native}/design.kicad_pcb',output_dir='{native}/gerbers',create_zip=True). Require actual copper, outline and drill files and archive identities. Keep exact check findings and every unresolved rating assumption; no production-ready claim.",
         "verification-evidence.md",
         config["expected_verification_files"],
     )
+    verification_files = {
+        "bom": output + "/design_bom.csv",
+        "fabrication": output + "/design-gerbers.zip",
+        "erc": output + "/erc.json",
+        "drc": output + "/drc.json",
+    }
+    stages["verify_and_export"]["fields"]["outputs"].extend(
+        h.port(role, "workspace_file") for role in verification_files
+    )
+    stages["verify_and_export"]["fields"]["settings"][
+        "expected_file_ports"
+    ] = verification_files
     h.add_reference(sections, routed, stages["verify_and_export"], "routed_board")
     h.add_reference(sections, basis, stages["verify_and_export"], "original_basis")
     chain = [
@@ -383,6 +431,70 @@ def prepare(args, directory):
         copy_final_sch,
         stages["verify_and_export"],
     ]
+    validation_sources = {
+        "basis": (
+            stages["capture_electrical_basis"],
+            stages["capture_electrical_basis"]["id"] + "_result",
+            "engineering_document",
+        ),
+        "board": (copy_final_pcb, "board", "workspace_file"),
+        "schematic": (copy_final_sch, "schematic", "workspace_file"),
+        **{
+            role: (stages["verify_and_export"], role, "workspace_file")
+            for role in verification_files
+        },
+    }
+    validator = {
+        "kind": "task",
+        "id": "validate_pcb_content_" + suffix,
+        "fields": {
+            "name": "Validate current PCB outputs",
+            "purpose": "Check the exact native design and fabrication package",
+            "step_type": "work",
+            "group": None,
+            "performed_by": "configured_tool",
+            "inputs": [
+                h.port("validate_" + role, kind)
+                for role, (_, _, kind) in validation_sources.items()
+            ],
+            "outputs": [h.port("assessment")],
+            "prompt": "",
+            "tool": None,
+            "reusable_step": None,
+            "settings": {
+                "authoring_template": "process-validator",
+                "output_format": "json",
+                "max_revisions": 0,
+                "validation": {
+                    "profile": {
+                        "source": "packaged",
+                        "name": profile["profile_resource"],
+                        "reference": profile["profile_ref"],
+                    },
+                    "baseline": profile["baseline_ref"],
+                    "subjects": {
+                        role: "validate_" + role for role in validation_sources
+                    },
+                },
+            },
+        },
+    }
+    sections.append(validator)
+    for role, (producer, producer_port, _) in validation_sources.items():
+        sections.append(
+            {
+                "kind": "connection",
+                "id": "bind_" + validator["id"] + "_" + role,
+                "fields": {
+                    "type": "item",
+                    "from": producer["id"] + "." + producer_port,
+                    "to": validator["id"] + ".validate_" + role,
+                    "label": "current PCB output to validate",
+                    "when": None,
+                },
+            }
+        )
+    chain.append(validator)
     for first, last in zip(chain, chain[1:]):
         sections.append(
             {

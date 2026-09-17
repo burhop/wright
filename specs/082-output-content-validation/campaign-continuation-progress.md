@@ -206,8 +206,15 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   validation. This makes the retained missing kit ID/version findings reachable
   through the canonical gate. Modelica/preparer/profile/runtime regression:
   `50 passed in 10.10s`; Ruff passed.
+- All three sensor-interface PCB workflows now bind the immutable electrical
+  basis response plus the final native board, schematic, BOM, fabrication
+  archive and ERC/DRC records to their full profiles. The existing engineer
+  basis checkpoint pins the complete review requirement set and exact basis
+  digest; the terminal validator consumes the independently created native
+  artifacts. PCB/preparer/profile/runtime regression: `44 passed in 7.78s`;
+  Ruff passed.
 
 ## Next action
 
-C012–C014: integrate the PCB workflows, then prove an actionable retained-output
-defect through the canonical gate when the provider resumes.
+C012–C014: integrate the printed-part workflows, then prove an actionable
+retained-output defect through the canonical gate when the provider resumes.

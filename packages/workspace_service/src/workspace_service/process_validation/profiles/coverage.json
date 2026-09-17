@@ -2899,7 +2899,7 @@
         "profile_ref": {
           "id": "sensor-interface-pcb-01-full",
           "version": "1",
-          "sha256": "475534cde9bfc17074a0e884832b3652a427bbc56177a742be46d0bd4469712a"
+          "sha256": "7feca0634fbfa9b1e80f7b9f3b100d656c4ae06d67c97e565ee1d0a4c1a6f192"
         },
         "baseline_ref": {
           "id": "sensor-interface-pcb-01-basis",
@@ -2922,7 +2922,7 @@
         "profile_ref": {
           "id": "sensor-interface-pcb-01-full",
           "version": "1",
-          "sha256": "475534cde9bfc17074a0e884832b3652a427bbc56177a742be46d0bd4469712a"
+          "sha256": "7feca0634fbfa9b1e80f7b9f3b100d656c4ae06d67c97e565ee1d0a4c1a6f192"
         },
         "baseline_ref": {
           "id": "sensor-interface-pcb-01-basis",
@@ -3020,7 +3020,7 @@
         "profile_ref": {
           "id": "sensor-interface-pcb-02-full",
           "version": "1",
-          "sha256": "087c28536581acf837f0ea440826c1effac10c81eec0aed6db90abbf0d1d5954"
+          "sha256": "fc53c00f53c6e67b4ec0d896311c769859e29291ffafb09bcb33c4bacd3e10d5"
         },
         "baseline_ref": {
           "id": "sensor-interface-pcb-02-basis",
@@ -3043,7 +3043,7 @@
         "profile_ref": {
           "id": "sensor-interface-pcb-02-full",
           "version": "1",
-          "sha256": "087c28536581acf837f0ea440826c1effac10c81eec0aed6db90abbf0d1d5954"
+          "sha256": "fc53c00f53c6e67b4ec0d896311c769859e29291ffafb09bcb33c4bacd3e10d5"
         },
         "baseline_ref": {
           "id": "sensor-interface-pcb-02-basis",
@@ -3141,7 +3141,7 @@
         "profile_ref": {
           "id": "sensor-interface-pcb-03-full",
           "version": "1",
-          "sha256": "ee98e22382d98f411a4f2ceeeda5f85a942c40b561fd35062583749a57e884cd"
+          "sha256": "fecdbda349e2d1c8ba476cb89bf8db0f7b6ff5cc1584af015797c6b5e017c037"
         },
         "baseline_ref": {
           "id": "sensor-interface-pcb-03-basis",
@@ -3164,7 +3164,7 @@
         "profile_ref": {
           "id": "sensor-interface-pcb-03-full",
           "version": "1",
-          "sha256": "ee98e22382d98f411a4f2ceeeda5f85a942c40b561fd35062583749a57e884cd"
+          "sha256": "fecdbda349e2d1c8ba476cb89bf8db0f7b6ff5cc1584af015797c6b5e017c037"
         },
         "baseline_ref": {
           "id": "sensor-interface-pcb-03-basis",

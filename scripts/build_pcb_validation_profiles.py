@@ -257,7 +257,7 @@ def build(scenario_id, pack_name):
             "limitations": [
                 "Warning disposition, production-source compatibility, full native-to-fabrication correspondence, physical performance and release authorization require authenticated engineering review."
             ],
-            "supported_kinds": ["file"],
+            "supported_kinds": ["file", "value"],
         }
     )
 

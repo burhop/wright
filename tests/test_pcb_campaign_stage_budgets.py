@@ -34,8 +34,8 @@ def test_complete_tables_fit_separate_native_stages(tmp_path, index, component_c
     result = preparer.prepare(SimpleNamespace(workspace_root=str(tmp_path / "workspace"), draft_root=str(tmp_path / "draft"), attempt="test", instance_source=None, server_id="selected-kicad", tool_catalog=None), directory)
     source = Path(result["source"]).read_text(encoding="utf-8")
     plan = compile_prompt_workflow(source)
-    assert len(plan.steps) == 17
-    prefixes = ["capture_electrical_basis", "review_electrical_basis", "author_pcb", "connect_native_schematic", "stage_build_schematic", "initialize_native_project", "build_native_board", "finish_native_board", "finish_remaining_native_board", "seal_native_board", "stage_routing_board", "stage_routing_project", "route_native_board", "publish_final_board", "publish_final_project", "publish_final_schematic", "verify_and_export"]
+    assert len(plan.steps) == 18
+    prefixes = ["capture_electrical_basis", "review_electrical_basis", "author_pcb", "connect_native_schematic", "stage_build_schematic", "initialize_native_project", "build_native_board", "finish_native_board", "finish_remaining_native_board", "seal_native_board", "stage_routing_board", "stage_routing_project", "route_native_board", "publish_final_board", "publish_final_project", "publish_final_schematic", "verify_and_export", "validate_pcb_content"]
     assert all(step.id.startswith(prefix + "_") for step, prefix in zip(plan.steps, prefixes))
     assert all(step.max_tool_calls == 32 for step in plan.steps if step.agent_task)
     assert all(step.timeout_seconds == 600 for step in plan.steps if step.agent_task)
@@ -85,10 +85,36 @@ def test_complete_tables_fit_separate_native_stages(tmp_path, index, component_c
     assert "never call board save" in plan.steps[16].prompt
     declared = [path for step in plan.steps for path in step.expected_files]
     assert len(declared) == len(set(declared))  # no immutable native path is recaptured after mutation
-    for index in [4, 6, 7, 8, 10, 11]:
-        assert not plan.steps[index].expected_files  # mutable staging copies
-    for index in [13, 14, 15]:
-        assert len(plan.steps[index].expected_files) == 1  # final copies are captured once
+    for step_index in [4, 6, 7, 8, 10, 11]:
+        assert not plan.steps[step_index].expected_files  # mutable staging copies
+    for step_index in [13, 14, 15]:
+        assert len(plan.steps[step_index].expected_files) == 1  # final copies are captured once
+    assert set(plan.steps[13].expected_file_ports) == {"board"}
+    assert set(plan.steps[15].expected_file_ports) == {"schematic"}
+    assert set(plan.steps[16].expected_file_ports) == {
+        "bom",
+        "fabrication",
+        "erc",
+        "drc",
+    }
+    review = plan.steps[1]
+    validator = plan.steps[17]
+    assert {role for role, _ in validator.validation_sources} == {
+        "basis",
+        "board",
+        "schematic",
+        "bom",
+        "fabrication",
+        "erc",
+        "drc",
+    }
+    assert validator.validation["profile"]["name"] == f"sensor-interface-pcb-0{index}"
+    configured_review = review.external_action["settings"]["validation_review"]
+    assert configured_review["profile_ref"] == validator.validation["profile"][
+        "reference"
+    ]
+    assert configured_review["requirement_ids"]
+    assert plan.revisions == {}
     tasks = {section["id"]: section for section in _parse(source) if section["kind"] == "task"}
     produced_before = set()
     copies = []

@@ -352,9 +352,9 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sensor-interface-pcb-01", "475534cde9bfc17074a0e884832b3652a427bbc56177a742be46d0bd4469712a", "31b433c19c4ce8d394a7e43bf40ee0dcd893f26a5e72e7a9df7b61a4372fd8f8"),
-    ("sensor-interface-pcb-02", "087c28536581acf837f0ea440826c1effac10c81eec0aed6db90abbf0d1d5954", "80c90a52422a8b25fccc23d4b430ce3543b8ebf63b92c989fa1a0591d4aea75d"),
-    ("sensor-interface-pcb-03", "ee98e22382d98f411a4f2ceeeda5f85a942c40b561fd35062583749a57e884cd", "3073a159f73f58b8661f9aca13e40d8acca067636a0c05529854683c0239159b"),
+    ("sensor-interface-pcb-01", "7feca0634fbfa9b1e80f7b9f3b100d656c4ae06d67c97e565ee1d0a4c1a6f192", "31b433c19c4ce8d394a7e43bf40ee0dcd893f26a5e72e7a9df7b61a4372fd8f8"),
+    ("sensor-interface-pcb-02", "fc53c00f53c6e67b4ec0d896311c769859e29291ffafb09bcb33c4bacd3e10d5", "80c90a52422a8b25fccc23d4b430ce3543b8ebf63b92c989fa1a0591d4aea75d"),
+    ("sensor-interface-pcb-03", "fecdbda349e2d1c8ba476cb89bf8db0f7b6ff5cc1584af015797c6b5e017c037", "3073a159f73f58b8661f9aca13e40d8acca067636a0c05529854683c0239159b"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
