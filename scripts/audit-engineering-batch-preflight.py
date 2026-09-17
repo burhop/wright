@@ -18,7 +18,7 @@ def digest(data):
 
 
 def declared_paths_for_task(section):
-    """Return static task outputs, including a bound external-action receipt."""
+    """Return static task outputs, including adapter and approval contracts."""
     settings = section["fields"].get("settings") or {}
     raw_files = settings.get("expected_files", "")
     files = (
@@ -26,6 +26,21 @@ def declared_paths_for_task(section):
         if isinstance(raw_files, str)
         else list(raw_files or [])
     )
+    cad = settings.get("cad") or {}
+    if isinstance(cad, str):
+        try:
+            cad = json.loads(cad)
+        except ValueError:
+            cad = {}
+    if isinstance(cad, dict):
+        native_path = cad.get("native_path")
+        if cad.get("save_native") and isinstance(native_path, str) and native_path.strip():
+            files.append(native_path.strip())
+        for export in cad.get("exports") or []:
+            path = export.get("path") if isinstance(export, dict) else None
+            if isinstance(path, str) and path.strip():
+                files.append(path.strip())
+    files = list(dict.fromkeys(files))
     declared = []
     if settings.get("save_output") and settings.get("output_filename"):
         declared.append(settings["output_filename"])
@@ -40,7 +55,7 @@ def declared_paths_for_task(section):
         receipt_path = approval.get("receipt_path") if isinstance(approval, dict) else None
         if isinstance(receipt_path, str) and receipt_path.strip():
             declared.append(receipt_path.strip())
-    return declared, files
+    return list(dict.fromkeys(declared)), files
 
 
 def audit(args):

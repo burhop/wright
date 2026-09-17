@@ -288,12 +288,28 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   exhaustion, no-progress, wrong-owner, invalidation and resume behavior. These
   records satisfy the mechanism and safety work without consuming another provider
   turn. C016 remains open for a current 30-case campaign instance.
+- Twenty-seven fresh current cases are now instantiated, source-bound and enrolled
+  without dispatch: 24 cases across heat, bracket, jig, harness, Pi, robot, PCB and
+  sheet metal, plus the three Modelica cases. The combined queue is
+  `.local-run/feature-081-live/campaign-execution/validator-campaign-082/current-ready-27.json`.
+  Its read-only preflight reports 24 pass, three review and zero fail; the three
+  Modelica reviews are the preserved conservative warnings for provider-generated
+  `scenario.json` files sharing an input basename. There are no observed run records.
+  The separate 24-case preflight passes 24/24 after the audit learned to read native
+  and exported paths from the canonical CAD adapter contract. The focused audit test
+  passes 3/3 and Ruff passes. The pause sentinel remains present, the dashboard still
+  returns HTTP 200, and no Sol readiness probe or workflow attempt was consumed.
+- Printed-part attempts remain intentionally unstaged until dispatch is viable. Their
+  qualified Blender repair binding is lifecycle-owned and attempt-specific, so it
+  should be launched just in time and cleaned up after terminal execution rather than
+  kept alive through the provider quota window. Current campaign credit remains
+  historical `30/30/24/0` and current `0/0/0`; enrollment alone earns no credit.
 
 ## Next action
 
-C016–C018: all ten family preparers now contain qualified full-profile gates and
-the bounded correction path already has retained real-AI structured and CAD proof.
-At the first available provider window, run one current canonical campaign case
-through review and full-profile validation, then resume ready cases serially without
-resetting the retry ledger. Recheck the six historical missing-output cases against
-current native capability rather than treating their old diagnoses as current.
+C016–C018: at the first available provider window, launch and enroll the three
+attempt-017 printed-part cases with their lifecycle-owned Blender/repair bindings,
+then run one current canonical case through review and full-profile validation.
+Resume the audited 27-case queue serially without resetting the retry ledger. Recheck
+the six historical missing-output cases against current native capability rather than
+treating their old diagnoses as current.

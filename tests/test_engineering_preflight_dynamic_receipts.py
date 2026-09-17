@@ -50,3 +50,34 @@ def test_json_encoded_approval_settings_preserve_the_same_receipt_contract():
         "campaign/case/attempt/artifacts/package.3mf",
         "campaign/case/attempt/artifacts/receipt.json",
     ]
+
+
+def test_json_encoded_cad_contract_declares_native_and_export_outputs():
+    settings = {
+        "cad": json.dumps(
+            {
+                "source": "new",
+                "native_path": "campaign/case/attempt/artifacts/part.psm",
+                "save_native": True,
+                "exports": [
+                    {
+                        "format": "step",
+                        "path": "campaign/case/attempt/artifacts/part.step",
+                    },
+                    {
+                        "format": "flat_dxf",
+                        "path": "campaign/case/attempt/artifacts/part.dxf",
+                    },
+                ],
+            }
+        )
+    }
+
+    declared, expected_files = preflight.declared_paths_for_task(task(settings))
+
+    assert expected_files == [
+        "campaign/case/attempt/artifacts/part.psm",
+        "campaign/case/attempt/artifacts/part.step",
+        "campaign/case/attempt/artifacts/part.dxf",
+    ]
+    assert declared == expected_files
