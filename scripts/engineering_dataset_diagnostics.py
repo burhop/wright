@@ -166,6 +166,18 @@ def build_diagnostics(campaign, *, runner_root=None, native_database=None, recov
             if all(isinstance(value, str) and value not in {".", ".."} and not any(c in value for c in "/\\:") for value in (scenario, attempt)):
                 runners[(scenario, attempt)] = read_json(runner_root / scenario / f"{attempt}.json", issues)
     summary = read_json(runner_root / "summary.json", issues) if runner_root else {}
+    pause_path = runner_root / "pause-after-current" if runner_root else None
+    pause = {}
+    if pause_path and pause_path.is_file() and pause_path.stat().st_size:
+        pause = read_json(pause_path, issues)
+    pause_reason = pause.get("reason") if isinstance(pause.get("reason"), str) else None
+    pause_model = pause.get("model") if isinstance(pause.get("model"), str) else None
+    pause_reset = (
+        pause.get("provider_reset_at")
+        if timestamp(pause.get("provider_reset_at"))
+        else None
+    )
+    pause_created = pause.get("created_at") if timestamp(pause.get("created_at")) else None
     rows = []
     for dataset in datasets:
         scenario, family = dataset["scenario_id"], dataset["template_id"]
@@ -218,9 +230,11 @@ def build_diagnostics(campaign, *, runner_root=None, native_database=None, recov
         "unresolved_attempts": [{"scenario_id": receipt["scenario_id"], "attempt_id": receipt["attempt_id"],
                                  "run_id": receipt["run_id"], "reason": runners[(receipt["scenario_id"], receipt["attempt_id"])].get("reason_code")} for receipt in unresolved],
         "last_completion_at": last_completion, "since_last_completion_seconds": seconds(last_completion, observed_at),
-        "runner": {"paused": (runner_root / "pause-after-current").is_file() if runner_root and runner_root.is_dir() else None,
+        "runner": {"paused": pause_path.is_file() if pause_path and runner_root.is_dir() else None,
                    "summary_observed_at": summary.get("updated_at"), "next_scenario_id": summary.get("next_scenario_id"),
-                   "worker_health": "unknown"},
+                   "worker_health": "unknown", "pause_reason": pause_reason,
+                   "pause_model": pause_model, "provider_reset_at": pause_reset,
+                   "pause_created_at": pause_created},
         "native": native_diagnostics(native_database, issues), "families": families, "scenarios": rows,
         "issues": issues,
     }

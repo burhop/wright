@@ -49,6 +49,7 @@
       <div class="recovery-stat"><strong id="runner-status">Unknown</strong><span>Between-case queue state</span></div>
       <div class="recovery-stat"><strong id="unresolved-attempts">Unknown</strong><span>Unresolved outcomes · not active progress</span></div>
     </div>
+    <p id="runner-detail" class="diagnostic-warning" hidden></p>
     <p id="diagnostic-error" class="diagnostic-warning" role="status">Loading diagnostic observations…</p>
     <div id="family-diagnostics" class="family-grid" data-testid="family-diagnostics"></div>
     <details class="native-panel"><summary id="native-summary">Native application ownership and cleanup · unknown</summary><div id="native-sessions" data-testid="native-sessions"></div></details>
@@ -117,6 +118,9 @@ function renderDiagnostics(){
   $('last-completion-detail').textContent=diagnostics.last_completion_at?elapsed(diagnostics.since_last_completion_seconds)+' since last completion':'Last complete workflow';
   $('last-completion').title=diagnostics.last_completion_at||'';
   $('runner-status').textContent=diagnostics.runner.paused===null?'Unknown':diagnostics.runner.paused?'Paused':'No pause recorded';
+  const runnerDetail=$('runner-detail'),pause=diagnostics.runner;
+  runnerDetail.hidden=!pause.paused;
+  runnerDetail.textContent=pause.paused?'Runner paused'+(pause.pause_reason?' · '+readable(pause.pause_reason):'')+(pause.pause_model?' · '+pause.pause_model:'')+(pause.provider_reset_at?' · provider reset '+timeLabel(pause.provider_reset_at):'')+(pause.next_scenario_id?' · next '+pause.next_scenario_id:''):'';
   $('unresolved-attempts').textContent=String(diagnostics.unresolved_attempts.length);
   $('unresolved-attempts').title=diagnostics.unresolved_attempts.map(row=>row.scenario_id+' / '+row.attempt_id+': '+row.reason).join('\n');
   $('diagnostic-updated').textContent='Observed '+timeLabel(diagnostics.observed_at);
