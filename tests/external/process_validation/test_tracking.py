@@ -1,6 +1,8 @@
 """Independent controls for tracking-timeline measurements."""
 
 import hashlib
+import importlib.util
+from pathlib import Path
 
 import pytest
 
@@ -20,6 +22,20 @@ from workspace_service.process_validation.readers.tracking import TrackingTimeli
 
 
 HEADER = "time_s,acquisition_time_s,original_header_time_s,raw_x_m,raw_y_m,aligned_x_m,aligned_y_m,planned_x_m,planned_y_m,dx_m,dy_m,lateral_error_m,yaw_error_rad\n"
+
+OPERATIONS_PATH = Path(__file__).parents[3] / "scripts/robot_tracking_operations.py"
+OPERATIONS_SPEC = importlib.util.spec_from_file_location(
+    "robot_tracking_operations_test", OPERATIONS_PATH
+)
+OPERATIONS = importlib.util.module_from_spec(OPERATIONS_SPEC)
+assert OPERATIONS_SPEC.loader is not None
+OPERATIONS_SPEC.loader.exec_module(OPERATIONS)
+
+
+def test_exact_boundary_interval_is_not_reported_as_a_gap():
+    assert not OPERATIONS.exceeds_interval_limit(0.9999999999999999, 1.5, 0.5)
+    assert not OPERATIONS.exceeds_interval_limit(15.999999999999998, 16.5, 0.5)
+    assert OPERATIONS.exceeds_interval_limit(13.5, 16.5, 0.5)
 
 
 def snapshot(rows):

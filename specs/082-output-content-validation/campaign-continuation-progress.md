@@ -506,6 +506,37 @@ producer authority or current-generation campaign credit. No inference, generati
 native replay, approval or campaign-counter mutation occurred. Driver:
 `.local-run/feature-081-live/campaign-execution/validate-retained-24.py`.
 
+A subsequent isolated-successor pass corrected the two deterministic producer
+defects without changing any frozen requirement or validator threshold. Robot-02's
+gap record is recomputed from its retained timeline with tolerance-aware boundary
+comparison, so the two floating-point representations of exact 0.5-second intervals
+are no longer false gaps. The Modelica study summarizer now emits
+`wright-water-heater-v1@0.1.0` from the same constants used to authenticate every
+native run; the three retained successor summaries add that identity only after
+checking every referenced native `run.json`, manifest digest and result digest.
+The exact full profiles now report **17 automated passes, 5 failures and 2
+blocked-only cases** across the 24 complete output sets. Reports and isolated byte
+copies are in
+`artifacts/process-validation/retained-successors-20260917T225954Z/summary.md`.
+The dashboard pointer now selects that result, so the existing fourth card and chart
+show `17/30`; full current approvals remain `0/30` and campaign credit remains
+unchanged. The same report directory contains `correction-manifest.json` for all 11
+originally affected cases (4 resolved, 7 needing new output) and
+`human-review-queue.json` (17 ready, 7 waiting for correction). No historical output
+was mutated and no human approval was inferred. The read-only scan of all 72 retained
+attempts found no alternate complete attempt that resolves the remaining findings.
+
+The remaining output corrections are therefore bounded and explicit: all three
+harness cases need a sourced or explicitly declared contact/splice-resistance basis
+and recomputed total branch drops; printed-02 needs a genuinely distinct repaired
+mesh followed by dependent slicing evidence; Pi-01 and Pi-03 need supported
+steady-state convergence and field-derived heat balance for both alternatives; Pi-02
+also needs enclosure B reduced to at most 60 mm and all dependent CAD/CFD outputs
+regenerated. These seven cases must not receive automated-pass credit from edited
+labels or weakened checks. The 17 automated-pass successors are ready for the normal
+authenticated review checkpoints, but the detached review queue itself grants no
+approval.
+
 The authority refresh also required successor execution waves: the previous wave plan
 still contained the original 12 AgentCAD grants. Use the local
 `validator-campaign-082/execution-waves-authority-refreshed.json` (SHA-256

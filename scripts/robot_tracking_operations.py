@@ -49,6 +49,14 @@ def fresh(path):
     return path
 
 
+def exceeds_interval_limit(start, end, maximum):
+    """Compare sampled times without treating float representation noise as a gap."""
+    interval = end - start
+    return interval > maximum and not math.isclose(
+        interval, maximum, rel_tol=1e-12, abs_tol=1e-12
+    )
+
+
 def convert_csv_to_bag(input_dir, output_dir):
     """Preserve frames/header clocks; acquisition timestamps order the real bag."""
     import numpy as np
@@ -217,7 +225,11 @@ def analyze_tracking_bag(bag, alignment, output_dir):
             raise ValueError("Event correlation exceeds original one-sample gate")
         events.append({**raw, "bag_elapsed_s": elapsed, "nearest_odometry_time_s": nearest, "difference_s": difference})
     external_times = [r["time_s"] for r in timeline]
-    gaps = [[a, b] for a, b in zip(external_times, external_times[1:]) if b-a > max_gap]
+    gaps = [
+        [a, b]
+        for a, b in zip(external_times, external_times[1:])
+        if exceeds_interval_limit(a, b, max_gap)
+    ]
     metrics = {"position_rmse_m": numpy_rmse[0], "lateral_rmse_m": numpy_rmse[1],
                "independent_scalar_rmse_m": scalar_rmse, "independent_relative_difference": disagreement,
                "independent_tolerance": 0.01, "velocity_disagreement_rmse_mps": math.sqrt(math.fsum(v*v for v in velocity)/len(velocity)),
