@@ -1191,25 +1191,75 @@
           "size_bytes": 584
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "printed-replacement-part-01",
+        "profile_ref": {
+          "id": "printed-replacement-part-01-full",
+          "version": "1",
+          "sha256": "9270c4ab898be51a72ce260f4cce6a2935e6ba47354ee95190d44786fb6dd2fb"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-01-basis",
+          "version": "1",
+          "sha256": "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"
+        },
+        "reader_ids": [
+          "printing@1",
+          "structured@1"
+        ],
+        "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+        "limitations": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_printing.py",
+          "tests/external/process_validation/test_printed_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "printed-replacement-part-01",
+        "profile_ref": {
+          "id": "printed-replacement-part-01-full",
+          "version": "1",
+          "sha256": "9270c4ab898be51a72ce260f4cce6a2935e6ba47354ee95190d44786fb6dd2fb"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-01-basis",
+          "version": "1",
+          "sha256": "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"
+        },
+        "reader_ids": [
+          "printing@1",
+          "structured@1"
+        ],
+        "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+        "limitations": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_printing.py",
+          "tests/external/process_validation/test_printed_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+          "limitation": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_printing.py",
+            "tests/external/process_validation/test_printed_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.slice",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+          "limitation": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
           "extension_recipe": "manufacturing.slice",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_printing.py",
+            "tests/external/process_validation/test_printed_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -1252,25 +1302,75 @@
           "size_bytes": 500
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "printed-replacement-part-02",
+        "profile_ref": {
+          "id": "printed-replacement-part-02-full",
+          "version": "1",
+          "sha256": "7aadc23f0e7c5e873207747d9a1109e84d264f84686f7baea3384b9d5d35eb86"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-02-basis",
+          "version": "1",
+          "sha256": "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"
+        },
+        "reader_ids": [
+          "printing@1",
+          "structured@1"
+        ],
+        "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+        "limitations": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_printing.py",
+          "tests/external/process_validation/test_printed_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "printed-replacement-part-02",
+        "profile_ref": {
+          "id": "printed-replacement-part-02-full",
+          "version": "1",
+          "sha256": "7aadc23f0e7c5e873207747d9a1109e84d264f84686f7baea3384b9d5d35eb86"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-02-basis",
+          "version": "1",
+          "sha256": "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"
+        },
+        "reader_ids": [
+          "printing@1",
+          "structured@1"
+        ],
+        "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+        "limitations": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_printing.py",
+          "tests/external/process_validation/test_printed_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+          "limitation": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_printing.py",
+            "tests/external/process_validation/test_printed_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.slice",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+          "limitation": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
           "extension_recipe": "manufacturing.slice",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_printing.py",
+            "tests/external/process_validation/test_printed_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -1313,25 +1413,75 @@
           "size_bytes": 521
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "printed-replacement-part-03",
+        "profile_ref": {
+          "id": "printed-replacement-part-03-full",
+          "version": "1",
+          "sha256": "2e652798daf82e44d02948dfcd0c1a8cee98bbec9757cd99d360155c5d730e61"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-03-basis",
+          "version": "1",
+          "sha256": "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"
+        },
+        "reader_ids": [
+          "printing@1",
+          "structured@1"
+        ],
+        "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+        "limitations": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_printing.py",
+          "tests/external/process_validation/test_printed_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "printed-replacement-part-03",
+        "profile_ref": {
+          "id": "printed-replacement-part-03-full",
+          "version": "1",
+          "sha256": "2e652798daf82e44d02948dfcd0c1a8cee98bbec9757cd99d360155c5d730e61"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-03-basis",
+          "version": "1",
+          "sha256": "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"
+        },
+        "reader_ids": [
+          "printing@1",
+          "structured@1"
+        ],
+        "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+        "limitations": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_printing.py",
+          "tests/external/process_validation/test_printed_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+          "limitation": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_printing.py",
+            "tests/external/process_validation/test_printed_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.slice",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+          "limitation": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
           "extension_recipe": "manufacturing.slice",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_printing.py",
+            "tests/external/process_validation/test_printed_profiles.py"
+          ]
         }
       ],
       "initial_slice": false

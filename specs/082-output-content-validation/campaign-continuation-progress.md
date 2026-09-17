@@ -97,8 +97,20 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   full design/export correspondence and release claims remain behind
   authenticated engineering review. Focused reader/profile/coverage tests:
   `11 passed in 2.28s`; Ruff passed.
+- All three printed-replacement-part profiles are now frozen and implemented. A
+  bounded print-artifact reader independently measures binary-STL envelopes and
+  manifold integrity, requires distinct source/repaired revisions with stable
+  spans, inspects safe 3MF members, and binds the actual slice and simulator-only
+  transfer records to the exact repaired-mesh/package digests. Cases 01 and 03
+  pass every automated check. Case 02 correctly fails with
+  `printing.mesh_not_distinct` because its retained source and repaired meshes
+  are byte-identical. Detailed feature geometry, orientation/support choices,
+  tolerance statements and physical claims remain behind authenticated review;
+  these review requirements are explicitly marked in the embedded frozen
+  baselines. Full process-validation regression: `105 passed in 37.81s`; Ruff
+  passed.
 
 ## Next action
 
-C010–C012: implement the next reusable three-case family and keep the eighteen full
-profiles pending exact review/correction evidence.
+C010–C012: implement the next reusable three-case family and keep the twenty-one
+full profiles pending exact review/correction evidence.

@@ -366,6 +366,21 @@ for _scenario_id, _profile_sha, _baseline_sha in (
         "evidence": ["tests/external/process_validation/test_kicad.py", "tests/external/process_validation/test_pcb_profiles.py"],
     }
 
+for _scenario_id, _profile_sha, _baseline_sha in (
+    ("printed-replacement-part-01", "9270c4ab898be51a72ce260f4cce6a2935e6ba47354ee95190d44786fb6dd2fb", "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"),
+    ("printed-replacement-part-02", "7aadc23f0e7c5e873207747d9a1109e84d264f84686f7baea3384b9d5d35eb86", "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"),
+    ("printed-replacement-part-03", "2e652798daf82e44d02948dfcd0c1a8cee98bbec9757cd99d360155c5d730e61", "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"),
+):
+    IMPLEMENTED_PROFILES[_scenario_id] = {
+        "profile_resource": _scenario_id,
+        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
+        "reader_ids": ["printing@1", "structured@1"],
+        "scope": "Binary-STL envelope and manifold integrity, distinct source/repaired lineage, exact P1S/PETG/process settings, safe 3MF inventory, slice hash lineage, simulator-only transfer binding, deliverables and required engineering review.",
+        "limitations": "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and release authorization require authenticated engineering review.",
+        "evidence": ["tests/external/process_validation/test_printing.py", "tests/external/process_validation/test_printed_profiles.py"],
+    }
+
 FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
