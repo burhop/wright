@@ -232,7 +232,7 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-01-full",
             "version": "1",
-            "sha256": "cd2b4b94c70aecdbac357b3a1f52dbde0f4f242a7675f75c54c468e69b99cfda",
+            "sha256": "0e6216a75e586a9966cd961cceb8068e9563dd0c7263c7a31425078080911da0",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-01-basis",
@@ -252,7 +252,7 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-02-full",
             "version": "1",
-            "sha256": "8f8a0ef5b8e0205211265e743b4ffe21cbf926baedf26b9839ab7d5fd3ecef2e",
+            "sha256": "6787b9682d664e90fd73bece5dcddf31079f23e69bd88cdadcdfe5881643474e",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-02-basis",
@@ -272,7 +272,7 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-03-full",
             "version": "1",
-            "sha256": "766ee7e00b881da64b276866db1aeddf13d1a4bb462238be0edba89411b04350",
+            "sha256": "11f5ca4b297e60132c541f55bce8720ee987e61924ed340dbff058eb814375cf",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-03-basis",

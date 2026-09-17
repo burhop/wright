@@ -274,7 +274,10 @@ def build(scenario_id, config):
             "limitations": [
                 "Physical robot operation and causal proof remain outside this digital validation gate."
             ],
-            "supported_kinds": ["file"],
+            # Canonical runs bind native artifacts as files and the AI-authored
+            # diagnosis as its exact immutable response value.  Retained
+            # campaign qualification continues to exercise the file form.
+            "supported_kinds": ["file", "value"],
         }
     )
 

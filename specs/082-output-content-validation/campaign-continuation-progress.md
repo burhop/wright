@@ -35,7 +35,7 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
 - Focused campaign/export tests: `68 passed in 11.92s`.
 - Browser check: 30 dataset rows, 30 images, four series, no browser errors.
 - Live counters: historical `30/30/24/0`; current `0/0/0` after dataset creation;
-  validator coverage `2` bounded qualified, `0` full-scope, `28` unsupported.
+  validator coverage `2` bounded qualified and `30/30` implemented full profiles.
 - C009 is complete and C010 is in progress: 30 source-hashed packaged baselines
   cover every current campaign case exactly once. They contain 315 atomic mandatory requirements, preserve
   the Modelica selected-kit amendment, validate against the closed runtime
@@ -152,8 +152,18 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   profiles were regenerated so every review check maps exactly to a baseline
   requirement marked `review_required=true`; a coverage-wide invariant prevents
   recurrence. Review/profile regression: `130 passed in 51.21s`; Ruff passed.
+- C010 and C011 are complete. The robot campaign preparer is the first C013
+  integration: all three canonical workflows now expose exact file ports for
+  their conversion manifest, timeline, metrics and plot, bind the immutable
+  diagnosis response, run the scenario's pinned full profile after the existing
+  engineer checkpoint, and hold the final evidence index unless the assessment
+  passes. The old instruction forcing correctness credit to zero was removed.
+  Automatic revision remains disabled while the five subjects have multiple
+  producers. Preparer/profile/runtime regression: `59 passed in 10.77s`; Ruff
+  passed.
 
 ## Next action
 
-C010–C012: connect the remaining full profiles to their process gates and
-correction paths, starting with a retained-output family before expensive reruns.
+C012–C014: bind the exact local-review decision into the immutable validator
+assessment, then prove the robot gate and actionable defect output in an isolated
+run before expanding the integration pattern to the other family preparers.

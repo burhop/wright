@@ -170,14 +170,14 @@ all dashboard counts and row selections reconcile to the persisted evidence.
   acceptance-case seeds as an index, not as a complete requirements specification.
   Build source-linked RTM entries for every mandatory digital requirement and
   deliverable; record explicit exclusions and required human/physical decisions.
-- [ ] C010 Freeze each baseline independently of candidate output: requirement
+- [x] C010 Freeze each baseline independently of candidate output: requirement
   ID, source hash/locator, expected condition, method, feature selector, unit,
   datum/frame, tolerance/uncertainty, subject role and correction owner. Apply
   approved sheet-metal R1–R4 decisions only within their recorded scope and retain
   the current Modelica derivative and manufacturer-source authority rules.
   Ambiguous or contradictory obligations remain blockers with a concrete proposed
   resolution for the user; never derive a tolerance from the candidate.
-- [ ] C011 Extend packaged readers/profiles using the family map below. Separate
+- [x] C011 Extend packaged readers/profiles using the family map below. Separate
   parse/structure checks, geometry/physics checks, requirements and cross-artifact
   correspondence. A generator's description, success flag, or passing ERC/DRC alone
   cannot establish content correctness. Keep runtime resources out of test-only paths.

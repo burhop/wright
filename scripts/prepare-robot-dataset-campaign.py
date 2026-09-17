@@ -12,6 +12,7 @@ from workspace_service.workflow_integration_policy import LOCAL_REVIEW_BINDING, 
 ROOT = Path(__file__).resolve().parents[1]
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/robot-tracking-diagnosis.json"
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/robot-tracking-diagnosis.workflow.wflow"
+VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 spec = importlib.util.spec_from_file_location("robot_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
@@ -88,6 +89,10 @@ def prepare(args, directory, available):
         return task["id"] + "." + task["id"] + "_result"
     normalize = new_task("normalize_csv", "Serialize original CSV uploads into a real ROS2 bag")
     normalized = bind(normalize, f"Call normalize_csv_to_ros2 exactly once with operation_source_document={inputs + '/robot_tracking_operations.py'!r}, input_directory={inputs!r}, output_directory={output + '/converted'!r}. Read the supplied source and mapping. Preserve original CSVs and +150ms header offsets; no frame transform during conversion. Save the actual returned conversion manifest. Never reuse a prior attempt's bag.", config["operation_server"], ["converted/recording/recording.db3", "converted/recording/metadata.yaml", "converted/conversion-manifest.json"])
+    normalize["fields"]["outputs"].append(helpers.port("conversion_manifest", "workspace_file"))
+    normalize["fields"]["settings"]["expected_file_ports"] = {
+        "conversion_manifest": output + "/converted/conversion-manifest.json"
+    }
     inspection_scope = (INSPECTION_STAGE_GUIDANCE
         + f"After this evidence is returned, the connected canonical step {stages['align_and_measure']['id']} on server {config['operation_server']} "
         "calls calculate_tracking_metrics on the complete same-run bag to produce the timeline, overlay and metrics; the later draft_diagnosis step writes diagnosis.md from those actual outputs. "
@@ -100,6 +105,15 @@ def prepare(args, directory, available):
     stages["inspect_bag"]["fields"]["settings"]["timeout_seconds"] = 600
     stages["inspect_bag"]["fields"]["settings"]["task_guidance"] += " " + inspection_scope
     measured = bind(stages["align_and_measure"], f"After actual native bag inspection/extraction succeeded, call calculate_tracking_metrics exactly once with operation_source_document={inputs + '/robot_tracking_operations.py'!r}, bag_directory={output + '/converted/recording'!r}, alignment_document={inputs + '/alignment.json'!r}, output_directory={output + '/analysis'!r}. The supplied reusable source applies the explicit transform once and retains the original 1% independent metrics and one-sample event gates. It must preserve the visual occlusion as missing samples, report unaligned/aligned overlays and save actual computed outputs. Read the returned metrics; don't invent or weaken checks.", config["operation_server"], ["analysis/timeline.csv", "analysis/trajectory-overlay.svg", "analysis/tracking-metrics.json"], filename="analysis-report.json")
+    measurement_files = {
+        "timeline": output + "/analysis/timeline.csv",
+        "plot": output + "/analysis/trajectory-overlay.svg",
+        "metrics": output + "/analysis/tracking-metrics.json",
+    }
+    stages["align_and_measure"]["fields"]["outputs"].extend(
+        helpers.port(role, "workspace_file") for role in measurement_files
+    )
+    stages["align_and_measure"]["fields"]["settings"]["expected_file_ports"] = measurement_files
     helpers.add_reference(sections, inspection, stages["align_and_measure"], "native_bag_evidence")
     diagnosis_task = new_task("draft_diagnosis", "Write the evidence-linked diagnosis for engineer review")
     diagnosis = bind(diagnosis_task, "Write the requested engineering diagnosis from the actual supplied original prompt, route sketch, bag evidence and computed metrics. Cite time ranges, retained counts, frame/time correction, event correlation, missing intervals and uncertainties. Compare raw and aligned interpretations. State measured observations separately from hypotheses; command/odometry disagreement alone is not evidence of wheel slip. Include the requested inexpensive next observation. These are fictional input logs and no real robot commands are authorized.", filename="diagnosis.md")
@@ -113,11 +127,82 @@ def prepare(args, directory, available):
                   "approval_binding": LOCAL_REVIEW_BINDING, "approval_destination": LOCAL_REVIEW_DESTINATION,
                   "approval_settings": {"review_task_id": review["id"]}, "approval_action": {"kind": "local_review", "mode": "review_only"}})
     helpers.add_reference(sections, diagnosis, review, "diagnosis_for_review")
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
+    profile = support.get("full_profile")
+    if not profile:
+        raise ValueError("The robot tracking full validator profile is unavailable")
+    validator = new_task("validate_robot_content", "Validate current robot tracking outputs")
+    validation_sources = {
+        "conversion_manifest": (normalize, "conversion_manifest", "workspace_file"),
+        "timeline": (stages["align_and_measure"], "timeline", "workspace_file"),
+        "metrics": (stages["align_and_measure"], "metrics", "workspace_file"),
+        "plot": (stages["align_and_measure"], "plot", "workspace_file"),
+        "diagnosis": (
+            diagnosis_task,
+            diagnosis_task["fields"]["outputs"][0]["key"],
+            "engineering_document",
+        ),
+    }
+    validator["fields"].update(
+        performed_by="configured_tool",
+        inputs=[
+            helpers.port("validate_" + role, kind)
+            for role, (_, _, kind) in validation_sources.items()
+        ],
+        outputs=[helpers.port("assessment")],
+        prompt="",
+        settings={
+            "authoring_template": "process-validator",
+            "output_format": "json",
+            "max_revisions": 0,
+            "validation": {
+                "profile": {
+                    "source": "packaged",
+                    "name": profile["profile_resource"],
+                    "reference": profile["profile_ref"],
+                },
+                "baseline": profile["baseline_ref"],
+                "subjects": {
+                    role: "validate_" + role for role in validation_sources
+                },
+            },
+        },
+    )
+    for role, (producer, producer_port, _) in validation_sources.items():
+        sections.append({
+            "kind": "connection",
+            "id": "bind_" + validator["id"] + "_" + role,
+            "fields": {
+                "type": "item",
+                "from": producer["id"] + "." + producer_port,
+                "to": validator["id"] + ".validate_" + role,
+                "label": "current robot output to validate",
+                "when": None,
+            },
+        })
     collection = new_task("collect_robot_evidence", "Collect the approved engineering diagnosis and artifact links")
-    bind(collection, "Create a compact artifact index referencing the actual same-run bag, conversion manifest, original/analysis source, inspection evidence, timeline, overlay, metrics and approved diagnosis. Do not claim correctness-validation credit; this campaign checks file presence only.", filename="evidence-index.md")
+    bind(collection, "Create a compact artifact index referencing the actual same-run bag, conversion manifest, original/analysis source, inspection evidence, timeline, overlay, metrics, approved diagnosis and current process-validation assessment. State only the scope and verdict supported by that assessment.", filename="evidence-index.md")
     helpers.add_reference(sections, diagnosis, collection, "approved_diagnosis")
-    for start, end in ((normalize["id"], stages["inspect_bag"]["id"]), (diagnosis_task["id"], review["id"]), (review["id"], collection["id"])):
+    helpers.add_reference(
+        sections,
+        validator["id"] + ".assessment",
+        collection,
+        "process_validation_assessment",
+    )
+    for start, end in ((normalize["id"], stages["inspect_bag"]["id"]), (diagnosis_task["id"], review["id"]), (review["id"], validator["id"])):
         sections.append({"kind": "connection", "id": "order_" + start + "_" + end, "fields": {"type": "order", "from": start, "to": end, "label": "same canonical execution", "when": None}})
+    sections.append({
+        "kind": "connection",
+        "id": "release_" + validator["id"],
+        "fields": {
+            "type": "approval",
+            "from": validator["id"],
+            "to": collection["id"],
+            "label": "release current validated outputs",
+            "when": "pass",
+        },
+    })
     result = helpers.render(sections)
     validate_workspace_authoring_shape(result)
     plan = compile_prompt_workflow(result)

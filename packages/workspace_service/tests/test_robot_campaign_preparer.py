@@ -35,13 +35,14 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
         ).iterdir()
         if p.name.startswith(f"{ordinal:02d}")
     )
+    scenario = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text()
     plan = compile_prompt_workflow(source)
     manifest = json.loads(
         Path(result["draft"]).with_name("staging-manifest.json").read_text()
     )
-    assert len(plan.steps) == 6
+    assert len(plan.steps) == 7
     assert len(manifest["preserved_original_stages"]) == 3
     assert len(manifest["preserved_original_edges"]) == 2
     assert plan.steps[0].id.startswith("normalize_csv_")
@@ -49,7 +50,8 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     assert plan.steps[2].id.startswith("align_and_measure_")
     assert plan.steps[3].id.startswith("draft_diagnosis_")
     assert plan.steps[4].external_action["action_kind"] == "local_review"
-    assert plan.steps[5].id.startswith("collect_robot_evidence_")
+    assert plan.steps[5].id.startswith("validate_robot_content_")
+    assert plan.steps[6].id.startswith("collect_robot_evidence_")
     assert "one percent" in source
     assert "metric_tolerance_percent" in source
     assert any(p.endswith("recording.db3") for p in plan.steps[0].expected_files)
@@ -117,6 +119,25 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     assert any(value.startswith(diagnosis.id + ".") for _, value in review.references)
     assert review.external_action["action"]["kind"] == "local_review"
     assert review.external_action["action"]["mode"] == "review_only"
+    validator = plan.steps[5]
+    assert validator.validation
+    assert validator.max_revisions == 0
+    assert {role for role, _ in validator.validation_sources} == {
+        "conversion_manifest",
+        "timeline",
+        "metrics",
+        "plot",
+        "diagnosis",
+    }
+    assert validator.validation["profile"]["name"] == scenario["scenario_id"]
+    assert plan.revisions == {}
+    assert set(measurement.expected_file_ports) == {"timeline", "plot", "metrics"}
+    assert set(plan.steps[0].expected_file_ports) == {"conversion_manifest"}
+    assert (
+        f'from: "{validator.id}"' in source
+        and 'label: "release current validated outputs"' in source
+        and 'when: "pass"' in source
+    )
     expected_tools = {
         (server, name)
         for server, names in config["allowed_tools"].items()
@@ -127,7 +148,6 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     } == expected_tools
     # Preserve actual original edges as well as their count; inspection's
     # narrowed prompt must not bypass measurement or the engineering review.
-    scenario = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
     suffix = scenario["scenario_id"].replace("-", "_") + "_test"
     original_edges = [
         item
