@@ -1524,33 +1524,88 @@
           "size_bytes": 491
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "raspberry-pi-enclosure-01",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-01-full",
+          "version": "1",
+          "sha256": "063276a93c5e418022a63c4bedf71f38463146cb19f55702f62cbdaee3b573de"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-01-basis",
+          "version": "1",
+          "sha256": "5c43d1f40a00764f55c12b4e31b58fdf2f12c5d21e21ec4775be69031f67a07c"
+        },
+        "reader_ids": [
+          "cfd-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+        "limitations": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
+        "evidence": [
+          "tests/external/process_validation/test_cfd.py",
+          "tests/external/process_validation/test_pi_enclosure_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "raspberry-pi-enclosure-01",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-01-full",
+          "version": "1",
+          "sha256": "063276a93c5e418022a63c4bedf71f38463146cb19f55702f62cbdaee3b573de"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-01-basis",
+          "version": "1",
+          "sha256": "5c43d1f40a00764f55c12b4e31b58fdf2f12c5d21e21ec4775be69031f67a07c"
+        },
+        "reader_ids": [
+          "cfd-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+        "limitations": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
+        "evidence": [
+          "tests/external/process_validation/test_cfd.py",
+          "tests/external/process_validation/test_pi_enclosure_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         },
         {
           "id": "source.authority",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "source.authority",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         },
         {
           "id": "thermal.cfd",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "thermal.cfd",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -1598,33 +1653,88 @@
           "size_bytes": 474
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "raspberry-pi-enclosure-02",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-02-full",
+          "version": "1",
+          "sha256": "07979c114f519763c5ece53662e425aa039f81fcee44e7a7e1bbeb9b36343b26"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-02-basis",
+          "version": "1",
+          "sha256": "5947b499daff950b17b32fe8a2fb6c80b2c41e10e05567444ade1aa65a62f979"
+        },
+        "reader_ids": [
+          "cfd-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+        "limitations": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
+        "evidence": [
+          "tests/external/process_validation/test_cfd.py",
+          "tests/external/process_validation/test_pi_enclosure_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "raspberry-pi-enclosure-02",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-02-full",
+          "version": "1",
+          "sha256": "07979c114f519763c5ece53662e425aa039f81fcee44e7a7e1bbeb9b36343b26"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-02-basis",
+          "version": "1",
+          "sha256": "5947b499daff950b17b32fe8a2fb6c80b2c41e10e05567444ade1aa65a62f979"
+        },
+        "reader_ids": [
+          "cfd-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+        "limitations": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
+        "evidence": [
+          "tests/external/process_validation/test_cfd.py",
+          "tests/external/process_validation/test_pi_enclosure_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         },
         {
           "id": "source.authority",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "source.authority",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         },
         {
           "id": "thermal.cfd",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "thermal.cfd",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -1677,33 +1787,88 @@
           "size_bytes": 527
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "raspberry-pi-enclosure-03",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-03-full",
+          "version": "1",
+          "sha256": "d808367685d1e8bbcffde3da67134c85dfb52afb466c7535e6113dd19e85e3ae"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-03-basis",
+          "version": "1",
+          "sha256": "6c795f2d61468598868c30f50a680742290649fbcf093de7360e721312397297"
+        },
+        "reader_ids": [
+          "cfd-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+        "limitations": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
+        "evidence": [
+          "tests/external/process_validation/test_cfd.py",
+          "tests/external/process_validation/test_pi_enclosure_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "raspberry-pi-enclosure-03",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-03-full",
+          "version": "1",
+          "sha256": "d808367685d1e8bbcffde3da67134c85dfb52afb466c7535e6113dd19e85e3ae"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-03-basis",
+          "version": "1",
+          "sha256": "6c795f2d61468598868c30f50a680742290649fbcf093de7360e721312397297"
+        },
+        "reader_ids": [
+          "cfd-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+        "limitations": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
+        "evidence": [
+          "tests/external/process_validation/test_cfd.py",
+          "tests/external/process_validation/test_pi_enclosure_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         },
         {
           "id": "source.authority",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "source.authority",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         },
         {
           "id": "thermal.cfd",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Actual STEP envelopes and fluid domains, exact geometry/load contract bindings, field-archive/hash correspondence, independent binary-VTK source temperatures, mass balance, convergence/heat-balance evidence and required engineering review.",
+          "limitation": "Retained fields lack supported convergence and heat-balance evidence; case 02 variant B also exceeds the frozen height. Manufacturer authority, detailed geometry and physical qualification require authenticated review.",
           "extension_recipe": "thermal.cfd",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_cfd.py",
+            "tests/external/process_validation/test_pi_enclosure_profiles.py"
+          ]
         }
       ],
       "initial_slice": false

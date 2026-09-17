@@ -109,8 +109,20 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   these review requirements are explicitly marked in the embedded frozen
   baselines. Full process-validation regression: `105 passed in 37.81s`; Ruff
   passed.
+- All three Raspberry Pi enclosure profiles are now frozen and implemented. A
+  bounded CFD evidence reader verifies contract-to-geometry/load hashes,
+  comparison-to-archive identity, every archived field digest, binary-VTK source
+  temperatures and boundary mass balance. STEP readback enforces each declared
+  enclosure envelope, and case 03 binds both solver contracts to every supplied
+  fan-curve point. All three retained runs are correctly blocked because they
+  explicitly lack supported steady-state convergence and field-derived heat
+  balance evidence; case 02 variant B also measures 68 mm high against its 60 mm
+  requirement. Manufacturer-source authority, detailed geometry and physical
+  qualification remain behind authenticated review. Focused reader/profile/
+  coverage tests: `12 passed in 10.78s`; full process-validation regression:
+  `113 passed in 46.54s`; Ruff passed.
 
 ## Next action
 
-C010–C012: implement the next reusable three-case family and keep the twenty-one
+C010–C012: implement the next reusable three-case family and keep the twenty-four
 full profiles pending exact review/correction evidence.

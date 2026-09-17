@@ -28,6 +28,7 @@ from data_vault.process_validation_repository import AttemptRecord
 
 from .evaluation import compare
 from .readers.base import ReaderContext, ReaderRegistry, ValidationIssue
+from .readers.cfd import CfdEvidenceReader
 from .readers.geometry import StepSeatGeometryReader
 from .readers.harness import HarnessReader
 from .readers.kicad import KiCadReader
@@ -114,6 +115,7 @@ class ProcessValidationService:
         if registry is None:
             registry = ReaderRegistry()
             registry.register(StructuredReader())
+            registry.register(CfdEvidenceReader())
             registry.register(StepSeatGeometryReader())
             registry.register(HarnessReader())
             registry.register(KiCadReader())
