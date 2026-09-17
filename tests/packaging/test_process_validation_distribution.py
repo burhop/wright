@@ -236,6 +236,16 @@ print(json.dumps({{
 """,
     )
     observed = json.loads(result.stdout)
+    source_coverage = json.loads(
+        (
+            REPOSITORY
+            / "packages/workspace_service/src/workspace_service/process_validation/"
+            "profiles/coverage.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert observed.pop("qualified_scenarios") == source_coverage[
+        "qualified_scenarios"
+    ]
     assert observed == {
         "return_code": 0,
         "release_eligible": True,
@@ -248,10 +258,6 @@ print(json.dumps({{
             "wright_validation__read",
         ],
         "coverage_version": "wright.process-validation-coverage/2",
-        "qualified_scenarios": [
-            "heat-spreader-sizing-01",
-            "parametric-drill-jig-01",
-        ],
         "profile_id": "structured-demo",
         "engineering_profiles": [
             "parametric-drill-jig-01-seat-geometry",

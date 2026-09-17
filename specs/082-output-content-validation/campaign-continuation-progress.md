@@ -399,7 +399,9 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   differs from the declared campaign-credit scope. The fresh 27-case audit has one exact
   full-profile validator per workflow, with `24 pass / 3 review / 0 fail`; the reviews are
   the same conservative Modelica basename warnings. Coverage/campaign/preflight tests pass
-  `54` checks and Ruff passes. After an owned dashboard restart, its API reports
+  `54` checks, the installed-wheel/offline distribution checks pass `2`, the affected
+  heat/printed preparer checks pass `9`, and Ruff passes. After an owned dashboard
+  restart, its API reports
   `30 qualified / 30 full scope / 0 unsupported`, while actual counters remain historical
   `30/30/24/0` and current `0/0/0`. The read-only browser audit passes 30 rows, 30 input
   images, four update-driven series, 17,971 history points, narrow layout and zero browser
