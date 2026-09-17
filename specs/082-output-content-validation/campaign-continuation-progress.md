@@ -304,12 +304,26 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   should be launched just in time and cleaned up after terminal execution rather than
   kept alive through the provider quota window. Current campaign credit remains
   historical `30/30/24/0` and current `0/0/0`; enrollment alone earns no credit.
+- The retained CalculiX container was found stopped, which exactly explained the
+  registered server's `Child MCP transport closed` state. Restarting that same owned
+  container and reactivating the same registration restored all eight tools. A direct
+  MCP diagnostic then hashed the retained bracket-03 attempt-012 baseline STEP and
+  passed an ephemeral 3 mm mesh plus all eight sealed fixture/load selections. Evidence
+  is `.local-run/feature-081-live/campaign-execution/calculix-recovery-082.json`;
+  no solve, durable CalculiX run or campaign dispatch occurred. The 27-case preflight
+  was rerun afterward with the same 24 pass, three review and zero fail result.
+- Solid Edge was not replayed. The current `CadMcp.Provider.SolidEdge.dll` SHA-256 is
+  exactly the one recorded by both retained sheet-02 flange probes, and both already
+  ended in the same non-retryable `E_POINTER` result with terminal cleanup. There is
+  therefore no documented material fix to justify a successor native attempt under
+  C019. The server being active proves discovery only, not flange recovery.
 
 ## Next action
 
 C016–C018: at the first available provider window, launch and enroll the three
 attempt-017 printed-part cases with their lifecycle-owned Blender/repair bindings,
 then run one current canonical case through review and full-profile validation.
-Resume the audited 27-case queue serially without resetting the retry ledger. Recheck
-the six historical missing-output cases against current native capability rather than
-treating their old diagnoses as current.
+Resume the audited 27-case queue serially without resetting the retry ledger. Use the
+recovered CalculiX registration for fresh bracket runs. Keep the sheet-metal flange
+episode quarantined until an actual provider repair is identified and passes a focused
+owned diagnostic.
