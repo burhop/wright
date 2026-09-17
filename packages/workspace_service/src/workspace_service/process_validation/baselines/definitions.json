@@ -281,6 +281,160 @@
         {"id":"HARNESS03-DELIVERABLES","text":"The output set contains labeled harness plan, exact pin schedule, cut list, BOM, illustrated assembly instructions and voltage-drop evidence.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Outputs"]]},
         {"id":"HARNESS03-ACTION-SCOPE","text":"The result is instrumentation design only, claims no machinery safety function or production certification, and performs no energizing, modification, fabrication or purchasing.","scope":"content","sources":[["context.md","Business and electrical configuration; Fabrication capability and policies"]]}
       ]
+    },
+    {
+      "scenario_id": "printed-replacement-part-01",
+      "scenario_path": "printed-replacement-part/01-observatory-focus-wheel",
+      "version": "1",
+      "requirements": [
+        {"id":"PRINT01-ENVELOPE","text":"The complete wheel is no more than 38.0 mm diameter and 18.0 mm high including the 2 mm raised front hub.","scope":"design","sources":[["prompt.txt","38 mm scale reference"],["context.md","Geometry and use"]]},
+        {"id":"PRINT01-GRIP","text":"The wheel has six equally spaced shallow scallops, at least 33 mm minimum grip diameter, nominal 1.0 mm exposed-edge rounds and subtle raised grip dots that do not form glove catches.","scope":"design","sources":[["prompt.txt","six scallops and grip dots"],["context.md","Geometry and use"]]},
+        {"id":"PRINT01-SOCKET","text":"The concentric blind D socket is 10.0 mm deep and derives from a 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and 0.20 mm flat clearance.","scope":"design","sources":[["prompt.txt","shaft and socket request"],["context.md","Geometry and use"]]},
+        {"id":"PRINT01-SOCKET-WALL","text":"At least 3.0 mm material remains above the blind socket and no set screw, insert, taper or keyway is added.","scope":"design","sources":[["context.md","Geometry and use"]]},
+        {"id":"PRINT01-MESH-LINEAGE","text":"Source and repaired printable meshes are distinct, correspond to the same approved geometry, and the final slice package binds to the repaired mesh revision.","scope":"content","sources":[["prompt.txt","requested mesh lineage"],["context.md","Review and outputs"]]},
+        {"id":"PRINT01-SLICE","text":"The final package uses installed matching P1S 0.4 mm PETG profiles, 0.20 mm layers, four perimeters and 35% infill; any PLA geometry prototype is explicitly labeled and cannot satisfy PETG.","scope":"design","sources":[["context.md","Capabilities and internal policy"]]},
+        {"id":"PRINT01-ORIENTATION","text":"Orientation and support decisions protect the upward-facing blind socket where feasible, retain an actual support/slicing preview, and identify any required support.","scope":"content","review_required":true,"sources":[["prompt.txt","orientation request"],["context.md","Review and outputs"]]},
+        {"id":"PRINT01-TOLERANCE","text":"Non-mating prototype dimensions use the proposed ±0.25 mm tolerance while D-socket design values remain separate from future measured fit values.","scope":"content","sources":[["context.md","Capabilities and internal policy"]]},
+        {"id":"PRINT01-DELIVERABLES","text":"The output set contains source mesh, repaired printable mesh, support/slicing preview, final P1S PETG package and a digest-bound local simulator transfer receipt.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Review and outputs"]]},
+        {"id":"PRINT01-ACTION-SCOPE","text":"The result does not claim strength, fit, accuracy, standards compliance or successful printing and does not use printer credentials, transfer to a physical printer or start a print.","scope":"content","sources":[["context.md","Capabilities and internal policy; Review and outputs"]]}
+      ]
+    },
+    {
+      "scenario_id": "printed-replacement-part-02",
+      "scenario_path": "printed-replacement-part/02-repair-cart-bow-handle",
+      "version": "1",
+      "requirements": [
+        {"id":"PRINT02-MOUNTING","text":"The two 4.5 mm through-hole centers are exactly 96.0 mm apart on flat 18 by 24 by 5 mm mounting pads at Z=0, with no threaded plastic bosses.","scope":"design","sources":[["prompt.txt","mounting request"],["context.md","Coordinate system and supplied measurements"]]},
+        {"id":"PRINT02-LABEL-KEEPOUT","text":"No mounting pad or handle material overlaps the drawer-label region below Y=-18 mm.","scope":"design","sources":[["context.md","Coordinate system and supplied measurements"]]},
+        {"id":"PRINT02-ENVELOPE","text":"The handle outer envelope is at most 118 mm wide, 28 mm high and 34 mm proud of the drawer.","scope":"design","sources":[["context.md","Coordinate system and supplied measurements"]]},
+        {"id":"PRINT02-FINGER-CLEARANCE","text":"At least 25 mm clearance exists between the rear of the grip and drawer plane over the central 65 mm span.","scope":"design","sources":[["context.md","Coordinate system and supplied measurements"]]},
+        {"id":"PRINT02-GRIP","text":"The bow uses a nominal 12 by 9 mm oval grip, internal blends at least 3 mm where space permits, touched-edge rounds at least 1 mm, and a shallow 1.5 mm thumb recess over the central 40 mm.","scope":"design","sources":[["prompt.txt","arched bow and thumb recess"],["context.md","Coordinate system and supplied measurements"]]},
+        {"id":"PRINT02-MESH-LINEAGE","text":"Source and repaired meshes remain distinct and the final 3MF and support preview bind to the reviewed repaired-mesh revision.","scope":"content","sources":[["prompt.txt","build and repair request"],["context.md","Process and company policy"]]},
+        {"id":"PRINT02-SLICE","text":"The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.","scope":"design","sources":[["context.md","Process and company policy"]]},
+        {"id":"PRINT02-ORIENTATION","text":"A recorded review compares pads-down and side orientations, retains the selected support preview and identifies support-contact locations.","scope":"content","review_required":true,"sources":[["context.md","Process and company policy"]]},
+        {"id":"PRINT02-DELIVERABLES","text":"The output set contains source mesh, repaired mesh, support preview, final 3MF and a digest-bound clearly simulated local transfer receipt.","scope":"content","sources":[["prompt.txt","requested package"],["context.md","Process and company policy"]]},
+        {"id":"PRINT02-ACTION-SCOPE","text":"The prototype is not represented as a tested lifting/load-restraint handle or certified/fit-validated part, and no real printer connection or print is performed.","scope":"content","sources":[["prompt.txt","prototype limitation"],["context.md","Work setting; Process and company policy"]]}
+      ]
+    },
+    {
+      "scenario_id": "printed-replacement-part-03",
+      "scenario_path": "printed-replacement-part/03-synthesizer-tilt-foot",
+      "version": "1",
+      "requirements": [
+        {"id":"PRINT03-BODY","text":"The rear-left foot uses the 26 by 38 mm mounting rectangle, remains at most 26 mm wide, and increases linearly from 8 mm height at Y=0 to 17 mm at Y=38 with a flat Z=0 mounting face and 3 mm side fillets.","scope":"design","sources":[["prompt.txt","shape request"],["context.md","Dimensioned intent"]]},
+        {"id":"PRINT03-HOLES","text":"Two 3.4 mm through holes lie at (13,9) and (13,29), normal to the mounting face.","scope":"design","sources":[["context.md","Dimensioned intent"]]},
+        {"id":"PRINT03-COUNTERBORES","text":"Each screw recess is a cylindrical 6.5 mm diameter by 2.5 mm deep counterbore from the sole, never a conical countersink or tapped hole, with at least 2.0 mm external wall.","scope":"design","sources":[["context.md","Dimensioned intent"]]},
+        {"id":"PRINT03-PAD-RECESS","text":"A 16 by 28 mm recess centered at (13,19) is 1.0 mm deep normal to the sloped sole with 2 mm corner rounds and does not add printed rubber geometry.","scope":"design","sources":[["context.md","Dimensioned intent"]]},
+        {"id":"PRINT03-CABLE-KEEPOUT","text":"The rear-right region X=21..26,Y=31..38 is removed for the full body depth with a 2 mm internal fillet.","scope":"design","sources":[["prompt.txt","keepout request"],["context.md","Dimensioned intent"]]},
+        {"id":"PRINT03-HANDEDNESS","text":"The model remains the specified rear-left part and is not automatically mirrored for the other side.","scope":"content","sources":[["prompt.txt","handedness instruction"],["context.md","Product and use assumptions"]]},
+        {"id":"PRINT03-MESH-LINEAGE","text":"Source and repaired printable meshes remain separate and the final slice binds to the reviewed repaired-mesh revision.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Manufacturing capability and policy"]]},
+        {"id":"PRINT03-SLICE","text":"The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.","scope":"design","sources":[["context.md","Manufacturing capability and policy"]]},
+        {"id":"PRINT03-SUPPORT","text":"Support planning avoids screw bores and the pad seating face where orientation permits and retains actual support evidence for any sculpted-side supports.","scope":"content","review_required":true,"sources":[["context.md","Manufacturing capability and policy"]]},
+        {"id":"PRINT03-DELIVERABLES","text":"The output set contains inspectable source mesh, repaired STL, support-aware P1S PETG package and a digest-bound simulator-only transfer receipt.","scope":"content","sources":[["prompt.txt","requested outputs"]]},
+        {"id":"PRINT03-ACTION-SCOPE","text":"The result makes no load, stability, screw-fit, creep, finish or material-certification claim and performs no instrument modification, physical transfer or print start.","scope":"content","sources":[["context.md","Product and use assumptions; Manufacturing capability and policy"]]}
+      ]
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-01",
+      "scenario_path": "sensor-interface-pcb/01-thermistor-interface",
+      "version": "1",
+      "requirements": [
+        {"id":"PCB01-CONNECTIVITY","text":"The native schematic and PCB implement every supplied netlist connection exactly: R1 10 kΩ 3V3-to-SENSE, R2 1 kΩ SENSE-to-ADC_OUT, C1 100 nF ADC_OUT-to-GND and C2 100 nF 3V3-to-GND on one shared GND.","scope":"design","sources":[["netlist.csv","all rows"],["context.md","Business and circuit"]]},
+        {"id":"PCB01-PARTS","text":"J1/J2 use the declared vertical THT header footprints and pin counts, R1/R2/C1/C2 use declared 0603 values/ratings, and exact purchasable connector records remain required before release.","scope":"design","sources":[["component-library.csv","all rows"],["context.md","Board and shop requirements"]]},
+        {"id":"PCB01-CONNECTORS","text":"J1 center is (7,15) mm with component-side top-to-bottom order 3V3/ADC_OUT/GND; J2 center is (33,15) mm with SENSE/GND, and pin 1 plus 3V3/NTC labels are clear.","scope":"design","sources":[["context.md","Placement"]]},
+        {"id":"PCB01-BOARD","text":"The PCB is a 40 by 30 mm, 1.6 mm two-layer board with 35 µm copper and four Ø2.5 mm NPTH holes at (3,3),(37,3),(3,27),(37,27).","scope":"design","sources":[["context.md","Board and shop requirements"]]},
+        {"id":"PCB01-RULES","text":"Copper remains 1.0 mm from mounting-hole edges; minimum track/clearance is 0.25/0.25 mm, minimum via drill 0.30 mm, all components are front-side and references remain readable.","scope":"design","sources":[["context.md","Board and shop requirements"]]},
+        {"id":"PCB01-PLACEMENT","text":"C1 is placed near the J1 analog-signal pin without changing approved connectivity or connector geometry.","scope":"design","sources":[["context.md","Placement"]]},
+        {"id":"PCB01-CHECKS","text":"Native ERC and DRC complete with zero unreviewed errors and preserve any reviewed warning disposition.","scope":"design","sources":[["prompt.txt","rule-check request"],["context.md","Deliverables"]]},
+        {"id":"PCB01-CORRESPONDENCE","text":"Gerber copper/outline, drill and BOM exports correspond exactly to the same native schematic/board revision.","scope":"content","sources":[["context.md","Deliverables"]]},
+        {"id":"PCB01-DELIVERABLES","text":"The output set contains editable .kicad_sch/.kicad_pcb, bom.csv, complete Gerber copper/outline layers, .drl, ERC and DRC reports.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Deliverables"]]},
+        {"id":"PCB01-ACTION-SCOPE","text":"The result is a low-voltage prototype design and does not claim electrical qualification, supplier capability, production release or authorization to order boards.","scope":"content","sources":[["context.md","Board and shop requirements; Deliverables"]]}
+      ]
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-02",
+      "scenario_path": "sensor-interface-pcb/02-dual-pressure-filter",
+      "version": "1",
+      "requirements": [
+        {"id":"PCB02-CONNECTIVITY","text":"Native schematic/PCB implement the exact two independent RAW_A→R1→ADC_A/C1 and RAW_B→R2→ADC_B/C2 networks, 5V decoupling C3/C4 and every supplied connector/test-pad net, with no capacitor or bridge between channels.","scope":"design","sources":[["netlist.csv","all rows"],["context.md","Business, circuit and assumptions"]]},
+        {"id":"PCB02-PARTS","text":"All component values, footprints, ratings and test-pad sizes match component-library.csv; exact real connector records remain required before production.","scope":"design","sources":[["component-library.csv","all rows"],["context.md","Board and shop requirements"]]},
+        {"id":"PCB02-CONNECTORS","text":"J2/J3 geometric centers are (34.0,19.5)/(34.0,10.5) mm, pin order is 5V/RAW/GND with pin 1 toward the top, channels are visibly distinct, and J1 remains the approved 1x04 mapping.","scope":"design","sources":[["context.md","Pinout and mechanical arrangement"]]},
+        {"id":"PCB02-TEST-PADS","text":"TP1..TP5 expose RAW_A,ADC_A,RAW_B,ADC_B,GND with at least 1.5 mm pads and 2.5 mm probe clearance; fixed TP1 origin is (10,14) mm.","scope":"design","sources":[["component-library.csv","TP1..TP5"],["netlist.csv","TP rows"],["context.md","Pinout and mechanical arrangement"]]},
+        {"id":"PCB02-QUALIFIED-PLACEMENT","text":"The current fresh board preserves J1=(4.5,18.81) at 180°, C2=(23,18.5) at 0°, C3=(8,23) at 0°, C4=(12,23) at 0° after the documented first move, and does not reuse the disqualified C3 90° hint.","scope":"design","sources":[["context.md","retained-board and recovery qualifications"]]},
+        {"id":"PCB02-BOARD-RULES","text":"The board is 40 by 30 mm, 1.6 mm two-layer/35 µm copper with the four declared NPTH holes, 1.0 mm hole-edge copper clearance, 0.25/0.25 mm track/clearance and 0.30 mm minimum via drill.","scope":"design","sources":[["context.md","Board and shop requirements"]]},
+        {"id":"PCB02-CHECKS","text":"Native connectivity has zero unconnected items and final ERC/DRC/placement audits have zero unreviewed errors, shorts, courtyard overlaps or mask bridges.","scope":"design","sources":[["context.md","Pinout and mechanical arrangement; Deliverables"]]},
+        {"id":"PCB02-CORRESPONDENCE","text":"Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.","scope":"content","sources":[["context.md","Deliverables"]]},
+        {"id":"PCB02-DELIVERABLES","text":"The output set contains editable native schematic/board, BOM, Gerber copper/outline, drill, ERC and DRC reports.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Deliverables"]]},
+        {"id":"PCB02-ACTION-SCOPE","text":"The result lists supplied 5 V/sensor/ADC assumptions and does not claim pump safety, production connector approval, electrical qualification or board-order authorization.","scope":"content","sources":[["context.md","Business, circuit and assumptions; Board and shop requirements; Deliverables"]]}
+      ]
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-03",
+      "scenario_path": "sensor-interface-pcb/03-fan-tach-service-board",
+      "version": "1",
+      "requirements": [
+        {"id":"PCB03-CONNECTIVITY","text":"Native schematic/PCB implement every supplied 24V/GND, 3V3, raw/output tach, pull-up, series-filter, capacitor and test-pad connection exactly, with no cross-channel bridge.","scope":"design","sources":[["netlist.csv","all rows"],["context.md","Business and system assumptions"]]},
+        {"id":"PCB03-COMPATIBILITY","text":"The report requires sourced confirmation that selected fans provide open-collector tach compatible with a 3.3 V pull-up and never accepts a push-pull 24 V tach output.","scope":"content","sources":[["context.md","Business and system assumptions"]]},
+        {"id":"PCB03-PARTS","text":"J1..J4, resistors, capacitors and TP1..TP5 match all declared footprints/values/ratings; exact production connectors remain unresolved until sourced.","scope":"design","sources":[["component-library.csv","all rows"]]},
+        {"id":"PCB03-POWER-ROUTING","text":"Each fan power/return branch uses at least 1.0 mm track width, common supply/return at least 1.5 mm, and 24 V copper remains at least 0.8 mm from logic except defined ground connections.","scope":"design","sources":[["context.md","Layout requirements and limitations"]]},
+        {"id":"PCB03-PLACEMENT","text":"J3/J4 centers remain (36,16.46)/(20,25.5) mm, TP3 center (32,14) mm, J2 origin (5,19) mm and TP1 origin (10,14) mm with required labels and routing corridor.","scope":"design","sources":[["context.md","Layout requirements and limitations"]]},
+        {"id":"PCB03-BOARD-RULES","text":"The board is 40 by 30 mm, 1.6 mm two-layer/35 µm copper with declared NPTH holes, 1.0 mm hole-edge copper clearance, 0.25/0.25 mm minimum track/clearance and 0.30 mm via drill.","scope":"design","sources":[["context.md","Board and shop requirements"]]},
+        {"id":"PCB03-CHECKS","text":"Native connectivity, ERC and DRC finish with zero unreviewed errors while preserving power/logic-domain constraints and the 0..500 Hz tach assumption.","scope":"design","sources":[["context.md","Business and system assumptions; Deliverables"]]},
+        {"id":"PCB03-CORRESPONDENCE","text":"Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.","scope":"content","sources":[["context.md","Deliverables"]]},
+        {"id":"PCB03-DELIVERABLES","text":"The output set contains editable KiCad schematic/board, BOM, Gerber copper/outline, drill and ERC/DRC reports.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Deliverables"]]},
+        {"id":"PCB03-ACTION-SCOPE","text":"The passive adapter is not represented as a fan/safety controller, isolation barrier, production-qualified board or authorization to order hardware.","scope":"content","sources":[["prompt.txt","passive-adapter scope"],["context.md","Layout requirements and limitations; Deliverables"]]}
+      ]
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-01",
+      "scenario_path": "lightweight-equipment-bracket/01-conveyor-vision-mount",
+      "version": "1",
+      "requirements": [
+        {"id":"BRACKET01-GEOMETRY","text":"Baseline and revision preserve the declared wall/shelf envelope, both Ø6.6 wall holes, both Ø4.5 camera holes, 10 mm hole keepouts and complete camera contact surface.","scope":"design","sources":[["dimensions.csv","all rows"],["context.md","Geometry and coordinate convention"]]},
+        {"id":"BRACKET01-MANUFACTURING","text":"The lighter single-solid machined design respects 6 mm minimum tool diameter, 3 mm internal radius and 3 mm residual wall without moving protected features.","scope":"design","sources":[["context.md","Business and fabrication"]]},
+        {"id":"BRACKET01-LOAD","text":"Both revisions use exactly the distributed (0,0,-100) N service load on x=60..85,y=-20..20,z=60 and cylindrical restraint on both wall holes; optional gravity remains separate.","scope":"design","sources":[["load-case.csv","row:service_100N"],["context.md","Fixture and load"]]},
+        {"id":"BRACKET01-MATERIAL","text":"Both solves use homogeneous linear-elastic material E=69 GPa, ν=0.33 and density 2700 kg/m³.","scope":"design","sources":[["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET01-RESPONSES","text":"Load-point displacement is at most 0.50 mm and evaluated von Mises stress is at most 120 MPa in a declared non-singular evaluation region while the unfiltered stress field is retained.","scope":"design","sources":[["load-case.csv","deflection_limit_mm,stress_limit_MPa"],["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET01-REACTIONS","text":"Reported support reactions balance the applied force/moment and identify the cylindrical-bearing/joint-compliance simplification.","scope":"design","sources":[["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET01-REFINEMENT","text":"Baseline and revision each retain consistent coarse/fine meshes with less than 5% change in declared response metrics.","scope":"design","sources":[["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET01-MASS","text":"The revision's independently calculated mass is at least 20% below baseline or the unmet target remains explicit without altering protected requirements.","scope":"design","sources":[["prompt.txt","20% target"],["context.md","Fixture and load"]]},
+        {"id":"BRACKET01-DELIVERABLES","text":"The output set contains baseline/revised STEP, actual CalculiX-compatible decks, displacement/stress fields, mass comparison and analysis report with exact revision/solve lineage.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Test output request"]]},
+        {"id":"BRACKET01-CLAIM-SCOPE","text":"The static prototype screening does not claim fatigue, impact, preload, joint slip, material certification or production release.","scope":"content","sources":[["context.md","Material and analysis basis; Test output request"]]}
+      ]
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-02",
+      "scenario_path": "lightweight-equipment-bracket/02-pump-instrument-outrigger",
+      "version": "1",
+      "requirements": [
+        {"id":"BRACKET02-GEOMETRY","text":"Baseline and revision preserve the declared back plate, shelf, two ribs, four Ø8.5 back holes, two Ø5.5 instrument holes, protected top pad and empty cable corridor.","scope":"design","sources":[["dimensions.csv","all rows"],["context.md","Geometric definition"]]},
+        {"id":"BRACKET02-MANUFACTURING","text":"The lighter single-billet 3-axis design respects 3 mm cutter radius, 4 mm wall and 8 mm material around bolt bores with no welds.","scope":"design","sources":[["context.md","Business constraints"]]},
+        {"id":"BRACKET02-LOAD","text":"Both revisions use the distributed vector (60,0,-80) N on x=72..100,y=-25..25,z=72 and cylindrical restraints on all four back holes, preserving eccentricity.","scope":"design","sources":[["load-case.csv","row:instrument_pull"],["context.md","Load and fixture"]]},
+        {"id":"BRACKET02-MATERIAL","text":"Both solves use homogeneous linear-elastic material E=69 GPa, ν=0.33 and density 2700 kg/m³.","scope":"design","sources":[["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET02-RESPONSES","text":"Load-point displacement is at most 0.50 mm and evaluated von Mises stress at most 120 MPa under a declared non-singular evaluation while retaining unfiltered fields.","scope":"design","sources":[["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET02-REACTIONS","text":"Support reaction force and moment balance the eccentric applied load and explicitly identify the bearing-restraint simplification.","scope":"design","sources":[["context.md","Load and fixture; Material and analysis basis"]]},
+        {"id":"BRACKET02-REFINEMENT","text":"Baseline and revision each retain consistent coarse/fine meshes with less than 5% change in declared response metrics.","scope":"design","sources":[["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET02-MASS","text":"The revision is at least 15% lighter or the unmet target remains explicit without changing load, envelope, holes or keepouts.","scope":"design","sources":[["prompt.txt","15% target"],["context.md","Load and fixture"]]},
+        {"id":"BRACKET02-DELIVERABLES","text":"The output set contains baseline/revised STEP, actual solver decks/results, displacement/stress fields, mass comparison and analysis report with exact lineage.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Test output request"]]},
+        {"id":"BRACKET02-CLAIM-SCOPE","text":"The static prototype result does not claim fatigue, impact, joint behavior, material certification, a supplier quote or production release.","scope":"content","sources":[["context.md","Business constraints; Material and analysis basis; Test output request"]]}
+      ]
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-03",
+      "scenario_path": "lightweight-equipment-bracket/03-dock-sensor-yoke",
+      "version": "1",
+      "requirements": [
+        {"id":"BRACKET03-GEOMETRY","text":"Baseline and revision preserve base, cheeks, complete crossbar outside faces, four Ø6.6 base holes, two Ø8.2 pivot holes, Ø24 pivot annuli and the empty service-access box.","scope":"design","sources":[["dimensions.csv","all rows"],["context.md","Baseline geometry"]]},
+        {"id":"BRACKET03-MANUFACTURING","text":"The lighter single-billet two-setup design respects 8 mm tool diameter, 4 mm internal radius/wall and 6 mm bore-edge-to-outside distance without additive or welded substitution.","scope":"design","sources":[["context.md","Customer and manufacturing capability"]]},
+        {"id":"BRACKET03-LOAD","text":"Both revisions use exactly +Y 100 N distributed over x=-20..20,y=-22,z=74..86 and cylindrical restraint on all four base holes, retaining the resulting torsion.","scope":"design","sources":[["load-case.csv","row:cable_snag"],["context.md","Mechanics and design target"]]},
+        {"id":"BRACKET03-MATERIAL","text":"Both solves use homogeneous linear-elastic material E=69 GPa, ν=0.33 and density 2700 kg/m³.","scope":"design","sources":[["context.md","Material and analysis basis"]]},
+        {"id":"BRACKET03-RESPONSES","text":"Crossbar-centroid displacement including torsion is at most 0.50 mm and evaluated stress at most 120 MPa under a declared non-singular region while retaining full fields.","scope":"design","sources":[["load-case.csv","deflection_limit_mm,stress_limit_MPa"],["context.md","Mechanics and design target; Material and analysis basis"]]},
+        {"id":"BRACKET03-REACTIONS","text":"Support reactions balance the sideways force and twisting moment and identify the base-hole bearing simplification.","scope":"design","sources":[["context.md","Mechanics and design target; Material and analysis basis"]]},
+        {"id":"BRACKET03-REFINEMENT","text":"Baseline and revision each retain consistent coarse/fine meshes with less than 5% change in declared displacement/stress responses.","scope":"design","sources":[["context.md","Mechanics and design target; Material and analysis basis"]]},
+        {"id":"BRACKET03-MASS","text":"The revision is at least 25% lighter or explicitly reports infeasibility without changing holes, datum faces, service box or load.","scope":"design","sources":[["prompt.txt","25% target"],["context.md","Mechanics and design target"]]},
+        {"id":"BRACKET03-DELIVERABLES","text":"The output set contains baseline/revised STEP, actual solver decks, displacement/stress fields, mass comparison and analysis report with exact lineage.","scope":"content","sources":[["prompt.txt","requested outputs"],["context.md","Test output request"]]},
+        {"id":"BRACKET03-CLAIM-SCOPE","text":"The result remains static prototype screening and does not claim impact, fatigue, joint behavior, material certification or production release.","scope":"content","sources":[["prompt.txt","scope"],["context.md","Mechanics and design target; Material and analysis basis"]]}
+      ]
     }
   ]
 }
