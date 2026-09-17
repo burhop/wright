@@ -243,7 +243,7 @@ def build(scenario_id: str, values: dict) -> ValidationProfile:
                 "The validator checks static linear-elastic digital evidence only; fatigue, impact, joint compliance, material certification and physical qualification remain outside scope.",
                 "Detailed protected-feature topology, machining feasibility and non-singular stress-region interpretation require authenticated engineering review.",
             ],
-            "supported_kinds": ["file"],
+            "supported_kinds": ["file", "value"],
         }
     )
 

@@ -223,7 +223,46 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
                 assert (Path(args.workspace_root) / item["path"]).read_bytes() == (
                     directory / name
                 ).read_bytes()
-        assert len(plan.steps) == 12 and len(manifest["tool_allowlist"]) == 11
+        final_review = next(
+            step for step in plan.steps if step.id.startswith("review_bracket_outputs_")
+        )
+        validator = next(
+            step for step in plan.steps if step.id.startswith("validate_bracket_content_")
+        )
+        assert set(cad.expected_file_ports) == {
+            "baseline_step",
+            "revised_step",
+            "mass_comparison",
+            "fea_requests",
+        }
+        field_roles = {
+            f"{variant}_{mesh}_{kind}"
+            for variant in ("baseline", "revised")
+            for mesh in ("coarse", "fine")
+            for kind in ("receipt", "displacement", "stress", "reaction")
+        }
+        for expansion in [
+            step for step in plan.steps if step.id.startswith("expand_")
+        ]:
+            assert len(expansion.expected_file_ports) == 4
+        assert {role for role, _ in validator.validation_sources} == {
+            "mechanical_basis",
+            "analysis_report",
+            "baseline_step",
+            "revised_step",
+            "mass_comparison",
+            "fea_requests",
+            *field_roles,
+        }
+        configured_review = final_review.external_action["settings"][
+            "validation_review"
+        ]
+        assert configured_review["profile_ref"] == validator.validation["profile"][
+            "reference"
+        ]
+        assert configured_review["requirement_ids"]
+        assert plan.revisions == {}
+        assert len(plan.steps) == 14 and len(manifest["tool_allowlist"]) == 11
     if script == "drill-jig":
         author = next(
             step for step in plan.steps if step.id.startswith("author_jig_source_")

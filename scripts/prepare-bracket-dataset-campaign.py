@@ -14,6 +14,7 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/lightweight-equipment-bracket.workflow.wflow"
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/lightweight-equipment-bracket.json"
+VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 spec = importlib.util.spec_from_file_location("bracket_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
@@ -62,6 +63,12 @@ def prepare(args, directory, tools):
     config = json.loads(BINDING.read_text(encoding="utf-8"))
     manifest = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
     identity = manifest["scenario_id"]
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
+    validation_profile = support.get("full_profile")
+    if not validation_profile:
+        raise ValueError("The bracket full validator profile is unavailable")
+    profile_document = json.loads((ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles" / (validation_profile["profile_resource"] + ".json")).read_text(encoding="utf-8"))
     suffix = identity.replace("-", "_") + "_" + args.attempt.replace("-", "_")
     workspace = Path(args.workspace_root).resolve()
     draft = Path(args.draft_root).resolve() / identity / args.attempt
@@ -163,6 +170,14 @@ def prepare(args, directory, tools):
     h.add_reference(sections, preflight_result, author, "actual_project_state")
     geometry = bind(original["create_bracket"], f"Execute actual AgentCAD run(script={cad_source!r},output='brackets',cwd={str(project)!r},build_dir='build',preview=False,view=False,diff=False). Inspect actual native execution result; the next confined file-observation task reads exported STEP identities, measurements, mass comparison and solver arguments. Each candidate must be one solid; fail on missing pad/centroid topology instead of using a broad substitute load face. Do not require an unavailable file reader at this CAD step or claim unobserved file contents.",
         "agentcad", ("baseline.step", "revised.step", "model-measurements.json", "mass-comparison.csv", "fea-requests.json"))
+    geometry_files = {
+        "baseline_step": output + "/baseline.step",
+        "revised_step": output + "/revised.step",
+        "mass_comparison": output + "/mass-comparison.csv",
+        "fea_requests": output + "/fea-requests.json",
+    }
+    original["create_bracket"]["fields"]["outputs"].extend(h.port(role, "workspace_file") for role in geometry_files)
+    original["create_bracket"]["fields"]["settings"]["expected_file_ports"] = geometry_files
     h.add_reference(sections, authored, original["create_bracket"], "executed_source")
     observe = task("inspect_bracket_exports", "Read actual bracket measurements and recorded solver requests")
     observed = bind(observe, f"Call inspect_file(includeText=true) for each actual {output}/model-measurements.json, {output}/mass-comparison.csv and {output}/fea-requests.json. Follow nextOffsetBytes until complete. Call inspect_file(includeText=false) for {output}/baseline.step and {output}/revised.step. Return full exact closed solver argument objects and actual file text/identities, without inventing or modifying requests, mass values or hashes. File presence is not engineering validation.", "wright-workspace-files", filename="cad-file-observations.json", customer_context=False)
@@ -183,16 +198,56 @@ def prepare(args, directory, tools):
                 "native-field-expansion/job.frd", "native-field-expansion/displacement-field.csv",
                 "native-field-expansion/stress-field.csv", "reaction-forces.json", "field-expansion-receipt.json"))
             fields = bind(expansion, f"For the completed {label} recorded run only, call export_recorded_fields_and_reactions(run_id=<actual>,expected_step_sha256=<actual>,output_directory='{output}/fea/{label}'). This is an explicit separate native solve adding RF/FRD output requests only. Preserve original nine sealed resources/full DAT, exact patch diff, second native command/input/output hashes, reactions and full displacement/stress fields. Report unresolved centroid-node sampling; never call nearest-node values the exact centroid. Do not present second-run output as original Casys output, do not repeat ambiguous native output directories, and do not modify a physical deck.", args.field_server_id, expected, filename=f"{label}-field-expansion-results.json")
+            prefix = variant + "_" + mesh
+            expansion_files = {
+                prefix + "_receipt": output + f"/fea/{label}/field-expansion-receipt.json",
+                prefix + "_displacement": output + f"/fea/{label}/native-field-expansion/displacement-field.csv",
+                prefix + "_stress": output + f"/fea/{label}/native-field-expansion/stress-field.csv",
+                prefix + "_reaction": output + f"/fea/{label}/reaction-forces.json",
+            }
+            expansion["fields"]["outputs"].extend(h.port(role, "workspace_file") for role in expansion_files)
+            expansion["fields"]["settings"]["expected_file_ports"] = expansion_files
             h.add_reference(sections, solves, expansion, "actual_recorded_run_identities")
             expansions.append(expansion)
-            field_results.append((label, fields))
+            field_results.append((label, fields, expansion, expansion_files))
     bind(original["solve_and_compare"], "Complete the original structural comparison from the actual prior kernel and solver operations: baseline/revised mass and target reduction, exact-centroid displacement (or explicit unresolved sampling), full raw stress peaks separately from declared evaluated stress treatment, original coarse/fine response changes and original5percent requirement, support reaction force/moment, supplied0.5mm/120MPa limits and machining constraints. Preserve failures/unachieved targets; never infer correctness from successful solver or file presence. Explain equal-node load approximation and fixed-bearing simplification, retain unfiltered fields and distinguish sealed original solves from the explicit output-only native expansions. A raw singular maximum must not be declared a meaningful evaluated design stress. If stress-region sampling is unresolved, make that limitation explicit and do not mark the bracket engineering-qualified. Return a concrete analysis report with source/run/file identities and comparison tables.", filename="analysis-report.md", format="markdown")
     h.add_reference(sections, geometry, original["solve_and_compare"], "actual_cad_mass")
     h.add_reference(sections, observed, original["solve_and_compare"], "observed_cad_mass_and_measurements")
     h.add_reference(sections, solves, original["solve_and_compare"], "original_numerical_observations")
-    for label, fields in field_results:
+    for label, fields, _, _ in field_results:
         h.add_reference(sections, fields, original["solve_and_compare"], label.replace("-", "_") + "_fields_and_reactions")
-    chain = [original["define_load_case"], review, preflight, author, original["create_bracket"], observe, solve_step, *expansions, original["solve_and_compare"]]
+    final_review = task("review_bracket_outputs", "Review exact bracket study outputs")
+    final_review["fields"].update(step_type="review", performed_by="engineer", instructions="Review the exact mechanical basis and final analysis report against every frozen geometry, manufacturing, load, material, response, reaction, refinement and claim-scope requirement.",
+        settings={"authoring_template": "external-action-approval", "action_kind": "local_review",
+            "approval_binding": {"server": "wright", "tool": "review_artifacts", "schema": h.digest(b"wright.local_review.v1")},
+            "approval_destination": {"kind": "local_review", "id": "workspace"},
+            "approval_settings": {"review_task_id": final_review["id"], "validation_review": {
+                "profile_ref": validation_profile["profile_ref"],
+                "requirement_ids": sorted(requirement["id"] for requirement in profile_document["baseline"]["requirements"] if requirement["review_required"]),
+            }},
+            "approval_action": {"kind": "local_review", "mode": "review_only"}})
+    analysis_port = original["solve_and_compare"]["id"] + "_result"
+    h.add_reference(sections, original["define_load_case"]["id"] + "." + original["define_load_case"]["id"] + "_result", final_review, "mechanical_basis")
+    h.add_reference(sections, original["solve_and_compare"]["id"] + "." + analysis_port, final_review, "analysis_report")
+    validation_sources = {
+        "mechanical_basis": (original["define_load_case"], original["define_load_case"]["id"] + "_result", "engineering_document"),
+        "analysis_report": (original["solve_and_compare"], analysis_port, "engineering_document"),
+        **{role: (original["create_bracket"], role, "workspace_file") for role in geometry_files},
+    }
+    for _, _, expansion, expansion_files in field_results:
+        validation_sources.update({role: (expansion, role, "workspace_file") for role in expansion_files})
+    validator = task("validate_bracket_content", "Validate current bracket study outputs")
+    validator["fields"].update(performed_by="configured_tool",
+        inputs=[h.port("validate_" + role, kind) for role, (_, _, kind) in validation_sources.items()],
+        outputs=[h.port("assessment")], prompt="",
+        settings={"authoring_template": "process-validator", "output_format": "json", "max_revisions": 0,
+            "validation": {"profile": {"source": "packaged", "name": validation_profile["profile_resource"], "reference": validation_profile["profile_ref"]},
+                "baseline": validation_profile["baseline_ref"], "subjects": {role: "validate_" + role for role in validation_sources}}})
+    for role, (producer, producer_port, _) in validation_sources.items():
+        sections.append({"kind": "connection", "id": "bind_" + validator["id"] + "_" + role,
+            "fields": {"type": "item", "from": producer["id"] + "." + producer_port,
+                "to": validator["id"] + ".validate_" + role, "label": "current bracket output to validate", "when": None}})
+    chain = [original["define_load_case"], review, preflight, author, original["create_bracket"], observe, solve_step, *expansions, original["solve_and_compare"], final_review, validator]
     for before, after in zip(chain, chain[1:]):
         sections.append({"kind": "connection", "id": "sequence_" + after["id"], "fields": {"type": "order", "from": before["id"], "to": after["id"], "label": "full structural revision sequence", "when": None}})
     rendered = h.render(sections)

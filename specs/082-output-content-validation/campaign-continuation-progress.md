@@ -234,8 +234,17 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   thermal, variant and claim-scope obligation. Retained convergence/heat-balance
   gaps and the case-02 height violation can now reach the canonical gate.
   Pi/preparer/profile/runtime regression: `48 passed in 22.68s`; Ruff passed.
+- All three bracket workflows now expose the reviewed mechanical basis and final
+  analysis values, baseline/revised STEP and mass/request files, and every exact
+  coarse/fine displacement, stress, reaction and field-expansion receipt. A new
+  post-analysis engineer checkpoint pins all review-required obligations before
+  the terminal full-profile gate. Current missing-output attempts will therefore
+  report their absent roles explicitly; recovered runs can be evaluated without
+  changing the graph. Bracket/preparer/profile/runtime regression:
+  `52 passed in 9.76s`; Ruff passed.
 
 ## Next action
 
-C012–C014: integrate the bracket workflows, then prove an actionable retained-
-output defect through the canonical gate when the provider resumes.
+C012–C014: integrate the sheet-metal workflows, completing all ten family
+preparers, then prove an actionable retained-output defect through the canonical
+gate when the provider resumes.

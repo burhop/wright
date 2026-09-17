@@ -617,7 +617,7 @@
         "profile_ref": {
           "id": "lightweight-equipment-bracket-01-full",
           "version": "1",
-          "sha256": "6027a12966f95e71dbfb7936af687ebdcb406d76abedd810a9d713efaf08f702"
+          "sha256": "0c2f24e8d8523a45e7c27bb00755b5cc0a2449dd738a1f7c3dea8856bf033a8f"
         },
         "baseline_ref": {
           "id": "lightweight-equipment-bracket-01-basis",
@@ -641,7 +641,7 @@
         "profile_ref": {
           "id": "lightweight-equipment-bracket-01-full",
           "version": "1",
-          "sha256": "6027a12966f95e71dbfb7936af687ebdcb406d76abedd810a9d713efaf08f702"
+          "sha256": "0c2f24e8d8523a45e7c27bb00755b5cc0a2449dd738a1f7c3dea8856bf033a8f"
         },
         "baseline_ref": {
           "id": "lightweight-equipment-bracket-01-basis",
@@ -740,7 +740,7 @@
         "profile_ref": {
           "id": "lightweight-equipment-bracket-02-full",
           "version": "1",
-          "sha256": "63f04f3d1612d390d33d5c99a08cc0bbe177fbb49e77361c1941e3950bf1c02c"
+          "sha256": "af5bcb43353c44cba7c2f321e6d900bfcfe57aad3473fffca6de1f1fa3afca00"
         },
         "baseline_ref": {
           "id": "lightweight-equipment-bracket-02-basis",
@@ -764,7 +764,7 @@
         "profile_ref": {
           "id": "lightweight-equipment-bracket-02-full",
           "version": "1",
-          "sha256": "63f04f3d1612d390d33d5c99a08cc0bbe177fbb49e77361c1941e3950bf1c02c"
+          "sha256": "af5bcb43353c44cba7c2f321e6d900bfcfe57aad3473fffca6de1f1fa3afca00"
         },
         "baseline_ref": {
           "id": "lightweight-equipment-bracket-02-basis",
@@ -863,7 +863,7 @@
         "profile_ref": {
           "id": "lightweight-equipment-bracket-03-full",
           "version": "1",
-          "sha256": "9cd2733d98bb9704464dcdbd6cdd043d8b63f14297a2880cb5753b160a92eb11"
+          "sha256": "a90c518ab4f74166733b3d99a5c541a4464f1d0249fe3bdc6c35cb5c737e90d5"
         },
         "baseline_ref": {
           "id": "lightweight-equipment-bracket-03-basis",
@@ -887,7 +887,7 @@
         "profile_ref": {
           "id": "lightweight-equipment-bracket-03-full",
           "version": "1",
-          "sha256": "9cd2733d98bb9704464dcdbd6cdd043d8b63f14297a2880cb5753b160a92eb11"
+          "sha256": "a90c518ab4f74166733b3d99a5c541a4464f1d0249fe3bdc6c35cb5c737e90d5"
         },
         "baseline_ref": {
           "id": "lightweight-equipment-bracket-03-basis",
