@@ -491,6 +491,21 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
 
 ## Next action
 
+On the user's request, ran validator-only inspection of all 24 retained complete
+output sets using the exact currently packaged full profiles (no removed checks or
+review requirements). Reports are in
+`artifacts/process-validation/retained-24-20260917T222248Z/summary.md`, with per-case
+report JSON, Markdown, RTM CSV, isolated assessment databases and hashed byte copies.
+Thirteen cases pass every automated check; nine have automated failures and two have
+only automated evidence blockers. Every case still requires human review. Failures
+are harness voltage-drop numeric evidence (all three), identical printed-02 source/
+repaired meshes, Pi-02 enclosure height, robot-02 gap records, and missing water-heater
+kit ID/version (all three). All three Pi cases lack convergence and heat-balance
+evidence. These detached assessments inspect retained bytes and do not claim original
+producer authority or current-generation campaign credit. No inference, generation,
+native replay, approval or campaign-counter mutation occurred. Driver:
+`.local-run/feature-081-live/campaign-execution/validate-retained-24.py`.
+
 The authority refresh also required successor execution waves: the previous wave plan
 still contained the original 12 AgentCAD grants. Use the local
 `validator-campaign-082/execution-waves-authority-refreshed.json` (SHA-256
