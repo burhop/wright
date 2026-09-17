@@ -213,8 +213,23 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   digest; the terminal validator consumes the independently created native
   artifacts. PCB/preparer/profile/runtime regression: `44 passed in 7.78s`;
   Ruff passed.
+- External integration checkpoints can now declare one exact `receipt`
+  workspace-file output when their approval settings name the receipt path.
+  Continuation verifies the persisted bytes, restores the receipt as a normal
+  provenance-bearing result and registers it for downstream validation. Local
+  reviews retain their prior no-output semantics. A focused continuation test
+  proves the verified receipt reaches the next canonical step.
+- All three printed-part workflows now expose the source and repaired meshes,
+  slicer package/evidence/previews/profiles, immutable source report and exact
+  simulated transfer receipt to their full profiles. A post-transfer engineer
+  checkpoint pins every detailed geometry, orientation, tolerance and claim
+  review before validation. Retained case 02's byte-identical source/repaired
+  mesh can now fail the canonical gate with its targeted lineage finding.
+  Printed/preparer/profile/approval/runtime regression: `78 passed in 26.52s`,
+  plus the receipt-output continuation test; Ruff passed.
 
 ## Next action
 
-C012–C014: integrate the printed-part workflows, then prove an actionable
-retained-output defect through the canonical gate when the provider resumes.
+C012–C014: integrate the Raspberry Pi enclosure workflows, then prove an
+actionable retained-output defect through the canonical gate when the provider
+resumes.

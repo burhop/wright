@@ -451,6 +451,19 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             )
             action_settings = approval_object("approval_settings", None)
             action = approval_object("approval_action", None)
+            declared_outputs = fields.get("outputs", [])
+            receipt_outputs = tuple(
+                (port["key"], str(port.get("kind", "engineering_document")))
+                for port in declared_outputs
+                if isinstance(port, dict) and isinstance(port.get("key"), str)
+            )
+            valid_receipt_output = not declared_outputs or (
+                action_kind != "local_review"
+                and isinstance(action_settings, dict)
+                and isinstance(action_settings.get("receipt_path"), str)
+                and len(receipt_outputs) == 1
+                and receipt_outputs == (("receipt", "workspace_file"),)
+            )
             if (
                 action_kind
                 not in {
@@ -463,7 +476,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 or fields.get("step_type") != "review"
                 or fields.get("tool") is not None
                 or fields.get("reusable_step") is not None
-                or fields.get("outputs")
+                or not valid_receipt_output
                 or not dependencies[block_id]
                 or not all(
                     isinstance(value, dict) and value
@@ -492,6 +505,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     "",
                     False,
                     "indexed",
+                    output_ports=receipt_outputs,
                     external_action={
                         "action_kind": action_kind,
                         "binding": binding,
@@ -1484,6 +1498,11 @@ async def execute_prompt_workflow(
                 )
                 engineering_results.append(receipt_result)
                 verified_receipts.append(output)
+                port = receipt.get("output_port") or "receipt"
+                if (port, "workspace_file") in released.output_ports:
+                    address = f"{released.id}.{port}"
+                    responses[address] = receipt_result
+                    artifacts_by_output[address] = [output]
                 await emit(
                     "result_ready",
                     task_id=released.id,
@@ -1492,15 +1511,17 @@ async def execute_prompt_workflow(
                 )
         # A review may expose the same exact artifact to downstream tasks. The
         # approval never creates a replacement engineering artifact.
-        if released.references:
+        if (
+            released.external_action["action_kind"] == "local_review"
+            and released.references
+        ):
             approved_source = released.references[0][1]
             for port, _ in released.output_ports:
                 responses[f"{released.id}.{port}"] = responses[approved_source]
                 artifacts_by_output[f"{released.id}.{port}"] = artifacts_by_output.get(
                     approved_source, []
                 )
-        records.append(
-            {
+        approval_record = {
                 "task_id": released.id,
                 "task_title": released.title,
                 "execution_kind": "approval",
@@ -1522,7 +1543,23 @@ async def execute_prompt_workflow(
                 "external_action": completed_checkpoint["external_action"],
                 "produced_files": verified_receipts,
             }
-        )
+        if validation_application:
+            approval_record["producer_attempt"] = 1 + sum(
+                1 for item in attempts if item["task_id"] == released.id
+            )
+        records.append(approval_record)
+        if validation_application:
+            from .process_validation.process import register_outputs
+
+            register_outputs(
+                validation_application,
+                released,
+                approval_record,
+                run_id,
+                responses,
+                artifacts_by_output,
+                engineering_results,
+            )
         await emit(
             "step_completed",
             task_id=released.id,

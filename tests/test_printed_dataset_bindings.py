@@ -90,8 +90,8 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     result = prepare.prepare(args, folder, tools)
     bound = Path(result["draft"]).read_text()
     plan = prepare.compile_prompt_workflow(bound)
-    assert len(plan.steps) == 4
-    assert all(step.id.endswith("api_created_identity") for step in plan.steps)
+    assert len(plan.steps) == 6
+    assert all(step.id.endswith("api_created_identity") for step in plan.steps[:4])
     assert all(step.expected_files for step in plan.steps[:3])
     assert plan.steps[0].server_id == blender_server
     assert plan.steps[1].server_id == "wright-printed-part-mesh-repair"
@@ -136,11 +136,46 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     assert "never inspect bpy.ops" in plan.steps[0].task_guidance
     assert "Never rebuild already-watertight geometry" in plan.steps[0].task_guidance
     assert "zero boundary/non-manifold edges" in plan.steps[0].task_guidance
-    assert plan.steps[-1].external_action["destination"] == {
+    assert plan.steps[3].external_action["destination"] == {
         "kind": "integration_test",
         "id": f"test://test-campaign/printer/printed-replacement-part-0{number}",
     }
-    assert plan.steps[-1].external_action["settings"]["nozzle_mm"] == "0.4"
+    assert plan.steps[3].external_action["settings"]["nozzle_mm"] == "0.4"
+    assert plan.steps[3].output_ports == (("receipt", "workspace_file"),)
+    assert set(plan.steps[0].expected_file_ports) == {"source_mesh"}
+    assert set(plan.steps[1].expected_file_ports) == {"repaired_mesh"}
+    assert set(plan.steps[2].expected_file_ports) == {
+        "support_preview",
+        "slice_package",
+        "slice_evidence",
+        "machine_profile",
+        "filament_profile",
+        "process_profile",
+    }
+    review = plan.steps[4]
+    validator = plan.steps[5]
+    assert review.external_action["action_kind"] == "local_review"
+    assert {role for role, _ in validator.validation_sources} == {
+        "source_mesh",
+        "source_report",
+        "repaired_mesh",
+        "support_preview",
+        "slice_package",
+        "slice_evidence",
+        "machine_profile",
+        "filament_profile",
+        "process_profile",
+        "transfer_receipt",
+    }
+    assert validator.validation["profile"]["name"] == (
+        f"printed-replacement-part-0{number}"
+    )
+    configured_review = review.external_action["settings"]["validation_review"]
+    assert configured_review["profile_ref"] == validator.validation["profile"][
+        "reference"
+    ]
+    assert configured_review["requirement_ids"]
+    assert plan.revisions == {}
     sections = prepare._parse(bound)
     image = next(s for s in sections if s["id"].startswith("image_and_scale_"))
     assert image["fields"]["settings"]["workspace_file"].endswith("/concept.png")

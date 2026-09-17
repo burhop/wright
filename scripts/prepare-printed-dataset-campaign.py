@@ -23,6 +23,7 @@ SERVER = "blender-mcp-ahujasid"
 SLICE_WRAPPER = ROOT / "scripts/engineering_dataset_slice_mcp.py"
 REPAIR_WRAPPER = ROOT / "scripts/engineering_dataset_mesh_repair_mcp.py"
 REPAIR_OPERATION = ROOT / "scripts/engineering_dataset_mesh_repair.py"
+VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 
 
 def _agentcad_guidance():
@@ -117,6 +118,20 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     slicer_server = getattr(args, "slicer_server", None) or config["slicer_server"]
     manifest = json.loads((scenario_dir / "scenario.json").read_text(encoding="utf-8"))
     scenario_id = manifest["scenario_id"]
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(
+        row for row in coverage["scenarios"] if row["scenario_id"] == scenario_id
+    )
+    validation_profile = support.get("full_profile")
+    if not validation_profile:
+        raise ValueError("The printed-part full validator profile is unavailable")
+    profile_document = json.loads(
+        (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+            / (validation_profile["profile_resource"] + ".json")
+        ).read_text(encoding="utf-8")
+    )
     suffix = scenario_id.replace("-", "_") + "_" + args.attempt.replace("-", "_")
     input_root = f"campaign/{scenario_id}/{args.attempt}/inputs"
     output_root = f"campaign/{scenario_id}/{args.attempt}/artifacts"
@@ -161,7 +176,10 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         performed_by="ai_assisted",
         prompt=source_config["prompt"].replace("{output_root}", output_root),
     )
-    source_task["fields"]["outputs"] = [port(source_result_key)]
+    source_task["fields"]["outputs"] = [
+        port(source_result_key),
+        port("source_mesh", "workspace_file"),
+    ]
     source_task["fields"]["settings"].update({
         "authoring_template": "mcp-task", "mcp_server": blender_server,
         "output_format": "json", "save_output": True,
@@ -169,6 +187,7 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "expected_files": "\n".join(f"{output_root}/{name}" for name in source_config["expected_files"]),
         "max_tool_calls": 12,
         "timeout_seconds": 600,
+        "expected_file_ports": {"source_mesh": f"{output_root}/source_mesh.stl"},
         "task_guidance": "Use only execute_blender_code, get_scene_info, get_viewport_screenshot. Do not access external asset or inference services. Preserve the exact original user prompt in every tool call. Return a compact operation and measurement summary; Wright records exact submitted source and file hashes in canonical evidence outside Blender. Never request raw file, hash, runpy, subprocess, persistent callback or text-datablock mechanisms. Blender safe mode rejects user-defined callables passed as callbacks or invoked indirectly: do not pass lambda functions or helper-function parameters that are later called; compute vertices and values explicitly. Explicitly import mathutils before calling mathutils.Vector; do not import and call Vector directly. Construct and export in the first authoring call when possible. Call bpy.ops.wm.stl_export(...) directly; never inspect bpy.ops or its module namespaces with hasattr or use an operator namespace as a value. Verify actual world-space bounds plus boundary and non-manifold edge counts, correct discrepancies, re-export, then finish immediately without a viewport screenshot once the requested bounds and zero boundary/non-manifold edges are reported. Never rebuild already-watertight geometry merely to restate measurements. Never report a file that was not generated.",
     })
     add_reference(sections, prompt_ref, source_task, "natural_prompt")
@@ -197,7 +216,7 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     repair_result_key = repair["id"] + "_result"
     repair["fields"].update(
         step_type="work", performed_by="configured_tool", inputs=[],
-        outputs=[port(repair_result_key)], prompt="",
+        outputs=[port(repair_result_key), port("repaired_mesh", "workspace_file")], prompt="",
         instructions=config["stages"]["repair_measure_orient"]["prompt"].replace("{output_root}", output_root),
         tool=None, reusable_step=None,
     )
@@ -211,6 +230,7 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "file_policy": "overwrite",
         "expected_files": "\n".join(f"{output_root}/{name}" for name in config["stages"]["repair_measure_orient"]["expected_files"]),
         "timeout_seconds": 600,
+        "expected_file_ports": {"repaired_mesh": f"{output_root}/repaired_mesh.stl"},
     }
     sections.append({
         "kind": "connection",
@@ -248,7 +268,20 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         step_type="work",
         performed_by="configured_tool",
         inputs=[],
-        outputs=[port(slicer["id"] + "_result")],
+        outputs=[
+            port(slicer["id"] + "_result"),
+            *[
+                port(role, "workspace_file")
+                for role in (
+                    "support_preview",
+                    "slice_package",
+                    "slice_evidence",
+                    "machine_profile",
+                    "filament_profile",
+                    "process_profile",
+                )
+            ],
+        ],
         prompt="",
         instructions=config["stages"]["supports_and_slice"]["prompt"],
         tool=None,
@@ -275,14 +308,114 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
             for name in config["stages"]["supports_and_slice"]["expected_files"]
         ),
         "timeout_seconds": 600,
+        "expected_file_ports": {
+            "support_preview": f"{output_root}/support-preview.svg",
+            "slice_package": f"{output_root}/slice_package.gcode.3mf",
+            "slice_evidence": f"{output_root}/slice-evidence.json",
+            "machine_profile": f"{output_root}/machine-profile.json",
+            "filament_profile": f"{output_root}/filament-profile.json",
+            "process_profile": f"{output_root}/process-profile.json",
+        },
     }
     approval = stage("authorize_transfer")
+    approval["fields"]["outputs"] = [port("receipt", "workspace_file")]
     approval["fields"]["settings"].update({
         "approval_binding": {"server": "wright", "tool": "test_handoff", "schema": digest(b"wright.integration_test_handoff.v1")},
         "approval_destination": {"kind": "integration_test", "id": f"test://{args.campaign_id}/printer/{scenario_id}"},
         "approval_settings": {"material": "PETG HF", "nozzle_mm": "0.4", "process": profile, "package_path": f"{output_root}/slice_package.gcode.3mf", "receipt_path": f"{output_root}/printer-transfer-receipt.json", "simulation": True},
         "approval_action": {"kind": "printer_transfer", "mode": "transfer_only", "simulation": True},
     })
+    final_review = {
+        "kind": "task",
+        "id": "review_printed_outputs_" + suffix,
+        "fields": {
+            "name": "Review exact printed-part outputs",
+            "purpose": "Review geometry, orientation and claim scope",
+            "step_type": "review",
+            "group": None,
+            "performed_by": "engineer",
+            "inputs": [],
+            "outputs": [],
+            "instructions": "Review the exact source-model report against every frozen geometry, tolerance, orientation, support and action-scope requirement. Approval does not establish physical fit, strength or print success.",
+            "tool": None,
+            "reusable_step": None,
+            "settings": {
+                "authoring_template": "external-action-approval",
+                "action_kind": "local_review",
+                "approval_binding": {"server": "wright", "tool": "review_artifacts", "schema": digest(b"wright.local_review.v1")},
+                "approval_destination": {"kind": "local_review", "id": "workspace"},
+                "approval_settings": {
+                    "review_task_id": "review_printed_outputs_" + suffix,
+                    "validation_review": {
+                        "profile_ref": validation_profile["profile_ref"],
+                        "requirement_ids": sorted(
+                            requirement["id"]
+                            for requirement in profile_document["baseline"]["requirements"]
+                            if requirement["review_required"]
+                        ),
+                    },
+                },
+                "approval_action": {"kind": "local_review", "mode": "review_only"},
+            },
+        },
+    }
+    sections.append(final_review)
+    add_reference(sections, source_task["id"] + "." + source_result_key, final_review, "source_report")
+    validation_sources = {
+        "source_mesh": (source_task, "source_mesh", "workspace_file"),
+        "source_report": (source_task, source_result_key, "engineering_document"),
+        "repaired_mesh": (repair, "repaired_mesh", "workspace_file"),
+        **{
+            role: (slicer, role, "workspace_file")
+            for role in (
+                "support_preview",
+                "slice_package",
+                "slice_evidence",
+                "machine_profile",
+                "filament_profile",
+                "process_profile",
+            )
+        },
+        "transfer_receipt": (approval, "receipt", "workspace_file"),
+    }
+    validator = {
+        "kind": "task",
+        "id": "validate_printed_content_" + suffix,
+        "fields": {
+            "name": "Validate current printed-part outputs",
+            "purpose": "Check exact model, slice and simulated handoff evidence",
+            "step_type": "work",
+            "group": None,
+            "performed_by": "configured_tool",
+            "inputs": [port("validate_" + role, kind) for role, (_, _, kind) in validation_sources.items()],
+            "outputs": [port("assessment")],
+            "prompt": "",
+            "tool": None,
+            "reusable_step": None,
+            "settings": {
+                "authoring_template": "process-validator",
+                "output_format": "json",
+                "max_revisions": 0,
+                "validation": {
+                    "profile": {"source": "packaged", "name": validation_profile["profile_resource"], "reference": validation_profile["profile_ref"]},
+                    "baseline": validation_profile["baseline_ref"],
+                    "subjects": {role: "validate_" + role for role in validation_sources},
+                },
+            },
+        },
+    }
+    sections.append(validator)
+    for role, (producer, producer_port, _) in validation_sources.items():
+        sections.append({"kind": "connection", "id": "bind_" + validator["id"] + "_" + role, "fields": {
+            "type": "item", "from": producer["id"] + "." + producer_port,
+            "to": validator["id"] + ".validate_" + role,
+            "label": "current printed-part output to validate", "when": None,
+        }})
+    for left, right in ((approval, final_review), (final_review, validator)):
+        sections.append({"kind": "connection", "id": "order_" + left["id"] + "_" + right["id"], "fields": {
+            "type": "order", "from": left["id"], "to": right["id"],
+            "label": "complete exact output review and validation", "when": None,
+        }})
     result = render(sections)
     validate_workspace_authoring_shape(result)
     compiled = compile_prompt_workflow(result)

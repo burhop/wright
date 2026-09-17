@@ -276,7 +276,7 @@ def build(scenario_id: str, values: dict) -> ValidationProfile:
             "limitations": [
                 "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and production release require authenticated engineering review."
             ],
-            "supported_kinds": ["file"],
+            "supported_kinds": ["file", "value"],
         }
     )
 

@@ -367,9 +367,9 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("printed-replacement-part-01", "9270c4ab898be51a72ce260f4cce6a2935e6ba47354ee95190d44786fb6dd2fb", "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"),
-    ("printed-replacement-part-02", "7aadc23f0e7c5e873207747d9a1109e84d264f84686f7baea3384b9d5d35eb86", "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"),
-    ("printed-replacement-part-03", "2e652798daf82e44d02948dfcd0c1a8cee98bbec9757cd99d360155c5d730e61", "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"),
+    ("printed-replacement-part-01", "d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4", "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"),
+    ("printed-replacement-part-02", "aa6e94d24ecf62de164767d63f7bbd5db59bfc5de1a90d3f1084496dfee64d59", "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"),
+    ("printed-replacement-part-03", "881423783fbb3588df6717f4f2eb9f7d1d30305c8849f2fa6bdfa015399f5ce3", "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
