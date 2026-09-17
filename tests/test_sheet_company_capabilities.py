@@ -28,6 +28,15 @@ TROUGH_REVISION = (
     INPUTS
     / "revisions/2026-09-12-sheet-capabilities-r4/sheet-metal-supplier-handoff-02"
 )
+TEXT_SUFFIXES = {".csv", ".json", ".md", ".svg", ".txt"}
+
+
+def content_sha256(path: Path) -> str:
+    """Hash Git text as LF while preserving byte identity for binary inputs."""
+    content = path.read_bytes()
+    if path.suffix.lower() in TEXT_SUFFIXES:
+        content = content.replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
 
 
 @pytest.mark.parametrize(
@@ -40,14 +49,16 @@ def test_r4_preserves_original_uploads_and_records_new_dataset_identity(
 ):
     ledger = json.loads((revision / "revision.json").read_text(encoding="utf-8"))
 
-    def sha(path):
-        return hashlib.sha256(path.read_bytes()).hexdigest()
-
-    assert sha(revision / "scenario.before.json") == ledger["original_manifest_sha256"]
-    assert sha(scenario / "scenario.json") == ledger["revised_manifest_sha256"]
-    assert sha(scenario / ledger["addendum"]) == ledger["addendum_sha256"]
+    assert (
+        content_sha256(revision / "scenario.before.json")
+        == ledger["original_manifest_sha256"]
+    )
+    assert (
+        content_sha256(scenario / "scenario.json") == ledger["revised_manifest_sha256"]
+    )
+    assert content_sha256(scenario / ledger["addendum"]) == ledger["addendum_sha256"]
     assert all(
-        sha(scenario / name) == expected
+        content_sha256(scenario / name) == expected
         for name, expected in ledger["retained_original_files"].items()
     )
     before = json.loads((revision / "scenario.before.json").read_text(encoding="utf-8"))

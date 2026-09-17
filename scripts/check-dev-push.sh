@@ -231,6 +231,7 @@ CHECK_DOCS=0
 CHECK_GITLEAKS=0
 CHECK_PROGRAM_CONTROL=0
 CHECK_DOCKER_SCAN=0
+BLOCKED_RECOVERY_SAFE=1
 PYTHON_TEST_TARGETS=()
 PLAYWRIGHT_TARGETS=()
 PLAYWRIGHT_ALL_PROJECTS=0
@@ -242,6 +243,13 @@ while IFS= read -r changed_file; do
     .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|apps/*|packages/*|src/*|hermes-plugin-wright/*|integrations/rivet/editor/*|integrations/rivet/runner/*|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
       CHECK_DOCKER_SCAN=1
       CHECK_PYTHON=1
+      ;;
+  esac
+  case "$changed_file" in
+    .gitattributes|docs/programs/engineering-process-platform/*|docs/contributing/dev-push-runbook.md|scripts/check-dev-push.sh|scripts/check-dev-push.ps1|tests/program_control_plane/*|tests/release/test_dev_push_process.py|tests/test_alpha_release_readiness.py|tests/test_printed_dataset_bindings.py|tests/test_sheet_company_capabilities.py|tests/ui-integration/*.spec.ts)
+      ;;
+    *)
+      BLOCKED_RECOVERY_SAFE=0
       ;;
   esac
   case "$changed_file" in
@@ -403,8 +411,14 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
     PROGRAM_LEASE_STATE="$($GATE_PYTHON -c 'import json; print("closed" if json.load(open("docs/programs/engineering-process-platform/program-state.json", encoding="utf-8"))["active_mutating_lease"] is None else "open")')"
     case "$PROGRAM_PUSH_STATE" in
       PUSH_AUTHORIZATION_PENDING|PR_READY|DEV_MERGE_READY|DEV_INTEGRATED) ;;
+      BLOCKED)
+        if [[ "$BLOCKED_RECOVERY_SAFE" != "1" ]]; then
+          echo "A BLOCKED recovery push may contain only program governance, dev-push gate, and test-contract paths; runtime or product changes require the normal reviewed lifecycle."
+          exit 1
+        fi
+        ;;
       *)
-        echo "Program-control changes may be pushed only after the governed feature reaches PUSH_AUTHORIZATION_PENDING, PR_READY, DEV_MERGE_READY, or DEV_INTEGRATED; found $PROGRAM_PUSH_STATE."
+        echo "Program-control changes may be pushed only after the governed feature reaches PUSH_AUTHORIZATION_PENDING, PR_READY, DEV_MERGE_READY, DEV_INTEGRATED, or a bounded BLOCKED recovery; found $PROGRAM_PUSH_STATE."
         exit 1
         ;;
     esac

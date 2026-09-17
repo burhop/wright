@@ -113,11 +113,11 @@ def test_frontend_quality_runs_linux_playwright_e2e() -> None:
     assert "Backend process exited before becoming ready" in workflow
 
 
-def test_playwright_ci_fails_fast_without_retries() -> None:
+def test_playwright_ci_reports_all_failures_without_retries() -> None:
     config = read_text("playwright.config.ts")
 
     assert "retries: 0" in config
-    assert "maxFailures: process.env.CI ? 5 : undefined" in config
+    assert "maxFailures: undefined" in config
     assert "retries: process.env.CI" not in config
 
 

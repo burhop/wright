@@ -128,6 +128,26 @@ profile because directory, iframe, and surface interactions are
 platform-sensitive. Ordinary application-source fallback remains
 Chromium-only; the full merge gate retains cross-browser coverage.
 
+Browser contracts that round-trip source through the API must derive persisted
+revision and digest expectations from the host-confirmed response. Do not assert
+an absolute revision computed from checkout bytes: Git line-ending conversion can
+make the same fixture a semantic no-op on Linux and a byte-level change on
+Windows. Wait for asynchronous digests to reach their final value before
+capturing them. A focused Windows pass does not replace the Linux CI check for
+these portability-sensitive contracts.
+
+Browser tests running against the managed frontend must send application API
+requests through same-origin `/api/...` paths. Do not hard-code the default
+backend port: both local gates intentionally support configurable API and UI
+ports, and Vite routes same-origin requests to the selected backend.
+
+Digest assertions over Git-managed text fixtures must likewise canonicalize
+checkout CRLF to committed LF before hashing. Keep binary fixture hashing byte
+exact; never apply text normalization to binary artifacts. This ensures the
+Windows merge gate and Linux CI verify one recorded content identity. Pin
+digest-protected repository text to `text eol=lf` in `.gitattributes`; test-side
+normalization is a defensive check, not a substitute for stable checkout bytes.
+
 Engineering-process control-plane changes have an explicit focused route. Changes under `docs/programs/engineering-process-platform/**`, `specs/076-control-plane-validator/**`, `scripts/program_control/**`, the `scripts/validate-engineering-process-program.py` entrypoint, or `tests/program_control_plane/**` select `tests/program_control_plane`. Python source and tests also enter Ruff/format/MyPy scope. The full merge gate and Linux/Windows CI run the focused suite before broader test roots so contract failures remain attributable. On either Windows or POSIX, the repeatable focused command is:
 
 ```text
@@ -154,6 +174,13 @@ This mirrors the
 non-mutating identity used by GitHub's synthetic merge checkout and prevents a
 locally named implementation worktree from hiding a lease/worktree mismatch that
 would fail pull-request validation.
+
+A `BLOCKED` state may be pushed only as a bounded recovery: every changed path
+must be program governance, the dev-push gate/runbook, or a test contract, the
+mutating lease must remain closed, and the exact committed validator must pass.
+Runtime and product paths are rejected in this state and must use the normal
+reviewed lifecycle. This exception exists so a post-merge CI failure can be
+recorded and corrected without fabricating a successful integration state.
 
 EPP-N01 may use the [prospective scoped implementation delivery rule](../programs/engineering-process-platform/coordinator-state-machine.md#prospective-native-implementation-delivery-revision-98-onward).
 It passes through these same states and gates with an exact-candidate independent

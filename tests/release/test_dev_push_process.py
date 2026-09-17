@@ -231,6 +231,36 @@ def test_program_control_push_requires_closed_non_mutating_state() -> None:
     ):
         assert state in push
         assert state in runbook
+    assert "BLOCKED)" in push
+    assert "BLOCKED_RECOVERY_SAFE=1" in push
+    assert "BLOCKED_RECOVERY_SAFE=0" in push
+    assert "A `BLOCKED` state may be pushed only as a bounded recovery" in runbook
+    assert "Runtime and product paths are rejected" in runbook
+    recovery_zero = push.index("BLOCKED_RECOVERY_SAFE=0")
+    recovery_start = push.rfind('case "$changed_file" in', 0, recovery_zero)
+    recovery_end = push.index("  esac", recovery_start)
+    recovery_allowlist = push[recovery_start:recovery_end]
+    for path_pattern in (
+        ".gitattributes",
+        "docs/programs/engineering-process-platform/*",
+        "docs/contributing/dev-push-runbook.md",
+        "scripts/check-dev-push.sh",
+        "scripts/check-dev-push.ps1",
+        "tests/program_control_plane/*",
+        "tests/release/test_dev_push_process.py",
+        "tests/test_alpha_release_readiness.py",
+        "tests/test_printed_dataset_bindings.py",
+        "tests/test_sheet_company_capabilities.py",
+        "tests/ui-integration/*.spec.ts",
+    ):
+        assert path_pattern in recovery_allowlist
+    for forbidden_pattern in (
+        "apps/*",
+        "packages/*",
+        "src/*",
+        "hermes-plugin-wright/*",
+    ):
+        assert forbidden_pattern not in recovery_allowlist
     assert "active mutating lease" in push
     assert "synthetic" in runbook
     assert (
@@ -342,6 +372,38 @@ def test_browser_gate_uses_isolated_configurable_ports() -> None:
     assert "process.env.WRIGHT_PLAYWRIGHT_PORT" in surface_fixture
     for spec in (ROOT / "tests/ui-integration/workspace-surfaces").glob("*.spec.ts"):
         assert "localhost:5173" not in spec.read_text(encoding="utf-8"), spec
+
+    for relative_spec in (
+        "tests/ui-integration/capture-screenshot.spec.ts",
+        "tests/ui-integration/dashboard-real.spec.ts",
+    ):
+        spec = _read(relative_spec)
+        assert "127.0.0.1:8000" not in spec
+        assert '"/api/workspace/' in spec
+
+
+def test_browser_contract_guidance_covers_cross_platform_persisted_identity() -> None:
+    runbook = _read("docs/contributing/dev-push-runbook.md")
+
+    assert "host-confirmed response" in runbook
+    assert "Git line-ending conversion" in runbook
+    assert "Wait for asynchronous digests" in runbook
+    assert "focused Windows pass does not replace the Linux CI check" in runbook
+
+
+def test_digest_protected_dataset_text_pins_lf_checkout_bytes() -> None:
+    attributes = _read(".gitattributes")
+
+    for pattern in (
+        "tests/fixtures/blender_mcp_5f8ddaf6/src/blender_mcp/safe_mode.py",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.csv",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.json",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.md",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.svg",
+        "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.txt",
+        "tests/datasets/engineering-workflows/revisions/2026-09-12-sheet-capabilities-r4/**/*.json",
+    ):
+        assert f"{pattern} text eol=lf" in attributes
 
 
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
