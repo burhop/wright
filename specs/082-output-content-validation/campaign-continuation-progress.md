@@ -462,6 +462,32 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   frozen review package for `ROBOT01-ACTION-SCOPE`, `ROBOT01-DIAGNOSIS` and
   `ROBOT01-PLOTS`. No provider request, workflow attempt, campaign count or existing
   receipt changed.
+- The owned API was restarted from commit `360dcd444a76cf65e1ed453b4b3c2889dffcca2e`
+  so the post-reset pilot will execute the current validation-review projection. The first
+  launcher wait ended at its 90-second bound while startup continued; PID `45172` then
+  became healthy and an idempotent rerun restored the qualified AgentCAD bootstrap with
+  SHA-256 `ad166be75f44977ed862c37c3b831002cf6e2ad3eed0f6d3dcc6409237a9e994`.
+  Both the API and dashboard return HTTP 200.
+- That deployment exposed 12 stale AgentCAD grant pins across the three heat, bracket,
+  jig and Pi cases. The first guarded repair stopped before manifest promotion and was
+  rolled back; its one partially written jig source was restored to the exact prior bytes.
+  The second byte-exact, append-only repair enrolled 12 replacement grants while retaining
+  all 12 old grants as active. It changed only AgentCAD schema authorities and the embedded
+  `agentcad__run` pin in six unrun jig/Pi sources, with all six prior source files retained
+  as digest-verified backups. The promoted 27-case manifest SHA-256 is
+  `1075e709d790ee7c6e4e08b2d1b70cf2f91600b6913c906e4878e45508a252f6`; the reconciled
+  review catalog SHA-256 is
+  `91d4f1a5f12c7045fc79ec008826b10587d2e605d72fdf59804152e907537652`.
+- A fresh independent audit verifies all 27 bound workflow hashes, all six source backups,
+  both active 12-grant sets and all 11 qualified AgentCAD tools. The final full preflight is
+  `24 pass / 3 review / 0 fail` (SHA-256
+  `a575ccd9170d33e83c7471d0dfcbd5de48c9473e40afcfe6034c2520330847f7`); the frozen robot
+  pilot is `1/1` pass (SHA-256
+  `4c97f85ffacbd06406ecda9d9695ff59cd2f5f654949f15f40f1f400168fa712`).
+  Neither audit found an observed run. The exact Sol model and pause sentinel remain in
+  place, historical/current counters remain `30/30/24/0` and `0/0/0`, and no readiness,
+  pilot-state, worker or resume receipt exists. The updated guarded launcher SHA-256 is
+  `b838916c3e93056fddc7087b8a26143c23d56f0d5adc497f272bbeebaffda28d`.
 
 ## Next action
 
