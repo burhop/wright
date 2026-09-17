@@ -370,15 +370,30 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   At a pending validation review, the person decides in that UI; while the campaign runner
   owns the attempt, the person must leave the separate Resume button to the runner so its
   persisted one-shot operation ledger remains authoritative.
+- The post-reset transition is now encoded in the local, campaign-specific launcher
+  `.local-run/feature-081-live/campaign-execution/run-validator-082-pilot.py`. Its
+  `readiness` action refuses to issue a request before `2026-09-19T11:09:44Z`, permits
+  only one POST to the exact registered session, requires the configured
+  `openai-codex::gpt-5.6-sol` route and an exact `READY` response, and records even an
+  unsuccessful or uncertain attempt so it cannot be silently replayed. Its `pilot`
+  action requires that successful receipt, pins the pilot manifest and both human-review
+  contracts by SHA-256, preserves the global pause sentinel, reruns the read-only
+  preflight, requires one pass with no prior run, and invokes the persistent runner for
+  only robot-tracking-01 attempt-006 with the shared retry ledger. The launch deliberately
+  omits `--pause-after-current` because its immutable manifest has exactly one case; the
+  global sentinel remains in place for every broader queue. Syntax and the read-only
+  `status` action pass. A deliberate pre-reset `readiness` invocation was rejected before
+  receipt creation or any POST. At `2026-09-17T20:42:25Z`, the service still reported the
+  exact Sol model, the pause sentinel was present, and no readiness, pilot state or worker
+  receipt existed.
 
 ## Next action
 
-C016–C018: after the recorded reset window, make one exact registered-session Sol
-readiness request. If it succeeds, dispatch only robot-tracking-01 attempt-006 through
-the existing runner and inspect its review plus full-profile assessment before expanding
-the queue, using the frozen pilot receipt and 27-case catalog as the exact human checklist.
-Then
-launch/enroll/run the three attempt-017 printed cases one at a time with
+C016–C018: after the recorded reset window, run the launcher's `readiness` action once.
+If its receipt is successful, run its `pilot` action and inspect robot-tracking-01's human
+review plus full-profile assessment before expanding the queue, using the frozen pilot
+receipt and 27-case catalog as the exact checklist. Then launch/enroll/run the three
+attempt-017 printed cases one at a time with
 the lifecycle wrapper, and resume the remaining audited queue serially without resetting
 the retry ledger. Use the recovered CalculiX registration for fresh bracket runs. Keep
 the sheet-metal flange episode quarantined until an actual provider repair is identified
