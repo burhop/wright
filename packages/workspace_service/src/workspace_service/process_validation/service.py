@@ -33,6 +33,7 @@ from .readers.geometry import StepSeatGeometryReader
 from .readers.harness import HarnessReader
 from .readers.kicad import KiCadReader
 from .readers.printing import PrintingArtifactReader
+from .readers.sheet_metal import SheetMetalEvidenceReader
 from .readers.structured import StructuredReader
 from .readers.step_box import StepBoundingBoxReader
 from .readers.structural import StructuralEvidenceReader
@@ -121,6 +122,7 @@ class ProcessValidationService:
             registry.register(HarnessReader())
             registry.register(KiCadReader())
             registry.register(PrintingArtifactReader())
+            registry.register(SheetMetalEvidenceReader())
             registry.register(StepBoundingBoxReader())
             registry.register(StructuralEvidenceReader())
             registry.register(ThermalFieldReader())

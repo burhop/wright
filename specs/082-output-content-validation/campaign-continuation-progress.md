@@ -133,8 +133,22 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   authenticated review. Focused reader/profile/preparer/coverage tests:
   `22 passed in 3.44s`; full process-validation regression:
   `122 passed in 32.39s`; Ruff passed.
+- All three sheet-metal supplier-handoff profiles are now frozen and
+  implemented, bringing full-profile coverage to 30 of 30 source packs. A
+  bounded reader checks exact installed material identity, evidenced native
+  design-check structure, millimetre developed-DXF entities, source-bound
+  final-manifest hashes and runtime-generated integration-test receipts. It
+  rejects embedded-image/solid DXF substitutes and any network-dispatched or
+  wrong-scenario handoff. The preparer now labels native criteria with the
+  frozen requirement ID and includes measured checks/material evidence in the
+  final manifest. Retained attempts pass their installed-material check and
+  correctly block on missing native CAD, exports and handoffs. Three stale local
+  image-lineage receipts were refreshed only after the current renderer
+  reproduced identical PNG bytes. Focused reader/profile/preparer/coverage
+  tests: `15 passed in 2.57s`; full process-validation and preparer regression:
+  `133 passed in 52.05s`; Ruff passed.
 
 ## Next action
 
-C010–C012: implement the three sheet-metal handoff profiles and keep the
-twenty-seven full profiles pending exact review/correction evidence.
+C010–C012: align authenticated-review flags across all thirty full profiles,
+then connect the remaining profiles to their process gates and correction paths.

@@ -37,6 +37,7 @@ def prepare(args, directory, available):
         raise ValueError("Publish the explicit R3 CAD design-choice input revision before preparing a fresh sheet-metal attempt")
     scenario = manifest["scenario_id"]
     scenario_config = config["scenarios"][scenario]
+    native_requirement_id = "SHEET" + scenario[-2:] + "-NATIVE"
     company_capabilities = "company-fabrication-capabilities-r4.md" in manifest["files"]["context"]
     # Keep the seven specific process references and the original eight-page
     # output contract; material identity needs its own primary supplier page.
@@ -238,7 +239,8 @@ def prepare(args, directory, available):
         inspect_ref = bind(inspect,
             "Inspect the exact upstream " + part_name + " without changing, rebuilding, saving or exporting it. "
             "Use cad.verify_inspection_requirements and native measurement/feature readbacks against the approved criterion table; retain all unavailable observations explicitly. "
-            "Return the existing design-check JSON contract: verdict pass/revise/needs_input; checks with requirement, expected, observed, status and 1-based evidence call indices; corrections list. "
+            "Return the existing design-check JSON contract: verdict pass/revise/needs_input; checks with requirement, expected, observed, status and evidence as a list of 1-based successful tool-call indices; corrections list. "
+            f"Prefix every applicable native criterion's requirement text with its frozen source requirement ID, and include at least one criterion prefixed {native_requirement_id}. "
             "Pass requires actual supported observed evidence, not recipe values or prose. Preserve the existing runtime inspection gate; this is not campaign content-validity qualification.",
             part_name + "-measured-check.json", SERVER)
         if company_capabilities:
@@ -296,7 +298,7 @@ def prepare(args, directory, available):
          "Summarize every original requirement, unresolved issue, explicit part quantity, indexed CAD attempt, measured check and exported file. "
          "Supplier preview/cart receipts are labeled simulations, no live quotation, order or acceptance. Retain manufacturing_release=HOLD and supplier_acceptance=unverified, the actual selected stock/rule/source evidence, exact native identity and all old-versus-new input decisions. A HOLD never waives a failed or unknown mandatory DFM gate. Do not claim content correctness qualification or certification. "
          f"Call collect_artifact_manifest(operation_source_document={operation_path!r}, output_root={output_root!r}, files=[...]). "
-         "Each entry has path (workspace-relative) and role (including part label). Include both actual supplier receipt JSONs, manufacturing intent and every required native PSM, STEP, DXF and inspection view using the exact indexed paths from upstream outputs. "
+         "Each entry has path (workspace-relative) and role (including part label). Include both actual supplier receipt JSONs, installed-materials.json, manufacturing intent, every part's measured-check JSON and every required native PSM, STEP, DXF and inspection view using the exact indexed paths from upstream outputs. "
          f"Also include {output_root}/supplier-evidence.json and all sixteen supplier-source HTML/text files; their exact names/hashes come from the source-bound research evidence. "
          f"The source-bound operation saves actual byte counts/SHA256/role labels to {output_root}/final-artifact-manifest.json. "
          "Do not copy source inputs into engineering outputs or invent missing file entries.",

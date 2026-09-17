@@ -3266,33 +3266,88 @@
           "size_bytes": 447
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sheet-metal-supplier-handoff-01",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-01-full",
+          "version": "1",
+          "sha256": "c5e22a3977cf99d01eb080ea37e6d7119323e5ae4cbb64e8d41cf686e21c1e8a"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-01-basis",
+          "version": "1",
+          "sha256": "efdfe67c2abba893af484c8412163b863fb39b20aef3d2c5be58b17b6e81643a"
+        },
+        "reader_ids": [
+          "sheet-metal-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_sheet_metal.py",
+          "tests/external/process_validation/test_sheet_metal_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sheet-metal-supplier-handoff-01",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-01-full",
+          "version": "1",
+          "sha256": "c5e22a3977cf99d01eb080ea37e6d7119323e5ae4cbb64e8d41cf686e21c1e8a"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-01-basis",
+          "version": "1",
+          "sha256": "efdfe67c2abba893af484c8412163b863fb39b20aef3d2c5be58b17b6e81643a"
+        },
+        "reader_ids": [
+          "sheet-metal-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_sheet_metal.py",
+          "tests/external/process_validation/test_sheet_metal_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.sheet_metal",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "manufacturing.sheet_metal",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         },
         {
           "id": "bundle",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "bundle",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -3365,33 +3420,88 @@
           "size_bytes": 451
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sheet-metal-supplier-handoff-02",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-02-full",
+          "version": "1",
+          "sha256": "813ffd775c73f888f14df5803e3f86e5bf06a9fe5fa5a9f3bbd54033f125f8d3"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-02-basis",
+          "version": "1",
+          "sha256": "ef692463cafec8fee996bcd53ec00d0556b1d9d1e77f745316536f0fa7676818"
+        },
+        "reader_ids": [
+          "sheet-metal-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_sheet_metal.py",
+          "tests/external/process_validation/test_sheet_metal_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sheet-metal-supplier-handoff-02",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-02-full",
+          "version": "1",
+          "sha256": "813ffd775c73f888f14df5803e3f86e5bf06a9fe5fa5a9f3bbd54033f125f8d3"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-02-basis",
+          "version": "1",
+          "sha256": "ef692463cafec8fee996bcd53ec00d0556b1d9d1e77f745316536f0fa7676818"
+        },
+        "reader_ids": [
+          "sheet-metal-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_sheet_metal.py",
+          "tests/external/process_validation/test_sheet_metal_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.sheet_metal",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "manufacturing.sheet_metal",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         },
         {
           "id": "bundle",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "bundle",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -3459,33 +3569,88 @@
           "size_bytes": 549
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "sheet-metal-supplier-handoff-03",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-03-full",
+          "version": "1",
+          "sha256": "5900909c4af2d7a60d96355d40f223f21c6472f5391e26e96b714fe1b1a4985e"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-03-basis",
+          "version": "1",
+          "sha256": "0b12b72d01a9e54b720b54d5a35f94f9b014eef2a532e16f307352a24175784f"
+        },
+        "reader_ids": [
+          "sheet-metal-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_sheet_metal.py",
+          "tests/external/process_validation/test_sheet_metal_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "sheet-metal-supplier-handoff-03",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-03-full",
+          "version": "1",
+          "sha256": "5900909c4af2d7a60d96355d40f223f21c6472f5391e26e96b714fe1b1a4985e"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-03-basis",
+          "version": "1",
+          "sha256": "0b12b72d01a9e54b720b54d5a35f94f9b014eef2a532e16f307352a24175784f"
+        },
+        "reader_ids": [
+          "sheet-metal-evidence@1",
+          "step-bounding-box@1",
+          "structured@1"
+        ],
+        "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_sheet_metal.py",
+          "tests/external/process_validation/test_sheet_metal_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         },
         {
           "id": "manufacturing.sheet_metal",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "manufacturing.sheet_metal",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         },
         {
           "id": "bundle",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
           "extension_recipe": "bundle",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_sheet_metal.py",
+            "tests/external/process_validation/test_sheet_metal_profiles.py"
+          ]
         }
       ],
       "initial_slice": false

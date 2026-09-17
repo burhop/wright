@@ -411,6 +411,21 @@ for _scenario_id, _profile_sha, _baseline_sha in (
         "evidence": ["tests/external/process_validation/test_structural.py", "tests/external/process_validation/test_bracket_profiles.py"],
     }
 
+for _scenario_id, _profile_sha, _baseline_sha in (
+    ("sheet-metal-supplier-handoff-01", "c5e22a3977cf99d01eb080ea37e6d7119323e5ae4cbb64e8d41cf686e21c1e8a", "efdfe67c2abba893af484c8412163b863fb39b20aef3d2c5be58b17b6e81643a"),
+    ("sheet-metal-supplier-handoff-02", "813ffd775c73f888f14df5803e3f86e5bf06a9fe5fa5a9f3bbd54033f125f8d3", "ef692463cafec8fee996bcd53ec00d0556b1d9d1e77f745316536f0fa7676818"),
+    ("sheet-metal-supplier-handoff-03", "5900909c4af2d7a60d96355d40f223f21c6472f5391e26e96b714fe1b1a4985e", "0b12b72d01a9e54b720b54d5a35f94f9b014eef2a532e16f307352a24175784f"),
+):
+    IMPLEMENTED_PROFILES[_scenario_id] = {
+        "profile_resource": _scenario_id,
+        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
+        "reader_ids": ["sheet-metal-evidence@1", "step-bounding-box@1", "structured@1"],
+        "scope": "Exact installed material identity, native inspection evidence, folded STEP presence, millimetre developed-DXF structure, source-bound final artifact manifest, local simulated supplier receipts and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack native CAD/export/handoff outputs. Proprietary PSM feature history, bend feasibility, detailed cross-format correspondence, supplier acceptance and physical fabrication require authenticated engineering review.",
+        "evidence": ["tests/external/process_validation/test_sheet_metal.py", "tests/external/process_validation/test_sheet_metal_profiles.py"],
+    }
+
 FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {

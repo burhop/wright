@@ -137,4 +137,5 @@ def test_every_unqualified_capability_has_an_explicit_extension_path():
             assert recipe["prerequisites"] and recipe["steps"]
 
     assert capabilities == set(recipes)
-    assert supports == {"qualified", "implemented", "planned", "unavailable"}
+    assert supports == {"qualified", "implemented"}
+    assert all(item["full_profile"] for item in coverage["scenarios"])
