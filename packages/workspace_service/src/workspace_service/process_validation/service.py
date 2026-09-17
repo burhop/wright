@@ -30,6 +30,7 @@ from .evaluation import compare
 from .readers.base import ReaderContext, ReaderRegistry, ValidationIssue
 from .readers.geometry import StepSeatGeometryReader
 from .readers.structured import StructuredReader
+from .readers.step_box import StepBoundingBoxReader
 from .readers.thermal import ThermalFieldReader
 from .readers.tracking import TrackingTimelineReader
 from .reporting import build_report, export_report
@@ -110,6 +111,7 @@ class ProcessValidationService:
             registry = ReaderRegistry()
             registry.register(StructuredReader())
             registry.register(StepSeatGeometryReader())
+            registry.register(StepBoundingBoxReader())
             registry.register(ThermalFieldReader())
             registry.register(TrackingTimelineReader())
         self.registry = registry

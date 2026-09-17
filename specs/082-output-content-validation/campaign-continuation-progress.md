@@ -48,9 +48,18 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   All three remain `implemented`, not `qualified`, pending required human review;
   case 02 also needs corrected producer output. Focused validation/resource tests:
   `44 passed in 9.53s`; Ruff passed.
+- C010–C012 also advanced for all three heat-spreader cases. Full profiles now
+  inspect actual STEP vertex envelopes, independently evaluate every retained
+  coarse/refined field, include the case-03 whole-interface contact resistance,
+  check balance/refinement/outcomes/selection and require the source-backed basis
+  review. All three retained cases pass every automated full-profile check. A
+  valid-file ideal-contact substitution reaches and fails the analytical check.
+  These full profiles remain implemented pending authenticated reviews; heat-01's
+  earlier bounded field profile remains separately qualified. Focused reader,
+  profile, coverage and service tests: `47 passed in 12.87s`; Ruff passed.
 
 ## Next action
 
 C010–C012: implement the next reusable three-case family profile, preserving the
-robot family as an implemented checkpoint until its review and corrected-output
-evidence can qualify it.
+robot and heat full profiles as implemented checkpoints until their review and
+corrected-output evidence can qualify them.

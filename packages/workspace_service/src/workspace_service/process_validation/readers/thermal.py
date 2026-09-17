@@ -201,7 +201,18 @@ class ThermalFieldReader:
                 "Analytical parameters must be positive.",
                 category="source_conflict",
             )
-        return cold + heat * length / (conductivity * width * thickness)
+        contact = _number(
+            parameters.get("contact_resistance_k_w", 0.0), "contact resistance"
+        )
+        if contact < 0:
+            raise ValidationIssue(
+                "profile.thermal_contact",
+                "Thermal contact resistance must be nonnegative.",
+                category="source_conflict",
+            )
+        return cold + heat * (
+            length / (conductivity * width * thickness) + contact
+        )
 
     def _selection(self, snapshot, check, context, related, evidence):
         if snapshot.subject.format != "json":

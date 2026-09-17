@@ -83,9 +83,8 @@ def test_only_the_two_bounded_initial_slices_are_qualified():
             assert item["support_status"] in {"implemented", "unsupported"}
             assert item["requirements_frozen"]
             assert not item["initial_slice"]
-            if scenario_id.startswith("robot-tracking-diagnosis-"):
+            if item["profile"]:
                 assert item["support_status"] == "implemented"
-                assert item["profile"]
             else:
                 assert item["profile"] is None
             assert not any(
@@ -111,6 +110,15 @@ def test_qualified_entries_pin_loadable_profiles_readers_and_evidence():
         assert metadata["scope"] and metadata["limitations"]
         for evidence_path in metadata["evidence"]:
             assert (REPOSITORY / evidence_path).is_file()
+
+    for item in coverage["scenarios"]:
+        metadata = item["full_profile"]
+        if metadata is None:
+            continue
+        profile = load_profile(metadata["profile_resource"])
+        assert profile.reference().model_dump(mode="json") == metadata["profile_ref"]
+        assert profile.baseline.reference().model_dump(mode="json") == metadata["baseline_ref"]
+        assert {f"{check.reader}@1" for check in profile.checks} == set(metadata["reader_ids"])
 
 
 def test_every_unqualified_capability_has_an_explicit_extension_path():

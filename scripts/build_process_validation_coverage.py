@@ -287,6 +287,37 @@ IMPLEMENTED_PROFILES = {
             "tests/external/process_validation/test_tracking_profiles.py",
         ],
     },
+    "heat-spreader-sizing-02": {
+        "profile_resource": "heat-spreader-sizing-02-full",
+        "profile_ref": {"id": "heat-spreader-sizing-02-full", "version": "1", "sha256": "42daf6deb97644e39d119240559e54d21e0ee6cd5a062fe86ed4b5060ef2ae66"},
+        "baseline_ref": {"id": "heat-spreader-sizing-02-basis", "version": "1", "sha256": "c135eb38bdb6df7de1059cba125b4d9ffa857f9646c026afb6f30d8caf366021"},
+        "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
+        "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
+        "limitations": "Required basis review is not yet authenticated; physical thermal qualification and certification remain excluded.",
+        "evidence": ["tests/external/process_validation/test_step_box.py", "tests/external/process_validation/test_heat_profiles.py"],
+    },
+    "heat-spreader-sizing-03": {
+        "profile_resource": "heat-spreader-sizing-03-full",
+        "profile_ref": {"id": "heat-spreader-sizing-03-full", "version": "1", "sha256": "9802f76c9413ba9bc8ce312a5c90f0b78b2927ad7bf090396459d04a4bf620d8"},
+        "baseline_ref": {"id": "heat-spreader-sizing-03-basis", "version": "1", "sha256": "b7aa6aff79adc8b3f6782495c73cc9bbb17dbfa4df763cc92281693ae6add6f7"},
+        "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
+        "scope": "Actual STEP envelopes, contact-resistance fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required design review.",
+        "limitations": "Required design review is not yet authenticated; physical thermal qualification and certification remain excluded.",
+        "evidence": ["tests/external/process_validation/test_step_box.py", "tests/external/process_validation/test_heat_profiles.py"],
+    },
+}
+
+FULL_SCOPE_IMPLEMENTED = {
+    **IMPLEMENTED_PROFILES,
+    "heat-spreader-sizing-01": {
+        "profile_resource": "heat-spreader-sizing-01-full",
+        "profile_ref": {"id": "heat-spreader-sizing-01-full", "version": "1", "sha256": "41dc00c372147995ef6e68a86052c98d7a5b8e8c0ad9986e5ed624733e678923"},
+        "baseline_ref": {"id": "heat-spreader-sizing-01-basis", "version": "1", "sha256": "819635eab37792ce1fee9832e5c085c5803760b61a4350e04b50de818c17c968"},
+        "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
+        "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
+        "limitations": "Required basis review is not yet authenticated; physical thermal qualification and certification remain excluded.",
+        "evidence": ["tests/external/process_validation/test_step_box.py", "tests/external/process_validation/test_heat_profiles.py"],
+    },
 }
 
 
@@ -376,6 +407,7 @@ def build(root: Path) -> dict:
                 if implemented
                 else "unsupported",
                 "profile": qualified or implemented,
+                "full_profile": FULL_SCOPE_IMPLEMENTED.get(case_id),
                 "capabilities": [
                     _capability(family, case_id, item) for item in CAPABILITIES[family]
                 ],
