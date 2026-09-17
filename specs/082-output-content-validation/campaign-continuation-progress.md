@@ -329,6 +329,17 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   Blender and fixed repair endpoints, calls the canonical preparer and existing campaign
   runner, requires exact preflight and always performs terminal lifecycle cleanup. Its
   syntax and CLI contract pass; it has not launched Blender or a workflow.
+- The remaining enrolled queue is partitioned into immutable serial waves at
+  `.local-run/feature-081-live/campaign-execution/validator-campaign-082/execution-waves.json`:
+  the one-case pilot, eight structured cases, nine established-native cases, six
+  recovered/complex-native cases and three quarantined Solid Edge cases. The union
+  covers all 27 enrolled scenarios exactly once. Independent preflights report
+  pilot `1/1` pass, structured `5 pass/3 review/0 fail` (the three known Modelica
+  basename reviews), established native `9/9` pass, recovered/complex native `6/6`
+  pass and quarantined sheet metal `3/3` static pass. Static readiness does not lift
+  the sheet-metal native hold. All 27 exact grants are present; their earliest expiry
+  is `2026-09-24T19:45:26Z`, five days after the recorded Sol reset. The consolidated
+  receipt is `execution-waves-readiness.json`; dispatch count remains zero.
 
 ## Next action
 
