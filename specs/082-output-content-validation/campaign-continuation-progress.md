@@ -121,8 +121,20 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   qualification remain behind authenticated review. Focused reader/profile/
   coverage tests: `12 passed in 10.78s`; full process-validation regression:
   `113 passed in 46.54s`; Ruff passed.
+- All three lightweight-equipment-bracket profiles are now frozen and
+  implemented. A bounded structural reader binds the four exact solver requests
+  to the two STEP revisions and frozen load/material/mesh contract, verifies
+  expansion receipt hashes, independently parses full displacement and stress
+  tables, checks force-and-moment equilibrium, coarse/fine sensitivity and
+  density-derived mass reduction. The preparer now freezes exact request and
+  mass-comparison schemas. Retained attempts correctly return actionable missing
+  output-role findings because none reached CAD or solver production; protected
+  topology, machining feasibility and stress-region interpretation remain behind
+  authenticated review. Focused reader/profile/preparer/coverage tests:
+  `22 passed in 3.44s`; full process-validation regression:
+  `122 passed in 32.39s`; Ruff passed.
 
 ## Next action
 
-C010–C012: implement the next reusable three-case family and keep the twenty-four
-full profiles pending exact review/correction evidence.
+C010–C012: implement the three sheet-metal handoff profiles and keep the
+twenty-seven full profiles pending exact review/correction evidence.

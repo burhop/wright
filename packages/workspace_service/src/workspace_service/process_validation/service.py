@@ -35,6 +35,7 @@ from .readers.kicad import KiCadReader
 from .readers.printing import PrintingArtifactReader
 from .readers.structured import StructuredReader
 from .readers.step_box import StepBoundingBoxReader
+from .readers.structural import StructuralEvidenceReader
 from .readers.thermal import ThermalFieldReader
 from .readers.tracking import TrackingTimelineReader
 from .readers.water_heater import WaterHeaterTimelineReader
@@ -121,6 +122,7 @@ class ProcessValidationService:
             registry.register(KiCadReader())
             registry.register(PrintingArtifactReader())
             registry.register(StepBoundingBoxReader())
+            registry.register(StructuralEvidenceReader())
             registry.register(ThermalFieldReader())
             registry.register(TrackingTimelineReader())
             registry.register(WaterHeaterTimelineReader())

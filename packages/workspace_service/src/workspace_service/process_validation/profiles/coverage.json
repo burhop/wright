@@ -611,25 +611,77 @@
           "size_bytes": 343
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "lightweight-equipment-bracket-01",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-01-full",
+          "version": "1",
+          "sha256": "6027a12966f95e71dbfb7936af687ebdcb406d76abedd810a9d713efaf08f702"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-01-basis",
+          "version": "1",
+          "sha256": "7f005f16e9831b90df52e57fbb30a8704f2cc390b2120870b29636a74aa5fbfa"
+        },
+        "reader_ids": [
+          "step-bounding-box@1",
+          "structural-evidence@1",
+          "structured@1"
+        ],
+        "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_structural.py",
+          "tests/external/process_validation/test_bracket_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "lightweight-equipment-bracket-01",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-01-full",
+          "version": "1",
+          "sha256": "6027a12966f95e71dbfb7936af687ebdcb406d76abedd810a9d713efaf08f702"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-01-basis",
+          "version": "1",
+          "sha256": "7f005f16e9831b90df52e57fbb30a8704f2cc390b2120870b29636a74aa5fbfa"
+        },
+        "reader_ids": [
+          "step-bounding-box@1",
+          "structural-evidence@1",
+          "structured@1"
+        ],
+        "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_structural.py",
+          "tests/external/process_validation/test_bracket_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_structural.py",
+            "tests/external/process_validation/test_bracket_profiles.py"
+          ]
         },
         {
           "id": "structural.fields",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
           "extension_recipe": "structural.fields",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_structural.py",
+            "tests/external/process_validation/test_bracket_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -682,25 +734,77 @@
           "size_bytes": 321
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "lightweight-equipment-bracket-02",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-02-full",
+          "version": "1",
+          "sha256": "63f04f3d1612d390d33d5c99a08cc0bbe177fbb49e77361c1941e3950bf1c02c"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-02-basis",
+          "version": "1",
+          "sha256": "b3afd5c748c5c2b4f2530dde6606abd4fc0fc7174a6c7f0c8548a97db3e62e9b"
+        },
+        "reader_ids": [
+          "step-bounding-box@1",
+          "structural-evidence@1",
+          "structured@1"
+        ],
+        "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_structural.py",
+          "tests/external/process_validation/test_bracket_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "lightweight-equipment-bracket-02",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-02-full",
+          "version": "1",
+          "sha256": "63f04f3d1612d390d33d5c99a08cc0bbe177fbb49e77361c1941e3950bf1c02c"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-02-basis",
+          "version": "1",
+          "sha256": "b3afd5c748c5c2b4f2530dde6606abd4fc0fc7174a6c7f0c8548a97db3e62e9b"
+        },
+        "reader_ids": [
+          "step-bounding-box@1",
+          "structural-evidence@1",
+          "structured@1"
+        ],
+        "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_structural.py",
+          "tests/external/process_validation/test_bracket_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_structural.py",
+            "tests/external/process_validation/test_bracket_profiles.py"
+          ]
         },
         {
           "id": "structural.fields",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
           "extension_recipe": "structural.fields",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_structural.py",
+            "tests/external/process_validation/test_bracket_profiles.py"
+          ]
         }
       ],
       "initial_slice": false
@@ -753,25 +857,77 @@
           "size_bytes": 312
         }
       ],
-      "support_status": "unsupported",
-      "profile": null,
-      "full_profile": null,
+      "support_status": "implemented",
+      "profile": {
+        "profile_resource": "lightweight-equipment-bracket-03",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-03-full",
+          "version": "1",
+          "sha256": "9cd2733d98bb9704464dcdbd6cdd043d8b63f14297a2880cb5753b160a92eb11"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-03-basis",
+          "version": "1",
+          "sha256": "b0ea52ecc61dd3dfb2d6cb9292e41173c117274e9ecc30c613ca6bb042320ac5"
+        },
+        "reader_ids": [
+          "step-bounding-box@1",
+          "structural-evidence@1",
+          "structured@1"
+        ],
+        "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_structural.py",
+          "tests/external/process_validation/test_bracket_profiles.py"
+        ]
+      },
+      "full_profile": {
+        "profile_resource": "lightweight-equipment-bracket-03",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-03-full",
+          "version": "1",
+          "sha256": "9cd2733d98bb9704464dcdbd6cdd043d8b63f14297a2880cb5753b160a92eb11"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-03-basis",
+          "version": "1",
+          "sha256": "b0ea52ecc61dd3dfb2d6cb9292e41173c117274e9ecc30c613ca6bb042320ac5"
+        },
+        "reader_ids": [
+          "step-bounding-box@1",
+          "structural-evidence@1",
+          "structured@1"
+        ],
+        "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
+        "evidence": [
+          "tests/external/process_validation/test_structural.py",
+          "tests/external/process_validation/test_bracket_profiles.py"
+        ]
+      },
       "capabilities": [
         {
           "id": "geometry",
-          "support": "planned",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
           "extension_recipe": "geometry",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_structural.py",
+            "tests/external/process_validation/test_bracket_profiles.py"
+          ]
         },
         {
           "id": "structural.fields",
-          "support": "unavailable",
-          "scope": null,
-          "limitation": "No frozen scenario profile and qualified reader currently cover this capability.",
+          "support": "implemented",
+          "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+          "limitation": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
           "extension_recipe": "structural.fields",
-          "evidence": []
+          "evidence": [
+            "tests/external/process_validation/test_structural.py",
+            "tests/external/process_validation/test_bracket_profiles.py"
+          ]
         }
       ],
       "initial_slice": false

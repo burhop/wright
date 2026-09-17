@@ -396,6 +396,21 @@ for _scenario_id, _profile_sha, _baseline_sha in (
         "evidence": ["tests/external/process_validation/test_cfd.py", "tests/external/process_validation/test_pi_enclosure_profiles.py"],
     }
 
+for _scenario_id, _profile_sha, _baseline_sha in (
+    ("lightweight-equipment-bracket-01", "6027a12966f95e71dbfb7936af687ebdcb406d76abedd810a9d713efaf08f702", "7f005f16e9831b90df52e57fbb30a8704f2cc390b2120870b29636a74aa5fbfa"),
+    ("lightweight-equipment-bracket-02", "63f04f3d1612d390d33d5c99a08cc0bbe177fbb49e77361c1941e3950bf1c02c", "b3afd5c748c5c2b4f2530dde6606abd4fc0fc7174a6c7f0c8548a97db3e62e9b"),
+    ("lightweight-equipment-bracket-03", "9cd2733d98bb9704464dcdbd6cdd043d8b63f14297a2880cb5753b160a92eb11", "b0ea52ecc61dd3dfb2d6cb9292e41173c117274e9ecc30c613ca6bb042320ac5"),
+):
+    IMPLEMENTED_PROFILES[_scenario_id] = {
+        "profile_resource": _scenario_id,
+        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
+        "reader_ids": ["step-bounding-box@1", "structural-evidence@1", "structured@1"],
+        "scope": "Exact STEP/request lineage, four recorded solve receipts, full field integrity, displacement, reaction force/moment equilibrium, coarse/fine sensitivity, mass reduction, deliverables and required engineering reviews.",
+        "limitations": "Retained campaign attempts lack the required CAD and solver outputs; protected topology, machining feasibility, evaluated stress treatment and physical qualification require authenticated engineering review.",
+        "evidence": ["tests/external/process_validation/test_structural.py", "tests/external/process_validation/test_bracket_profiles.py"],
+    }
+
 FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
