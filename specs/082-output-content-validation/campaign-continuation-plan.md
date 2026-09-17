@@ -207,12 +207,12 @@ all dashboard counts and row selections reconcile to the persisted evidence.
   stage, source input, native/tool grant and simulated approval. Remove obsolete
   preparer instructions that force `valid_data=0`. Use direct/local validation where
   sufficient and MCP/native readers where needed.
-- [ ] C014 Send the existing bounded correction packet to the actual producing
+- [x] C014 Send the existing bounded correction packet to the actual producing
   AI: requirement/check, expected/observed, units/frame/tolerance, evidence/feature,
   output owner, acceptance target and recheck IDs. Preserve satisfied constraints.
   Export JSON, Markdown and RTM from the same immutable assessment using the shared
   report contract. Do not develop a competing reporting application.
-- [ ] C015 Enable at most two automatic producer revisions for eligible explicitly
+- [x] C015 Enable at most two automatic producer revisions for eligible explicitly
   configured replayable segments. The currently queued pilot checks use zero
   revisions; change source and re-enroll intentionally if enabling repair. Keep
   the existing v1 single-producer/check restriction. Multi-owner failures require

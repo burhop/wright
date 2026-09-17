@@ -265,16 +265,35 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   newly-created-session probe failed earlier at workspace registration and is not
   treated as quota evidence. No workflow attempt or retry episode was consumed,
   and the pause sentinel was preserved.
+- A second exact-route probe after the user indicated the session appeared usable
+  again returned the same HTTP 503 usage-limit response at
+  `2026-09-17T19:26:42Z`. This was a readiness check only: it created no workflow
+  run, consumed no campaign attempt and left the pause sentinel intact.
+- The queued current jig-01/heat-01 pilot manifest was audited again read-only at
+  `2026-09-17T19:31:25Z`: 2/2 cases passed with zero warnings or failures. Exact
+  source bytes, current grants and tool schemas, complete input bindings, required
+  stages, declared output roles and absence of prior run records all reconcile.
 - The combined campaign/preparer/runtime audit passed `219` checks in `67.26s`.
   It covers campaign evidence and retry semantics, every family preparer, profile
   coverage, validator execution/currentness, bounded rework, review continuation
   and shared reporting. The only warning was the known denied shared pytest cache;
   the private basetemp completed normally. C021 remains open for the final native
   gates and browser audit against actual resumed campaign evidence.
+- C014 and C015 are complete based on the retained production-path demonstrations
+  already audited in `completion.md`. The configured Hermes structured run sent a
+  typed measured correction packet to its owning AI, produced a distinct corrected
+  revision, rechecked the complete profile and released the consumer. The isolated
+  AgentCAD jig run did the same through the MCP task path. Both retained runs used
+  explicit bounded revision policies; the regression suite proves persisted budget,
+  exhaustion, no-progress, wrong-owner, invalidation and resume behavior. These
+  records satisfy the mechanism and safety work without consuming another provider
+  turn. C016 remains open for a current 30-case campaign instance.
 
 ## Next action
 
-C014–C016: all ten family preparers now contain qualified full-profile gates.
-At the first available provider window, run an isolated canonical case through
-review, targeted defect, actionable correction packet and recheck; then resume the
-current campaign without resetting its retry ledger.
+C016–C018: all ten family preparers now contain qualified full-profile gates and
+the bounded correction path already has retained real-AI structured and CAD proof.
+At the first available provider window, run one current canonical campaign case
+through review and full-profile validation, then resume ready cases serially without
+resetting the retry ledger. Recheck the six historical missing-output cases against
+current native capability rather than treating their old diagnoses as current.
