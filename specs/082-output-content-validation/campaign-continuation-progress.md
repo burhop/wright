@@ -20,6 +20,10 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   persisted update numbers, so unsuccessful/unchanged observations remain flat
   steps without creating time-based gaps. The 17,969-point live history renders
   once per ledger revision instead of redrawing on every poll.
+- The Windows restart command now terminates the already-verified owned process
+  tree as one unit. This fixes the prior `Stop-Process` child/parent race; the
+  corrected script successfully relaunched the dashboard with 30 rows, 17,969
+  update events, zero unsupported profiles and unchanged honest campaign counts.
 
 ## Evidence and current state
 
