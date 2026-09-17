@@ -165,7 +165,7 @@ all dashboard counts and row selections reconcile to the persisted evidence.
 
 ### C2 — Freeze all 30 acceptance baselines and reusable checks
 
-- [ ] C009 Re-read all complete current packs, including prompts, context,
+- [x] C009 Re-read all complete current packs, including prompts, context,
   images, tables, source references and approved amendments. Use the 081
   acceptance-case seeds as an index, not as a complete requirements specification.
   Build source-linked RTM entries for every mandatory digital requirement and

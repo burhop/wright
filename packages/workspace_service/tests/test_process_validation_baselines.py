@@ -18,6 +18,18 @@ def definitions():
     return json.loads(DEFINITIONS.read_text(encoding="utf-8"))["scenarios"]
 
 
+def test_definitions_cover_every_current_campaign_scenario_exactly_once():
+    declared = [row["scenario_id"] for row in definitions()]
+    current = [
+        json.loads(path.read_text(encoding="utf-8"))["scenario_id"]
+        for path in (
+            REPOSITORY / "tests/datasets/engineering-workflows/scenarios"
+        ).glob("*/*/scenario.json")
+    ]
+    assert len(declared) == len(set(declared)) == 30
+    assert set(declared) == set(current)
+
+
 def test_all_declared_baselines_are_packaged_closed_and_source_current():
     for definition in definitions():
         baseline = load_baseline(definition["scenario_id"])
