@@ -340,13 +340,23 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   the sheet-metal native hold. All 27 exact grants are present; their earliest expiry
   is `2026-09-24T19:45:26Z`, five days after the recorded Sol reset. The consolidated
   receipt is `execution-waves-readiness.json`; dispatch count remains zero.
+- The pilot's human-review contract is frozen before execution at
+  `.local-run/feature-081-live/campaign-execution/validator-campaign-082/pilot-robot01-review-requirements.json`.
+  It pins the bound workflow, pilot manifest, full-profile and baseline references,
+  validator subjects, review checkpoint and the three exact review requirements:
+  `ROBOT01-PLOTS`, `ROBOT01-DIAGNOSIS` and `ROBOT01-ACTION-SCOPE`. Generator
+  assertions prove the checkpoint set equals every `review_required` baseline
+  requirement and that the profile's review checks cover the same set. The receipt
+  records no reviewer or assessment and explicitly denies validator-pass credit from
+  the integration-test actor. No approval, workflow attempt or campaign count changed.
 
 ## Next action
 
 C016–C018: after the recorded reset window, make one exact registered-session Sol
 readiness request. If it succeeds, dispatch only robot-tracking-01 attempt-006 through
 the existing runner and inspect its review plus full-profile assessment before expanding
-the queue. Then launch/enroll/run the three attempt-017 printed cases one at a time with
+the queue, using the frozen review receipt as the exact human checklist. Then
+launch/enroll/run the three attempt-017 printed cases one at a time with
 the lifecycle wrapper, and resume the remaining audited queue serially without resetting
 the retry ledger. Use the recovered CalculiX registration for fresh bracket runs. Keep
 the sheet-metal flange episode quarantined until an actual provider repair is identified
