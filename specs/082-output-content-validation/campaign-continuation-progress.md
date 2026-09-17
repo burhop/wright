@@ -349,13 +349,23 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   requirement and that the profile's review checks cover the same set. The receipt
   records no reviewer or assessment and explicitly denies validator-pass credit from
   the integration-test actor. No approval, workflow attempt or campaign count changed.
+- The same review-contract audit now covers every enrolled case at
+  `.local-run/feature-081-live/campaign-execution/validator-campaign-082/current-ready-27-review-catalog.json`.
+  All 27 bound workflows have exactly one full-profile validator and one matching
+  validation-review checkpoint. Their pinned profile and baseline references reconcile,
+  every checkpoint names exactly the profile's `review_required` requirement set, and
+  the review checks cover all 146 source-backed obligations with zero assertion failures.
+  Every entry remains `awaiting_output_and_human_review`, with no reviewer, assessment or
+  validator-pass credit. The three printed cases will receive the same audit after their
+  lifecycle-owned workflows are prepared just in time.
 
 ## Next action
 
 C016–C018: after the recorded reset window, make one exact registered-session Sol
 readiness request. If it succeeds, dispatch only robot-tracking-01 attempt-006 through
 the existing runner and inspect its review plus full-profile assessment before expanding
-the queue, using the frozen review receipt as the exact human checklist. Then
+the queue, using the frozen pilot receipt and 27-case catalog as the exact human checklist.
+Then
 launch/enroll/run the three attempt-017 printed cases one at a time with
 the lifecycle wrapper, and resume the remaining audited queue serially without resetting
 the retry ledger. Use the recovered CalculiX registration for fresh bracket runs. Keep
