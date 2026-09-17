@@ -81,3 +81,36 @@ def test_cad_evidence_bounds_list_is_rejected(tmp_path: Path):
     contract["evidence"]["fluid_domain_observed_bounds_mm"] = [0, 0, 0, 10, 10, 10]
     with pytest.raises(ValueError, match="CAD evidence domain bounds are invalid"):
         operations.validate(contract, tmp_path)
+
+
+def _steady_log(initial_residual: float, final_residual: float, temperatures: list[float]) -> str:
+    rows = []
+    for iteration, temperature in enumerate(temperatures, start=1):
+        rows.extend(
+            [
+                f"Time = {iteration}s",
+                "",
+                "DILUPBiCGStab:  Solving for h, Initial residual = "
+                f"{initial_residual}, Final residual = {final_residual}, No Iterations 1",
+                f"Min/max T:298.15 {temperature}",
+            ]
+        )
+    return "\n".join(rows) + "\n\nEnd\n"
+
+
+def test_convergence_summary_uses_residual_and_temperature_window():
+    result = operations.summarize_steady_convergence(
+        _steady_log(1e-5, 1e-7, [300.0, 300.0001, 300.0002, 300.0003, 300.0004]),
+        5,
+    )
+    assert result["passed"] is True
+    assert result["criteria"]["window_iterations"] == 5
+
+
+def test_convergence_summary_rejects_unsettled_solve():
+    result = operations.summarize_steady_convergence(
+        _steady_log(0.014, 2e-5, [300.0, 300.01, 300.02, 300.03, 300.04]),
+        5,
+    )
+    assert result["passed"] is False
+    assert result["observed"]["maximum_initial_residual"] == pytest.approx(0.014)

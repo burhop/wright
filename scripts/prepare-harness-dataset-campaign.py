@@ -43,7 +43,22 @@ def prepare(args,directory,available):
             stage_file(inputs+"/"+path.name,path.read_bytes(),{"original":path.relative_to(ROOT).as_posix()})
     for name in ("harness_engineering_operations.py","harness_engineering_mcp.py","harness_component_sources.json"):
         stage_file(inputs+"/"+name,(ROOT/"scripts"/name).read_bytes(),{"authored_source":"scripts/"+name})
-    stage_file(inputs+"/design.json",(json.dumps(config["scenarios"][identity],indent=2)+"\n").encode(),{"derived_from":"Original context.md; explicit50mm installed zone pigtail design choice conserves original route lengths"})
+    design_contract = dict(config["scenarios"][identity])
+    resistance_values = (
+        args.contact_resistance_ohm,
+        args.splice_port_resistance_ohm,
+        args.resistance_basis,
+    )
+    if any(value is not None for value in resistance_values):
+        if not all(value is not None for value in resistance_values):
+            raise ValueError("Both resistance values and their engineering basis are required")
+        design_contract["resistance_assumption"] = {
+            "contact_ohm_each": args.contact_resistance_ohm,
+            "splice_port_ohm_each": args.splice_port_resistance_ohm,
+            "basis": args.resistance_basis,
+            "status": "reviewed_engineering_assumption",
+        }
+    stage_file(inputs+"/design.json",(json.dumps(design_contract,indent=2)+"\n").encode(),{"derived_from":"Original context.md; explicit 50 mm installed zone pigtail design choice conserves original route lengths; optional resistance values require the workflow engineering review"})
     human="\n\n".join((directory/name).read_text(encoding="utf-8") for name in ["user-profile.md","prompt.txt",*manifest["files"]["context"]])
     stage_file(inputs+"/assembled-context.md",human.encode(),{"derived_from":manifest["files"]})
     context=helpers.add_file_input(sections,suffix,"human_context",inputs+"/assembled-context.md")
@@ -91,13 +106,13 @@ def prepare(args,directory,available):
     stages["generate_harness"]["fields"]["outputs"].extend(helpers.port(role,"workspace_file") for role in generated_files)
     stages["generate_harness"]["fields"]["settings"]["expected_file_ports"]=generated_files
     helpers.add_reference(sections,research_ref,stages["generate_harness"],"retrieved_parts")
-    verified=bind(stages["verify_harness"],f"Call verify_harness_package once with input_directory={inputs!r}, research_directory={output+'/research'!r}, generated_directory={output+'/generated'!r}, output_directory={output+'/verified'!r}, operation_source_document={inputs+'/harness_engineering_operations.py'!r}. Inspect the actual emitted native netlist independently, compare original customer nets/reserves, solve shared startup and continuous currents and calculate both initial assumed-wire and sourced-wire copper drops. Unknown contact resistance must remain unknown, never zero. Report rejected nets/underrated parts/excessive copper drop; missing application derating or fan data is explicit release HOLD, never electrical approval.","verification-report.json",["verified/verification.json","verified/voltage-drop.json","verified/independent-netlist.csv"])
+    verified=bind(stages["verify_harness"],f"Call verify_harness_package once with input_directory={inputs!r}, research_directory={output+'/research'!r}, generated_directory={output+'/generated'!r}, output_directory={output+'/verified'!r}, operation_source_document={inputs+'/harness_engineering_operations.py'!r}. Inspect the actual emitted native netlist independently, compare original customer nets/reserves, solve shared startup and continuous currents and calculate both initial assumed-wire and sourced-wire copper drops. Use contact/splice resistance only when design.json contains the closed reviewed_engineering_assumption record; otherwise it must remain unknown, never zero. Report rejected nets/underrated parts/excessive copper or total drop; missing application derating or fan data is explicit release HOLD, never electrical approval.","verification-report.json",["verified/verification.json","verified/voltage-drop.json","verified/independent-netlist.csv"])
     verified_files={"netlist":output+"/verified/independent-netlist.csv","voltage_drop":output+"/verified/voltage-drop.json"}
     stages["verify_harness"]["fields"]["outputs"].extend(helpers.port(role,"workspace_file") for role in verified_files)
     stages["verify_harness"]["fields"]["settings"]["expected_file_ports"]=verified_files
     helpers.add_reference(sections,generated,stages["verify_harness"],"actual_native_package")
     final=new_task("collect_harness","Collect generated harness documents and engineering findings")
-    handoff=bind(final,"Write the final engineering handoff index for this real attempt, with exact links to native diagram/YAML/BOM, pins/cuts, assembly, source records and independent voltage/net checks. Address original human prompt/context and preserve all release HOLD/rejected findings; never claim total voltage drop or electrical release was validated. Include missing exact device/chassis/derating evidence as next engineering actions. The following process validator determines requirements-compliance credit from the exact current outputs.","harness-handoff.md",tool=False)
+    handoff=bind(final,"Write the final engineering handoff index for this real attempt, with exact links to native diagram/YAML/BOM, pins/cuts, assembly, source records and independent voltage/net checks. Address original human prompt/context and preserve all release HOLD/rejected findings. Report a total voltage drop only when voltage-drop.json contains the closed reviewed resistance assumption and distinguish assumed values from measured production data; never claim electrical release. Include missing exact device/chassis/derating evidence as next engineering actions. The following process validator determines requirements-compliance credit from the exact current outputs.","harness-handoff.md",tool=False)
     helpers.add_reference(sections,verified,final,"independent_findings")
     helpers.add_reference(sections,generated,final,"native_package")
     coverage=json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
@@ -158,6 +173,9 @@ if __name__ == "__main__":
     parser.add_argument("--attempt",default="attempt-001")
     parser.add_argument("--scenario")
     parser.add_argument("--instance-source")
+    parser.add_argument("--contact-resistance-ohm",type=float)
+    parser.add_argument("--splice-port-resistance-ohm",type=float)
+    parser.add_argument("--resistance-basis")
     parser.add_argument("--api",default="http://127.0.0.1:8000")
     parser.add_argument("--session",default="wright-local-e3dc0ef1-06da-45dd-83b9-290347814f8a")
     args=parser.parse_args()

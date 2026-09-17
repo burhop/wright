@@ -150,13 +150,15 @@ def test_generated_pi_profiles_are_reproducible_and_reviewable():
 
 
 @pytest.mark.parametrize("scenario_id", sorted(ATTEMPTS))
-def test_retained_fields_pass_readback_but_missing_validation_evidence_blocks(
+def test_retained_fields_expose_unsettled_solve_and_missing_heat_balance(
     tmp_path, scenario_id
 ):
     outcome = evaluate(tmp_path, scenario_id)
     findings = {item.check_id: item for item in outcome.assessment.findings}
-    assert findings["convergence-evidence"].code == "cfd.convergence_unproven"
+    assert findings["convergence-evidence"].code == "cfd.convergence_failed"
+    assert "initial residual" in findings["convergence-evidence"].summary
     assert findings["heat-balance-evidence"].code == "cfd.heat_balance_missing"
+    assert outcome.assessment.summary.counts["fail"] > 0
     assert outcome.assessment.summary.counts["blocked"] > 0
     passed = {item.check_id for item in outcome.assessment.checks if item.state == "pass"}
     assert {

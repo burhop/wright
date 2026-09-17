@@ -681,7 +681,7 @@ def prepare(args, directory, available):
     )
     bind(
         collection,
-        f"After actual Foam-Agent run, call collect_pi_cfd_comparison once with operation_source_document={inputs + '/pi_cfd_operations.py'!r}, output_directory={output!r}. It requires completed matching solver records and actual nonempty computed fields; no input copies or design-target values may substitute. Summarize the real region temperatures, pressure/flow observations and unresolved physical/convergence assumptions against the original requirements. Preserve both variants. The following process validator determines requirements-compliance credit from the exact current outputs.",
+        f"After actual Foam-Agent run, call collect_pi_cfd_comparison once with operation_source_document={inputs + '/pi_cfd_operations.py'!r}, output_directory={output!r}. It requires completed matching solver records, actual nonempty computed fields, measured residual/temperature convergence windows and per-face external energy evidence; no input copies or design-target values may substitute. Summarize the real region temperatures, pressure/flow observations, convergence result and heat-balance result against the original requirements. Preserve failures and both variants. The following process validator independently recomputes requirements-compliance credit from the exact current outputs.",
         "cfd-handoff.md",
         "wright-campaign-pi-cfd",
         ("cfd-comparison.json", "cfd-fields.zip"),

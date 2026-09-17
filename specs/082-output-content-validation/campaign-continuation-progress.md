@@ -537,6 +537,33 @@ labels or weakened checks. The 17 automated-pass successors are ready for the no
 authenticated review checkpoints, but the detached review queue itself grants no
 approval.
 
+The CFD convergence path is now executable rather than a producer-supplied boolean.
+The fixed Pi producer records the final five solver iterations, maximum initial and
+final equation residuals, relative maximum-temperature change, fixed thresholds and
+the exact solver-log digest. The `cfd-evidence` reader independently recomputes those
+values from each archived log before accepting a convergence claim. Applying that
+reader to the retained runs proves that every 300-iteration Pi solve is still
+unsettled; their reports now return `cfd.convergence_failed` with the measured values
+and a continue-solve action. Heat balance remains blocked because the retained fields
+do not contain a complete field-derived external heat-flow balance. Future Pi runs now
+derive `grad(T)`, archive per-face area, outward velocity, density, temperature,
+normal temperature gradient, heat capacity and conductivity, and report the external
+sensible-enthalpy-plus-conduction balance. The validator independently integrates that
+CSV and rejects a mismatched summary or digest. The latest isolated report is
+`artifacts/process-validation/retained-successors-20260917T233614Z/summary.md`:
+**17 automated passes and 7 failed cases** among 24 complete output sets, with each Pi
+case also retaining its heat-balance blocker. The dashboard pointer selects this
+report; validator pass credit remains `17/30`, review credit remains `0/30`, and no
+historical artifact or campaign counter was changed.
+
+The harness producer now accepts contact and splice-port resistance only through a
+closed `reviewed_engineering_assumption` record with positive bounded values and a
+written basis. When present, independent verification counts every supply/return
+termination, calculates contact/splice and copper drops separately, and reports the
+total while preserving the production-measurement release hold. With no reviewed
+record, resistance remains unknown and total drop remains unavailable; the current
+three retained cases therefore remain failed rather than receiving invented values.
+
 The authority refresh also required successor execution waves: the previous wave plan
 still contained the original 12 AgentCAD grants. Use the local
 `validator-campaign-082/execution-waves-authority-refreshed.json` (SHA-256

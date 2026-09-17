@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import io
 import json
@@ -19,6 +20,16 @@ _MAX_MEMBERS = 256
 _MAX_EXPANDED_BYTES = 192 * 1024 * 1024
 _FIELD_HEADER = re.compile(rb"FIELD attributes [0-9]+\n")
 _TYPE_SIZE = {"float": 4, "double": 8, "int": 4, "unsigned_int": 4}
+_CONVERGENCE_WINDOW_ITERATIONS = 5
+_CONVERGENCE_MAX_INITIAL_RESIDUAL = 1e-4
+_CONVERGENCE_MAX_FINAL_RESIDUAL = 1e-6
+_CONVERGENCE_MAX_RELATIVE_TEMPERATURE_CHANGE = 1e-5
+_TIME_LINE = re.compile(r"^Time = ([0-9]+(?:\.[0-9]+)?)s?$", re.MULTILINE)
+_RESIDUAL_LINE = re.compile(
+    r"Solving for ([A-Za-z0-9_]+), Initial residual = ([0-9.eE+-]+), "
+    r"Final residual = ([0-9.eE+-]+)"
+)
+_TEMPERATURE_LINE = re.compile(r"Min/max T:([0-9.eE+-]+) ([0-9.eE+-]+)")
 
 
 def _defect(code, message):
@@ -132,6 +143,132 @@ def _field_values(content, field_name):
     raise _defect("cfd.temperature_missing", "VTK output has no temperature field.")
 
 
+def _convergence_measurement(content, expected_iterations):
+    try:
+        text = content.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise _defect("cfd.solver_log_invalid", "CFD solver log must be UTF-8 text.") from exc
+    matches = list(_TIME_LINE.finditer(text))
+    if len(matches) < _CONVERGENCE_WINDOW_ITERATIONS or "\nEnd\n" not in text:
+        raise _missing(
+            "cfd.convergence_window_missing",
+            "Solver log lacks a completed five-iteration convergence window.",
+        )
+    samples = []
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        block = text[match.end() : end]
+        residuals = _RESIDUAL_LINE.findall(block)
+        temperatures = _TEMPERATURE_LINE.findall(block)
+        if not residuals or not temperatures:
+            raise _missing(
+                "cfd.convergence_sample_missing",
+                "Solver log lacks residual or temperature evidence for a steady iteration.",
+            )
+        samples.append(
+            {
+                "iteration": float(match.group(1)),
+                "maximum_initial_residual": max(float(row[1]) for row in residuals),
+                "maximum_final_residual": max(float(row[2]) for row in residuals),
+                "maximum_temperature_k": max(float(row[1]) for row in temperatures),
+            }
+        )
+    window = samples[-_CONVERGENCE_WINDOW_ITERATIONS:]
+    if not math.isclose(window[-1]["iteration"], float(expected_iterations)):
+        raise _defect(
+            "cfd.convergence_iteration",
+            "Solver log did not reach the comparison's declared final iteration.",
+        )
+    scale = max(abs(window[-1]["maximum_temperature_k"]), 1.0)
+    observed = {
+        "maximum_initial_residual": max(row["maximum_initial_residual"] for row in window),
+        "maximum_final_residual": max(row["maximum_final_residual"] for row in window),
+        "relative_temperature_change": abs(
+            window[-1]["maximum_temperature_k"] - window[0]["maximum_temperature_k"]
+        )
+        / scale,
+    }
+    criteria = {
+        "window_iterations": _CONVERGENCE_WINDOW_ITERATIONS,
+        "maximum_initial_residual": _CONVERGENCE_MAX_INITIAL_RESIDUAL,
+        "maximum_final_residual": _CONVERGENCE_MAX_FINAL_RESIDUAL,
+        "maximum_relative_temperature_change": _CONVERGENCE_MAX_RELATIVE_TEMPERATURE_CHANGE,
+    }
+    return {
+        "method": "last-five-iteration-residual-and-temperature-window-v1",
+        "criteria": criteria,
+        "observed": observed,
+        "samples": window,
+        "passed": (
+            observed["maximum_initial_residual"] <= criteria["maximum_initial_residual"]
+            and observed["maximum_final_residual"] <= criteria["maximum_final_residual"]
+            and observed["relative_temperature_change"]
+            <= criteria["maximum_relative_temperature_change"]
+        ),
+    }
+
+
+def _heat_balance_measurement(content, context):
+    columns = (
+        "patch",
+        "role",
+        "area_m2",
+        "normal_velocity_m_s",
+        "density_kg_m3",
+        "temperature_k",
+        "temperature_gradient_normal_k_m",
+        "cp_j_kg_k",
+        "conductivity_w_m_k",
+        "ambient_k",
+    )
+    try:
+        rows = csv.DictReader(io.StringIO(content.decode("utf-8-sig")), strict=True)
+        if tuple(rows.fieldnames or ()) != columns:
+            raise ValueError("columns")
+        heat_out_w = 0.0
+        count = 0
+        for count, row in enumerate(rows, start=1):
+            context.checkpoint(entities=count * len(columns))
+            if not row["patch"] or row["role"] not in {
+                "ambient",
+                "inlet",
+                "outlet",
+                "fan",
+                "wall",
+            }:
+                raise ValueError("identity")
+            values = {
+                key: float(row[key])
+                for key in columns
+                if key not in {"patch", "role"}
+            }
+            if any(not math.isfinite(value) for value in values.values()):
+                raise ValueError("finite")
+            if (
+                values["area_m2"] <= 0
+                or values["density_kg_m3"] <= 0
+                or values["cp_j_kg_k"] <= 0
+                or values["conductivity_w_m_k"] <= 0
+            ):
+                raise ValueError("physical")
+            heat_out_w += values["area_m2"] * (
+                values["density_kg_m3"]
+                * values["cp_j_kg_k"]
+                * (values["temperature_k"] - values["ambient_k"])
+                * values["normal_velocity_m_s"]
+                - values["conductivity_w_m_k"]
+                * values["temperature_gradient_normal_k_m"]
+            )
+        if count == 0:
+            raise ValueError("empty")
+        return heat_out_w
+    except (UnicodeError, csv.Error, KeyError, TypeError, ValueError) as exc:
+        raise _defect(
+            "cfd.heat_balance_invalid",
+            "Boundary energy evidence must be a finite physical per-face CSV.",
+        ) from exc
+
+
 def _variant(comparison, name):
     variants = comparison.get("variants")
     if not isinstance(variants, list):
@@ -223,24 +360,124 @@ class CfdEvidenceReader:
         elif operation == "convergence":
             comparison = _json(snapshot.content, "CFD comparison")
             variants = [_variant(comparison, name) for name in ("variant-a", "variant-b")]
-            if not all(item.get("steady_state_convergence_claimed") is True for item in variants):
+            archive_snapshot = related.get("field_archive")
+            if archive_snapshot is None:
                 raise _missing(
                     "cfd.convergence_unproven",
-                    "Both CFD alternatives need explicit, supported steady-state convergence evidence.",
+                    "Bind the archived solver logs for independent convergence measurement.",
+                )
+            archive, names = _archive(archive_snapshot.content, context)
+            failures = []
+            for item in variants:
+                variant_name = item["variant"]
+                log_name = f"{variant_name}/solver.log"
+                if log_name not in names:
+                    archive.close()
+                    raise _defect("cfd.archive_missing", "CFD archive lacks a solver log.")
+                log_content = archive.read(log_name)
+                profile = item.get("numerical_profile")
+                if not isinstance(profile, dict) or "end" not in profile:
+                    archive.close()
+                    raise _defect(
+                        "cfd.convergence_profile",
+                        "CFD convergence evidence lacks the declared final iteration.",
+                    )
+                measured = _convergence_measurement(log_content, profile["end"])
+                evidence = item.get("convergence_evidence")
+                expected = {
+                    **measured,
+                    "solver_log_sha256": hashlib.sha256(log_content).hexdigest(),
+                }
+                if evidence is not None and evidence != expected:
+                    archive.close()
+                    raise _defect(
+                        "cfd.convergence_evidence_mismatch",
+                        f"{variant_name} convergence evidence disagrees with its archived solver log.",
+                    )
+                if item.get("steady_state_convergence_claimed") is not measured["passed"]:
+                    archive.close()
+                    raise _defect(
+                        "cfd.convergence_claim_mismatch",
+                        f"{variant_name} convergence claim disagrees with measured solver evidence.",
+                    )
+                if not measured["passed"]:
+                    values = measured["observed"]
+                    failures.append(
+                        f"{variant_name}: initial residual {values['maximum_initial_residual']:.3g}, "
+                        f"final residual {values['maximum_final_residual']:.3g}, relative "
+                        f"temperature change {values['relative_temperature_change']:.3g}"
+                    )
+            archive.close()
+            if failures:
+                raise _defect(
+                    "cfd.convergence_failed",
+                    "Continue the steady solve until the fixed convergence criteria pass. "
+                    + "; ".join(failures)
+                    + ".",
                 )
             observed = True
         elif operation == "heat_balance":
             comparison = _json(snapshot.content, "CFD comparison")
             variants = [_variant(comparison, name) for name in ("variant-a", "variant-b")]
-            try:
-                balances = [float(item["heat_balance_relative"]) for item in variants]
-            except (KeyError, TypeError, ValueError) as exc:
+            archive_snapshot = related.get("field_archive")
+            if archive_snapshot is None:
                 raise _missing(
                     "cfd.heat_balance_missing",
-                    "Both alternatives need field-derived heat-balance evidence.",
-                ) from exc
-            if any(not math.isfinite(item) or item < 0 for item in balances):
-                raise _defect("cfd.heat_balance_invalid", "Heat-balance evidence is invalid.")
+                    "Bind the archived per-face energy fields for heat-balance measurement.",
+                )
+            archive, names = _archive(archive_snapshot.content, context)
+            balances = []
+            for item in variants:
+                member = item.get("heat_balance_file")
+                digest = item.get("heat_balance_file_sha256")
+                if not isinstance(member, str) or not isinstance(digest, str):
+                    archive.close()
+                    raise _missing(
+                        "cfd.heat_balance_missing",
+                        "Both alternatives need field-derived heat-balance evidence.",
+                    )
+                name = f"{item['variant']}/{member}"
+                if name not in names:
+                    archive.close()
+                    raise _defect(
+                        "cfd.heat_balance_file_missing",
+                        f"CFD archive lacks {name}.",
+                    )
+                content = archive.read(name)
+                if hashlib.sha256(content).hexdigest() != digest:
+                    archive.close()
+                    raise _defect(
+                        "cfd.heat_balance_hash",
+                        f"CFD heat-balance digest does not match {name}.",
+                    )
+                heat_out_w = _heat_balance_measurement(content, context)
+                try:
+                    input_heat_w = float(item["input_heat_w"])
+                    reported_heat_out_w = float(item["net_outward_heat_w"])
+                    reported_balance = float(item["heat_balance_relative"])
+                except (KeyError, TypeError, ValueError) as exc:
+                    archive.close()
+                    raise _defect(
+                        "cfd.heat_balance_invalid",
+                        "Heat-balance summary is incomplete.",
+                    ) from exc
+                if not math.isfinite(input_heat_w) or input_heat_w <= 0:
+                    archive.close()
+                    raise _defect(
+                        "cfd.heat_balance_invalid",
+                        "Heat-balance input load must be finite and positive.",
+                    )
+                balance = abs(input_heat_w - heat_out_w) / input_heat_w
+                if not math.isclose(heat_out_w, reported_heat_out_w, rel_tol=1e-9, abs_tol=1e-12) or not math.isclose(
+                    balance, reported_balance, rel_tol=1e-9, abs_tol=1e-12
+                ):
+                    archive.close()
+                    raise _defect(
+                        "cfd.heat_balance_mismatch",
+                        f"{item['variant']} heat-balance summary disagrees with its archived face fields.",
+                    )
+                balances.append(balance)
+            archive.close()
             observed = max(balances)
             unit = "1"
         else:

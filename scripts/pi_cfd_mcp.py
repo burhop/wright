@@ -217,14 +217,20 @@ def collect_comparison(workspace, foam_root, operation_source_document, output_d
             if operation.sha(field) != boundary["sha256"]:
                 raise ValueError("Actual pressure/flow boundary field changed")
             files.append((field, row["variant"]+"/"+field.name))
+        energy = operation.path_under(case/"results", result["heat_balance_file"])
+        if operation.sha(energy) != result["heat_balance_file_sha256"]:
+            raise ValueError("Boundary energy evidence changed")
+        files.append((energy, row["variant"]+"/"+energy.name))
         files.append((case/"results/computed-fields.json", row["variant"]+"/computed-fields.json"))
         files.append((case/"log.chtMultiRegionFoam", row["variant"]+"/solver.log"))
         variants.append({"variant": row["variant"], "original_contract_sha256": row["original_contract_sha256"], **result})
     with zipfile.ZipFile(output/"cfd-fields.zip", "x", compression=zipfile.ZIP_DEFLATED) as archive:
         for path, relative in files:
             archive.write(path, relative)
+    complete = all(item.get("engineering_validation_complete") is True for item in variants)
     comparison = {"variants": variants, "field_archive_sha256": operation.sha(output/"cfd-fields.zip"),
-                  "engineering_validation_complete": False, "scope": "Actual numerical fields; convergence and engineering targets must be assessed separately"}
+                  "engineering_validation_complete": complete,
+                  "scope": "Actual numerical fields with independently checkable convergence and external-face heat-balance evidence; product targets remain separate"}
     operation.write(output/"cfd-comparison.json", json.dumps(comparison, indent=2))
     return comparison
 

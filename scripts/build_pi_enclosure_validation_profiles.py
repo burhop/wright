@@ -204,7 +204,10 @@ def build(scenario_id, values):
                 "comparison",
                 constraint={"operator": "equals", "expected": True},
                 selector="cfd/convergence",
-                parameters={"operation": "convergence"},
+                parameters={
+                    "operation": "convergence",
+                    "related_roles": ["field_archive"],
+                },
             ),
             check(
                 "heat-balance-evidence",
@@ -212,7 +215,10 @@ def build(scenario_id, values):
                 "comparison",
                 constraint={"operator": "range", "maximum": 0.01},
                 selector="cfd/heat_balance_relative",
-                parameters={"operation": "heat_balance"},
+                parameters={
+                    "operation": "heat_balance",
+                    "related_roles": ["field_archive"],
+                },
                 unit="1",
             ),
             check(
