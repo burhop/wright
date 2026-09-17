@@ -33,14 +33,14 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
 - Browser check: 30 dataset rows, 30 images, four series, no browser errors.
 - Live counters: historical `30/30/24/0`; current `0/0/0` after dataset creation;
   validator coverage `2` bounded qualified, `0` full-scope, `28` unsupported.
-- C009/C010 in progress: 24 source-hashed packaged baselines are frozen for all
+- C009/C010 in progress: 27 source-hashed packaged baselines are frozen for all
   heat-spreader, drill-jig, robot-tracking, water-heater, fan-harness, printed-part,
-  PCB and bracket cases. They contain 264 atomic mandatory requirements, preserve
+  PCB, bracket and enclosure cases. They contain 288 atomic mandatory requirements, preserve
   the Modelica selected-kit amendment, validate against the closed runtime
   `Baseline` model, and are reproducible from the reviewed definitions. Baseline
   checks remain green; the initial baseline/distribution check passed 6 tests.
 
 ## Next action
 
-C009: freeze the remaining six source-linked baselines for enclosure and
-sheet-metal families, then rerun baseline/distribution checks for all 30.
+C009: freeze the remaining three source-linked sheet-metal baselines, then rerun
+baseline/distribution checks for all 30.
