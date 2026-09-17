@@ -404,6 +404,19 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   `30/30/24/0` and current `0/0/0`. The read-only browser audit passes 30 rows, 30 input
   images, four update-driven series, 17,971 history points, narrow layout and zero browser
   errors. No provider request or workflow attempt was consumed.
+- C022 now has a fail-closed completion auditor at
+  `scripts/audit_engineering_campaign_completion.py`. It writes one 30-row JSON
+  reconciliation and a matching readable Markdown report, and cannot return complete
+  unless historical and current counters reach target, coverage remains 30 qualified/full
+  scope, every selected attempt matches the current dataset/template, every required step
+  and output identity is complete, every immutable assessment is current/full-scope/pass,
+  every selected output was rehashed in a current full audit, and campaign ingestion has
+  no issues. Four focused controls cover a complete case, missing current run, failed
+  assessment/incremental scan and stale dataset identity; all pass and Ruff passes. The
+  present reports are `artifacts/engineering-workflow-datasets/completion-audit-current.json`
+  and `.md`. They correctly report `0/30` passing rows: all 30 still lack a current run,
+  current output, full-scope assessment and final byte audit. The global state remains
+  incomplete at historical `30/30/24/0` and current `0/0/0`.
 
 ## Next action
 
