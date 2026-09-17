@@ -456,7 +456,12 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   approval. Backend approval/continuation regressions pass `79/79`, the editor component
   suite passes `43/43`, the production build passes, Ruff and `git diff --check` pass, and
   the two served Chromium process-validation journeys pass through the normal Workflows
-  entry. No provider request, workflow attempt, campaign count or existing receipt changed.
+  entry. A read-only rehearsal compiled the frozen robot-tracking-01 attempt-006 source
+  (`b382fd863bb3483d0b917cc9ee65bcc4e656336085394a0d439b0496a4c3fbaf`) from its
+  real campaign workspace and reproduced the exact three requirement projections in the
+  frozen review package for `ROBOT01-ACTION-SCOPE`, `ROBOT01-DIAGNOSIS` and
+  `ROBOT01-PLOTS`. No provider request, workflow attempt, campaign count or existing
+  receipt changed.
 
 ## Next action
 
