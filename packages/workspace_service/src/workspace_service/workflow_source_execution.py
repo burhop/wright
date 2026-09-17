@@ -1303,6 +1303,75 @@ def _execution_snapshot(
     )
 
 
+def _approval_settings(
+    *,
+    pending_action: PromptStep,
+    plan: PromptWorkflow,
+    workspace_dir: str,
+) -> dict:
+    """Bind human-readable requirements to a local review's exact subject."""
+    action = pending_action.external_action or {}
+    settings = dict(action.get("settings") or {})
+    configured = settings.get("validation_review")
+    if action.get("action_kind") != "local_review" or configured is None:
+        return settings
+    if (
+        not isinstance(configured, dict)
+        or set(configured) != {"profile_ref", "requirement_ids"}
+        or not isinstance(configured.get("requirement_ids"), list)
+        or not configured["requirement_ids"]
+        or any(not isinstance(item, str) for item in configured["requirement_ids"])
+        or len(set(configured["requirement_ids"]))
+        != len(configured["requirement_ids"])
+    ):
+        raise _invalid(
+            f"{pending_action.title}: validation review settings are incomplete.",
+            "Pin one validation profile and its exact unique review-required requirement IDs.",
+        )
+
+    from core.process_validation import VersionReference
+    from .process_validation.configuration import ValidatorConfiguration
+
+    try:
+        expected = VersionReference.model_validate(configured["profile_ref"])
+        matching = []
+        for step in plan.steps:
+            if step.validation is None:
+                continue
+            candidate = ValidatorConfiguration.model_validate(step.validation)
+            if candidate.profile.reference == expected:
+                matching.append(candidate.load(workspace_dir))
+    except (OSError, ValueError, TypeError) as exc:
+        raise _invalid(
+            f"{pending_action.title}: the pinned validation review profile is unavailable or changed.",
+            "Restore the exact profile or update the workflow pins before requesting review.",
+        ) from exc
+    if not matching:
+        raise _invalid(
+            f"{pending_action.title}: the pinned validation review profile is not used by this workflow.",
+            "Bind the review to the exact profile used by a validator step in this workflow.",
+        )
+    profile = matching[0]
+    review_requirements = {
+        requirement.id: requirement
+        for requirement in profile.baseline.requirements
+        if requirement.review_required
+    }
+    requested = configured["requirement_ids"]
+    if set(requested) != set(review_requirements):
+        raise _invalid(
+            f"{pending_action.title}: the validation review requirement set does not match the pinned profile.",
+            "Review every and only the profile requirements marked review_required.",
+        )
+    settings["validation_review_requirements"] = [
+        review_requirements[requirement_id].model_dump(
+            mode="json", include={"id", "text", "scope", "sources"}
+        )
+        for requirement_id in requested
+    ]
+    return settings
+
+
 async def execute_prompt_workflow(
     *,
     service,
@@ -2433,7 +2502,11 @@ async def execute_prompt_workflow(
             "artifact_digests": artifact_digests,
             "binding": action["binding"],
             "destination": action["destination"],
-            "settings": action["settings"],
+            "settings": _approval_settings(
+                pending_action=pending_action,
+                plan=plan,
+                workspace_dir=workspace_dir,
+            ),
             "action": action["action"],
         }
         result["_approval_request"] = {

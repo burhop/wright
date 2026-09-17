@@ -493,6 +493,45 @@ end
         )
     )
     request = first["_approval_request"]
+    review_requirements = request["subject"]["settings"][
+        "validation_review_requirements"
+    ]
+    assert review_requirements == [
+        {
+            "id": "REVIEW-001",
+            "text": "An authenticated reviewer accepts the exact result.",
+            "scope": "content",
+            "sources": [
+                {
+                    "artifact_ref": "requirements.md",
+                    "locator": "R1",
+                    "sha256": "a" * 64,
+                }
+            ],
+        }
+    ]
+    if passes:
+        from workspace_service.workflow_source_execution import _approval_settings
+
+        review_step = next(step for step in plan.steps if step.id == "review")
+        bad_action = json.loads(json.dumps(review_step.external_action))
+        bad_action["settings"]["validation_review"]["requirement_ids"] = [
+            "REVIEW-MISSING"
+        ]
+        bad_review = replace(review_step, external_action=bad_action)
+        with pytest.raises(WorkflowSourceExecutionError) as mismatch:
+            _approval_settings(
+                pending_action=bad_review,
+                plan=replace(
+                    plan,
+                    steps=tuple(
+                        bad_review if step.id == "review" else step
+                        for step in plan.steps
+                    ),
+                ),
+                workspace_dir=str(tmp_path),
+            )
+        assert "does not match the pinned profile" in str(mismatch.value)
     actions = app.workflow_external_actions
     checkpoint = actions.request(
         workspace_id="workspace",

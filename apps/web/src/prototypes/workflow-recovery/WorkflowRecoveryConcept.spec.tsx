@@ -827,6 +827,32 @@ describe("WorkflowRecoveryConcept component states", () => {
             },
             requirement_ids: ["ARM-REQ-001", "ARM-REQ-004"],
           },
+          validation_review_requirements: [
+            {
+              id: "ARM-REQ-001",
+              text: "The arm reaches every declared target pose.",
+              scope: "design",
+              sources: [
+                {
+                  artifact_ref: "requirements/robot-arm.md",
+                  locator: "R1",
+                  sha256: "f".repeat(64),
+                },
+              ],
+            },
+            {
+              id: "ARM-REQ-004",
+              text: "The report identifies all unreachable poses.",
+              scope: "content",
+              sources: [
+                {
+                  artifact_ref: "requirements/robot-arm.md",
+                  locator: "R4",
+                  sha256: "1".repeat(64),
+                },
+              ],
+            },
+          ],
         },
         action: { kind: "local_review", mode: "review_only" },
       },
@@ -871,6 +897,11 @@ describe("WorkflowRecoveryConcept component states", () => {
     expect(
       screen.getByTestId("workflow-validation-review-requirements"),
     ).toHaveTextContent("ARM-REQ-004");
+    expect(panel).toHaveTextContent(
+      "The arm reaches every declared target pose.",
+    );
+    expect(panel).toHaveTextContent("requirements/robot-arm.md");
+    expect(panel).toHaveTextContent("R4");
     expect(panel).toHaveTextContent(
       "record only the decision here; the campaign runner resumes the attempt",
     );

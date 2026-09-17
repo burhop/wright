@@ -445,6 +445,18 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   SHA-256 is `f39094ecddc8b7e667757ec0d280ffdba68ae067472d3d689e118211d2a703ee`;
   syntax and Ruff pass, `status` remains read-only, and an early `resume` refused before
   any receipt or mutation because no readiness/pilot state exists.
+- A validation-review checkpoint now carries the exact human-readable requirement text,
+  content/design scope and every pinned source artifact, locator and SHA-256 alongside its
+  existing profile reference and requirement IDs. The runner derives this projection from
+  the exact packaged or workspace profile used by the workflow's validator; it refuses to
+  create the checkpoint when the profile cannot be resolved or the configured IDs differ
+  from the complete `review_required` set. The projection is inside the immutable approval
+  subject, so changing requirement text or source identity makes the approval stale on
+  resume. The Workflows approval panel requires and renders those details before enabling
+  approval. Backend approval/continuation regressions pass `79/79`, the editor component
+  suite passes `43/43`, the production build passes, Ruff and `git diff --check` pass, and
+  the two served Chromium process-validation journeys pass through the normal Workflows
+  entry. No provider request, workflow attempt, campaign count or existing receipt changed.
 
 ## Next action
 

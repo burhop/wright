@@ -359,7 +359,20 @@ interface ValidationReviewDetails {
   readonly profileId: string;
   readonly profileVersion: string;
   readonly profileDigest: string;
-  readonly requirementIds: readonly string[];
+  readonly requirements: readonly ValidationReviewRequirement[];
+}
+
+interface ValidationReviewRequirement {
+  readonly id: string;
+  readonly text: string;
+  readonly scope: "content" | "design";
+  readonly sources: readonly ValidationReviewSource[];
+}
+
+interface ValidationReviewSource {
+  readonly artifactRef: string;
+  readonly locator: string;
+  readonly sha256: string;
 }
 
 function recordValue(value: unknown): Record<string, unknown> | null {
@@ -376,21 +389,63 @@ function validationReviewDetails(
   const review = recordValue(settings?.validation_review);
   const profile = recordValue(review?.profile_ref);
   const requirementIds = review?.requirement_ids;
+  const requirementValues = settings?.validation_review_requirements;
   if (
     typeof profile?.id !== "string" ||
     typeof profile.version !== "string" ||
     typeof profile.sha256 !== "string" ||
     !Array.isArray(requirementIds) ||
     requirementIds.length === 0 ||
-    !requirementIds.every((value): value is string => typeof value === "string")
+    !requirementIds.every(
+      (value): value is string => typeof value === "string",
+    ) ||
+    !Array.isArray(requirementValues) ||
+    requirementValues.length !== requirementIds.length
   ) {
     return null;
+  }
+  const requirements: ValidationReviewRequirement[] = [];
+  for (const [index, value] of requirementValues.entries()) {
+    const requirement = recordValue(value);
+    const sourceValues = requirement?.sources;
+    if (
+      requirement?.id !== requirementIds[index] ||
+      typeof requirement.text !== "string" ||
+      !requirement.text.trim() ||
+      (requirement.scope !== "content" && requirement.scope !== "design") ||
+      !Array.isArray(sourceValues) ||
+      sourceValues.length === 0
+    ) {
+      return null;
+    }
+    const sources: ValidationReviewSource[] = [];
+    for (const value of sourceValues) {
+      const source = recordValue(value);
+      if (
+        typeof source?.artifact_ref !== "string" ||
+        typeof source.locator !== "string" ||
+        typeof source.sha256 !== "string"
+      ) {
+        return null;
+      }
+      sources.push({
+        artifactRef: source.artifact_ref,
+        locator: source.locator,
+        sha256: source.sha256,
+      });
+    }
+    requirements.push({
+      id: requirement.id as string,
+      text: requirement.text,
+      scope: requirement.scope,
+      sources,
+    });
   }
   return {
     profileId: profile.id,
     profileVersion: profile.version,
     profileDigest: profile.sha256,
-    requirementIds,
+    requirements,
   };
 }
 
@@ -521,12 +576,25 @@ function WorkflowExternalApprovalPanel({
           </p>
           <h4>
             Requirements in this decision (
-            {validationReview.requirementIds.length})
+            {validationReview.requirements.length})
           </h4>
           <ul data-testid="workflow-validation-review-requirements">
-            {validationReview.requirementIds.map((requirementId) => (
-              <li key={requirementId}>
-                <code>{requirementId}</code>
+            {validationReview.requirements.map((requirement) => (
+              <li key={requirement.id}>
+                <p>
+                  <code>{requirement.id}</code> · {requirement.scope}
+                </p>
+                <p>{requirement.text}</p>
+                <ul>
+                  {requirement.sources.map((source) => (
+                    <li
+                      key={`${source.artifactRef}:${source.locator}:${source.sha256}`}
+                    >
+                      <code>{source.artifactRef}</code> · {source.locator} ·
+                      SHA-256 <code>{source.sha256}</code>
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>
@@ -534,8 +602,8 @@ function WorkflowExternalApprovalPanel({
       )}
       {isValidationReview && !validationReview && (
         <p role="alert">
-          The pinned validation profile or requirement list is missing. Request
-          changes instead of approving this review.
+          The pinned validation profile, requirement text, or source evidence is
+          missing. Request changes instead of approving this review.
         </p>
       )}
       {isValidationReview && (

@@ -320,6 +320,32 @@ test("shows the exact human requirements review from the workspace Workflows con
                 },
                 requirement_ids: ["STRUCT-001", "STRUCT-002"],
               },
+              validation_review_requirements: [
+                {
+                  id: "STRUCT-001",
+                  text: "The output records the required identity fields.",
+                  scope: "content",
+                  sources: [
+                    {
+                      artifact_ref: "requirements/structured.md",
+                      locator: "Identity fields",
+                      sha256: "f".repeat(64),
+                    },
+                  ],
+                },
+                {
+                  id: "STRUCT-002",
+                  text: "The measured length remains within its declared limit.",
+                  scope: "design",
+                  sources: [
+                    {
+                      artifact_ref: "requirements/structured.md",
+                      locator: "Length constraint",
+                      sha256: "1".repeat(64),
+                    },
+                  ],
+                },
+              ],
             },
             action: { kind: "local_review", mode: "review_only" },
           },
@@ -346,6 +372,11 @@ test("shows the exact human requirements review from the workspace Workflows con
   await expect(review).toContainText("structured-demo");
   await expect(review).toContainText("STRUCT-001");
   await expect(review).toContainText("STRUCT-002");
+  await expect(review).toContainText(
+    "The output records the required identity fields.",
+  );
+  await expect(review).toContainText("requirements/structured.md");
+  await expect(review).toContainText("Length constraint");
   await expect(review).toContainText(subjectDigest);
   await expect(review).toContainText(
     "record only the decision here; the campaign runner resumes the attempt",

@@ -103,7 +103,7 @@ async def restore_continuation(
     once. The engine additionally rejects stale source/inputs/files and any
     approval whose action has not been definitively reconciled as dispatched.
     """
-    from .workflow_source_execution import _error
+    from .workflow_source_execution import _approval_settings, _error
 
     def stale(message):
         return _error(
@@ -139,10 +139,15 @@ async def restore_continuation(
         or state.get("input_identities") != input_identities(input_values)
         or subject.get("input_digests")
         != sorted(input_identities(input_values).values())
-        or any(
-            subject.get(key) != step.external_action[key]
-            for key in ("binding", "destination", "settings", "action")
+        or subject.get("binding") != step.external_action["binding"]
+        or subject.get("destination") != step.external_action["destination"]
+        or subject.get("settings")
+        != _approval_settings(
+            pending_action=step,
+            plan=plan,
+            workspace_dir=workspace_dir,
         )
+        or subject.get("action") != step.external_action["action"]
     ):
         raise stale("The saved definition, inputs, or approved action changed.")
     expected_ids = [candidate.id for candidate in plan.steps[:cursor]]
