@@ -355,6 +355,45 @@ function WorkflowDemoCapturePanel({
   );
 }
 
+interface ValidationReviewDetails {
+  readonly profileId: string;
+  readonly profileVersion: string;
+  readonly profileDigest: string;
+  readonly requirementIds: readonly string[];
+}
+
+function recordValue(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function validationReviewDetails(
+  checkpoint: WorkflowApprovalCheckpoint,
+): ValidationReviewDetails | null {
+  if (checkpoint.action_kind !== "local_review") return null;
+  const settings = recordValue(checkpoint.subject.settings);
+  const review = recordValue(settings?.validation_review);
+  const profile = recordValue(review?.profile_ref);
+  const requirementIds = review?.requirement_ids;
+  if (
+    typeof profile?.id !== "string" ||
+    typeof profile.version !== "string" ||
+    typeof profile.sha256 !== "string" ||
+    !Array.isArray(requirementIds) ||
+    requirementIds.length === 0 ||
+    !requirementIds.every((value): value is string => typeof value === "string")
+  ) {
+    return null;
+  }
+  return {
+    profileId: profile.id,
+    profileVersion: profile.version,
+    profileDigest: profile.sha256,
+    requirementIds,
+  };
+}
+
 function WorkflowExternalApprovalPanel({
   initial,
   sessionId,
@@ -440,6 +479,8 @@ function WorkflowExternalApprovalPanel({
     }
   };
   const outcome = checkpoint.external_action?.outcome;
+  const isValidationReview = checkpoint.action_kind === "local_review";
+  const validationReview = validationReviewDetails(checkpoint);
   return (
     <section
       className="recovery-review-panel"
@@ -447,7 +488,9 @@ function WorkflowExternalApprovalPanel({
       aria-labelledby={`workflow-approval-${checkpoint.checkpoint_id}`}
     >
       <h3 id={`workflow-approval-${checkpoint.checkpoint_id}`}>
-        External action approval
+        {isValidationReview
+          ? "Requirements review"
+          : "External action approval"}
       </h3>
       <p>
         <b>{checkpoint.action_kind.replaceAll("_", " ")}</b> ·{" "}
@@ -457,9 +500,50 @@ function WorkflowExternalApprovalPanel({
           : ""}
       </p>
       <p>
-        This decision covers the exact definition, inputs, artifacts, binding,
-        destination, settings, and proposed action shown below.
+        {isValidationReview
+          ? "Your decision becomes validator evidence for the exact definition, artifacts, pinned profile, and requirements shown below."
+          : "This decision covers the exact definition, inputs, artifacts, binding, destination, settings, and proposed action shown below."}
       </p>
+      {validationReview && (
+        <section
+          className="recovery-validation-review"
+          aria-labelledby={`workflow-validation-review-${checkpoint.checkpoint_id}`}
+        >
+          <h4 id={`workflow-validation-review-${checkpoint.checkpoint_id}`}>
+            Pinned validation profile
+          </h4>
+          <p>
+            <code>{validationReview.profileId}</code> · version{" "}
+            <code>{validationReview.profileVersion}</code>
+          </p>
+          <p className="recovery-validation-review__digest">
+            Profile digest: <code>{validationReview.profileDigest}</code>
+          </p>
+          <h4>
+            Requirements in this decision (
+            {validationReview.requirementIds.length})
+          </h4>
+          <ul data-testid="workflow-validation-review-requirements">
+            {validationReview.requirementIds.map((requirementId) => (
+              <li key={requirementId}>
+                <code>{requirementId}</code>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {isValidationReview && !validationReview && (
+        <p role="alert">
+          The pinned validation profile or requirement list is missing. Request
+          changes instead of approving this review.
+        </p>
+      )}
+      {isValidationReview && (
+        <p className="recovery-validation-review__runner-note">
+          If a campaign runner owns this attempt, record only the decision here;
+          the campaign runner resumes the attempt.
+        </p>
+      )}
       <dl className="recovery-native-run__metadata">
         <dt>Subject digest</dt>
         <dd>
@@ -493,10 +577,12 @@ function WorkflowExternalApprovalPanel({
               type="button"
               className="recovery-button recovery-button--primary"
               data-testid="workflow-external-approval-approve"
-              disabled={busy}
+              disabled={busy || (isValidationReview && !validationReview)}
               onClick={() => void decide("approved")}
             >
-              Approve exact action
+              {isValidationReview
+                ? "Approve reviewed requirements"
+                : "Approve exact action"}
             </button>
             <button
               type="button"

@@ -90,7 +90,10 @@ export interface WorkflowApprovalCheckpoint {
   run_id: string;
   step_id: string;
   action_kind:
-    "printer_transfer" | "supplier_upload_preview" | "cart_quote_handoff";
+    | "local_review"
+    | "printer_transfer"
+    | "supplier_upload_preview"
+    | "cart_quote_handoff";
   subject: Record<string, unknown>;
   subject_digest: string;
   state:

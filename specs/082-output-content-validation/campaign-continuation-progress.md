@@ -419,6 +419,20 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   and `.md`. They correctly report `0/30` passing rows: all 30 still lack a current run,
   current output, full-scope assessment and final byte audit. The global state remains
   incomplete at historical `30/30/24/0` and current `0/0/0`.
+- The normal workflow approval panel now recognizes `local_review` as the validator's
+  human requirements checkpoint. It presents the pinned profile ID, version and digest,
+  lists every exact requirement ID in the decision, explains that the decision becomes
+  validator evidence for the immutable subject, and tells reviewers to leave resume to
+  the campaign runner when it owns the attempt. Malformed local-review subjects show a
+  blocking warning and cannot be approved from the panel; generic external-action behavior
+  remains unchanged. The full editor component suite passes `43/43`, the production web
+  build passes, and ESLint reports no errors (nine unrelated existing hook warnings). A
+  served Chromium check entered an ordinary workspace, clicked its Workflows control,
+  ran a mocked `awaiting_approval` result and verified the exact requirements-review panel
+  on an isolated feature-enabled Vite server. The already-running server on port 5173 did
+  not have the canonical recovery feature enabled, so it was left untouched rather than
+  treated as evidence. The real checklist remains to be observed against the post-reset
+  pilot checkpoint before broader dispatch.
 
 ## Next action
 

@@ -804,6 +804,81 @@ describe("WorkflowRecoveryConcept component states", () => {
     resume.mockRestore();
   });
 
+  it("presents a local validation checkpoint as an exact requirements review", async () => {
+    const pending: WorkflowApprovalCheckpoint = {
+      checkpoint_id: "checkpoint-validation-review",
+      workspace_id: "workspace-1",
+      workflow_id: "workflows/validated.workflow.wflow",
+      run_id: "run-validation-1",
+      step_id: "review_requirements",
+      action_kind: "local_review",
+      subject: {
+        definition_digest: "a".repeat(64),
+        input_digests: ["b".repeat(64)],
+        artifact_digests: ["c".repeat(64)],
+        binding: { server: "wright", tool: "review_artifacts" },
+        destination: { kind: "local_review", id: "workspace" },
+        settings: {
+          validation_review: {
+            profile_ref: {
+              id: "robot-arm-design-01",
+              version: "1.0.0",
+              sha256: "d".repeat(64),
+            },
+            requirement_ids: ["ARM-REQ-001", "ARM-REQ-004"],
+          },
+        },
+        action: { kind: "local_review", mode: "review_only" },
+      },
+      subject_digest: "e".repeat(64),
+      state: "pending",
+      continuation: { next_step_index: 3 },
+      actor: null,
+      reason: null,
+      created_at: 1,
+      updated_at: 1,
+      expires_at: null,
+      external_action: null,
+    };
+    const onRun = vi.fn().mockResolvedValue({
+      status: "awaiting_approval" as const,
+      approval: pending,
+      outputPath: "robot-arm.step",
+      outputBytes: 4096,
+      taskTitle: "Review requirements",
+      taskId: "review_requirements",
+      outputs: [],
+    });
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        workflowFilePath="workflows/validated.workflow.wflow"
+        definitionRevision={2}
+        storageDigest={"a".repeat(64)}
+        workspaceSessionId="session-1"
+        onRun={onRun}
+      />,
+    );
+
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    const panel = await screen.findByTestId("workflow-external-approval");
+    expect(panel).toHaveTextContent("Requirements review");
+    expect(panel).toHaveTextContent("robot-arm-design-01");
+    expect(panel).toHaveTextContent("1.0.0");
+    expect(
+      screen.getByTestId("workflow-validation-review-requirements"),
+    ).toHaveTextContent("ARM-REQ-001");
+    expect(
+      screen.getByTestId("workflow-validation-review-requirements"),
+    ).toHaveTextContent("ARM-REQ-004");
+    expect(panel).toHaveTextContent(
+      "record only the decision here; the campaign runner resumes the attempt",
+    );
+    expect(
+      screen.getByTestId("workflow-external-approval-approve"),
+    ).toHaveTextContent("Approve reviewed requirements");
+  });
+
   it("creates a local capture only from a verified run and selected persistent evidence", async () => {
     const createCapture = vi
       .spyOn(workspaceService, "createWorkflowDemoCapture")

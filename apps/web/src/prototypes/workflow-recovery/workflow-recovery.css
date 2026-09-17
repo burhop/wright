@@ -2615,6 +2615,42 @@
 .recovery-native-run__metadata code {
   overflow-wrap: anywhere;
 }
+.recovery-validation-review {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--recovery-line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--recovery-panel) 86%, transparent);
+}
+.recovery-validation-review h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+}
+.recovery-validation-review h4:not(:first-child) {
+  margin-top: 12px;
+}
+.recovery-validation-review p,
+.recovery-validation-review ul {
+  margin: 0;
+}
+.recovery-validation-review ul {
+  display: grid;
+  gap: 4px;
+  padding-left: 20px;
+}
+.recovery-validation-review code,
+.recovery-validation-review__runner-note code {
+  overflow-wrap: anywhere;
+}
+.recovery-validation-review__digest {
+  color: var(--recovery-muted);
+  font-size: 11px;
+}
+.recovery-validation-review__runner-note {
+  padding: 10px 12px;
+  border-left: 3px solid var(--recovery-violet);
+  color: var(--recovery-muted);
+}
 .workflow-recovery--redesign .recovery-code {
   height: 100%;
   min-height: 0;

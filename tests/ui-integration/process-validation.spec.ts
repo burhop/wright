@@ -275,3 +275,87 @@ test("authors a validator and shows correction diagnostics with assessment links
     contentType: "image/png",
   });
 });
+
+test("shows the exact human requirements review from the workspace Workflows control", async ({
+  page,
+}, testInfo) => {
+  const subjectDigest = "e".repeat(64);
+  const mock = await mockRecoveryWorkspace(page, {
+    source,
+    run: {
+      events: [],
+      result: {
+        status: "awaiting_approval",
+        run_id: "run-validation-review",
+        run_log_path: "runs/structured-validation/run-validation-review.json",
+        workspace_id: "ws-recovery",
+        workflow_path: "workflows/mounting-bracket.workflow.wflow",
+        workflow_title: "Structured output validation and correction",
+        task_id: "review_requirements",
+        task_title: "Review requirements",
+        output_path: "validation/review-package.json",
+        output_bytes: 512,
+        outputs: [],
+        results: [],
+        steps: [],
+        approval: {
+          checkpoint_id: "checkpoint-validation-review",
+          workspace_id: "ws-recovery",
+          workflow_id: "workflows/mounting-bracket.workflow.wflow",
+          run_id: "run-validation-review",
+          step_id: "review_requirements",
+          action_kind: "local_review",
+          subject: {
+            definition_digest: "a".repeat(64),
+            input_digests: ["b".repeat(64)],
+            artifact_digests: ["c".repeat(64)],
+            binding: { server: "wright", tool: "review_artifacts" },
+            destination: { kind: "local_review", id: "workspace" },
+            settings: {
+              validation_review: {
+                profile_ref: {
+                  id: "structured-demo",
+                  version: "1.0.0",
+                  sha256: "d".repeat(64),
+                },
+                requirement_ids: ["STRUCT-001", "STRUCT-002"],
+              },
+            },
+            action: { kind: "local_review", mode: "review_only" },
+          },
+          subject_digest: subjectDigest,
+          state: "pending",
+          continuation: { next_step_index: 2 },
+          actor: null,
+          reason: null,
+          created_at: 1,
+          updated_at: 1,
+          expires_at: null,
+          external_action: null,
+        },
+      },
+    },
+  });
+
+  await openRecoveryEditor(page);
+  await page.getByTestId("workflow-recovery-run-start").click();
+  await expect.poll(() => mock.runCount()).toBe(1);
+  const review = page.getByTestId("workflow-external-approval");
+  await expect(review).toBeVisible();
+  await expect(review).toContainText("Requirements review");
+  await expect(review).toContainText("structured-demo");
+  await expect(review).toContainText("STRUCT-001");
+  await expect(review).toContainText("STRUCT-002");
+  await expect(review).toContainText(subjectDigest);
+  await expect(review).toContainText(
+    "record only the decision here; the campaign runner resumes the attempt",
+  );
+  await expect(
+    review.getByTestId("workflow-external-approval-approve"),
+  ).toHaveText("Approve reviewed requirements");
+
+  await testInfo.attach("validation-requirements-review", {
+    body: await page.screenshot({ fullPage: true }),
+    contentType: "image/png",
+  });
+});
