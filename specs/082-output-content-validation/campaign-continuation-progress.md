@@ -265,6 +265,12 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   newly-created-session probe failed earlier at workspace registration and is not
   treated as quota evidence. No workflow attempt or retry episode was consumed,
   and the pause sentinel was preserved.
+- The combined campaign/preparer/runtime audit passed `219` checks in `67.26s`.
+  It covers campaign evidence and retry semantics, every family preparer, profile
+  coverage, validator execution/currentness, bounded rework, review continuation
+  and shared reporting. The only warning was the known denied shared pytest cache;
+  the private basetemp completed normally. C021 remains open for the final native
+  gates and browser audit against actual resumed campaign evidence.
 
 ## Next action
 
