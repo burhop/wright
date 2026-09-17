@@ -433,6 +433,18 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   not have the canonical recovery feature enabled, so it was left untouched rather than
   treated as evidence. The real checklist remains to be observed against the post-reset
   pilot checkpoint before broader dispatch.
+- The post-review runner handoff is now covered directly. A persisted attempt stopped at
+  `validation_review_requires_human` was given an authenticated human-approved checkpoint;
+  the runner issued exactly one ledger-owned resume, did not auto-decide, did not create a
+  second run and reached the existing completion record. The full runner suite passes
+  `37/37` and Ruff passes. The local pilot launcher also has a guarded `resume` action for
+  the case where its two-hour observation window expires before the person decides. It
+  requires the original worker to be terminal, the exact persisted attempt to remain at a
+  clean manual-review boundary, no prior resume operation/receipt, the exact checkpoint to
+  be human-approved, the configured Sol route and the frozen manifest/review hashes. Its
+  SHA-256 is `f39094ecddc8b7e667757ec0d280ffdba68ae067472d3d689e118211d2a703ee`;
+  syntax and Ruff pass, `status` remains read-only, and an early `resume` refused before
+  any receipt or mutation because no readiness/pilot state exists.
 
 ## Next action
 

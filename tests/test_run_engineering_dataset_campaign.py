@@ -411,6 +411,60 @@ def test_validation_review_never_uses_automatic_integration_actor(case,tmp_path,
     assert '"reason_code": "validation_review_requires_human"' in events
 
 
+def test_human_approved_validation_review_is_resumed_only_by_runner(case,tmp_path,make_runner):
+    persisted(case)
+    checkpoint={
+        "checkpoint_id":"checkpoint-1",
+        "subject_digest":"e"*64,
+        "run_id":"run-1",
+        "state":"approved",
+        "actor":"local_workspace_user",
+        "subject":{
+            "settings":{
+                "validation_review":{
+                    "profile_ref":{"id":"profile","version":"1","sha256":"f"*64},
+                    "requirement_ids":["REQ-1"],
+                }
+            }
+        },
+    }
+    state_path=tmp_path/"state"/case["scenario_id"]/(case["attempt_id"]+".json")
+    runner_module.atomic_json(state_path,{
+        "schema_version":1,
+        "case_digest":runner_module.fingerprint(case),
+        "phase":"awaiting_manual_approval",
+        "operations":{"start":{"state":"response_received"}},
+        "pending_checkpoint_id":"checkpoint-1",
+        "manual_approval_reason":"validation_review_requires_human",
+    })
+    class HumanApprovedTransport:
+        def __init__(self):
+            self.posts=[]
+        def request(self,path,body=None,**kwargs):
+            if body is None:
+                assert "/approvals/checkpoint-1" in path
+                return {"ok":True,"data":checkpoint}
+            state=json.loads(state_path.read_text())
+            assert state["operations"][state["active_operation"]]["state"] == "intent_persisted"
+            assert path.endswith("/resume")
+            self.posts.append((path,body))
+            persisted(case,status="completed",checkpoint_state="consumed")
+            return {"ok":True,"data":{}}
+    transport=HumanApprovedTransport()
+
+    result=make_runner(transport).run([case])
+
+    assert result[0]["phase"] == "completed"
+    assert len(transport.posts) == 1
+    path,body=transport.posts[0]
+    assert path.endswith("/resume") and not path.endswith("/run")
+    assert body["checkpoint_id"] == "checkpoint-1"
+    assert body["subject_digest"] == "e"*64
+    final_state=json.loads(state_path.read_text())
+    assert set(final_state["operations"]) == {"start","resume:checkpoint-1"}
+    assert final_state["operations"]["resume:checkpoint-1"]["state"] == "response_received"
+
+
 def test_pause_sentinel_is_checked_between_cases_without_interrupting_current(case,tmp_path,make_runner):
     sentinel=tmp_path/"pause"
     class PausingTransport(FakeTransport):
