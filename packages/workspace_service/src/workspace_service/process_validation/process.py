@@ -189,6 +189,77 @@ async def execute_validator(
             "Validation did not produce a terminal assessment.",
             "Inspect the saved validation attempt before retrying.",
         )
+    review_requirement_ids = {
+        requirement.id
+        for requirement in profile.baseline.requirements
+        if requirement.review_required
+    }
+    for record in reversed(records):
+        authority = record.get("review_authority") or {}
+        configured = (authority.get("settings") or {}).get("validation_review")
+        if (
+            authority.get("action_kind") != "local_review"
+            or not isinstance(configured, dict)
+            or not configured
+        ):
+            continue
+        configured_ids = configured.get("requirement_ids")
+        if (
+            set(configured) != {"profile_ref", "requirement_ids"}
+            or not isinstance(configured_ids, list)
+            or any(not isinstance(item, str) for item in configured_ids)
+            or configured.get("profile_ref")
+            != profile.reference().model_dump(mode="json")
+            or set(configured_ids) != review_requirement_ids
+            or not isinstance(authority.get("actor"), str)
+            or not authority["actor"].strip()
+            or authority["actor"].startswith("integration_test:")
+            or not isinstance(authority.get("checkpoint_id"), str)
+            or not isinstance(authority.get("subject_digest"), str)
+        ):
+            continue
+        approved = (authority.get("subject") or {}).get("artifact_digests")
+        if not isinstance(approved, list) or any(
+            not isinstance(item, str) for item in approved
+        ):
+            continue
+        approved_digests = set(approved)
+        if not {subject.sha256 for subject in assessment.request.subjects}.issubset(
+            approved_digests
+        ):
+            continue
+        rationale = authority.get("reason")
+        if not isinstance(rationale, str) or not rationale.strip():
+            rationale = (
+                "Approved the exact validator subjects under the declared "
+                "local-review criteria."
+            )
+        for requirement_id in sorted(review_requirement_ids):
+            assessment = application.service.record_review(
+                assessment.id,
+                requirement_id=requirement_id,
+                actor_id=authority["actor"],
+                authority_ref=(
+                    "workflow-approval:"
+                    + authority["checkpoint_id"]
+                    + ":"
+                    + authority["subject_digest"]
+                ),
+                decision="approved",
+                rationale=rationale,
+                evidence_refs=(
+                    authority["checkpoint_id"],
+                    authority["subject_digest"],
+                ),
+            )
+        from .service import EvaluationOutcome
+
+        outcome = EvaluationOutcome(
+            outcome.attempt,
+            assessment,
+            application.service.currentness(assessment).is_current,
+        )
+        break
     raw = assessment.model_dump_json(indent=2)
     path = await service.files.write_generated(
         workspace_dir, f"validation/{assessment.id}.json", raw, "indexed"

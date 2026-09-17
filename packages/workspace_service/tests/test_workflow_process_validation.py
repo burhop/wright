@@ -329,3 +329,228 @@ def test_no_available_subject_still_produces_a_blocked_assessment(tmp_path):
     result = app.service.evaluate(request, profile)
     assert result.assessment and not result.release_eligible
     assert all(f.code == "subject.role_missing" for f in result.assessment.findings)
+
+
+@pytest.mark.parametrize(
+    ("review_actor", "passes"),
+    [("reviewer-1", True), ("integration_test:campaign", False)],
+)
+def test_exact_local_review_satisfies_only_its_pinned_validator_requirements(
+    tmp_path, review_actor, passes
+):
+    from dataclasses import asdict, replace
+
+    from core.process_validation import ValidationProfile, canonical_json
+    from data_vault import WorkflowContinuationRepository
+    from workspace_service.process_validation.application import ValidationApplication
+    from workspace_service.workflow_external_actions import WorkflowExternalActionService
+    from workspace_service.workflow_integration_policy import (
+        LOCAL_REVIEW_BINDING,
+        LOCAL_REVIEW_DESTINATION,
+    )
+
+    profile = ValidationProfile.model_validate(
+        {
+            "id": "review-bridge-profile",
+            "version": "1",
+            "baseline": {
+                "id": "review-bridge-basis",
+                "version": "1",
+                "requirements": [
+                    {
+                        "id": "REVIEW-001",
+                        "text": "An authenticated reviewer accepts the exact result.",
+                        "scope": "content",
+                        "mandatory": True,
+                        "review_required": True,
+                        "sources": [
+                            {
+                                "artifact_ref": "requirements.md",
+                                "locator": "R1",
+                                "sha256": "a" * 64,
+                            }
+                        ],
+                    }
+                ],
+            },
+            "checks": [
+                {
+                    "id": "review-result",
+                    "version": "1",
+                    "requirement_ids": ["REVIEW-001"],
+                    "subject_role": "result",
+                    "reader": "structured",
+                    "selector": "",
+                    "constraint": {"operator": "review"},
+                    "evidence_method": "human_review",
+                }
+            ],
+            "supported_kinds": ["value"],
+        }
+    )
+    (tmp_path / "review-profile.json").write_text(
+        canonical_json(profile), encoding="utf-8"
+    )
+    config = {
+        "profile": {
+            "source": "workspace",
+            "name": "review-profile.json",
+            "reference": profile.reference().model_dump(mode="json"),
+        },
+        "baseline": profile.baseline.reference().model_dump(mode="json"),
+        "subjects": {"result": "inspect_subject"},
+    }
+    review_settings = {
+        "authoring_template": "external-action-approval",
+        "action_kind": "local_review",
+        "approval_binding": LOCAL_REVIEW_BINDING,
+        "approval_destination": LOCAL_REVIEW_DESTINATION,
+        "approval_settings": {
+            "review_task_id": "review",
+            "validation_review": {
+                "profile_ref": profile.reference().model_dump(mode="json"),
+                "requirement_ids": ["REVIEW-001"],
+            },
+        },
+        "approval_action": {"kind": "local_review", "mode": "review_only"},
+    }
+    text = source(
+        task("produce", fmt="json"),
+        f'''task review
+  name: "Review exact result"
+  step_type: review
+  performed_by: engineer
+  inputs: [{{"key":"review_subject","name":"Result","kind":"engineering_document","required":true}}]
+  outputs: []
+  instructions: "Approve only when REVIEW-001 is satisfied by this exact result."
+  settings: {json.dumps(review_settings)}
+  tool: null
+  reusable_step: null
+end
+''',
+        validator(config),
+        task("consume", fmt="text"),
+    )
+    text += '''connection review_subject
+  type: item
+  from: "produce.produce_response"
+  to: "review.review_subject"
+  label: "Exact result to review"
+  when: null
+end
+connection validation_subject
+  type: item
+  from: "produce.produce_response"
+  to: "inspect.inspect_subject"
+  label: "Exact result to validate"
+  when: null
+end
+connection review_before_validation
+  type: order
+  from: "review"
+  to: "inspect"
+  label: "Apply exact review"
+  when: null
+end
+connection release
+  type: approval
+  from: "inspect"
+  to: "consume"
+  label: "Release reviewed result"
+  when: pass
+end
+'''
+    plan = replace(compile_prompt_workflow(text), definition_digest="b" * 64)
+    app = runtime_service(tmp_path)
+
+    async def read_reference(workspace_dir, path):
+        return (tmp_path / path).read_bytes()
+
+    async def hash_reference(workspace_dir, path):
+        import hashlib
+
+        return hashlib.sha256((tmp_path / path).read_bytes()).hexdigest()
+
+    app.files.read_reference = read_reference
+    app.files.hash_reference = hash_reference
+    app.workflow_external_actions = WorkflowExternalActionService(
+        WorkflowContinuationRepository(str(tmp_path / "actions.db"))
+    )
+    calls = []
+
+    async def generate(prompt, fmt):
+        calls.append(fmt)
+        return '{"reviewed":true}' if fmt == "json" else "released"
+
+    first = asyncio.run(
+        execute_prompt_workflow(
+            service=app,
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={},
+            response_generator=generate,
+            run_id="review-bridge-run",
+        )
+    )
+    request = first["_approval_request"]
+    actions = app.workflow_external_actions
+    checkpoint = actions.request(
+        workspace_id="workspace",
+        workflow_id="review-bridge.workflow.wflow",
+        run_id=first["run_id"],
+        step_id=request["step_id"],
+        action_kind=request["action_kind"],
+        subject=request["subject"],
+        continuation=request["continuation"],
+    )
+    checkpoint = actions.decide(
+        checkpoint.checkpoint_id,
+        workspace_id="workspace",
+        expected_subject_digest=checkpoint.subject_digest,
+        actor=review_actor,
+        approved=True,
+        reason="Reviewed REVIEW-001 against the exact response.",
+    )
+    checkpoint = actions.consume_for_dispatch(
+        checkpoint.checkpoint_id,
+        workspace_id="workspace",
+        current_subject=checkpoint.subject,
+        action_id="local-review-1",
+    )
+    checkpoint = actions.reconcile(
+        checkpoint.checkpoint_id,
+        workspace_id="workspace",
+        run_id=first["run_id"],
+        expected_subject_digest=checkpoint.subject_digest,
+        outcome="dispatched",
+        evidence={"kind": "local_review"},
+    )
+    async def resume():
+        return await execute_prompt_workflow(
+                service=app,
+                workspace_dir=str(tmp_path),
+                plan=plan,
+                input_values={},
+                response_generator=generate,
+                continuation=checkpoint.continuation,
+                completed_checkpoint=asdict(checkpoint),
+        )
+
+    if not passes:
+        with pytest.raises(WorkflowSourceExecutionError) as error:
+            asyncio.run(resume())
+        assert error.value.code == "PROCESS_VALIDATION_NEEDS_INPUT"
+        assert calls == ["json"]
+        return
+    final = asyncio.run(resume())
+
+    validation = next(step for step in final["steps"] if step["task_id"] == "inspect")
+    assessment = ValidationApplication(
+        app.db_path, "workspace", str(tmp_path)
+    ).get_result(validation["validation"]["assessment_id"]).assessment
+    assert validation["validation"]["release_eligible"]
+    assert assessment.summary.release_eligible
+    assert len(assessment.review_ids) == 1
+    assert assessment.checks[0].state == "pass"
+    assert assessment.checks[0].evidence_refs[0] == assessment.review_ids[0]
+    assert calls == ["json", "text"]

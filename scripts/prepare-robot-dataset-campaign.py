@@ -132,6 +132,22 @@ def prepare(args, directory, available):
     profile = support.get("full_profile")
     if not profile:
         raise ValueError("The robot tracking full validator profile is unavailable")
+    profile_document = json.loads(
+        (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+            / (profile["profile_resource"] + ".json")
+        ).read_text(encoding="utf-8")
+    )
+    review_requirement_ids = sorted(
+        requirement["id"]
+        for requirement in profile_document["baseline"]["requirements"]
+        if requirement["review_required"]
+    )
+    review["fields"]["settings"]["approval_settings"]["validation_review"] = {
+        "profile_ref": profile["profile_ref"],
+        "requirement_ids": review_requirement_ids,
+    }
     validator = new_task("validate_robot_content", "Validate current robot tracking outputs")
     validation_sources = {
         "conversion_manifest": (normalize, "conversion_manifest", "workspace_file"),

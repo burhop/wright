@@ -8,6 +8,7 @@ executing connected AI prompts and saving their declared response files.
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
@@ -1458,8 +1459,6 @@ async def execute_prompt_workflow(
         ).get("produced_files", [])
         verified_receipts = []
         if receipt_files:
-            import hashlib
-
             for receipt in receipt_files:
                 path = _safe_path(receipt.get("output_path"))
                 raw = await service.files.read_reference(workspace_dir, path)
@@ -1511,6 +1510,15 @@ async def execute_prompt_workflow(
                 "response": "Approved",
                 "checkpoint_id": completed_checkpoint["checkpoint_id"],
                 "subject_digest": completed_checkpoint["subject_digest"],
+                "review_authority": {
+                    "action_kind": released.external_action["action_kind"],
+                    "settings": released.external_action["settings"],
+                    "actor": completed_checkpoint.get("actor"),
+                    "reason": completed_checkpoint.get("reason"),
+                    "subject": completed_checkpoint.get("subject"),
+                    "subject_digest": completed_checkpoint["subject_digest"],
+                    "checkpoint_id": completed_checkpoint["checkpoint_id"],
+                },
                 "external_action": completed_checkpoint["external_action"],
                 "produced_files": verified_receipts,
             }
@@ -2072,7 +2080,11 @@ async def execute_prompt_workflow(
                     step.title,
                     (
                         Representation(
-                            "value", f"steps/{step.id}/response", step.output_format
+                            "value",
+                            f"steps/{step.id}/response",
+                            step.output_format,
+                            sha256=hashlib.sha256(response.encode("utf-8")).hexdigest(),
+                            size_bytes=len(response.encode("utf-8")),
                         ),
                     ),
                     Provenance(run_id, step.id, key),
@@ -2308,8 +2320,6 @@ async def execute_prompt_workflow(
             "context": plan.review_context,
         }
     if pending_action:
-        import hashlib
-
         def digest_input(value):
             if isinstance(value, WorkflowReference):
                 return value.sha256

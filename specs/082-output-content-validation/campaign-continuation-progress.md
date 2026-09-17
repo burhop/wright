@@ -161,6 +161,18 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   Automatic revision remains disabled while the five subjects have multiple
   producers. Preparer/profile/runtime regression: `59 passed in 10.77s`; Ruff
   passed.
+- Canonical local reviews can now satisfy validator review checks only when a
+  resumed checkpoint pins the same profile, the complete declared review
+  requirement set and every exact subject digest. The resulting immutable
+  assessment records the reviewer, checkpoint and authority digest. Automatic
+  integration-test actors are explicitly rejected as human reviewers, so the
+  campaign's auto approval mode cannot create correctness credit. AI response
+  values now carry their own digest and byte count through continuation, closing
+  the identity gap for reviewed text/JSON outputs. The end-to-end continuation
+  test proves manual approval releases the consumer while an integration actor
+  remains held for review. Combined robot/profile/reporting/rework/continuation
+  regression: `82 passed in 14.81s`; the final affected-suite rerun passed
+  `73` checks in `11.42s`; Ruff passed.
 
 ## Next action
 
