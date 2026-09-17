@@ -67,6 +67,14 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     generated = next(step for step in plan.steps if step.id.startswith("generate_jig_"))
     inspected = next(step for step in plan.steps if step.id.startswith("check_alignment_"))
     assert {Path(path).name for path in generated.expected_files} == set(config["expected_generated_files"])
+    validators = [step for step in plan.steps if step.validation]
+    if ordinal == 1:
+        assert len(validators) == 1
+        assert validators[0].validation["profile"]["name"] == "parametric-drill-jig-01"
+        assert validators[0].validation["subjects"] == {"jig_step": "jig"}
+        assert generated.expected_file_ports["jig_step"].endswith("/jig.step")
+    else:
+        assert validators == []
     assert {Path(path).name for path in inspected.expected_files} == {"dimension-report.json"}
     observer = next(step for step in plan.steps if step.id.startswith("inspect_jig_exports_"))
     assert not observer.references

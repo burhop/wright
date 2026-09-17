@@ -424,9 +424,60 @@ def test_valid_data_never_increases_from_file_checks_or_receipt_claims(corpus):
     status = corpus.status()
     assert status["metrics"]["processes_with_outputs"] == 1
     assert status["metrics"]["valid_data"] == 0
-    assert status["content_validation_enabled"] is False
+    assert status["content_validation_enabled"] is True
     assert all(event["metrics"]["valid_data"] == 0 for event in status["history"])
     assert current_case(corpus)["latest_attempt"]["output_check"]["content_validated"] is False
+
+
+def test_qualified_immutable_assessment_increases_valid_data(corpus):
+    path, receipt, _ = make_receipt(corpus)
+    assessment = {
+        "id": "assessment-campaign-test",
+        "profile": {"id": "qualified-profile"},
+        "summary": {
+            "content_verified": True,
+            "requirements_compliant": True,
+            "evaluation_complete": True,
+            "release_eligible": True,
+            "physical_validation": "not_assessed",
+            "counts": {"pass": 1, "fail": 0, "blocked": 0, "error": 0,
+                       "inconclusive": 0, "not_applicable": 0},
+        },
+    }
+    encoded = json.dumps(assessment).encode()
+    artifact = path.parent / "artifacts/_validation/assessment-campaign-test.json"
+    artifact.parent.mkdir()
+    artifact.write_bytes(encoded)
+    receipt["produced_files"].append({
+        "artifact_id": "validation-assessment",
+        "path": "_validation/assessment-campaign-test.json",
+        "sha256": digest(encoded),
+        "artifact_role": "verification",
+    })
+    receipt["validations"] = [{
+        "schema_version": "wright.process-validation/1",
+        "assessment_id": assessment["id"],
+        "assessment_digest": digest(json.dumps(
+            assessment, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+        ).encode()),
+        "is_current": True,
+        "release_eligible": True,
+        "summary": assessment["summary"],
+        "assessment_artifact": "_validation/assessment-campaign-test.json",
+    }]
+    write_json(path, receipt)
+    corpus.validation_coverage["sample-process-01"] = {
+        "support_status": "qualified", "profile": {"scope": "test", "limitations": "test"},
+        "capabilities": [],
+    }
+
+    corpus.scan()
+    status = corpus.status()
+
+    assert status["metrics"]["valid_data"] == 1
+    case = current_case(corpus)
+    assert case["validation"]["status"] == "pass"
+    assert case["latest_attempt"]["output_check"]["content_validated"] is True
 
 
 def test_approval_modes_are_validated_persisted_and_idempotent(corpus):

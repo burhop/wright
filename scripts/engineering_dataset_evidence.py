@@ -18,7 +18,7 @@ class EvidenceError(ValueError):
     pass
 
 
-EXPORTER_REVISION = 5
+EXPORTER_REVISION = 6
 
 
 def _public_error(record):
@@ -318,6 +318,42 @@ def export_run_evidence(run_record_path, *, workspace_root, export_root,
     else:
         _require(terminal is None, "Terminal event conflicts with nonterminal record")
     output_path = _scoped(workspace, output_root)
+    validation_by_path = {}
+    for step in result.get("steps", []):
+        validation = step.get("validation")
+        if validation is None:
+            continue
+        _require(isinstance(validation, dict), "Validation result is invalid")
+        _require(validation.get("schema_version") == "wright.process-validation/1",
+                 "Validation result schema is unsupported")
+        assessment_id = validation.get("assessment_id")
+        assessment_location = validation.get("assessment_path")
+        _require(isinstance(assessment_id, str) and re.fullmatch(r"assessment-[A-Za-z0-9_-]{1,140}", assessment_id),
+                 "Validation assessment identity is invalid")
+        assessment_path = _scoped(workspace, assessment_location)
+        validation_root = (workspace / "validation").resolve()
+        _require(assessment_path.parent == validation_root
+                 and assessment_path.name == assessment_id + ".json"
+                 and assessment_path.is_file(),
+                 "Validation assessment is outside the workspace validation store")
+        assessment_bytes = assessment_path.read_bytes()
+        _require(0 < len(assessment_bytes) <= 16 * 1024 * 1024,
+                 "Validation assessment is empty or too large")
+        assessment = json.loads(assessment_bytes)
+        assessment_digest = _sha(json.dumps(
+            assessment, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8"))
+        _require(validation.get("assessment_digest") == assessment_digest
+                 and assessment.get("id") == assessment_id
+                 and validation.get("summary") == assessment.get("summary"),
+                 "Validation result differs from its immutable assessment")
+        public_path = "_validation/" + assessment_path.name
+        validation_by_path[assessment_location] = {
+            **validation,
+            "profile_id": assessment.get("profile", {}).get("id"),
+            "assessment_artifact": public_path,
+        }
     approval_steps = {s["task_id"]:s for s in result.get("steps", []) if s.get("execution_kind") == "approval"}
     approved_paths = {}
     has_test_handoff = False
@@ -343,7 +379,15 @@ def export_run_evidence(run_record_path, *, workspace_root, export_root,
                 continue
             location = representation.get("location")
             path = _scoped(workspace, location)
-            _require(path.is_relative_to(output_path) and path != output_path, "Artifact lies outside this attempt output root")
+            validation_reference = validation_by_path.get(location)
+            if validation_reference:
+                _require(artifact.get("artifact_role") == "verification",
+                         "Validation assessment is not verification evidence")
+                public_path = validation_reference["assessment_artifact"]
+            else:
+                _require(path.is_relative_to(output_path) and path != output_path,
+                         "Artifact lies outside this attempt output root")
+                public_path = path.relative_to(output_path).as_posix()
             _require(path.is_file(), "Recorded artifact is missing")
             data = path.read_bytes()
             actual = _sha(data)
@@ -381,7 +425,7 @@ def export_run_evidence(run_record_path, *, workspace_root, export_root,
                          and destination.get("id") in context.get("test_destinations", [])
                          and str(destination.get("id", "")).startswith("test://"),
                          "Receipt destination was not enrolled as an exact test destination")
-            candidates.append(({"artifact_id":artifact["id"], "path":path.relative_to(output_path).as_posix(),
+            candidates.append(({"artifact_id":artifact["id"], "path":public_path,
                 "workspace_path":location, "sha256":actual, "size_bytes":len(data), "run_id":run_id,
                 "task_id":task, "artifact_role":artifact.get("artifact_role","deliverable")}, data))
     status = record.get("status")
@@ -400,7 +444,12 @@ def export_run_evidence(run_record_path, *, workspace_root, export_root,
         "run_id":run_id, "status":status, "accepted_by_runtime":True, "execution_kind":"integration",
         "started_at":started_at, "finished_at":record.get("completed_at") if is_complete else None,
         "terminal_step_reached":is_complete, "all_required_steps_succeeded":is_complete,
-        "external_effects":"test_destinations" if has_test_handoff else "none", "content_validated":False,
+        "external_effects":"test_destinations" if has_test_handoff else "none",
+        "content_validated":bool(validation_by_path) and all(
+            item.get("is_current") is True and item.get("release_eligible") is True
+            for item in validation_by_path.values()
+        ),
+        "validations":list(validation_by_path.values()),
         "required_step_ids":required, "completed_step_ids":sorted(completed),
         "produced_files":[v for v,_ in candidates], "runtime_evidence":{"path":relative_log,"sha256":_sha(raw)},
         "excluded_artifacts": excluded_artifacts,

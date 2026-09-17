@@ -31,6 +31,10 @@ REPO = Path(__file__).resolve().parents[1]
 DEFAULT_INPUTS = REPO / "tests/datasets/engineering-workflows"
 DEFAULT_STATE = REPO / "artifacts/engineering-workflow-datasets"
 TEMPLATES = REPO / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates"
+VALIDATION_COVERAGE = (
+    REPO
+    / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
+)
 METRIC_KEYS = ("datasets_created", "combinations_run", "processes_with_outputs", "valid_data")
 
 
@@ -95,7 +99,7 @@ def matches(name: str, pattern: str) -> bool:
 
 
 def check_outputs(dataset: dict, receipt: dict, artifact_root: Path) -> dict:
-    """Check presence/identity only; never parse or accept engineering contents."""
+    """Check output identity and independently persisted validator assessments."""
     produced = receipt.get("produced_files", [])
     observed = []
     errors = []
@@ -116,12 +120,57 @@ def check_outputs(dataset: dict, receipt: dict, artifact_root: Path) -> dict:
         role["role"]: [name for name in observed if any(matches(name, p) for p in role["patterns"])]
         for role in dataset["expected_outputs"]
     }
+    validations = []
+    for validation in receipt.get("validations", []):
+        try:
+            if not isinstance(validation, dict):
+                raise ValueError("Validation references must be objects")
+            relative = validation["assessment_artifact"]
+            artifact = next(
+                item
+                for item in produced
+                if item.get("path") == relative
+                and item.get("artifact_role") == "verification"
+            )
+            assessment_path = safe_file(artifact_root, relative)
+            assessment_bytes = assessment_path.read_bytes()
+            if digest(assessment_bytes) != artifact.get("sha256"):
+                raise ValueError("Validation assessment digest does not match its artifact")
+            assessment = json.loads(assessment_bytes)
+            summary = assessment.get("summary", {})
+            if (
+                validation.get("schema_version") != "wright.process-validation/1"
+                or validation.get("assessment_id") != assessment.get("id")
+                or validation.get("assessment_digest") != digest(
+                    json.dumps(assessment, sort_keys=True, separators=(",", ":")).encode()
+                )
+                or validation.get("summary") != summary
+            ):
+                raise ValueError("Validation reference differs from the immutable assessment")
+            release_eligible = bool(
+                validation.get("is_current") is True
+                and validation.get("release_eligible") is True
+                and summary.get("evaluation_complete") is True
+                and summary.get("requirements_compliant") is True
+                and summary.get("release_eligible") is True
+            )
+            validations.append({**validation, "release_eligible": release_eligible})
+        except (StopIteration, ValueError, KeyError, TypeError, OSError, json.JSONDecodeError) as error:
+            errors.append(str(error))
+    validation = {
+        "status": "pass" if validations and all(v["release_eligible"] for v in validations) else (
+            "hold" if validations else "not_run"
+        ),
+        "release_eligible": bool(validations and all(v["release_eligible"] for v in validations)),
+        "assessments": validations,
+    }
     return {
         "passed": not errors and all(roles.values()),
         "roles": roles,
         "missing_roles": [role for role, paths in roles.items() if not paths],
         "errors": errors,
-        "content_validated": False,
+        "content_validated": validation["release_eligible"],
+        "validation": validation,
     }
 
 
@@ -150,8 +199,15 @@ def scan_identity(path: Path, receipt: dict) -> dict:
 
 
 class Campaign:
-    def __init__(self, inputs: Path = DEFAULT_INPUTS, root: Path = DEFAULT_STATE, templates: Path = TEMPLATES):
+    def __init__(self, inputs: Path = DEFAULT_INPUTS, root: Path = DEFAULT_STATE, templates: Path = TEMPLATES,
+                 validation_coverage: Path = VALIDATION_COVERAGE):
         self.inputs, self.root, self.templates = inputs.resolve(), root.resolve(), templates.resolve()
+        coverage = json.loads(validation_coverage.read_text(encoding="utf-8-sig"))
+        if coverage.get("schema_version") != "wright.process-validation-coverage/2":
+            raise ValueError("Unsupported process-validation coverage inventory")
+        self.validation_coverage = {
+            row["scenario_id"]: row for row in coverage.get("scenarios", [])
+        }
         self.config = json.loads((inputs / "campaign.json").read_text(encoding="utf-8-sig"))
         self.root.mkdir(parents=True, exist_ok=True)
         (self.root / "output").mkdir(exist_ok=True)
@@ -204,13 +260,33 @@ class Campaign:
         db.row_factory = sqlite3.Row
         return db
 
-    @staticmethod
-    def metrics(db) -> dict:
+    def metrics(self, db) -> dict:
+        validated = set()
+        qualified = {
+            scenario_id for scenario_id, row in self.validation_coverage.items()
+            if row.get("support_status") == "qualified"
+        }
+        current_revisions = {}
+        for row in db.execute("SELECT id,document FROM datasets"):
+            dataset = json.loads(row["document"])
+            current_revisions[row["id"]] = (
+                dataset["digest"], dataset["template_digest"]
+            )
+        for row in db.execute("SELECT scenario_id,completed,document FROM attempts"):
+            attempt = json.loads(row["document"])
+            if (row["scenario_id"] in qualified
+                    and row["completed"] == 1
+                    and current_revisions.get(row["scenario_id"]) == (
+                        attempt.get("dataset_digest"), attempt.get("template_digest")
+                    )
+                    and attempt.get("output_check", {}).get("passed") is True
+                    and attempt.get("output_check", {}).get("validation", {}).get("release_eligible") is True):
+                validated.add(row["scenario_id"])
         return dict(zip(METRIC_KEYS, [
             db.execute("SELECT COUNT(*) FROM datasets").fetchone()[0],
             db.execute("SELECT COUNT(DISTINCT scenario_id) FROM attempts WHERE ran=1").fetchone()[0],
             db.execute("SELECT COUNT(DISTINCT scenario_id) FROM attempts WHERE completed=1").fetchone()[0],
-            0,
+            len(validated),
         ]))
 
     def event(self, db, kind: str, subject: str | None):
@@ -380,6 +456,29 @@ class Campaign:
                     completed_current_revision=any(a["completed_with_outputs"] for a in current),
                     latest_attempt=current[-1] if current else None,
                 )
+                support = self.validation_coverage.get(data["scenario_id"])
+                if support is None:
+                    support = {
+                        "support_status": "unsupported",
+                        "profile": None,
+                        "capabilities": [],
+                    }
+                latest_validation = (
+                    current[-1].get("output_check", {}).get("validation") if current else None
+                )
+                data["validation"] = {
+                    "support_status": support["support_status"],
+                    "profile": support.get("profile"),
+                    "capabilities": support.get("capabilities", []),
+                    "status": (
+                        "unsupported" if support["support_status"] != "qualified"
+                        else latest_validation.get("status")
+                        if latest_validation and latest_validation.get("status") != "not_run"
+                        else "pending"
+                    ),
+                    "assessment_count": len(latest_validation.get("assessments", []))
+                    if latest_validation else 0,
+                }
                 datasets.append(data)
             history = [{"at": r["at"], "kind": r["kind"], "metrics": json.loads(r["metrics"])} for r in db.execute("SELECT * FROM events ORDER BY seq")]
             result = {
@@ -388,7 +487,17 @@ class Campaign:
                 "history": history, "updated_at": history[-1]["at"], "datasets": datasets,
                 "issues": [dict(r) for r in db.execute("SELECT * FROM issues ORDER BY path")],
                 "execution_adapter": "ready" if self.metrics(db)["combinations_run"] else "pending",
-                "content_validation_enabled": False,
+                "content_validation_enabled": True,
+                "validation_coverage": {
+                    "qualified": sum(
+                        row["support_status"] == "qualified"
+                        for row in self.validation_coverage.values()
+                    ),
+                    "unsupported": sum(
+                        row["support_status"] == "unsupported"
+                        for row in self.validation_coverage.values()
+                    ),
+                },
             }
         with self.publish_lock:
             result["reconciliation"] = dict(self._reconciliation)

@@ -13,6 +13,7 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/heat-spreader-sizing.workflow.wflow"
+VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 spec = importlib.util.spec_from_file_location("heat_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
@@ -141,6 +142,57 @@ def prepare(args, directory, tools):
         "mcp_arguments":"{}","timeout_seconds":600,"output_format":"json","save_output":True,
         "output_filename":output+"/solver-execution.json","file_policy":"overwrite",
         "expected_files":"\n".join(output+"/"+name for name in expected)}
+    validator = None
+    if identity == "heat-spreader-sizing-01":
+        coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+        support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
+        if support["support_status"] != "qualified" or not support.get("profile"):
+            raise ValueError("The heat-spreader validator profile is not qualified")
+        profile = support["profile"]
+        validation_files = {
+            "baseline_coarse": output + "/baseline_40-coarse-temperature.csv",
+            "baseline_fine": output + "/baseline_40-fine-temperature.csv",
+            "revision_coarse": output + "/revision_60-coarse-temperature.csv",
+            "revision_fine": output + "/revision_60-fine-temperature.csv",
+            "decision": output + "/sizing-decision.json",
+        }
+        fields["outputs"].extend(
+            h.port(role, "workspace_file") for role in validation_files
+        )
+        fields["settings"]["expected_file_ports"] = validation_files
+        validator = task("validate_heat_content", "Validate actual thermal fields and sizing")
+        validator["fields"].update(
+            performed_by="configured_tool",
+            inputs=[h.port("validate_" + role, "workspace_file") for role in validation_files],
+            outputs=[h.port("assessment")],
+            prompt="",
+            settings={
+                "authoring_template": "process-validator",
+                "output_format": "json",
+                "max_revisions": 0,
+                "validation": {
+                    "profile": {
+                        "source": "packaged",
+                        "name": profile["profile_resource"],
+                        "reference": profile["profile_ref"],
+                    },
+                    "baseline": profile["baseline_ref"],
+                    "subjects": {role: "validate_" + role for role in validation_files},
+                },
+            },
+        )
+        for role in validation_files:
+            sections.append({
+                "kind": "connection",
+                "id": "bind_" + validator["id"] + "_" + role,
+                "fields": {
+                    "type": "item",
+                    "from": execute["id"] + "." + role,
+                    "to": validator["id"] + ".validate_" + role,
+                    "label": "actual thermal output to validate",
+                    "when": None,
+                },
+            })
     h.add_reference(sections, invocation_ref, execute, "exact_solver_arguments")
     executed = execute["id"]+"."+execute["id"]+"_result"
     bind(original["solve_and_verify"],
@@ -154,6 +206,8 @@ def prepare(args, directory, tools):
     h.add_reference(sections, prepared, original["solve_and_verify"], "preflight")
     h.add_reference(sections, observed, original["solve_and_verify"], "actual_geometry")
     chain = [original["define_thermal_case"], review, preflight, author, original["create_plate_geometry"], observe, solver_inputs, execute, original["solve_and_verify"]]
+    if validator:
+        chain.append(validator)
     for before, after in zip(chain, chain[1:]):
         sections.append({"kind": "connection", "id": "sequence_" + after["id"], "fields": {"type": "order", "from": before["id"], "to": after["id"], "label": "complete thermal process", "when": None}})
     rendered = h.render(sections)

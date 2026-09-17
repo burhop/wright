@@ -18,6 +18,7 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 ROOT = Path(__file__).resolve().parents[1]
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json"
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/parametric-drill-jig.workflow.wflow"
+VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 CIRCLE_CENTER_GUIDANCE = (
     "For extracted circular edges in build123d 0.10.0, first require edge.geom_type == GeomType.CIRCLE, then use edge.arc_center (a property) for the underlying circle center and edge.radius for its radius. "
     "Edge.center() defaults to position_at(0.5), a point on the curve, and must not be used as the hole/axis center. Apply the supplied datum transform to the actual arc_center coordinates. "
@@ -164,6 +165,50 @@ def prepare(args, directory, tools):
     helpers.add_reference(sections, basis, author, "accepted_design")
     helpers.add_reference(sections, init_result, author, "project_initialized")
     generated = bind_native_run(stages["generate_jig"], code_path, "jig", config["expected_generated_files"])
+    validator = None
+    if identity == "parametric-drill-jig-01":
+        coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+        support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
+        if support["support_status"] != "qualified" or not support.get("profile"):
+            raise ValueError("The drill-jig validator profile is not qualified")
+        profile = support["profile"]
+        stages["generate_jig"]["fields"]["outputs"].append(
+            helpers.port("jig_step", "workspace_file")
+        )
+        stages["generate_jig"]["fields"]["settings"]["expected_file_ports"] = {
+            "jig_step": output + "/jig.step"
+        }
+        validator = task("validate_jig_content", "Validate actual jig seat geometry")
+        validator["fields"].update(
+            performed_by="configured_tool",
+            inputs=[helpers.port("jig", "workspace_file")],
+            outputs=[helpers.port("assessment")],
+            prompt="",
+            settings={
+                "authoring_template": "process-validator",
+                "output_format": "json",
+                "max_revisions": 0,
+                "validation": {
+                    "profile": {
+                        "source": "packaged",
+                        "name": profile["profile_resource"],
+                        "reference": profile["profile_ref"],
+                    },
+                    "baseline": profile["baseline_ref"],
+                    "subjects": {"jig_step": "jig"},
+                },
+            },
+        )
+        sections.append(dict(
+            kind="connection", id="bind_" + validator["id"] + "_jig",
+            fields={
+                "type": "item",
+                "from": stages["generate_jig"]["id"] + ".jig_step",
+                "to": validator["id"] + ".jig",
+                "label": "actual jig STEP to validate",
+                "when": None,
+            },
+        ))
     # Fixed native arguments read the just-authored file. The explicit sequence
     # below retains approval/authoring dependencies without JSON argument edges.
     checker = task("author_jig_inspection", "Author inspection of actual exported jig")
@@ -188,7 +233,10 @@ def prepare(args, directory, tools):
     bind(observe, f"Call inspect_file(includeText=true,maxTextBytes=8192,offsetBytes=0) for {output}/dimension-report.json and {output}/cad-lineage.json, following nextOffsetBytes until complete with maxTextBytes=8192 on every page. Do not request larger pages or embed native execution JSON; retain the complete files and observe every page. Call inspect_file(includeText=false) for {output}/jig.step, {output}/jig.stl and {output}/hole-layout.dxf. Preserve the actual independent dimensional failures, unresolved evidence and file hashes in the observation report. Never infer physical-fit qualification from successful execution or file presence.", "wright-workspace-files", filename="cad-file-observations.json", customer_context=False)
     # This task reads the sealed files directly. Order edges below require both
     # native runs to finish without embedding their redundant response bodies.
-    chain = [stages["validate_inputs"], review, init, author, stages["generate_jig"], checker, stages["check_alignment"], observe]
+    chain = [stages["validate_inputs"], review, init, author, stages["generate_jig"]]
+    if validator:
+        chain.append(validator)
+    chain.extend([checker, stages["check_alignment"], observe])
     for earlier, later in zip(chain, chain[1:]):
         sections.append(dict(kind="connection", id="sequence_" + later["id"], fields={"type": "order",
             "from": earlier["id"], "to": later["id"], "label": "full jig engineering sequence", "when": None}))

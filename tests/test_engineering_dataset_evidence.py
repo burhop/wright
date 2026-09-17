@@ -69,6 +69,80 @@ def test_export_derives_receipt_and_copies_exact_actual_artifact(case):
     assert export() == receipt
 
 
+def test_export_carries_verified_process_validation_assessment(case):
+    record, args, _, export = case
+    workspace = Path(args["workspace_root"])
+    assessment_id = "assessment-test01"
+    assessment = {
+        "id": assessment_id,
+        "profile": {"id": "qualified-profile"},
+        "summary": {
+            "content_verified": True,
+            "requirements_compliant": True,
+            "evaluation_complete": True,
+            "release_eligible": True,
+            "physical_validation": "not_assessed",
+            "counts": {"pass": 1, "fail": 0, "blocked": 0, "error": 0,
+                       "inconclusive": 0, "not_applicable": 0},
+        },
+    }
+    assessment_path = workspace / "validation" / f"{assessment_id}.json"
+    assessment_path.parent.mkdir()
+    assessment_path.write_text(json.dumps(assessment), encoding="utf-8")
+    canonical = json.dumps(
+        assessment, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+        allow_nan=False,
+    ).encode()
+    validation = {
+        "schema_version": "wright.process-validation/1",
+        "assessment_id": assessment_id,
+        "assessment_digest": sha(canonical),
+        "attempt_id": "producer-attempt-1",
+        "workspace_id": "campaign-workspace",
+        "is_current": True,
+        "release_eligible": True,
+        "summary": assessment["summary"],
+        "finding_count": 0,
+        "verdict": "pass",
+        "assessment_path": f"validation/{assessment_id}.json",
+        "corrections": [],
+    }
+    verification = {
+        "id": f"run-1:mesh:diagnostic:validation/{assessment_id}.json",
+        "kind": "file",
+        "name": "validation assessment",
+        "artifact_role": "verification",
+        "provenance": {
+            "run_id": "run-1", "task_id": "mesh",
+            "output_port": f"diagnostic:validation/{assessment_id}.json",
+        },
+        "representations": [{
+            "kind": "workspace_file", "location": f"validation/{assessment_id}.json",
+            "format": "json", "durability": "persistent",
+            "sha256": sha(assessment_path.read_bytes()),
+            "size_bytes": assessment_path.stat().st_size,
+        }],
+    }
+    record["events"].insert(3, {
+        "kind": "result_ready", "task_id": "mesh",
+        "at": record["completed_at"], "engineering_result": verification,
+    })
+    record["result"]["steps"][0]["validation"] = validation
+    record["result"]["results"].append(verification)
+
+    receipt = export()
+
+    assert receipt["content_validated"] is True
+    assert receipt["validations"][0]["profile_id"] == "qualified-profile"
+    assert receipt["validations"][0]["assessment_artifact"] == (
+        f"_validation/{assessment_id}.json"
+    )
+    copied = args["export_root"] / "case-01/attempt-01/artifacts/_validation" / (
+        assessment_id + ".json"
+    )
+    assert json.loads(copied.read_text()) == assessment
+
+
 def test_export_persists_available_model_usage_and_keeps_missing_unknown(case):
     record, _, _, export = case
     unknown = export()

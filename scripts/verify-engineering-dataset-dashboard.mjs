@@ -23,6 +23,8 @@ try {
   await expect(page.locator("tr.dataset-row")).toHaveCount(30);
   await expect(page.locator("path.chart-line")).toHaveCount(4);
   const state = await (await page.request.get(url + "/api/status")).json();
+  if (state.validation_coverage?.qualified !== 2 || state.validation_coverage?.unsupported !== 28)
+    throw new Error("Validator coverage inventory is not projected faithfully");
   if (JSON.stringify(state.history[0].metrics) !== JSON.stringify({
     datasets_created: 0, combinations_run: 0, processes_with_outputs: 0, valid_data: 0,
   })) throw new Error("Missing real zero baseline");
@@ -43,11 +45,9 @@ try {
       const value = state.history[index].metrics[name];
       if (!Number.isInteger(value) || value < 0 || value > 30)
         throw new Error("Invalid history counter: " + name);
-      if (index && value < state.history[index - 1].metrics[name])
+      if (index && name !== "valid_data" && value < state.history[index - 1].metrics[name])
         throw new Error("Cumulative history regressed: " + name);
     }
-    if (state.history[index].metrics.valid_data !== 0)
-      throw new Error("Content validation was incorrectly credited");
   }
   let imagesChecked = 0;
   let completedFilesChecked = 0;
@@ -66,9 +66,12 @@ try {
       if (!receiptResponse.ok()) throw new Error("Completed run receipt is unavailable");
       const receipt = await receiptResponse.json();
       if (receipt.run_id !== attempt.run_id || receipt.status !== "completed"
-        || !receipt.all_required_steps_succeeded || !receipt.terminal_step_reached
-        || receipt.content_validated !== false)
+        || !receipt.all_required_steps_succeeded || !receipt.terminal_step_reached)
         throw new Error("Completed output link has a different runtime identity");
+      if (receipt.content_validated === true && (!Array.isArray(receipt.validations)
+        || !receipt.validations.length || receipt.validations.some(item =>
+          item.is_current !== true || item.release_eligible !== true)))
+        throw new Error("Content validation lacks a current release-eligible assessment");
       for (const file of receipt.produced_files) {
         const fileResponse = await page.request.get(outputBase + "/artifacts/"
           + file.path.split("/").map(encodeURIComponent).join("/"));

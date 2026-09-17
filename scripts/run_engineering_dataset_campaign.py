@@ -400,7 +400,9 @@ class Runner:
                     required_step_ids=case["required_step_ids"],output_root=case["output_root"],lifecycle=lifecycle)
                 self.save(state_path,state,evidence_status="exported",last_receipt_status=receipt["status"],
                           evidence_exporter_revision=_evidence.EXPORTER_REVISION,observed_lifecycle_digest=lifecycle_identity,
-                          usage=receipt.get("usage", {"status": "unknown"}))
+                          usage=receipt.get("usage", {"status": "unknown"}),
+                          validations=receipt.get("validations", []),
+                          content_validated=receipt.get("content_validated") is True)
             except (ValueError, KeyError, OSError, TypeError) as error:
                 self.save(state_path,state,evidence_status="not_exportable",evidence_error_type=type(error).__name__,
                           evidence_error=str(error) if isinstance(error,_evidence.EvidenceError) else "Runtime evidence could not be read",
@@ -634,16 +636,22 @@ class Runner:
                 if self.pause_after_current and self.pause_after_current.exists():
                     self.emit(case,"campaign_paused_between_cases",reason_code="pause_sentinel_present")
                     atomic_json(self.root/"summary.json",{"updated_at":now(),"cases":results,
-                        "paused":True,"next_scenario_id":case["scenario_id"],"content_validation_enabled":False})
+                        "paused":True,"next_scenario_id":case["scenario_id"],
+                        "content_validation_enabled":True,
+                        "validation_contract":"wright.process-validation/1"})
                     break
                 try:
                     result=self.run_case(case)
                     results.append({"scenario_id":case["scenario_id"],"attempt_id":case["attempt_id"],"phase":result["phase"],
+                                    "content_validated":result.get("content_validated", False),
+                                    "validations":result.get("validations", []),
                                     **({"native_cleanup":result["native_cleanup"]} if "native_cleanup" in result else {})})
                 except (OSError,ValueError,KeyError,TypeError) as error:
                     results.append({"scenario_id":case["scenario_id"],"attempt_id":case["attempt_id"],"phase":"runner_blocked","error_type":type(error).__name__})
                 self.emit(case,"case_checkpoint",phase=results[-1]["phase"])
-                atomic_json(self.root/"summary.json",{"updated_at":now(),"cases":results,"content_validation_enabled":False})
+                atomic_json(self.root/"summary.json",{"updated_at":now(),"cases":results,
+                    "content_validation_enabled":True,
+                    "validation_contract":"wright.process-validation/1"})
         return results
 
 
