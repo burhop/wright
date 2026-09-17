@@ -1,6 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 
 async function installFakeSocket(page: Page): Promise<void> {
+  await page.route("**/webmcp-test-harness", async (route) => {
+    await route.fulfill({
+      contentType: "text/html",
+      body: '<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>',
+    });
+  });
   await page.addInitScript(() => {
     class FakeSocket extends EventTarget {
       static readonly OPEN = 1;
@@ -36,7 +42,7 @@ async function installFakeSocket(page: Page): Promise<void> {
 }
 
 async function register(page: Page, surfaceId: string): Promise<void> {
-  await page.goto("/");
+  await page.goto("/webmcp-test-harness");
   await page.evaluate(async (selectedSurface) => {
     const module =
       await import("/src/services/surfaces/webmcp/wright-surface-sdk.ts");
@@ -101,8 +107,9 @@ test("scopes identical tools, falls back without native WebMCP, denies stale sco
   const second = await browser.newPage();
   await installFakeSocket(first);
   await installFakeSocket(second);
-  // Keep both registrations active, but load the Vite-served SDK serially. Two
-  // simultaneous cold imports can starve WebKit's page evaluation on Windows.
+  // Keep both registrations active, but load the Vite-served SDK serially from
+  // a minimal same-origin document. Loading the complete application in both
+  // pages competes with the SDK import and can starve WebKit on Windows.
   await register(first, "surface-a");
   await register(second, "surface-b");
 
