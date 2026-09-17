@@ -491,6 +491,17 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
 
 ## Next action
 
+The authority refresh also required successor execution waves: the previous wave plan
+still contained the original 12 AgentCAD grants. Use the local
+`validator-campaign-082/execution-waves-authority-refreshed.json` (SHA-256
+`0d9542191c6b90b85a68e9bf7f2356aba27e3940944b0e4b363f43dbda5a3a6f`)
+instead of `execution-waves.json` for subsequent batches. Its union matches all 27
+current manifest cases exactly once. Only source and integration-policy digests differ
+for 12 cases in two successor wave manifests; ordering, pilot, printing lifecycle and
+Solid Edge quarantine gates are preserved. Independent read-only preflights pass 9/9
+for refreshed wave 02 and 6/6 for refreshed wave 03, with zero warnings, failures or
+observed runs. Original wave manifests, plan and readiness evidence remain intact.
+
 C016–C018: after the recorded reset window, run the launcher's `readiness` action once.
 If its receipt is successful, run its `pilot` action and inspect robot-tracking-01's human
 review plus full-profile assessment before expanding the queue, using the frozen pilot
