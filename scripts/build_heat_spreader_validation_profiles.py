@@ -287,7 +287,7 @@ def build(scenario_id, config):
             "limitations": [
                 "Physical thermal qualification and certification remain outside this digital validation gate."
             ],
-            "supported_kinds": ["file"],
+            "supported_kinds": ["file", "value"],
         }
     )
 

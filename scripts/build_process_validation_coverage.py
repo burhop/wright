@@ -289,7 +289,7 @@ IMPLEMENTED_PROFILES = {
     },
     "heat-spreader-sizing-02": {
         "profile_resource": "heat-spreader-sizing-02-full",
-        "profile_ref": {"id": "heat-spreader-sizing-02-full", "version": "1", "sha256": "8f2e182b675c1aa0b2af47d8323b9355446353b4cc71a49ea548a087e65a22a2"},
+        "profile_ref": {"id": "heat-spreader-sizing-02-full", "version": "1", "sha256": "8c4b48a93163b03936315af2060f47ab154553264ecaeeac2d998db6abc57851"},
         "baseline_ref": {"id": "heat-spreader-sizing-02-basis", "version": "1", "sha256": "e8f86603db3713c227be1f311485f150e2cf1fbe4aae35998678429c7822c139"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
         "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
@@ -298,7 +298,7 @@ IMPLEMENTED_PROFILES = {
     },
     "heat-spreader-sizing-03": {
         "profile_resource": "heat-spreader-sizing-03-full",
-        "profile_ref": {"id": "heat-spreader-sizing-03-full", "version": "1", "sha256": "af5febbc9017bb37b9f4e5d15ed6445c2d3e4d76cc0ddb3bc24579263b0042ec"},
+        "profile_ref": {"id": "heat-spreader-sizing-03-full", "version": "1", "sha256": "99bd9a4b009cee5540eb88d0ea6f2c91dba76857fc1a37b3b44a9f8ed14ee9a5"},
         "baseline_ref": {"id": "heat-spreader-sizing-03-basis", "version": "1", "sha256": "c30c4e62e2048071105e830ad347b6d5a9341ce6e4d1b94ad31a50651a4949b7"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
         "scope": "Actual STEP envelopes, contact-resistance fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required design review.",
@@ -430,7 +430,7 @@ FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
         "profile_resource": "heat-spreader-sizing-01-full",
-        "profile_ref": {"id": "heat-spreader-sizing-01-full", "version": "1", "sha256": "626485b183053ea12f559c0ab31b85bcbfa893141fd5585f8cd302bebfc00481"},
+        "profile_ref": {"id": "heat-spreader-sizing-01-full", "version": "1", "sha256": "3528aa7740b1ab0b7f0ab98ee02904aa37195e11eb8e600d6123ea1371cce1f5"},
         "baseline_ref": {"id": "heat-spreader-sizing-01-basis", "version": "1", "sha256": "648762c15d9461eedc7067bc51272e7fcc5e75e1a785efdfaa47efc123dd4e20"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
         "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",

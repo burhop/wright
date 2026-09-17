@@ -34,9 +34,9 @@ def _tools():
     ]
 
 
-def test_only_qualified_heat_case_compiles_with_validator(tmp_path):
+def test_all_heat_cases_compile_with_full_validator(tmp_path):
     scenarios = ROOT / "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing"
-    for ordinal in (1, 2):
+    for ordinal in (1, 2, 3):
         directory = next(path for path in scenarios.iterdir() if path.name.startswith(f"{ordinal:02d}"))
         args = SimpleNamespace(
             workspace_root=str(tmp_path / f"workspace-{ordinal}"),
@@ -50,18 +50,48 @@ def test_only_qualified_heat_case_compiles_with_validator(tmp_path):
         result = PREPARER.prepare(args, directory, _tools())
         plan = compile_prompt_workflow(Path(result["draft"]).read_text(encoding="utf-8"))
         validators = [step for step in plan.steps if step.validation]
-        if ordinal == 1:
-            assert len(validators) == 1
-            validator = validators[0]
-            assert validator.validation["profile"]["name"] == "heat-spreader-sizing-01"
-            assert set(validator.validation["subjects"]) == {
-                "baseline_coarse", "baseline_fine", "revision_coarse",
-                "revision_fine", "decision",
-            }
-            solver = next(step for step in plan.steps if step.id.startswith("execute_recorded_fe_call_"))
-            assert set(solver.expected_file_ports) == set(validator.validation["subjects"])
-        else:
-            assert validators == []
+        assert len(validators) == 1
+        validator = validators[0]
+        scenario_id = f"heat-spreader-sizing-{ordinal:02d}"
+        assert validator.validation["profile"]["name"] == scenario_id + "-full"
+        candidates = [
+            row.split(",", 1)[0]
+            for row in (directory / "alternatives.csv")
+            .read_text(encoding="utf-8")
+            .splitlines()[1:]
+            if row
+        ]
+        expected_roles = {
+            "basis",
+            "decision",
+            *(
+                candidate + "_" + suffix
+                for candidate in candidates
+                for suffix in ("geometry", "coarse", "fine")
+            ),
+        }
+        assert set(validator.validation["subjects"]) == expected_roles
+        solver = next(
+            step
+            for step in plan.steps
+            if step.id.startswith("execute_recorded_fe_call_")
+        )
+        assert set(solver.expected_file_ports) == expected_roles - {
+            "basis",
+            *(candidate + "_geometry" for candidate in candidates),
+        }
+        geometry = next(
+            step for step in plan.steps if step.id.startswith("create_plate_geometry_")
+        )
+        assert set(geometry.expected_file_ports) == {
+            candidate + "_geometry" for candidate in candidates
+        }
+        review = next(
+            step for step in plan.steps if step.id.startswith("review_thermal_basis_")
+        )
+        assert review.external_action["settings"]["validation_review"][
+            "profile_ref"
+        ] == validator.validation["profile"]["reference"]
         manifest = json.loads(
             Path(result["draft"]).with_name("staging-manifest.json").read_text()
         )

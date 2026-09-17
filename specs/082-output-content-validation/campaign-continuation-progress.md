@@ -173,9 +173,15 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   remains held for review. Combined robot/profile/reporting/rework/continuation
   regression: `82 passed in 14.81s`; the final affected-suite rerun passed
   `73` checks in `11.42s`; Ruff passed.
+- All three heat campaign workflows now use their full profiles. Each exposes
+  exact candidate STEP, coarse field, fine field, decision and basis subjects;
+  the existing basis review pins the matching full-profile review requirements.
+  The obsolete instruction forcing the valid-data counter to zero was replaced
+  with the actual downstream gate. The full-profile preparer and runtime
+  regression passed `52` checks in `11.76s`; Ruff passed.
 
 ## Next action
 
-C012–C014: bind the exact local-review decision into the immutable validator
-assessment, then prove the robot gate and actionable defect output in an isolated
-run before expanding the integration pattern to the other family preparers.
+C012–C014: finish the drill-jig full-profile process bindings, then prove an
+actionable retained-output defect through the canonical gate before expanding
+the integration pattern to the remaining family preparers.

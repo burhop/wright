@@ -148,64 +148,67 @@ def prepare(args, directory, tools):
         "mcp_arguments":"{}","timeout_seconds":600,"output_format":"json","save_output":True,
         "output_filename":output+"/solver-execution.json","file_policy":"overwrite",
         "expected_files":"\n".join(output+"/"+name for name in expected)}
-    validator = None
-    if identity == "heat-spreader-sizing-01":
-        coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
-        support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
-        if support["support_status"] != "qualified" or not support.get("profile"):
-            raise ValueError("The heat-spreader validator profile is not qualified")
-        profile = support["profile"]
-        validation_files = {
-            "baseline_coarse": output + "/baseline_40-coarse-temperature.csv",
-            "baseline_fine": output + "/baseline_40-fine-temperature.csv",
-            "revision_coarse": output + "/revision_60-coarse-temperature.csv",
-            "revision_fine": output + "/revision_60-fine-temperature.csv",
-            "decision": output + "/sizing-decision.json",
-        }
-        fields["outputs"].extend(
-            h.port(role, "workspace_file") for role in validation_files
-        )
-        fields["settings"]["expected_file_ports"] = validation_files
-        validator = task("validate_heat_content", "Validate actual thermal fields and sizing")
-        validator["fields"].update(
-            performed_by="configured_tool",
-            inputs=[h.port("validate_" + role, "workspace_file") for role in validation_files],
-            outputs=[h.port("assessment")],
-            prompt="",
-            settings={
-                "authoring_template": "process-validator",
-                "output_format": "json",
-                "max_revisions": 0,
-                "validation": {
-                    "profile": {
-                        "source": "packaged",
-                        "name": profile["profile_resource"],
-                        "reference": profile["profile_ref"],
-                    },
-                    "baseline": profile["baseline_ref"],
-                    "subjects": {role: "validate_" + role for role in validation_files},
-                },
-            },
-        )
-        for role in validation_files:
-            sections.append({
-                "kind": "connection",
-                "id": "bind_" + validator["id"] + "_" + role,
-                "fields": {
-                    "type": "item",
-                    "from": execute["id"] + "." + role,
-                    "to": validator["id"] + ".validate_" + role,
-                    "label": "actual thermal output to validate",
-                    "when": None,
-                },
-            })
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
+    profile = support.get("full_profile")
+    if not profile:
+        raise ValueError("The heat-spreader full validator profile is unavailable")
+    geometry_files = {name + "_geometry": output + "/" + name + ".step" for name in cases}
+    original["create_plate_geometry"]["fields"]["outputs"].extend(
+        h.port(role, "workspace_file") for role in geometry_files
+    )
+    original["create_plate_geometry"]["fields"]["settings"]["expected_file_ports"] = geometry_files
+    solver_files = {
+        **{
+            name + "_" + level: output + "/" + name + "-" + level + "-temperature.csv"
+            for name in cases
+            for level in ("coarse", "fine")
+        },
+        "decision": output + "/sizing-decision.json",
+    }
+    fields["outputs"].extend(h.port(role, "workspace_file") for role in solver_files)
+    fields["settings"]["expected_file_ports"] = solver_files
+    validation_sources = {
+        "basis": (
+            original["define_thermal_case"],
+            original["define_thermal_case"]["fields"]["outputs"][0]["key"],
+            "engineering_document",
+        ),
+        **{
+            role: (original["create_plate_geometry"], role, "workspace_file")
+            for role in geometry_files
+        },
+        **{role: (execute, role, "workspace_file") for role in solver_files},
+    }
+    profile_document = json.loads(
+        (ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles" / (profile["profile_resource"] + ".json")).read_text(encoding="utf-8")
+    )
+    review["fields"]["settings"]["approval_settings"]["validation_review"] = {
+        "profile_ref": profile["profile_ref"],
+        "requirement_ids": sorted(
+            req["id"] for req in profile_document["baseline"]["requirements"] if req["review_required"]
+        ),
+    }
+    validator = task("validate_heat_content", "Validate actual thermal geometry, fields and sizing")
+    validator["fields"].update(
+        performed_by="configured_tool",
+        inputs=[h.port("validate_" + role, kind) for role, (_, _, kind) in validation_sources.items()],
+        outputs=[h.port("assessment")], prompt="",
+        settings={"authoring_template": "process-validator", "output_format": "json", "max_revisions": 0,
+            "validation": {"profile": {"source": "packaged", "name": profile["profile_resource"], "reference": profile["profile_ref"]},
+                "baseline": profile["baseline_ref"], "subjects": {role: "validate_" + role for role in validation_sources}}},
+    )
+    for role, (producer, producer_port, _) in validation_sources.items():
+        sections.append({"kind": "connection", "id": "bind_" + validator["id"] + "_" + role,
+            "fields": {"type": "item", "from": producer["id"] + "." + producer_port,
+                "to": validator["id"] + ".validate_" + role, "label": "current thermal output to validate", "when": None}})
     h.add_reference(sections, invocation_ref, execute, "exact_solver_arguments")
     executed = execute["id"]+"."+execute["id"]+"_result"
     bind(original["solve_and_verify"],
         f"Complete the original thermal sizing verification using the actual preceding native FE operation. Call inspect_file(includeText=true,maxTextBytes=4096) for {output}/heat-balance.json, {output}/mesh-comparison.json and {output}/sizing-decision.json; follow nextOffsetBytes until all three JSON documents are observed. "
         f"Call inspect_file(includeText=false) for each computed raw field under {output}: {json.dumps([name for name in expected if name.endswith(('.vtu','.csv'))])}. Preserve actual hashes and byte counts for all files. "
         "Report each candidate's computed temperature, mass, declared temperature limit, analytical agreement, mesh sensitivity, and input/removed heat balance. Preserve the original two-percent analytical agreement and mesh-stability checks, one-percent heat-balance check, and required selected maximum at or below its declared limit. Use the native JSON checks and values; retain observed failures, no-candidate outcomes and every numerical/model limitation without inventing passes. "
-        "The preceding OASiS call deliberately used critic_approved=false. Its result remains unverified pending an independent critic; preserve that warning explicitly. Successful execution, original numerical comparisons and file presence do not constitute OASiS verification or physical qualification. Do not dispatch a solver again, invent critic approval, replace raw fields, or add a separate deferred campaign correctness-validation program; its valid-data counter remains zero.",
+        "The preceding OASiS call deliberately used critic_approved=false. Its result remains unverified pending an independent critic; preserve that warning explicitly. Successful execution, original numerical comparisons and file presence do not constitute OASiS verification or physical qualification. Do not dispatch a solver again, invent critic approval or replace raw fields. The following process validator determines requirements-compliance credit from the exact current outputs.",
         "wright-workspace-files", filename="thermal-verification-report.json", customer_context=False)
     original["solve_and_verify"]["fields"]["settings"]["max_tool_calls"] = 24
     h.add_reference(sections, executed, original["solve_and_verify"], "actual_native_solver_result")

@@ -224,9 +224,16 @@ async def execute_validator(
         ):
             continue
         approved_digests = set(approved)
-        if not {subject.sha256 for subject in assessment.request.subjects}.issubset(
-            approved_digests
-        ):
+        review_roles = {
+            check.subject_role
+            for check in profile.checks
+            if check.constraint.operator == "review"
+        }
+        if not {
+            subject.sha256
+            for subject in assessment.request.subjects
+            if subject.role in review_roles
+        }.issubset(approved_digests):
             continue
         rationale = authority.get("reason")
         if not isinstance(rationale, str) or not rationale.strip():

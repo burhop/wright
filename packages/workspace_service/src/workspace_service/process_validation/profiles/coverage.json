@@ -277,7 +277,7 @@
         "profile_ref": {
           "id": "heat-spreader-sizing-01-full",
           "version": "1",
-          "sha256": "626485b183053ea12f559c0ab31b85bcbfa893141fd5585f8cd302bebfc00481"
+          "sha256": "3528aa7740b1ab0b7f0ab98ee02904aa37195e11eb8e600d6123ea1371cce1f5"
         },
         "baseline_ref": {
           "id": "heat-spreader-sizing-01-basis",
@@ -371,7 +371,7 @@
         "profile_ref": {
           "id": "heat-spreader-sizing-02-full",
           "version": "1",
-          "sha256": "8f2e182b675c1aa0b2af47d8323b9355446353b4cc71a49ea548a087e65a22a2"
+          "sha256": "8c4b48a93163b03936315af2060f47ab154553264ecaeeac2d998db6abc57851"
         },
         "baseline_ref": {
           "id": "heat-spreader-sizing-02-basis",
@@ -395,7 +395,7 @@
         "profile_ref": {
           "id": "heat-spreader-sizing-02-full",
           "version": "1",
-          "sha256": "8f2e182b675c1aa0b2af47d8323b9355446353b4cc71a49ea548a087e65a22a2"
+          "sha256": "8c4b48a93163b03936315af2060f47ab154553264ecaeeac2d998db6abc57851"
         },
         "baseline_ref": {
           "id": "heat-spreader-sizing-02-basis",
@@ -494,7 +494,7 @@
         "profile_ref": {
           "id": "heat-spreader-sizing-03-full",
           "version": "1",
-          "sha256": "af5febbc9017bb37b9f4e5d15ed6445c2d3e4d76cc0ddb3bc24579263b0042ec"
+          "sha256": "99bd9a4b009cee5540eb88d0ea6f2c91dba76857fc1a37b3b44a9f8ed14ee9a5"
         },
         "baseline_ref": {
           "id": "heat-spreader-sizing-03-basis",
@@ -518,7 +518,7 @@
         "profile_ref": {
           "id": "heat-spreader-sizing-03-full",
           "version": "1",
-          "sha256": "af5febbc9017bb37b9f4e5d15ed6445c2d3e4d76cc0ddb3bc24579263b0042ec"
+          "sha256": "99bd9a4b009cee5540eb88d0ea6f2c91dba76857fc1a37b3b44a9f8ed14ee9a5"
         },
         "baseline_ref": {
           "id": "heat-spreader-sizing-03-basis",
