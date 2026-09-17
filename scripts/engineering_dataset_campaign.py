@@ -678,6 +678,7 @@ def serve(campaign: Campaign, port: int, *, runner_root=None, native_database=No
                     data = json.loads(summary.read_text(encoding="utf-8"))
                     return self.send(200, json.dumps({
                         "report_root": selected["report_root"],
+                        "observed_at": selected.get("observed_at"),
                         "cases": [{key: row[key] for key in (
                             "scenario_id", "retained_attempt", "automated_checks", "review_checks"
                         )} for row in data["cases"]],
