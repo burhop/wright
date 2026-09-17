@@ -382,9 +382,9 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("raspberry-pi-enclosure-01", "063276a93c5e418022a63c4bedf71f38463146cb19f55702f62cbdaee3b573de", "5c43d1f40a00764f55c12b4e31b58fdf2f12c5d21e21ec4775be69031f67a07c"),
-    ("raspberry-pi-enclosure-02", "07979c114f519763c5ece53662e425aa039f81fcee44e7a7e1bbeb9b36343b26", "5947b499daff950b17b32fe8a2fb6c80b2c41e10e05567444ade1aa65a62f979"),
-    ("raspberry-pi-enclosure-03", "d808367685d1e8bbcffde3da67134c85dfb52afb466c7535e6113dd19e85e3ae", "6c795f2d61468598868c30f50a680742290649fbcf093de7360e721312397297"),
+    ("raspberry-pi-enclosure-01", "951d04395fec0385859db2fb4cd5b0fec2d9007fe33dfc1899c5fd98e5582115", "5c43d1f40a00764f55c12b4e31b58fdf2f12c5d21e21ec4775be69031f67a07c"),
+    ("raspberry-pi-enclosure-02", "af3a77d442abad177fb6779e4860a02e33f2293d31405aa34941eaf8adeacce4", "5947b499daff950b17b32fe8a2fb6c80b2c41e10e05567444ade1aa65a62f979"),
+    ("raspberry-pi-enclosure-03", "80a044eff182a73147caabf57e5b4d56c20ff90c246df1052174e0be5f15ab0e", "6c795f2d61468598868c30f50a680742290649fbcf093de7360e721312397297"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,

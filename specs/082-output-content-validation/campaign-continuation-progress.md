@@ -227,9 +227,15 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   mesh can now fail the canonical gate with its targeted lineage finding.
   Printed/preparer/profile/approval/runtime regression: `78 passed in 26.52s`,
   plus the receipt-output continuation test; Ruff passed.
+- All three Raspberry Pi enclosure workflows now expose the exact manufacturer
+  research and reviewed basis values, authored CAD source, both enclosure/fluid/
+  board/heat-source STEP sets, both CFD contracts, field archive and comparison
+  to their full profiles. The existing design review pins every source, geometry,
+  thermal, variant and claim-scope obligation. Retained convergence/heat-balance
+  gaps and the case-02 height violation can now reach the canonical gate.
+  Pi/preparer/profile/runtime regression: `48 passed in 22.68s`; Ruff passed.
 
 ## Next action
 
-C012–C014: integrate the Raspberry Pi enclosure workflows, then prove an
-actionable retained-output defect through the canonical gate when the provider
-resumes.
+C012–C014: integrate the bracket workflows, then prove an actionable retained-
+output defect through the canonical gate when the provider resumes.

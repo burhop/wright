@@ -282,7 +282,7 @@ def build(scenario_id, values):
             "limitations": [
                 "Manufacturer-source authority, detailed CAD features and physical thermal, ingress, electrical, EMC, material and release claims require authenticated engineering review. Mesh-refinement evidence is not present in the retained output."
             ],
-            "supported_kinds": ["file"],
+            "supported_kinds": ["file", "value"],
         }
     )
 
