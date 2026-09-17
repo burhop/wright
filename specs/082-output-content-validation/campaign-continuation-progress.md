@@ -358,6 +358,18 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   Every entry remains `awaiting_output_and_human_review`, with no reviewer, assessment or
   validator-pass credit. The three printed cases will receive the same audit after their
   lifecycle-owned workflows are prepared just in time.
+- The serial runner now treats any checkpoint carrying `validation_review` as an
+  unconditional human boundary, even when both the enrolled grant and dashboard prefer
+  automatic integration-test approvals. Ordinary test-only checkpoints remain automatic;
+  the requirements review persists `validation_review_requires_human` and performs no
+  decision mutation until a person acts. This prevents an `integration_test:*` actor from
+  consuming the one-shot checkpoint that the validator must authenticate. The complete
+  runner suite passes `36` tests and Ruff passes. The dashboard preference is restored to
+  `auto`; the final review guard is enforced by the runner. The served workspace is healthy
+  at `http://127.0.0.1:5173/workspace/c33593b1-73a8-4056-a7f4-a07a9903dd2d?workflow=canonical`.
+  At a pending validation review, the person decides in that UI; while the campaign runner
+  owns the attempt, the person must leave the separate Resume button to the runner so its
+  persisted one-shot operation ledger remains authoritative.
 
 ## Next action
 

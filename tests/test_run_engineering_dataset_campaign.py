@@ -381,6 +381,36 @@ def test_manual_preference_or_manual_enrollment_never_auto_approves(case,tmp_pat
     assert state["operations"] == {}
 
 
+def test_validation_review_never_uses_automatic_integration_actor(case,tmp_path,make_runner):
+    preference=tmp_path/"status.json"
+    runner_module.atomic_json(preference,{"approval_mode":"auto"})
+    _,record=persisted(case)
+    checkpoint={
+        **record["approval"],
+        "subject":{
+            "settings":{
+                "validation_review":{
+                    "profile_ref":{"id":"profile","version":"1","sha256":"f"*64},
+                    "requirement_ids":["REQ-1"],
+                }
+            }
+        },
+    }
+    class ReadOnlyTransport:
+        def request(self,path,body=None,**kwargs):
+            assert body is None
+            return {"ok":True,"data":checkpoint}
+    runner=make_runner(ReadOnlyTransport(),campaign_status=preference,case_timeout=.04)
+    assert runner.run([case])[0]["phase"] == "awaiting_manual_approval"
+    state=json.loads((tmp_path/"state"/case["scenario_id"]/(case["attempt_id"]+".json")).read_text())
+    assert state["operations"] == {}
+    assert state["campaign_approval_mode"] == "auto"
+    assert state["enrolled_approval_mode"] == "auto"
+    assert state["manual_approval_reason"] == "validation_review_requires_human"
+    events=(tmp_path/"state/events.ndjson").read_text()
+    assert '"reason_code": "validation_review_requires_human"' in events
+
+
 def test_pause_sentinel_is_checked_between_cases_without_interrupting_current(case,tmp_path,make_runner):
     sentinel=tmp_path/"pause"
     class PausingTransport(FakeTransport):

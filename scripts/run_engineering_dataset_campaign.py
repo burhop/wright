@@ -43,6 +43,14 @@ def fingerprint(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+def requires_human_validation_review(checkpoint):
+    """Validation credit can only consume an authenticated human review."""
+    subject = checkpoint.get("subject")
+    settings = subject.get("settings") if isinstance(subject, dict) else None
+    configured = settings.get("validation_review") if isinstance(settings, dict) else None
+    return isinstance(configured, dict) and bool(configured)
+
+
 def atomic_json(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(path.name + ".tmp")
@@ -562,13 +570,18 @@ class Runner:
                     if checkpoint["state"] == "pending":
                         preference = self.approval_preference()
                         grant_mode = record.get("execution_context", {}).get("approval_mode", "manual")
-                        if preference != "auto" or grant_mode != "auto":
+                        validation_review = requires_human_validation_review(checkpoint)
+                        if validation_review or preference != "auto" or grant_mode != "auto":
+                            manual_reason = ("validation_review_requires_human"
+                                             if validation_review else "campaign_policy")
                             changed = state.get("phase") != "awaiting_manual_approval"
                             self.save(state_path,state,"awaiting_manual_approval",
                                       campaign_approval_mode=preference,enrolled_approval_mode=grant_mode,
-                                      pending_checkpoint_id=checkpoint_id)
+                                      pending_checkpoint_id=checkpoint_id,
+                                      manual_approval_reason=manual_reason)
                             if changed:
-                                self.emit(case,"awaiting_manual_approval",checkpoint_id=checkpoint_id)
+                                self.emit(case,"awaiting_manual_approval",checkpoint_id=checkpoint_id,
+                                          reason_code=manual_reason)
                             time.sleep(self.poll_seconds)
                             continue
                         key = "decision:" + checkpoint_id
