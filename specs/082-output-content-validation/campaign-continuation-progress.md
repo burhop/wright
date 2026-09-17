@@ -78,8 +78,14 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   parameter summary omits the required `wright-water-heater-v1@0.1.0` identity,
   producing targeted `kit-id` and `kit-version` findings. Focused tests:
   `34 passed in 5.17s`; Ruff passed.
+- All three drill-jig full profiles are now frozen and implemented. The existing
+  native STEP reader directly measures every declared body and flange circle at
+  2, 4 and 6 hole locations in the workpiece datum; retained STEP files pass all
+  automated checks. DXF/report inventory is bound, while stackup, keepouts, keys,
+  access, marking and claim scope require authenticated design review. Jig reader
+  and full-profile tests: `13 passed in 6.61s`.
 
 ## Next action
 
-C010–C012: implement the next reusable three-case family and keep the twelve full
-robot, heat, harness and water profiles pending exact review/correction evidence.
+C010–C012: implement the next reusable three-case family and keep the fifteen full
+profiles pending exact review/correction evidence.

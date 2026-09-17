@@ -337,6 +337,20 @@ for _scenario_id, _profile_sha, _baseline_sha in (
         "evidence": ["tests/external/process_validation/test_water_heater.py", "tests/external/process_validation/test_water_heater_profiles.py"],
     }
 
+for _scenario_id, _profile_sha, _baseline_sha in (
+    ("parametric-drill-jig-02", "6592d49505d2ecb87ab33ac9fa21a6d436c4852046ad2187efaffe582b8a7448", "77f06f130aeca4dbfaa6085eda8f8a1c7abc9671cb445479891fa087fb58094d"),
+    ("parametric-drill-jig-03", "3c0afcf348c3562c09098c158c2bcbe892b0cb3f92c036f9580b9013009c7d03", "d10f4d89c43d6140309c4a19fee7c88d0d83e39dfe2c0474e57cf5f9d8191a4f"),
+):
+    IMPLEMENTED_PROFILES[_scenario_id] = {
+        "profile_resource": _scenario_id,
+        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
+        "reader_ids": ["step-seat-geometry@1", "structured@1"],
+        "scope": "Actual STEP body/flange seat coordinates and diameters, required DXF/report deliverables and authenticated review of remaining geometry/design obligations.",
+        "limitations": "Required design reviews are not authenticated; physical fit, machining, drilling and supplier qualification remain excluded.",
+        "evidence": ["tests/external/process_validation/test_geometry.py", "tests/external/process_validation/test_jig_profiles.py"],
+    }
+
 FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
@@ -347,6 +361,15 @@ FULL_SCOPE_IMPLEMENTED = {
         "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
         "limitations": "Required basis review is not yet authenticated; physical thermal qualification and certification remain excluded.",
         "evidence": ["tests/external/process_validation/test_step_box.py", "tests/external/process_validation/test_heat_profiles.py"],
+    },
+    "parametric-drill-jig-01": {
+        "profile_resource": "parametric-drill-jig-01-full",
+        "profile_ref": {"id": "parametric-drill-jig-01-full", "version": "1", "sha256": "114a3a204e3e208a5bde00da35a5c6ada870bf303784d8ae8ca95d27be639492"},
+        "baseline_ref": {"id": "parametric-drill-jig-01-basis", "version": "1", "sha256": "f3018a6f6843cec7d03f2e7b06a86628206e4082ae3b4fd8e9b22521885a6644"},
+        "reader_ids": ["step-seat-geometry@1", "structured@1"],
+        "scope": "Actual STEP body/flange seat coordinates and diameters, required DXF/report deliverables and authenticated review of remaining geometry/design obligations.",
+        "limitations": "Required design reviews are not authenticated; physical fit, machining, drilling and supplier qualification remain excluded.",
+        "evidence": ["tests/external/process_validation/test_geometry.py", "tests/external/process_validation/test_jig_profiles.py"],
     },
 }
 
