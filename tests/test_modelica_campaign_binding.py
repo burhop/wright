@@ -50,7 +50,7 @@ def catalog(tmp_path):
     return runtime, projected, tool_path, manifest_path
 
 
-@pytest.mark.parametrize("index,steps,direct", [(1, 9, 7), (2, 9, 7), (3, 25, 23)])
+@pytest.mark.parametrize("index,steps,direct", [(1, 11, 7), (2, 11, 7), (3, 27, 23)])
 def test_every_generated_heater_node_resolves_and_keeps_original_stages(tmp_path, catalog, index, steps, direct):
     runtime, projected, tool_path, manifest_path = catalog
     directory = next((ROOT / "tests/datasets/engineering-workflows/scenarios/water-heater-sizing").glob(f"{index:02}-*"))
@@ -73,6 +73,32 @@ def test_every_generated_heater_node_resolves_and_keeps_original_stages(tmp_path
         assert path.endswith("/evidence.json")
         assert path in export.expected_files
         assert len(export.expected_files) == len(preparer.NATIVE_FILES)
+    study_producer = next(
+        step
+        for step in plan.steps
+        if set(step.expected_file_ports) == set(preparer.STUDY_OUTPUTS)
+    )
+    assert study_producer.id.startswith(
+        "compare_sealed_study_" if index == 3 else "verify_selection_"
+    )
+    review = next(
+        step for step in plan.steps if step.id.startswith("review_heater_outputs_")
+    )
+    validator = next(
+        step for step in plan.steps if step.id.startswith("validate_heater_content_")
+    )
+    assert review.external_action["action_kind"] == "local_review"
+    assert {role for role, _ in validator.validation_sources} == set(
+        preparer.STUDY_OUTPUTS
+    )
+    assert validator.validation["profile"]["name"] == f"water-heater-sizing-0{index}"
+    configured_review = review.external_action["settings"]["validation_review"]
+    assert configured_review["profile_ref"] == validator.validation["profile"][
+        "reference"
+    ]
+    assert configured_review["requirement_ids"]
+    assert plan.revisions == {}
+    assert "following process validator" in Path(result["source"]).read_text()
     for step in plan.steps:
         if step.tool_name or step.agent_task:
             runtime.preflight(step)

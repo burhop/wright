@@ -10,6 +10,7 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/water-heater-sizing.workflow.wflow"
+VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 spec = importlib.util.spec_from_file_location("modelica_binding_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
@@ -17,6 +18,14 @@ ORIGINAL = ["define_requirement", "run_allowed_settings", "verify_selection"]
 TOOLS = ["modelica_simulation_manifest_get", "modelica_simulation_request_template_get", "modelica_simulation_submit", "modelica_simulation_request_get", "modelica_export_recorded_result", "modelica_summarize_recorded_study"]
 NATIVE_FILES = ["request.json", "resolved-parameters.json", "WrightWaterHeater.mo", "scenario.json", "parameter-schema.json", "run.mos", "omc.log", "result.csv", "evidence.json", "run.json"]
 STUDY_FILES = ["temperature-time.csv", "power-comparison.csv", "energy-summary.csv", "temperature-curve.svg", "heater-selection.md", "kit-run-parameters.json"]
+STUDY_OUTPUTS = {
+    "timeline": "temperature-time.csv",
+    "comparison": "power-comparison.csv",
+    "energy": "energy-summary.csv",
+    "curve": "temperature-curve.svg",
+    "report": "heater-selection.md",
+    "parameters": "kit-run-parameters.json",
+}
 
 
 def csv_rows(path):
@@ -124,14 +133,14 @@ Get modelica_simulation_manifest_get for wright-water-heater-v1 version0.1.0 sce
 
 After each actual successful refined submission, call modelica_export_recorded_result with dataset_id={identity}, attempt_id={args.attempt}, exact refined request_id and expected_manifest_sha256={refined['manifest_sha256']}. Then call modelica_summarize_recorded_study ONCE after every required run with dataset_id,attempt_id, all baseline requests {json.dumps([{k: v for k, v in item.items() if k != 'output'} for item in observed])} plus every refined request/digest, time_limit_s={quantities['heat_up_limit']}, candidate_powers_w={json.dumps(candidates)}, loss_conductances_w_per_k={json.dumps([loss for _, loss in loss_cases])}. This computes independent target crossing, trapezoidal energy, capacity/loss balance and numerical stability from actual sealed CSVs and creates the comparison/energy/plot/report files. It must reject missing candidate/loss evidence.
 
-Write a clear engineering assessment of the actual outputs and limitations. For the mobile brewer, additionally account for the supplied inverter efficiency and battery Wh/usable-energy/per-batch constraints using actual electrical energy; distinguish battery input from delivered thermal energy. Do not claim supplier release or engineering content validation. Keep the original engineering requirement review, every baseline run, independent tighter rerun and final study artifacts. Never use the unrelated original kit or an ODE surrogate."""
+Write a clear engineering assessment of the actual outputs and limitations. For the mobile brewer, additionally account for the supplied inverter efficiency and battery Wh/usable-energy/per-batch constraints using actual electrical energy; distinguish battery input from delivered thermal energy. Do not claim supplier release. The following process validator determines requirements-compliance credit from the exact current study files. Keep the original engineering requirement review, every baseline run, independent tighter rerun and final study artifacts. Never use the unrelated original kit or an ODE surrogate."""
     verify["fields"].update(step_type="work", performed_by="ai_assisted", tool=None, reusable_step=None, inputs=[], outputs=[h.port(verify["id"] + "_result")], prompt=prompt, instructions=prompt)
     verify["fields"]["settings"] = {"authoring_template": "mcp-task", "mcp_server": args.server_id, "max_tool_calls": 24, "timeout_seconds": 600, "timestep_sensitivity_required": True, "arbitrary_source": False, "task_guidance": "Only the enrolled selected Modelica tools are available. Preserve actual sealed identities and complete all original engineering stages. Exported native evidence is immutable; no physical actions.", "output_format": "markdown", "save_output": True, "output_filename": output + "/workflow-heater-selection.md", "file_policy": "overwrite", "expected_files": "\n".join(output + "/" + name for name in [*STUDY_FILES, *[request_id + "/" + name for request_id in selected_ids for name in NATIVE_FILES]])}
     # The canonical compiler caps each node at16 declared native files. Retain
     # every file by expanding the multi-loss phase into ordinary export nodes.
     final_nodes = []
     if len(loss_cases) > 1:
-        refined_prompt = prompt.split("After each actual successful refined submission", 1)[0] + "The next explicit canonical nodes export every refined request and compute the independent time/energy/numerical-stability study. Complete only the selected tighter simulations in this task, then report the actual selected power and exact completed request identities. Retain every loss case."
+        refined_prompt = prompt.split("After each actual successful refined submission", 1)[0] + "The next explicit canonical nodes export every refined request and compute the independent time/energy/numerical-stability study. Complete only the selected tighter simulations in this task, then report the actual selected power and exact completed request identities. Retain every loss case. The following process validator determines requirements-compliance credit from the exact current study files."
         verify["fields"].update(prompt=refined_prompt, instructions=refined_prompt)
         verify["fields"]["settings"]["expected_files"] = ""
         for request_id, (label, _) in zip(selected_ids, loss_cases):
@@ -149,6 +158,122 @@ Write a clear engineering assessment of the actual outputs and limitations. For 
         h.add_reference(sections, item["output"], verify, "native_baseline_" + str(index), "workspace_file")
     chain.append(verify)
     chain.extend(final_nodes)
+    study_producer = final_nodes[-1] if final_nodes else verify
+    study_producer["fields"]["outputs"].extend(
+        h.port(role, "workspace_file") for role in STUDY_OUTPUTS
+    )
+    study_producer["fields"]["settings"]["expected_file_ports"] = {
+        role: output + "/" + filename for role, filename in STUDY_OUTPUTS.items()
+    }
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(
+        row for row in coverage["scenarios"] if row["scenario_id"] == identity
+    )
+    profile = support.get("full_profile")
+    if not profile:
+        raise ValueError("The water-heater full validator profile is unavailable")
+    profile_document = json.loads(
+        (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+            / (profile["profile_resource"] + ".json")
+        ).read_text(encoding="utf-8")
+    )
+    final_review = {
+        "kind": "task",
+        "id": "review_heater_outputs_" + suffix,
+        "fields": {
+            "name": "Review exact heater study outputs",
+            "purpose": "Review source-backed energy, refinement and release claims",
+            "group": None,
+            "step_type": "review",
+            "performed_by": "engineer",
+            "tool": None,
+            "reusable_step": None,
+            "inputs": [],
+            "outputs": [],
+            "instructions": "Review the exact energy summary, comparison and engineering report against every frozen review requirement. Approval does not authorize purchasing, construction or operation.",
+            "settings": {
+                "authoring_template": "external-action-approval",
+                "action_kind": "local_review",
+                "approval_binding": {
+                    "server": "wright",
+                    "tool": "review_artifacts",
+                    "schema": h.digest(b"wright.local_review.v1"),
+                },
+                "approval_destination": {"kind": "local_review", "id": "workspace"},
+                "approval_settings": {
+                    "review_task_id": "review_heater_outputs_" + suffix,
+                    "validation_review": {
+                        "profile_ref": profile["profile_ref"],
+                        "requirement_ids": sorted(
+                            requirement["id"]
+                            for requirement in profile_document["baseline"]["requirements"]
+                            if requirement["review_required"]
+                        ),
+                    },
+                },
+                "approval_action": {"kind": "local_review", "mode": "review_only"},
+            },
+        },
+    }
+    sections.append(final_review)
+    for role in ("energy", "comparison", "report"):
+        h.add_reference(
+            sections,
+            study_producer["id"] + "." + role,
+            final_review,
+            "review_" + role,
+            "workspace_file",
+        )
+    validator = {
+        "kind": "task",
+        "id": "validate_heater_content_" + suffix,
+        "fields": {
+            "name": "Validate current heater outputs",
+            "purpose": "Check the exact study against frozen requirements",
+            "group": None,
+            "step_type": "work",
+            "performed_by": "configured_tool",
+            "tool": None,
+            "reusable_step": None,
+            "inputs": [h.port("validate_" + role, "workspace_file") for role in STUDY_OUTPUTS],
+            "outputs": [h.port("assessment")],
+            "prompt": "",
+            "settings": {
+                "authoring_template": "process-validator",
+                "output_format": "json",
+                "max_revisions": 0,
+                "validation": {
+                    "profile": {
+                        "source": "packaged",
+                        "name": profile["profile_resource"],
+                        "reference": profile["profile_ref"],
+                    },
+                    "baseline": profile["baseline_ref"],
+                    "subjects": {
+                        role: "validate_" + role for role in STUDY_OUTPUTS
+                    },
+                },
+            },
+        },
+    }
+    sections.append(validator)
+    for role in STUDY_OUTPUTS:
+        sections.append(
+            {
+                "kind": "connection",
+                "id": "bind_" + validator["id"] + "_" + role,
+                "fields": {
+                    "type": "item",
+                    "from": study_producer["id"] + "." + role,
+                    "to": validator["id"] + ".validate_" + role,
+                    "label": "current heater output to validate",
+                    "when": None,
+                },
+            }
+        )
+    chain.extend([final_review, validator])
     for first, last in zip(chain, chain[1:]):
         sections.append({"kind": "connection", "id": "complete_sequence_" + last["id"], "fields": {"type": "order", "from": first["id"], "to": last["id"], "label": "complete native heater engineering chain", "when": None}})
     rendered = h.render(sections)

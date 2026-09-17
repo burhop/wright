@@ -198,8 +198,16 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   null total-drop defect can therefore reach the canonical gate as an actionable
   failure once the provider resumes. Harness/profile/runtime regression:
   `44 passed in 6.83s`; Ruff passed.
+- All three water-heater workflows now expose the exact timeline, comparison,
+  energy summary, curve, report and parameter files to their full profiles.
+  Single-loss cases bind the original verification stage; the multi-loss case
+  binds the sealed-study stage that actually creates those files. A post-study
+  engineer checkpoint pins the energy, refinement and claim-scope reviews before
+  validation. This makes the retained missing kit ID/version findings reachable
+  through the canonical gate. Modelica/preparer/profile/runtime regression:
+  `50 passed in 10.10s`; Ruff passed.
 
 ## Next action
 
-C012–C014: integrate the water-heater workflows, then prove an actionable
-retained-output defect through the canonical gate when the provider resumes.
+C012–C014: integrate the PCB workflows, then prove an actionable retained-output
+defect through the canonical gate when the provider resumes.
