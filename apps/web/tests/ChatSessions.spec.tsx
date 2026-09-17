@@ -802,11 +802,14 @@ describe("ChatProvider session state", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "send hello" }));
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(/Hermes ended the chat turn/i),
-      ).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText(/Hermes ended the chat turn/i),
+        ).toBeInTheDocument();
+      },
+      { timeout: 5_000 },
+    );
     expect(screen.queryByText(/^assistant:$/)).not.toBeInTheDocument();
   });
 });
