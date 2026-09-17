@@ -272,6 +272,10 @@
           "artifacts/process-validation/engineering/20260916T213859Z/heat/evidence.json"
         ]
       },
+      "campaign_credit": {
+        "full_scope": false,
+        "reason": "The qualified profile intentionally excludes required CAD, manufacturing, interface and physical scope, so it cannot establish whole-case compliance."
+      },
       "capabilities": [
         {
           "id": "thermal.conduction",
@@ -718,6 +722,10 @@
           "tests/external/process_validation/test_geometry.py",
           "artifacts/process-validation/engineering/20260916T213859Z/jig/evidence.json"
         ]
+      },
+      "campaign_credit": {
+        "full_scope": false,
+        "reason": "The qualified profile covers only H1/H2 seat geometry and excludes other mandatory jig, fit and manufacturing requirements."
       },
       "capabilities": [
         {

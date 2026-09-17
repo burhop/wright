@@ -1,7 +1,7 @@
 # Campaign continuation: 30/30/30/30
 
 **Date:** 2026-09-17. **Branch:** `codex/082-output-content-validation`.
-**Status:** Proposed follow-on plan; submitting [the saved goal](campaign-continuation-goal.md) approves implementation and campaign execution.
+**Status:** Active follow-on plan; the saved goal was submitted and approved implementation and campaign execution.
 
 ## Objective and authority
 
@@ -113,21 +113,21 @@ acceptance, retain that obligation as pending; do not silently exclude it for cr
 
 ### C0 — Reconcile and prepare a safe resumption
 
-- [ ] C001 Read this plan, AGENTS, the constitution, 082 quickstart/report contract
+- [x] C001 Read this plan, AGENTS, the constitution, 082 quickstart/report contract
   and the compact 081 recovery checkpoint. Inspect the campaign database/status,
   retry ledger, queue and owned-service receipts. Do not repeat branch recovery.
-- [ ] C002 Save a compact 30-row inventory of current input/template hashes,
+- [x] C002 Save a compact 30-row inventory of current input/template hashes,
   selected producer/run/output identity, output completeness, requirement baseline,
   full versus partial validator coverage, blocker and next action. Compare retained
   input snapshots with the checkout, including Windows line endings. Preserve raw
   identities and historical credit; do not edit receipts, revert requirements or
   broadly rerun everything merely to make hashes match.
-- [ ] C003 Check actual API, inference and native reader/provider availability.
+- [x] C003 Check actual API, inference and native reader/provider availability.
   Use one small disposable inference request on the configured Sol route. Recheck
   a quota hold at its indicated reset or a material configuration change, rather
   than repeatedly polling the model. Continue offline implementation if unavailable.
   Validate owned process identity, disk headroom and cleanup before startup/restart.
-- [ ] C004 Reconcile the staged pilot manifest against saved canonical instances,
+- [x] C004 Reconcile the staged pilot manifest against saved canonical instances,
   all input bindings, current tools/schemas, source/profile hashes and approval
   expiry. Re-enroll only when identity or authority changed. Retain old manifests.
   Clear a pause only after its recorded cause is resolved; never replay an
@@ -138,22 +138,22 @@ an executable offline work list. A runtime blocker does not block C1/C2 developm
 
 ### C1 — Make validation credit reliable
 
-- [ ] C005 Harden the existing exporter/campaign projection before increasing
+- [x] C005 Harden the existing exporter/campaign projection before increasing
   fourth-counter credit. Check exact subject/output revision, producer run,
   scenario, mandatory scope, profile/baseline and reader qualification/currentness.
   Reuse the runtime's authority and currentness logic; do not build a second
   evaluator in the dashboard. Validation errors must not erase separately proven
   generation/output completeness.
-- [ ] C006 Use one canonical assessment digest function. Inspection found
+- [x] C006 Use one canonical assessment digest function. Inspection found
   `ensure_ascii=False, allow_nan=False` in the exporter but default JSON options
   in `check_outputs`; cover non-ASCII findings and reject non-finite data consistently.
-- [ ] C007 Replace reliance on receipt-time `is_current`, a scenario-level
+- [x] C007 Replace reliance on receipt-time `is_current`, a scenario-level
   `qualified` flag and "any completed passing attempt" with checked currentness,
   full required-scope coverage and deterministic candidate selection. The existing
   two partial profiles must not earn whole-case passes. Test foreign profiles,
   wrong subjects, missing mandatory checks, stale baselines, tampered evidence,
   a newer failed attempt after a pass, and changed reader qualification.
-- [ ] C008 Keep the dashboard available at port 8771. Show historical versus
+- [x] C008 Keep the dashboard available at port 8771. Show historical versus
   current completion, output completeness separately from validator outcome,
   supported scope, blocker, failed requirements and assessment/report links.
   Change the fourth progress bar from the qualified-profile denominator to 30.

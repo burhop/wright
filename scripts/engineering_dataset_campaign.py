@@ -21,6 +21,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import quote, unquote, urlparse
 
+from core.process_validation import canonical_digest
+
 if __package__:
     from .engineering_dataset_diagnostics import build_diagnostics
 else:
@@ -98,11 +100,84 @@ def matches(name: str, pattern: str) -> bool:
     )
 
 
-def check_outputs(dataset: dict, receipt: dict, artifact_root: Path) -> dict:
-    """Check output identity and independently persisted validator assessments."""
+def _assessment_matches_campaign_scope(
+    assessment: dict, receipt: dict, produced: list[dict], support: dict | None
+) -> tuple[bool, list[str]]:
+    """Recompute exact output identity and whole-case coverage for campaign credit."""
+    errors = []
+    request = assessment.get("request")
+    profile = assessment.get("profile")
+    credit = support.get("campaign_credit", {}) if isinstance(support, dict) else {}
+    expected_profile = support.get("profile", {}) if isinstance(support, dict) else {}
+    if not isinstance(request, dict) or not isinstance(profile, dict):
+        return False, ["Validation assessment omits its request or pinned profile"]
+    if request.get("profile_ref") != expected_profile.get("profile_ref"):
+        errors.append("Validation profile reference differs from campaign coverage")
+    if request.get("baseline_ref") != expected_profile.get("baseline_ref"):
+        errors.append("Validation baseline reference differs from campaign coverage")
+    if request.get("run_id") != receipt.get("run_id"):
+        errors.append("Validation request belongs to another producer run")
+
+    deliverables = {
+        (
+            item.get("sha256"), item.get("run_id"), item.get("task_id"),
+            item.get("output_port"),
+        )
+        for item in produced
+        if isinstance(item, dict)
+        and item.get("artifact_role", "deliverable") != "verification"
+    }
+    subjects = request.get("subjects")
+    if not isinstance(subjects, list) or not subjects:
+        errors.append("Validation assessment has no bound subjects")
+        subjects = []
+    for subject in subjects:
+        producer = subject.get("producer", {}) if isinstance(subject, dict) else {}
+        identity = (
+            subject.get("sha256") if isinstance(subject, dict) else None,
+            producer.get("run_id"), producer.get("step_id"), producer.get("output_port"),
+        )
+        if producer.get("run_id") != receipt.get("run_id") or identity not in deliverables:
+            errors.append("Validation subject differs from an exact produced output revision")
+
+    mandatory = {
+        row.get("id")
+        for row in profile.get("baseline", {}).get("requirements", [])
+        if isinstance(row, dict) and row.get("mandatory") is True and row.get("id")
+    }
+    assessed = {
+        requirement_id
+        for check in assessment.get("checks", [])
+        if isinstance(check, dict)
+        for requirement_id in check.get("requirement_ids", [])
+        if isinstance(requirement_id, str)
+    }
+    expected_requirements = set(credit.get("requirement_ids", []))
+    expected_roles = set(credit.get("subject_roles", []))
+    actual_roles = {
+        subject.get("role") for subject in subjects
+        if isinstance(subject, dict) and isinstance(subject.get("role"), str)
+    }
+    full_scope = credit.get("full_scope") is True
+    if full_scope and (
+        not expected_requirements
+        or mandatory != expected_requirements
+        or not expected_requirements.issubset(assessed)
+        or not expected_roles
+        or actual_roles != expected_roles
+    ):
+        errors.append("Validation assessment does not cover the declared full campaign scope")
+        full_scope = False
+    return full_scope and not errors, errors
+
+
+def check_outputs(
+    dataset: dict, receipt: dict, artifact_root: Path, support: dict | None = None
+) -> dict:
+    """Check output identity separately from full-scope validation eligibility."""
     produced = receipt.get("produced_files", [])
     observed = []
-    errors = []
+    output_errors = []
     for item in produced:
         try:
             if not isinstance(item, dict) or not item.get("artifact_id"):
@@ -115,20 +190,20 @@ def check_outputs(dataset: dict, receipt: dict, artifact_root: Path) -> dict:
                 raise ValueError("An input copy cannot substitute for generated output")
             observed.append(item["path"])
         except (ValueError, KeyError, TypeError, OSError) as error:
-            errors.append(str(error))
+            output_errors.append(str(error))
     roles = {
         role["role"]: [name for name in observed if any(matches(name, p) for p in role["patterns"])]
         for role in dataset["expected_outputs"]
     }
     validations = []
+    validation_errors = []
     for validation in receipt.get("validations", []):
         try:
             if not isinstance(validation, dict):
                 raise ValueError("Validation references must be objects")
             relative = validation["assessment_artifact"]
             artifact = next(
-                item
-                for item in produced
+                item for item in produced
                 if item.get("path") == relative
                 and item.get("artifact_role") == "verification"
             )
@@ -141,34 +216,50 @@ def check_outputs(dataset: dict, receipt: dict, artifact_root: Path) -> dict:
             if (
                 validation.get("schema_version") != "wright.process-validation/1"
                 or validation.get("assessment_id") != assessment.get("id")
-                or validation.get("assessment_digest") != digest(
-                    json.dumps(assessment, sort_keys=True, separators=(",", ":")).encode()
-                )
+                or validation.get("assessment_digest") != canonical_digest(assessment)
                 or validation.get("summary") != summary
             ):
                 raise ValueError("Validation reference differs from the immutable assessment")
+            full_scope, identity_errors = _assessment_matches_campaign_scope(
+                assessment, receipt, produced, support
+            )
+            if identity_errors:
+                raise ValueError("; ".join(identity_errors))
             release_eligible = bool(
-                validation.get("is_current") is True
+                full_scope
+                and validation.get("is_current") is True
                 and validation.get("release_eligible") is True
+                and assessment.get("subject_current") is True
                 and summary.get("evaluation_complete") is True
                 and summary.get("requirements_compliant") is True
                 and summary.get("release_eligible") is True
             )
-            validations.append({**validation, "release_eligible": release_eligible})
+            validations.append({
+                **validation, "full_scope": full_scope,
+                "release_eligible": release_eligible,
+            })
         except (StopIteration, ValueError, KeyError, TypeError, OSError, json.JSONDecodeError) as error:
-            errors.append(str(error))
+            validation_errors.append(str(error))
+    full_scope_declared = bool(
+        isinstance(support, dict)
+        and support.get("campaign_credit", {}).get("full_scope") is True
+    )
     validation = {
-        "status": "pass" if validations and all(v["release_eligible"] for v in validations) else (
-            "hold" if validations else "not_run"
+        "status": "error" if validation_errors else (
+            "pass" if validations and all(v["release_eligible"] for v in validations)
+            else "partial" if validations and not full_scope_declared
+            else "hold" if validations else "not_run"
         ),
         "release_eligible": bool(validations and all(v["release_eligible"] for v in validations)),
         "assessments": validations,
+        "errors": validation_errors,
     }
     return {
-        "passed": not errors and all(roles.values()),
+        "passed": not output_errors and all(roles.values()),
         "roles": roles,
         "missing_roles": [role for role, paths in roles.items() if not paths],
-        "errors": errors,
+        "errors": output_errors + validation_errors,
+        "output_errors": output_errors,
         "content_validated": validation["release_eligible"],
         "validation": validation,
     }
@@ -260,33 +351,52 @@ class Campaign:
         db.row_factory = sqlite3.Row
         return db
 
-    def metrics(self, db) -> dict:
-        validated = set()
-        qualified = {
-            scenario_id for scenario_id, row in self.validation_coverage.items()
-            if row.get("support_status") == "qualified"
-        }
+    def _selected_current_attempts(self, db) -> dict[str, dict]:
         current_revisions = {}
         for row in db.execute("SELECT id,document FROM datasets"):
             dataset = json.loads(row["document"])
             current_revisions[row["id"]] = (
                 dataset["digest"], dataset["template_digest"]
             )
-        for row in db.execute("SELECT scenario_id,completed,document FROM attempts"):
+        selected = {}
+        for row in db.execute("SELECT scenario_id,document FROM attempts ORDER BY id"):
             attempt = json.loads(row["document"])
-            if (row["scenario_id"] in qualified
-                    and row["completed"] == 1
-                    and current_revisions.get(row["scenario_id"]) == (
-                        attempt.get("dataset_digest"), attempt.get("template_digest")
-                    )
-                    and attempt.get("output_check", {}).get("passed") is True
-                    and attempt.get("output_check", {}).get("validation", {}).get("release_eligible") is True):
-                validated.add(row["scenario_id"])
+            if current_revisions.get(row["scenario_id"]) != (
+                attempt.get("dataset_digest"), attempt.get("template_digest")
+            ):
+                continue
+            key = (attempt.get("started_at") or "", attempt.get("attempt_id") or "")
+            prior = selected.get(row["scenario_id"])
+            if prior is None or key >= prior[0]:
+                selected[row["scenario_id"]] = (key, attempt)
+        return {scenario_id: item[1] for scenario_id, item in selected.items()}
+
+    def current_metrics(self, db) -> dict:
+        selected = self._selected_current_attempts(db)
+        return {
+            "combinations_run": sum(
+                attempt.get("accepted_by_runtime") is True
+                and attempt.get("execution_kind") in {"live", "integration"}
+                for attempt in selected.values()
+            ),
+            "processes_with_outputs": sum(
+                attempt.get("completed_with_outputs") is True
+                for attempt in selected.values()
+            ),
+            "valid_data": sum(
+                attempt.get("completed_with_outputs") is True
+                and attempt.get("output_check", {}).get("validation", {}).get("release_eligible") is True
+                for attempt in selected.values()
+            ),
+        }
+
+    def metrics(self, db) -> dict:
+        current = self.current_metrics(db)
         return dict(zip(METRIC_KEYS, [
             db.execute("SELECT COUNT(*) FROM datasets").fetchone()[0],
             db.execute("SELECT COUNT(DISTINCT scenario_id) FROM attempts WHERE ran=1").fetchone()[0],
             db.execute("SELECT COUNT(DISTINCT scenario_id) FROM attempts WHERE completed=1").fetchone()[0],
-            len(validated),
+            current["valid_data"],
         ]))
 
     def event(self, db, kind: str, subject: str | None):
@@ -398,7 +508,9 @@ class Campaign:
                     or len(definition) != 64 or any(c not in "0123456789abcdef" for c in definition.lower())):
                 raise ValueError("Accepted runs require a start time and exact instantiated definition digest")
         ran = accepted and execution
-        structural = check_outputs(dataset, data, path.parent / "artifacts")
+        structural = check_outputs(
+            dataset, data, path.parent / "artifacts", self.validation_coverage.get(case_id)
+        )
         completed = (
             ran and data.get("status") in {"completed", "succeeded"}
             and data.get("terminal_step_reached") is True
@@ -450,11 +562,12 @@ class Campaign:
                     "SELECT document FROM attempts WHERE scenario_id=? ORDER BY id", (data["scenario_id"],)
                 )]
                 current = [a for a in attempts if a.get("dataset_digest") == data["digest"] and a.get("template_digest") == data["template_digest"]]
-                current.sort(key=lambda a: a.get("started_at") or "")
+                current.sort(key=lambda a: (a.get("started_at") or "", a.get("attempt_id") or ""))
+                selected = current[-1] if current else None
                 data.update(
-                    attempts=len(attempts), latest_status=current[-1]["status"] if current else "not_run",
-                    completed_current_revision=any(a["completed_with_outputs"] for a in current),
-                    latest_attempt=current[-1] if current else None,
+                    attempts=len(attempts), latest_status=selected["status"] if selected else "not_run",
+                    completed_current_revision=bool(selected and selected["completed_with_outputs"]),
+                    latest_attempt=selected,
                 )
                 support = self.validation_coverage.get(data["scenario_id"])
                 if support is None:
@@ -464,7 +577,7 @@ class Campaign:
                         "capabilities": [],
                     }
                 latest_validation = (
-                    current[-1].get("output_check", {}).get("validation") if current else None
+                    selected.get("output_check", {}).get("validation") if selected else None
                 )
                 data["validation"] = {
                     "support_status": support["support_status"],
@@ -478,12 +591,14 @@ class Campaign:
                     ),
                     "assessment_count": len(latest_validation.get("assessments", []))
                     if latest_validation else 0,
+                    "campaign_credit": support.get("campaign_credit", {"full_scope": False}),
                 }
                 datasets.append(data)
             history = [{"at": r["at"], "kind": r["kind"], "metrics": json.loads(r["metrics"])} for r in db.execute("SELECT * FROM events ORDER BY seq")]
             result = {
                 "campaign_id": self.config["campaign_id"], "target": self.config["target"],
-                "metrics": self.metrics(db), "approval_mode": db.execute("SELECT value FROM settings WHERE key='approval_mode'").fetchone()[0],
+                "metrics": self.metrics(db), "current_metrics": self.current_metrics(db),
+                "approval_mode": db.execute("SELECT value FROM settings WHERE key='approval_mode'").fetchone()[0],
                 "history": history, "updated_at": history[-1]["at"], "datasets": datasets,
                 "issues": [dict(r) for r in db.execute("SELECT * FROM issues ORDER BY path")],
                 "execution_adapter": "ready" if self.metrics(db)["combinations_run"] else "pending",
@@ -491,6 +606,10 @@ class Campaign:
                 "validation_coverage": {
                     "qualified": sum(
                         row["support_status"] == "qualified"
+                        for row in self.validation_coverage.values()
+                    ),
+                    "full_scope": sum(
+                        row.get("campaign_credit", {}).get("full_scope") is True
                         for row in self.validation_coverage.values()
                     ),
                     "unsupported": sum(

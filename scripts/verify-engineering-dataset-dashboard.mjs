@@ -25,6 +25,13 @@ try {
   const state = await (await page.request.get(url + "/api/status")).json();
   if (state.validation_coverage?.qualified !== 2 || state.validation_coverage?.unsupported !== 28)
     throw new Error("Validator coverage inventory is not projected faithfully");
+  if (state.validation_coverage?.full_scope !== 0)
+    throw new Error("Bounded validator profiles were incorrectly projected as full-scope campaign coverage");
+  if (!state.current_metrics || !Number.isInteger(state.current_metrics.processes_with_outputs))
+    throw new Error("Current-revision campaign metrics are missing");
+  await expect(page.locator("#current-runs")).toHaveText(String(state.current_metrics.combinations_run));
+  await expect(page.locator("#current-outputs")).toHaveText(String(state.current_metrics.processes_with_outputs));
+  await expect(page.locator("#full-scope-count")).toHaveText("0");
   if (JSON.stringify(state.history[0].metrics) !== JSON.stringify({
     datasets_created: 0, combinations_run: 0, processes_with_outputs: 0, valid_data: 0,
   })) throw new Error("Missing real zero baseline");

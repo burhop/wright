@@ -13,12 +13,14 @@ from pathlib import Path, PurePosixPath
 import re
 import time
 
+from core.process_validation import canonical_digest
+
 
 class EvidenceError(ValueError):
     pass
 
 
-EXPORTER_REVISION = 6
+EXPORTER_REVISION = 7
 
 
 def _public_error(record):
@@ -340,10 +342,7 @@ def export_run_evidence(run_record_path, *, workspace_root, export_root,
         _require(0 < len(assessment_bytes) <= 16 * 1024 * 1024,
                  "Validation assessment is empty or too large")
         assessment = json.loads(assessment_bytes)
-        assessment_digest = _sha(json.dumps(
-            assessment, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
-            allow_nan=False,
-        ).encode("utf-8"))
+        assessment_digest = canonical_digest(assessment)
         _require(validation.get("assessment_digest") == assessment_digest
                  and assessment.get("id") == assessment_id
                  and validation.get("summary") == assessment.get("summary"),
@@ -427,7 +426,9 @@ def export_run_evidence(run_record_path, *, workspace_root, export_root,
                          "Receipt destination was not enrolled as an exact test destination")
             candidates.append(({"artifact_id":artifact["id"], "path":public_path,
                 "workspace_path":location, "sha256":actual, "size_bytes":len(data), "run_id":run_id,
-                "task_id":task, "artifact_role":artifact.get("artifact_role","deliverable")}, data))
+                "task_id":task,
+                "output_port":artifact["provenance"].get("output_port"),
+                "artifact_role":artifact.get("artifact_role","deliverable")}, data))
     status = record.get("status")
     mapping = {"continuation_ready":"awaiting_approval", "changes_requested":"blocked",
                "external_action_not_dispatched":"blocked", "awaiting_external_outcome":"outcome_unknown",
