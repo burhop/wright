@@ -317,13 +317,26 @@ is `2026-09-19T11:09:44Z`. The runner pause remains in force.
   ended in the same non-retryable `E_POINTER` result with terminal cleanup. There is
   therefore no documented material fix to justify a successor native attempt under
   C019. The server being active proves discovery only, not flange recovery.
+- The first post-quota canonical pilot is now fixed as robot-tracking-01 attempt-006,
+  extracted from the enrolled 27-case queue at
+  `.local-run/feature-081-live/campaign-execution/validator-campaign-082/pilot-robot01-attempt006.json`.
+  Its fresh read-only preflight passes 1/1 with zero warnings, failures or prior run
+  records. This case exercises the full validator/review path with deterministic local
+  robot tools before spending native CAD retry budget. It has not been dispatched.
+- A generic just-in-time printed-case wrapper now exists at
+  `.local-run/feature-081-live/campaign-execution/run-validator-082-printed-case.py`.
+  It requires the configured Sol model, launches the existing lifecycle-owned guarded
+  Blender and fixed repair endpoints, calls the canonical preparer and existing campaign
+  runner, requires exact preflight and always performs terminal lifecycle cleanup. Its
+  syntax and CLI contract pass; it has not launched Blender or a workflow.
 
 ## Next action
 
-C016–C018: at the first available provider window, launch and enroll the three
-attempt-017 printed-part cases with their lifecycle-owned Blender/repair bindings,
-then run one current canonical case through review and full-profile validation.
-Resume the audited 27-case queue serially without resetting the retry ledger. Use the
-recovered CalculiX registration for fresh bracket runs. Keep the sheet-metal flange
-episode quarantined until an actual provider repair is identified and passes a focused
-owned diagnostic.
+C016–C018: after the recorded reset window, make one exact registered-session Sol
+readiness request. If it succeeds, dispatch only robot-tracking-01 attempt-006 through
+the existing runner and inspect its review plus full-profile assessment before expanding
+the queue. Then launch/enroll/run the three attempt-017 printed cases one at a time with
+the lifecycle wrapper, and resume the remaining audited queue serially without resetting
+the retry ledger. Use the recovered CalculiX registration for fresh bracket runs. Keep
+the sheet-metal flange episode quarantined until an actual provider repair is identified
+and passes a focused owned diagnostic.
