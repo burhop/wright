@@ -16,7 +16,10 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   canonical digest. Output completeness remains independent of validator errors.
 - The dashboard was ownership-checked and restarted at port 8771. Browser
   verification passed 30 rows, 30 input images, four chart series and narrow
-  layout with no browser errors.
+  layout with no browser errors. Its horizontal axis now uses equally spaced
+  persisted update numbers, so unsuccessful/unchanged observations remain flat
+  steps without creating time-based gaps. The 17,969-point live history renders
+  once per ledger revision instead of redrawing on every poll.
 
 ## Evidence and current state
 

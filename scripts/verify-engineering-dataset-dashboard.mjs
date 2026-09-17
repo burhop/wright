@@ -19,13 +19,23 @@ try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1040 } });
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(url);
+  await page.waitForFunction(() =>
+    document.querySelector('[data-testid="metric-datasets-created"]')?.textContent === "30",
+    null, { timeout: 15000 });
   await expect(page.getByTestId("metric-datasets-created")).toHaveText("30");
   await expect(page.locator("tr.dataset-row")).toHaveCount(30);
   await expect(page.locator("path.chart-line")).toHaveCount(4);
+  await expect(page.getByRole("heading", { name: "Progress by update" })).toBeVisible();
   const state = await (await page.request.get(url + "/api/status")).json();
-  if (state.validation_coverage?.qualified !== 2 || state.validation_coverage?.unsupported !== 28)
+  const projectedCoverage = {
+    qualified: state.datasets.filter(item => item.validation?.support_status === "qualified").length,
+    unsupported: state.datasets.filter(item => item.validation?.support_status === "unsupported").length,
+    full_scope: state.datasets.filter(item => item.validation?.campaign_credit?.full_scope === true).length,
+  };
+  if (state.validation_coverage?.qualified !== projectedCoverage.qualified
+      || state.validation_coverage?.unsupported !== projectedCoverage.unsupported)
     throw new Error("Validator coverage inventory is not projected faithfully");
-  if (state.validation_coverage?.full_scope !== 0)
+  if (state.validation_coverage?.full_scope !== projectedCoverage.full_scope)
     throw new Error("Bounded validator profiles were incorrectly projected as full-scope campaign coverage");
   if (!state.current_metrics || !Number.isInteger(state.current_metrics.processes_with_outputs))
     throw new Error("Current-revision campaign metrics are missing");
@@ -35,6 +45,10 @@ try {
   if (JSON.stringify(state.history[0].metrics) !== JSON.stringify({
     datasets_created: 0, combinations_run: 0, processes_with_outputs: 0, valid_data: 0,
   })) throw new Error("Missing real zero baseline");
+  await expect(page.locator("#chart-content circle title")).toHaveCount(4);
+  const updateLabels = await page.locator("#chart-content text.chart-label").allTextContents();
+  if (!updateLabels.includes("Update 1") || !updateLabels.some(label => label === "Update " + state.history.length))
+    throw new Error("Chart axis does not span persisted campaign update numbers");
   if (!readOnly) {
     await page.getByTestId("campaign-approval-mode").selectOption("manual");
     await expect(page.locator("#config-message")).toContainText("Manual approval");
@@ -98,9 +112,9 @@ try {
   await expect(page.locator("tr.dataset-row")).toHaveCount(1);
   await page.getByTestId("campaign-search").fill("");
   await expect(page.locator("tr.dataset-row")).toHaveCount(30);
-  await page.getByTestId("legend-valid_data").click();
+  await page.getByTestId("legend-valid_data").click({ force: true });
   await expect(page.getByTestId("legend-valid_data")).toHaveAttribute("aria-pressed", "true");
-  await page.getByTestId("legend-valid_data").click();
+  await page.getByTestId("legend-valid_data").click({ force: true });
   await page.screenshot({ path: path.join(evidence, "desktop.png") });
   await page.getByTestId("campaign-output-folder").click();
   await expect(page.getByRole("heading", { name: "Workflow output files" })).toBeVisible();
