@@ -180,6 +180,15 @@ def build(scenario_id, directory):
             )
     for role in ("plan", "pin_schedule", "cut_list", "bom", "assembly", "voltage_drop"):
         checks.append(check("deliverable-" + role, [rid("DELIVERABLES")], role))
+    review_ids = {
+        requirement_id
+        for item in checks
+        if item["constraint"]["operator"] == "review"
+        for requirement_id in item["requirement_ids"]
+    }
+    baseline = baseline.model_dump(mode="json")
+    for requirement in baseline["requirements"]:
+        requirement["review_required"] = requirement["id"] in review_ids
     return ValidationProfile.model_validate(
         {
             "id": scenario_id + "-full",

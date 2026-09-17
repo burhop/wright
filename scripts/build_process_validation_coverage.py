@@ -232,12 +232,12 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-01-full",
             "version": "1",
-            "sha256": "0d3704713b050507ce0cdc1d54288eadac617fd54601362fdd4bd281144c582c",
+            "sha256": "cd2b4b94c70aecdbac357b3a1f52dbde0f4f242a7675f75c54c468e69b99cfda",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-01-basis",
             "version": "1",
-            "sha256": "17d6451a1e12dad10f74c8b095c996bad312ba27fa9763c69c7e6ad82491227b",
+            "sha256": "a1b6db09fddaaf3f80acfa2914daf3e0850160f9b09693879024425fe9020e26",
         },
         "reader_ids": ["structured@1", "tracking-timeline@1"],
         "scope": "Traceable conversion, alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
@@ -252,12 +252,12 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-02-full",
             "version": "1",
-            "sha256": "6c7f0759d057cd6389c933d74bfbed1341e6df8cd5a2e3803dbe98e109c83db8",
+            "sha256": "8f8a0ef5b8e0205211265e743b4ffe21cbf926baedf26b9839ab7d5fd3ecef2e",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-02-basis",
             "version": "1",
-            "sha256": "d2855eaa739e67fe4a8df94c50d47abc4b538ff7753a5230f3a314ebbfb388a2",
+            "sha256": "4caf51cc91a953004bce257b90216e83d50b7836a3b83196fbaf5a0a3842a9b1",
         },
         "reader_ids": ["structured@1", "tracking-timeline@1"],
         "scope": "Traceable conversion, spatial/time alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
@@ -272,12 +272,12 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-03-full",
             "version": "1",
-            "sha256": "19f58fd4bb6351737ae733c5610b0db9107594386dfa3caf8ed76cefa61628cc",
+            "sha256": "766ee7e00b881da64b276866db1aeddf13d1a4bb462238be0edba89411b04350",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-03-basis",
             "version": "1",
-            "sha256": "200605741a81745b82408656a1d12bdae388e74b5e3a86dbfbe0beb457976656",
+            "sha256": "c08adf5cd747d36651e57e565fb5a63b4c989b7f25041321eec44ccbaee257ce",
         },
         "reader_ids": ["structured@1", "tracking-timeline@1"],
         "scope": "Traceable conversion, missing-sample preservation, retained timeline metrics, wrapped yaw, event correspondence, deliverable presence and required plot/diagnosis reviews.",
@@ -289,8 +289,8 @@ IMPLEMENTED_PROFILES = {
     },
     "heat-spreader-sizing-02": {
         "profile_resource": "heat-spreader-sizing-02-full",
-        "profile_ref": {"id": "heat-spreader-sizing-02-full", "version": "1", "sha256": "42daf6deb97644e39d119240559e54d21e0ee6cd5a062fe86ed4b5060ef2ae66"},
-        "baseline_ref": {"id": "heat-spreader-sizing-02-basis", "version": "1", "sha256": "c135eb38bdb6df7de1059cba125b4d9ffa857f9646c026afb6f30d8caf366021"},
+        "profile_ref": {"id": "heat-spreader-sizing-02-full", "version": "1", "sha256": "8f2e182b675c1aa0b2af47d8323b9355446353b4cc71a49ea548a087e65a22a2"},
+        "baseline_ref": {"id": "heat-spreader-sizing-02-basis", "version": "1", "sha256": "e8f86603db3713c227be1f311485f150e2cf1fbe4aae35998678429c7822c139"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
         "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
         "limitations": "Required basis review is not yet authenticated; physical thermal qualification and certification remain excluded.",
@@ -298,8 +298,8 @@ IMPLEMENTED_PROFILES = {
     },
     "heat-spreader-sizing-03": {
         "profile_resource": "heat-spreader-sizing-03-full",
-        "profile_ref": {"id": "heat-spreader-sizing-03-full", "version": "1", "sha256": "9802f76c9413ba9bc8ce312a5c90f0b78b2927ad7bf090396459d04a4bf620d8"},
-        "baseline_ref": {"id": "heat-spreader-sizing-03-basis", "version": "1", "sha256": "b7aa6aff79adc8b3f6782495c73cc9bbb17dbfa4df763cc92281693ae6add6f7"},
+        "profile_ref": {"id": "heat-spreader-sizing-03-full", "version": "1", "sha256": "af5febbc9017bb37b9f4e5d15ed6445c2d3e4d76cc0ddb3bc24579263b0042ec"},
+        "baseline_ref": {"id": "heat-spreader-sizing-03-basis", "version": "1", "sha256": "c30c4e62e2048071105e830ad347b6d5a9341ce6e4d1b94ad31a50651a4949b7"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
         "scope": "Actual STEP envelopes, contact-resistance fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required design review.",
         "limitations": "Required design review is not yet authenticated; physical thermal qualification and certification remain excluded.",
@@ -308,9 +308,9 @@ IMPLEMENTED_PROFILES = {
 }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sensor-fan-harness-01", "585eb8e5b0d72bce2f82de8a515354548e8e23eb821ef0fd80f120f5ec821621", "2bb18ff7bab8624f21dea88b8df297ea42a9fe7e144a75373d5f46903cc8efed"),
-    ("sensor-fan-harness-02", "6108bfcac945ff3018c19a581e72aef2dcf615dba62295a5b5d2ebc6ffb26578", "81b536a099781344aef35d76d34c9b3128c44f8f88ea508809af0aafefdbce9e"),
-    ("sensor-fan-harness-03", "08a75a770bf113319b42c3190930877285758762cf068f4c51b25e2975e46ff9", "b1083fac47ba76119e11185808a18c5ceb552950de3260f341d6566ed81e7648"),
+    ("sensor-fan-harness-01", "eddd68314f61e6ac107009d923cc2c80ef5956cdd0f529a3b77dffbed15f5ca5", "0a17c7a175b00f57d758068762bc76bf294dfe19028b400bedaf893a24c68eb1"),
+    ("sensor-fan-harness-02", "39feee2cbf5cd848bc8f43087073f166b1d186fd18670761169399c88928c66a", "f2d5bbbddc28104471bd5ee9da4434fe18288e082f3f3ed145c0549cef091c6c"),
+    ("sensor-fan-harness-03", "a483f3c85cf24565d29580c20c97d55c96e8d79ab7e0d058d2a0b8b75be1dd86", "fa7d92b76771ed1305ef37510c65b4756a16ae6541291d9bdd67aaeb1eec7d87"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
@@ -323,9 +323,9 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("water-heater-sizing-01", "50cbd44da2968007256b4826d4aa4b4f7ca0783f001ac6372c58143ef4e2705c", "6f83a7235a75361b4fc8168f288d6d4277601dce31d88949bf8c7294c8b1f741"),
-    ("water-heater-sizing-02", "bb1998684bf64f76a576fb101a434e3297caeab6f881a9386d7e48317b667cc5", "5e2ab52fe2ca956a0e207e7f1d93601a9ed0ab88a03d8759955d791dbedd9e66"),
-    ("water-heater-sizing-03", "e4ea406d1eb765a967c5405f075e2f670ba39586f7f353fca2057b3715e4785a", "84ba8e72f5de5df5f687a9bbb112da23b89fd71f2aeb037fa784d00d1495eae0"),
+    ("water-heater-sizing-01", "d04f0c7cf7a074ee2f5e26141c6673e2a3304ea8c8cc37b03bad1ecc2857d2c1", "83dc0e6d9877a46c9b0c5ba0c84941ffcfff06fa32eadfab4cccf3248bd8bde5"),
+    ("water-heater-sizing-02", "5ef2ef688dd957f0e0294ea36ef5926ab8f948bdb2f9ef6089b1e2f8e0a29f54", "4f3aaa8fac7278c69de7fbca166477a151cfd07869d9c37db493c337c8f99f34"),
+    ("water-heater-sizing-03", "df62db9766be2c52fb616f620b3917a2087f31c996570030a3496bf0d66e7d28", "c8303d44b3d63733d64cd03270f3b3cd4f1786edf5b187d824227dd476ca863c"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
@@ -338,8 +338,8 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("parametric-drill-jig-02", "6592d49505d2ecb87ab33ac9fa21a6d436c4852046ad2187efaffe582b8a7448", "77f06f130aeca4dbfaa6085eda8f8a1c7abc9671cb445479891fa087fb58094d"),
-    ("parametric-drill-jig-03", "3c0afcf348c3562c09098c158c2bcbe892b0cb3f92c036f9580b9013009c7d03", "d10f4d89c43d6140309c4a19fee7c88d0d83e39dfe2c0474e57cf5f9d8191a4f"),
+    ("parametric-drill-jig-02", "fd39181e0c3a7d5262b27b17ff837f4cbd86fab7d67a524f101d9cd259bec754", "01ab65b9f751d126beb09c310e17339bd32fbae19581f86b27313b4e443df4b0"),
+    ("parametric-drill-jig-03", "381bdca15a9d7e6345290436d1cb9d92dd7f086c47feed64373faeb528c48052", "6c26d73189485eaba89e07ab551c83afa40fae40fda86b43ec8a36ac891f38cc"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
@@ -352,9 +352,9 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sensor-interface-pcb-01", "bb2524c35af414900992f39d3330387316187fa7217c082d68b17bbe719e8007", "e24d15c8f27361632e58b9dcb3e3687e97446d95de21905cef1792dbc59ddb79"),
-    ("sensor-interface-pcb-02", "f574687e600949f5b33887ab97ac14b02c7d0e5f251ac494c93d390614009f7a", "e538f38efa35d709ee8c2b53bdf33c0f50ebdd316ecdb68830979cf3bb8260b3"),
-    ("sensor-interface-pcb-03", "c0964bd98e92480c3c8e2bc1d258fdf72ff504ee26268355c53d8f4f52b62855", "eac0a5621632de48fd80a2aec4cbf38dd01021f9c48fd95106e4bcc46015bcfe"),
+    ("sensor-interface-pcb-01", "475534cde9bfc17074a0e884832b3652a427bbc56177a742be46d0bd4469712a", "31b433c19c4ce8d394a7e43bf40ee0dcd893f26a5e72e7a9df7b61a4372fd8f8"),
+    ("sensor-interface-pcb-02", "087c28536581acf837f0ea440826c1effac10c81eec0aed6db90abbf0d1d5954", "80c90a52422a8b25fccc23d4b430ce3543b8ebf63b92c989fa1a0591d4aea75d"),
+    ("sensor-interface-pcb-03", "ee98e22382d98f411a4f2ceeeda5f85a942c40b561fd35062583749a57e884cd", "3073a159f73f58b8661f9aca13e40d8acca067636a0c05529854683c0239159b"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
@@ -430,8 +430,8 @@ FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
         "profile_resource": "heat-spreader-sizing-01-full",
-        "profile_ref": {"id": "heat-spreader-sizing-01-full", "version": "1", "sha256": "41dc00c372147995ef6e68a86052c98d7a5b8e8c0ad9986e5ed624733e678923"},
-        "baseline_ref": {"id": "heat-spreader-sizing-01-basis", "version": "1", "sha256": "819635eab37792ce1fee9832e5c085c5803760b61a4350e04b50de818c17c968"},
+        "profile_ref": {"id": "heat-spreader-sizing-01-full", "version": "1", "sha256": "626485b183053ea12f559c0ab31b85bcbfa893141fd5585f8cd302bebfc00481"},
+        "baseline_ref": {"id": "heat-spreader-sizing-01-basis", "version": "1", "sha256": "648762c15d9461eedc7067bc51272e7fcc5e75e1a785efdfaa47efc123dd4e20"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
         "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
         "limitations": "Required basis review is not yet authenticated; physical thermal qualification and certification remain excluded.",
@@ -439,8 +439,8 @@ FULL_SCOPE_IMPLEMENTED = {
     },
     "parametric-drill-jig-01": {
         "profile_resource": "parametric-drill-jig-01-full",
-        "profile_ref": {"id": "parametric-drill-jig-01-full", "version": "1", "sha256": "114a3a204e3e208a5bde00da35a5c6ada870bf303784d8ae8ca95d27be639492"},
-        "baseline_ref": {"id": "parametric-drill-jig-01-basis", "version": "1", "sha256": "f3018a6f6843cec7d03f2e7b06a86628206e4082ae3b4fd8e9b22521885a6644"},
+        "profile_ref": {"id": "parametric-drill-jig-01-full", "version": "1", "sha256": "0d1cbca11861a0fe8b18f47887568b1420a72b553baf413180c70892d5647724"},
+        "baseline_ref": {"id": "parametric-drill-jig-01-basis", "version": "1", "sha256": "71f0fad592432ba092f5f2a170012875417044daeeb6306faa9f93446f21f3a4"},
         "reader_ids": ["step-seat-geometry@1", "structured@1"],
         "scope": "Actual STEP body/flange seat coordinates and diameters, required DXF/report deliverables and authenticated review of remaining geometry/design obligations.",
         "limitations": "Required design reviews are not authenticated; physical fit, machining, drilling and supplier qualification remain excluded.",

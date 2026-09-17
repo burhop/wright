@@ -147,8 +147,13 @@ estimate `2026-09-19T11:09:44Z`. The runner pause remains in force.
   reproduced identical PNG bytes. Focused reader/profile/preparer/coverage
   tests: `15 passed in 2.57s`; full process-validation and preparer regression:
   `133 passed in 52.05s`; Ruff passed.
+- Authenticated-review semantics are now consistent across all 30 full
+  profiles. Eighteen earlier heat, jig, tracking, harness, PCB and water-heater
+  profiles were regenerated so every review check maps exactly to a baseline
+  requirement marked `review_required=true`; a coverage-wide invariant prevents
+  recurrence. Review/profile regression: `130 passed in 51.21s`; Ruff passed.
 
 ## Next action
 
-C010–C012: align authenticated-review flags across all thirty full profiles,
-then connect the remaining profiles to their process gates and correction paths.
+C010–C012: connect the remaining full profiles to their process gates and
+correction paths, starting with a retained-output family before expensive reruns.

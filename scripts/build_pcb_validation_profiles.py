@@ -238,6 +238,15 @@ def build(scenario_id, pack_name):
                 method="human_review",
             )
         )
+    review_ids = {
+        requirement_id
+        for item in checks
+        if item["constraint"]["operator"] == "review"
+        for requirement_id in item["requirement_ids"]
+    }
+    baseline = baseline.model_dump(mode="json")
+    for requirement in baseline["requirements"]:
+        requirement["review_required"] = requirement["id"] in review_ids
     return ValidationProfile.model_validate(
         {
             "id": scenario_id + "-full",

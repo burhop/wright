@@ -119,6 +119,17 @@ def test_qualified_entries_pin_loadable_profiles_readers_and_evidence():
         assert profile.reference().model_dump(mode="json") == metadata["profile_ref"]
         assert profile.baseline.reference().model_dump(mode="json") == metadata["baseline_ref"]
         assert {f"{check.reader}@1" for check in profile.checks} == set(metadata["reader_ids"])
+        review_ids = {
+            requirement_id
+            for check in profile.checks
+            if check.constraint.operator == "review"
+            for requirement_id in check.requirement_ids
+        }
+        assert review_ids == {
+            requirement.id
+            for requirement in profile.baseline.requirements
+            if requirement.review_required
+        }
 
 
 def test_every_unqualified_capability_has_an_explicit_extension_path():
