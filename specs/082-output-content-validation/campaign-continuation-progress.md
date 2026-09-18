@@ -20,12 +20,12 @@ historical evidence only. The global campaign pause was released at
   verification passed 30 rows, 30 input images, four chart series and narrow
   layout with no browser errors. Its horizontal axis now uses equally spaced
   persisted update numbers, so unsuccessful/unchanged observations remain flat
-  steps without creating time-based gaps. The 17,969-point live history renders
-  once per ledger revision instead of redrawing on every poll.
+  steps without creating time-based gaps. Internal observer snapshots remain in
+  the evidence ledger but are collapsed out of the plotted update sequence.
 - The Windows restart command now terminates the already-verified owned process
   tree as one unit. This fixes the prior `Stop-Process` child/parent race; the
-  corrected script successfully relaunched the dashboard with 30 rows, 17,969
-  update events, zero unsupported profiles and unchanged honest campaign counts.
+  corrected script successfully relaunched the dashboard with 30 rows, zero
+  unsupported profiles and unchanged honest campaign counts.
 
 ## Evidence and current state
 
@@ -667,12 +667,31 @@ inferred human approvals, no browser or request errors and no narrow-layout over
 Evidence and desktop/mobile snapshots are under
 `artifacts/process-validation/dashboard-validator-082-20260918/`.
 
-C016–C018: readiness is complete and the campaign is unpaused. Run the launcher's
-`pilot` action for robot-tracking-01 attempt-006 and inspect its human review plus
-full-profile assessment before expanding the queue, using the successful readiness
-receipt and 27-case catalog as the exact checklist. Then launch/enroll/run the three
-attempt-017 printed cases one at a time with
-the lifecycle wrapper, and resume the remaining audited queue serially without resetting
-the retry ledger. Use the recovered CalculiX registration for fresh bracket runs. Keep
-the sheet-metal flange episode quarantined until an actual provider repair is identified
-and passes a focused owned diagnostic.
+C016–C018: readiness completed and the campaign was unpaused. Robot-tracking-01
+attempt-006 failed at `normalize_csv_to_ros2` because its staged operation source hash
+predated the qualified float-boundary repair. Attempt-007 preserved that receipt,
+enrolled the exact current source and cleared normalization, but its bag-inspection
+step correctly stopped because the connected normalization response had summarized
+the conversion manifest to a path and hash. Both failures were recorded as flat
+`30/30/24/17` dashboard updates; neither received output or validator credit.
+
+The robot preparer now preserves the conversion tool's exact topic/schema/count array
+in the normalization response and tells the connected bag-only inspection to compare
+its independently observed counts against that response. Focused preparation coverage
+passes. Attempt-008 enrolled this bounded correction, passed exact preflight 1/1, and
+completed normalization, independent bag inspection, metrics generation and the
+evidence-linked diagnosis. All five bag types and counts match the conversion manifest;
+the run is paused at the required human validation review with run
+`bf32d836e9dd4250bd34594748ceda87` and checkpoint
+`checkpoint-73451232a9738513da519bee`. The three pending requirements are
+`ROBOT01-ACTION-SCOPE`, `ROBOT01-DIAGNOSIS` and `ROBOT01-PLOTS`. No approval was
+inferred and the validator has not run.
+
+Next, complete that exact checkpoint through the normal Workflows UI. Resume the same
+attempt only after the API shows a real authenticated human actor and the exact subject
+digest remains current. Inspect the resulting full-profile assessment before replacing
+attempt-006 with attempt-008 in the 27-case queue. Then run the three attempt-017 printed
+cases one at a time with the lifecycle wrapper and resume the remaining audited queue
+serially without resetting the retry ledger. Use the recovered CalculiX registration
+for fresh bracket runs. Keep the sheet-metal flange episode quarantined until an actual
+provider repair is identified and passes a focused owned diagnostic.
