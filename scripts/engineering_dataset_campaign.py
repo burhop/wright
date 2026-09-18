@@ -347,8 +347,16 @@ class Campaign:
 
     def connect(self):
         db = sqlite3.connect(self.db, timeout=20)
-        db.execute("PRAGMA journal_mode=WAL")
         db.row_factory = sqlite3.Row
+        db.execute("PRAGMA busy_timeout=20000")
+        # Reissuing journal_mode=WAL needs a write lock even when the database is
+        # already in WAL mode.  Dashboard reads and the background scanner use
+        # separate connections, so that needless write can deadlock behind a
+        # legitimate full-audit transaction.  Initialize WAL once, then leave an
+        # established database in its current mode.
+        journal_mode = db.execute("PRAGMA journal_mode").fetchone()[0]
+        if str(journal_mode).lower() != "wal":
+            db.execute("PRAGMA journal_mode=WAL")
         return db
 
     def _selected_current_attempts(self, db) -> dict[str, dict]:

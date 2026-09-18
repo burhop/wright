@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sqlite3
 import threading
 
 import pytest
@@ -223,6 +224,16 @@ def test_campaign_update_records_zero_delta_history_step(corpus):
     corpus.record_update("Validator results unchanged", validator_passes=17)
     overridden = corpus.status()["history"][-1]
     assert overridden["metrics"] == {**before["metrics"], "valid_data": 17}
+
+
+def test_dashboard_reads_do_not_reassert_wal_behind_an_active_writer(corpus):
+    corpus.scan()
+
+    with sqlite3.connect(corpus.db, timeout=0.1) as writer:
+        writer.execute("BEGIN IMMEDIATE")
+        status = corpus.status()
+
+    assert status["metrics"]["datasets_created"] == 3
 
 
 def test_retry_attempts_and_restart_count_a_pair_only_once(corpus):

@@ -641,6 +641,27 @@ Solid Edge quarantine gates are preserved. Independent read-only preflights pass
 for refreshed wave 02 and 6/6 for refreshed wave 03, with zero warnings, failures or
 observed runs. Original wave manifests, plan and readiness evidence remain intact.
 
+A live full-byte reconciliation exposed and then qualified a dashboard SQLite
+coordination defect. Every connection was reissuing `PRAGMA journal_mode=WAL`, which
+requested a write lock even after WAL mode was established and raced a legitimate
+full-audit writer. Connections now read the current mode first and only initialize WAL
+when needed; a regression holds an active writer while a dashboard status read succeeds.
+The 47-test campaign suite and Ruff pass. After an owned dashboard restart, the
+incremental observer returns current with no error or ingestion issue, and a concurrent
+full audit completes successfully. The refreshed fail-closed completion report remains
+correctly incomplete at 0/30 current rows: detached retained-output validation does not
+invent current workflow attempts or campaign-ingested assessment credit.
+
+The same audit found that later operational events could visually lower the chart's
+validator line from the selected retained result of 17 back to the campaign ledger's
+zero. Chart history now carries the selected retained pass count forward from its
+observation time while allowing a higher current validated count to supersede it. The
+served acceptance audit verifies 30 rows, 10 workflow families, `30/30/24/17`, four
+update-driven lines ending at update 90, visible pass and failure states, HTTP 200 for
+the findings/JSON/RTM links, current freshness, zero inferred human approvals, no browser
+or request errors and no narrow-layout overflow. Evidence and desktop/mobile snapshots
+are under `artifacts/process-validation/dashboard-validator-082-20260918/`.
+
 C016–C018: after the recorded reset window, run the launcher's `readiness` action once.
 If its receipt is successful, run its `pilot` action and inspect robot-tracking-01's human
 review plus full-profile assessment before expanding the queue, using the frozen pilot
