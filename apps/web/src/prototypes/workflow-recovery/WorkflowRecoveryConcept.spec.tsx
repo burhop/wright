@@ -494,6 +494,47 @@ describe("WorkflowRecoveryConcept component states", () => {
     expect(onSave).toHaveBeenCalledTimes(2);
   });
 
+  it("shows authoritative template qualification and blocks a setup-required run before dispatch", async () => {
+    const onRun = vi.fn();
+    const onRefreshTemplateReadiness = vi.fn();
+    render(
+      <Editor
+        onRun={onRun}
+        onRefreshTemplateReadiness={onRefreshTemplateReadiness}
+        templateReadiness={{
+          state: "setup_required",
+          template_id: "printed-replacement-part",
+          template_version: "1.0.0",
+          source_digest: null,
+          layout_digest: null,
+          definition_valid: true,
+          configured: false,
+          qualified: false,
+          available: false,
+          verified_run: false,
+          facts: [],
+          blocking_reasons: [
+            "Connect and qualify the required engineering tools.",
+          ],
+          message: null,
+        }}
+      />,
+    );
+    await userEvent.click(
+      screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+    );
+    expect(screen.getByText("Setup required")).toBeVisible();
+    await userEvent.click(
+      screen.getByTestId("workflow-recovery-template-readiness-refresh"),
+    );
+    expect(onRefreshTemplateReadiness).toHaveBeenCalledOnce();
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    expect(onRun).not.toHaveBeenCalled();
+    expect(screen.getByTestId("workflow-native-run-summary")).toHaveTextContent(
+      "Run blocked before prompt dispatch",
+    );
+  });
+
   it("corrects the old single-file image template on save while preserving its file and identity", async () => {
     const workflow = cloneWorkflow(initialWorkflow);
     const image = createAuthoringObject("image-input", workflow, initialLayout);
@@ -608,17 +649,23 @@ describe("WorkflowRecoveryConcept component states", () => {
       taskTitle: string;
       taskId: string;
     }) => void;
-    const onRun = vi.fn().mockImplementation(
-      () =>
-        new Promise<{
-          outputPath: string;
-          outputBytes: number;
-          taskTitle: string;
-          taskId: string;
-        }>((resolve) => {
-          resolveRun = resolve;
-        }),
-    );
+    const onRun = vi.fn().mockImplementation((options?: WorkflowRunOptions) => {
+      options?.onEvent?.({
+        kind: "run_started",
+        at: new Date().toISOString(),
+        task_id: "",
+        task_title: "Create HTML report",
+        run_log_path: "runs/report.json",
+      });
+      return new Promise<{
+        outputPath: string;
+        outputBytes: number;
+        taskTitle: string;
+        taskId: string;
+      }>((resolve) => {
+        resolveRun = resolve;
+      });
+    });
     render(
       <Editor
         workflowSource={reportWorkflowSource}
@@ -642,9 +689,6 @@ describe("WorkflowRecoveryConcept component states", () => {
     expect(
       screen.getByTestId("workflow-recovery-native-run-input"),
     ).toHaveTextContent("Prompt sent to");
-    expect(
-      screen.getByTestId("workflow-recovery-native-run-input"),
-    ).toHaveTextContent(reportPrompt);
     expect(
       screen.getByTestId("workflow-recovery-native-run-log"),
     ).toHaveTextContent("Run requested");
@@ -1261,7 +1305,7 @@ end`;
     expect(screen.queryByText("Workflow completed")).not.toBeInTheDocument();
   });
 
-  it("clears a failed run's canvas badge while keeping the error and submitted prompt in run details", async () => {
+  it("clears a rejected run's canvas badge without claiming that a prompt was dispatched", async () => {
     const onRun = vi
       .fn()
       .mockRejectedValue(
@@ -1282,8 +1326,8 @@ end`;
       ).toHaveTextContent("Model connection lost"),
     );
     expect(
-      screen.getByTestId("workflow-recovery-native-run-input"),
-    ).toHaveTextContent(reportPrompt);
+      screen.queryByTestId("workflow-recovery-native-run-input"),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByTestId("workflow-recovery-block-block.document-1"),
     ).toHaveAttribute("data-run-state", "idle");
@@ -1346,6 +1390,61 @@ end`;
     expect(onRun).toHaveBeenCalledWith(
       expect.objectContaining({ expectedStorageDigest: "c".repeat(64) }),
     );
+  });
+
+  it("does not start two runs when Save & run is clicked while the save is pending", async () => {
+    let savedSource = "";
+    let resolveSave!: (result: {
+      source: string;
+      definition_revision: number;
+      storage_digest: string;
+    }) => void;
+    const onSave = vi.fn(
+      (source: string) =>
+        new Promise<{
+          source: string;
+          definition_revision: number;
+          storage_digest: string;
+        }>((resolve) => {
+          savedSource = source;
+          resolveSave = resolve;
+        }),
+    );
+    const onRun = vi.fn(async () => ({
+      outputPath: "report-rapid.json",
+      outputBytes: 10,
+      taskTitle: "Create HTML report",
+    }));
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        definitionRevision={2}
+        storageDigest={"b".repeat(64)}
+        onSave={onSave}
+        onRun={onRun}
+      />,
+    );
+    fireEvent.click(
+      screen.getByTestId("workflow-recovery-block-block.document-1"),
+    );
+    fireEvent.change(
+      screen.getByTestId(
+        "workflow-recovery-block-instructions-block.document-1",
+      ),
+      { target: { value: "Save exactly once." } },
+    );
+
+    const saveAndRun = screen.getByRole("button", { name: "Save & run" });
+    fireEvent.click(saveAndRun);
+    fireEvent.click(saveAndRun);
+    expect(onSave).toHaveBeenCalledOnce();
+
+    resolveSave({
+      source: savedSource,
+      definition_revision: 3,
+      storage_digest: "c".repeat(64),
+    });
+    await waitFor(() => expect(onRun).toHaveBeenCalledOnce());
   });
 
   it("does not run after a failed save and keeps the prompt draft", async () => {
@@ -1787,6 +1886,23 @@ end`;
         screen.getByTestId("workflow-recovery-concept").dataset.semanticDigest,
       ).toMatch(/^sha256:/),
     );
+    expect(
+      screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+    ).toHaveTextContent("4 items need attention");
+    await userEvent.click(
+      screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+    );
+    expect(
+      screen.getByTestId("workflow-recovery-run-readiness"),
+    ).toHaveTextContent("0/3 configured");
+    expect(
+      screen.getByTestId("workflow-recovery-block-block.review-design"),
+    ).toHaveTextContent("Review CAD model for approval");
+    expect(
+      screen.queryByTestId(
+        "workflow-recovery-readiness-task-block.review-design",
+      ),
+    ).not.toBeInTheDocument();
     expect(missingInteractiveTestIds(container)).toEqual([]);
     expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
     expect(screen.getByTestId("workflow-recovery-run-start")).toHaveAttribute(

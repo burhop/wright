@@ -77,6 +77,9 @@ test("creates a fresh template copy and opens it in the established editor", asy
     createdEditor.getByTestId("workflow-recovery-save"),
   ).toBeVisible();
   await expect(
+    createdEditor.getByTestId("workflow-recovery-template-readiness-issue"),
+  ).toContainText("Setup required");
+  await expect(
     createdEditor.getByTestId("workflow-recovery-view-code"),
   ).toBeVisible();
 });

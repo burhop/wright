@@ -41,6 +41,9 @@ test("automatically creates the default workflow when Workflows is opened", asyn
   await expect(page.getByTestId("workflow-recovery-filebar")).toContainText(
     "Mounting bracket development",
   );
+  await expect(
+    page.getByTestId("workflow-recovery-block-binding-block.generate-geometry"),
+  ).toBeVisible();
   await expect(page.getByTestId("workflow-recovery-save-status")).toContainText(
     "Saved",
   );
@@ -607,6 +610,7 @@ test("uses real typed handles and preserves source across a layout save", async 
     "Saved",
   );
   await expect.poll(() => state.current()?.layout_revision).toBe(1);
+  expect(state.current()?.definition_revision).toBe(2);
   expect(state.current()?.source.replace(/\r\n/g, "\n")).toBe(
     publicWorkflowSource.replace(/\r\n/g, "\n"),
   );

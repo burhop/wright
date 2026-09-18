@@ -1397,6 +1397,8 @@ export function toDraftProjection(
                   componentId: block.componentRef.componentId,
                   versionRange: block.componentRef.versionRange,
                 },
+          configuration: { ...block.configuration },
+          bindingId: block.bindingId,
         },
       ];
     }),

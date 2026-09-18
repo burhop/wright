@@ -8,6 +8,7 @@ import pytest
 
 from workspace_service.errors import WorkspaceTimeoutError
 from workspace_service.executor import BoundedExecutor
+from workspace_service.workflow_sources import WorkspaceWorkflowSourceStore
 
 
 @pytest.mark.asyncio
@@ -49,4 +50,19 @@ async def test_bounded_executor_limits_concurrency():
         *(executor.run("bounded", work, timeout_seconds=1) for _ in range(8))
     )
     assert peak == 2
+    await executor.close()
+
+
+@pytest.mark.asyncio
+async def test_run_to_completion_observes_filesystem_work_on_python_313(tmp_path):
+    executor = BoundedExecutor(max_workers=1)
+    document = await executor.run_to_completion(
+        "workflow source create",
+        lambda: WorkspaceWorkflowSourceStore(str(tmp_path)).create(
+            "workflows/example.workflow.wflow",
+            'workflow test\n  name: "Example"\nend\n',
+        ),
+    )
+    assert document.storage_revision == 1
+    assert (tmp_path / "workflows/example.workflow.wflow").is_file()
     await executor.close()
