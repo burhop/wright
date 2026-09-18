@@ -685,7 +685,11 @@ the run is paused at the required human validation review with run
 `bf32d836e9dd4250bd34594748ceda87` and checkpoint
 `checkpoint-73451232a9738513da519bee`. The three pending requirements are
 `ROBOT01-ACTION-SCOPE`, `ROBOT01-DIAGNOSIS` and `ROBOT01-PLOTS`. No approval was
-inferred and the validator has not run.
+inferred and the validator has not run. The checkpoint transition is dashboard
+update 93, a verified flat `30/30/24/17` step. The guarded local resume wrapper
+`resume-validator-082-robot01-attempt008.py` pins the manifest, run, checkpoint,
+subject digest, configured model and successful readiness receipt; it refuses to
+resume without a non-integration authenticated human actor.
 
 Next, complete that exact checkpoint through the normal Workflows UI. Resume the same
 attempt only after the API shows a real authenticated human actor and the exact subject
