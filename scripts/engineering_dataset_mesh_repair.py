@@ -26,6 +26,10 @@ def blender_code(configuration: dict) -> str:
     degenerate_tolerance = float(
         configuration.get("degenerate_tolerance_mm", 0.000001)
     )
+    force_voxel_remesh = configuration.get("force_voxel_remesh", False) is True
+    envelope_margin = float(configuration.get("envelope_margin_mm", 0.0))
+    if not 0.0 <= envelope_margin <= 0.005:
+        raise ValueError("Envelope margin must be between 0 and 0.005 mm")
     object_name = str(configuration["object_name"])
     return f'''import bpy, bmesh, json, math, mathutils
 
@@ -35,6 +39,8 @@ preview = {preview!r}
 triangle_limit = {triangle_limit!r}
 merge_tolerance = {merge_tolerance!r}
 degenerate_tolerance = {degenerate_tolerance!r}
+force_voxel_remesh = {force_voxel_remesh!r}
+envelope_margin = {envelope_margin!r}
 object_name = {object_name!r}
 
 before_objects = set(bpy.context.scene.objects)
@@ -140,7 +146,7 @@ def keep_largest_component(item):
     bm.free()
     return removed
 
-if clean_metrics['boundary_edges'] != 0 or clean_metrics['nonmanifold_edges'] != 0 or clean_metrics['connected_components'] != 1:
+if force_voxel_remesh or clean_metrics['boundary_edges'] != 0 or clean_metrics['nonmanifold_edges'] != 0 or clean_metrics['connected_components'] != 1:
     voxel_size_mm = max(0.08, min(0.30, min(before_dimensions) / 100.0))
     while True:
         obj.data.remesh_voxel_size = voxel_size_mm
@@ -161,9 +167,10 @@ if clean_metrics['boundary_edges'] != 0 or clean_metrics['nonmanifold_edges'] !=
         voxel_size_mm *= max(1.15, min(2.0, triangle_factor * 1.05))
     remeshed_dimensions = dimensions(obj)
     for axis in range(3):
-        if remeshed_dimensions[axis] <= 0:
+        target_dimension = before_dimensions[axis] - envelope_margin
+        if remeshed_dimensions[axis] <= 0 or target_dimension <= 0:
             raise RuntimeError('Voxel remesh produced a zero dimension')
-        obj.scale[axis] *= before_dimensions[axis] / remeshed_dimensions[axis]
+        obj.scale[axis] *= target_dimension / remeshed_dimensions[axis]
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     obj.data.update()
     clean_metrics = metrics(obj)
@@ -232,7 +239,7 @@ render_result = bpy.ops.render.render(write_still=True)
 if render_result != {{'FINISHED'}}:
     raise RuntimeError('Preview render failed: ' + str(render_result))
 
-report = {{'operation':'fixed_native_blender_mesh_repair','source_preserved':source,'artifacts':[repaired,preview],'before':{{'dimensions_mm':before_dimensions,'mesh':before_metrics}},'after':{{'dimensions_mm':final_dimensions,'mesh':final_metrics}},'repair':{{'merge_tolerance_mm':merge_tolerance,'degenerate_tolerance_mm':degenerate_tolerance,'voxel_remesh_used':voxel_remesh_used,'voxel_size_mm':voxel_size_mm,'voxel_iterations':voxel_iterations,'discarded_components':discarded_components,'decimation_used':decimation_used,'triangle_limit':triangle_limit}},'orientation':{{'action':'preserved_model_axes_and_translated_minimum_z_to_build_plate','supports':'assigned by the pinned slicer operation'}},'checks':{{'closed_manifold':True,'outward_normals':final_metrics['signed_volume_mm3']>0,'single_component':True,'within_triangle_limit':True,'fits_p1s_256mm_cube':True}},'content_validated':False}}
+report = {{'operation':'fixed_native_blender_mesh_repair','source_preserved':source,'artifacts':[repaired,preview],'before':{{'dimensions_mm':before_dimensions,'mesh':before_metrics}},'after':{{'dimensions_mm':final_dimensions,'mesh':final_metrics}},'repair':{{'merge_tolerance_mm':merge_tolerance,'degenerate_tolerance_mm':degenerate_tolerance,'force_voxel_remesh':force_voxel_remesh,'envelope_margin_mm':envelope_margin,'voxel_remesh_used':voxel_remesh_used,'voxel_size_mm':voxel_size_mm,'voxel_iterations':voxel_iterations,'discarded_components':discarded_components,'decimation_used':decimation_used,'triangle_limit':triangle_limit}},'orientation':{{'action':'preserved_model_axes_and_translated_minimum_z_to_build_plate','supports':'assigned by the pinned slicer operation'}},'checks':{{'closed_manifold':True,'outward_normals':final_metrics['signed_volume_mm3']>0,'single_component':True,'within_triangle_limit':True,'fits_p1s_256mm_cube':True}},'content_validated':False}}
 print(json.dumps(report,separators=(',',':')))
 '''
 

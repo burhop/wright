@@ -199,9 +199,11 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "repaired": str(confined(workspace, f"{output_root}/repaired_mesh.stl")),
         "preview": str(confined(workspace, f"{output_root}/mesh-preview.png")),
         "object_name": f"wright_{scenario_id.replace('-', '_')}_{args.attempt.replace('-', '_')}_repaired",
-        "triangle_limit": 80000,
+        "triangle_limit": 24000 if scenario_id == "printed-replacement-part-02" else 80000,
         "merge_tolerance_mm": 0.001,
         "degenerate_tolerance_mm": 0.000001,
+        "force_voxel_remesh": scenario_id == "printed-replacement-part-02",
+        "envelope_margin_mm": 0.001 if scenario_id == "printed-replacement-part-02" else 0.0,
     }
     repair_recipe_path = f"{input_root}/mesh-repair-operation.json"
     repair_recipe_bytes = (json.dumps(repair_config, indent=2) + "\n").encode()

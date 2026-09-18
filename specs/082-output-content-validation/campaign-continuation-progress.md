@@ -574,6 +574,21 @@ adds one equally spaced chart step. The CFD qualification recorded update 17,972
 `30/30/24/17`; the dashboard orders that event after the retained-result snapshot and
 keeps the validator line flat at 17.
 
+Printed-02 then used its two bounded detached correction cycles. Both owned Blender
+sessions performed actual voxel remeshing, dependent Bambu slicing and terminal cleanup;
+neither contacted a printer or used model inference. The first successor retained the
+114 × 24 × 34 mm envelope but produced 72,104 triangles, so the validator blocked five
+mesh checks at its 100,000-entity limit. The second reduced the output to 27,460 closed,
+manifold triangles and produced a newly bound slice package, but binary-STL inspection
+budgets four entities per triangle and correctly blocked it as well. Printed-02 is now
+quarantined at the two-cycle limit. The future fresh-workflow producer is configured for
+at most 24,000 triangles plus a 0.001 mm envelope margin to stay below both the reader
+budget and the exact 34 mm boundary; that configuration has unit coverage but has not
+been awarded a detached pass. The selected report is now
+`artifacts/process-validation/retained-successors-20260918T001417Z/summary.md`; its
+correction manifest records the quarantine, its review queue remains 17 ready / 7
+waiting, and dashboard update 17,973 remains `30/30/24/17`.
+
 The harness producer now accepts contact and splice-port resistance only through a
 closed `reviewed_engineering_assumption` record with positive bounded values and a
 written basis. When present, independent verification counts every supply/return

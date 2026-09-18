@@ -90,6 +90,15 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     result = prepare.prepare(args, folder, tools)
     bound = Path(result["draft"]).read_text()
     plan = prepare.compile_prompt_workflow(bound)
+    repair_configuration = json.loads(
+        (
+            Path(args.workspace_root)
+            / f"campaign/printed-replacement-part-0{number}/isolated/inputs/mesh-repair-operation.json"
+        ).read_text()
+    )
+    assert repair_configuration["force_voxel_remesh"] is (number == 2)
+    assert repair_configuration["triangle_limit"] == (24000 if number == 2 else 80000)
+    assert repair_configuration["envelope_margin_mm"] == (0.001 if number == 2 else 0.0)
     assert len(plan.steps) == 6
     assert all(step.id.endswith("api_created_identity") for step in plan.steps[:4])
     assert all(step.expected_files for step in plan.steps[:3])
@@ -298,8 +307,23 @@ def test_fixed_mesh_repair_code_clears_exact_pinned_guard(tmp_path):
             "preview": str(tmp_path / "mesh-preview.png"),
             "object_name": "wright_test_repaired",
             "triangle_limit": 80000,
+            "force_voxel_remesh": True,
+            "envelope_margin_mm": 0.001,
         }
     )
     assert safe_mode.is_safe(code) == (True, "")
+    assert "force_voxel_remesh = True" in code
+    assert "envelope_margin = 0.001" in code
     assert "subprocess" not in code
     assert "open(" not in code
+
+    with pytest.raises(ValueError, match="Envelope margin"):
+        repair_operation.blender_code(
+            {
+                "source": str(tmp_path / "source_mesh.stl"),
+                "repaired": str(tmp_path / "repaired_mesh.stl"),
+                "preview": str(tmp_path / "mesh-preview.png"),
+                "object_name": "wright_invalid_margin",
+                "envelope_margin_mm": 0.01,
+            }
+        )
