@@ -29,6 +29,35 @@ export interface WorkspaceWorkflowSourceDocument {
   layout_status?: "missing" | "current" | "stale";
 }
 
+export type WorkspaceWorkflowSourceReadinessState =
+  | "not_template"
+  | "reference"
+  | "setup_required"
+  | "ready"
+  | "verified"
+  | "unavailable";
+
+export interface WorkspaceWorkflowSourceReadiness {
+  state: WorkspaceWorkflowSourceReadinessState;
+  template_id: string | null;
+  template_version: string | null;
+  source_digest: string | null;
+  layout_digest: string | null;
+  definition_valid: boolean | null;
+  configured: boolean | null;
+  qualified: boolean | null;
+  available: boolean | null;
+  verified_run: boolean | null;
+  facts: Array<{
+    code?: string;
+    label?: string;
+    satisfied?: boolean;
+    evidence?: string[];
+  }>;
+  blocking_reasons: string[];
+  message: string | null;
+}
+
 export type EngineeringTemplateReadinessState =
   "reference" | "setup_required" | "ready" | "verified";
 
@@ -348,6 +377,54 @@ export class WorkspaceWorkflowSourceConflictError extends Error {
     this.currentStorageRevision = currentStorageRevision;
     this.currentStorageDigest = currentStorageDigest;
   }
+}
+
+export class WorkspaceWorkflowRunError extends Error {
+  readonly code: string;
+  readonly correction: string | null;
+
+  constructor(code: string, message: string, correction?: string | null) {
+    super(message);
+    this.name = "WorkspaceWorkflowRunError";
+    this.code = code;
+    this.correction = correction ?? null;
+  }
+}
+
+function workflowRunFailurePrefix(code: string): string {
+  const templateCodes = new Set([
+    "workflow_template_setup_required",
+    "workflow_template_unavailable",
+    "workflow_template_not_qualified",
+  ]);
+  const mcpCodes = new Set([
+    "mcp_tool_unavailable",
+    "mcp_server_unavailable",
+    "mcp_binding_invalid",
+  ]);
+  const hostCodes = new Set([
+    "host_software_unavailable",
+    "host_application_unavailable",
+  ]);
+  const modelCodes = new Set([
+    "model_service_unavailable",
+    "model_access_denied",
+  ]);
+  const outputCodes = new Set([
+    "output_capture_failed",
+    "workflow_output_unavailable",
+  ]);
+  if (templateCodes.has(code))
+    return "Template qualification blocked. Owner: template maintainer / Wright environment.";
+  if (mcpCodes.has(code))
+    return "MCP/tool execution failed. Owner: MCP/tool maintainer.";
+  if (hostCodes.has(code))
+    return "Host application execution failed. Owner: Wright environment / host maintainer.";
+  if (modelCodes.has(code))
+    return "Model service unavailable. Owner: model service maintainer.";
+  if (outputCodes.has(code))
+    return "Output capture failed. Owner: workflow maintainer.";
+  return `Workflow execution failed. Backend code: ${code}. Owner is not classified; inspect the run diagnostic.`;
 }
 
 export interface RivetWorkflowOperation {
@@ -1191,6 +1268,21 @@ export class WorkspaceService {
     return response.json();
   }
 
+  async getWorkspaceWorkflowSourceReadiness(
+    sessionId: string,
+    path: string,
+  ): Promise<WorkspaceWorkflowSourceReadiness> {
+    const query = new URLSearchParams({ session_id: sessionId, path });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/readiness?${query.toString()}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) {
+      throw new Error("Workflow qualification could not be checked.");
+    }
+    return response.json();
+  }
+
   async getWorkspaceWorkflowInputFiles(
     sessionId: string,
     workspaceId: string,
@@ -1467,27 +1559,38 @@ export class WorkspaceService {
     );
     if (!response.ok) {
       let message = "The workflow could not run.";
+      let code = "workflow_run_failed";
+      let correction: string | null = null;
       try {
         const payload = (await response.json()) as {
+          error_code?: unknown;
           message?: unknown;
-          details?: { correction?: unknown };
-          detail?: { message?: unknown; correction?: unknown };
+          details?: { code?: unknown; correction?: unknown };
+          detail?: { code?: unknown; message?: unknown; correction?: unknown };
         };
         // API middleware normalizes HTTPException bodies; also accept the
         // original envelope for older hosts and test adapters.
         const detail = payload.detail ?? {
+          code: payload.error_code ?? payload.details?.code,
           message: payload.message,
           correction: payload.details?.correction,
         };
+        if (typeof detail?.code === "string") code = detail.code;
         if (typeof detail?.message === "string") {
           message = detail.message;
-          if (typeof detail.correction === "string")
+          if (typeof detail.correction === "string") {
+            correction = detail.correction;
             message += ` ${detail.correction}`;
+          }
         }
       } catch {
         // Keep the safe fallback; backend error bodies may be non-JSON.
       }
-      throw new Error(message);
+      throw new WorkspaceWorkflowRunError(
+        code,
+        `${workflowRunFailurePrefix(code)} ${message}`,
+        correction,
+      );
     }
     let run: WorkspaceWorkflowSourceRun | undefined;
     if (
@@ -1509,7 +1612,11 @@ export class WorkspaceService {
         )
           run = event.result;
         else if (event.kind === "failed")
-          throw new Error(`${event.message} ${event.correction ?? ""}`);
+          throw new WorkspaceWorkflowRunError(
+            typeof event.code === "string" ? event.code : "workflow_run_failed",
+            `${workflowRunFailurePrefix(typeof event.code === "string" ? event.code : "workflow_run_failed")} ${event.message}`,
+            typeof event.correction === "string" ? event.correction : null,
+          );
         else onEvent(event as WorkspaceWorkflowRunEvent);
       };
       try {

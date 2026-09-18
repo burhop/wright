@@ -164,6 +164,34 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
     expect(JSON.stringify(layout)).toBe(layoutBefore);
   });
 
+  it("keeps the full execution identity available for long binding labels", () => {
+    const projection = toDraftProjection(
+      initialWorkflow,
+      cloneLayout(initialLayout),
+    );
+    const label =
+      "AgentCAD / manufacturer-cad-server-with-a-deliberately-long-qualified-tool-name";
+    render(
+      <RecoveryCanvasRuntimeProvider
+        value={{
+          ...runtime(),
+          executionLabels: { "block.generate-geometry": label },
+        }}
+      >
+        <ReactFlowRecoveryCanvas
+          projection={projection}
+          selectedSemanticId={null}
+          onIntent={() => undefined}
+        />
+      </RecoveryCanvasRuntimeProvider>,
+    );
+    const binding = screen.getByTestId(
+      "workflow-recovery-block-binding-block.generate-geometry",
+    );
+    expect(binding.querySelector("b")).toHaveAttribute("title", label);
+    expect(binding).toHaveTextContent(label);
+  });
+
   it("uses current execution and input mode when no matching template supplies the presentation kind", () => {
     const workflow = cloneWorkflow(initialWorkflow);
     const layout = cloneLayout(initialLayout);

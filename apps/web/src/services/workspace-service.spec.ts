@@ -12,6 +12,7 @@ import {
   type SupportDiagnosticPreview,
   WorkspaceWorkflowSourceConflictError,
   WorkspaceWorkflowSourceNotFoundError,
+  WorkspaceWorkflowRunError,
 } from "./workspace-service";
 
 const digest = "d".repeat(64);
@@ -436,6 +437,77 @@ describe("CAD workflow completion", () => {
       );
     },
   );
+  it("categorizes template qualification failures without claiming prompt dispatch", async () => {
+    mocks.fetch.mockResolvedValue(
+      response(
+        {
+          detail: {
+            code: "workflow_template_setup_required",
+            message:
+              "This engineering template needs setup or qualification before a live run.",
+            correction: "Connect and qualify the required engineering tools.",
+          },
+        },
+        409,
+      ),
+    );
+    await expect(
+      workspaceService.runWorkspaceWorkflowSource(
+        "session",
+        "workflows/template.wflow",
+        digest,
+      ),
+    ).rejects.toThrow(
+      "Template qualification blocked. Owner: template maintainer / Wright environment.",
+    );
+  });
+
+  it.each([
+    ["mcp_tool_unavailable", "MCP/tool execution failed."],
+    ["host_software_unavailable", "Host application execution failed."],
+    ["model_service_unavailable", "Model service unavailable."],
+    ["output_capture_failed", "Output capture failed."],
+  ])("categorizes %s failures for the run owner", async (code, prefix) => {
+    mocks.fetch.mockResolvedValue(
+      response(
+        {
+          detail: {
+            code,
+            message: "The selected execution dependency is unavailable.",
+          },
+        },
+        503,
+      ),
+    );
+
+    const failure = await workspaceService
+      .runWorkspaceWorkflowSource("session", "workflows/template.wflow", digest)
+      .catch((error: unknown) => error);
+
+    expect(failure).toBeInstanceOf(WorkspaceWorkflowRunError);
+    expect(failure).toMatchObject({ code, correction: null });
+    expect((failure as Error).message).toContain(prefix);
+  });
+
+  it("does not infer ownership from an unknown backend code substring", async () => {
+    mocks.fetch.mockResolvedValue(
+      response(
+        {
+          detail: {
+            code: "tooling_policy_unknown",
+            message: "The backend returned an unclassified failure.",
+          },
+        },
+        503,
+      ),
+    );
+    const failure = await workspaceService
+      .runWorkspaceWorkflowSource("session", "workflows/template.wflow", digest)
+      .catch((error: unknown) => error);
+    expect((failure as Error).message).toContain(
+      "Backend code: tooling_policy_unknown. Owner is not classified",
+    );
+  });
 });
 
 describe("workflow input file choices", () => {
@@ -908,6 +980,35 @@ describe("workspace workflow source client", () => {
         workflowDocument.path,
       ),
     ).rejects.toBeInstanceOf(WorkspaceWorkflowSourceNotFoundError);
+  });
+
+  it("loads authoritative template readiness without treating a source read as a run", async () => {
+    const readiness = {
+      state: "setup_required",
+      template_id: "printed-replacement-part",
+      template_version: "1.0.0",
+      source_digest: null,
+      layout_digest: null,
+      definition_valid: true,
+      configured: false,
+      qualified: false,
+      available: false,
+      verified_run: false,
+      facts: [],
+      blocking_reasons: ["Configure adapters."],
+      message: null,
+    };
+    mocks.fetch.mockResolvedValue(response(readiness));
+    await expect(
+      workspaceService.getWorkspaceWorkflowSourceReadiness(
+        "session",
+        workflowDocument.path,
+      ),
+    ).resolves.toEqual(readiness);
+    expect(mocks.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/api/workspace/workflow-sources/readiness?"),
+      { cache: "no-store" },
+    );
   });
 
   it("creates only after an explicit call and leaves definition revision assignment to the host", async () => {

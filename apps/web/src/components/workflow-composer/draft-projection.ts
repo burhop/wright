@@ -54,6 +54,9 @@ export interface DraftBlockProjection extends DraftBlock {
   readonly gates: readonly DraftGateProjection[];
   readonly artifacts: readonly DraftArtifactProjection[];
   readonly componentRef?: DraftComponentReferenceProjection | null;
+  /** Optional authoring metadata supplied by workflow-recovery projections. */
+  readonly configuration?: Record<string, string | number | boolean>;
+  readonly bindingId?: string | null;
 }
 export interface DraftPhaseProjection extends DraftPhase {
   readonly semanticId: string;

@@ -1,0 +1,30 @@
+{
+  "date": "2026-09-18",
+  "scope": "bounded low-cost workflow editor and readiness QA",
+  "live_engineering_execution": "not_run",
+  "paid_workflow_calls": "disabled",
+  "catalog_templates": 10,
+  "catalog_readiness": {
+    "setup_required": 3,
+    "reference": 7,
+    "ready_or_verified": 0
+  },
+  "tests": {
+    "vitest_files": 26,
+    "vitest_tests": 269,
+    "playwright_tests": 15,
+    "playwright_passed": 15
+  },
+  "python_service_tests": {
+    "status": "blocked",
+    "reason": "base environment lacks opentelemetry; uv cache is read-only"
+  },
+  "changed_files": [
+    "tests/ui-integration/workflow-recovery.spec.ts"
+  ],
+  "remaining": [
+    "qualify packaged engineering template integrations",
+    "restore reviewed Python test environment",
+    "publish per-example readiness inventory for the approximately 30 campaign examples"
+  ]
+}

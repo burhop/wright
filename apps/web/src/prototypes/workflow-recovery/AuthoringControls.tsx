@@ -18,10 +18,330 @@ import {
   type RecoveryWorkflow,
 } from "./model";
 import { WorkflowObjectIcon } from "./WorkflowObjectIcon";
+import { disconnectedProcessDiagnostic } from "./run-readiness";
+import type { WorkspaceWorkflowSourceReadiness } from "../../services/workspace-service";
 
 export interface AuthoringWorkspaceFile {
   path: string;
   name: string;
+}
+
+export function isServerScopedMcpTask(block: RecoveryBlock): boolean {
+  return block.configuration.authoring_template === "mcp-task";
+}
+
+export function isExactMcpTool(block: RecoveryBlock): boolean {
+  return block.configuration.authoring_template === "mcp-tool";
+}
+
+export function mcpTaskHasRequiredBinding(block: RecoveryBlock): boolean {
+  if (isServerScopedMcpTask(block))
+    return Boolean(block.configuration.mcp_server);
+  if (isExactMcpTool(block))
+    return (
+      Boolean(block.configuration.mcp_server) &&
+      Boolean(block.configuration.mcp_tool)
+    );
+  return false;
+}
+
+export function mcpTaskIsAvailable(
+  block: RecoveryBlock,
+  tools: readonly WorkflowMcpTool[],
+): boolean {
+  const server = String(block.configuration.mcp_server ?? "");
+  const tool = String(block.configuration.mcp_tool ?? "");
+  return tools.some(
+    (item) =>
+      item.server_id === server &&
+      (isServerScopedMcpTask(block) || item.name === tool),
+  );
+}
+
+export function AuthoringRunReadiness({
+  workflow,
+  saved,
+  executionConnected,
+  templateReadiness,
+  sessionId,
+  onRefreshTemplateReadiness,
+  onSelect,
+}: {
+  readonly workflow: RecoveryWorkflow;
+  readonly saved: boolean;
+  readonly executionConnected: boolean;
+  readonly templateReadiness?: WorkspaceWorkflowSourceReadiness | null;
+  readonly sessionId?: string;
+  readonly onRefreshTemplateReadiness?: () => void;
+  readonly onSelect: (id: string) => void;
+}) {
+  const inputs = authoringReadiness(workflow);
+  const processIssue = disconnectedProcessDiagnostic(workflow);
+  const tasks = workflow.blocks.filter(
+    (block) => recoveryAuthoringSectionKind(block) !== "input",
+  );
+  const isMcpTask = (block: RecoveryBlock) =>
+    isServerScopedMcpTask(block) || isExactMcpTool(block);
+  const unbound = tasks.filter((block) => {
+    const hasMcpBinding = mcpTaskHasRequiredBinding(block);
+    const requiresExecutionBinding =
+      block.executionKind === "deterministic" || isMcpTask(block);
+    return requiresExecutionBinding && !block.bindingId && !hasMcpBinding;
+  });
+  const mcpTasks = tasks.filter(isMcpTask);
+  const mcpCheckKey = mcpTasks
+    .map(
+      (block) =>
+        `${block.id}:${block.configuration.mcp_server ?? ""}:${block.configuration.mcp_tool ?? ""}`,
+    )
+    .join("|");
+  const [mcpTools, setMcpTools] = useState<WorkflowMcpTool[] | null>(null);
+  const [mcpCheckError, setMcpCheckError] = useState("");
+  const [mcpCheckVersion, setMcpCheckVersion] = useState(0);
+  useEffect(() => {
+    let current = true;
+    setMcpTools(null);
+    setMcpCheckError("");
+    if (!sessionId || mcpTasks.length === 0) return;
+    void listWorkflowMcpTools(sessionId)
+      .then((tools) => {
+        if (current) setMcpTools(tools);
+      })
+      .catch(() => {
+        if (current) setMcpCheckError("MCP availability could not be checked.");
+      });
+    return () => {
+      current = false;
+    };
+  }, [mcpCheckKey, mcpCheckVersion, mcpTasks.length, sessionId]);
+  const mcpStatus = (block: RecoveryBlock) => {
+    if (!mcpTools) return mcpCheckError ? "check unavailable" : "checking";
+    return mcpTaskIsAvailable(block, mcpTools) ? "available" : "unavailable";
+  };
+  const unavailableMcpCount = mcpTasks.filter((block) =>
+    ["unavailable", "check unavailable"].includes(mcpStatus(block)),
+  ).length;
+  const attentionCount =
+    inputs.inputs.filter((item) => item.status !== "configured").length +
+    unbound.length +
+    (processIssue ? 1 : 0) +
+    (!saved ? 1 : 0) +
+    (!executionConnected ? 1 : 0) +
+    unavailableMcpCount +
+    (templateReadiness &&
+    !["not_template", "ready", "verified"].includes(templateReadiness.state)
+      ? 1
+      : 0);
+  const templateStatus = templateReadiness
+    ? templateReadiness.state === "not_template"
+      ? "Hand-authored workflow"
+      : templateReadiness.state === "setup_required"
+        ? "Setup required"
+        : templateReadiness.state === "reference"
+          ? "Reference only"
+          : templateReadiness.state === "unavailable"
+            ? "Check unavailable"
+            : templateReadiness.state === "verified"
+              ? "Verified"
+              : "Ready"
+    : "Checking…";
+  const templateStatusTone =
+    !templateReadiness ||
+    templateReadiness.state === "not_template" ||
+    templateReadiness.state === "ready" ||
+    templateReadiness.state === "verified"
+      ? templateReadiness?.state === "not_template"
+        ? "unknown"
+        : "good"
+      : "attention";
+  return (
+    <details
+      className={`recovery-run-readiness ${attentionCount ? "has-attention" : "is-ready"}`}
+      data-testid="workflow-recovery-run-readiness"
+    >
+      <summary data-testid="workflow-recovery-run-readiness-toggle">
+        <b>Run readiness</b>
+        <span>
+          {attentionCount
+            ? `${attentionCount} item${attentionCount === 1 ? "" : "s"} need attention`
+            : "Authoring checks pass"}
+        </span>
+      </summary>
+      <div className="recovery-run-readiness__grid">
+        <ReadinessItem
+          label="Inputs"
+          value={`${inputs.configuredCount}/${inputs.totalCount} configured`}
+          status={
+            inputs.configuredCount === inputs.totalCount ? "good" : "attention"
+          }
+        />
+        <ReadinessItem
+          label="Process"
+          value={processIssue ? "Disconnected groups" : "Connected"}
+          status={processIssue ? "attention" : "good"}
+          action={processIssue ? "Check graph" : undefined}
+          onAction={
+            processIssue
+              ? () => onSelect(workflow.blocks[0]?.id ?? "")
+              : undefined
+          }
+          actionTestId="workflow-recovery-readiness-process-action"
+        />
+        <ReadinessItem
+          label="Saved definition"
+          value={saved ? "Saved" : "Unsaved changes"}
+          status={saved ? "good" : "attention"}
+        />
+        <ReadinessItem
+          label="Run path"
+          value={
+            executionConnected ? "Connected · preflight required" : "Not wired"
+          }
+          status={executionConnected ? "unknown" : "attention"}
+        />
+        <ReadinessItem
+          label="Template qualification"
+          value={templateStatus}
+          status={templateStatusTone}
+        />
+      </div>
+      {unbound.length > 0 && (
+        <div className="recovery-run-readiness__issue">
+          <b>Unbound tasks</b>
+          {unbound.map((block) => (
+            <button
+              type="button"
+              key={block.id}
+              data-testid={`workflow-recovery-readiness-task-${block.id}`}
+              onClick={() => onSelect(block.id)}
+            >
+              {block.title} · choose a tool or execution binding
+            </button>
+          ))}
+        </div>
+      )}
+      {mcpTasks.length > 0 && (
+        <div className="recovery-run-readiness__issue">
+          <b>Tool bindings</b>
+          {mcpTasks.map((block) => (
+            <button
+              type="button"
+              key={block.id}
+              data-testid={`workflow-recovery-readiness-mcp-${block.id}`}
+              onClick={() => onSelect(block.id)}
+            >
+              {block.title} ·{" "}
+              {String(block.configuration.mcp_server ?? "server not selected")}
+              {isExactMcpTool(block)
+                ? ` / ${String(block.configuration.mcp_tool ?? "tool not selected")}`
+                : " · AI selects the operation"}
+              {` · ${mcpStatus(block)}`}
+            </button>
+          ))}
+          {mcpCheckError && (
+            <span>
+              {mcpCheckError} Owner: Wright environment · Next: check the{" "}
+              <a href="/tool-registry">Tool Registry</a>.
+            </span>
+          )}
+          <button
+            type="button"
+            data-testid="workflow-recovery-mcp-refresh"
+            onClick={() => setMcpCheckVersion((version) => version + 1)}
+          >
+            Recheck MCP availability
+          </button>
+        </div>
+      )}
+      {templateReadiness &&
+        templateReadiness.state !== "not_template" &&
+        (templateReadiness.blocking_reasons.length > 0 ||
+          templateReadiness.message) && (
+          <div
+            className="recovery-run-readiness__issue"
+            data-testid="workflow-recovery-template-readiness-issue"
+          >
+            <b>
+              {templateReadiness.template_id ?? "Workflow template"} ·{" "}
+              {templateStatus}
+            </b>
+            {(templateReadiness.blocking_reasons.length
+              ? templateReadiness.blocking_reasons
+              : [
+                  templateReadiness.message ??
+                    "Wright could not assess this template.",
+                ]
+            ).map((reason) => (
+              <span key={reason}>
+                Owner: template maintainer / Wright environment · Next: {reason}
+              </span>
+            ))}
+            {onRefreshTemplateReadiness && (
+              <button
+                type="button"
+                data-testid="workflow-recovery-template-readiness-refresh"
+                onClick={onRefreshTemplateReadiness}
+              >
+                Recheck qualification
+              </button>
+            )}
+          </div>
+        )}
+      {inputs.inputs
+        .filter((item) => item.status !== "configured")
+        .map((item) => (
+          <div className="recovery-run-readiness__issue" key={item.blockId}>
+            <button
+              type="button"
+              data-testid={`workflow-recovery-readiness-input-${item.blockId}`}
+              onClick={() => onSelect(item.blockId)}
+            >
+              {item.title} · {item.reason}
+            </button>
+          </div>
+        ))}
+      {executionConnected ? (
+        <p className="recovery-run-readiness__note">
+          Host software, MCP availability, and model access are not assessed by
+          the editor. Wright must complete that preflight before any prompt or
+          tool call is dispatched. Owner: Wright environment / tool maintainer.
+        </p>
+      ) : (
+        <p className="recovery-run-readiness__note">
+          Execution availability has not been assessed. Wright will not send a
+          prompt until the run service confirms the saved workflow.
+        </p>
+      )}
+    </details>
+  );
+}
+
+function ReadinessItem({
+  label,
+  value,
+  status,
+  action,
+  onAction,
+  actionTestId,
+}: {
+  readonly label: string;
+  readonly value: string;
+  readonly status: "good" | "attention" | "unknown";
+  readonly action?: string;
+  readonly onAction?: () => void;
+  readonly actionTestId?: string;
+}) {
+  return (
+    <div className={`recovery-run-readiness__item is-${status}`}>
+      <span>{label}</span>
+      <b>{value}</b>
+      {action && onAction && (
+        <button type="button" data-testid={actionTestId} onClick={onAction}>
+          {action}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export function AuthoringCreateRail({
@@ -371,7 +691,6 @@ export function AuthoringSettings({
   workflow,
   readOnly,
   onApply,
-  onDelete,
   direct = false,
 }: {
   direct?: boolean;
@@ -379,7 +698,6 @@ export function AuthoringSettings({
   readonly workflow: RecoveryWorkflow;
   readonly readOnly: boolean;
   readonly onApply: (commands: RecoveryCommand[]) => boolean;
-  readonly onDelete: () => void;
   readonly onListWorkspaceFiles?: () => Promise<AuthoringWorkspaceFile[]>;
 }) {
   const [title, setTitle] = useState(block.title);
@@ -727,14 +1045,6 @@ export function AuthoringSettings({
               Apply settings
             </button>
           )}
-          <button
-            type="button"
-            className="recovery-button recovery-button--danger"
-            data-testid="workflow-recovery-delete"
-            onClick={onDelete}
-          >
-            Delete block…
-          </button>
         </div>
       )}
     </section>

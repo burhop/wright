@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   get: vi.fn(),
+  readiness: vi.fn(),
   create: vi.fn(),
   update: vi.fn(),
   files: vi.fn(),
@@ -17,6 +18,7 @@ vi.mock("../../services/workspace-service", async (importOriginal) => {
     ...actual,
     workspaceService: {
       getWorkspaceWorkflowSource: mocks.get,
+      getWorkspaceWorkflowSourceReadiness: mocks.readiness,
       createWorkspaceWorkflowSource: mocks.create,
       updateWorkspaceWorkflowSource: mocks.update,
       getWorkspaceWorkflowInputFiles: mocks.files,
@@ -46,6 +48,8 @@ vi.mock(
       >;
       onReadStoredSource?: () => Promise<{ source: string }>;
       onReloadStoredSource?: () => Promise<void>;
+      templateReadiness?: { state: string } | null;
+      onRefreshTemplateReadiness?: () => void;
     }) {
       const [initialSource] = useState(props.workflowSource);
       const [readSource, setReadSource] = useState("");
@@ -63,6 +67,18 @@ vi.mock(
           data-layout={JSON.stringify(props.workflowLayout)}
           data-files={files}
         >
+          <output data-testid="fixture-readiness">
+            {props.templateReadiness?.state ?? "none"}
+          </output>
+          {props.onRefreshTemplateReadiness && (
+            <button
+              type="button"
+              data-testid="fixture-readiness-refresh"
+              onClick={() => void props.onRefreshTemplateReadiness?.()}
+            >
+              Refresh readiness fixture
+            </button>
+          )}
           {props.fileActions}
           {props.onSave && (
             <button
@@ -163,6 +179,8 @@ function renderPage({
 describe("workspace workflow page", () => {
   beforeEach(() => {
     mocks.get.mockReset();
+    mocks.readiness.mockReset();
+    mocks.readiness.mockResolvedValue({ state: "not_template" });
     mocks.create.mockReset();
     mocks.update.mockReset();
     mocks.files.mockReset();
@@ -201,6 +219,32 @@ describe("workspace workflow page", () => {
       width: "100%",
       minWidth: "0",
     });
+  });
+
+  it("keeps an older readiness refresh from overwriting a newer result", async () => {
+    mocks.get.mockResolvedValue(document);
+    let resolveOlder!: (value: { state: string }) => void;
+    const older = new Promise<{ state: string }>((resolve) => {
+      resolveOlder = resolve;
+    });
+    mocks.readiness
+      .mockResolvedValueOnce({ state: "not_template" })
+      .mockImplementationOnce(() => older)
+      .mockResolvedValueOnce({ state: "verified" });
+    renderPage();
+    await screen.findByTestId("fixture-readiness-refresh");
+    await userEvent.click(screen.getByTestId("fixture-readiness-refresh"));
+    await userEvent.click(screen.getByTestId("fixture-readiness-refresh"));
+    await waitFor(() =>
+      expect(screen.getByTestId("fixture-readiness")).toHaveTextContent(
+        "verified",
+      ),
+    );
+    resolveOlder({ state: "unavailable" });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(screen.getByTestId("fixture-readiness")).toHaveTextContent(
+      "verified",
+    );
   });
 
   it("passes persisted layout and loads real file choices on demand in the current workspace", async () => {
