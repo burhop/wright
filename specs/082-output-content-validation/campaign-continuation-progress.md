@@ -589,6 +589,34 @@ been awarded a detached pass. The selected report is now
 correction manifest records the quarantine, its review queue remains 17 ready / 7
 waiting, and dashboard update 17,973 remains `30/30/24/17`.
 
+Pi-01 then received a bounded native OpenFOAM continuation and two isolated numerical
+profile probes without changing any retained campaign output. Continuing the qualified
+variant-A case from iteration 300 to 1,000 completed normally but failed every frozen
+steady-state criterion: maximum initial residual `0.006122175668`, maximum final
+residual `0.00002211137719`, and relative maximum-temperature change
+`0.0000159914967072`. Its field-derived external balance measured `0.313577321988 W`
+out for `6.0 W` in, or `0.947737113002` relative imbalance. The independent reader
+reproduced the heat result exactly. Increasing iterations alone is therefore not a
+qualified correction.
+
+The first numerical profile probe used full solid/energy relaxation and exact active
+linear solves. It was stopped at iteration 1,033 after the maximum temperature climbed
+from about `299 K` to more than `547 K`, the worst initial residual grew to about
+`0.071`, and pressure solves reached 250 iterations. The second and final profile used
+moderate relaxation and bounded `0.0001` relative linear tolerance through iteration
+1,200. It remained stable and brought maximum final residual below its limit at
+`0.000000325323`, but still failed maximum initial residual at `0.01121594424`, relative
+temperature change at `0.0000345325588571`, and heat balance at `0.919758625982`
+relative imbalance (`0.481448244108 W` out). The independent reader again reproduced
+the producer heat result. Evidence is under
+`artifacts/process-validation/pi01-continuation-1000-20260918/` and
+`artifacts/process-validation/pi01-numerics-probes-20260918/`. The shared Pi CFD
+numerical path is quarantined after two unsuccessful correction cycles pending a
+material solver/boundary repair and a successful isolated proof; Pi-02 also retains its
+separate enclosure-height correction. The selected report remains 17 automated passes
+with 17 ready / 7 waiting for review, and dashboard update 17,974 records the truthful
+flat `30/30/24/17` step.
+
 The harness producer now accepts contact and splice-port resistance only through a
 closed `reviewed_engineering_assumption` record with positive bounded values and a
 written basis. When present, independent verification counts every supply/return
