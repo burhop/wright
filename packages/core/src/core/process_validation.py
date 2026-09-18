@@ -681,13 +681,16 @@ class AssessmentCurrentness(Contract):
     latest_assessment_id: Identifier | None = None
     superseded_by: tuple[Identifier, ...] = ()
     is_current: StrictBool
-    stale_reason: Literal[
-        "newer_validation_attempt",
-        "superseded_by_review",
-        "subject_revision_changed",
-        "subject_changed_during_validation",
-        "subject_unavailable",
-    ] | None = None
+    stale_reason: (
+        Literal[
+            "newer_validation_attempt",
+            "superseded_by_review",
+            "subject_revision_changed",
+            "subject_changed_during_validation",
+            "subject_unavailable",
+        ]
+        | None
+    ) = None
 
     @model_validator(mode="after")
     def explains_staleness(self):
@@ -720,21 +723,22 @@ class RequirementTraceRow(Contract):
     subject_sha256: Digest | None = None
     producer: ProducerIdentity | None = None
     finding_ids: tuple[Identifier, ...] = ()
-    action: Literal[
-        "revise_output",
-        "supply_input",
-        "restore_capability",
-        "request_review",
-        "retry_validation",
-        "refresh_subject",
-    ] | None = None
+    action: (
+        Literal[
+            "revise_output",
+            "supply_input",
+            "restore_capability",
+            "request_review",
+            "retry_validation",
+            "refresh_subject",
+        ]
+        | None
+    ) = None
 
     @model_validator(mode="after")
     def aligned_observations(self):
         if not (
-            len(self.observed)
-            == len(self.observed_units)
-            == len(self.observed_frames)
+            len(self.observed) == len(self.observed_units) == len(self.observed_frames)
         ):
             raise ValueError("Observed values, units and frames must align")
         if self.subject_id is None and (
@@ -782,9 +786,7 @@ class ValidationReport(Contract):
             for check in assessment.profile.checks
             for requirement_id in check.requirement_ids
         }
-        actual_rows = {
-            (row.requirement_id, row.check_id) for row in self.traceability
-        }
+        actual_rows = {(row.requirement_id, row.check_id) for row in self.traceability}
         if actual_rows != expected_rows or len(actual_rows) != len(self.traceability):
             raise ValueError("Report traceability differs from profile coverage")
         return self

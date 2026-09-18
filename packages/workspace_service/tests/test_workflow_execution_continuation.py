@@ -379,22 +379,26 @@ def test_handoff_receipt_is_verified_and_attached_to_original_run(tmp_path, chan
 def test_verified_handoff_receipt_output_can_feed_a_downstream_step(tmp_path):
     import hashlib
 
-    text = source().replace(
-        "outputs: []",
-        'outputs: [{"key":"handoff_receipt","kind":"workspace_file","name":"Receipt"}]',
-    ).replace(
-        '"approval_settings": {"material": "PLA", "profile": "0.20-standard"}',
-        '"approval_settings": {"receipt_path": "receipt.json"}',
+    text = (
+        source()
+        .replace(
+            "outputs: []",
+            'outputs: [{"key":"handoff_receipt","kind":"workspace_file","name":"Receipt"}]',
+        )
+        .replace(
+            '"approval_settings": {"material": "PLA", "profile": "0.20-standard"}',
+            '"approval_settings": {"receipt_path": "receipt.json"}',
+        )
     )
     text += task("after", fmt="text")
-    text += '''connection receipt_to_after
+    text += """connection receipt_to_after
   type: item
   from: "approve.handoff_receipt"
   to: "after.after_prompt"
   label: "verified receipt"
   when: null
 end
-'''
+"""
     plan = replace(compile_prompt_workflow(text), definition_digest="a" * 64)
     services = service(tmp_path)
     prompts = []

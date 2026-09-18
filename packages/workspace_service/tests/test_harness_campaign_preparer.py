@@ -69,9 +69,9 @@ def test_harness_keeps_original_review_nets_and_all_outputs(tmp_path, ordinal):
         expected_roles.add("shield")
     assert {role for role, _ in validator.validation_sources} == expected_roles
     configured_review = review.external_action["settings"]["validation_review"]
-    assert configured_review["profile_ref"] == validator.validation["profile"][
-        "reference"
-    ]
+    assert (
+        configured_review["profile_ref"] == validator.validation["profile"]["reference"]
+    )
     assert configured_review["requirement_ids"]
     assert plan.revisions == {}
     assert set(plan.steps[2].expected_file_ports) == expected_roles & {

@@ -27,7 +27,9 @@ def _number(value, name):
         try:
             value = float(value)
         except (TypeError, ValueError) as exc:
-            raise _defect("thermal.invalid_value", f"Thermal {name} must be numeric.") from exc
+            raise _defect(
+                "thermal.invalid_value", f"Thermal {name} must be numeric."
+            ) from exc
     value = float(value)
     if not math.isfinite(value):
         raise _defect("thermal.nonfinite", f"Thermal {name} must be finite.")
@@ -63,7 +65,9 @@ def _field(snapshot, context, parameters):
             "Thermal field checks require three source-derived dimensions in mm.",
             category="source_conflict",
         ) from exc
-    if len(dimensions) != 3 or any(not math.isfinite(item) or item <= 0 for item in dimensions):
+    if len(dimensions) != 3 or any(
+        not math.isfinite(item) or item <= 0 for item in dimensions
+    ):
         raise ValidationIssue(
             "profile.thermal_dimensions",
             "Thermal dimensions must be three finite positive values.",
@@ -93,7 +97,12 @@ class ThermalFieldReader:
         config_digest=canonical_digest(
             {
                 "field": "finite x/y/z/temperature CSV",
-                "checks": ["analytical-rise", "heat-balance", "refinement", "selection"],
+                "checks": [
+                    "analytical-rise",
+                    "heat-balance",
+                    "refinement",
+                    "selection",
+                ],
                 "version": 1,
             }
         ),
@@ -114,7 +123,8 @@ class ThermalFieldReader:
         else:
             if snapshot.subject.format != "csv":
                 raise _defect(
-                    "thermal.field_format", "Thermal numerical checks require a field CSV."
+                    "thermal.field_format",
+                    "Thermal numerical checks require a field CSV.",
                 )
             field = _field(snapshot, context, check.parameters)
             unit = "1"
@@ -124,7 +134,9 @@ class ThermalFieldReader:
                 observed, unit = field["maximum"], "degC"
             elif operation == "analytical_relative_error":
                 analytical = self._analytical_hot(check.parameters)
-                cold = _number(check.parameters.get("cold_temperature_c"), "cold temperature")
+                cold = _number(
+                    check.parameters.get("cold_temperature_c"), "cold temperature"
+                )
                 rise = analytical - cold
                 if rise <= 0:
                     raise ValidationIssue(
@@ -135,11 +147,17 @@ class ThermalFieldReader:
                 observed = abs((field["maximum"] - cold) - rise) / rise
             elif operation == "heat_balance_relative":
                 length, width, thickness = field["dimensions_m"]
-                conductivity = _number(check.parameters.get("conductivity_w_mk"), "conductivity")
+                conductivity = _number(
+                    check.parameters.get("conductivity_w_mk"), "conductivity"
+                )
                 heat = _number(check.parameters.get("heat_input_w"), "heat input")
-                removed = conductivity * width * thickness * (
-                    field["maximum"] - field["minimum"]
-                ) / length
+                removed = (
+                    conductivity
+                    * width
+                    * thickness
+                    * (field["maximum"] - field["minimum"])
+                    / length
+                )
                 observed = abs(removed - heat) / abs(heat)
             elif operation == "refinement_relative":
                 role = check.parameters.get("coarse_role")
@@ -155,11 +173,14 @@ class ThermalFieldReader:
                         "thermal.refinement_lineage",
                         "Refined field must contain more points than its bound coarse field.",
                     )
-                cold = _number(check.parameters.get("cold_temperature_c"), "cold temperature")
+                cold = _number(
+                    check.parameters.get("cold_temperature_c"), "cold temperature"
+                )
                 fine_rise = field["maximum"] - cold
                 if fine_rise <= 0:
                     raise _defect(
-                        "thermal.invalid_rise", "Refined field has no positive temperature rise."
+                        "thermal.invalid_rise",
+                        "Refined field has no positive temperature rise.",
                     )
                 observed = abs(field["maximum"] - coarse["maximum"]) / fine_rise
                 evidence.append(
@@ -172,7 +193,12 @@ class ThermalFieldReader:
                     category="source_conflict",
                 )
         identity = canonical_digest(
-            {"subject": snapshot.subject, "check": check, "reader": self.identity, "related": tuple(item.subject for item in context.related_snapshots)}
+            {
+                "subject": snapshot.subject,
+                "check": check,
+                "reader": self.identity,
+                "related": tuple(item.subject for item in context.related_snapshots),
+            }
         )
         return Measurement(
             id="m-" + identity,
@@ -210,9 +236,7 @@ class ThermalFieldReader:
                 "Thermal contact resistance must be nonnegative.",
                 category="source_conflict",
             )
-        return cold + heat * (
-            length / (conductivity * width * thickness) + contact
-        )
+        return cold + heat * (length / (conductivity * width * thickness) + contact)
 
     def _selection(self, snapshot, check, context, related, evidence):
         if snapshot.subject.format != "json":
@@ -222,10 +246,13 @@ class ThermalFieldReader:
             selected = decision["selected_case_id"]
         except (UnicodeError, json.JSONDecodeError, KeyError, TypeError) as exc:
             raise _defect(
-                "thermal.invalid_decision", "Sizing decision does not name a selected case."
+                "thermal.invalid_decision",
+                "Sizing decision does not name a selected case.",
             ) from exc
         cases = check.parameters.get("cases")
-        limit = _number(check.parameters.get("temperature_limit_c"), "temperature limit")
+        limit = _number(
+            check.parameters.get("temperature_limit_c"), "temperature limit"
+        )
         if not isinstance(cases, list) or not cases:
             raise ValidationIssue(
                 "profile.thermal_cases",
@@ -236,7 +263,9 @@ class ThermalFieldReader:
         for case in cases:
             if not isinstance(case, dict):
                 raise ValidationIssue(
-                    "profile.thermal_cases", "Thermal candidate definition is invalid.", category="source_conflict"
+                    "profile.thermal_cases",
+                    "Thermal candidate definition is invalid.",
+                    category="source_conflict",
                 )
             role = case.get("role")
             related_snapshot = related.get(role)
@@ -245,7 +274,10 @@ class ThermalFieldReader:
                     "subject.related_role_missing",
                     f"Selection requires the bound field role '{role}'.",
                 )
-            parameters = {**check.parameters, "dimensions_mm": case.get("dimensions_mm")}
+            parameters = {
+                **check.parameters,
+                "dimensions_mm": case.get("dimensions_mm"),
+            }
             field = _field(related_snapshot, context, parameters)
             observed.append(
                 (
@@ -257,7 +289,11 @@ class ThermalFieldReader:
             evidence.append(
                 f"subject:{related_snapshot.subject.id}@{related_snapshot.subject.sha256}#field"
             )
-        passing = sorted((width, identifier) for identifier, width, maximum in observed if maximum <= limit)
+        passing = sorted(
+            (width, identifier)
+            for identifier, width, maximum in observed
+            if maximum <= limit
+        )
         derived = passing[0][1] if passing else None
         if not isinstance(selected, str) or selected != derived:
             raise _defect(

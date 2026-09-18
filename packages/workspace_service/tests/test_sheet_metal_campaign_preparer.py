@@ -61,9 +61,11 @@ def test_prepared_case_retains_every_original_gate_and_human_input(tmp_path, ord
         "local_review",
         "supplier_upload_preview",
         "cart_quote_handoff",
+        "local_review",
     ]
-    assert plan.steps[-1].id.startswith("collect_handoff_")
-    for gate in gates[1:]:
+    assert any(step.id.startswith("collect_handoff_") for step in plan.steps)
+    assert plan.steps[-1].id.startswith("validate_sheet_content_")
+    for gate in gates[1:3]:
         assert gate.external_action["destination"]["id"].startswith(
             "test://test-campaign/supplier/"
         )
@@ -71,6 +73,7 @@ def test_prepared_case_retains_every_original_gate_and_human_input(tmp_path, ord
         assert gate.external_action["settings"]["manufacturing_release"] == "HOLD"
         assert gate.external_action["settings"]["supplier_acceptance"] == "unverified"
         assert gate.external_action["action"]["order"] is False
+    assert gates[-1].external_action["settings"]["validation_review"]["requirement_ids"]
     assert len(
         [step for step in plan.steps if step.cad and step.cad["source"] == "new"]
     ) == (2 if ordinal == 3 else 1)

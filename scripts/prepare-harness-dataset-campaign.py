@@ -44,18 +44,21 @@ def prepare(args,directory,available):
     for name in ("harness_engineering_operations.py","harness_engineering_mcp.py","harness_component_sources.json"):
         stage_file(inputs+"/"+name,(ROOT/"scripts"/name).read_bytes(),{"authored_source":"scripts/"+name})
     design_contract = dict(config["scenarios"][identity])
+    contact_resistance_ohm = getattr(args, "contact_resistance_ohm", None)
+    splice_port_resistance_ohm = getattr(args, "splice_port_resistance_ohm", None)
+    resistance_basis = getattr(args, "resistance_basis", None)
     resistance_values = (
-        args.contact_resistance_ohm,
-        args.splice_port_resistance_ohm,
-        args.resistance_basis,
+        contact_resistance_ohm,
+        splice_port_resistance_ohm,
+        resistance_basis,
     )
     if any(value is not None for value in resistance_values):
         if not all(value is not None for value in resistance_values):
             raise ValueError("Both resistance values and their engineering basis are required")
         design_contract["resistance_assumption"] = {
-            "contact_ohm_each": args.contact_resistance_ohm,
-            "splice_port_ohm_each": args.splice_port_resistance_ohm,
-            "basis": args.resistance_basis,
+            "contact_ohm_each": contact_resistance_ohm,
+            "splice_port_ohm_each": splice_port_resistance_ohm,
+            "basis": resistance_basis,
             "status": "reviewed_engineering_assumption",
         }
     stage_file(inputs+"/design.json",(json.dumps(design_contract,indent=2)+"\n").encode(),{"derived_from":"Original context.md; explicit 50 mm installed zone pigtail design choice conserves original route lengths; optional resistance values require the workflow engineering review"})

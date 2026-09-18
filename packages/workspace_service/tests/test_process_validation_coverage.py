@@ -11,8 +11,7 @@ from workspace_service.process_validation.profiles import load_profile
 
 REPOSITORY = Path(__file__).parents[3]
 COVERAGE_PATH = (
-    REPOSITORY
-    / "packages/workspace_service/src/workspace_service/process_validation/"
+    REPOSITORY / "packages/workspace_service/src/workspace_service/process_validation/"
     "profiles/coverage.json"
 )
 
@@ -79,9 +78,7 @@ def test_all_full_scope_profiles_are_qualified_and_initial_slices_remain_identif
             "qualified"
         }
     assert {
-        scenario_id
-        for scenario_id, item in scenarios.items()
-        if item["initial_slice"]
+        scenario_id for scenario_id, item in scenarios.items() if item["initial_slice"]
     } == {"parametric-drill-jig-01", "heat-spreader-sizing-01"}
 
 
@@ -93,9 +90,10 @@ def test_qualified_entries_pin_loadable_profiles_readers_and_evidence():
             continue
         profile = load_profile(metadata["profile_resource"])
         assert profile.reference().model_dump(mode="json") == metadata["profile_ref"]
-        assert profile.baseline.reference().model_dump(mode="json") == metadata[
-            "baseline_ref"
-        ]
+        assert (
+            profile.baseline.reference().model_dump(mode="json")
+            == metadata["baseline_ref"]
+        )
         assert {f"{check.reader}@1" for check in profile.checks} == set(
             metadata["reader_ids"]
         )
@@ -109,8 +107,13 @@ def test_qualified_entries_pin_loadable_profiles_readers_and_evidence():
             continue
         profile = load_profile(metadata["profile_resource"])
         assert profile.reference().model_dump(mode="json") == metadata["profile_ref"]
-        assert profile.baseline.reference().model_dump(mode="json") == metadata["baseline_ref"]
-        assert {f"{check.reader}@1" for check in profile.checks} == set(metadata["reader_ids"])
+        assert (
+            profile.baseline.reference().model_dump(mode="json")
+            == metadata["baseline_ref"]
+        )
+        assert {f"{check.reader}@1" for check in profile.checks} == set(
+            metadata["reader_ids"]
+        )
         review_ids = {
             requirement_id
             for check in profile.checks
@@ -134,9 +137,9 @@ def test_qualified_entries_pin_loadable_profiles_readers_and_evidence():
         }
         assert set(item["campaign_credit"]["requirement_ids"]) == mandatory_ids
         assert mandatory_ids <= assessed_ids
-        assert {
-            check.subject_role for check in profile.checks
-        } <= set(item["campaign_credit"]["subject_roles"])
+        assert {check.subject_role for check in profile.checks} <= set(
+            item["campaign_credit"]["subject_roles"]
+        )
 
 
 def test_every_capability_preserves_its_extension_recipe():

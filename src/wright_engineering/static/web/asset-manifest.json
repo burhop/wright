@@ -1,24 +1,24 @@
 {
   "files": [
     {
-      "path": "assets/index-C42fYR6I.css",
-      "sha256": "4c34bc71396b96597864d02fc8a7115a8fb9318162ec9d12cee9e243ddbda543",
-      "size": 38968
+      "path": "assets/index-7dO1WQsg.js",
+      "sha256": "de93a2f031cef790a68f35891d7d0fb8612512602393cd7814ffd56b2bec8c5c",
+      "size": 2281523
     },
     {
-      "path": "assets/index-qPXWFVHO.js",
-      "sha256": "31a689c2305f051726836db60a33931dbd8fa3ff6bdfeb720e918d2423d8f7d3",
-      "size": 1732811
+      "path": "assets/index-EoxGyPZd.css",
+      "sha256": "9104d239e597f91bbe5b02215c1dd5181923b6cb6d3cdee1e4a88ac7215197ac",
+      "size": 138624
     },
     {
-      "path": "assets/NativeProcessPage-abnR3BgO.js",
-      "sha256": "2a02fafb67798ded4915b0a96372c473d5a294d535f1e9697a07883f5b4b5f40",
-      "size": 232576
+      "path": "assets/NativeProcessPage-BR3Y0gMw.css",
+      "sha256": "cbd1e90b1f97d6c435e588bb02f95d93a61f0e15b6ea72177ee1a0ed4eb216fc",
+      "size": 7233
     },
     {
-      "path": "assets/NativeProcessPage-CHP8FWMI.css",
-      "sha256": "307c40cefc87d3ab747deb93fa35c4e7db114ea607da9ee197bbe9c9d408d1ac",
-      "size": 22645
+      "path": "assets/NativeProcessPage-UWjJwfX1.js",
+      "sha256": "8cfb6909ead6284b91fb4a0a9c56a0b8680898426bc41aed235a879d67a7abe2",
+      "size": 54939
     },
     {
       "path": "assets/plotly.min-dkCWgMZq.js",
@@ -42,8 +42,23 @@
     },
     {
       "path": "index.html",
-      "sha256": "e7826f730682ddf5661ac77fd4fd55b56c4deff004aad3ed7c4a84ef0e358a2c",
-      "size": 1005
+      "sha256": "3aee817c90a96a18f90f18e647d2712518371a135c8ba5667d433a3728dfb99c",
+      "size": 1074
+    },
+    {
+      "path": "recovery-concept/manufacturability-report.html",
+      "sha256": "e7163a8cd8df53123922d8fb783e282b22d0ce9911e229005d3f679148622fcd",
+      "size": 2884
+    },
+    {
+      "path": "recovery-concept/mounting-bracket.step",
+      "sha256": "b253b9e9dcf26ef8c44f932d9198c92dc0831abf80660f0727a7a701bc5afe74",
+      "size": 696
+    },
+    {
+      "path": "recovery-concept/mounting-bracket.svg",
+      "sha256": "1e8600d68d6ced1bb29a0dea46f36582751d0073bcafa251a5e9aa470f83b23e",
+      "size": 1980
     },
     {
       "path": "surface-sandbox/index.html",
@@ -62,8 +77,13 @@
     },
     {
       "path": "third-party-licenses-web.txt",
-      "sha256": "c6eff6707f58a51bbdf973343048304d3c9575b67ccd6028851b751af4a40bb9",
+      "sha256": "868f66cb252c5700564c2ab5d68a1cf2aa142cd943e3409a47830f3c761e11bd",
       "size": 236029
+    },
+    {
+      "path": "wright-mark.svg",
+      "sha256": "b7ca97182bd7075a225c18310b89166bd179cb3929658cf9b015c63194e48f62",
+      "size": 248
     }
   ],
   "schema_version": 1

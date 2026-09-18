@@ -8,6 +8,7 @@ specs/053-workspace-surfaces/contracts/** text eol=lf
 packages/core/src/core/surfaces/schemas/** text eol=lf
 
 # Validator baselines are byte-hashed and copied into installed runtime profiles.
+packages/workspace_service/src/workspace_service/process_validation/baselines/*.json text eol=lf
 packages/workspace_service/src/workspace_service/process_validation/profiles/*.md text eol=lf
 packages/workspace_service/src/workspace_service/process_validation/profiles/*.json text eol=lf
 tests/datasets/process-validation/** text eol=lf

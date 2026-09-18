@@ -69,7 +69,9 @@ def _json(content, name):
             parse_constant=_constant,
         )
     except (UnicodeError, ValueError, RecursionError) as exc:
-        raise _defect("cfd.invalid_json", f"{name} must be finite unambiguous JSON.") from exc
+        raise _defect(
+            "cfd.invalid_json", f"{name} must be finite unambiguous JSON."
+        ) from exc
     if not isinstance(value, dict):
         raise _defect("cfd.invalid_json", f"{name} must be a JSON object.")
     return value
@@ -80,11 +82,15 @@ def _archive(content, context):
         archive = ZipFile(io.BytesIO(content))
         entries = archive.infolist()
         if not entries or len(entries) > _MAX_MEMBERS:
-            raise _defect("cfd.archive_entries", "CFD archive member count is unsupported.")
+            raise _defect(
+                "cfd.archive_entries", "CFD archive member count is unsupported."
+            )
         context.checkpoint(entities=len(entries))
         names = [entry.filename.replace("\\", "/") for entry in entries]
         if len(names) != len(set(names)):
-            raise _defect("cfd.archive_duplicates", "CFD archive has duplicate members.")
+            raise _defect(
+                "cfd.archive_duplicates", "CFD archive has duplicate members."
+            )
         total = 0
         for entry, name in zip(entries, names, strict=True):
             total += entry.file_size
@@ -96,15 +102,20 @@ def _archive(content, context):
                 or entry.flag_bits & 0x1
             ):
                 raise _defect(
-                    "cfd.archive_member", "CFD archive has an unsafe or encrypted member."
+                    "cfd.archive_member",
+                    "CFD archive has an unsafe or encrypted member.",
                 )
         if total > _MAX_EXPANDED_BYTES:
-            raise _defect("cfd.archive_size", "Expanded CFD archive exceeds the reader limit.")
+            raise _defect(
+                "cfd.archive_size", "Expanded CFD archive exceeds the reader limit."
+            )
         return archive, set(names)
     except ValidationIssue:
         raise
     except (BadZipFile, OSError, RuntimeError) as exc:
-        raise _defect("cfd.invalid_archive", "CFD fields must be a valid ZIP archive.") from exc
+        raise _defect(
+            "cfd.invalid_archive", "CFD fields must be a valid ZIP archive."
+        ) from exc
 
 
 def _field_values(content, field_name):
@@ -119,24 +130,33 @@ def _field_values(content, field_name):
             if line_end < 0:
                 raise _defect("cfd.invalid_vtk", "VTK field header is truncated.")
             try:
-                name, components, tuples, data_type = content[position:line_end].decode(
-                    "ascii"
-                ).split()
+                name, components, tuples, data_type = (
+                    content[position:line_end].decode("ascii").split()
+                )
                 components, tuples = int(components), int(tuples)
                 size = _TYPE_SIZE[data_type]
             except (UnicodeError, ValueError, KeyError) as exc:
-                raise _defect("cfd.invalid_vtk", "VTK field declaration is unsupported.") from exc
+                raise _defect(
+                    "cfd.invalid_vtk", "VTK field declaration is unsupported."
+                ) from exc
             start = line_end + 1
             end = start + components * tuples * size
             if end > len(content):
                 raise _defect("cfd.invalid_vtk", "VTK binary field is truncated.")
             if name == field_name:
                 if components != 1 or data_type not in {"float", "double"}:
-                    raise _defect("cfd.invalid_vtk", "Temperature field has invalid type.")
+                    raise _defect(
+                        "cfd.invalid_vtk", "Temperature field has invalid type."
+                    )
                 code = ">f" if data_type == "float" else ">d"
-                values = tuple(item[0] for item in struct.iter_unpack(code, content[start:end]))
+                values = tuple(
+                    item[0] for item in struct.iter_unpack(code, content[start:end])
+                )
                 if not values or any(not math.isfinite(item) for item in values):
-                    raise _defect("cfd.nonfinite_field", "Temperature field is empty or nonfinite.")
+                    raise _defect(
+                        "cfd.nonfinite_field",
+                        "Temperature field is empty or nonfinite.",
+                    )
                 return values
             position = end + (content[end : end + 1] == b"\n")
         match = _FIELD_HEADER.search(content, position)
@@ -147,7 +167,9 @@ def _convergence_measurement(content, expected_iterations):
     try:
         text = content.decode("utf-8")
     except UnicodeDecodeError as exc:
-        raise _defect("cfd.solver_log_invalid", "CFD solver log must be UTF-8 text.") from exc
+        raise _defect(
+            "cfd.solver_log_invalid", "CFD solver log must be UTF-8 text."
+        ) from exc
     matches = list(_TIME_LINE.finditer(text))
     if len(matches) < _CONVERGENCE_WINDOW_ITERATIONS or "\nEnd\n" not in text:
         raise _missing(
@@ -181,7 +203,9 @@ def _convergence_measurement(content, expected_iterations):
         )
     scale = max(abs(window[-1]["maximum_temperature_k"]), 1.0)
     observed = {
-        "maximum_initial_residual": max(row["maximum_initial_residual"] for row in window),
+        "maximum_initial_residual": max(
+            row["maximum_initial_residual"] for row in window
+        ),
         "maximum_final_residual": max(row["maximum_final_residual"] for row in window),
         "relative_temperature_change": abs(
             window[-1]["maximum_temperature_k"] - window[0]["maximum_temperature_k"]
@@ -238,9 +262,7 @@ def _heat_balance_measurement(content, context):
             }:
                 raise ValueError("identity")
             values = {
-                key: float(row[key])
-                for key in columns
-                if key not in {"patch", "role"}
+                key: float(row[key]) for key in columns if key not in {"patch", "role"}
             }
             if any(not math.isfinite(value) for value in values.values()):
                 raise ValueError("finite")
@@ -272,10 +294,18 @@ def _heat_balance_measurement(content, context):
 def _variant(comparison, name):
     variants = comparison.get("variants")
     if not isinstance(variants, list):
-        raise _defect("cfd.comparison_variants", "CFD comparison has no variant records.")
-    matches = [item for item in variants if isinstance(item, dict) and item.get("variant") == name]
+        raise _defect(
+            "cfd.comparison_variants", "CFD comparison has no variant records."
+        )
+    matches = [
+        item
+        for item in variants
+        if isinstance(item, dict) and item.get("variant") == name
+    ]
     if len(matches) != 1:
-        raise _defect("cfd.comparison_variants", f"CFD comparison must contain one {name} record.")
+        raise _defect(
+            "cfd.comparison_variants", f"CFD comparison must contain one {name} record."
+        )
     return matches[0]
 
 
@@ -285,7 +315,11 @@ class CfdEvidenceReader:
         version="1",
         config_digest=canonical_digest(
             {
-                "formats": ["contract-json", "comparison-json", "legacy-binary-vtk-zip"],
+                "formats": [
+                    "contract-json",
+                    "comparison-json",
+                    "legacy-binary-vtk-zip",
+                ],
                 "checks": [
                     "contract-geometry-and-load-binding",
                     "archive-summary-and-field-hashes",
@@ -304,7 +338,9 @@ class CfdEvidenceReader:
     def measure(self, snapshot, check, context):
         operation = check.parameters.get("operation")
         related = {item.subject.role: item for item in context.related_snapshots}
-        evidence = [f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}"]
+        evidence = [
+            f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}"
+        ]
         unit = None
         if operation == "contract":
             value = _json(snapshot.content, "CFD contract")
@@ -315,11 +351,16 @@ class CfdEvidenceReader:
             archive_snapshot = related.get("field_archive")
             if archive_snapshot is None:
                 raise ValidationIssue(
-                    "subject.related_role_missing", "Bind the required field_archive output role."
+                    "subject.related_role_missing",
+                    "Bind the required field_archive output role.",
                 )
-            if comparison.get("field_archive_sha256") != archive_snapshot.subject.sha256:
+            if (
+                comparison.get("field_archive_sha256")
+                != archive_snapshot.subject.sha256
+            ):
                 raise _defect(
-                    "cfd.archive_binding", "Comparison does not bind the exact CFD archive bytes."
+                    "cfd.archive_binding",
+                    "Comparison does not bind the exact CFD archive bytes.",
                 )
             archive, names = _archive(archive_snapshot.content, context)
             observed = self._verify_archive(comparison, archive, names, context)
@@ -333,7 +374,9 @@ class CfdEvidenceReader:
             member = check.parameters.get("member")
             if not isinstance(member, str) or member not in names:
                 archive.close()
-                raise _defect("cfd.field_missing", "Required CFD temperature field is absent.")
+                raise _defect(
+                    "cfd.field_missing", "Required CFD temperature field is absent."
+                )
             content = archive.read(member)
             archive.close()
             values = _field_values(content, "T")
@@ -345,21 +388,32 @@ class CfdEvidenceReader:
             boundaries = variant.get("actual_boundaries")
             if not isinstance(boundaries, list) or len(boundaries) < 2:
                 raise _missing(
-                    "cfd.mass_balance_missing", "Mass-balance evidence needs at least two boundaries."
+                    "cfd.mass_balance_missing",
+                    "Mass-balance evidence needs at least two boundaries.",
                 )
             try:
-                fluxes = [float(item["net_outward_volume_flux_m3_s"]) for item in boundaries]
+                fluxes = [
+                    float(item["net_outward_volume_flux_m3_s"]) for item in boundaries
+                ]
             except (KeyError, TypeError, ValueError) as exc:
                 raise _missing(
-                    "cfd.mass_balance_missing", "Boundary volume-flux evidence is incomplete."
+                    "cfd.mass_balance_missing",
+                    "Boundary volume-flux evidence is incomplete.",
                 ) from exc
-            if any(not math.isfinite(item) for item in fluxes) or sum(map(abs, fluxes)) == 0:
-                raise _defect("cfd.mass_balance_invalid", "Boundary fluxes are invalid.")
+            if (
+                any(not math.isfinite(item) for item in fluxes)
+                or sum(map(abs, fluxes)) == 0
+            ):
+                raise _defect(
+                    "cfd.mass_balance_invalid", "Boundary fluxes are invalid."
+                )
             observed = abs(sum(fluxes)) / sum(map(abs, fluxes))
             unit = "1"
         elif operation == "convergence":
             comparison = _json(snapshot.content, "CFD comparison")
-            variants = [_variant(comparison, name) for name in ("variant-a", "variant-b")]
+            variants = [
+                _variant(comparison, name) for name in ("variant-a", "variant-b")
+            ]
             archive_snapshot = related.get("field_archive")
             if archive_snapshot is None:
                 raise _missing(
@@ -373,7 +427,9 @@ class CfdEvidenceReader:
                 log_name = f"{variant_name}/solver.log"
                 if log_name not in names:
                     archive.close()
-                    raise _defect("cfd.archive_missing", "CFD archive lacks a solver log.")
+                    raise _defect(
+                        "cfd.archive_missing", "CFD archive lacks a solver log."
+                    )
                 log_content = archive.read(log_name)
                 profile = item.get("numerical_profile")
                 if not isinstance(profile, dict) or "end" not in profile:
@@ -394,7 +450,10 @@ class CfdEvidenceReader:
                         "cfd.convergence_evidence_mismatch",
                         f"{variant_name} convergence evidence disagrees with its archived solver log.",
                     )
-                if item.get("steady_state_convergence_claimed") is not measured["passed"]:
+                if (
+                    item.get("steady_state_convergence_claimed")
+                    is not measured["passed"]
+                ):
                     archive.close()
                     raise _defect(
                         "cfd.convergence_claim_mismatch",
@@ -418,7 +477,9 @@ class CfdEvidenceReader:
             observed = True
         elif operation == "heat_balance":
             comparison = _json(snapshot.content, "CFD comparison")
-            variants = [_variant(comparison, name) for name in ("variant-a", "variant-b")]
+            variants = [
+                _variant(comparison, name) for name in ("variant-a", "variant-b")
+            ]
             archive_snapshot = related.get("field_archive")
             if archive_snapshot is None:
                 raise _missing(
@@ -468,7 +529,9 @@ class CfdEvidenceReader:
                         "Heat-balance input load must be finite and positive.",
                     )
                 balance = abs(input_heat_w - heat_out_w) / input_heat_w
-                if not math.isclose(heat_out_w, reported_heat_out_w, rel_tol=1e-9, abs_tol=1e-12) or not math.isclose(
+                if not math.isclose(
+                    heat_out_w, reported_heat_out_w, rel_tol=1e-9, abs_tol=1e-12
+                ) or not math.isclose(
                     balance, reported_balance, rel_tol=1e-9, abs_tol=1e-12
                 ):
                     archive.close()
@@ -513,34 +576,56 @@ class CfdEvidenceReader:
         region_roles = parameters.get("region_roles")
         if not isinstance(expected, dict) or not isinstance(region_roles, dict):
             raise ValidationIssue(
-                "profile.cfd_contract", "CFD contract expectations are missing.", category="source_conflict"
+                "profile.cfd_contract",
+                "CFD contract expectations are missing.",
+                category="source_conflict",
             )
         if value.get("ambient_k") != expected.get("ambient_k") or value.get(
             "gravity_m_s2"
         ) != expected.get("gravity_m_s2"):
-            raise _defect("cfd.contract_conditions", "CFD ambient or gravity differs from the frozen basis.")
+            raise _defect(
+                "cfd.contract_conditions",
+                "CFD ambient or gravity differs from the frozen basis.",
+            )
         regions = value.get("regions")
         if not isinstance(regions, list):
-            raise _defect("cfd.contract_regions", "CFD contract has no region inventory.")
+            raise _defect(
+                "cfd.contract_regions", "CFD contract has no region inventory."
+            )
         by_name = {item.get("name"): item for item in regions if isinstance(item, dict)}
         for name, required in expected.get("regions", {}).items():
             actual = by_name.get(name)
             if not actual:
-                raise _defect("cfd.contract_region_missing", f"CFD contract lacks region {name}.")
-            material = actual.get("material") if isinstance(actual.get("material"), dict) else {}
+                raise _defect(
+                    "cfd.contract_region_missing", f"CFD contract lacks region {name}."
+                )
+            material = (
+                actual.get("material")
+                if isinstance(actual.get("material"), dict)
+                else {}
+            )
             if actual.get("heat_w") != required.get("heat_w") or material.get(
                 "kappa"
             ) != required.get("kappa"):
-                raise _defect("cfd.contract_region_value", f"CFD region {name} has wrong load/material data.")
+                raise _defect(
+                    "cfd.contract_region_value",
+                    f"CFD region {name} has wrong load/material data.",
+                )
         for name, role in region_roles.items():
             actual, bound = by_name.get(name), related.get(role)
             if actual is None or bound is None:
                 raise ValidationIssue(
-                    "subject.related_role_missing", f"Bind the required related output role '{role}'."
+                    "subject.related_role_missing",
+                    f"Bind the required related output role '{role}'.",
                 )
             if actual.get("sha256") != bound.subject.sha256:
-                raise _defect("cfd.contract_geometry_binding", f"CFD region {name} is not bound to the exact geometry bytes.")
-            evidence.append(f"subject:{bound.subject.id}@{bound.subject.sha256}#cfd-region:{name}")
+                raise _defect(
+                    "cfd.contract_geometry_binding",
+                    f"CFD region {name} is not bound to the exact geometry bytes.",
+                )
+            evidence.append(
+                f"subject:{bound.subject.id}@{bound.subject.sha256}#cfd-region:{name}"
+            )
 
     @staticmethod
     def _verify_archive(comparison, archive, names, context):
@@ -550,19 +635,29 @@ class CfdEvidenceReader:
             summary_name = f"{variant_name}/computed-fields.json"
             log_name = f"{variant_name}/solver.log"
             if summary_name not in names or log_name not in names:
-                raise _defect("cfd.archive_missing", "CFD archive lacks a field summary or solver log.")
+                raise _defect(
+                    "cfd.archive_missing",
+                    "CFD archive lacks a field summary or solver log.",
+                )
             summary = _json(archive.read(summary_name), "Archived field summary")
             for key in ("actual_regions", "actual_boundaries", "contract_sha256"):
                 if summary.get(key) != variant.get(key):
-                    raise _defect("cfd.summary_mismatch", "Archived fields and comparison JSON disagree.")
-            records = summary.get("actual_regions", []) + summary.get("actual_boundaries", [])
+                    raise _defect(
+                        "cfd.summary_mismatch",
+                        "Archived fields and comparison JSON disagree.",
+                    )
+            records = summary.get("actual_regions", []) + summary.get(
+                "actual_boundaries", []
+            )
             for record in records:
                 member = f"{variant_name}/{record.get('field', '')}"
                 if member not in names:
                     raise _defect("cfd.field_missing", f"CFD archive lacks {member}.")
                 digest = hashlib.sha256(archive.read(member)).hexdigest()
                 if digest != record.get("sha256"):
-                    raise _defect("cfd.field_hash", f"CFD field digest does not match {member}.")
+                    raise _defect(
+                        "cfd.field_hash", f"CFD field digest does not match {member}."
+                    )
                 count += 1
                 context.checkpoint(entities=count)
         return count

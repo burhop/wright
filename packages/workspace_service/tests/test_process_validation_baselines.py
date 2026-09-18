@@ -55,7 +55,10 @@ def test_generated_baselines_are_reproducible():
 
 def test_baseline_loader_pins_digest_and_rejects_traversal():
     baseline = load_baseline("heat-spreader-sizing-01")
-    assert load_baseline("heat-spreader-sizing-01", expected=baseline.reference()) == baseline
+    assert (
+        load_baseline("heat-spreader-sizing-01", expected=baseline.reference())
+        == baseline
+    )
     assert canonical_json(baseline).startswith('{"amendments":')
     try:
         load_baseline("../heat-spreader-sizing-01")

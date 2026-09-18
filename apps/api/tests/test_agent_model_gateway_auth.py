@@ -80,3 +80,94 @@ async def test_model_request_uses_running_gateway_credentials_not_model_profile(
 
     assert result == {"providers": []}
     assert resolver_calls == [("hermes", None)]
+
+
+def test_model_options_only_include_account_accessible_models() -> None:
+    result = agent._build_model_options_response(
+        {
+            "provider": "openai-codex",
+            "model": "gpt-5.6-sol",
+            "providers": [
+                {
+                    "slug": "openai-codex",
+                    "name": "OpenAI Codex",
+                    "authenticated": True,
+                    "models": [
+                        "gpt-6-astra",
+                        "gpt-5.6-sol",
+                        "gpt-5.6-sol-pro",
+                    ],
+                },
+                {
+                    "slug": "openai-api",
+                    "name": "OpenAI API",
+                    "authenticated": False,
+                    "models": ["gpt-5.6-sol"],
+                },
+                {
+                    "slug": "copilot",
+                    "name": "GitHub Copilot",
+                    "models": ["gpt-5.6-sol"],
+                },
+                {
+                    "slug": "custom-team",
+                    "name": "Team Gateway",
+                    "authenticated": True,
+                    "models": ["team-model"],
+                },
+            ],
+        }
+    )
+
+    assert [group.provider for group in result.groups] == [
+        "openai-codex",
+    ]
+    assert [option.model for option in result.groups[0].options] == [
+        "gpt-6-astra",
+        "gpt-5.6-sol",
+    ]
+
+
+def test_model_options_keep_current_provider_for_older_hermes_payloads() -> None:
+    result = agent._build_model_options_response(
+        {
+            "provider": "openai-codex",
+            "model": "gpt-5.6-sol",
+            "providers": [
+                {
+                    "slug": "openai-codex",
+                    "name": "OpenAI Codex",
+                    "models": ["gpt-5.6-sol"],
+                },
+                {
+                    "slug": "copilot",
+                    "name": "GitHub Copilot",
+                    "models": ["gpt-5.6-sol"],
+                },
+            ],
+        }
+    )
+
+    assert [group.provider for group in result.groups] == ["openai-codex"]
+
+
+def test_model_options_do_not_restore_an_inaccessible_current_model() -> None:
+    result = agent._build_model_options_response(
+        {
+            "provider": "openai-codex",
+            "model": "gpt-5.6-sol-pro",
+            "providers": [
+                {
+                    "slug": "openai-codex",
+                    "name": "OpenAI Codex",
+                    "authenticated": True,
+                    "models": ["gpt-5.6-sol", "gpt-5.6-sol-pro"],
+                }
+            ],
+        }
+    )
+
+    assert result.current_provider == "openai-codex"
+    assert result.current_model is None
+    assert result.current_value is None
+    assert [option.model for option in result.groups[0].options] == ["gpt-5.6-sol"]

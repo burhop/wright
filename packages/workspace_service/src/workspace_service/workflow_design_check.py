@@ -278,8 +278,7 @@ def validate_rework(steps, revisions):
             and check.validation_sources
             and validation_sources == {target_id}
             and all(
-                source
-                in {f"{target_id}.{port}" for port, _ in target.output_ports}
+                source in {f"{target_id}.{port}" for port, _ in target.output_ports}
                 for _, source in check.validation_sources
             )
         )
@@ -323,8 +322,7 @@ def validate_rework(steps, revisions):
             and target.cad.get("policy", "indexed") == "indexed"
             and not target.application
             and not target.design_check
-            and target_validation_ports
-            <= {port for port, _ in target.output_ports}
+            and target_validation_ports <= {port for port, _ in target.output_ports}
         )
         local_validator_file_mcp_rework = bool(
             target

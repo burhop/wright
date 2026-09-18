@@ -343,7 +343,9 @@ def test_exact_local_review_satisfies_only_its_pinned_validator_requirements(
     from core.process_validation import ValidationProfile, canonical_json
     from data_vault import WorkflowContinuationRepository
     from workspace_service.process_validation.application import ValidationApplication
-    from workspace_service.workflow_external_actions import WorkflowExternalActionService
+    from workspace_service.workflow_external_actions import (
+        WorkflowExternalActionService,
+    )
     from workspace_service.workflow_integration_policy import (
         LOCAL_REVIEW_BINDING,
         LOCAL_REVIEW_DESTINATION,
@@ -416,7 +418,7 @@ def test_exact_local_review_satisfies_only_its_pinned_validator_requirements(
     }
     text = source(
         task("produce", fmt="json"),
-        f'''task review
+        f"""task review
   name: "Review exact result"
   step_type: review
   performed_by: engineer
@@ -427,11 +429,11 @@ def test_exact_local_review_satisfies_only_its_pinned_validator_requirements(
   tool: null
   reusable_step: null
 end
-''',
+""",
         validator(config),
         task("consume", fmt="text"),
     )
-    text += '''connection review_subject
+    text += """connection review_subject
   type: item
   from: "produce.produce_response"
   to: "review.review_subject"
@@ -459,7 +461,7 @@ connection release
   label: "Release reviewed result"
   when: pass
 end
-'''
+"""
     plan = replace(compile_prompt_workflow(text), definition_digest="b" * 64)
     app = runtime_service(tmp_path)
 
@@ -564,15 +566,16 @@ end
         outcome="dispatched",
         evidence={"kind": "local_review"},
     )
+
     async def resume():
         return await execute_prompt_workflow(
-                service=app,
-                workspace_dir=str(tmp_path),
-                plan=plan,
-                input_values={},
-                response_generator=generate,
-                continuation=checkpoint.continuation,
-                completed_checkpoint=asdict(checkpoint),
+            service=app,
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={},
+            response_generator=generate,
+            continuation=checkpoint.continuation,
+            completed_checkpoint=asdict(checkpoint),
         )
 
     if not passes:
@@ -584,9 +587,11 @@ end
     final = asyncio.run(resume())
 
     validation = next(step for step in final["steps"] if step["task_id"] == "inspect")
-    assessment = ValidationApplication(
-        app.db_path, "workspace", str(tmp_path)
-    ).get_result(validation["validation"]["assessment_id"]).assessment
+    assessment = (
+        ValidationApplication(app.db_path, "workspace", str(tmp_path))
+        .get_result(validation["validation"]["assessment_id"])
+        .assessment
+    )
     assert validation["validation"]["release_eligible"]
     assert assessment.summary.release_eligible
     assert len(assessment.review_ids) == 1

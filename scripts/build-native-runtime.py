@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -57,10 +58,13 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _run(command: list[str], *, cwd: Path) -> None:
+def _run(
+    command: list[str], *, cwd: Path, env: dict[str, str] | None = None
+) -> None:
     completed = subprocess.run(
         command,
         cwd=cwd,
+        env=env,
         check=False,
         text=True,
         stdout=subprocess.PIPE,
@@ -78,7 +82,15 @@ def build_frontend() -> None:
     if npm is None:
         raise CandidateBuildError("npm is required only on the release build host")
     _run([npm, "ci"], cwd=WEB_ROOT)
-    _run([npm, "run", "build"], cwd=WEB_ROOT)
+    environment = dict(os.environ)
+    environment.update(
+        {
+            "VITE_WRIGHT_PROCESS_DEFINITION_VIEW": "1",
+            "VITE_WRIGHT_WORKFLOW_COMPOSER": "1",
+            "VITE_WRIGHT_WORKFLOW_RECOVERY": "1",
+        }
+    )
+    _run([npm, "run", "build"], cwd=WEB_ROOT, env=environment)
 
 
 def inspect_web_dist(source: Path) -> list[dict[str, object]]:

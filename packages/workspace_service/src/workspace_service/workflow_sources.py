@@ -963,8 +963,11 @@ class WorkspaceWorkflowSourceStore:
             raise ValueError("Artifact read limit must be between 1 byte and 256 MiB")
         path = self._paths.resolve(relative_path, must_exist=True)
         return self._read_bounded_file(
-            path, max_bytes=max_bytes, label="artifact",
-            invalid_code="artifact_path_invalid", too_large_code="artifact_too_large",
+            path,
+            max_bytes=max_bytes,
+            label="artifact",
+            invalid_code="artifact_path_invalid",
+            too_large_code="artifact_too_large",
             too_large_message="Artifact exceeds the configured read limit",
         )
 

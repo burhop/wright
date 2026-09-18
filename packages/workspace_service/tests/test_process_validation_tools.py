@@ -319,9 +319,10 @@ def test_real_gateway_policy_dispatch_audit_and_output_schema(tmp_path):
             {"assessment_id": result.structured_content["assessment_id"]},
         )
     )
-    assert report.structured_content["assessment"]["id"] == result.structured_content[
-        "assessment_id"
-    ]
+    assert (
+        report.structured_content["assessment"]["id"]
+        == result.structured_content["assessment_id"]
+    )
     exported = asyncio.run(
         gateway.call_tool(
             "session",

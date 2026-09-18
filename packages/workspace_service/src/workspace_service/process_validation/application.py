@@ -57,9 +57,7 @@ class ValidationApplication:
         return self.service.get_result(assessment_id)
 
     def list_findings(self, assessment_id, *, cursor=0, limit=20):
-        return self.service.list_findings(
-            assessment_id, cursor=cursor, limit=limit
-        )
+        return self.service.list_findings(assessment_id, cursor=cursor, limit=limit)
 
     def export_result(self, assessment_id, format):
         return self.service.export_result(assessment_id, format)

@@ -227,7 +227,9 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             step for step in plan.steps if step.id.startswith("review_bracket_outputs_")
         )
         validator = next(
-            step for step in plan.steps if step.id.startswith("validate_bracket_content_")
+            step
+            for step in plan.steps
+            if step.id.startswith("validate_bracket_content_")
         )
         assert set(cad.expected_file_ports) == {
             "baseline_step",
@@ -241,9 +243,7 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             for mesh in ("coarse", "fine")
             for kind in ("receipt", "displacement", "stress", "reaction")
         }
-        for expansion in [
-            step for step in plan.steps if step.id.startswith("expand_")
-        ]:
+        for expansion in [step for step in plan.steps if step.id.startswith("expand_")]:
             assert len(expansion.expected_file_ports) == 4
         assert {role for role, _ in validator.validation_sources} == {
             "mechanical_basis",
@@ -257,9 +257,10 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
         configured_review = final_review.external_action["settings"][
             "validation_review"
         ]
-        assert configured_review["profile_ref"] == validator.validation["profile"][
-            "reference"
-        ]
+        assert (
+            configured_review["profile_ref"]
+            == validator.validation["profile"]["reference"]
+        )
         assert configured_review["requirement_ids"]
         assert plan.revisions == {}
         assert len(plan.steps) == 14 and len(manifest["tool_allowlist"]) == 11

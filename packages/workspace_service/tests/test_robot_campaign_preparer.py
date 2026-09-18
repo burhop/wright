@@ -131,9 +131,9 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     }
     assert validator.validation["profile"]["name"] == scenario["scenario_id"]
     configured_review = review.external_action["settings"]["validation_review"]
-    assert configured_review["profile_ref"] == validator.validation["profile"][
-        "reference"
-    ]
+    assert (
+        configured_review["profile_ref"] == validator.validation["profile"]["reference"]
+    )
     assert configured_review["requirement_ids"]
     assert plan.revisions == {}
     assert set(measurement.expected_file_ports) == {"timeline", "plot", "metrics"}

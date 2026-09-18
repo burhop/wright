@@ -28,7 +28,9 @@ def _number(value, name: str) -> float:
     try:
         result = float(value)
     except (TypeError, ValueError) as exc:
-        raise _defect("structural.invalid_value", f"Structural {name} must be numeric.") from exc
+        raise _defect(
+            "structural.invalid_value", f"Structural {name} must be numeric."
+        ) from exc
     if not math.isfinite(result):
         raise _defect("structural.nonfinite", f"Structural {name} must be finite.")
     return result
@@ -38,15 +40,21 @@ def _json(snapshot):
     try:
         value = json.loads(snapshot.content)
     except (UnicodeError, json.JSONDecodeError) as exc:
-        raise _defect("structural.invalid_json", "Structural evidence must be valid JSON.") from exc
+        raise _defect(
+            "structural.invalid_json", "Structural evidence must be valid JSON."
+        ) from exc
     if not isinstance(value, dict):
-        raise _defect("structural.invalid_json", "Structural evidence must be a JSON object.")
+        raise _defect(
+            "structural.invalid_json", "Structural evidence must be a JSON object."
+        )
     return value
 
 
 def _csv(snapshot, headers):
     try:
-        reader = csv.DictReader(io.StringIO(snapshot.content.decode("utf-8-sig")), strict=True)
+        reader = csv.DictReader(
+            io.StringIO(snapshot.content.decode("utf-8-sig")), strict=True
+        )
         if reader.fieldnames != list(headers):
             raise ValueError("columns")
         rows = []
@@ -70,7 +78,10 @@ def _related(context):
 
 def _vector(value, name, length=3):
     if not isinstance(value, list) or len(value) != length:
-        raise _defect("structural.invalid_vector", f"Structural {name} must contain {length} values.")
+        raise _defect(
+            "structural.invalid_vector",
+            f"Structural {name} must contain {length} values.",
+        )
     return tuple(_number(item, name) for item in value)
 
 
@@ -81,9 +92,14 @@ def _displacements(snapshot):
         try:
             node = int(row["node_id"])
         except ValueError as exc:
-            raise _defect("structural.invalid_node", "Displacement node IDs must be integers.") from exc
+            raise _defect(
+                "structural.invalid_node", "Displacement node IDs must be integers."
+            ) from exc
         if node <= 0 or node in seen:
-            raise _defect("structural.duplicate_node", "Displacement node IDs must be unique and positive.")
+            raise _defect(
+                "structural.duplicate_node",
+                "Displacement node IDs must be unique and positive.",
+            )
         seen.add(node)
         vector = tuple(_number(row[key], key) for key in ("ux_mm", "uy_mm", "uz_mm"))
         magnitudes.append(math.sqrt(sum(item * item for item in vector)))
@@ -107,9 +123,15 @@ def _stresses(snapshot):
         try:
             key = (int(row["element_id"]), int(row["integration_point"]))
         except ValueError as exc:
-            raise _defect("structural.invalid_element", "Stress element identities must be integers.") from exc
+            raise _defect(
+                "structural.invalid_element",
+                "Stress element identities must be integers.",
+            ) from exc
         if min(key) <= 0 or key in seen:
-            raise _defect("structural.duplicate_element", "Stress integration-point identities must be unique and positive.")
+            raise _defect(
+                "structural.duplicate_element",
+                "Stress integration-point identities must be unique and positive.",
+            )
         seen.add(key)
         sxx, syy, szz, sxy, sxz, syz = (
             _number(row[name], name) for name in headers[2:]
@@ -149,7 +171,9 @@ class StructuralEvidenceReader:
     def measure(self, snapshot, check, context):
         operation = check.parameters.get("operation")
         related = _related(context)
-        evidence = [f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}"]
+        evidence = [
+            f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}"
+        ]
         unit = check.unit
         if operation == "request_contract":
             observed = self._request_contract(snapshot, check, related, evidence)
@@ -197,7 +221,10 @@ class StructuralEvidenceReader:
         value = _json(snapshot)
         runs = value.get("runs")
         if not isinstance(runs, list) or len(runs) != 4:
-            raise _defect("structural.request_inventory", "FEA requests must contain exactly four labeled runs.")
+            raise _defect(
+                "structural.request_inventory",
+                "FEA requests must contain exactly four labeled runs.",
+            )
         expected_force = _vector(check.parameters.get("force_n"), "load force")
         expected = {
             (variant, mesh): size
@@ -206,18 +233,31 @@ class StructuralEvidenceReader:
         }
         seen = set()
         for item in runs:
-            if not isinstance(item, dict) or not isinstance(item.get("arguments"), dict):
-                raise _defect("structural.request_schema", "Each FEA request needs variant, mesh and arguments.")
+            if not isinstance(item, dict) or not isinstance(
+                item.get("arguments"), dict
+            ):
+                raise _defect(
+                    "structural.request_schema",
+                    "Each FEA request needs variant, mesh and arguments.",
+                )
             key = (item.get("variant"), item.get("mesh"))
             if key not in expected or key in seen:
-                raise _defect("structural.request_inventory", "FEA run labels must be unique baseline/revised coarse/fine pairs.")
+                raise _defect(
+                    "structural.request_inventory",
+                    "FEA run labels must be unique baseline/revised coarse/fine pairs.",
+                )
             seen.add(key)
             arguments = item["arguments"]
             role = f"{key[0]}_step"
             geometry = related.get(role)
             if geometry is None:
-                raise ValidationIssue("subject.related_role_missing", f"Bind the required related output role '{role}'.")
-            evidence.append(f"subject:{geometry.subject.id}@{geometry.subject.sha256}#geometry")
+                raise ValidationIssue(
+                    "subject.related_role_missing",
+                    f"Bind the required related output role '{role}'.",
+                )
+            evidence.append(
+                f"subject:{geometry.subject.id}@{geometry.subject.sha256}#geometry"
+            )
             material = arguments.get("material")
             if (
                 arguments.get("expected_step_sha256") != geometry.subject.sha256
@@ -227,7 +267,10 @@ class StructuralEvidenceReader:
                 or _number(material.get("e_mpa"), "elastic modulus") != 69000.0
                 or _number(material.get("nu"), "Poisson ratio") != 0.33
             ):
-                raise _defect("structural.request_contract", "FEA request differs from the frozen geometry, mesh or material contract.")
+                raise _defect(
+                    "structural.request_contract",
+                    "FEA request differs from the frozen geometry, mesh or material contract.",
+                )
             loads = arguments.get("loads")
             fixed = arguments.get("fixed")
             selections = arguments.get("selections")
@@ -238,9 +281,15 @@ class StructuralEvidenceReader:
                 or not fixed
                 or not isinstance(selections, list)
                 or not selections
-                or any(_vector(load.get("force_n"), "applied force") != expected_force for load in loads)
+                or any(
+                    _vector(load.get("force_n"), "applied force") != expected_force
+                    for load in loads
+                )
             ):
-                raise _defect("structural.load_contract", "FEA request does not preserve the exact distributed load and nonempty selections.")
+                raise _defect(
+                    "structural.load_contract",
+                    "FEA request does not preserve the exact distributed load and nonempty selections.",
+                )
         return True
 
     @staticmethod
@@ -249,37 +298,59 @@ class StructuralEvidenceReader:
         geometry_role = check.parameters.get("geometry_role")
         geometry = related.get(geometry_role)
         if geometry is None:
-            raise ValidationIssue("subject.related_role_missing", f"Bind the required related output role '{geometry_role}'.")
+            raise ValidationIssue(
+                "subject.related_role_missing",
+                f"Bind the required related output role '{geometry_role}'.",
+            )
         if (
             value.get("status") != "completed"
             or value.get("expected_step_sha256") != geometry.subject.sha256
             or value.get("physics_deck_changed") is not False
-            or value.get("expansion_kind") != "explicit_separate_native_solve_output_requests_only"
+            or value.get("expansion_kind")
+            != "explicit_separate_native_solve_output_requests_only"
             or not isinstance(value.get("original_run_id"), str)
             or not value["original_run_id"].startswith("r-")
             or int(value.get("nodal_displacement_rows", 0)) <= 0
             or int(value.get("stress_integration_point_rows", 0)) <= 0
         ):
-            raise _defect("structural.receipt_contract", "Field expansion receipt does not preserve the completed geometry-bound output-only solve contract.")
+            raise _defect(
+                "structural.receipt_contract",
+                "Field expansion receipt does not preserve the completed geometry-bound output-only solve contract.",
+            )
         files = value.get("files")
         if not isinstance(files, list):
-            raise _defect("structural.receipt_files", "Field expansion receipt omits its file inventory.")
+            raise _defect(
+                "structural.receipt_files",
+                "Field expansion receipt omits its file inventory.",
+            )
         indexed = {item.get("path"): item for item in files if isinstance(item, dict)}
         expected_paths = check.parameters.get("expected_paths")
         if not isinstance(expected_paths, dict) or not expected_paths:
-            raise ValidationIssue("profile.structural_paths", "Receipt binding requires role-to-path mappings.", category="source_conflict")
+            raise ValidationIssue(
+                "profile.structural_paths",
+                "Receipt binding requires role-to-path mappings.",
+                category="source_conflict",
+            )
         for role, path in expected_paths.items():
             bound, item = related.get(role), indexed.get(path)
             if bound is None:
-                raise ValidationIssue("subject.related_role_missing", f"Bind the required related output role '{role}'.")
+                raise ValidationIssue(
+                    "subject.related_role_missing",
+                    f"Bind the required related output role '{role}'.",
+                )
             if (
                 not isinstance(item, dict)
                 or item.get("sha256") != bound.subject.sha256
                 or item.get("bytes") != len(bound.content)
             ):
-                raise _defect("structural.receipt_file_mismatch", f"Receipt does not bind the exact '{path}' output.")
+                raise _defect(
+                    "structural.receipt_file_mismatch",
+                    f"Receipt does not bind the exact '{path}' output.",
+                )
             evidence.append(f"subject:{bound.subject.id}@{bound.subject.sha256}#{path}")
-        evidence.append(f"subject:{geometry.subject.id}@{geometry.subject.sha256}#geometry")
+        evidence.append(
+            f"subject:{geometry.subject.id}@{geometry.subject.sha256}#geometry"
+        )
         return True
 
     @staticmethod
@@ -287,15 +358,31 @@ class StructuralEvidenceReader:
         coarse_role = check.parameters.get("coarse_role")
         coarse = related.get(coarse_role)
         if coarse is None:
-            raise ValidationIssue("subject.related_role_missing", f"Bind the required related output role '{coarse_role}'.")
+            raise ValidationIssue(
+                "subject.related_role_missing",
+                f"Bind the required related output role '{coarse_role}'.",
+            )
         kind = check.parameters.get("field")
-        parser = _displacements if kind == "displacement" else _stresses if kind == "stress" else None
+        parser = (
+            _displacements
+            if kind == "displacement"
+            else _stresses
+            if kind == "stress"
+            else None
+        )
         if parser is None:
-            raise ValidationIssue("profile.structural_field", "Refinement field must be displacement or stress.", category="source_conflict")
+            raise ValidationIssue(
+                "profile.structural_field",
+                "Refinement field must be displacement or stress.",
+                category="source_conflict",
+            )
         fine_count, fine_max = parser(snapshot)
         coarse_count, coarse_max = parser(coarse)
         if fine_count <= coarse_count:
-            raise _defect("structural.refinement_lineage", "Fine field must contain more observations than its bound coarse field.")
+            raise _defect(
+                "structural.refinement_lineage",
+                "Fine field must contain more observations than its bound coarse field.",
+            )
         denominator = max(abs(fine_max), 1e-12)
         evidence.append(f"subject:{coarse.subject.id}@{coarse.subject.sha256}#field")
         return abs(fine_max - coarse_max) / denominator
@@ -304,7 +391,9 @@ class StructuralEvidenceReader:
     def _reaction_equilibrium(snapshot, check):
         value = _json(snapshot)
         reaction_force = _vector(value.get("reaction_force_n"), "reaction force")
-        reaction_moment = _vector(value.get("reaction_moment_about_global_origin_nmm"), "reaction moment")
+        reaction_moment = _vector(
+            value.get("reaction_moment_about_global_origin_nmm"), "reaction moment"
+        )
         applied = _vector(check.parameters.get("force_n"), "applied force")
         centroid = _vector(check.parameters.get("load_centroid_mm"), "load centroid")
         applied_moment = (
@@ -313,33 +402,69 @@ class StructuralEvidenceReader:
             centroid[0] * applied[1] - centroid[1] * applied[0],
         )
         force_scale = max(math.sqrt(sum(item * item for item in applied)), 1e-12)
-        moment_scale = max(math.sqrt(sum(item * item for item in applied_moment)), force_scale)
-        force_error = math.sqrt(sum((a + b) ** 2 for a, b in zip(reaction_force, applied, strict=True))) / force_scale
-        moment_error = math.sqrt(sum((a + b) ** 2 for a, b in zip(reaction_moment, applied_moment, strict=True))) / moment_scale
+        moment_scale = max(
+            math.sqrt(sum(item * item for item in applied_moment)), force_scale
+        )
+        force_error = (
+            math.sqrt(
+                sum((a + b) ** 2 for a, b in zip(reaction_force, applied, strict=True))
+            )
+            / force_scale
+        )
+        moment_error = (
+            math.sqrt(
+                sum(
+                    (a + b) ** 2
+                    for a, b in zip(reaction_moment, applied_moment, strict=True)
+                )
+            )
+            / moment_scale
+        )
         return max(force_error, moment_error)
 
     @staticmethod
     def _mass_reduction(snapshot, check, related, evidence):
         headers = ("variant", "volume_mm3", "mass_g", "step_sha256")
         rows = _csv(snapshot, headers)
-        if len(rows) != 2 or {row["variant"] for row in rows} != {"baseline", "revised"}:
-            raise _defect("structural.mass_inventory", "Mass comparison must contain exactly baseline and revised rows.")
+        if len(rows) != 2 or {row["variant"] for row in rows} != {
+            "baseline",
+            "revised",
+        }:
+            raise _defect(
+                "structural.mass_inventory",
+                "Mass comparison must contain exactly baseline and revised rows.",
+            )
         values = {}
         density = _number(check.parameters.get("density_kg_m3"), "density")
         for row in rows:
             variant = row["variant"]
             geometry = related.get(f"{variant}_step")
             if geometry is None:
-                raise ValidationIssue("subject.related_role_missing", f"Bind the required related output role '{variant}_step'.")
+                raise ValidationIssue(
+                    "subject.related_role_missing",
+                    f"Bind the required related output role '{variant}_step'.",
+                )
             volume = _number(row["volume_mm3"], "volume")
             mass = _number(row["mass_g"], "mass")
             calculated = volume * density * 1e-6
-            if volume <= 0 or mass <= 0 or abs(mass - calculated) > max(1e-6, calculated * 0.001):
-                raise _defect("structural.mass_calculation", "Reported mass does not match volume and frozen density.")
+            if (
+                volume <= 0
+                or mass <= 0
+                or abs(mass - calculated) > max(1e-6, calculated * 0.001)
+            ):
+                raise _defect(
+                    "structural.mass_calculation",
+                    "Reported mass does not match volume and frozen density.",
+                )
             if row["step_sha256"] != geometry.subject.sha256:
-                raise _defect("structural.mass_geometry", "Mass comparison does not bind the exact STEP revision.")
+                raise _defect(
+                    "structural.mass_geometry",
+                    "Mass comparison does not bind the exact STEP revision.",
+                )
             values[variant] = mass
-            evidence.append(f"subject:{geometry.subject.id}@{geometry.subject.sha256}#geometry")
+            evidence.append(
+                f"subject:{geometry.subject.id}@{geometry.subject.sha256}#geometry"
+            )
         if values["revised"] >= values["baseline"]:
             return 0.0
         return 1.0 - values["revised"] / values["baseline"]

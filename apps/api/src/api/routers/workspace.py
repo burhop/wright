@@ -660,9 +660,7 @@ def _process_validation_application(session_id: str, service: WorkspaceService):
     from workspace_service.process_validation.application import ValidationApplication
 
     scope = _workflow_source_scope(session_id, service)
-    return ValidationApplication(
-        DATABASE_PATH, scope.workspace_id, scope.workspace_dir
-    )
+    return ValidationApplication(DATABASE_PATH, scope.workspace_id, scope.workspace_dir)
 
 
 def _process_validation_error(error: Exception) -> HTTPException:
@@ -1280,9 +1278,9 @@ def process_validation_export(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     try:
-        exported = _process_validation_application(
-            session_id, service
-        ).export_result(assessment_id, format)
+        exported = _process_validation_application(session_id, service).export_result(
+            assessment_id, format
+        )
     except (KeyError, ValueError, OSError) as error:
         raise _process_validation_error(error) from error
     return Response(

@@ -538,6 +538,19 @@ def _model_option_value(provider: str, model: str) -> str:
     return f"{provider}::{model}"
 
 
+def _provider_is_accessible(provider_row: dict, current_provider: str | None) -> bool:
+    """Expose models only for the provider selected in Hermes setup."""
+    provider = str(provider_row.get("slug") or "").strip()
+    return bool(current_provider and provider == current_provider)
+
+
+def _model_is_accessible(provider: str, model: str) -> bool:
+    # Hermes versions predating account-aware Codex discovery included API
+    # service-tier aliases in the ChatGPT OAuth picker. The Codex backend
+    # rejects those aliases, so they are not selectable account models.
+    return not (provider == "openai-codex" and model.endswith("-pro"))
+
+
 async def _hermes_json_request(
     method: str,
     path: str,
@@ -585,7 +598,14 @@ async def _hermes_json_request(
 
 def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
     current_provider = str(payload.get("provider") or "").strip() or None
-    current_model = str(payload.get("model") or "").strip() or None
+    discovered_current_model = str(payload.get("model") or "").strip() or None
+    current_model = (
+        discovered_current_model
+        if current_provider
+        and discovered_current_model
+        and _model_is_accessible(current_provider, discovered_current_model)
+        else None
+    )
     current_value = (
         _model_option_value(current_provider, current_model)
         if current_provider and current_model
@@ -597,12 +617,12 @@ def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
         if not isinstance(provider_row, dict):
             continue
         provider = str(provider_row.get("slug") or "").strip()
-        if not provider:
+        if not provider or not _provider_is_accessible(provider_row, current_provider):
             continue
         models = [
             str(model).strip()
             for model in (provider_row.get("models") or [])
-            if str(model).strip()
+            if str(model).strip() and _model_is_accessible(provider, str(model).strip())
         ]
         if not models:
             continue

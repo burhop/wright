@@ -29,9 +29,7 @@ class ReportExport:
 def build_report(
     assessment: Assessment, currentness: AssessmentCurrentness
 ) -> ValidationReport:
-    requirements = {
-        item.id: item for item in assessment.profile.baseline.requirements
-    }
+    requirements = {item.id: item for item in assessment.profile.baseline.requirements}
     results = {item.check_id: item for item in assessment.checks}
     measurements = {item.id: item for item in assessment.measurements}
     findings = {item.id: item for item in assessment.findings}
@@ -132,7 +130,11 @@ def _markdown(value: object) -> str:
 
 def render_markdown(report: ValidationReport) -> str:
     assessment = report.assessment
-    verdict = "PASS" if report.currentness.is_current and assessment.summary.release_eligible else "HOLD"
+    verdict = (
+        "PASS"
+        if report.currentness.is_current and assessment.summary.release_eligible
+        else "HOLD"
+    )
     lines = [
         "# Process validation report",
         "",
@@ -255,7 +257,9 @@ def render_rtm_csv(report: ValidationReport) -> str:
                 _csv_safe(list(row.evidence_refs)),
                 _csv_safe(row.subject_id),
                 row.subject_sha256 or "",
-                _csv_safe(row.producer.model_dump(mode="json") if row.producer else None),
+                _csv_safe(
+                    row.producer.model_dump(mode="json") if row.producer else None
+                ),
                 row.action or "",
                 report.assessment.id,
                 report.assessment_digest,
@@ -268,10 +272,23 @@ def render_rtm_csv(report: ValidationReport) -> str:
 def export_report(report: ValidationReport, format: str) -> ReportExport:
     stem = f"wright-validation-{report.assessment.id}"
     if format == "json":
-        content = (json.dumps(report.model_dump(mode="json"), ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+        content = (
+            json.dumps(report.model_dump(mode="json"), ensure_ascii=False, indent=2)
+            + "\n"
+        ).encode("utf-8")
         return ReportExport(format, "application/json", stem + ".json", content)
     if format == "markdown":
-        return ReportExport(format, "text/markdown; charset=utf-8", stem + ".md", render_markdown(report).encode("utf-8"))
+        return ReportExport(
+            format,
+            "text/markdown; charset=utf-8",
+            stem + ".md",
+            render_markdown(report).encode("utf-8"),
+        )
     if format in {"csv", "rtm"}:
-        return ReportExport("csv", "text/csv; charset=utf-8", stem + "-rtm.csv", render_rtm_csv(report).encode("utf-8"))
+        return ReportExport(
+            "csv",
+            "text/csv; charset=utf-8",
+            stem + "-rtm.csv",
+            render_rtm_csv(report).encode("utf-8"),
+        )
     raise ValueError("Report format must be json, markdown or csv")

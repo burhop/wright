@@ -1321,8 +1321,7 @@ def _approval_settings(
         or not isinstance(configured.get("requirement_ids"), list)
         or not configured["requirement_ids"]
         or any(not isinstance(item, str) for item in configured["requirement_ids"])
-        or len(set(configured["requirement_ids"]))
-        != len(configured["requirement_ids"])
+        or len(set(configured["requirement_ids"])) != len(configured["requirement_ids"])
     ):
         raise _invalid(
             f"{pending_action.title}: validation review settings are incomplete.",
@@ -1560,7 +1559,10 @@ async def execute_prompt_workflow(
                     if kind == "workspace_file"
                 ]
                 port = receipt.get("output_port") or "receipt"
-                if port not in declared_receipt_ports and len(declared_receipt_ports) == 1:
+                if (
+                    port not in declared_receipt_ports
+                    and len(declared_receipt_ports) == 1
+                ):
                     port = declared_receipt_ports[0]
                 output = {
                     **receipt,
@@ -1598,27 +1600,27 @@ async def execute_prompt_workflow(
                     approved_source, []
                 )
         approval_record = {
-                "task_id": released.id,
-                "task_title": released.title,
-                "execution_kind": "approval",
-                "output_format": "text",
-                "output_path": None,
-                "output_bytes": 0,
-                "response": "Approved",
-                "checkpoint_id": completed_checkpoint["checkpoint_id"],
+            "task_id": released.id,
+            "task_title": released.title,
+            "execution_kind": "approval",
+            "output_format": "text",
+            "output_path": None,
+            "output_bytes": 0,
+            "response": "Approved",
+            "checkpoint_id": completed_checkpoint["checkpoint_id"],
+            "subject_digest": completed_checkpoint["subject_digest"],
+            "review_authority": {
+                "action_kind": released.external_action["action_kind"],
+                "settings": released.external_action["settings"],
+                "actor": completed_checkpoint.get("actor"),
+                "reason": completed_checkpoint.get("reason"),
+                "subject": completed_checkpoint.get("subject"),
                 "subject_digest": completed_checkpoint["subject_digest"],
-                "review_authority": {
-                    "action_kind": released.external_action["action_kind"],
-                    "settings": released.external_action["settings"],
-                    "actor": completed_checkpoint.get("actor"),
-                    "reason": completed_checkpoint.get("reason"),
-                    "subject": completed_checkpoint.get("subject"),
-                    "subject_digest": completed_checkpoint["subject_digest"],
-                    "checkpoint_id": completed_checkpoint["checkpoint_id"],
-                },
-                "external_action": completed_checkpoint["external_action"],
-                "produced_files": verified_receipts,
-            }
+                "checkpoint_id": completed_checkpoint["checkpoint_id"],
+            },
+            "external_action": completed_checkpoint["external_action"],
+            "produced_files": verified_receipts,
+        }
         if validation_application:
             approval_record["producer_attempt"] = 1 + sum(
                 1 for item in attempts if item["task_id"] == released.id
@@ -2433,6 +2435,7 @@ async def execute_prompt_workflow(
             "context": plan.review_context,
         }
     if pending_action:
+
         def digest_input(value):
             if isinstance(value, WorkflowReference):
                 return value.sha256

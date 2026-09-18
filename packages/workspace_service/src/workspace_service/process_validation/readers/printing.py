@@ -80,7 +80,8 @@ def _stl(content: bytes, context) -> dict:
         values = struct.unpack_from("<12fH", content, 84 + index * 50)
         if not all(math.isfinite(item) for item in values[:12]):
             raise _defect(
-                "printing.nonfinite_stl", "The printable mesh contains nonfinite coordinates."
+                "printing.nonfinite_stl",
+                "The printable mesh contains nonfinite coordinates.",
             )
         vertices = tuple(
             tuple(float(item) for item in values[offset : offset + 3])
@@ -222,7 +223,9 @@ class PrintingArtifactReader:
         unit = None
         if operation in {"stl_dimension", "mesh_integrity"}:
             if snapshot.subject.format != "stl":
-                raise _defect("printing.mesh_format", "Mesh checks require a binary STL.")
+                raise _defect(
+                    "printing.mesh_format", "Mesh checks require a binary STL."
+                )
             if check.parameters.get("unit_convention") != "mm":
                 raise ValidationIssue(
                     "profile.printing_unit",
@@ -259,7 +262,8 @@ class PrintingArtifactReader:
             (source,) = _related(context, "source_mesh")
             if snapshot.subject.format != "stl" or source.subject.format != "stl":
                 raise _defect(
-                    "printing.mesh_format", "Mesh lineage requires two binary STL files."
+                    "printing.mesh_format",
+                    "Mesh lineage requires two binary STL files.",
                 )
             if snapshot.subject.sha256 == source.subject.sha256:
                 raise _defect(
@@ -294,7 +298,9 @@ class PrintingArtifactReader:
             value = _json_object(snapshot.content, "Slice evidence")
             valid = (
                 value.get("operation")
-                == check.parameters.get("expected_operation", "actual_local_bambu_slice")
+                == check.parameters.get(
+                    "expected_operation", "actual_local_bambu_slice"
+                )
                 and value.get("simulation") is False
                 and value.get("exit_code") == 0
                 and value.get("source_sha256") == repaired.subject.sha256
@@ -315,8 +321,10 @@ class PrintingArtifactReader:
         elif operation == "package_inventory":
             members = _archive(snapshot.content, context)
             required = check.parameters.get("required_members")
-            if not isinstance(required, list) or not required or any(
-                not isinstance(item, str) or not item for item in required
+            if (
+                not isinstance(required, list)
+                or not required
+                or any(not isinstance(item, str) or not item for item in required)
             ):
                 raise ValidationIssue(
                     "profile.printing_members",
@@ -327,7 +335,8 @@ class PrintingArtifactReader:
             if missing:
                 raise _defect(
                     "printing.package_missing",
-                    "The slice package is missing required members: " + ", ".join(missing),
+                    "The slice package is missing required members: "
+                    + ", ".join(missing),
                 )
             observed = len(set(required))
             unit = "1"
@@ -365,9 +374,7 @@ class PrintingArtifactReader:
                 "subject": snapshot.subject,
                 "check": check,
                 "reader": self.identity,
-                "related": tuple(
-                    item.subject for item in context.related_snapshots
-                ),
+                "related": tuple(item.subject for item in context.related_snapshots),
             }
         )
         return Measurement(

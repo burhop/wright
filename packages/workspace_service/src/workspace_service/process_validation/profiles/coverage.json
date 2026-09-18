@@ -2130,7 +2130,7 @@
         "profile_ref": {
           "id": "raspberry-pi-enclosure-01-full",
           "version": "1",
-          "sha256": "951d04395fec0385859db2fb4cd5b0fec2d9007fe33dfc1899c5fd98e5582115"
+          "sha256": "1840e74a6f5f1235bf8a1cf35eed08fe77d84e7dc149db1945cc5d019ed17924"
         },
         "baseline_ref": {
           "id": "raspberry-pi-enclosure-01-basis",
@@ -2155,7 +2155,7 @@
         "profile_ref": {
           "id": "raspberry-pi-enclosure-01-full",
           "version": "1",
-          "sha256": "951d04395fec0385859db2fb4cd5b0fec2d9007fe33dfc1899c5fd98e5582115"
+          "sha256": "1840e74a6f5f1235bf8a1cf35eed08fe77d84e7dc149db1945cc5d019ed17924"
         },
         "baseline_ref": {
           "id": "raspberry-pi-enclosure-01-basis",
@@ -2290,7 +2290,7 @@
         "profile_ref": {
           "id": "raspberry-pi-enclosure-02-full",
           "version": "1",
-          "sha256": "af3a77d442abad177fb6779e4860a02e33f2293d31405aa34941eaf8adeacce4"
+          "sha256": "8c6ecf39eeb3f893d499dccfcd16741fc99e3883e0eb93a5cd278fe2392e361a"
         },
         "baseline_ref": {
           "id": "raspberry-pi-enclosure-02-basis",
@@ -2315,7 +2315,7 @@
         "profile_ref": {
           "id": "raspberry-pi-enclosure-02-full",
           "version": "1",
-          "sha256": "af3a77d442abad177fb6779e4860a02e33f2293d31405aa34941eaf8adeacce4"
+          "sha256": "8c6ecf39eeb3f893d499dccfcd16741fc99e3883e0eb93a5cd278fe2392e361a"
         },
         "baseline_ref": {
           "id": "raspberry-pi-enclosure-02-basis",
@@ -2457,7 +2457,7 @@
         "profile_ref": {
           "id": "raspberry-pi-enclosure-03-full",
           "version": "1",
-          "sha256": "80a044eff182a73147caabf57e5b4d56c20ff90c246df1052174e0be5f15ab0e"
+          "sha256": "fca3e7bb12904189c8321901fd58cd033c0527d6394900c19f2adb18115112cd"
         },
         "baseline_ref": {
           "id": "raspberry-pi-enclosure-03-basis",
@@ -2482,7 +2482,7 @@
         "profile_ref": {
           "id": "raspberry-pi-enclosure-03-full",
           "version": "1",
-          "sha256": "80a044eff182a73147caabf57e5b4d56c20ff90c246df1052174e0be5f15ab0e"
+          "sha256": "fca3e7bb12904189c8321901fd58cd033c0527d6394900c19f2adb18115112cd"
         },
         "baseline_ref": {
           "id": "raspberry-pi-enclosure-03-basis",

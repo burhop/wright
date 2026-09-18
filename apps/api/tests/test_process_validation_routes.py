@@ -56,7 +56,9 @@ class FakeValidationApplication:
     def export_result(self, assessment_id, format):
         self.get_result(assessment_id)
         if format == "csv":
-            return ReportExport("csv", "text/csv; charset=utf-8", "report.csv", b"status\r\npass\r\n")
+            return ReportExport(
+                "csv", "text/csv; charset=utf-8", "report.csv", b"status\r\npass\r\n"
+            )
         raise ValueError("unsupported test format")
 
     def record_review(self, assessment_id, **kwargs):
@@ -142,7 +144,9 @@ def test_review_uses_authenticated_actor_and_rejects_client_actor(monkeypatch):
     )
     assert response.status_code == 200
     assert application.review_calls[0]["actor_id"] == "authenticated-engineer"
-    assert application.review_calls[0]["authority_ref"] == "control-plane:trace-api-review"
+    assert (
+        application.review_calls[0]["authority_ref"] == "control-plane:trace-api-review"
+    )
 
     forged = client.post(
         f"/api/workspace/process-validations/{assessment_id}/reviews",

@@ -73,11 +73,14 @@ def main(argv=None):
             elif args.operation == "read":
                 if not args.assessment:
                     parser.error("Read requires --assessment")
-                arguments, context_id = {
-                    "assessment_id": args.assessment,
-                    "cursor": args.cursor,
-                    "limit": args.limit,
-                }, "cli-read"
+                arguments, context_id = (
+                    {
+                        "assessment_id": args.assessment,
+                        "cursor": args.cursor,
+                        "limit": args.limit,
+                    },
+                    "cli-read",
+                )
             else:
                 if not args.assessment:
                     parser.error(f"{args.operation.title()} requires --assessment")

@@ -24,9 +24,13 @@ def _json(snapshot):
     try:
         value = json.loads(snapshot.content)
     except (UnicodeError, json.JSONDecodeError) as exc:
-        raise _defect("sheet_metal.invalid_json", "Sheet-metal evidence must be valid JSON.") from exc
+        raise _defect(
+            "sheet_metal.invalid_json", "Sheet-metal evidence must be valid JSON."
+        ) from exc
     if not isinstance(value, dict):
-        raise _defect("sheet_metal.invalid_json", "Sheet-metal evidence must be a JSON object.")
+        raise _defect(
+            "sheet_metal.invalid_json", "Sheet-metal evidence must be a JSON object."
+        )
     return value
 
 
@@ -58,7 +62,9 @@ class SheetMetalEvidenceReader:
     def measure(self, snapshot, check, context):
         operation = check.parameters.get("operation")
         related = _related(context)
-        evidence = [f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}"]
+        evidence = [
+            f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}"
+        ]
         if operation == "design_check":
             observed = self._design_check(snapshot, check)
         elif operation == "dxf_contract":
@@ -111,7 +117,10 @@ class SheetMetalEvidenceReader:
         requirements = []
         for item in checks:
             if not isinstance(item, dict):
-                raise _defect("sheet_metal.native_check_schema", "Native inspection criteria must be objects.")
+                raise _defect(
+                    "sheet_metal.native_check_schema",
+                    "Native inspection criteria must be objects.",
+                )
             requirement = item.get("requirement")
             evidence = item.get("evidence")
             if (
@@ -130,7 +139,9 @@ class SheetMetalEvidenceReader:
                 )
             requirements.append(requirement)
         required_ids = check.parameters.get("required_requirement_ids")
-        if not isinstance(required_ids, list) or any(not isinstance(item, str) for item in required_ids):
+        if not isinstance(required_ids, list) or any(
+            not isinstance(item, str) for item in required_ids
+        ):
             raise ValidationIssue(
                 "profile.sheet_metal_requirements",
                 "Native inspection check requires source requirement IDs.",
@@ -153,38 +164,60 @@ class SheetMetalEvidenceReader:
         try:
             lines = snapshot.content.decode("utf-8-sig").splitlines()
         except UnicodeError as exc:
-            raise _defect("sheet_metal.dxf_encoding", "Developed DXF must be bounded UTF-8 text.") from exc
+            raise _defect(
+                "sheet_metal.dxf_encoding", "Developed DXF must be bounded UTF-8 text."
+            ) from exc
         if len(lines) % 2 or not lines:
-            raise _defect("sheet_metal.dxf_structure", "Developed DXF must contain complete group-code pairs.")
+            raise _defect(
+                "sheet_metal.dxf_structure",
+                "Developed DXF must contain complete group-code pairs.",
+            )
         pairs = []
         for index in range(0, len(lines), 2):
             context.checkpoint(entities=index // 2 + 1)
             try:
                 code = int(lines[index].strip())
             except ValueError as exc:
-                raise _defect("sheet_metal.dxf_structure", "DXF group codes must be integers.") from exc
+                raise _defect(
+                    "sheet_metal.dxf_structure", "DXF group codes must be integers."
+                ) from exc
             value = lines[index + 1].strip()
             if code in {10, 20, 11, 21, 40, 41, 42}:
                 try:
                     numeric = float(value)
                 except ValueError as exc:
-                    raise _defect("sheet_metal.dxf_numeric", "DXF geometry contains a nonnumeric coordinate.") from exc
+                    raise _defect(
+                        "sheet_metal.dxf_numeric",
+                        "DXF geometry contains a nonnumeric coordinate.",
+                    ) from exc
                 if not math.isfinite(numeric):
-                    raise _defect("sheet_metal.dxf_numeric", "DXF geometry contains a nonfinite coordinate.")
+                    raise _defect(
+                        "sheet_metal.dxf_numeric",
+                        "DXF geometry contains a nonfinite coordinate.",
+                    )
             pairs.append((code, value))
         if pairs[-1] != (0, "EOF"):
-            raise _defect("sheet_metal.dxf_structure", "Developed DXF is missing its EOF marker.")
+            raise _defect(
+                "sheet_metal.dxf_structure", "Developed DXF is missing its EOF marker."
+            )
         units = None
         for index, pair in enumerate(pairs[:-1]):
             if pair == (9, "$INSUNITS") and pairs[index + 1][0] == 70:
                 units = pairs[index + 1][1]
         if units != "4":
-            raise _defect("sheet_metal.dxf_units", "Developed DXF must declare millimetres with $INSUNITS=4.")
+            raise _defect(
+                "sheet_metal.dxf_units",
+                "Developed DXF must declare millimetres with $INSUNITS=4.",
+            )
         in_entities, entity_count = False, 0
         supported = {"LINE", "ARC", "CIRCLE", "LWPOLYLINE", "POLYLINE", "SPLINE"}
         forbidden = {"IMAGE", "INSERT", "3DSOLID", "BODY", "VIEWPORT"}
         for index, pair in enumerate(pairs):
-            if pair == (0, "SECTION") and index + 1 < len(pairs) and pairs[index + 1] == (2, "ENTITIES"):
+            if (
+                pair == (0, "SECTION")
+                and index + 1 < len(pairs)
+                and pairs[index + 1] == (2, "ENTITIES")
+            ):
                 in_entities = True
                 continue
             if in_entities and pair == (0, "ENDSEC"):
@@ -192,11 +225,17 @@ class SheetMetalEvidenceReader:
                 continue
             if in_entities and pair[0] == 0:
                 if pair[1] in forbidden:
-                    raise _defect("sheet_metal.dxf_substitute", "DXF contains a non-flat embedded or solid representation.")
+                    raise _defect(
+                        "sheet_metal.dxf_substitute",
+                        "DXF contains a non-flat embedded or solid representation.",
+                    )
                 if pair[1] in supported:
                     entity_count += 1
         if entity_count == 0:
-            raise _defect("sheet_metal.dxf_empty", "Developed DXF contains no supported flat geometry entities.")
+            raise _defect(
+                "sheet_metal.dxf_empty",
+                "Developed DXF contains no supported flat geometry entities.",
+            )
         return entity_count
 
     @staticmethod
@@ -209,13 +248,22 @@ class SheetMetalEvidenceReader:
             or not isinstance(files, list)
             or not files
         ):
-            raise _defect("sheet_metal.manifest_contract", "Final handoff manifest has an invalid source-bound contract.")
+            raise _defect(
+                "sheet_metal.manifest_contract",
+                "Final handoff manifest has an invalid source-bound contract.",
+            )
         indexed = {}
         for item in files:
             if not isinstance(item, dict) or not isinstance(item.get("path"), str):
-                raise _defect("sheet_metal.manifest_schema", "Final handoff manifest file entries are invalid.")
+                raise _defect(
+                    "sheet_metal.manifest_schema",
+                    "Final handoff manifest file entries are invalid.",
+                )
             if item["path"] in indexed:
-                raise _defect("sheet_metal.manifest_duplicate", "Final handoff manifest contains duplicate paths.")
+                raise _defect(
+                    "sheet_metal.manifest_duplicate",
+                    "Final handoff manifest contains duplicate paths.",
+                )
             indexed[item["path"]] = item
         expected = check.parameters.get("expected_basenames")
         if not isinstance(expected, dict) or not expected:
@@ -226,15 +274,32 @@ class SheetMetalEvidenceReader:
             )
         for role, basename in expected.items():
             bound = related.get(role)
-            matches = [item for path, item in indexed.items() if path.replace("\\", "/").endswith("/" + basename) or path == basename]
+            matches = [
+                item
+                for path, item in indexed.items()
+                if path.replace("\\", "/").endswith("/" + basename) or path == basename
+            ]
             if bound is None:
-                raise ValidationIssue("subject.related_role_missing", f"Bind the required related output role '{role}'.")
+                raise ValidationIssue(
+                    "subject.related_role_missing",
+                    f"Bind the required related output role '{role}'.",
+                )
             if len(matches) != 1:
-                raise _defect("sheet_metal.manifest_inventory", f"Final handoff manifest must contain exactly one '{basename}'.")
+                raise _defect(
+                    "sheet_metal.manifest_inventory",
+                    f"Final handoff manifest must contain exactly one '{basename}'.",
+                )
             item = matches[0]
-            if item.get("sha256") != bound.subject.sha256 or item.get("bytes") != len(bound.content):
-                raise _defect("sheet_metal.manifest_mismatch", f"Final handoff manifest does not bind the exact '{basename}' bytes.")
-            evidence.append(f"subject:{bound.subject.id}@{bound.subject.sha256}#{basename}")
+            if item.get("sha256") != bound.subject.sha256 or item.get("bytes") != len(
+                bound.content
+            ):
+                raise _defect(
+                    "sheet_metal.manifest_mismatch",
+                    f"Final handoff manifest does not bind the exact '{basename}' bytes.",
+                )
+            evidence.append(
+                f"subject:{bound.subject.id}@{bound.subject.sha256}#{basename}"
+            )
         return len(expected)
 
     @staticmethod
@@ -253,16 +318,27 @@ class SheetMetalEvidenceReader:
             or destination.get("id") != expected_destination
             or value.get("dataset_id") != check.parameters.get("scenario_id")
         ):
-            raise _defect("sheet_metal.handoff_contract", "Supplier handoff is not the exact local integration-test action for this scenario.")
+            raise _defect(
+                "sheet_metal.handoff_contract",
+                "Supplier handoff is not the exact local integration-test action for this scenario.",
+            )
         digests = value.get("artifact_digests")
         if (
             not isinstance(digests, list)
             or not digests
             or any(not isinstance(item, str) for item in digests)
         ):
-            raise _defect("sheet_metal.handoff_artifacts", "Supplier handoff omits its exact artifact digest list.")
+            raise _defect(
+                "sheet_metal.handoff_artifacts",
+                "Supplier handoff omits its exact artifact digest list.",
+            )
         for role, bound in related.items():
             if bound.subject.sha256 not in digests:
-                raise _defect("sheet_metal.handoff_artifacts", f"Supplier handoff does not bind the exact '{role}' artifact.")
-            evidence.append(f"subject:{bound.subject.id}@{bound.subject.sha256}#handoff")
+                raise _defect(
+                    "sheet_metal.handoff_artifacts",
+                    f"Supplier handoff does not bind the exact '{role}' artifact.",
+                )
+            evidence.append(
+                f"subject:{bound.subject.id}@{bound.subject.sha256}#handoff"
+            )
         return True

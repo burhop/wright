@@ -221,9 +221,7 @@ class ProcessValidationService:
         return FindingPage(
             **self.reference(report.assessment, report.currentness).model_dump(),
             findings=tuple(items),
-            next_cursor=end
-            if end < len(report.assessment.findings)
-            else None,
+            next_cursor=end if end < len(report.assessment.findings) else None,
         )
 
     @staticmethod
@@ -259,9 +257,7 @@ class ProcessValidationService:
         rationale: str,
         evidence_refs: tuple[str, ...],
     ) -> Assessment:
-        original = self.repository.assessment(
-            self.resolver.workspace_id, assessment_id
-        )
+        original = self.repository.assessment(self.resolver.workspace_id, assessment_id)
         if not self.currentness(original).is_current:
             raise ValueError("Review requires the current validation assessment")
         review = ReviewDecision(
@@ -294,9 +290,10 @@ class ProcessValidationService:
         }
         if not eligible:
             raise ValueError("Requirement has no pending review check")
-        checks, findings = [], [
-            item for item in original.findings if item.check_id not in eligible
-        ]
+        checks, findings = (
+            [],
+            [item for item in original.findings if item.check_id not in eligible],
+        )
         for check in original.checks:
             if check.check_id not in eligible:
                 checks.append(check)
@@ -335,9 +332,7 @@ class ProcessValidationService:
                 CheckResult(
                     check_id=check.check_id,
                     requirement_ids=check.requirement_ids,
-                    state="pass"
-                    if review.decision == "approved"
-                    else "fail",
+                    state="pass" if review.decision == "approved" else "fail",
                     evidence_refs=evidence,
                     finding_ids=finding_ids,
                 )

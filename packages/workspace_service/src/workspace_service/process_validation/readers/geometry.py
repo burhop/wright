@@ -12,7 +12,10 @@ from .base import ValidationIssue
 
 _ENTITY = re.compile(rb"#([0-9]+)\s*=\s*([A-Z0-9_]+)\s*\((.*?)\)\s*;", re.DOTALL)
 _REFERENCE = re.compile(rb"#([0-9]+)")
-_NUMBER = re.compile(rb"(?<![A-Z0-9_])[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[ED][-+]?[0-9]+)?", re.IGNORECASE)
+_NUMBER = re.compile(
+    rb"(?<![A-Z0-9_])[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[ED][-+]?[0-9]+)?",
+    re.IGNORECASE,
+)
 _SELECTOR = re.compile(r"^seat/([A-Za-z0-9_.-]+)/(?:(center)_(x|y)_mm|(diameter)_mm)$")
 
 
@@ -35,13 +38,17 @@ def _finite_number(raw: bytes) -> float:
 
 def _entities(content: bytes, context):
     if not content.lstrip().startswith(b"ISO-10303-21;"):
-        raise _defect("geometry.invalid_step", "Output is not an ISO-10303-21 STEP file.")
+        raise _defect(
+            "geometry.invalid_step", "Output is not an ISO-10303-21 STEP file."
+        )
     entities = {}
     for count, match in enumerate(_ENTITY.finditer(content), start=1):
         context.checkpoint(entities=count)
         identifier = int(match.group(1))
         if identifier in entities:
-            raise _defect("geometry.duplicate_entity", "STEP entity IDs must be unique.")
+            raise _defect(
+                "geometry.duplicate_entity", "STEP entity IDs must be unique."
+            )
         entities[identifier] = (match.group(2).decode("ascii"), match.group(3))
     if not entities or b"END-ISO-10303-21;" not in content:
         raise _defect("geometry.invalid_step", "STEP exchange structure is incomplete.")
@@ -119,7 +126,12 @@ class StepSeatGeometryReader:
         config_digest=canonical_digest(
             {
                 "format": "ISO-10303-21",
-                "entities": ["CIRCLE", "AXIS2_PLACEMENT_3D", "CARTESIAN_POINT", "DIRECTION"],
+                "entities": [
+                    "CIRCLE",
+                    "AXIS2_PLACEMENT_3D",
+                    "CARTESIAN_POINT",
+                    "DIRECTION",
+                ],
                 "center": "axis-placement-origin",
                 "version": 1,
             }
@@ -151,7 +163,10 @@ class StepSeatGeometryReader:
             ) from exc
         if (
             len(nominal) != 2
-            or not all(math.isfinite(item) for item in (*nominal, nominal_diameter, capture, radius_tolerance))
+            or not all(
+                math.isfinite(item)
+                for item in (*nominal, nominal_diameter, capture, radius_tolerance)
+            )
             or nominal_diameter <= 0
             or capture <= 0
             or radius_tolerance < 0
@@ -177,11 +192,17 @@ class StepSeatGeometryReader:
                 # are not model-space edge evidence and are deliberately ignored.
                 if placement[0] == "AXIS2_PLACEMENT_2D":
                     continue
-                placement_refs = [int(item) for item in _REFERENCE.findall(placement[1])]
+                placement_refs = [
+                    int(item) for item in _REFERENCE.findall(placement[1])
+                ]
                 if placement[0] != "AXIS2_PLACEMENT_3D" or len(placement_refs) < 2:
                     raise ValueError("invalid circle placement")
-                center = _point(transform, _vector(entities[placement_refs[0]], "CARTESIAN_POINT"))
-                axis = _direction(transform, _vector(entities[placement_refs[1]], "DIRECTION"))
+                center = _point(
+                    transform, _vector(entities[placement_refs[0]], "CARTESIAN_POINT")
+                )
+                axis = _direction(
+                    transform, _vector(entities[placement_refs[1]], "DIRECTION")
+                )
                 circles.append((identifier, center, axis, numbers[-1]))
                 context.checkpoint(entities=len(circles))
         except (KeyError, ValueError, UnicodeError) as exc:

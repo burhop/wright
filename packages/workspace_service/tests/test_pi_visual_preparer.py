@@ -197,9 +197,7 @@ def test_visual_pi_preserves_real_stages_review_and_bounded_artifacts(
         p["key"].endswith("human_context") for p in author_section["fields"]["inputs"]
     )
     assert any(s.id.startswith("inspect_cad_exports_") for s in plan.steps)
-    collection = next(
-        s for s in plan.steps if s.id.startswith("collect_cfd_results_")
-    )
+    collection = next(s for s in plan.steps if s.id.startswith("collect_cfd_results_"))
     validator = next(s for s in plan.steps if s.id.startswith("validate_pi_content_"))
     assert set(collection.expected_file_ports) == {"comparison", "field_archive"}
     assert {role for role, _ in validator.validation_sources} == {
@@ -210,12 +208,14 @@ def test_visual_pi_preserves_real_stages_review_and_bounded_artifacts(
         "comparison",
         "field_archive",
     }
-    assert validator.validation["profile"]["name"] == f"raspberry-pi-enclosure-0{ordinal}"
+    assert (
+        validator.validation["profile"]["name"] == f"raspberry-pi-enclosure-0{ordinal}"
+    )
     review = next(s for s in plan.steps if s.id.startswith("review_design_"))
     configured_review = review.external_action["settings"]["validation_review"]
-    assert configured_review["profile_ref"] == validator.validation["profile"][
-        "reference"
-    ]
+    assert (
+        configured_review["profile_ref"] == validator.validation["profile"]["reference"]
+    )
     assert configured_review["requirement_ids"]
     assert plan.revisions == {}
     assert "prototype design authority" in (

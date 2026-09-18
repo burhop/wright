@@ -145,7 +145,11 @@ def test_active_cancellation_releases_reader_resource_and_is_terminal(tmp_path):
 def test_provider_readback_receives_exact_trace_and_pinned_revision(tmp_path):
     base = load_profile("structured-demo")
     profile = ValidationProfile(
-        **{**base.model_dump(), "version": "provider-security", "supported_kinds": ("provider",)}
+        **{
+            **base.model_dump(),
+            "version": "provider-security",
+            "supported_kinds": ("provider",),
+        }
     )
     content = json.dumps(
         {"length_mm": 100, "part_id": "demo-plate"},
@@ -209,9 +213,7 @@ def test_provider_readback_receives_exact_trace_and_pinned_revision(tmp_path):
         ),
     ],
 )
-def test_untrusted_deep_or_entity_heavy_json_fails_closed(
-    tmp_path, raw, budget, code
-):
+def test_untrusted_deep_or_entity_heavy_json_fails_closed(tmp_path, raw, budget, code):
     profile = load_profile("structured-demo")
     path = tmp_path / "untrusted.json"
     path.write_bytes(raw)

@@ -71,7 +71,7 @@ def mcp_file_rework_source(*, revision_policy="create_new_files"):
         "baseline": profile.baseline.reference().model_dump(),
         "subjects": {"jig_step": "jig"},
     }
-    return f'''workflow mcp_file_rework
+    return f"""workflow mcp_file_rework
   name: "MCP file correction"
 end
 task produce
@@ -110,7 +110,7 @@ connection repair
   label: "Correct measured geometry"
   when: revise
 end
-'''
+"""
 
 
 def run(tmp_path, plan, generate, events):
@@ -130,7 +130,9 @@ def run(tmp_path, plan, generate, events):
     )
 
 
-def test_structured_producer_receives_typed_feedback_and_releases_new_revision(tmp_path):
+def test_structured_producer_receives_typed_feedback_and_releases_new_revision(
+    tmp_path,
+):
     plan = compile_prompt_workflow(rework_source(max_revisions=2))
     prompts, events = [], []
 
@@ -151,11 +153,19 @@ def test_structured_producer_receives_typed_feedback_and_releases_new_revision(t
     assert '"observed":98' in repair_prompt
     assert '"preserve_requirement_ids":["DEMO-002","DEMO-003"]' in repair_prompt
     assert result["steps"][-1]["task_id"] == "consume"
-    assert [record["producer_attempt"] for record in result["revision_attempts"] if record["task_id"] == "produce"] == [1]
-    current = next(record for record in result["steps"] if record["task_id"] == "produce")
+    assert [
+        record["producer_attempt"]
+        for record in result["revision_attempts"]
+        if record["task_id"] == "produce"
+    ] == [1]
+    current = next(
+        record for record in result["steps"] if record["task_id"] == "produce"
+    )
     assert current["producer_attempt"] == 2
     assert current["repair_feedback"]["remaining_revisions"] == 2
-    delivered = next(event for event in events if event["kind"] == "validation_feedback_delivered")
+    delivered = next(
+        event for event in events if event["kind"] == "validation_feedback_delivered"
+    )
     assert delivered["target_step_id"] == "produce"
     assert delivered["remaining_revisions"] == 2
     assert len([event for event in events if event["kind"] == "design_check"]) == 2
@@ -174,7 +184,16 @@ def test_identical_output_and_defect_stop_without_spending_another_revision(tmp_
 
     assert error.value.code == "PROCESS_VALIDATION_NO_PROGRESS"
     assert len(prompts) == 2
-    assert len([event for event in events if event["kind"] == "validation_feedback_delivered"]) == 1
+    assert (
+        len(
+            [
+                event
+                for event in events
+                if event["kind"] == "validation_feedback_delivered"
+            ]
+        )
+        == 1
+    )
 
 
 def test_revision_budget_is_persisted_and_exhaustion_holds_consumer(tmp_path):
@@ -197,7 +216,9 @@ def test_revision_budget_is_persisted_and_exhaustion_holds_consumer(tmp_path):
     assert not (tmp_path / "consume.txt").exists()
 
 
-def test_mixed_failure_and_unknown_repair_defect_then_hold_for_missing_evidence(tmp_path):
+def test_mixed_failure_and_unknown_repair_defect_then_hold_for_missing_evidence(
+    tmp_path,
+):
     from core.process_validation import ValidationProfile
     from workspace_service.process_validation.profiles import load_profile
 
@@ -213,9 +234,7 @@ def test_mixed_failure_and_unknown_repair_defect_then_hold_for_missing_evidence(
         "name": "mixed-profile.json",
         "reference": profile.reference().model_dump(),
     }
-    plan = compile_prompt_workflow(
-        rework_source(max_revisions=2, config=config)
-    )
+    plan = compile_prompt_workflow(rework_source(max_revisions=2, config=config))
     outputs = iter((98, 100))
     events = []
 
@@ -356,7 +375,9 @@ def test_compile_rejects_mcp_file_rework_without_explicit_create_new_policy():
     ["jig-validation-loop.workflow.wflow", "heat-validation.workflow.wflow"],
 )
 def test_saved_engineering_processes_pin_loadable_profiles(tmp_path, filename):
-    from workspace_service.process_validation.configuration import ValidatorConfiguration
+    from workspace_service.process_validation.configuration import (
+        ValidatorConfiguration,
+    )
 
     source_path = (
         Path(__file__).parents[3]

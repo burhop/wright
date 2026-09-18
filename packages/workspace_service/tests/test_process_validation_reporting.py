@@ -260,9 +260,7 @@ def test_report_reads_do_not_cross_workspace_boundary(tmp_path):
 def test_schema_only_consumer_accepts_examples_and_reconciles_exports():
     contract = REPOSITORY / "specs/082-output-content-validation/contracts"
     schema = json.loads(
-        (contract / "schemas/ValidationReport.schema.json").read_text(
-            encoding="utf-8"
-        )
+        (contract / "schemas/ValidationReport.schema.json").read_text(encoding="utf-8")
     )
     validator = Draft202012Validator(schema)
     expected = {
