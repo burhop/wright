@@ -130,6 +130,8 @@ $env:WRIGHT_DATA_ROOT = $dataRoot
 $env:WRIGHT_WORKSPACES_DIR = $workspaceRoot
 $env:WRIGHT_WORKSPACE_ROOT = $workspaceRoot
 $env:HERMES_API_BASE_URL = $hermesBase
+$env:HERMES_PROFILE = "wright"
+$env:WRIGHT_HERMES_PROFILE = "wright"
 $env:WRIGHT_AUTH_MODE = "compat"
 $env:WRIGHT_RIVET_WORKFLOWS_ENABLED = "1"
 $env:WRIGHT_RIVET_EDITOR_ENABLED = "1"
@@ -146,24 +148,38 @@ $env:VITE_WRIGHT_PROCESS_DEFINITION_VIEW = "1"
 $env:VITE_WRIGHT_WORKFLOW_COMPOSER = "1"
 $env:VITE_WRIGHT_WORKFLOW_RECOVERY = "1"
 
-# Reuse the existing local Hermes gateway key in memory so Wright can list
-# models and create sessions. Never print or copy the credential into the repo.
+# Reuse the existing local Hermes gateway settings in memory so the isolated
+# Wright profile opens the same loopback API. Never print or copy credentials
+# into the repository or the profile-specific configuration.
 $hermesEnvCandidates = @(
     (Join-Path $env:LOCALAPPDATA "hermes\.env"),
     (Join-Path $env:USERPROFILE ".hermes\.env")
+)
+$hermesEnvKeys = @(
+    "API_SERVER_ENABLED",
+    "API_SERVER_HOST",
+    "API_SERVER_PORT",
+    "API_SERVER_KEY",
+    "WRIGHT_API_TOKEN"
 )
 foreach ($candidate in $hermesEnvCandidates) {
     if (-not (Test-Path -LiteralPath $candidate)) {
         continue
     }
     foreach ($line in Get-Content -LiteralPath $candidate) {
-        if ($line -notmatch '^\s*(HERMES_API_KEY|API_SERVER_KEY)\s*=\s*(.+?)\s*$') {
+        if ($line -notmatch '^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*$') {
+            continue
+        }
+        $key = $Matches[1]
+        if ($hermesEnvKeys -notcontains $key) {
             continue
         }
         $value = $Matches[2].Trim().Trim('"').Trim("'")
         if (-not [string]::IsNullOrWhiteSpace($value)) {
-            $env:HERMES_API_KEY = $value
-            break
+            Set-Item -Path "Env:$key" -Value $value
+            if ($key -eq "API_SERVER_KEY") {
+                $env:HERMES_API_KEY = $value
+            }
         }
     }
     if (-not [string]::IsNullOrWhiteSpace($env:HERMES_API_KEY)) {
@@ -208,7 +224,7 @@ if (-not (Test-HttpEndpoint -Uri "$hermesBase/health")) {
     # Hermes's OpenAI-compatible API server is a decision service for Wright.
     # Keep its process cwd outside the repository so an accidentally enabled
     # Hermes host tool cannot create untracked files in the source checkout.
-    Start-HiddenProcess -Name "hermes-gateway" -FilePath $hermes -ArgumentList @("gateway", "run") -WorkingDirectory $hermesWorkRoot
+    Start-HiddenProcess -Name "hermes-gateway" -FilePath $hermes -ArgumentList @("-p", "wright", "gateway", "run") -WorkingDirectory $hermesWorkRoot
 }
 Wait-HttpEndpoint -Name "Hermes gateway" -Uri "$hermesBase/health"
 

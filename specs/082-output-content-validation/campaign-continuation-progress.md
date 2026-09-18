@@ -1,10 +1,11 @@
 # Campaign continuation progress
 
-**Updated:** 2026-09-17. **Branch:** `codex/082-output-content-validation`.
-**Model:** `openai-codex::gpt-5.6-sol`; usage telemetry is unavailable. A fresh
-registered-session inference probe at `2026-09-17T19:10:49Z` was rejected before
-generation with `The usage limit has been reached`. The retained reset estimate
-is `2026-09-19T11:09:44Z`. The runner pause remains in force.
+**Updated:** 2026-09-18. **Branch:** `codex/082-output-content-validation`.
+**Model:** `openai-codex::gpt-5.6-sol`; the exact registered campaign session returned
+`READY` at `2026-09-18T15:00:40Z`. Hermes profile `wright` is authenticated and both
+Wright and the gateway now use that profile. The old provider reset estimate remains
+historical evidence only. The global campaign pause was released at
+`2026-09-18T15:01:47Z` after successful readiness.
 
 ## Completed
 
@@ -662,9 +663,9 @@ the findings/JSON/RTM links, current freshness, zero inferred human approvals, n
 or request errors and no narrow-layout overflow. Evidence and desktop/mobile snapshots
 are under `artifacts/process-validation/dashboard-validator-082-20260918/`.
 
-C016–C018: after the recorded reset window, run the launcher's `readiness` action once.
-If its receipt is successful, run its `pilot` action and inspect robot-tracking-01's human
-review plus full-profile assessment before expanding the queue, using the frozen pilot
+C016–C018: readiness is complete and the campaign is unpaused. Run the launcher's
+`pilot` action for robot-tracking-01 attempt-006 and inspect its human review plus
+full-profile assessment before expanding the queue, using the successful readiness
 receipt and 27-case catalog as the exact checklist. Then launch/enroll/run the three
 attempt-017 printed cases one at a time with
 the lifecycle wrapper, and resume the remaining audited queue serially without resetting
