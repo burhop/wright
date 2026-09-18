@@ -556,6 +556,24 @@ case also retaining its heat-balance blocker. The dashboard pointer selects this
 report; validator pass credit remains `17/30`, review credit remains `0/30`, and no
 historical artifact or campaign counter was changed.
 
+The new boundary-energy producer path is now qualified against an isolated copy of
+the native Pi-01 variant-A OpenFOAM case. The first read exposed that the OpenFOAM
+`polyMesh/boundary` header was being mistaken for a physical patch; the producer now
+filters the `FoamFile` header and coupled `sampleRegion` interfaces before integrating
+external faces. The corrected native extraction wrote 13,830 per-face observations.
+It measured 6.0 W input and 0.0151271109 W net outward heat, for 0.997478815 relative
+imbalance against the fixed 0.01 limit. The independent `cfd-evidence` reader reproduced
+the heat flow to floating-point precision from the CSV, so this retained 300-iteration
+case correctly fails instead of receiving convergence credit. Evidence is under
+`artifacts/process-validation/cfd-boundary-energy-qualification-20260917/`; focused
+producer/reader/profile tests pass 18 checks and Ruff passes. The dashboard API still
+reconciles to the selected report with 24 complete outputs and 17 validator passes.
+The campaign ledger now supports an explicit `update` event with an optional displayed
+validator-pass count, so a material change that leaves all four counts unchanged still
+adds one equally spaced chart step. The CFD qualification recorded update 17,972 at
+`30/30/24/17`; the dashboard orders that event after the retained-result snapshot and
+keeps the validator line flat at 17.
+
 The harness producer now accepts contact and splice-port resistance only through a
 closed `reviewed_engineering_assumption` record with positive bounded values and a
 written basis. When present, independent verification counts every supply/return

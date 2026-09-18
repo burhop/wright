@@ -399,9 +399,9 @@ class Campaign:
             current["valid_data"],
         ]))
 
-    def event(self, db, kind: str, subject: str | None):
+    def event(self, db, kind: str, subject: str | None, metrics: dict | None = None):
         db.execute("INSERT INTO events(at,kind,subject,metrics) VALUES (?,?,?,?)", (
-            now(), kind, subject, json.dumps(self.metrics(db)),
+            now(), kind, subject, json.dumps(metrics or self.metrics(db)),
         ))
 
     def configure(self, mode: str):
@@ -412,6 +412,21 @@ class Campaign:
             if prior != mode:
                 db.execute("UPDATE settings SET value=? WHERE key='approval_mode'", (mode,))
                 self.event(db, "approval_mode_changed", mode)
+
+    def record_update(self, note: str, *, validator_passes: int | None = None):
+        """Persist an equally spaced chart step even when campaign counts do not change."""
+        note = note.strip() if isinstance(note, str) else ""
+        if not note or len(note) > 240:
+            raise ValueError("Campaign update note must contain 1 to 240 characters")
+        if validator_passes is not None and (
+            not isinstance(validator_passes, int) or not 0 <= validator_passes <= 30
+        ):
+            raise ValueError("Validator passes must be an integer from 0 to 30")
+        with self.lock, self.connect() as db:
+            metrics = self.metrics(db)
+            if validator_passes is not None:
+                metrics["valid_data"] = validator_passes
+            self.event(db, "campaign_update", note, metrics)
 
     def scan(self, *, full_audit: bool = False):
         started = time.monotonic()
@@ -770,11 +785,18 @@ def serve(campaign: Campaign, port: int, *, runner_root=None, native_database=No
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["init", "scan", "status", "configure", "serve"])
+    parser.add_argument(
+        "command", choices=["init", "scan", "status", "configure", "update", "serve"]
+    )
     parser.add_argument("--inputs", type=Path, default=DEFAULT_INPUTS)
     parser.add_argument("--state", type=Path, default=DEFAULT_STATE)
     parser.add_argument("--port", type=int, default=8771)
     parser.add_argument("--approval-mode", choices=["manual", "auto"])
+    parser.add_argument("--note", help="Short description for an update-driven chart step")
+    parser.add_argument(
+        "--validator-passes", type=int,
+        help="Displayed automated-validator pass count for this update",
+    )
     parser.add_argument("--full-audit", action="store_true", help="Re-hash every recorded output instead of using unchanged metadata")
     parser.add_argument("--runner-state", type=Path, default=REPO / ".local-run/feature-081-live/campaign-runner-state")
     parser.add_argument("--native-database", type=Path, default=REPO / ".local-run/feature-081-live/data/wright.db")
@@ -791,6 +813,10 @@ def main():
         if not args.approval_mode:
             parser.error("configure requires --approval-mode")
         campaign.configure(args.approval_mode)
+    if args.command == "update":
+        if not args.note:
+            parser.error("update requires --note")
+        campaign.record_update(args.note, validator_passes=args.validator_passes)
     campaign.export()
     print(json.dumps(campaign.status(), indent=2))
 

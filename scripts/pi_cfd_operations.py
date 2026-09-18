@@ -89,6 +89,93 @@ def summarize_steady_convergence(log_text, expected_iterations):
     }
 
 
+def external_boundary_patches(boundary_text):
+    """Return physical patches while excluding the Foam header and coupled interfaces."""
+    patches = re.findall(
+        r"\n\s*([a-zA-Z][a-zA-Z0-9_]*)\s*\n\s*\{([^}]+)\}",
+        boundary_text,
+    )
+    return [
+        (patch, body)
+        for patch, body in patches
+        if patch != "FoamFile" and "sampleRegion" not in body
+    ]
+
+
+def extract_boundary_energy(case, contract, fluid_region, grid, pv, results):
+    """Integrate external fluid-boundary energy from exported native fields."""
+    identity = fluid_region["name"]
+    material = fluid_region["material"]
+    boundary_text = (case / "constant" / identity / "polyMesh/boundary").read_text()
+    roles = {item["name"]: item["role"] for item in contract["boundaries"]}
+    energy_rows = []
+    for patch, _ in external_boundary_patches(boundary_text):
+        paths = list((case / "VTK" / identity / patch).glob("*.vtk"))
+        if len(paths) != 1:
+            raise ValueError("Expected one latest-time external boundary field")
+        surface = pv.read(paths[0]).compute_normals(
+            cell_normals=True,
+            point_normals=False,
+            consistent_normals=False,
+        )
+        required = {"U", "rho", "T", "grad(T)", "Normals"}
+        if not required <= set(surface.cell_data):
+            raise ValueError("External boundary lacks energy-balance fields")
+        areas = surface.compute_cell_sizes()["Area"]
+        normals = surface.cell_data["Normals"]
+        centers = surface.cell_centers().points
+        from_center = centers - grid.center
+        if float((normals * from_center).sum(axis=1).mean()) < 0:
+            normals = -normals
+        normal_velocity = (surface.cell_data["U"] * normals).sum(axis=1)
+        normal_gradient = (surface.cell_data["grad(T)"] * normals).sum(axis=1)
+        for index in range(surface.n_cells):
+            energy_rows.append(
+                {
+                    "patch": patch,
+                    "role": roles.get(patch, "wall"),
+                    "area_m2": float(areas[index]),
+                    "normal_velocity_m_s": float(normal_velocity[index]),
+                    "density_kg_m3": float(surface.cell_data["rho"][index]),
+                    "temperature_k": float(surface.cell_data["T"][index]),
+                    "temperature_gradient_normal_k_m": float(normal_gradient[index]),
+                    "cp_j_kg_k": float(material["cp"]),
+                    "conductivity_w_m_k": float(material["kappa"]),
+                    "ambient_k": float(contract["ambient_k"]),
+                }
+            )
+    if not energy_rows:
+        raise ValueError("No external boundary energy fields were extracted")
+    energy_path = results / "boundary-energy.csv"
+    with energy_path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(energy_rows[0]))
+        writer.writeheader()
+        writer.writerows(energy_rows)
+    heat_out_w = sum(
+        row["area_m2"]
+        * (
+            row["density_kg_m3"]
+            * row["cp_j_kg_k"]
+            * (row["temperature_k"] - row["ambient_k"])
+            * row["normal_velocity_m_s"]
+            - row["conductivity_w_m_k"]
+            * row["temperature_gradient_normal_k_m"]
+        )
+        for row in energy_rows
+    )
+    input_heat_w = sum(float(region.get("heat_w", 0)) for region in contract["regions"])
+    if input_heat_w <= 0:
+        raise ValueError("Heat balance requires a positive declared source load")
+    return {
+        "heat_balance_file": energy_path.name,
+        "heat_balance_file_sha256": sha(energy_path),
+        "input_heat_w": input_heat_w,
+        "net_outward_heat_w": heat_out_w,
+        "heat_balance_relative": abs(input_heat_w - heat_out_w) / input_heat_w,
+        "heat_balance_method": "external-face sensible-enthalpy-plus-conduction-v1",
+    }
+
+
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -662,13 +749,12 @@ def solve_and_extract(case):
     import pyvista as pv
     records = []
     boundary_records = []
-    energy_rows = []
+    energy_summary = None
     results = case/"results"
     results.mkdir()
     for region in contract["regions"]:
         identity = region["name"]
         is_fluid = region["kind"] == "fluid"
-        material = region["material"]
         foam_command(case, ["foamToVTK", "-region", identity, "-latestTime"])
         candidates = list((case/"VTK"/identity).rglob("*.vtu")) + list((case/"VTK"/identity).rglob("*.vtk"))
         internal = [path for path in candidates if "internal" in path.name or path.parent.name == identity]
@@ -683,49 +769,11 @@ def solve_and_extract(case):
         shutil.copyfile(mesh_path, target)
         records.append({"region": identity, "cells": grid.n_cells, "minimum_k": float(temperature.min()), "maximum_k": float(temperature.max()), "field": target.name, "sha256": sha(target)})
         if is_fluid:
-            boundary_text = (case/"constant"/identity/"polyMesh/boundary").read_text()
-            patches = re.findall(
-                r"\n\s*([a-zA-Z][a-zA-Z0-9_]*)\s*\n\s*\{([^}]+)\}",
-                boundary_text,
+            if energy_summary is not None:
+                raise ValueError("Energy extraction requires exactly one fluid region")
+            energy_summary = extract_boundary_energy(
+                case, contract, region, grid, pv, results
             )
-            roles = {item["name"]: item["role"] for item in contract["boundaries"]}
-            for patch, body in patches:
-                if "sampleRegion" in body:
-                    continue
-                paths = list((case/"VTK"/identity/patch).glob("*.vtk"))
-                if len(paths) != 1:
-                    raise ValueError("Expected one latest-time external boundary field")
-                surface = pv.read(paths[0]).compute_normals(
-                    cell_normals=True,
-                    point_normals=False,
-                    consistent_normals=False,
-                )
-                required = {"U", "rho", "T", "grad(T)", "Normals"}
-                if not required <= set(surface.cell_data):
-                    raise ValueError("External boundary lacks energy-balance fields")
-                areas = surface.compute_cell_sizes()["Area"]
-                normals = surface.cell_data["Normals"]
-                centers = surface.cell_centers().points
-                from_center = centers - grid.center
-                if float((normals * from_center).sum(axis=1).mean()) < 0:
-                    normals = -normals
-                normal_velocity = (surface.cell_data["U"] * normals).sum(axis=1)
-                normal_gradient = (surface.cell_data["grad(T)"] * normals).sum(axis=1)
-                for index in range(surface.n_cells):
-                    energy_rows.append(
-                        {
-                            "patch": patch,
-                            "role": roles.get(patch, "wall"),
-                            "area_m2": float(areas[index]),
-                            "normal_velocity_m_s": float(normal_velocity[index]),
-                            "density_kg_m3": float(surface.cell_data["rho"][index]),
-                            "temperature_k": float(surface.cell_data["T"][index]),
-                            "temperature_gradient_normal_k_m": float(normal_gradient[index]),
-                            "cp_j_kg_k": float(material["cp"]),
-                            "conductivity_w_m_k": float(material["kappa"]),
-                            "ambient_k": float(contract["ambient_k"]),
-                        }
-                    )
         for boundary in [item for item in contract["boundaries"] if item["region"] == identity]:
             paths = list((case/"VTK"/identity/boundary["name"]).glob("*.vtk"))
             if len(paths) != 1:
@@ -744,34 +792,10 @@ def solve_and_extract(case):
                                      "area_mean_static_pressure_pa": float((pressure*areas).sum()/area),
                                      "area_mean_total_pressure_pa": float(((pressure+.5*density*(velocity**2).sum(axis=1))*areas).sum()/area),
                                      "field": target.name, "sha256": sha(target), "normals": "Actual VTK boundary polygon winding"})
-    energy_path = results/"boundary-energy.csv"
-    if not energy_rows:
-        raise ValueError("No external boundary energy fields were extracted")
-    with energy_path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(energy_rows[0]))
-        writer.writeheader()
-        writer.writerows(energy_rows)
-    heat_out_w = sum(
-        row["area_m2"]
-        * (
-            row["density_kg_m3"]
-            * row["cp_j_kg_k"]
-            * (row["temperature_k"] - row["ambient_k"])
-            * row["normal_velocity_m_s"]
-            - row["conductivity_w_m_k"]
-            * row["temperature_gradient_normal_k_m"]
-        )
-        for row in energy_rows
-    )
-    input_heat_w = sum(float(region.get("heat_w", 0)) for region in contract["regions"])
-    if input_heat_w <= 0:
-        raise ValueError("Heat balance requires a positive declared source load")
-    balance_relative = abs(input_heat_w-heat_out_w)/input_heat_w
-    result = {"actual_regions": records, "actual_boundaries": boundary_records, "contract_sha256": sha(case/"contract.json"), "compiler_sha256": sha(__file__), "solver": "chtMultiRegionFoam OpenFOAM10", "numerical_profile": profile, "engineering_validation_complete": convergence["passed"] and balance_relative <= 0.01, "steady_state_convergence_claimed": convergence["passed"], "convergence_evidence": convergence,
-              "heat_balance_file": energy_path.name, "heat_balance_file_sha256": sha(energy_path),
-              "input_heat_w": input_heat_w, "net_outward_heat_w": heat_out_w,
-              "heat_balance_relative": balance_relative,
-              "heat_balance_method": "external-face sensible-enthalpy-plus-conduction-v1"}
+    if energy_summary is None:
+        raise ValueError("No fluid region was available for energy extraction")
+    result = {"actual_regions": records, "actual_boundaries": boundary_records, "contract_sha256": sha(case/"contract.json"), "compiler_sha256": sha(__file__), "solver": "chtMultiRegionFoam OpenFOAM10", "numerical_profile": profile, "engineering_validation_complete": convergence["passed"] and energy_summary["heat_balance_relative"] <= 0.01, "steady_state_convergence_claimed": convergence["passed"], "convergence_evidence": convergence,
+              **energy_summary}
     write(results/"computed-fields.json", json.dumps(result, indent=2))
     write(claim, json.dumps({**dispatch_identity, "status": "completed", "result_sha256": sha(results/"computed-fields.json")}, indent=2))
     return result

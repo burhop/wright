@@ -210,6 +210,21 @@ def test_zero_origin_registration_scan_and_restart_are_idempotent(corpus):
     assert list((corpus.root / "output").glob("*/*")) == []
 
 
+def test_campaign_update_records_zero_delta_history_step(corpus):
+    before = corpus.status()
+
+    corpus.record_update("Qualified CFD boundary-energy extraction")
+
+    after = corpus.status()
+    assert len(after["history"]) == len(before["history"]) + 1
+    assert after["history"][-1]["kind"] == "campaign_update"
+    assert after["history"][-1]["metrics"] == before["metrics"]
+
+    corpus.record_update("Validator results unchanged", validator_passes=17)
+    overridden = corpus.status()["history"][-1]
+    assert overridden["metrics"] == {**before["metrics"], "valid_data": 17}
+
+
 def test_retry_attempts_and_restart_count_a_pair_only_once(corpus):
     make_receipt(corpus, status="failed", terminal_step_reached=False,
                  all_required_steps_succeeded=False)

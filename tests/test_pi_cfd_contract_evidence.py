@@ -114,3 +114,29 @@ def test_convergence_summary_rejects_unsettled_solve():
     )
     assert result["passed"] is False
     assert result["observed"]["maximum_initial_residual"] == pytest.approx(0.014)
+
+
+def test_external_boundary_patches_exclude_header_and_coupled_interfaces():
+    boundary = """
+FoamFile
+{
+    class polyBoundaryMesh;
+}
+ambient_x_min
+{
+    type patch;
+}
+air_to_shell
+{
+    type mappedWall;
+    sampleRegion shell;
+}
+outer_air
+{
+    type wall;
+}
+"""
+
+    assert [
+        patch for patch, _ in operations.external_boundary_patches(boundary)
+    ] == ["ambient_x_min", "outer_air"]
