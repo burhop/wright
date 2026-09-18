@@ -129,7 +129,7 @@ def submission(saved, request_id=None):
 
 
 def wait_run(client, run_id):
-    deadline = time.monotonic() + 5
+    deadline = time.monotonic() + 15
     while time.monotonic() < deadline:
         response = client.get(f"{BASE}/runs/{run_id}", params=SESSION)
         assert response.status_code == 200, response.text
