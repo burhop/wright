@@ -572,7 +572,12 @@ The campaign ledger now supports an explicit `update` event with an optional dis
 validator-pass count, so a material change that leaves all four counts unchanged still
 adds one equally spaced chart step. The CFD qualification recorded update 17,972 at
 `30/30/24/17`; the dashboard orders that event after the retained-result snapshot and
-keeps the validator line flat at 17.
+keeps the validator line flat at 17. The chart projection excludes internal observation
+events that repeat the prior four-count snapshot while retaining every count change,
+retained-validation snapshot and explicit campaign update. A served headless-browser
+check reduces the 17,974-event ledger to 89 meaningful equally spaced updates, renders
+the existing validator card at `17/30`, and ends all four chart markers at
+`30/30/24/17` without a dashboard error.
 
 Printed-02 then used its two bounded detached correction cycles. Both owned Blender
 sessions performed actual voxel remeshing, dependent Bambu slicing and terminal cleanup;
