@@ -657,11 +657,15 @@ The same audit found that later operational events could visually lower the char
 validator line from the selected retained result of 17 back to the campaign ledger's
 zero. Chart history now carries the selected retained pass count forward from its
 observation time while allowing a higher current validated count to supersede it. The
-served acceptance audit verifies 30 rows, 10 workflow families, `30/30/24/17`, four
-update-driven lines ending at update 90, visible pass and failure states, HTTP 200 for
-the findings/JSON/RTM links, current freshness, zero inferred human approvals, no browser
-or request errors and no narrow-layout overflow. Evidence and desktop/mobile snapshots
-are under `artifacts/process-validation/dashboard-validator-082-20260918/`.
+retained projection arrives after the initial status response, so the chart redraw key
+now includes every plotted metric instead of only the history length and final point.
+This prevents the first incomplete orange path from surviving the retained-data redraw.
+The served acceptance audit verifies 30 rows, 10 workflow families, `30/30/24/17`, four
+update-driven lines ending at update 91, a nondecreasing automated-pass path, visible pass
+and failure states, HTTP 200 for the findings/JSON/RTM links, current freshness, zero
+inferred human approvals, no browser or request errors and no narrow-layout overflow.
+Evidence and desktop/mobile snapshots are under
+`artifacts/process-validation/dashboard-validator-082-20260918/`.
 
 C016–C018: readiness is complete and the campaign is unpaused. Run the launcher's
 `pilot` action for robot-tracking-01 attempt-006 and inspect its human review plus
