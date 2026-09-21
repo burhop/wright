@@ -1325,6 +1325,10 @@ end`;
         screen.getByTestId("workflow-recovery-native-run-mode"),
       ).toHaveTextContent("Model connection lost"),
     );
+    expect(screen.getByTestId("workflow-native-run-summary")).toHaveTextContent(
+      "Run blocked",
+    );
+    expect(screen.queryByText("Workflow failed")).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("workflow-recovery-native-run-input"),
     ).not.toBeInTheDocument();

@@ -1614,7 +1614,7 @@ export class WorkspaceService {
         else if (event.kind === "failed")
           throw new WorkspaceWorkflowRunError(
             typeof event.code === "string" ? event.code : "workflow_run_failed",
-            `${workflowRunFailurePrefix(typeof event.code === "string" ? event.code : "workflow_run_failed")} ${event.message}`,
+            `${workflowRunFailurePrefix(typeof event.code === "string" ? event.code : "workflow_run_failed")} ${event.message}${typeof event.correction === "string" ? ` ${event.correction}` : ""}`,
             typeof event.correction === "string" ? event.correction : null,
           );
         else onEvent(event as WorkspaceWorkflowRunEvent);

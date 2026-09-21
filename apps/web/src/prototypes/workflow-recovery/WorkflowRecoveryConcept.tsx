@@ -712,7 +712,9 @@ function NativeRunPanel({
                     : error
                       ? error.startsWith("Workflow cancelled.")
                         ? "Workflow cancelled"
-                        : "Workflow failed"
+                        : error.startsWith("Run blocked")
+                          ? "Run blocked"
+                          : "Workflow failed"
                       : "Ready to run"}
         </b>
         <span>
@@ -2651,6 +2653,8 @@ function WorkflowRecoveryReadyConcept({
       setWorkflowRunError(
         `Run blocked before prompt dispatch. ${reason} Owner: template maintainer / Wright environment.`,
       );
+      setWorkflowRun(null);
+      setNativeRunDispatchConfirmed(false);
       setRunDetailsOpen(true);
       return;
     }
@@ -2743,12 +2747,14 @@ function WorkflowRecoveryReadyConcept({
       runAbort.current = new AbortController();
       setWorkflowRunPending(true);
       setRunDetailsOpen(true);
+      let executionConfirmed = false;
       try {
         const result = await onRun({
           signal: runAbort.current?.signal,
           expectedStorageDigest: subject.storageDigest,
           onEvent: (event) => {
             if (event.kind === "run_started") {
+              executionConfirmed = true;
               setNativeRunDispatchConfirmed(true);
               setNativeRunLogPath(event.run_log_path ?? "");
             }
@@ -2787,6 +2793,7 @@ function WorkflowRecoveryReadyConcept({
               );
             }
             if (event.kind === "step_started") {
+              executionConfirmed = true;
               setNativeRunDispatchConfirmed(true);
               setNativeCompletedTaskIds(
                 (ids) => new Set([...ids].filter((id) => id !== event.task_id)),
@@ -2854,8 +2861,10 @@ function WorkflowRecoveryReadyConcept({
         const message = runAbort.current?.signal.aborted
           ? "Workflow cancelled. An application job already submitted may still be running. Check its status before running again. Results produced so far are preserved."
           : error instanceof Error
-            ? error.message
-            : "The workflow could not run.";
+            ? `${executionConfirmed ? "" : "Run blocked before execution was confirmed. "}${error.message}`
+            : executionConfirmed
+              ? "The workflow could not run."
+              : "Run blocked before execution was confirmed.";
         const completedAt = new Date().toISOString();
         setNativeRunCompletedAt(completedAt);
         setWorkflowRunError(message);
@@ -2865,7 +2874,9 @@ function WorkflowRecoveryReadyConcept({
             at: completedAt,
             label: runAbort.current?.signal.aborted
               ? "Run cancelled"
-              : "Run failed",
+              : executionConfirmed
+                ? "Run failed"
+                : "Run blocked",
             detail: message,
           },
         ]);

@@ -23,24 +23,6 @@ class BoundedExecutor:
         self._capacity = asyncio.Semaphore(max_workers)
         self._closed = False
 
-    def _submit(self, work: Callable[[], T]) -> asyncio.Future[T]:
-        """Submit work and explicitly bridge its concurrent future to asyncio.
-
-        Using ``loop.run_in_executor`` here left completed filesystem futures
-        invisible to the event loop on the supported Python 3.13 runtime in
-        this repository. Wrapping the executor future directly preserves the
-        same cancellation and timeout semantics while ensuring completion is
-        delivered to the owning loop.
-        """
-        return asyncio.wrap_future(self._pool.submit(partial(work)))
-
-    @staticmethod
-    async def _wait_for_result(future: asyncio.Future[T]) -> T:
-        """Observe completion without depending on a missed wakeup callback."""
-        while not future.done():
-            await asyncio.sleep(0.01)
-        return future.result()
-
     async def run(
         self, operation: str, work: Callable[[], T], *, timeout_seconds: float
     ) -> T:
@@ -51,7 +33,8 @@ class BoundedExecutor:
         try:
             async with asyncio.timeout(timeout_seconds):
                 async with self._capacity:
-                    return await self._wait_for_result(self._submit(work))
+                    loop = asyncio.get_running_loop()
+                    return await loop.run_in_executor(self._pool, partial(work))
         except TimeoutError as exc:
             raise WorkspaceTimeoutError(
                 f"{operation} exceeded its deadline", operation=operation
@@ -69,12 +52,12 @@ class BoundedExecutor:
         if self._closed:
             raise RuntimeError("workspace executor is closed")
         async with self._capacity:
-            future = self._submit(work)
+            loop = asyncio.get_running_loop()
+            future = loop.run_in_executor(self._pool, partial(work))
             cancellation_requested = False
-            while True:
+            while not future.done():
                 try:
-                    result = await self._wait_for_result(future)
-                    break
+                    await asyncio.shield(future)
                 except asyncio.CancelledError:
                     cancellation_requested = True
             if cancellation_requested:
@@ -86,7 +69,7 @@ class BoundedExecutor:
                 except BaseException:
                     pass
                 raise asyncio.CancelledError
-            return result
+            return future.result()
 
     async def close(self) -> None:
         if self._closed:

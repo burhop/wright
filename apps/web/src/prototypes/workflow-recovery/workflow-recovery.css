@@ -1308,19 +1308,47 @@
 }
 
 .recovery-run-readiness {
-  position: relative;
-  min-width: 15rem;
-  max-width: 27rem;
+  min-width: 0;
+  flex: 0 1 auto;
   border: var(--recovery-size-1) solid var(--color-border);
   border-radius: var(--recovery-radius-md);
   background: var(--color-surface);
   color: var(--color-primary);
+}
+.workflow-recovery--redesign .recovery-filebar {
+  position: relative;
+}
+.recovery-run-readiness__body {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 8px;
+  z-index: 40;
+  width: min(27rem, calc(100% - 16px));
+  max-height: min(28rem, 60vh);
+  overflow: auto;
+  padding-top: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.workflow-recovery--redesign
+  .recovery-run-readiness
+  .recovery-run-readiness__body
+  button {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .recovery-run-readiness.has-attention {
   border-color: var(--recovery-amber);
 }
 .recovery-run-readiness summary {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: var(--recovery-size-6);
   padding: var(--recovery-size-7) var(--recovery-size-9);
@@ -3598,6 +3626,18 @@
   }
   .workflow-recovery--redesign .recovery-toolbar {
     gap: 4px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .workflow-recovery--redesign .recovery-toolbar__actions {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .recovery-run-readiness summary {
+    flex-wrap: nowrap;
+  }
+  .recovery-run-readiness summary span {
+    display: none;
   }
   .workflow-recovery--redesign .recovery-toolbar .recovery-tabs {
     display: none;

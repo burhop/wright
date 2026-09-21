@@ -275,6 +275,29 @@ describe("terminal workflow review", () => {
     ).resolves.toEqual(result);
     expect(event).not.toHaveBeenCalled();
   });
+  it("preserves the next action in streamed failure messages", async () => {
+    mocks.fetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          kind: "failed",
+          code: "mcp_tool_unavailable",
+          message: "Tool unavailable.",
+          correction: "Enable the selected server in Tool Registry.",
+        }) + "\n",
+        { headers: { "Content-Type": "application/x-ndjson" } },
+      ),
+    );
+    await expect(
+      workspaceService.runWorkspaceWorkflowSource(
+        "session",
+        review.workflow_path,
+        digest,
+        vi.fn(),
+      ),
+    ).rejects.toThrow(
+      "Tool unavailable. Enable the selected server in Tool Registry.",
+    );
+  });
   it("binds a decision to the exact package and local workspace without inventing actor identity", async () => {
     mocks.fetch.mockResolvedValue(response({ ...review, state: "approved" }));
     await workspaceService.decideWorkspaceWorkflowReview(
