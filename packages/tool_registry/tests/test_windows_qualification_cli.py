@@ -70,6 +70,7 @@ def test_qualify_enforces_native_windows_before_any_run(
 
 def test_qualify_rejects_unmarked_work_root(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr(cli.platform, "system", lambda: "Windows")
+    monkeypatch.setattr(cli.platform, "machine", lambda: "AMD64")
     decision = tmp_path / "decision.json"
     _decision(decision, "brep-mcp", "safety_blocked")
 
@@ -94,6 +95,7 @@ def test_qualify_all_uses_only_the_fixed_order_and_completes_boundaries(
     tmp_path: Path, monkeypatch
 ) -> None:
     monkeypatch.setattr(cli.platform, "system", lambda: "Windows")
+    monkeypatch.setattr(cli.platform, "machine", lambda: "AMD64")
     decisions = tmp_path / "decisions"
     for server_id in WINDOWS_MCP_ALLOWLIST:
         _decision(decisions / f"{server_id}.json", server_id, "safety_blocked")
@@ -126,6 +128,7 @@ def test_qualify_all_uses_only_the_fixed_order_and_completes_boundaries(
 
 def test_decision_must_be_bound_to_current_recipe(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr(cli.platform, "system", lambda: "Windows")
+    monkeypatch.setattr(cli.platform, "machine", lambda: "AMD64")
     decision = tmp_path / "decision.json"
     _decision(decision, "brep-mcp", "safety_blocked")
     payload = json.loads(decision.read_text())

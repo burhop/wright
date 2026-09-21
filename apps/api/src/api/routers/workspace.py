@@ -122,6 +122,7 @@ from api.schemas.workspace import (
     EngineeringWorkflowTemplateDetailResponse,
     EngineeringWorkflowTemplateReadinessRequest,
     EngineeringWorkflowTemplateInstanceRequest,
+    WorkflowSourceReadinessResponse,
     EngineeringWorkflowTemplateInstanceResponse,
     WorkflowApprovalDecisionRequest,
     WorkflowApprovalResumeRequest,
@@ -983,6 +984,75 @@ async def read_workflow_source_endpoint(
     try:
         document = await service.workflow_sources.read(scope.workspace_dir, path)
         return _workflow_source_response(scope.workspace_id, document)
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "code": "workflow_source_not_found",
+                "message": "Workflow source not found",
+            },
+        ) from error
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
+
+
+@router.get(
+    "/workflow-sources/readiness",
+    response_model=WorkflowSourceReadinessResponse,
+)
+@traced("workspace.workflow_sources.readiness")
+async def read_workflow_source_readiness_endpoint(
+    response: Response,
+    session_id: str = Query(..., min_length=1, max_length=256),
+    path: str = Query(..., min_length=1, max_length=256),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Return the same template qualification state used by the run gate.
+
+    A hand-authored workflow is deliberately reported as ``not_template``;
+    the editor must not imply that an absent catalog provenance record is a
+    qualified engineering runtime.
+    """
+
+    scope = _workflow_source_scope(session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        await service.workflow_sources.read(scope.workspace_dir, path)
+        origin = await service.workflow_sources.read_template_origin(
+            scope.workspace_dir, path
+        )
+        if origin is None:
+            return WorkflowSourceReadinessResponse(state="not_template")
+        template_id = origin.get("template_id")
+        template_version = origin.get("template_version")
+        source_digest = origin.get("template_source_digest")
+        layout_digest = origin.get("template_layout_digest")
+        if not isinstance(template_id, str) or not isinstance(template_version, str):
+            return WorkflowSourceReadinessResponse(
+                state="unavailable",
+                message="The saved template provenance is incomplete.",
+            )
+        readiness = service.engineering_workflow_templates.readiness(
+            template_id, template_version
+        )
+        return WorkflowSourceReadinessResponse(
+            state=readiness["state"],
+            template_id=template_id,
+            template_version=template_version,
+            source_digest=source_digest if isinstance(source_digest, str) else None,
+            layout_digest=layout_digest if isinstance(layout_digest, str) else None,
+            definition_valid=readiness.get("definition_valid"),
+            configured=readiness.get("configured"),
+            qualified=readiness.get("qualified"),
+            available=readiness.get("available"),
+            verified_run=readiness.get("verified_run"),
+            facts=readiness.get("facts", []),
+            blocking_reasons=readiness.get("blocking_reasons", []),
+        )
+    except EngineeringWorkflowTemplateError as error:
+        return WorkflowSourceReadinessResponse(state="unavailable", message=str(error))
     except FileNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

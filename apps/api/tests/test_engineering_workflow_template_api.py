@@ -63,6 +63,10 @@ def test_template_list_detail_readiness_and_instance_contract(sync_client, tmp_p
             f"/api/workspace/workflow-source-templates/{selected['template_id']}/instances",
             json=body,
         )
+        source_readiness = sync_client.get(
+            "/api/workspace/workflow-sources/readiness",
+            params={"session_id": "session-1", "path": body["workflow_path"]},
+        )
         retry = sync_client.post(
             f"/api/workspace/workflow-source-templates/{selected['template_id']}/instances",
             json=body,
@@ -90,6 +94,9 @@ def test_template_list_detail_readiness_and_instance_contract(sync_client, tmp_p
     assert readiness.status_code == 200
     assert readiness.json()["state"] == "setup_required"
     assert created.status_code == 201
+    assert source_readiness.status_code == 200
+    assert source_readiness.json()["state"] == "setup_required"
+    assert source_readiness.json()["template_id"] == selected["template_id"]
     assert created.headers["cache-control"] == "no-store"
     assert created.json()["layout_status"] == "current"
     assert created.json()["workflow_id"] == created.json()["layout"]["workflowId"]

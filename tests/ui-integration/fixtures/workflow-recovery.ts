@@ -83,6 +83,7 @@ export async function mockRecoveryWorkspace(
       ? null
       : workflowDocument(options.source ?? publicWorkflowSource, 1, 2);
   let currentPath = WORKFLOW_PATH;
+  let sourceReadiness: "not_template" | "setup_required" = "not_template";
   let creates = 0;
   let missingReads = 0;
   let updates = 0;
@@ -302,6 +303,7 @@ export async function mockRecoveryWorkspace(
         workflow_path: string;
       };
       currentPath = body.workflow_path;
+      sourceReadiness = "setup_required";
       document = workflowDocument(publicWorkflowSource, 1, 1, currentPath);
       return route.fulfill({
         status: 201,
@@ -313,6 +315,26 @@ export async function mockRecoveryWorkspace(
             version: "1.0.0",
             source_digest: "d".repeat(64),
           },
+        },
+      });
+    }
+    if (path === "/api/workspace/workflow-sources/readiness" && method === "GET") {
+      return route.fulfill({
+        headers: { "Cache-Control": "no-store" },
+        json: {
+          state: sourceReadiness,
+          template_id: sourceReadiness === "setup_required" ? "printed-replacement-part" : null,
+          template_version: sourceReadiness === "setup_required" ? "1.0.0" : null,
+          source_digest: null,
+          layout_digest: null,
+          definition_valid: true,
+          configured: sourceReadiness !== "setup_required",
+          qualified: sourceReadiness !== "setup_required",
+          available: sourceReadiness !== "setup_required",
+          verified_run: false,
+          facts: [],
+          blocking_reasons: sourceReadiness === "setup_required" ? ["Connect and qualify the required engineering tools."] : [],
+          message: null,
         },
       });
     }

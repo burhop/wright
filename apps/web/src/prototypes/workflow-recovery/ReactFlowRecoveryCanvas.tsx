@@ -70,6 +70,7 @@ interface RecoveryCanvasRuntime {
   readonly onArtifactInspect: (portId: string) => void;
   readonly focusPath?: boolean;
   readonly blockIcons?: Readonly<Record<string, string>>;
+  readonly executionLabels?: Readonly<Record<string, string>>;
   readonly readOnly?: boolean;
   readonly canConnect?: (sourcePortId: string, targetPortId: string) => boolean;
   readonly connectionIssue?: (
@@ -312,6 +313,7 @@ function PortRow({
 const RecoveryBlockNode = memo(function RecoveryBlockNode({
   data,
 }: NodeProps<RecoveryFlowNode>) {
+  const runtime = useContext(RuntimeContext);
   const block = data.block;
   const updateInternals = useUpdateNodeInternals();
   const portIdentity = [...block.inputs, ...block.outputs]
@@ -332,6 +334,13 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({
     if (!data.readOnly && title.trim() && title.trim() !== block.title)
       data.onRename(title.trim());
   };
+  const executionLabel =
+    runtime.executionLabels?.[block.semanticId] ??
+    (block.configuration?.mcp_server && block.configuration?.mcp_tool
+      ? `${String(block.configuration.mcp_server)} / ${String(block.configuration.mcp_tool)}`
+      : block.bindingId
+        ? String(block.bindingId)
+        : "Not bound");
   return (
     <article
       className={`recovery-block recovery-block--${block.role}${data.selected ? " is-selected" : ""}${data.active ? " is-active" : ""}${data.proposed ? " is-proposed" : ""}${data.muted ? " is-muted" : ""}`}
@@ -456,6 +465,15 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({
         {block.inputs.length} in <span aria-hidden="true">→</span>{" "}
         {block.outputs.length} out
       </div>
+      {block.role !== "input" && (
+        <div
+          className="recovery-block__binding"
+          data-testid={`workflow-recovery-block-binding-${block.semanticId}`}
+        >
+          <span>Binding</span>
+          <b title={executionLabel}>{executionLabel}</b>
+        </div>
+      )}
       {data.componentState !== null && (
         <section
           className={`recovery-component${data.componentState.collapsed ? " is-collapsed" : ""}`}

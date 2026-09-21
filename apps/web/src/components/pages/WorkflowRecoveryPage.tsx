@@ -14,6 +14,7 @@ import {
   workspaceService,
   WorkspaceWorkflowSourceNotFoundError,
   type WorkspaceWorkflowSourceDocument,
+  type WorkspaceWorkflowSourceReadiness,
 } from "../../services/workspace-service";
 
 const starterWorkflowSource =
@@ -42,6 +43,9 @@ export function WorkflowRecoveryPage({
   const dialogId = useId();
   const [document, setDocument] =
     useState<WorkspaceWorkflowSourceDocument | null>(null);
+  const [templateReadiness, setTemplateReadiness] =
+    useState<WorkspaceWorkflowSourceReadiness | null>(null);
+  const templateReadinessRequest = useRef(0);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [message, setMessage] = useState("");
   const [editorInstance, setEditorInstance] = useState(0);
@@ -198,6 +202,89 @@ export function WorkflowRecoveryPage({
       current = false;
     };
   }, [openWorkflow]);
+
+  useEffect(() => {
+    if (!document) {
+      templateReadinessRequest.current += 1;
+      setTemplateReadiness(null);
+      return;
+    }
+    let current = true;
+    const requestId = ++templateReadinessRequest.current;
+    setTemplateReadiness(null);
+    void workspaceService
+      .getWorkspaceWorkflowSourceReadiness(sessionId, visiblePath)
+      .then((readiness) => {
+        if (current && requestId === templateReadinessRequest.current)
+          setTemplateReadiness(readiness);
+      })
+      .catch((error: unknown) => {
+        if (!current || requestId !== templateReadinessRequest.current) return;
+        setTemplateReadiness({
+          state: "unavailable",
+          template_id: null,
+          template_version: null,
+          source_digest: null,
+          layout_digest: null,
+          definition_valid: null,
+          configured: null,
+          qualified: null,
+          available: null,
+          verified_run: null,
+          facts: [],
+          blocking_reasons: [],
+          message:
+            error instanceof Error
+              ? error.message
+              : "Workflow qualification could not be checked.",
+        });
+      });
+    return () => {
+      current = false;
+    };
+  }, [document, sessionId, visiblePath]);
+
+  const refreshTemplateReadiness = useCallback(async () => {
+    if (!document) return;
+    const requestScope = `${sessionId}:${visiblePath}`;
+    const requestId = ++templateReadinessRequest.current;
+    try {
+      const readiness =
+        await workspaceService.getWorkspaceWorkflowSourceReadiness(
+          sessionId,
+          visiblePath,
+        );
+      if (
+        requestId === templateReadinessRequest.current &&
+        requestScope === `${sessionId}:${visiblePath}`
+      )
+        setTemplateReadiness(readiness);
+    } catch (error: unknown) {
+      if (
+        requestId !== templateReadinessRequest.current ||
+        requestScope !== `${sessionId}:${visiblePath}`
+      )
+        return;
+      setTemplateReadiness({
+        state: "unavailable",
+        template_id: null,
+        template_version: null,
+        source_digest: null,
+        layout_digest: null,
+        definition_valid: null,
+        configured: null,
+        qualified: null,
+        available: null,
+        verified_run: null,
+        facts: [],
+        blocking_reasons: [],
+        message:
+          error instanceof Error
+            ? error.message
+            : "Workflow qualification could not be checked.",
+      });
+    }
+  }, [document, sessionId, visiblePath]);
 
   const saveWorkflow = async (source: string, layout?: RecoveryLayout) => {
     if (
@@ -631,6 +718,8 @@ export function WorkflowRecoveryPage({
             onReadStoredSource={readStoredWorkflow}
             onReloadStoredSource={reloadStoredWorkflow}
             onRun={runWorkflow}
+            templateReadiness={templateReadiness}
+            onRefreshTemplateReadiness={refreshTemplateReadiness}
             onOpenFile={onOpenFile}
           />
         )}

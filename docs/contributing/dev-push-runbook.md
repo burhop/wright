@@ -236,6 +236,21 @@ authoritative in CI when a local Docker host is unavailable.
 
 ## CI failure protocol
 
+PR #133 exposed a Python dependency-audit gap: an exact-image scan does not
+replace the runtime environment audit performed by public-alpha CI. The full
+merge gate and Python slice of the fast gate now run
+`scripts.release.audit_runtime_dependencies`, using CI's locked runtime
+`pip-audit` command and the same expiring-exception policy. Missing, empty or
+malformed audit reports and audit-service failures block the gate. Network
+access to the advisory service is required; do not treat an unavailable audit
+as a clean result. The PowerShell entry points delegate to these same gates.
+
+Concurrency regressions must control the failing interleaving, rather than
+depend on repeated lucky schedules. The metrics replay test forces competing
+pre-insert reads if that unsafe pattern returns. Native API functional tests
+use a bounded 15-second completion wait; the former five-second deadline was
+shorter than a successful Windows CI execution and was not a performance SLA.
+
 - Collect every failed job and its first actionable error before editing.
 - Let the complete CI browser run report its full failure set; do not cap the run
   after an arbitrary number of failures that forces serial discovery pushes.

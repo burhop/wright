@@ -1,8 +1,17 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { AuthoringCreateRail } from "./AuthoringControls";
+import {
+  AuthoringCreateRail,
+  AuthoringRunReadiness,
+} from "./AuthoringControls";
 import { McpBlockEditor } from "./McpBlockEditor";
 import { createAuthoringObject } from "./authoring-objects";
+import {
+  acceptRecoveryResult,
+  applyRecoveryBatch,
+  recoveryCommandBatch,
+} from "./command-system";
+import { createMcpServerBlock, mcpServerChoices } from "./mcp-server-blocks";
 import { initialWorkflow, initialLayout } from "./model";
 import {
   listWorkflowMcpTools,
@@ -159,4 +168,40 @@ it("keeps server names readable in the inspector while binding the original tool
     ]),
   );
   expect(screen.queryByText(serverId)).not.toBeInTheDocument();
+});
+
+it("shows server-scoped tasks as available and supports an explicit inventory recheck", async () => {
+  mockDiscovery();
+  const server = mcpServerChoices([tool])[0]!;
+  const commands = createMcpServerBlock(server, initialWorkflow, initialLayout);
+  const result = applyRecoveryBatch(
+    initialWorkflow,
+    initialLayout,
+    recoveryCommandBatch(initialWorkflow.revision, "graph", commands),
+  );
+  const workflow = acceptRecoveryResult(
+    initialWorkflow,
+    initialLayout,
+    result,
+  )!.workflow;
+  render(
+    <AuthoringRunReadiness
+      workflow={workflow}
+      saved={true}
+      executionConnected={true}
+      sessionId="session"
+      onSelect={vi.fn()}
+    />,
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-run-readiness-toggle"));
+  expect(
+    await screen.findByText(/AI selects the operation · available/),
+  ).toBeInTheDocument();
+  expect(screen.queryByText("Unbound tasks")).not.toBeInTheDocument();
+  const callsBeforeRefresh = vi.mocked(fetch).mock.calls.length;
+  const refresh = screen.getByTestId("workflow-recovery-mcp-refresh");
+  fireEvent.click(refresh);
+  expect(vi.mocked(fetch).mock.calls.length).toBeGreaterThan(
+    callsBeforeRefresh,
+  );
 });
