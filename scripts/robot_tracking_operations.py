@@ -13,6 +13,7 @@ import json
 import math
 from pathlib import Path
 import shutil
+import textwrap
 
 EPOCH_NS = 1767225600000000000
 TOPICS = {
@@ -135,12 +136,212 @@ def load_bag(bag):
     return result
 
 
-def analyze_tracking_bag(bag, alignment, output_dir):
-    """Read actual CDR messages, apply explicit survey/time contract and compare."""
-    import numpy as np
+def plot_segments(samples, maximum_gap):
+    """Never draw a measured line across an unobserved time interval."""
+    segments = []
+    for sample in samples:
+        if not segments or exceeds_interval_limit(
+            segments[-1][-1]["time_s"], sample["time_s"], maximum_gap
+        ):
+            segments.append([])
+        segments[-1].append(sample)
+    return segments
+
+
+def render_tracking_plots(output, timeline, planned, odometry, metrics):
+    """Present the recorded comparison; no smoothing, acceptance limit or diagnosis."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
+
+    output = Path(output)
+    contract = metrics["alignment"]
+    maximum_gap = float(contract["max_interpolation_gap_s"])
+    external_segments = plot_segments(timeline, maximum_gap)
+    wheel_segments = plot_segments(odometry, maximum_gap)
+    peak = max(timeline, key=lambda row: abs(row["lateral_error_m"]))
+    peak_wheel = max(odometry, key=lambda row: abs(row["lateral_error_m"]))
+    start, end = planned[0]["time_s"], planned[-1]["time_s"]
+    gaps = list(metrics["external_gaps_not_interpolated"])
+    if timeline[0]["time_s"] > start:
+        gaps.insert(0, [start, timeline[0]["time_s"]])
+    if timeline[-1]["time_s"] < end:
+        gaps.append([timeline[-1]["time_s"], end])
+    colors = {"planned": "#475569", "external": "#0072B2", "wheel": "#D55E00"}
+    legend = [
+        Line2D([], [], color=colors["planned"], lw=2, ls=":", label="Intended route"),
+        Line2D([], [], color=colors["external"], lw=2, marker="o", ms=4,
+               label="External position measurement"),
+        Line2D([], [], color=colors["wheel"], lw=2, ls="--",
+               label="Wheel-based estimate (odometry)"),
+    ]
+
+    def series(ax, segments, x_key, y_key, color, style, y_scale=1):
+        for segment in segments:
+            ax.plot([row[x_key] for row in segment],
+                    [row[y_key] * y_scale for row in segment],
+                    style, color=color, lw=2, ms=3.5)
+
+    def decorate(ax):
+        ax.grid(True, color="#e2e8f0", lw=0.8)
+        ax.set_axisbelow(True)
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+        ax.margins(x=0.025, y=0.18)
+
+    def path_plot(ax, prefix="aligned"):
+        series(ax, plot_segments(planned, maximum_gap), "x_m", "y_m",
+               colors["planned"], ":", 1000)
+        series(ax, wheel_segments, "x_m", "y_m", colors["wheel"], "--", 1000)
+        series(ax, external_segments, prefix + "_x_m", prefix + "_y_m",
+               colors["external"], "o-", 1000)
+        ax.set(xlabel="Map X position (m)", ylabel="Map Y position (mm)", aspect="auto")
+        decorate(ax)
+
+    def save(fig, name, description):
+        # SVG text remains text for accessibility, searching and crisp enlargement.
+        try:
+            fig.savefig(output / (name + ".svg"), metadata={
+                "Title": "Robot tracking — intended and recorded motion",
+                "Description": description,
+            })
+            fig.savefig(output / (name + ".png"), dpi=150)
+        finally:
+            plt.close(fig)
+
+    event_notes = [
+        f"Operator note at {event['bag_elapsed_s']:g} s: {event.get('operator_note', 'Event recorded')}"
+        for event in metrics["events"]
+    ]
+    alignment_note = (
+        f"External alignment: X shift {float(contract['translation_x_m']):g} m; "
+        f"Y shift {float(contract['translation_y_m']):g} m; "
+        f"rotation {math.degrees(float(contract['rotation_rad'])):g} degrees; "
+        f"subtract {1000 * float(contract['header_offset_s']):g} ms from its clock."
+    )
+    no_correction = all(float(contract[key]) == 0 for key in (
+        "translation_x_m", "translation_y_m", "rotation_rad", "header_offset_s"
+    ))
+    limitations = ("Shaded bands: no comparable external measurements. " if gaps else "") + (
+        "Lines connect recorded samples; missing external measurements are not filled. "
+        "Tracker repeatability is unknown. No acceptance limit is drawn. "
+        "An event occurring at the same time does not prove a cause or wheel slip."
+    )
+    with plt.rc_context({"font.family": "DejaVu Sans", "font.size": 11,
+                         "axes.titlesize": 14, "axes.labelsize": 11,
+                         "svg.fonttype": "none", "figure.facecolor": "white"}):
+        fig = plt.figure(figsize=(12, 10.5))
+        fig.suptitle("How closely did the cart follow its intended path?",
+                     x=0.08, y=0.975, ha="left", fontsize=21, weight="bold", color="#0f172a")
+        fig.text(0.08, 0.938,
+                 f"Synthetic example • Recorded interval {start:g}–{end:g} s • "
+                 f"Common coordinate frame: {contract['map_frame']}", color="#475569")
+        for x, value, label in [
+            (0.08, f"{abs(peak['lateral_error_m']) * 1000:.1f} mm",
+             f"Largest external sideways error · {peak['time_s']:g} s"),
+            (0.40, f"{abs(peak_wheel['lateral_error_m']) * 1000:.1f} mm",
+             f"Largest wheel-estimated error · {peak_wheel['time_s']:g} s"),
+            (0.73, f"{metrics['lateral_rmse_m'] * 1000:.1f} mm",
+             "External sideways error · RMS"),
+        ]:
+            fig.text(x, 0.889, value, fontsize=22, weight="bold", color="#0f172a")
+            fig.text(x, 0.864, label, fontsize=9.5, color="#475569")
+        fig.legend(handles=legend, loc="upper left", bbox_to_anchor=(0.073, 0.841),
+                   ncol=3, frameon=False, fontsize=10.5)
+        grid = fig.add_gridspec(2, 1, left=0.10, right=0.97, top=0.77,
+                               bottom=0.24, hspace=0.60, height_ratios=[1, 1.05])
+        path_ax = fig.add_subplot(grid[0])
+        path_plot(path_ax)
+        path_ax.set_title("1  |  Where did the cart go?", loc="left", pad=12, weight="bold")
+        path_ax.text(0, -0.31,
+                     "Path-view axes are scaled independently to reveal small deviations; this is not a scale drawing.",
+                     transform=path_ax.transAxes, fontsize=10, color="#475569")
+
+        error_ax = fig.add_subplot(grid[1])
+        error_ax.set_title("2  |  How far sideways, and when?", loc="left", pad=12, weight="bold")
+        error_ax.axhline(0, color=colors["planned"], ls=":", lw=2)
+        series(error_ax, wheel_segments, "time_s", "lateral_error_m", colors["wheel"], "--", 1000)
+        series(error_ax, external_segments, "time_s", "lateral_error_m", colors["external"], "o-", 1000)
+        for a, b in gaps:
+            error_ax.axvspan(a, b, color="#cbd5e1", alpha=0.65)
+        for index, event in enumerate(metrics["events"]):
+            t = event["bag_elapsed_s"]
+            error_ax.axvline(t, color="#64748b", lw=1, ls="-.")
+            error_ax.text(t, 1.02 + 0.06 * index, f"Operator note · {t:g} s",
+                          transform=error_ax.get_xaxis_transform(), ha="center", fontsize=9.5)
+        error_ax.scatter([peak["time_s"]], [1000 * peak["lateral_error_m"]],
+                         s=75, facecolors="white", edgecolors=colors["external"], lw=2, zorder=5)
+        error_ax.set(xlabel="Elapsed time from run start (s)",
+                     ylabel="Sideways error (mm)\nrelative to intended route", xlim=(start, end))
+        decorate(error_ax)
+        error_ax.text(0, -0.32,
+                      "Zero = on the intended route. Positive = left of the intended heading; negative = right.",
+                      transform=error_ax.transAxes, fontsize=10, color="#475569")
+        fig.text(0.08, 0.153, "\n".join(textwrap.fill(note, 124) for note in event_notes),
+                 fontsize=10.5, color="#0f172a", va="top")
+        fig.text(0.08, 0.110,
+                 "RMS is a whole-interval error measure, not the peak. "
+                 f"External comparison uses {len(timeline)} recorded samples.", fontsize=10, color="#475569")
+        fig.text(0.08, 0.079, textwrap.fill(limitations, 132), fontsize=10,
+                 color="#475569", va="top", linespacing=1.5)
+        save(fig, "trajectory-overlay", limitations)
+
+        # Keep the raw/aligned evidence separate so an unchanged alignment does
+        # not consume the main engineering comparison with two identical panels.
+        fig, axes = plt.subplots(1, 2, figsize=(12, 6.5))
+        fig.subplots_adjust(left=0.08, right=0.97, top=0.71, bottom=0.31, wspace=0.29)
+        fig.suptitle("Alignment check: put the measurements on the same basis",
+                     x=0.08, y=0.97, ha="left", fontsize=18, weight="bold")
+        fig.text(0.08, 0.89, textwrap.fill(alignment_note, 118), fontsize=11)
+        fig.legend(handles=legend, loc="upper left", bbox_to_anchor=(0.073, 0.82),
+                   ncol=3, frameon=False, fontsize=10)
+        for ax, prefix, title in zip(axes, ["raw", "aligned"],
+                                     ["Before: source coordinates", "After: common map coordinates"]):
+            path_plot(ax, prefix)
+            ax.set_title(title, loc="left", fontsize=13, pad=12)
+        axes[0].set(xlabel="Source X coordinate (m)", ylabel="Source Y coordinate (mm)")
+        fig.text(0.08, 0.20,
+                 "The panels match: no position or clock correction was specified." if no_correction else
+                 "Before: external coordinates may use a different origin. Only the aligned comparison supports diagnosis.",
+                 fontsize=11)
+        fig.text(0.08, 0.14,
+                 "Axes are independently scaled, not a physical scale drawing. "
+                 "See the main plot for time-linked sideways error.", fontsize=10)
+        fig.text(0.08, 0.09, "Synthetic example • Missing measurements remain missing • No engineering approval", fontsize=10)
+        save(fig, "alignment-comparison", alignment_note + " " + limitations)
+
+    guide = [
+        "# Reading the robot tracking plots", "",
+        "## Start with the path and sideways-error comparison", "",
+        "![Path and sideways-error comparison](trajectory-overlay.svg)", "",
+        "- Dotted gray: the intended route, not a measurement.",
+        "- Blue circles and line: the external tracker's position measurements, not assumed ground truth.",
+        "- Dashed orange: the wheel-based position estimate (odometry), not an independent measurement of ground motion.",
+        "- Top panel: map position. The axes use different scales to expose small deviations; do not infer angles from it.",
+        "- Bottom panel: sideways error in millimetres at each recorded time. Zero is on the intended route; positive is left of the intended heading.",
+        "- The outlined blue point marks the largest absolute external sideways error. RMS summarizes error over the retained samples; it is not a maximum or a confidence bound.",
+        "- Gray time bands, when present, mark intervals without comparable external measurements. No external line bridges them.", "",
+        "## Observations to inspect", "",
+        f"- Largest absolute external sideways error: {abs(peak['lateral_error_m'])*1000:.3f} mm at {peak['time_s']:g} s.",
+        f"- Largest absolute wheel-estimated sideways error: {abs(peak_wheel['lateral_error_m'])*1000:.3f} mm at {peak_wheel['time_s']:g} s.",
+        f"- External lateral RMS error: {metrics['lateral_rmse_m']*1000:.3f} mm over {len(timeline)} samples.",
+        *["- " + note for note in event_notes], "",
+        "These are observations in synthetic input data, not a proven physical cause. " + limitations, "",
+        "## Check the alignment", "", alignment_note, "",
+        "![Before and after alignment](alignment-comparison.svg)", "",
+        "Original values and calculated external residuals remain in [timeline.csv](timeline.csv); "
+        "the calculation record is [tracking-metrics.json](tracking-metrics.json). "
+        "Wheel poses are read from the same recorded bag in the declared map frame; "
+        "their sideways residuals use the intended heading at each wheel sample time.", "",
+        "These plots do not set an acceptable tracking limit, certify performance, or authorize robot operation.", "",
+    ]
+    (output / "plot-guide.md").write_text("\n".join(guide), encoding="utf-8")
+
+
+def analyze_tracking_bag(bag, alignment, output_dir):
+    """Read actual CDR messages, apply explicit survey/time contract and compare."""
+    import numpy as np
 
     output = fresh(output_dir)
     contract = json.loads(Path(alignment).read_text(encoding="utf-8"))
@@ -156,6 +357,8 @@ def analyze_tracking_bag(bag, alignment, output_dir):
         yaw = math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
         return [pose.position.x, pose.position.y, yaw]
     planned = data["/wright_test/planned_pose"]
+    if any(msg.header.frame_id != contract["map_frame"] for _, msg in planned):
+        raise ValueError("Planned path frame disagrees with the declared map frame")
     planned_t = np.array([time(msg.header.stamp) for _, msg in planned])
     planned_xy = np.array([pose_values(msg) for _, msg in planned])
     yaw_unwrapped = np.unwrap(planned_xy[:, 2])
@@ -208,10 +411,20 @@ def analyze_tracking_bag(bag, alignment, output_dir):
     cmd_t = np.array([time(msg.header.stamp) for _, msg in commands])
     cmd_v = np.array([msg.twist.linear.x for _, msg in commands])
     velocity = []
+    odometry = []
     for _, msg in data["/wright_test/odom"]:
+        if msg.header.frame_id != contract["map_frame"]:
+            raise ValueError("Wheel odometry frame disagrees with the declared map frame")
         t = time(msg.header.stamp)
+        p = interpolate(t)
+        if p is not None:
+            x, y, _ = pose_values(msg)
+            odometry.append({"time_s": t, "x_m": x, "y_m": y,
+                             "lateral_error_m": -math.sin(p[2]) * (x-p[0]) + math.cos(p[2]) * (y-p[1])})
         if cmd_t[0] <= t <= cmd_t[-1]:
             velocity.append(float(msg.twist.twist.linear.x - np.interp(t, cmd_t, cmd_v)))
+    if not odometry:
+        raise ValueError("No wheel odometry samples in planned-path coverage")
     events = []
     for timestamp, msg in data["/wright_test/operator_event"]:
         elapsed = (timestamp-EPOCH_NS)/1e9
@@ -242,15 +455,10 @@ def analyze_tracking_bag(bag, alignment, output_dir):
         writer = csv.DictWriter(stream, fieldnames=list(timeline[0]))
         writer.writeheader()
         writer.writerows(timeline)
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    for ax, prefix, title in zip(axes, ["raw", "aligned"], ["Supplied frame (unaligned)", "Survey/time aligned, valid samples only"]):
-        ax.plot(planned_xy[:, 0], planned_xy[:, 1], label="planned")
-        ax.scatter([r[prefix+"_x_m"] for r in timeline], [r[prefix+"_y_m"] for r in timeline], s=8, label="external")
-        ax.set(xlabel="x [m]", ylabel="y [m]", title=title, aspect="equal")
-        ax.legend()
-    fig.tight_layout()
-    fig.savefig(output / "trajectory-overlay.svg")
-    plt.close(fig)
+    render_tracking_plots(output, timeline,
+                          [{"time_s": float(t), "x_m": float(p[0]), "y_m": float(p[1])}
+                           for t, p in zip(planned_t, planned_xy)], odometry, metrics)
+    metrics["plot_files"] = ["trajectory-overlay.svg", "alignment-comparison.svg", "plot-guide.md"]
     write_json(output / "tracking-metrics.json", metrics)
     shutil.copyfile(__file__, output / "analysis-operation.py")
     return metrics

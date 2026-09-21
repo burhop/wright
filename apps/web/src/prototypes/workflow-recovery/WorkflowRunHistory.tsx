@@ -4,6 +4,7 @@ import {
   type WorkspaceWorkflowRunSummary,
 } from "../../services/workspace-service";
 import { EngineeringResults } from "./EngineeringResults";
+import { approvalPresentation } from "./engineering-run-presentation";
 
 export function WorkflowRunHistory({
   sessionId,
@@ -90,8 +91,13 @@ export function WorkflowRunHistory({
               open={run.status === "interrupted" || run.status === "unknown"}
             >
               <summary>
-                {labels[run.status] ?? "Status needs checking"} ·{" "}
-                {new Date(run.started_at).toLocaleString()}
+                {(run.status === "awaiting_approval" ||
+                run.status === "changes_requested"
+                  ? approvalPresentation(run.approval)?.label
+                  : null) ??
+                  labels[run.status] ??
+                  "Status needs checking"}{" "}
+                · {new Date(run.started_at).toLocaleString()}
               </summary>
               {(run.status === "interrupted" || run.status === "unknown") && (
                 <p>

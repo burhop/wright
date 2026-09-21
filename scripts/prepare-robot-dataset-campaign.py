@@ -49,6 +49,11 @@ def prepare(args, directory, available):
     output = f"campaign/{identity}/{args.attempt}/artifacts"
     source = Path(args.instance_source).read_text(encoding="utf-8") if args.instance_source else TEMPLATE.read_text(encoding="utf-8").replace("__instance__", suffix)
     sections = _parse(source)
+    if identity == "robot-tracking-diagnosis-01":
+        next(s for s in sections if s["kind"] == "workflow")["fields"].update(
+            name="Investigate cart tracking at a floor seam",
+            purpose="Compare the intended route, overhead tracker and wheel-based position estimate around the recorded floor-seam crossing. Separate measured deviations from possible causes and choose the next inexpensive observation. Offline analysis of synthetic logs; no robot control or demonstrated pass/fail tracking limit.",
+        )
     originals = [s["id"] for s in sections if s["kind"] == "task"]
     edges = [s.copy() for s in sections if s["kind"] == "connection"]
     stages = {key: next(s for s in sections if s["id"].startswith(key + "_") and s["kind"] == "task")
@@ -104,11 +109,13 @@ def prepare(args, directory, available):
     # the complete inspection intact within the runtime's ten-minute task cap.
     stages["inspect_bag"]["fields"]["settings"]["timeout_seconds"] = 600
     stages["inspect_bag"]["fields"]["settings"]["task_guidance"] += " " + inspection_scope
-    measured = bind(stages["align_and_measure"], f"After actual native bag inspection/extraction succeeded, call calculate_tracking_metrics exactly once with operation_source_document={inputs + '/robot_tracking_operations.py'!r}, bag_directory={output + '/converted/recording'!r}, alignment_document={inputs + '/alignment.json'!r}, output_directory={output + '/analysis'!r}. The supplied reusable source applies the explicit transform once and retains the original 1% independent metrics and one-sample event gates. It must preserve the visual occlusion as missing samples, report unaligned/aligned overlays and save actual computed outputs. Read the returned metrics; don't invent or weaken checks.", config["operation_server"], ["analysis/timeline.csv", "analysis/trajectory-overlay.svg", "analysis/tracking-metrics.json"], filename="analysis-report.json")
+    measured = bind(stages["align_and_measure"], f"After actual native bag inspection/extraction succeeded, call calculate_tracking_metrics exactly once with operation_source_document={inputs + '/robot_tracking_operations.py'!r}, bag_directory={output + '/converted/recording'!r}, alignment_document={inputs + '/alignment.json'!r}, output_directory={output + '/analysis'!r}. The supplied reusable source applies the explicit transform once and retains the original 1% independent metrics and one-sample event gates. It must preserve the visual occlusion as missing samples, report unaligned/aligned overlays and save actual computed outputs. The main plot compares the intended route, external position measurements and wheel-based estimates, with time-linked sideways error in millimetres. Keep the separate alignment comparison and plot reading guide available for review. Read the returned metrics; don't invent or weaken checks.", config["operation_server"], ["analysis/timeline.csv", "analysis/trajectory-overlay.svg", "analysis/tracking-metrics.json", "analysis/alignment-comparison.svg", "analysis/plot-guide.md"], filename="analysis-report.json")
     measurement_files = {
         "timeline": output + "/analysis/timeline.csv",
         "plot": output + "/analysis/trajectory-overlay.svg",
         "metrics": output + "/analysis/tracking-metrics.json",
+        "alignment_plot": output + "/analysis/alignment-comparison.svg",
+        "plot_guide": output + "/analysis/plot-guide.md",
     }
     stages["align_and_measure"]["fields"]["outputs"].extend(
         helpers.port(role, "workspace_file") for role in measurement_files
@@ -116,13 +123,22 @@ def prepare(args, directory, available):
     stages["align_and_measure"]["fields"]["settings"]["expected_file_ports"] = measurement_files
     helpers.add_reference(sections, inspection, stages["align_and_measure"], "native_bag_evidence")
     diagnosis_task = new_task("draft_diagnosis", "Write the evidence-linked diagnosis for engineer review")
-    diagnosis = bind(diagnosis_task, "Write the requested engineering diagnosis from the actual supplied original prompt, route sketch, bag evidence and computed metrics. Cite time ranges, retained counts, frame/time correction, event correlation, missing intervals and uncertainties. Compare raw and aligned interpretations. State measured observations separately from hypotheses; command/odometry disagreement alone is not evidence of wheel slip. Include the requested inexpensive next observation. These are fictional input logs and no real robot commands are authorized.", filename="diagnosis.md")
+    diagnosis = bind(diagnosis_task, "Write the requested engineering diagnosis from the actual supplied original prompt, route sketch, bag evidence and computed metrics. Cite time ranges, retained counts, frame/time correction, event correlation, missing intervals and uncertainties. Compare raw and aligned interpretations. Link the actual path/error plot, separate alignment comparison and plot reading guide from the measurement output. Explain what each plot shows in engineering language, including the independent axis scales and the difference between external measurement and wheel-based estimate. State measured observations separately from hypotheses; command/odometry disagreement alone is not evidence of wheel slip. Include the requested inexpensive next observation. These are fictional input logs and no real robot commands are authorized.", filename="diagnosis.md")
+    diagnosis_task["fields"]["prompt"] += (
+        " Organize the report under: Why this analysis matters; What the plots show; "
+        "Measured findings; What remains unknown; Next inexpensive test. "
+        "Start with a short decision-oriented summary, not file hashes or tool details. "
+        "Use actual relative Markdown links: [Path and sideways error](analysis/trajectory-overlay.svg), "
+        "[Before and after alignment](analysis/alignment-comparison.svg), and "
+        "[How to read the plots](analysis/plot-guide.md). "
+        "Do not invent a tracking acceptance limit or imply that the seam caused the deviation."
+    )
     helpers.add_reference(sections, measured, diagnosis_task, "actual_metrics")
     helpers.add_reference(sections, inspection, diagnosis_task, "bag_evidence")
     helpers.add_reference(sections, image, diagnosis_task, "route_image", "reference_images")
     # The original combined AI/engineer semantic stage remains the authority gate.
     review = stages["evidence_diagnosis"]
-    review["fields"].update(step_type="review", performed_by="engineer", inputs=[], outputs=[], instructions="Review the actual diagnosis, event and metrics evidence. Keep observations separate from candidate causes; do not infer wheel slip from command/odometry disagreement.",
+    review["fields"].update(name="Review findings and choose the next test", step_type="review", performed_by="engineer", inputs=[], outputs=[], instructions="Review the actual diagnosis, event and metrics evidence. Keep observations separate from candidate causes; do not infer wheel slip from command/odometry disagreement.",
         settings={"authoring_template": "external-action-approval", "action_kind": "local_review", "causal_overclaiming": False,
                   "approval_binding": LOCAL_REVIEW_BINDING, "approval_destination": LOCAL_REVIEW_DESTINATION,
                   "approval_settings": {"review_task_id": review["id"]}, "approval_action": {"kind": "local_review", "mode": "review_only"}})

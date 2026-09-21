@@ -46,7 +46,7 @@ export function validationRunPresentation(
     return {
       label: "Correction budget exhausted",
       detail:
-        "The current output still has findings. Downstream work remains held; open the saved assessment before starting a new run.",
+        "The result still has unresolved findings after the allowed correction attempts. Later steps are paused. Open the assessment to see what needs attention before running again.",
     };
   if (
     progress.kind === "validation_feedback_delivered" ||
@@ -58,8 +58,8 @@ export function validationRunPresentation(
         progress.revision ? `Correction revision ${progress.revision}. ` : ""
       }${
         progress.remaining_revisions === undefined
-          ? "The producer is creating a new revision from measured findings."
-          : `${progress.remaining_revisions} configured correction revision(s) remain at feedback delivery.`
+          ? "The producing step is revising its result to address the check findings."
+          : `${progress.remaining_revisions} automatic correction attempt(s) remain. Later steps wait for the result to pass its checks.`
       }`,
     };
   if (progress.kind === "design_check" && progress.status !== "pass")
@@ -70,8 +70,8 @@ export function validationRunPresentation(
           : "Validation held",
       detail:
         progress.status === "revise"
-          ? "Measured defects prevent release while the runner prepares bounded correction feedback."
-          : "Downstream work remains held until missing evidence or validator capability is restored.",
+          ? "The result did not pass its checks. Later steps are paused while corrections are prepared."
+          : "The result could not be checked. Later steps are paused until the missing evidence or checking tool is available.",
     };
   return null;
 }

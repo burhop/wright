@@ -81,8 +81,17 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
         "timeline.csv",
         "trajectory-overlay.svg",
         "tracking-metrics.json",
+        "alignment-comparison.svg",
+        "plot-guide.md",
     }
     assert diagnosis.output_path.endswith("/diagnosis.md")
+    assert "What remains unknown; Next inexpensive test" in diagnosis.prompt
+    assert "[Path and sideways error](analysis/trajectory-overlay.svg)" in diagnosis.prompt
+    assert review.title == "Review findings and choose the next test"
+    if ordinal == 1:
+        workflow = next(s for s in _parse(source) if s["kind"] == "workflow")
+        assert workflow["fields"]["name"] == "Investigate cart tracking at a floor seam"
+        assert "no robot control" in workflow["fields"]["purpose"]
     assert "calculate_tracking_metrics exactly once" in measurement.prompt
     assert "independently reads every actual message" in inspection.prompt
     assert (
@@ -136,7 +145,9 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     )
     assert configured_review["requirement_ids"]
     assert plan.revisions == {}
-    assert set(measurement.expected_file_ports) == {"timeline", "plot", "metrics"}
+    assert set(measurement.expected_file_ports) == {"timeline", "plot", "metrics", "alignment_plot", "plot_guide"}
+    assert "time-linked sideways error in millimetres" in measurement.prompt
+    assert "plot reading guide" in diagnosis.prompt
     assert set(plan.steps[0].expected_file_ports) == {"conversion_manifest"}
     assert (
         f'from: "{validator.id}"' in source

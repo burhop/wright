@@ -134,6 +134,10 @@ it("recovers an external run into the existing graph and viewer links without PO
   expect(screen.getByTestId("workflow-run-observed-metrics")).toHaveTextContent(
     "2 model calls",
   );
+  expect(
+    screen.getByTestId("workflow-recovery-native-run-log"),
+  ).not.toHaveAttribute("open");
+  fireEvent.click(screen.getByText("Technical log and telemetry"));
   fireEvent.click(screen.getByTestId("workflow-recovery-open-run-record"));
   expect(onOpenFile).toHaveBeenCalledWith(current.path);
   current = {
@@ -296,11 +300,9 @@ it("restores validator hold diagnostics and opens the exact saved assessment", a
   );
   fireEvent.click(screen.getByTestId("workflow-recovery-run-details-toggle"));
   expect(screen.getByTestId("workflow-native-run-summary")).toHaveTextContent(
-    "Measured defects prevent release",
+    "The result did not pass its checks",
   );
-  fireEvent.click(
-    screen.getByTestId("workflow-recovery-open-validation-evidence"),
-  );
+  fireEvent.click(screen.getByTestId("workflow-open-check-report"));
   expect(onOpenFile).toHaveBeenCalledWith("validation/assessment-held.json");
 });
 

@@ -10,6 +10,7 @@ export function InputBlockEditor({
   readOnly,
   onApply,
   onListFiles,
+  onOpenFile,
   isImage = false,
 }: {
   isImage?: boolean;
@@ -18,6 +19,7 @@ export function InputBlockEditor({
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
   onListFiles?: () => Promise<AuthoringWorkspaceFile[]>;
+  onOpenFile?: (path: string) => void;
 }) {
   const [files, setFiles] = useState<AuthoringWorkspaceFile[]>([]);
   const [message, setMessage] = useState("");
@@ -89,6 +91,7 @@ export function InputBlockEditor({
             {image ? "Image" : "Workspace file"}
             <select
               data-testid="workflow-recovery-input-select"
+              title={path || (image ? "Choose an image" : "Choose a file")}
               disabled={readOnly || busy}
               value={path}
               onChange={(e) => update("workspace_file", e.target.value)}
@@ -100,12 +103,33 @@ export function InputBlockEditor({
                 <option value={path}>{path} · not in current list</option>
               )}
               {choices.map((file) => (
-                <option key={file.path} value={file.path}>
+                <option key={file.path} value={file.path} title={file.path}>
                   {file.path}
                 </option>
               ))}
             </select>
           </label>
+          {path && (
+            <div className="recovery-prompt-editor__selected-file">
+              <span>Selected file</span>
+              <code
+                data-testid="workflow-recovery-input-selected-path"
+                title={path}
+              >
+                {path}
+              </code>
+              {onOpenFile && (
+                <button
+                  type="button"
+                  className="recovery-button recovery-button--secondary"
+                  data-testid="workflow-recovery-input-open"
+                  onClick={() => onOpenFile(path)}
+                >
+                  Open file
+                </button>
+              )}
+            </div>
+          )}
           {image && (
             <label className="recovery-button recovery-button--secondary">
               {busy ? "Uploading…" : "Upload image"}

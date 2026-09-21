@@ -873,3 +873,98 @@ in the normal workspace Workflows → File → Open workflow → attempt-008 →
 details panel. Leave Resume to the guarded campaign runner. Upon a new decision,
 revalidate actor, three-requirement coverage and the exact subject digest, then
 resume the same attempt if approved. All broader scope and blockers remain intact.
+
+## September 21: user-requested engineering presentation correction
+
+This checkpoint supersedes the immediate action above. The user has already
+provided UX feedback; do not ask them to approve the unreadable attempt-008
+package again. Their latest authorization was to integrate the improved plots,
+explanations and review experience, not to restart the full campaign or supply
+engineering sign-off.
+
+Robot-01 attempt-009 is the new, linked presentation correction. Enrollment and
+the one-case static preflight passed. The existing serial runner executed fresh
+CSV normalization, bag inspection, measurements and diagnosis using the configured
+Sol route. The actual bag files, timeline and original metric values match 008;
+the authored-operation identity and presentation are intentionally revised.
+All 29 files in attempt-008 remain byte-for-byte intact, with its decision pending.
+
+- Successor run: `f0059a04d5964fa8866ccf4c4faa0f12`.
+- Review: `checkpoint-9fad3238e32dd0b229ac309d`, pending, actor null.
+- Subject: `2d883db23f0364ae5baca188cec8d687e27f93c083494e4a48b0cf634093d30b`.
+- Source: `17143186aa5b26e100d59b34a20879c2621f49fff230ae848217e66216064ab1`.
+- Manifest: `campaign-execution/validator-campaign-082/pilot-robot01-attempt009-correction.json`
+  under `.local-run/feature-081-live/`.
+- State: `.local-run/feature-081-live/campaign-runner-state/validator-082-pilot-robot01-attempt009/robot-tracking-diagnosis-01/attempt-009.json`.
+- Retry episode: `robot01-engineering-presentation`, first correction, max two,
+  linked to 008 with isolated preview evidence. Earlier episodes remain intact.
+
+Normal workspace browser verification passed all 24 actions. Run details now
+shows the workflow's authored purpose, verified image previews, direct full-size
+image/document opening and clear requirements. The report explains findings,
+unknowns and the proposed follow-up test. Evidence:
+`artifacts/ui-walkthrough/robot009-engineering-review/20260921-1802-01/`.
+The Playwright UI Walkthrough skill stopped before approval or resume.
+
+Final verification exposed a pre-existing backend handoff defect: AI-assisted
+MCP tasks with multiple `expected_files` do not apply their explicit
+`expected_file_ports`. Four canonical validation subjects are missing from the
+live output ledger: conversion manifest, timeline, metrics, plot. Do not claim a
+completed validator run, backfill the live ledger by hand, change the saved
+checkpoint, or submit user approval as a workaround. The direct-tool branch has
+the mapping logic; the AI task branch omits it.
+
+The separate immutable full-profile diagnostic reports 25 passing automated
+checks and two pending human-review checks (three requirements), with the four
+missing canonical bindings explicitly disclosed. No requirement or profile was
+weakened and no approval was copied. Evidence:
+`artifacts/robot-tracking-plot/robot009-verification-20260921/verification.json`.
+This is detached verification with zero completion/validation credit.
+
+The owned runner observer was stopped after confirming `awaiting_manual_approval`,
+no active operation and the exact run identity. There is no background automatic
+resume. The durable pending state remains; no final runner summary was fabricated.
+The goal and broader queue remain stopped. Focused frontend suites: 388 passed;
+TypeScript check passed. Plot/preparer/tracking suites: 18 passed, three optional
+host-dependency skips; the prior selected-container six-test proof is preserved.
+
+**Next action:** qualify the AI-task named-file output binding repair, including
+multi-file and review-continuation tests, then establish a supported recovery or
+fresh successor before resuming Robot. Do not start other cases or ask the user
+to approve around this known blocker. The improved attempt-009 UI is available
+for UX inspection now; engineering release remains unapproved and incomplete.
+
+## 2026-09-21 — output blocks and direct result access
+
+User authorized visible output blocks and distinct input/output styling, with
+campaign restart deferred until the experience is accepted. Implemented a
+read-only result projection in the existing workspace editor, without rewriting
+the workflow, its saved layout, or campaign evidence. Blue INPUT cards and teal
+RESULT cards use different labels, arrows, and borders. Result groups connect to
+their producing steps; View results opens the result viewer, and Results beside
+Inputs selects the same blocks. The viewer prioritizes the selected file,
+verified image preview, and direct Open in tab. Details of its location and
+producer remain available on demand.
+
+Robot 009 shows four available result groups and an expected, unproduced evidence
+index. Availability is separate from review approval. Draft/source changes detach
+saved-run results from current task connections. No UI inspection can execute,
+approve, or edit a step. Unknown structured measurements are not relabelled as
+interpreted engineering conclusions.
+
+Verification: 290 frontend tests across 32 suites passed; TypeScript passed.
+The normal workspace Workflows entry walkthrough passed 34 actions, including
+result-card opening, inline plot rendering, full-size plot/report tabs, the
+disabled expected final file, and 1060/752-pixel layouts. Visual inspection led
+to moving file access above producer explanations and reserving space for the
+result viewer at narrow widths. Corrected result-node sizing so auto-panning
+keeps the complete selected card visible. Final evidence and valid walkthrough
+report: `artifacts/ui-walkthrough/robot009-result-blocks/20260921-1845-04/`.
+Earlier evidence is retained; the first browser launch was denied by the sandbox
+and verification subsequently ran with approved browser-launch permission.
+
+Saved run, source digest, artifact identities, pending checkpoint, and actor are
+identical before/after. No approval, workflow save, campaign resume, merge, or push
+was submitted. User acceptance is still required. The next runtime work remains
+the AI-task named-file output binding repair described above, not a blind restart
+of the campaign or an approval workaround.

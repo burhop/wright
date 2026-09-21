@@ -10,6 +10,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
   WorkflowRecoveryConcept as Editor,
+  RelationshipInspector,
   type WorkflowRecoveryConceptProps,
   type WorkflowRecoveryPersistedSource,
 } from "./WorkflowRecoveryConcept";
@@ -848,6 +849,47 @@ describe("WorkflowRecoveryConcept component states", () => {
     resume.mockRestore();
   });
 
+  it("explains a data connection in engineering terms without changing its definition", () => {
+    const connection = initialWorkflow.relationships.find(
+      (r) => r.kind === "data",
+    )!;
+    const apply = vi.fn();
+    render(
+      <RelationshipInspector
+        relationshipId={connection.id}
+        workflow={initialWorkflow}
+        readOnly={false}
+        onApply={apply}
+        onDisconnect={vi.fn()}
+      />,
+    );
+    const explanation = screen.getByTestId(
+      "workflow-engineering-connection-context",
+    );
+    const sourcePort = initialWorkflow.ports.find(
+      (p) => p.id === connection.sourceId,
+    )!;
+    const targetPort = initialWorkflow.ports.find(
+      (p) => p.id === connection.targetId,
+    )!;
+    expect(explanation).toHaveTextContent(
+      initialWorkflow.blocks.find((b) => b.id === sourcePort.ownerBlockId)!
+        .title,
+    );
+    expect(explanation).toHaveTextContent(
+      initialWorkflow.blocks.find((b) => b.id === targetPort.ownerBlockId)!
+        .title,
+    );
+    expect(explanation).toHaveTextContent("Information carried:");
+    expect(explanation).not.toHaveTextContent(connection.sourceId);
+    expect(
+      screen.getByTestId(
+        `workflow-recovery-relationship-label-${connection.id}`,
+      ),
+    ).toHaveValue(connection.label);
+    expect(apply).not.toHaveBeenCalled();
+  });
+
   it("presents a local validation checkpoint as an exact requirements review", async () => {
     const pending: WorkflowApprovalCheckpoint = {
       checkpoint_id: "checkpoint-validation-review",
@@ -902,7 +944,13 @@ describe("WorkflowRecoveryConcept component states", () => {
       },
       subject_digest: "e".repeat(64),
       state: "pending",
-      continuation: { next_step_index: 3 },
+      continuation: {
+        next_step_index: 3,
+        artifact_files: [
+          { path: "results/arm-report.md", sha256: "c".repeat(64) },
+        ],
+        execution_context: { campaign_id: "controlled-test" },
+      },
       actor: null,
       reason: null,
       created_at: 1,
@@ -919,6 +967,11 @@ describe("WorkflowRecoveryConcept component states", () => {
       taskId: "review_requirements",
       outputs: [],
     });
+    const onOpenFile = vi.fn();
+    const decide = vi
+      .spyOn(workspaceService, "decideWorkflowApproval")
+      .mockResolvedValue({ ...pending, state: "approved", updated_at: 2 });
+    const resume = vi.spyOn(workspaceService, "resumeWorkflowApproval");
     render(
       <Editor
         workflowSource={reportWorkflowSource}
@@ -927,31 +980,60 @@ describe("WorkflowRecoveryConcept component states", () => {
         storageDigest={"a".repeat(64)}
         workspaceSessionId="session-1"
         onRun={onRun}
+        onOpenFile={onOpenFile}
       />,
     );
 
     await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
     const panel = await screen.findByTestId("workflow-external-approval");
-    expect(panel).toHaveTextContent("Requirements review");
+    expect(panel).toHaveTextContent("Review results against the requirements");
+    expect(
+      screen.getByTestId("workflow-recovery-run-details-toggle"),
+    ).toHaveTextContent("Awaiting your review");
+    const technical = screen.getByTestId("workflow-approval-technical-record");
+    expect(technical).not.toHaveAttribute("open");
     expect(panel).toHaveTextContent("robot-arm-design-01");
     expect(panel).toHaveTextContent("1.0.0");
     expect(
       screen.getByTestId("workflow-validation-review-requirements"),
-    ).toHaveTextContent("ARM-REQ-001");
+    ).not.toHaveTextContent("ARM-REQ-001");
     expect(
       screen.getByTestId("workflow-validation-review-requirements"),
-    ).toHaveTextContent("ARM-REQ-004");
+    ).not.toHaveTextContent("ARM-REQ-004");
     expect(panel).toHaveTextContent(
       "The arm reaches every declared target pose.",
     );
     expect(panel).toHaveTextContent("requirements/robot-arm.md");
     expect(panel).toHaveTextContent("R4");
-    expect(panel).toHaveTextContent(
-      "record only the decision here; the campaign runner resumes the attempt",
+    expect(panel).not.toHaveTextContent("campaign runner");
+    await userEvent.click(
+      screen.getByRole("button", { name: "Open arm-report.md" }),
     );
+    expect(onOpenFile).toHaveBeenCalledWith("results/arm-report.md");
     expect(
       screen.getByTestId("workflow-external-approval-approve"),
     ).toHaveTextContent("Approve reviewed requirements");
+    await userEvent.click(
+      screen.getByTestId("workflow-external-approval-approve"),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("workflow-recovery-run-details-toggle"),
+      ).toHaveTextContent("Review approved · waiting to continue"),
+    );
+    expect(
+      screen.queryByTestId("workflow-external-approval-resume"),
+    ).toBeNull();
+    expect(decide).toHaveBeenCalledWith(
+      "session-1",
+      pending,
+      "approved",
+      null,
+      expect.any(String),
+    );
+    expect(resume).not.toHaveBeenCalled();
+    decide.mockRestore();
+    resume.mockRestore();
   });
 
   it("creates a local capture only from a verified run and selected persistent evidence", async () => {
@@ -1861,7 +1943,8 @@ end`;
   });
 
   it("stores a workspace-relative file path and treats a bare filename as the workspace root", async () => {
-    render(<WorkflowRecoveryConcept />);
+    const onOpenFile = vi.fn();
+    render(<WorkflowRecoveryConcept onOpenFile={onOpenFile} />);
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -1881,6 +1964,14 @@ end`;
     expect(
       screen.getByTestId("workflow-recovery-input-file-block.file-input-1"),
     ).toHaveValue("requirements.docx");
+    expect(
+      screen.getByTestId("workflow-recovery-input-selected-path"),
+    ).toHaveTextContent("requirements.docx");
+    expect(
+      screen.getByTestId("workflow-recovery-input-selected-path"),
+    ).toHaveAttribute("title", "requirements.docx");
+    await userEvent.click(screen.getByTestId("workflow-recovery-input-open"));
+    expect(onOpenFile).toHaveBeenCalledWith("requirements.docx");
     await userEvent.click(screen.getByTestId("workflow-recovery-view-code"));
     expect(
       screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-source-editor")

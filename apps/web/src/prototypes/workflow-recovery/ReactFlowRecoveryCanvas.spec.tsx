@@ -67,6 +67,22 @@ function runtime(
 }
 
 describe("ReactFlowRecoveryCanvas component contract", () => {
+  it("renders read-only result blocks whose controls only select, never edit or run", () => {
+    const onIntent = vi.fn();
+    const result = {id: "result.report", producerId: "block.generate-geometry", producerTitle: "Generate geometry",
+      title: "Model", files: [{path: "run/model.step", available: true}], sourceMismatch: false, reviewLabel: ""};
+    const projection = toDraftProjection(initialWorkflow, initialLayout);
+    const before = JSON.stringify(projection);
+    render(<RecoveryCanvasRuntimeProvider value={{...runtime(), resultBlocks: [result]}}>
+      <ReactFlowRecoveryCanvas projection={projection} selectedSemanticId={null} onIntent={onIntent} />
+    </RecoveryCanvasRuntimeProvider>);
+    fireEvent.click(screen.getByTestId("workflow-result-block").querySelector("button")!);
+    expect(onIntent).toHaveBeenCalledWith({type: "select", semanticId: result.id});
+    fireEvent.keyDown(screen.getByTestId("workflow-result-block"), {key: "Delete"});
+    expect(onIntent.mock.calls.every(([intent]) => intent.type === "select")).toBe(true);
+    expect(JSON.stringify(projection)).toBe(before);
+    expect(screen.getByTestId("workflow-result-block")).toHaveTextContent("1 of 1 files available");
+  });
   it("rejects an image-to-text keyboard connection but accepts an image input", () => {
     const workflow = cloneWorkflow(initialWorkflow);
     workflow.ports.find(

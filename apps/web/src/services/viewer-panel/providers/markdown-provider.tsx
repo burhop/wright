@@ -175,6 +175,18 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({ document }) => {
 export class MarkdownProvider implements ViewerProvider<MarkdownDocument> {
   readonly id = "markdown-viewer";
   private roots = new Map<string, Root>();
+  private retiringRoots = new WeakSet<Root>();
+
+  private retireRoot(uri: string, root = this.roots.get(uri)) {
+    if (!root) return;
+    // An old panel's disposal must not remove a newer preview for the same file.
+    if (this.roots.get(uri) === root) this.roots.delete(uri);
+    if (this.retiringRoots.has(root)) return;
+    this.retiringRoots.add(root);
+    // Panel disposal can occur during the workspace's React commit. Dispose the
+    // independent preview root after that commit rather than unmounting mid-render.
+    queueMicrotask(() => root.unmount());
+  }
 
   readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = () => ({
     dispose: () => {},
@@ -197,8 +209,7 @@ export class MarkdownProvider implements ViewerProvider<MarkdownDocument> {
   }
 
   disposeDocument(doc: MarkdownDocument) {
-    this.roots.get(doc.uri)?.unmount();
-    this.roots.delete(doc.uri);
+    this.retireRoot(doc.uri);
     doc.dispose();
   }
 
@@ -208,8 +219,7 @@ export class MarkdownProvider implements ViewerProvider<MarkdownDocument> {
     _mode: ViewerMode,
     _token: CancellationToken,
   ): Promise<void> {
-    this.roots.get(document.uri)?.unmount();
-    this.roots.delete(document.uri);
+    this.retireRoot(document.uri);
     panel.container.innerHTML = "";
 
     const mount = window.document.createElement("div");
@@ -221,8 +231,7 @@ export class MarkdownProvider implements ViewerProvider<MarkdownDocument> {
     root.render(<MarkdownPreview document={document} />);
 
     panel.onDidDispose(() => {
-      root.unmount();
-      this.roots.delete(document.uri);
+      this.retireRoot(document.uri, root);
     });
   }
 
