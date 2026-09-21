@@ -995,3 +995,52 @@ Preserve 008/009 sources, evidence, reviews and retry ledgers. Robot 010 gets it
 own bounded named-output-binding correction episode supported by the material
 runtime fix, isolated test evidence, and restart identity. Stop at its genuine
 engineering review; broader waves remain gated on a qualified pilot.
+
+### Restart outcome — Robot 010 running
+
+Local commits `7d3a9384`, `2594f034` and `dd26ac51` preserve the accepted UI,
+named-file runtime repair, focused tests and owned-restart safeguards. No push
+or merge was performed. The final restart-helper suite passed 33 tests.
+
+The existing jig-01 attempt-015 source returned a pre-existing
+`workflow_source_integrity` error during restart preflight. Its file was not
+rewritten or repaired. The helper was extended to fingerprint locally present
+invalid workflow files instead of requiring successful API parsing of all files.
+The API restart then launched successfully but took about 3.5 minutes to start,
+outlasting the helper's retry loop. The failed checker lost its in-memory
+before-snapshot; **whole-workspace before/after preservation is not claimed**.
+Read-only post-startup reconciliation verified the exact owned API listener
+39864 (launcher 28368), clean committed module origins at `dd26ac51`, Robot 009's
+unchanged saved source/revisions, and its unchanged pending review/checkpoint
+with no actor. Health reported the agent connected. The saved verification
+explicitly records its limited scope and the startup-check timeout:
+`.local-run/feature-081-live/restarts/robot-named-file-binding-20260921/verification.json`.
+
+The existing preparer and enroller created fresh Robot 010 after rerunning all
+seven isolated binding controls. All Robot 009 file hashes and its approval
+record were identical before/after enrollment. The linked correction episode is
+`robot01-named-output-binding`, correction `named-file-ports-r1`, with at most two
+corrections; it does not reset prior exhausted episodes. Qualification evidence:
+`artifacts/engineering-workflow-datasets/diagnostics/robot01-named-output-binding-r1.json`.
+
+Preflight passed the one-case manifest with zero errors and zero warnings:
+17 staged inputs, six granted tools, all required stages and output roles, one
+full-profile validator, and no existing run. Manifest:
+`.local-run/feature-081-live/campaign-execution/validator-campaign-082/pilot-robot01-attempt010-binding-correction.json`.
+Preflight receipt alongside it: `pilot-robot01-attempt010-preflight.json`.
+
+The existing serial runner launched at 2026-09-21 19:11:16 EDT (launcher 9212).
+Actual run `1e10a25958694ce2ab4d9454029b1fcf` is **running**, with the first
+`normalize_csv_to_ros2` tool call and model usage observed. Saved source digest:
+`a19b0f8b02bb6d5fd1d487c0a7f99a89db7b0be5f1b875cc970bcea2afb9a07f`.
+State/logs and ownership receipt are under
+`.local-run/feature-081-live/campaign-runner-state/validator-082-pilot-robot01-attempt010/`.
+Configured inference remains `openai-codex::gpt-5.6-sol`. There is one runner and
+one case, not a restarted broad queue or Codex goal. No new completion or
+full-profile validation credit is claimed at this running checkpoint.
+
+The runner remains responsible for this attempt and must pause at genuine human
+review. Do not launch a duplicate while its start operation is active. Next:
+verify the produced named file bindings, review the new engineering evidence,
+then complete canonical validation before qualifying broader campaign waves.
+UI acceptance did not approve any engineering requirement.
