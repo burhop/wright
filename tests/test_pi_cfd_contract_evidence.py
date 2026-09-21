@@ -3,6 +3,9 @@
 import hashlib
 import importlib.util
 from pathlib import Path
+from types import SimpleNamespace
+
+import numpy as np
 
 import pytest
 
@@ -140,3 +143,42 @@ outer_air
     assert [
         patch for patch, _ in operations.external_boundary_patches(boundary)
     ] == ["ambient_x_min", "outer_air"]
+
+
+def test_boundary_energy_includes_solid_conduction_without_requiring_solid_velocity(tmp_path):
+    contract = _contract(tmp_path)
+    contract["regions"][1]["heat_w"] = 6
+    surfaces = {}
+    for region in contract["regions"]:
+        identity = region["name"]
+        boundary = tmp_path / "constant" / identity / "polyMesh/boundary"
+        boundary.parent.mkdir(parents=True)
+        boundary.write_text("\nFoamFile\n{ class polyBoundaryMesh; }\nouter\n{ type wall; nFaces 1; }\ncoupled\n{ type mappedWall; sampleRegion neighbor; nFaces 1; }\n")
+        vtk = tmp_path / "VTK" / identity / "outer/face.vtk"
+        vtk.parent.mkdir(parents=True)
+        vtk.touch()
+        # One square metre conducts 1 W from air and 5 W from the solid.
+        data = {"T": np.array([304.15]), "grad(T)": np.array([[0, 0, -(1 if identity == "air" else 5) / region["material"]["kappa"]]]), "Normals": np.array([[0, 0, 1]])}
+        if identity == "air":
+            data.update(U=np.array([[0, 0, 0]]), rho=np.array([1.18]))
+        surface = SimpleNamespace(n_cells=1, cell_data=data)
+        surface.compute_normals = lambda **kwargs: surfaces[identity]
+        surface.compute_cell_sizes = lambda: {"Area": np.array([1.0])}
+        surface.cell_centers = lambda: SimpleNamespace(points=np.array([[0, 0, 1]]))
+        surfaces[identity] = surface
+    # Bind each surface separately rather than closing over the last loop value.
+    for surface in surfaces.values():
+        surface.compute_normals = lambda surface=surface, **kwargs: surface
+    pv = SimpleNamespace(read=lambda path: surfaces[path.parents[1].name])
+    grids = {region["name"]: SimpleNamespace(center=np.array([0, 0, 0])) for region in contract["regions"]}
+    results = tmp_path / "results"
+    results.mkdir()
+    energy = operations.extract_boundary_energy(tmp_path, contract, grids, pv, results)
+    assert energy["net_outward_heat_w"] == pytest.approx(6)
+    assert energy["heat_balance_relative"] == pytest.approx(0)
+    csv = (results / "boundary-energy.csv").read_text()
+    assert "air/outer" in csv and "shell/outer" in csv
+    assert "coupled" not in csv and "FoamFile" not in csv
+    del grids["shell"]
+    with pytest.raises(ValueError, match="every contract region"):
+        operations.extract_boundary_energy(tmp_path, contract, grids, pv, results)

@@ -122,6 +122,17 @@ interpolating from `distance_min_mm`. Geometry is not substituted or simplified.
 Measure meshing, conversion, solve and export time before a full pilot; each
 current canonical operation must fit its declared runtime budget.
 
+Boundary-energy extraction includes external faces on **every fluid and solid
+region**, excluding coupled internal interfaces. It exports native `grad(T)` for
+each region. Fluid faces contribute sensible enthalpy and conduction; stationary
+solid faces contribute conduction with zero advective velocity. CSV patch names
+are qualified as `region/patch`, so identically named region patches remain
+distinct. Missing regional field evidence fails closed. This accounting does not
+establish convergence or qualify a design. Preserve the 1% heat-balance limit and
+the independent residual/temperature-window checks. Qualify the reader's resource
+budget against the actual face count before enrollment; do not silently truncate
+the boundary table to fit the default budget.
+
 Legacy version 1 retains its original uniform mesh and explicit `duration_s` /
 `delta_t_s` transient behavior. Use it only for an explicitly justified transient
 study. Do not add those fields to version 2 or silently shorten an accepted

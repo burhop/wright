@@ -25,6 +25,7 @@ from workspace_service.process_validation.readers.base import (
 from workspace_service.process_validation.readers.cfd import (
     CfdEvidenceReader,
     _convergence_measurement,
+    _heat_balance_measurement,
 )
 
 
@@ -278,6 +279,17 @@ def test_heat_balance_is_integrated_from_archived_per_face_fields():
         comparison, check("heat_balance", unit="1"), context
     )
     assert measurement.value == pytest.approx(0.0)
+
+
+@pytest.mark.parametrize("cancelled,expected", [(False, "reader.entity_limit"), (True, "validation.cancelled")])
+def test_heat_balance_preserves_resource_and_cancellation_issues(cancelled, expected):
+    content = b"patch,role,area_m2,normal_velocity_m_s,density_kg_m3,temperature_k,temperature_gradient_normal_k_m,cp_j_kg_k,conductivity_w_m_k,ambient_k\nsolid/feet,wall,1,0,1000,301,-1,1000,1,300\n"
+    context = ReaderContext.create(ResourceBudget(max_entities=1), "budget-test")
+    if cancelled:
+        context.cancelled.set()
+    with pytest.raises(ValidationIssue) as captured:
+        _heat_balance_measurement(content, context)
+    assert captured.value.code == expected
 
 
 def test_heat_balance_rejects_summary_that_disagrees_with_face_fields():

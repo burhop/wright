@@ -102,10 +102,11 @@ def external_boundary_patches(boundary_text):
     ]
 
 
-def extract_boundary_energy(case, contract, fluid_region, grid, pv, results):
-    """Integrate external fluid-boundary energy from exported native fields."""
-    identity = fluid_region["name"]
-    material = fluid_region["material"]
+def extract_region_boundary_energy_rows(case, contract, region, grid, pv):
+    """Measure one region's external faces, excluding internal coupled interfaces."""
+    identity = region["name"]
+    material = region["material"]
+    is_fluid = region["kind"] == "fluid"
     boundary_text = (case / "constant" / identity / "polyMesh/boundary").read_text()
     roles = {item["name"]: item["role"] for item in contract["boundaries"]}
     energy_rows = []
@@ -118,7 +119,9 @@ def extract_boundary_energy(case, contract, fluid_region, grid, pv, results):
             point_normals=False,
             consistent_normals=False,
         )
-        required = {"U", "rho", "T", "grad(T)", "Normals"}
+        required = {"T", "grad(T)", "Normals"}
+        if is_fluid:
+            required |= {"U", "rho"}
         if not required <= set(surface.cell_data):
             raise ValueError("External boundary lacks energy-balance fields")
         areas = surface.compute_cell_sizes()["Area"]
@@ -127,16 +130,16 @@ def extract_boundary_energy(case, contract, fluid_region, grid, pv, results):
         from_center = centers - grid.center
         if float((normals * from_center).sum(axis=1).mean()) < 0:
             normals = -normals
-        normal_velocity = (surface.cell_data["U"] * normals).sum(axis=1)
+        normal_velocity = (surface.cell_data["U"] * normals).sum(axis=1) if is_fluid else None
         normal_gradient = (surface.cell_data["grad(T)"] * normals).sum(axis=1)
         for index in range(surface.n_cells):
             energy_rows.append(
                 {
-                    "patch": patch,
+                    "patch": f"{identity}/{patch}",
                     "role": roles.get(patch, "wall"),
                     "area_m2": float(areas[index]),
-                    "normal_velocity_m_s": float(normal_velocity[index]),
-                    "density_kg_m3": float(surface.cell_data["rho"][index]),
+                    "normal_velocity_m_s": float(normal_velocity[index]) if is_fluid else 0.0,
+                    "density_kg_m3": float(surface.cell_data["rho"][index]) if is_fluid else float(material["rho"]),
                     "temperature_k": float(surface.cell_data["T"][index]),
                     "temperature_gradient_normal_k_m": float(normal_gradient[index]),
                     "cp_j_kg_k": float(material["cp"]),
@@ -144,6 +147,19 @@ def extract_boundary_energy(case, contract, fluid_region, grid, pv, results):
                     "ambient_k": float(contract["ambient_k"]),
                 }
             )
+    return energy_rows
+
+
+def extract_boundary_energy(case, contract, region_grids, pv, results):
+    """Integrate all external fluid and solid faces; never omit a material region."""
+    expected_regions = {region["name"] for region in contract["regions"]}
+    if set(region_grids) != expected_regions:
+        raise ValueError("Heat balance requires exported fields for every contract region")
+    energy_rows = []
+    for region in contract["regions"]:
+        energy_rows.extend(extract_region_boundary_energy_rows(
+            case, contract, region, region_grids[region["name"]], pv,
+        ))
     if not energy_rows:
         raise ValueError("No external boundary energy fields were extracted")
     energy_path = results / "boundary-energy.csv"
@@ -172,7 +188,7 @@ def extract_boundary_energy(case, contract, fluid_region, grid, pv, results):
         "input_heat_w": input_heat_w,
         "net_outward_heat_w": heat_out_w,
         "heat_balance_relative": abs(input_heat_w - heat_out_w) / input_heat_w,
-        "heat_balance_method": "external-face sensible-enthalpy-plus-conduction-v1",
+        "heat_balance_method": "external-region-face sensible-enthalpy-plus-conduction-v2",
     }
 
 
@@ -733,28 +749,15 @@ def solve_and_extract(case):
     profile = numerical_profile(contract)
     convergence = summarize_steady_convergence(solver_log.read_text(), profile["end"])
     convergence["solver_log_sha256"] = sha(solver_log)
-    fluid_region = next(region for region in contract["regions"] if region["kind"] == "fluid")
-    foam_command(
-        case,
-        [
-            "chtMultiRegionFoam",
-            "-postProcess",
-            "-func",
-            "grad(T)",
-            "-latestTime",
-            "-region",
-            fluid_region["name"],
-        ],
-    )
     import pyvista as pv
     records = []
     boundary_records = []
-    energy_summary = None
+    region_grids = {}
     results = case/"results"
     results.mkdir()
     for region in contract["regions"]:
         identity = region["name"]
-        is_fluid = region["kind"] == "fluid"
+        foam_command(case, ["chtMultiRegionFoam", "-postProcess", "-func", "grad(T)", "-latestTime", "-region", identity])
         foam_command(case, ["foamToVTK", "-region", identity, "-latestTime"])
         candidates = list((case/"VTK"/identity).rglob("*.vtu")) + list((case/"VTK"/identity).rglob("*.vtk"))
         internal = [path for path in candidates if "internal" in path.name or path.parent.name == identity]
@@ -762,18 +765,13 @@ def solve_and_extract(case):
             raise ValueError("No actual VTK internal field exported for "+identity)
         mesh_path = max(internal, key=lambda path: path.stat().st_size)
         grid = pv.read(mesh_path)
+        region_grids[identity] = grid
         if "T" not in grid.array_names or not grid.n_cells:
             raise ValueError("Actual computed cell temperature is missing")
         temperature = grid["T"]
         target = results/(identity+mesh_path.suffix)
         shutil.copyfile(mesh_path, target)
         records.append({"region": identity, "cells": grid.n_cells, "minimum_k": float(temperature.min()), "maximum_k": float(temperature.max()), "field": target.name, "sha256": sha(target)})
-        if is_fluid:
-            if energy_summary is not None:
-                raise ValueError("Energy extraction requires exactly one fluid region")
-            energy_summary = extract_boundary_energy(
-                case, contract, region, grid, pv, results
-            )
         for boundary in [item for item in contract["boundaries"] if item["region"] == identity]:
             paths = list((case/"VTK"/identity/boundary["name"]).glob("*.vtk"))
             if len(paths) != 1:
@@ -792,8 +790,7 @@ def solve_and_extract(case):
                                      "area_mean_static_pressure_pa": float((pressure*areas).sum()/area),
                                      "area_mean_total_pressure_pa": float(((pressure+.5*density*(velocity**2).sum(axis=1))*areas).sum()/area),
                                      "field": target.name, "sha256": sha(target), "normals": "Actual VTK boundary polygon winding"})
-    if energy_summary is None:
-        raise ValueError("No fluid region was available for energy extraction")
+    energy_summary = extract_boundary_energy(case, contract, region_grids, pv, results)
     result = {"actual_regions": records, "actual_boundaries": boundary_records, "contract_sha256": sha(case/"contract.json"), "compiler_sha256": sha(__file__), "solver": "chtMultiRegionFoam OpenFOAM10", "numerical_profile": profile, "engineering_validation_complete": convergence["passed"] and energy_summary["heat_balance_relative"] <= 0.01, "steady_state_convergence_claimed": convergence["passed"], "convergence_evidence": convergence,
               **energy_summary}
     write(results/"computed-fields.json", json.dumps(result, indent=2))

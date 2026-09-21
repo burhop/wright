@@ -284,6 +284,9 @@ def _heat_balance_measurement(content, context):
         if count == 0:
             raise ValueError("empty")
         return heat_out_w
+    except ValidationIssue:
+        # Reader limits/cancellation are not corrupt engineering evidence.
+        raise
     except (UnicodeError, csv.Error, KeyError, TypeError, ValueError) as exc:
         raise _defect(
             "cfd.heat_balance_invalid",
