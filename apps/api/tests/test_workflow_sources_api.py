@@ -673,3 +673,28 @@ def test_workflow_source_storage_failures_use_safe_typed_503_envelope(
         "Workflow source storage is temporarily unavailable"
     )
     assert "sensitive" not in response.text
+
+
+def test_workflow_source_readiness_distinguishes_hand_authored_and_missing(
+    sync_client,
+):
+    service = _Service()
+    service.workflow_sources.current = _document("workflow bracket\nend\n", 1, 1)
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        hand_authored = sync_client.get(
+            "/api/workspace/workflow-sources/readiness",
+            params={"session_id": "session-1", "path": SOURCE_PATH},
+        )
+        service.workflow_sources.current = None
+        missing = sync_client.get(
+            "/api/workspace/workflow-sources/readiness",
+            params={"session_id": "session-1", "path": SOURCE_PATH},
+        )
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
+
+    assert hand_authored.status_code == 200
+    assert hand_authored.json()["state"] == "not_template"
+    assert missing.status_code == 404
+    assert missing.json()["error_code"] == "workflow_source_not_found"

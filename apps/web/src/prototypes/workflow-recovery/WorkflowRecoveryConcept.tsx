@@ -48,6 +48,7 @@ import {
 import {
   AuthoringCreateRail,
   AuthoringInputsNavigator,
+  AuthoringRunReadiness,
   AuthoringSettings,
   AuthoringPortConnections,
   type AuthoringWorkspaceFile,
@@ -93,6 +94,7 @@ import {
   type WorkspaceWorkflowReview,
   type WorkspaceWorkflowRunSummary,
 } from "../../services/workspace-service";
+import type { WorkspaceWorkflowSourceReadiness } from "../../services/workspace-service";
 import { WorkflowReviewPanel, useWorkflowReviews } from "./WorkflowReviewPanel";
 import { WorkflowRunHistory } from "./WorkflowRunHistory";
 import {
@@ -178,6 +180,8 @@ export interface WorkflowRecoveryConceptProps {
   readonly onRun?: (
     options?: WorkflowRunOptions,
   ) => Promise<WorkflowRecoveryRunResult>;
+  readonly templateReadiness?: WorkspaceWorkflowSourceReadiness | null;
+  readonly onRefreshTemplateReadiness?: () => void;
 }
 
 export interface WorkflowRunOptions {
@@ -762,6 +766,7 @@ function NativeRunPanel({
   storageDigest,
   startedAt,
   completedAt,
+  dispatchConfirmed,
   events,
   partialResults,
   runLogPath,
@@ -784,6 +789,7 @@ function NativeRunPanel({
   readonly storageDigest?: string;
   readonly startedAt: string;
   readonly completedAt: string;
+  readonly dispatchConfirmed: boolean;
   readonly events: readonly NativeRunEvent[];
   readonly partialResults: WorkspaceEngineeringResult[];
   readonly runLogPath: string;
@@ -871,7 +877,9 @@ function NativeRunPanel({
                     : error
                       ? error.startsWith("Workflow cancelled.")
                         ? "Workflow cancelled"
-                        : "Workflow failed"
+                        : error.startsWith("Run blocked")
+                          ? "Run blocked"
+                          : "Workflow failed"
                       : "Ready to run"}
         </b>
         <span>
@@ -1051,7 +1059,7 @@ function NativeRunPanel({
           onOpenFile={onOpenFile}
         />
       )}
-      {startedAt && !observed && (
+      {startedAt && dispatchConfirmed && !observed && (
         <section
           className="recovery-native-run__input"
           data-testid="workflow-recovery-native-run-input"
@@ -1074,7 +1082,7 @@ function NativeRunPanel({
                   </>
                 ) : (
                   <>
-                    <h3>Prompt sent</h3>
+                    <h3>Prompt dispatched</h3>
                     <pre>{step.prompt}</pre>
                     <h3>Format instructions</h3>
                     <pre>{step.format_instructions}</pre>
@@ -1221,6 +1229,8 @@ export function WorkflowRecoveryConcept({
   onReadStoredSource,
   onReloadStoredSource,
   onRun,
+  templateReadiness,
+  onRefreshTemplateReadiness,
   onOpenFile,
   fileActions,
 }: WorkflowRecoveryConceptProps = {}) {
@@ -1296,6 +1306,8 @@ export function WorkflowRecoveryConcept({
       onReadStoredSource={onReadStoredSource}
       onReloadStoredSource={onReloadStoredSource}
       onRun={onRun}
+      templateReadiness={templateReadiness}
+      onRefreshTemplateReadiness={onRefreshTemplateReadiness}
       onOpenFile={onOpenFile}
       fileActions={fileActions}
     />
@@ -1796,6 +1808,8 @@ interface WorkflowRecoveryReadyConceptProps {
   readonly onRun?: (
     options?: WorkflowRunOptions,
   ) => Promise<WorkflowRecoveryRunResult>;
+  readonly templateReadiness?: WorkspaceWorkflowSourceReadiness | null;
+  readonly onRefreshTemplateReadiness?: () => void;
 }
 
 function WorkflowRecoveryReadyConcept({
@@ -1814,6 +1828,8 @@ function WorkflowRecoveryReadyConcept({
   onReadStoredSource,
   onReloadStoredSource,
   onRun,
+  templateReadiness,
+  onRefreshTemplateReadiness,
   onOpenFile,
   fileActions,
 }: WorkflowRecoveryReadyConceptProps) {
@@ -1888,9 +1904,12 @@ function WorkflowRecoveryReadyConcept({
     useState<WorkflowRecoveryRunResult | null>(null);
   const [workflowRunError, setWorkflowRunError] = useState("");
   const runAbort = useRef<AbortController | null>(null);
+  const runStartInFlight = useRef(false);
   useEffect(() => () => runAbort.current?.abort(), []);
   const [workflowRunPending, setWorkflowRunPending] = useState(false);
   const [nativeRunStartedAt, setNativeRunStartedAt] = useState("");
+  const [nativeRunDispatchConfirmed, setNativeRunDispatchConfirmed] =
+    useState(false);
   const [nativeRunCompletedAt, setNativeRunCompletedAt] = useState("");
   const [nativeRunEvents, setNativeRunEvents] = useState<NativeRunEvent[]>([]);
   const [nativeValidationProgress, setNativeValidationProgress] =
@@ -2834,12 +2853,38 @@ function WorkflowRecoveryReadyConcept({
       return;
     }
     if (
+      onRun &&
+      templateReadiness &&
+      ["reference", "setup_required", "unavailable"].includes(
+        templateReadiness.state,
+      )
+    ) {
+      const reason =
+        templateReadiness.blocking_reasons[0] ??
+        templateReadiness.message ??
+        (templateReadiness.state === "reference"
+          ? "This workflow is reference material, not a qualified runnable template."
+          : "Wright could not confirm that this workflow is ready to run.");
+      setWorkflowRunError(
+        `Run blocked before prompt dispatch. ${reason} Owner: template maintainer / Wright environment.`,
+      );
+      setWorkflowRun(null);
+      setNativeRunDispatchConfirmed(false);
+      setRunDetailsOpen(true);
+      return;
+    }
+    if (
       presentedPending ||
       (observer.enabled &&
         (!observer.checked || Boolean(observer.error && !observer.record)))
     )
       return;
     if (onRun) {
+      // Claim the whole asynchronous start operation before awaiting a save.
+      // The button cannot reflect `workflowRunPending` until after that await,
+      // so a rapid second click must be rejected synchronously here.
+      if (runStartInFlight.current) return;
+      runStartInFlight.current = true;
       setNativePartialResults([]);
       setNativeRunLogPath("");
       let subject = persistedSubject;
@@ -2849,8 +2894,20 @@ function WorkflowRecoveryReadyConcept({
         !saveConflict &&
         (semanticDirty || layoutDirty) &&
         onSave
-      )
-        subject = await saveWorkflow();
+      ) {
+        try {
+          subject = await saveWorkflow();
+        } catch (error) {
+          runStartInFlight.current = false;
+          setWorkflowRunError(
+            error instanceof Error
+              ? error.message
+              : "The workflow could not be saved before running.",
+          );
+          setRunDetailsOpen(true);
+          return;
+        }
+      }
       if (
         sourceDirty ||
         !sourceValid ||
@@ -2861,9 +2918,11 @@ function WorkflowRecoveryReadyConcept({
         setWorkflowRun(null);
         setNativeRunInput(null);
         setNativeRunStartedAt("");
+        setNativeRunDispatchConfirmed(false);
         setNativeRunCompletedAt("");
         setNativeRunEvents([]);
         setWorkflowRunError("Save the valid workflow file before running it.");
+        runStartInFlight.current = false;
         setRunDetailsOpen(true);
         return;
       }
@@ -2887,6 +2946,7 @@ function WorkflowRecoveryReadyConcept({
       setNativeCompletedTaskIds(new Set());
       const startedAt = new Date().toISOString();
       setNativeRunStartedAt(startedAt);
+      setNativeRunDispatchConfirmed(false);
       setNativeRunCompletedAt("");
       setNativeRunEvents([
         {
@@ -2903,6 +2963,7 @@ function WorkflowRecoveryReadyConcept({
       runAbort.current = new AbortController();
       setWorkflowRunPending(true);
       setRunDetailsOpen(true);
+      let executionConfirmed = false;
       try {
         const result = await onRun({
           signal: runAbort.current?.signal,
@@ -2917,8 +2978,11 @@ function WorkflowRecoveryReadyConcept({
               ].includes(event.kind)
             )
               setNativeValidationProgress(event);
-            if (event.kind === "run_started")
+            if (event.kind === "run_started") {
+              executionConfirmed = true;
+              setNativeRunDispatchConfirmed(true);
               setNativeRunLogPath(event.run_log_path ?? "");
+            }
             if (event.kind === "result_ready" && event.engineering_result) {
               const ready = event.engineering_result;
               setNativePartialResults((results) => [
@@ -2954,6 +3018,8 @@ function WorkflowRecoveryReadyConcept({
               );
             }
             if (event.kind === "step_started") {
+              executionConfirmed = true;
+              setNativeRunDispatchConfirmed(true);
               setNativeCompletedTaskIds(
                 (ids) => new Set([...ids].filter((id) => id !== event.task_id)),
               );
@@ -3027,8 +3093,10 @@ function WorkflowRecoveryReadyConcept({
         const message = runAbort.current?.signal.aborted
           ? "Workflow cancelled. An application job already submitted may still be running. Check its status before running again. Results produced so far are preserved."
           : error instanceof Error
-            ? error.message
-            : "The workflow could not run.";
+            ? `${executionConfirmed ? "" : "Run blocked before execution was confirmed. "}${error.message}`
+            : executionConfirmed
+              ? "The workflow could not run."
+              : "Run blocked before execution was confirmed.";
         const completedAt = new Date().toISOString();
         setNativeRunCompletedAt(completedAt);
         setWorkflowRunError(message);
@@ -3038,12 +3106,15 @@ function WorkflowRecoveryReadyConcept({
             at: completedAt,
             label: runAbort.current?.signal.aborted
               ? "Run cancelled"
-              : "Run failed",
+              : executionConfirmed
+                ? "Run failed"
+                : "Run blocked",
             detail: message,
           },
         ]);
       } finally {
         setWorkflowRunPending(false);
+        runStartInFlight.current = false;
       }
       return;
     }
@@ -3480,6 +3551,21 @@ function WorkflowRecoveryReadyConcept({
                 Cancel run
               </button>
             )}
+            <AuthoringRunReadiness
+              workflow={workflow}
+              saved={
+                !semanticDirty &&
+                !sourceDirty &&
+                !layoutDirty &&
+                saveState === "saved" &&
+                !saveConflict
+              }
+              executionConnected={Boolean(onRun)}
+              templateReadiness={templateReadiness}
+              onRefreshTemplateReadiness={onRefreshTemplateReadiness}
+              sessionId={workspaceSessionId}
+              onSelect={(id) => selectObject(id, "definition")}
+            />
             <button
               type="button"
               className="recovery-button recovery-button--primary"
@@ -3597,6 +3683,27 @@ function WorkflowRecoveryReadyConcept({
                 hiddenPorts,
                 outputLabels: cadOutputs.labels,
                 outputGroups: cadOutputs.groups,
+                executionLabels: Object.fromEntries(
+                  candidateWorkflow.blocks.map((block) => {
+                    const template = block.configuration.authoring_template;
+                    const server = String(block.configuration.mcp_server ?? "");
+                    const tool = String(block.configuration.mcp_tool ?? "");
+                    const binding = candidateWorkflow.bindings.find(
+                      (item) => item.id === block.bindingId,
+                    );
+                    const label =
+                      template === "mcp-task"
+                        ? `MCP server: ${String(block.configuration.mcp_server_name ?? server)} · AI-selected operation`
+                        : template === "mcp-tool"
+                          ? `MCP tool: ${server} / ${tool}`
+                          : block.executionKind === "human"
+                            ? "Human review"
+                            : binding
+                              ? `${binding.kind === "internal" ? "Internal" : binding.kind} · ${binding.capabilityName}`
+                              : "Execution binding not selected";
+                    return [block.id, label];
+                  }),
+                ),
                 canConnect: isConnectionAllowed,
                 connectionIssue: (sourceId, targetId) =>
                   engineeringConnectionIssue(
@@ -3916,7 +4023,6 @@ function WorkflowRecoveryReadyConcept({
                       workflow={inspectionWorkflow}
                       readOnly={blockEditorReadOnly}
                       onApply={(commands) => applyCommands("form", commands)}
-                      onDelete={() => requestDelete(selectedBlock.id)}
                     />
                     {(selectedBlock.inputPortIds.length > 0 ||
                       selectedBlock.outputPortIds.length > 0) && (
@@ -4150,7 +4256,9 @@ function WorkflowRecoveryReadyConcept({
                       : presentedError
                         ? presentedError.startsWith("Workflow cancelled.")
                           ? "Run cancelled"
-                          : "Run failed"
+                          : presentedError.startsWith("Run blocked")
+                            ? "Run blocked"
+                            : "Run failed"
                         : "Ready to run"
               : runStage > 0
                 ? `Simulation · ${runStateLabel[run.state]}`
@@ -4189,6 +4297,9 @@ function WorkflowRecoveryReadyConcept({
                 }
                 startedAt={presentedStartedAt}
                 completedAt={presentedCompletedAt}
+                dispatchConfirmed={
+                  nativeRunDispatchConfirmed || Boolean(observed)
+                }
                 events={presentedEvents}
                 partialResults={observed?.results ?? nativePartialResults}
                 runLogPath={presentedRunLogPath}

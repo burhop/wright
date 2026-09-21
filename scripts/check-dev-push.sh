@@ -403,6 +403,7 @@ fi
 
 if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv sync --all-packages --all-groups
+  run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
   if [[ "$CHECK_DOCKER_SCAN" == "1" ]]; then
     run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host
   fi

@@ -11,6 +11,11 @@ import {
 } from "./recovery-authoring";
 import { createMcpServerBlock, mcpServerChoices } from "./mcp-server-blocks";
 import type { WorkflowMcpTool } from "./mcp-settings";
+import {
+  mcpTaskHasRequiredBinding,
+  mcpTaskIsAvailable,
+} from "./AuthoringControls";
+import { createAuthoringObject } from "./authoring-objects";
 
 const tools: WorkflowMcpTool[] = [
   "cad.list_providers",
@@ -100,4 +105,34 @@ it("uses the same AI task for servers with other operations without inventing CA
   });
   if (commands[0]!.kind === "add_block")
     expect(commands[0]!.block.configuration.cad).toBeUndefined();
+});
+
+it("treats server-scoped AI tasks and exact MCP calls as different binding contracts", () => {
+  const server = mcpServerChoices(tools)[0]!;
+  const commands = createMcpServerBlock(server, initialWorkflow, initialLayout);
+  const result = applyRecoveryBatch(
+    initialWorkflow,
+    initialLayout,
+    recoveryCommandBatch(initialWorkflow.revision, "graph", commands),
+  );
+  expect(result.ok).toBe(true);
+  const serverTask = acceptRecoveryResult(
+    initialWorkflow,
+    initialLayout,
+    result,
+  )!.workflow.blocks.at(-1)!;
+  expect(serverTask.configuration.mcp_tool).toBeUndefined();
+  expect(mcpTaskHasRequiredBinding(serverTask)).toBe(true);
+  expect(mcpTaskIsAvailable(serverTask, tools)).toBe(true);
+
+  const exact = createAuthoringObject(
+    "mcp-tool",
+    initialWorkflow,
+    initialLayout,
+  ).block;
+  exact.configuration.mcp_server = "server-id";
+  expect(mcpTaskHasRequiredBinding(exact)).toBe(false);
+  exact.configuration.mcp_tool = tools[0]!.name;
+  expect(mcpTaskHasRequiredBinding(exact)).toBe(true);
+  expect(mcpTaskIsAvailable(exact, tools)).toBe(true);
 });

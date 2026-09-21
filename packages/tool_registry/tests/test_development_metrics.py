@@ -1,4 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
+import sqlite3
+from threading import Barrier
 
 import pytest
 
@@ -35,6 +37,48 @@ def test_concurrent_append_is_idempotent_and_rejects_conflicting_replay(tmp_path
     with pytest.raises(ValueError, match="reused"):
         store.append(event(subject="different"))
     assert len(store.read()["events"]) == 1
+
+
+@pytest.mark.parametrize("conflicting", [False, True])
+def test_append_serializes_read_and_insert(tmp_path, monkeypatch, conflicting):
+    # Force both readers to see an absent ID if a SELECT-before-INSERT returns.
+    readers = Barrier(2, timeout=5)
+    connect = sqlite3.connect
+
+    class Cursor(sqlite3.Cursor):
+        def fetchone(self):
+            result = super().fetchone()
+            if not self.connection.inserted:
+                readers.wait()
+            return result
+
+    class Connection(sqlite3.Connection):
+        inserted = False
+
+        def execute(self, sql, parameters=()):
+            if sql.startswith("INSERT"):
+                self.inserted = True
+            return self.cursor(factory=Cursor).execute(sql, parameters)
+
+    store = DevelopmentMetrics(tmp_path)
+    store.append(event("seed"))
+    monkeypatch.setattr(
+        sqlite3, "connect", lambda *a, **kw: connect(*a, **kw, factory=Connection)
+    )
+
+    def append(subject):
+        try:
+            return store.append(event(subject=subject))
+        except ValueError as error:
+            assert "reused" in str(error)
+            return "conflict"
+
+    subjects = ["first", "second" if conflicting else "first"]
+    with ThreadPoolExecutor(max_workers=2) as workers:
+        results = list(workers.map(append, subjects))
+    assert results.count(True) == 1
+    assert results.count("conflict" if conflicting else False) == 1
+    assert len(store.read()["events"]) == 2
 
 
 def test_out_of_order_results_sort_by_observation_time(tmp_path):

@@ -197,6 +197,31 @@ class WorkflowSourceResponse(BaseModel):
     layout_status: Literal["missing", "current", "stale"] = "missing"
 
 
+class WorkflowSourceReadinessResponse(BaseModel):
+    """Authoritative readiness for a stored workflow's template provenance."""
+
+    state: Literal[
+        "not_template",
+        "reference",
+        "setup_required",
+        "ready",
+        "verified",
+        "unavailable",
+    ]
+    template_id: str | None = None
+    template_version: str | None = None
+    source_digest: str | None = None
+    layout_digest: str | None = None
+    definition_valid: bool | None = None
+    configured: bool | None = None
+    qualified: bool | None = None
+    available: bool | None = None
+    verified_run: bool | None = None
+    facts: list[Dict[str, Any]] = Field(default_factory=list)
+    blocking_reasons: list[str] = Field(default_factory=list)
+    message: str | None = None
+
+
 class EngineeringWorkflowTemplateListResponse(BaseModel):
     catalog_version: str
     templates: list[Dict[str, Any]]

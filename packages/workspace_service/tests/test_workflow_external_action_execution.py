@@ -16,6 +16,8 @@ from workspace_service.workflow_source_execution import (
     compile_prompt_workflow,
     execute_prompt_workflow,
 )
+from workspace_service.executor import BoundedExecutor
+from workspace_service.use_cases.files import WorkspaceFileUseCases
 
 
 def source() -> str:
@@ -70,26 +72,9 @@ end
 
 
 def service(root):
-    adapter = LocalWorkspaceFiles(str(root))
-
-    async def write_generated(workspace_dir, path, content, policy):
-        return await asyncio.to_thread(
-            adapter.write_generated, path, content.encode(), policy
-        )
-
-    async def read_reference(workspace_dir, path):
-        return (await asyncio.to_thread(adapter.read, path))[1]
-
-    async def hash_reference(workspace_dir, path):
-        from workspace_service.workspace_file_identity import workspace_file_sha256
-
-        return await asyncio.to_thread(workspace_file_sha256, workspace_dir, path)
-
     return SimpleNamespace(
-        files=SimpleNamespace(
-            write_generated=write_generated,
-            read_reference=read_reference,
-            hash_reference=hash_reference,
+        files=WorkspaceFileUseCases(
+            str(root / "file-state.db"), BoundedExecutor(), LocalWorkspaceFiles
         ),
         workflow_external_actions=WorkflowExternalActionService(
             WorkflowContinuationRepository(str(root / "state.db"))

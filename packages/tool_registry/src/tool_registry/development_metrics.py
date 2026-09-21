@@ -142,18 +142,19 @@ class DevelopmentMetrics:
                 "CREATE TABLE IF NOT EXISTS events (seq INTEGER PRIMARY KEY, "
                 "id TEXT UNIQUE NOT NULL, at TEXT NOT NULL, payload TEXT NOT NULL)"
             )
+            inserted = db.execute(
+                "INSERT INTO events(id,at,payload) VALUES(?,?,?) "
+                "ON CONFLICT(id) DO NOTHING",
+                (event["id"], event["at"], payload),
+            )
+            if inserted.rowcount == 1:
+                return True
             existing = db.execute(
                 "SELECT payload FROM events WHERE id=?", (event["id"],)
             ).fetchone()
-            if existing:
-                if existing[0] != payload:
-                    raise ValueError("Event ID reused with different content")
-                return False
-            db.execute(
-                "INSERT INTO events(id,at,payload) VALUES(?,?,?)",
-                (event["id"], event["at"], payload),
-            )
-        return True
+            if existing is None or existing[0] != payload:
+                raise ValueError("Event ID reused with different content")
+            return False
 
     def read(self) -> dict[str, Any]:
         if not self.path.exists():
