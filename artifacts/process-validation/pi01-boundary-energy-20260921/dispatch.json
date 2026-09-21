@@ -1,0 +1,19 @@
+{
+  "kind": "isolated_retained_field_postprocessing",
+  "container_id": "45276f9d116a7cb8389753ecd78e50bd943db0b10aed834d757e45aabec7a2a4",
+  "container_name": "wright-pi-boundary-energy-20260921",
+  "image": "sha256:2f7f4bab1305671d0d622dd166070b24c21d3b81cd18730b3f3478a0b1d73b95",
+  "status": "completed_and_archived",
+  "started_at": "2026-09-21T16:24:37.416873714Z",
+  "finished_at": "2026-09-21T16:24:50.462921759Z",
+  "exit_code": 0,
+  "qualification_sha256": "7195ace476161087ad79265b00d5dcb826435c9dd1af6a4015990c7a1e942b8e",
+  "retained_files_unchanged": 134,
+  "container_retained_stopped": true,
+  "retained_volume_read_only": true,
+  "network": "none",
+  "deadline_seconds": 240,
+  "solver_executed": false,
+  "campaign_dispatches": 0,
+  "campaign_credit": false
+}

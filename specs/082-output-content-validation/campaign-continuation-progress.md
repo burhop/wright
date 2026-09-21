@@ -1,6 +1,6 @@
 # Campaign continuation progress
 
-**Updated:** 2026-09-18. **Branch:** `codex/082-output-content-validation`.
+**Updated:** 2026-09-21. **Branch:** `codex/082-output-content-validation`.
 **Model:** `openai-codex::gpt-5.6-sol`; the exact registered campaign session returned
 `READY` at `2026-09-18T15:00:40Z`. Hermes profile `wright` is authenticated and both
 Wright and the gateway now use that profile. The old provider reset estimate remains
@@ -699,3 +699,177 @@ cases one at a time with the lifecycle wrapper and resume the remaining audited 
 serially without resetting the retry ledger. Use the recovered CalculiX registration
 for fresh bracket runs. Keep the sheet-metal flange episode quarantined until an actual
 provider repair is identified and passes a focused owned diagnostic.
+
+## September 21 continuation — exact human review restored
+
+Robot-01 attempt-008 remains at the original pending checkpoint
+`checkpoint-73451232a9738513da519bee`, run
+`bf32d836e9dd4250bd34594748ceda87`, subject digest
+`bf5cce0f15829bb136b98b99a66ad5632bf5a0b0ccc78cbc9ad781b89fadf8a5`.
+No reviewer was inferred and no resume was submitted. The raw run and normal
+run-list API both report `awaiting_approval`, 89 events, and matching current
+source identity. The prior event-count export mismatch is not reproduced in
+this snapshot; it is not grounds to alter historical evidence or award credit.
+
+Services are restored on API 8000, Hermes 8642, web 5173 and dashboard 8771.
+A fresh single Sol readiness request returned `READY` with no error at
+`2026-09-21T15:58:11Z`; receipt:
+`.local-run/feature-081-live/campaign-execution/validator-campaign-082/sol-readiness-20260921.json`.
+The previous readiness receipt remains intact. The frontend originally lacked
+the documented Vite workflow flags and routed Workflows to unavailable Rivet.
+Only the ownership-verified frontend was stopped; the existing services-only
+launcher restored the flags without requesting native application startup.
+
+Normal workspace navigation then exposed a UI parser defect: runtime-supported
+`expected_file_ports` objects were rejected as unsupported settings. The focused
+editor fix preserves the exact string map through scalar-model/wire/source round
+trips, using the existing protected structured-settings storage. Malformed maps
+remain rejected. It does not modify the saved workflow, approval subject,
+requirements, grants, or output evidence. Three focused suites passed (57 tests);
+`tsc -b apps/web/tsconfig.json --pretty false` passed. This is a local fix, not a
+push, merge, release, or new user acceptance of the editor.
+
+The read-only browser walkthrough reached the exact pinned profile and all three
+pending review requirements through the ordinary workspace Workflows control:
+`artifacts/ui-walkthrough/robot008-review/20260921-continuation-05/report.html`.
+Its structure validator passed. Earlier failed captures are retained in sibling
+continuation directories: missing frontend flags, rejected output map, then a
+harness selector matching a hidden tab. The successful capture scopes controls
+to the visible tab. Two aborted observer requests during tab navigation are
+recorded; no HTTP failure or console/page error appears in the final capture.
+The existing older-layout warning remains visible; no layout was saved.
+The walkthrough skill stopped at the human-decision boundary. User instructions
+link the original diagnosis and plot and explicitly leave Resume to the guarded
+campaign runner after authenticated approval.
+
+Fresh read-only successor-wave preflights are in `validator-campaign-082/`:
+
+- `wave01-preflight-20260921.json`: 5 pass, 3 review, 0 fail. Water-heater-01/02/03
+  retain declared-output/input-basename warnings; review their producer contract
+  before dispatch, without assuming equal basenames mean equal bytes.
+- `wave02-preflight-20260921.json`: 9 pass, 0 review, 0 fail.
+- `wave03-preflight-20260921.json`: 3 pass, 0 review, 3 fail. All three Pi cases
+  report `validator_profile_not_current_full_scope`; reconcile pinned profile
+  identities before any future enrollment. Their independent CFD quarantine
+  remains in force. Passing static checks does not replace live native readiness.
+
+The dashboard received an operational update for the restored review path with
+no new validator credit. Its ledger reports 30 historical cases/runs, 24 retained
+output sets, 0 current full passes, and one observed current run; retained
+automated passes remain separate from authenticated current completion.
+Attempt-006 has not been replaced in the queue, no printed attempt-017 has been
+launched, and all retry/quarantine history is preserved. Next action remains the
+user's exact review decision, followed by guarded same-attempt resume and
+inspection of the complete full-profile assessment before broader dispatch.
+
+### Independent preparation while robot review is pending
+
+Read-only comparison confirms that all three staged Pi validators still pin the
+older profile digests (`951d0439…`, `af3a77d4…`, `80a044ef…`) rather than current
+coverage (`1840e74a…`, `8c6ecf39…`, `fca3e7bb…`). The convergence/heat-balance
+profile repair in `ea269277` added exact `field_archive` bindings to those checks;
+the 1% heat-balance limit was not relaxed. Do not change the profiles back to
+make old enrollment pass. A future solver-qualified successor must pin current
+profiles in both validator and human-review subjects and obtain fresh source/
+grant identities. The old enrolled sources and manifests remain untouched.
+
+The printing lifecycle wrapper had two pre-dispatch defects: exact equality with
+an obsolete three-field runner summary mislabeled current completed summaries,
+and every non-completed return (including pending human review) was reported as
+a known failed terminal operation before native cleanup. It is now repository
+owned at `scripts/run_printed_validator_campaign.py`, with the existing local
+`run-validator-082-printed-case.py` retained as a compatibility entry point.
+`scripts/engineering_campaign_outcome.py` requires one matching case, matching
+summary/durable-state phase, an existing run identity, no active operation and
+an actual terminal runtime state before cleanup. Pending reviews, uncertain
+dispatches, contradictory state and subprocess errors retain the owned resource
+and explicitly record the unresolved/nonterminal outcome. Extra validation
+fields no longer invalidate a completed execution; execution completion itself
+still awards no content-validation credit. The shared retry-ledger argument is
+explicit, and existing attempts still refuse replay.
+
+The classification, mocked wrapper orchestration and existing campaign runner
+suites pass **64 tests**; Ruff passes for all four new Python files. The local
+compatibility command's `--help` succeeds without native dispatch. Test commands
+use an isolated workspace-local temporary/cache directory after the host's
+default pytest temporary directory denied access. No printed attempt-017 was
+launched to test this repair. If a future printing run pauses for human review,
+inspect and resume its existing runner state, then verify terminal state before
+calling lifecycle cleanup; do not relaunch the staging wrapper or start another
+printing case while its owned resource is retained.
+
+### Native readiness and Pi energy-accounting diagnostic
+
+The host restart had stopped `wright-calculix-campaign` again. After verifying
+its existing pinned image, command, mounts and loopback port, it was started
+without replacing its registration or data. The preserved recovery probe was
+rerun with a fresh receipt `campaign-execution/calculix-recovery-20260921.json`:
+eight tools, exact retained STEP identity and ephemeral mesh/selection preflight
+passed. No CalculiX solve or campaign dispatch occurred.
+
+A read-only audit found a concrete Pi accounting omission: Pi-01 variant A has
+232 external solid-foot faces, whereas the original energy integral included
+only external air faces. The compiler now exports native temperature gradients
+for every region and integrates all external fluid and solid faces, excluding
+coupled interfaces. Solid faces have zero advective contribution. Regional grids
+are mandatory; CSV names are region-qualified. No source loads, materials,
+geometry, residual limits or 1% heat-balance threshold changed.
+
+An isolated network-disabled container using the existing pinned CFD image
+postprocessed copies of the retained attempt-032 variant-A checkpoint at iteration
+300. The source volume was read-only; all 134 checked source files remained
+unchanged. No new solver run was executed. The container completed with exit 0
+in 13 seconds and is retained stopped for audit. Archived evidence:
+`artifacts/process-validation/pi01-boundary-energy-20260921/`.
+The corrected outward heat is `0.01512711160669954 W` against `6 W` input, with
+relative imbalance `0.9974788147322168`. The independent reader reproduces that
+total. This is **still failed** and does not qualify the Pi numerical path.
+
+The full boundary CSV exceeds the default 100,000-entity reader budget. Its
+independent diagnostic receipt explicitly uses 200,000; production settings were
+not silently changed. The reader now preserves typed entity-limit and cancellation
+errors instead of reclassifying them as corrupt CSV evidence. Future Pi enrollment
+must qualify an explicit resource envelope as well as the repaired numerical path.
+Focused compiler/reader/profile tests pass 21/21; the separate geometry/profile
+regressions pass 7/7 (overlapping profile coverage). Ruff and `git diff --check`
+pass. All native observations remain diagnostics with zero campaign credit.
+
+OpenFOAM 10's supported `nEcorrectors` loop is a possible next isolated numerical
+investigation: it repeats solid/fluid energy coupling while momentum/pressure
+updates occur at loop boundaries. This is only a sourced lead, not an implemented
+or qualified repair. Sources: [solver loop](https://cpp.openfoam.org/v10/chtMultiRegionFoam_8C_source.html)
+and [fluid coupling order](https://cpp.openfoam.org/v10/solveFluid_8H_source.html).
+The Pi CFD quarantine, stale profile pins and Pi-02 height correction remain open.
+Robot attempt-008 was checked again and still has no human decision or resume.
+
+### Saved checkpoint awaiting human decision
+
+The exact pending robot checkpoint has been revalidated across more than three
+consecutive continuation turns. Independent readiness, parser, lifecycle and
+energy-accounting work is saved; none grants engineering approval or substitutes
+for the required pilot. The successor execution waves remain gated on that pilot.
+Do not launch printing or the broader queue merely because their static preflight
+passes. Pi and sheet-metal expensive dispatch remain quarantined; the energy-loop
+idea alone is not a qualified material solver repair.
+
+Focused local commits (no push, merge or release):
+
+- `c7ad1b1c`: output-port-map preservation and read-only robot review walkthrough.
+- `4b25bb9e`: native-session retention at pending or uncertain printing outcomes.
+- `18e24907`: complete external-boundary heat accounting and typed reader limits.
+
+A full-byte campaign reconciliation completed successfully at
+`2026-09-21T16:35:38Z` in 331.883 seconds with no reconciliation error.
+`artifacts/engineering-workflow-datasets/checkpoint-audit-20260921.{json,md}`
+records all 30 rows as incomplete: one observed current run, zero current complete
+output sets and zero current full-scope passes. The running dashboard observer
+subsequently published an incremental reconciliation, so the report honestly
+also flags `campaign_full_audit_not_current`; it must not be presented as final
+C022 completion evidence. Final C021/C022 completion gates remain open.
+
+Immediate user action: review the original diagnosis and plot for robot-01
+attempt-008 and record **Approve reviewed requirements** or **Request changes**
+in the normal workspace Workflows → File → Open workflow → attempt-008 → Run
+details panel. Leave Resume to the guarded campaign runner. Upon a new decision,
+revalidate actor, three-requirement coverage and the exact subject digest, then
+resume the same attempt if approved. All broader scope and blockers remain intact.
