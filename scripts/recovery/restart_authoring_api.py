@@ -27,6 +27,7 @@ BACKEND_SOURCE_FILES = (
     "packages/agent_adapters/src/agent_adapters/hermes.py",
     "packages/agent_adapters/src/agent_adapters/hermes_config.py",
     "packages/workspace_service/src/workspace_service/workflow_sources.py",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 )
 OPERATOR_SOURCE_FILE = "scripts/recovery/restart_authoring_api.py"
 MODULE_SOURCE_FILES = {
@@ -36,6 +37,7 @@ MODULE_SOURCE_FILES = {
     "agent_adapters.hermes": "packages/agent_adapters/src/agent_adapters/hermes.py",
     "agent_adapters.hermes_config": "packages/agent_adapters/src/agent_adapters/hermes_config.py",
     "workspace_service.workflow_sources": "packages/workspace_service/src/workspace_service/workflow_sources.py",
+    "workspace_service.workflow_source_execution": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 }
 
 # Resolve leaf modules without importing any application package, including
@@ -203,10 +205,15 @@ def validate_api_process_command(
         and Path(command[1]) == executable
         and command[2:] == suffix
     )
-    if (
-        not 1 <= port <= 65535
-        or Path(cwd).resolve() != repo / "apps/api"
-        or not (direct or wrapped)
+    module = (
+        len(command) == len(suffix) + 3
+        and Path(command[0]) == python
+        and command[1:3] == ["-m", "uvicorn"]
+        and command[3:] == suffix
+        and Path(cwd).resolve() == repo
+    )
+    if not 1 <= port <= 65535 or not (
+        module or (Path(cwd).resolve() == repo / "apps/api" and (direct or wrapped))
     ):
         raise RuntimeError("The requested process is not the exact owned API")
 
@@ -249,8 +256,8 @@ def main() -> None:
             "Restart evidence must stay inside the checkout's .local-run directory"
         )
     process = psutil.Process(args.pid)
-    executable = repo / ".venv/Scripts/uvicorn.exe"
     command = process.cmdline()
+    working_directory = process.cwd()
     validate_api_process_command(repo, args.port, command, process.cwd())
     if not any(
         connection.laddr.port == args.port and connection.status == "LISTEN"
@@ -297,15 +304,8 @@ def main() -> None:
         (evidence / "stderr.log").open("wb") as stderr,
     ):
         child = subprocess.Popen(
-            [
-                str(executable),
-                "api.main:app",
-                "--host",
-                "127.0.0.1",
-                "--port",
-                str(args.port),
-            ],
-            cwd=repo / "apps/api",
+            command,
+            cwd=working_directory,
             env=environment,
             stdout=stdout,
             stderr=stderr,

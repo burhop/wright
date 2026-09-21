@@ -52,6 +52,29 @@ def test_wrong_working_directory_is_rejected(tmp_path):
         validate_api_process_command(tmp_path, 8018, command(tmp_path), tmp_path)
 
 
+def test_exact_source_tree_module_launcher_is_accepted_without_extra_flags(tmp_path):
+    module = [
+        str(tmp_path / ".venv/Scripts/python.exe"),
+        "-m",
+        "uvicorn",
+        "api.main:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000",
+    ]
+    validate_api_process_command(tmp_path, 8000, module, tmp_path)
+    for changed in [
+        module + ["--reload"],
+        [*module[:-1], "8001"],
+        ["python", *module[1:]],
+    ]:
+        with pytest.raises(RuntimeError, match="exact owned API"):
+            validate_api_process_command(tmp_path, 8000, changed, tmp_path)
+    with pytest.raises(RuntimeError, match="exact owned API"):
+        validate_api_process_command(tmp_path, 8000, module, tmp_path / "apps/api")
+
+
 @pytest.mark.parametrize("port", [0, -1, 65536])
 def test_invalid_listening_port_is_rejected(tmp_path, port):
     with pytest.raises(RuntimeError, match="exact owned API"):
@@ -180,7 +203,9 @@ def test_nested_module_origin_probe_never_imports_application_packages(
         assert parent_paths == [str(tmp_path / parent.replace(".", "/"))]
         nested_calls.append(name)
         if name in helper.MODULE_SOURCE_FILES:
-            return ModuleSpec(name, None, origin=str(tmp_path / helper.MODULE_SOURCE_FILES[name]))
+            return ModuleSpec(
+                name, None, origin=str(tmp_path / helper.MODULE_SOURCE_FILES[name])
+            )
         return package_spec(name)
 
     monkeypatch.setattr(importlib.util, "find_spec", top_level)

@@ -968,3 +968,30 @@ identical before/after. No approval, workflow save, campaign resume, merge, or p
 was submitted. User acceptance is still required. The next runtime work remains
 the AI-task named-file output binding repair described above, not a blind restart
 of the campaign or an approval workaround.
+
+## 2026-09-21 — accepted UI, commit and guarded restart
+
+The user accepted the result-block direction and explicitly requested committing
+all project work and restarting the campaign. Commit `7d3a9384` preserves the 34
+UI, plot, guide, test and documentation files. Generated runtime/evidence data
+remain local; no push or merge is authorized or performed.
+
+The restart prerequisite repair now applies the exact `expected_file_ports` map
+to verified AI-task file receipts, publishes named EngineeringResults, routes
+individual downstream file inputs, and prevents a summary from replacing a file
+result identity. Missing, empty and unchanged files still fail closed. Robot 009
+is not backfilled and its pending review is not adopted as approval.
+
+Focused runtime checks passed 144 tests, including the seven new multiple-file,
+real-repository/validator, durable-continuation and missing-file controls. The
+tool/model in those isolated controls are simulated; they do not earn campaign
+execution credit. API restart ownership checks passed 28 tests; the helper now
+also accepts the exact verified source-tree `python -m uvicorn` launch and records
+the execution module's source hash. All other ownership restrictions remain.
+
+Next: restart only the verified idle local API, enroll the fresh linked Robot 010
+with the existing preparer and enroller, preflight it, and start the serial runner.
+Preserve 008/009 sources, evidence, reviews and retry ledgers. Robot 010 gets its
+own bounded named-output-binding correction episode supported by the material
+runtime fix, isolated test evidence, and restart identity. Stop at its genuine
+engineering review; broader waves remain gated on a qualified pilot.

@@ -140,6 +140,21 @@ class PromptStep:
     revision_policy: str = ""
 
 
+def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
+    """Bind verified receipts only; a model's response is not a file output."""
+    for produced in produced_files:
+        port = next(
+            (
+                key
+                for key, path in step.expected_file_ports.items()
+                if path == produced["output_path"]
+            ),
+            None,
+        )
+        if port:
+            produced["output_port"] = port
+
+
 def _reference_prompt_context(
     name: str,
     reference: WorkflowReference,
@@ -1743,17 +1758,9 @@ async def execute_prompt_workflow(
             produced_files = verify_task_files(
                 workspace_dir, step.expected_files, prior_files
             )
+            _bind_expected_file_ports(step, produced_files)
             for produced in produced_files:
-                port = next(
-                    (
-                        key
-                        for key, path in step.expected_file_ports.items()
-                        if path == produced["output_path"]
-                    ),
-                    None,
-                )
-                if port:
-                    produced["output_port"] = port
+                port = produced.get("output_port")
                 produced_result = file_result(
                     {"task_id": step.id, "task_title": step.title, **produced},
                     Provenance(run_id, step.id, port or produced["output_path"]),
@@ -2044,6 +2051,7 @@ async def execute_prompt_workflow(
                                 prior_files,
                             )
                         )
+                        _bind_expected_file_ports(step, produced_files)
                 else:
                     generated = (
                         await response_generator(
@@ -2139,6 +2147,22 @@ async def execute_prompt_workflow(
                     if exported:
                         responses[f"{step.id}.{key}"] = exported
                         continue
+                if key in step.expected_file_ports:
+                    mapped = [
+                        item
+                        for item in produced_files
+                        if item.get("output_port") == key
+                    ]
+                    if len(mapped) != 1:
+                        raise _invalid(
+                            f"{step.title}: the named file output {key} was not produced.",
+                            "Create the exact expected file before continuing.",
+                        )
+                    responses[f"{step.id}.{key}"] = file_result(
+                        mapped[0], Provenance(run_id, step.id, key)
+                    )
+                    artifacts_by_output[f"{step.id}.{key}"] = mapped
+                    continue
                 files = (
                     [f for f in produced_files if f.get("output_port") == key]
                     if step.cad and kind == "workspace_file"
@@ -2187,6 +2211,17 @@ async def execute_prompt_workflow(
             # The response remains usable downstream without a file. Saved files
             # will be attached as representations of this same result below.
             key = step.output_ports[0][0] if step.output_ports else "response"
+            if key in step.expected_file_ports:
+                # Do not reuse a named file result's ID for the task summary.
+                # All-file producers still retain their response for diagnostics.
+                key = next(
+                    (
+                        port
+                        for port, _ in step.output_ports
+                        if port not in step.expected_file_ports
+                    ),
+                    "__task_response",
+                )
             result_kind = "structured" if step.output_format == "json" else "text"
             engineering_results.append(
                 EngineeringResult(
