@@ -259,6 +259,20 @@ function isValidatorObject(
   );
 }
 
+// Runtime tool-created outputs use an exact port-to-file map. Preserve its
+// object form through the scalar-only editor model, like approval objects.
+function isExpectedFilePortsObject(key: string, value: unknown): boolean {
+  return (
+    key === "expected_file_ports" &&
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    Object.entries(value).every(
+      ([port, file]) => port.length > 0 && typeof file === "string" && file.length > 0,
+    )
+  );
+}
+
 function instructionFields(block: RecoveryBlock): [string, unknown][] {
   const active =
     block.configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] ??
@@ -1322,6 +1336,7 @@ export function parseRecoveryAuthoringSource(
         ([key, value]) =>
           !["string", "number", "boolean"].includes(typeof value) &&
           !isApprovalObject(settings as Record<string, unknown>, key, value) &&
+          !isExpectedFilePortsObject(key, value) &&
           !isValidatorObject(settings as Record<string, unknown>, key, value),
       )
     )
@@ -1329,7 +1344,7 @@ export function parseRecoveryAuthoringSource(
         diagnostic(
           "WFR-SOURCE-FIELD-TYPE",
           `${section.kind} ${section.key}.settings must contain scalar values or documented configuration objects.`,
-          "Use scalar settings, documented external-action approval objects, or a validation object on a process validator.",
+          "Use scalar settings, an expected_file_ports map, documented external-action approval objects, or a validation object on a process validator.",
           baseBlock?.id ?? null,
           section.startLine,
         ),
@@ -1460,7 +1475,8 @@ export function parseRecoveryAuthoringSource(
     delete configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
     const approvalObjects = Object.fromEntries(
       Object.entries(configuration).filter(([key, value]) =>
-        isApprovalObject(configuration, key, value),
+        isApprovalObject(configuration, key, value) ||
+        isExpectedFilePortsObject(key, value),
       ),
     );
     if (Object.keys(approvalObjects).length) {
