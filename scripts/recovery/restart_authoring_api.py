@@ -12,6 +12,7 @@ import json
 import subprocess
 import time
 import urllib.parse
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -239,6 +240,34 @@ def find_launched_api_listener(
     raise RuntimeError("The launched API process tree does not own its listening port")
 
 
+def snapshot_local_workflows(workspace: Path) -> dict[str, str]:
+    """Protect even pre-existing invalid documents without repairing their bytes."""
+    workspace = workspace.resolve(strict=True)
+    directory = workspace / "workflows"
+    if not directory.is_dir() or not directory.resolve().is_relative_to(workspace):
+        raise RuntimeError("The registered workflow directory is unavailable")
+    result = {}
+    for path in directory.rglob("*"):
+        if not path.resolve().is_relative_to(workspace):
+            raise RuntimeError("A workflow file escaped the registered workspace")
+        if path.is_file():
+            result[path.relative_to(workspace).as_posix()] = hashlib.sha256(
+                path.read_bytes()
+            ).hexdigest()
+    return result
+
+
+def preserved_integrity_error(
+    error: urllib.error.HTTPError, path: str, snapshots: dict[str, str]
+) -> bool:
+    if error.code != 503 or path not in snapshots:
+        return False
+    try:
+        return json.load(error).get("error_code") == "workflow_source_integrity"
+    except (ValueError, AttributeError):
+        return False
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--pid", type=int, required=True)
@@ -278,6 +307,14 @@ def main() -> None:
     before = get(source_route)
     if before["workspace_id"] != args.workspace or before["path"] != args.source:
         raise RuntimeError("The before-state was not the exact workspace document")
+    registered = get(
+        "/api/workspace/by-id/" + urllib.parse.quote(args.workspace, safe="")
+    )
+    if registered["workspace_id"] != args.workspace:
+        raise RuntimeError("The registered workspace identity changed")
+    local_workspace = Path(registered["local_path"]).resolve(strict=True)
+    local_before = snapshot_local_workflows(local_workspace)
+    preserved_invalid_documents = []
     files_route = (
         "/api/workspace/workflow-sources/input-files?"
         + urllib.parse.urlencode({"session_id": args.session})
@@ -293,9 +330,16 @@ def main() -> None:
             route = "/api/workspace/workflow-sources?" + urllib.parse.urlencode(
                 {"session_id": args.session, "path": choice["path"]}
             )
-            before_documents[choice["path"]] = get(route)
+            try:
+                before_documents[choice["path"]] = get(route)
+            except urllib.error.HTTPError as error:
+                if not preserved_integrity_error(error, choice["path"], local_before):
+                    raise
+                preserved_invalid_documents.append(choice["path"])
     environment = process.environ()  # carried in memory only, never printed
     code_before = capture_code_provenance(repo, environment)
+    if snapshot_local_workflows(local_workspace) != local_before:
+        raise RuntimeError("Workspace files changed during restart preflight")
     evidence.mkdir(parents=True, exist_ok=False)
     process.terminate()
     process.wait(timeout=15)
@@ -356,6 +400,8 @@ def main() -> None:
     code_after = capture_code_provenance(repo, listener.environ())
     if code_after != code_before:
         raise RuntimeError("Committed code or module origins changed across restart")
+    if snapshot_local_workflows(local_workspace) != local_before:
+        raise RuntimeError("Workspace file bytes changed across restart")
     result = {
         "started_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "previous_pid": args.pid,
@@ -369,6 +415,9 @@ def main() -> None:
         "code_provenance": code_after,
         "code_identity_unchanged_across_restart": True,
         "source_unchanged": True,
+        "all_local_workflow_files_unchanged": True,
+        "local_workflow_file_sha256": local_before,
+        "preexisting_integrity_errors_preserved": preserved_invalid_documents,
         "source_sha256": hashlib.sha256(after["source"].encode()).hexdigest(),
         "storage_revision": after["storage_revision"],
         "storage_digest": after["storage_digest"],

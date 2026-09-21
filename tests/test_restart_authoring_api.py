@@ -2,11 +2,55 @@
 
 from pathlib import Path
 import hashlib
+import io
+import urllib.error
 
 import pytest
 
 from scripts.recovery import restart_authoring_api as helper
 from scripts.recovery.restart_authoring_api import validate_api_process_command
+
+
+def test_local_snapshot_preserves_invalid_workflow_bytes_and_detects_changes(tmp_path):
+    folder = tmp_path / "workflows"
+    folder.mkdir()
+    path = folder / "old.workflow.wflow"
+    path.write_bytes(b"not valid workflow syntax")
+    before = helper.snapshot_local_workflows(tmp_path)
+    assert before == {
+        "workflows/old.workflow.wflow": hashlib.sha256(path.read_bytes()).hexdigest()
+    }
+    path.write_bytes(b"changed invalid source")
+    assert helper.snapshot_local_workflows(tmp_path) != before
+
+
+@pytest.mark.parametrize(
+    "status,code,known,allowed",
+    [
+        (503, "workflow_source_integrity", True, True),
+        (503, "workflow_source_integrity", False, False),
+        (503, "workspace_timeout", True, False),
+        (500, "workflow_source_integrity", True, False),
+    ],
+)
+def test_only_fingerprinted_preexisting_integrity_errors_allow_preservation(
+    status, code, known, allowed
+):
+    error = urllib.error.HTTPError(
+        "http://127.0.0.1/local",
+        status,
+        "error",
+        {},
+        io.BytesIO(('{"error_code":"' + code + '"}').encode()),
+    )
+    assert (
+        helper.preserved_integrity_error(
+            error,
+            "workflows/old.workflow.wflow",
+            {"workflows/old.workflow.wflow": "a" * 64} if known else {},
+        )
+        is allowed
+    )
 
 
 def command(repo: Path, *, python_wrapper: bool = True) -> list[str]:
