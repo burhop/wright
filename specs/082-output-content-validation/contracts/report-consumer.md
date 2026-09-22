@@ -96,4 +96,3 @@ Use the following independent compatibility check in the report branch:
    rows.
 5. Render unknown additive fields without failure and reject an unknown
    `schema_version`.
-

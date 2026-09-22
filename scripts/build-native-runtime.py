@@ -58,9 +58,7 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _run(
-    command: list[str], *, cwd: Path, env: dict[str, str] | None = None
-) -> None:
+def _run(command: list[str], *, cwd: Path, env: dict[str, str] | None = None) -> None:
     completed = subprocess.run(
         command,
         cwd=cwd,

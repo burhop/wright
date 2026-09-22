@@ -1,7 +1,9 @@
 # Process validator distribution evidence
 
-**Date:** 2026-09-16  
-**Feature:** 082 output content validation  
+**Date:** 2026-09-16
+
+**Feature:** 082 output content validation
+
 **Scope:** T031 installed native/offline/CLI/gateway/Docker boundary
 
 ## Installed wheel

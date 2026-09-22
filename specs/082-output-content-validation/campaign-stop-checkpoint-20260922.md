@@ -100,3 +100,28 @@ Actual scanner regression: 24 integrity-value occurrences and one requirement
 label accepted; 18 neighboring credential findings detected across 13 negative
 contexts. Seven security-configuration tests pass. This does not itself claim
 a clean rerun of the complete history or a completed cumulative gate.
+
+The subsequent full-history Gitleaks scan passed across 1,534 commits with no
+findings. Its invocation explicitly skipped TruffleHog; no TruffleHog result is
+claimed. The rebuilt candidate at `fa9f1da8` also passed the exact-image policy
+with no findings: image
+`sha256:d649fec5efd79138b85c5c4f6723b357392db9d9eb48e9ad878dae27ed2de387`.
+The image built from a clean Git archive. Public scan evidence is retained locally
+under `test-results/docker-image-security/20260922T220808Z-1e43ef6f/public/`.
+Focused frontend verification passed 68 tests in five files, TypeScript, and
+Prettier; ESLint reported no errors and ten existing warnings.
+
+The cumulative gate identified one additional native-build-script formatting
+issue. The corrected script has an identical Python syntax tree. A full-branch
+whitespace review also cleaned three older documentation/test files.
+
+The retained structured correction proof exposed historical Git line-ending
+conversion: its three top-level JSON files were originally recorded with CRLF,
+while the workflow and nested evidence used LF. Recovery changed only newline
+bytes, preserving the original manifest unchanged. All 11 staged evidence blobs
+now match its original byte counts and SHA-256 hashes; both independent retained
+proof tests pass. Pre-recovery local copies were preserved under
+`.local-run/stop-checkpoint-20260922/evidence-before-eol-recovery/`. Existing
+byte-preserving Git attributes protect the corrected evidence on future checkouts.
+This repairs portability of historical proof; it does not create a new run or
+campaign pass. Full cumulative and fast-push gates remain pending at this point.

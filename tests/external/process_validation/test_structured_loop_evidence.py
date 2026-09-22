@@ -80,4 +80,3 @@ def test_retained_structured_loop_proves_real_bounded_correction_and_release():
     assert feedback.findings[0].observed == 98
     assert feedback.findings[0].correction.target_step_id == "produce"
     assert evidence["consumer"]["saved_response"]["output_path"] == "release-note.txt"
-
