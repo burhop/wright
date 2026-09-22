@@ -159,11 +159,14 @@
     "scope": "Actual Blender design and repair, Bambu slice and simulated transfer. No human approval, canonical final validation, physical printing or campaign completion credit."
   },
   "bracket01_followup": {
-    "status": "isolated_canonical_running_not_qualified",
+    "status": "failed_source_syntax_native_topology_followup_held",
     "attempt_id": "attempt-901",
     "started_at": "2026-09-22T20:00:11Z",
     "run_id": "9ccf3bd8f9c4438aaaaad725f004fa1c",
-    "last_observed_step": "Author baseline and lightweight revision CAD",
+    "last_observed_step": "Create and measure bracket CAD",
+    "finished_at": "2026-09-22T20:14:34.792600Z",
+    "failure": "Source line 279 has a mismatched delimiter; canonical CAD produced no STEP. Isolated syntax repair then exposed missing load-centroid topology. Two unsuccessful isolated topology corrections are held.",
+    "repair_record": "artifacts/campaign-example-renewal/qualification/bracket01-source-publication-repair.json",
     "run_path": "runs/campaign-bracket-01-attempt-901/20260922T200011Z-c03989178397.json",
     "source_sha256": "1bab748705d8cbc4bc04db515092ca54c725036827adbc7d1e67011fbc614d0d",
     "manifest": ".local-run/renewal-qualification/bracket01-canonical-901/manifest-linked.json",

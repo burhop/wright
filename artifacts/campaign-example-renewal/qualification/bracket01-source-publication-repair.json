@@ -1,0 +1,61 @@
+{
+  "schema": "wright.campaign-repair-evidence/1",
+  "observed_at": "2026-09-22T20:33:00Z",
+  "scenario_id": "lightweight-equipment-bracket-01",
+  "attempt_id": "attempt-901",
+  "run_id": "9ccf3bd8f9c4438aaaaad725f004fa1c",
+  "canonical_status": "failed",
+  "canonical_finished_at": "2026-09-22T20:14:34.792600Z",
+  "original_source_sha256": "26c126d7a967dd057f7ef9da1a02fcf61c6a0fb91ffdcccba3dd5e606b947703",
+  "original_source_unchanged": true,
+  "counter_target": "complete final output packages, then full-scope validation passes",
+  "blocking_artifact": "baseline/revised CAD exports and their checked load-patch topology",
+  "runtime_repair": {
+    "status": "implemented_tested_not_deployed",
+    "boundary": "Python source publication before the immutable file write and before native CAD dispatch",
+    "behavior": "Reject bounded invalid syntax with line/column feedback; the existing agent-task budget permits corrected arguments before any external mutation. The document service independently enforces the same syntax check after exact private authority validation.",
+    "source_is_not_executed_by_check": true,
+    "overwrite_authority_added": false,
+    "retry_budget_increased": false,
+    "focused_tests_passed": 111,
+    "tests_skipped": 1,
+    "skip_reason": "Existing host-dependent symlink test",
+    "ruff": "passed"
+  },
+  "native_probes": [
+    {
+      "id": "syntax-only",
+      "result": "Syntax repair reaches actual native CAD but exported baseline lacks the required exact load-centroid vertex. Partial STEP files are not complete outputs.",
+      "gateway_receipt": ".local-run/renewal-qualification/bracket01-source-syntax-proof/gateway-result.json",
+      "gateway_receipt_sha256": "f623a1832293af367eb7c0fa5760044e10a9c352c37eecdfcb34107afa9e749b",
+      "native_metadata": ".local-run/renewal-qualification/bracket01-source-syntax-proof/build/v1_bracket_failed/meta.json",
+      "native_metadata_sha256": "88ed8e909b01021efcf7c2b67a345beb36982927b456e86e0cab41bd18255f80",
+      "observation_note": "The harness expected the success metadata path and raised FileNotFoundError; actual failure metadata and gateway response above establish the native error. No rerun was used to repair this observation. An earlier sandbox process-launch denial is also retained."
+    },
+    {
+      "id": "topology-correction-1-explicit-junctions",
+      "result": "failed: exact load-centroid vertex still absent",
+      "receipt": ".local-run/renewal-qualification/bracket01-topology-proof/qualification.json",
+      "sha256": "feb5826825affa6c372ff54b90bf5ecc410d0bfc2e33cf09fdcd21a3d483b9de"
+    },
+    {
+      "id": "topology-correction-2-shared-vertices",
+      "result": "failed: native splitter raised Standard_NoSuchObject before valid output",
+      "receipt": ".local-run/renewal-qualification/bracket01-shared-vertices-proof/qualification.json",
+      "sha256": "7c3631295a85708c1e79c76ebf01dd7456e027d5616538227bc5ee37887173a3"
+    }
+  ],
+  "topology_probe_budget": {
+    "max_corrections": 2,
+    "unsuccessful_corrections": 2,
+    "status": "held_no_further_native_retries",
+    "scope": "This isolated retained-source topology repair path. Does not reset or replace the canonical campaign-global retry episode."
+  },
+  "new_canonical_dispatches": 0,
+  "new_complete_packages": 0,
+  "new_full_scope_passes": 0,
+  "solid_edge_touched": false,
+  "engineering_requirements_changed": false,
+  "human_approvals_recorded": 0,
+  "next_action": "Preserve the held bracket path and progress independent qualification. Do not stage or dispatch bracket 902 based only on the passing syntax tests. Deployment of the runtime fix needs a service boundary that does not restart the active Solid Edge MCP."
+}

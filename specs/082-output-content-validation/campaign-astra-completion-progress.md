@@ -17,6 +17,33 @@ User selected Astra for implementation; actual campaign inference remains
   The active goal authorizes broad execution after these gates; the older
   renewal instruction to finish ready but stopped is superseded.
 
+## Latest completion-focused checkpoint — 22 September, 20:33 UTC
+
+The preceding status-only turn is classified **no progress**. This continuation
+made a bounded runtime repair and gathered actual native evidence that changes
+the next action; it did not add a completed package or validation pass.
+
+| Case / counter | Specific blocker and work | Verified disposition |
+| --- | --- | --- |
+| Bracket 01 / complete files | Attempt 901 failed at 20:14 UTC on Python syntax before native CAD. Added syntax validation before immutable publication and repairable feedback in the existing bounded task loop. | 111 focused tests pass; one existing host-dependent symlink test skips. Real source is rejected at line 279. No overwrite authority or budget increase. Not live-deployed. |
+| Bracket 01 / correct CAD for validation | Syntax-only isolated native execution exposed missing load-centroid topology. Explicit junction and shared-vertex corrections both failed. | Preserve all three native probe records; hold this topology path after its two unsuccessful corrections. Do not stage 902 or claim partial STEP files as complete outputs. |
+| Printed 01 / final review and validation | Exact files await actual engineering review, including the exposed-edge and tolerance discrepancies in the review brief. | Live API still reports pending review, actor null and unchanged source. No approval recorded. |
+| Independent families / qualification | Continue an unaffected family under R3 while bracket repair is held; Solid Edge remains deferred. | All-family readiness is not claimed and broad dispatch remains gated. |
+
+Evidence: `artifacts/campaign-example-renewal/qualification/bracket01-source-publication-repair.json`.
+The current runtime repair targets **CAD source publication → completed native
+exports → full validation**, not a new capability unrelated to these outputs.
+The API remains PID 41624 on the prior loaded code. The registry reports the
+Solid Edge MCP active and stdio-based; do **not** use an API restart that would
+stop/restart it while another task owns its improvement. The syntax repair and
+earlier harness reader are not claimed as deployed.
+
+Nine isolated canonical qualification dispatches and zero broad campaign waves
+remain recorded. Historical/current metrics remain unchanged. The canonical
+bracket retry episode is preserved; the separate two-correction topology hold
+must not be erased by a fresh attempt name. Earlier sections below are history,
+including their once-current statement that Bracket 01 was still running.
+
 ## Modelica repair and staged successor
 
 Water 901/902 are preserved failures. The new no-network

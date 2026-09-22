@@ -14,6 +14,11 @@ from jsonschema import Draft202012Validator
 from tool_registry.gateway_service import SUPPORTED_PROTOCOL_VERSION
 from tool_registry.gateway_models import GatewayError, GatewayWorkspaceScopeError
 from .workflow_source_execution import _invalid, _error, WorkflowSourceExecutionError
+from .workspace_document_artifacts import (
+    WORKSPACE_DOCUMENT_TOOL_NAME,
+    WorkspaceDocumentArtifactError,
+    validate_python_source,
+)
 
 
 class WorkflowMcpToolError(WorkflowSourceExecutionError):
@@ -379,6 +384,22 @@ class WorkflowMcpRuntime:
                 f"{step.title}: {field} does not match the tool's {error.validator} requirement.",
                 "Correct this input or the upstream AI's JSON response, then run again.",
             )
+        # Agent tasks can correct invalid arguments within their existing budget
+        # before any mutation. Rejecting only inside the writer would instead
+        # terminate the task as a failed mutation, after consuming that call.
+        if (
+            step.tool_name == WORKSPACE_DOCUMENT_TOOL_NAME
+            and isinstance(arguments.get("relativePath"), str)
+            and arguments["relativePath"].lower().endswith(".py")
+            and isinstance(arguments.get("content"), str)
+        ):
+            try:
+                validate_python_source(arguments["content"])
+            except WorkspaceDocumentArtifactError as error:
+                raise _invalid(
+                    f"{step.title}: {error}",
+                    "Correct the Python content and submit it again within the existing task budget.",
+                ) from error
 
     def arguments(self, step, responses):
         tool = self.resolve(step)
