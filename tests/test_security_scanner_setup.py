@@ -84,10 +84,16 @@ def test_security_scan_scripts_use_pinned_scanner_images() -> None:
     assert "rev-list --count HEAD" in bash_script
     assert "refusing a false-green scan" in bash_script
 
-    assert 'Test-Path -LiteralPath (Join-Path $RootDir ".git") -PathType Leaf' in powershell_script
+    assert (
+        'Test-Path -LiteralPath (Join-Path $RootDir ".git") -PathType Leaf'
+        in powershell_script
+    )
     assert "git clone --no-hardlinks --no-checkout" in powershell_script
     assert "rev-list --count HEAD" in powershell_script
-    assert 'Remove-Item -LiteralPath $TemporaryScanParent -Recurse -Force' in powershell_script
+    assert (
+        "Remove-Item -LiteralPath $TemporaryScanParent -Recurse -Force"
+        in powershell_script
+    )
 
     assert "scripts/security-scan.sh --include-untracked" in alpha_bash
     assert "scripts/security-scan.ps1 -IncludeUntracked" in alpha_powershell
@@ -113,11 +119,19 @@ def test_gitleaks_config_keeps_allowlists_narrow() -> None:
     assert config.count("static/program-status/current\\.json") == 1
     assert '''"[0-9a-f]{32,}"''' not in config
     assert config.count("c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba") == 1
+    assert config.count("a48069a97477b58c2debf8029455291eee5af5d3") == 1
     assert config.count("80e7e19d53e42c6c01990731d7cc111cef3009d8") == 1
     assert config.count("playwright-list\\.json\\.txt") == 1
     assert config.count("TR-0091\\.json") == 1
-    assert '''^WRIGHT_API_TOKEN": "[0-9a-f]{64}"$''' in config
-    assert '''^api_body_sha256:[0-9a-f]{64}"$''' in config
+    assert """^WRIGHT_API_TOKEN": "[0-9a-f]{64}"$""" in config
+    assert """^api_body_sha256:[0-9a-f]{64}"$""" in config
+    assert "^JIG03-KEEPOUTS$" in config
+    assert (
+        "^packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-03\\.json$"
+        in config
+    )
+    assert "Historical mass-example snapshot tokens" in config
+    assert "Historical concept-example snapshot tokens" in config
 
 
 def test_program_status_gitleaks_allowlist_has_scanner_backed_negative_control() -> (

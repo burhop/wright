@@ -113,7 +113,10 @@ import { cadCommands, cadPortId, type CadOptions } from "./CadTaskOptions";
 import { EngineeringResults } from "./EngineeringResults";
 import { EngineeringReviewFiles } from "./EngineeringReviewFiles";
 import { workflowResultBlocks } from "./workflow-result-blocks";
-import { WorkflowResultInspector, WorkflowResultsNavigator } from "./WorkflowResultInspector";
+import {
+  WorkflowResultInspector,
+  WorkflowResultsNavigator,
+} from "./WorkflowResultInspector";
 import {
   EngineeringActionScope,
   EngineeringRunProgress,
@@ -605,7 +608,11 @@ function WorkflowExternalApprovalPanel({
         </section>
       )}
       {isValidationReview && (
-        <EngineeringReviewFiles checkpoint={checkpoint} sessionId={sessionId} onOpenFile={onOpenFile} />
+        <EngineeringReviewFiles
+          checkpoint={checkpoint}
+          sessionId={sessionId}
+          onOpenFile={onOpenFile}
+        />
       )}
       {validationReview && (
         <section
@@ -1348,42 +1355,115 @@ export interface WorkflowRecoveryStoredSource {
 }
 
 /** Recorded evidence remains inspectable even when authoring fails closed. */
-function InvalidSourceRunResults({ workspaceSessionId, workspaceId, workflowFilePath,
-  storageDigest, onOpenFile }: Pick<WorkflowRecoveryConceptProps,
-  "workspaceSessionId" | "workspaceId" | "workflowFilePath" | "storageDigest" | "onOpenFile">) {
-  const observer = useWorkflowRunObserver(workspaceSessionId, workspaceId,
-    workflowFilePath ?? "", storageDigest ?? "");
+function InvalidSourceRunResults({
+  workspaceSessionId,
+  workspaceId,
+  workflowFilePath,
+  storageDigest,
+  onOpenFile,
+}: Pick<
+  WorkflowRecoveryConceptProps,
+  | "workspaceSessionId"
+  | "workspaceId"
+  | "workflowFilePath"
+  | "storageDigest"
+  | "onOpenFile"
+>) {
+  const observer = useWorkflowRunObserver(
+    workspaceSessionId,
+    workspaceId,
+    workflowFilePath ?? "",
+    storageDigest ?? "",
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const record = observer.record;
-  const mismatch = Boolean(record && (record.source_matches_current === false ||
-    (storageDigest && record.source_digest !== storageDigest)));
-  const results = workflowResultBlocks({workflow: null, results: record?.results,
-    outputs: record?.execution?.outputs, checkpoint: record?.approval, sourceMismatch: mismatch});
-  const selected = results.find(result => result.id === selectedId) ?? results[0];
+  const mismatch = Boolean(
+    record &&
+    (record.source_matches_current === false ||
+      (storageDigest && record.source_digest !== storageDigest)),
+  );
+  const results = workflowResultBlocks({
+    workflow: null,
+    results: record?.results,
+    outputs: record?.execution?.outputs,
+    checkpoint: record?.approval,
+    sourceMismatch: mismatch,
+  });
+  const selected =
+    results.find((result) => result.id === selectedId) ?? results[0];
   if (!observer.enabled) return null;
-  return <section className="recovery-saved-run-results" data-testid="workflow-invalid-source-results">
-    <h2>Results from the saved run</h2>
-    <p>The diagram needs correction, but files already produced remain available.
-      Viewing these results does not correct the workflow or approve the design.</p>
-    {observer.error && <p role="status">Could not refresh run status: {observer.error}
-      <button type="button" onClick={observer.refresh}>Refresh saved run</button></p>}
-    {!observer.checked && <p role="status">Loading saved run…</p>}
-    {observer.checked && !record && !observer.error && <p>No saved run was found for this workflow.</p>}
-    {record && <>
-      <p>{approvalPresentation(record.approval)?.label ??
-        (record.status === "running" ? "Workflow running" : "Saved execution")}</p>
-      {mismatch && <p role="status">These results belong to a different saved workflow version.
-        They do not verify the current file.</p>}
-      <WorkflowResultsNavigator results={results} onSelect={setSelectedId} />
-      {selected && <WorkflowResultInspector key={selected.id} result={selected}
-        sessionId={workspaceSessionId} onOpenFile={onOpenFile} onSelectProducer={() => undefined} />}
-      {onOpenFile && <button type="button" className="recovery-button recovery-button--secondary"
-        onClick={() => onOpenFile(record.path)}>Open saved run log</button>}
-      {record.approval && workspaceSessionId && <WorkflowExternalApprovalPanel
-        key={`${record.run_id}:${record.approval.checkpoint_id}`} initial={record.approval}
-        sessionId={workspaceSessionId} onOpenFile={onOpenFile} onUpdate={observer.refresh} />}
-    </>}
-  </section>;
+  return (
+    <section
+      className="recovery-saved-run-results"
+      data-testid="workflow-invalid-source-results"
+    >
+      <h2>Results from the saved run</h2>
+      <p>
+        The diagram needs correction, but files already produced remain
+        available. Viewing these results does not correct the workflow or
+        approve the design.
+      </p>
+      {observer.error && (
+        <p role="status">
+          Could not refresh run status: {observer.error}
+          <button type="button" onClick={observer.refresh}>
+            Refresh saved run
+          </button>
+        </p>
+      )}
+      {!observer.checked && <p role="status">Loading saved run…</p>}
+      {observer.checked && !record && !observer.error && (
+        <p>No saved run was found for this workflow.</p>
+      )}
+      {record && (
+        <>
+          <p>
+            {approvalPresentation(record.approval)?.label ??
+              (record.status === "running"
+                ? "Workflow running"
+                : "Saved execution")}
+          </p>
+          {mismatch && (
+            <p role="status">
+              These results belong to a different saved workflow version. They
+              do not verify the current file.
+            </p>
+          )}
+          <WorkflowResultsNavigator
+            results={results}
+            onSelect={setSelectedId}
+          />
+          {selected && (
+            <WorkflowResultInspector
+              key={selected.id}
+              result={selected}
+              sessionId={workspaceSessionId}
+              onOpenFile={onOpenFile}
+              onSelectProducer={() => undefined}
+            />
+          )}
+          {onOpenFile && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              onClick={() => onOpenFile(record.path)}
+            >
+              Open saved run log
+            </button>
+          )}
+          {record.approval && workspaceSessionId && (
+            <WorkflowExternalApprovalPanel
+              key={`${record.run_id}:${record.approval.checkpoint_id}`}
+              initial={record.approval}
+              sessionId={workspaceSessionId}
+              onOpenFile={onOpenFile}
+              onUpdate={observer.refresh}
+            />
+          )}
+        </>
+      )}
+    </section>
+  );
 }
 
 export function WorkflowRecoveryConcept({
@@ -1452,18 +1532,23 @@ export function WorkflowRecoveryConcept({
         data-surface-state="invalid-source"
       >
         <div className="recovery-invalid-source__warning" role="alert">
-        <b>Workflow file needs correction.</b>
-        <span>
-          {issue?.explanation ?? "The saved engineering source is invalid."}
-        </span>
-        <small>
-          {issue?.code ?? "WFR-SOURCE-INVALID"} · The accepted diagram was not
-          replaced with fallback content.
-        </small>
+          <b>Workflow file needs correction.</b>
+          <span>
+            {issue?.explanation ?? "The saved engineering source is invalid."}
+          </span>
+          <small>
+            {issue?.code ?? "WFR-SOURCE-INVALID"} · The accepted diagram was not
+            replaced with fallback content.
+          </small>
         </div>
-        <InvalidSourceRunResults key={`${workspaceSessionId}:${workspaceId}:${workflowFilePath}`}
-          workspaceSessionId={workspaceSessionId} workspaceId={workspaceId}
-          workflowFilePath={workflowFilePath} storageDigest={storageDigest} onOpenFile={onOpenFile} />
+        <InvalidSourceRunResults
+          key={`${workspaceSessionId}:${workspaceId}:${workflowFilePath}`}
+          workspaceSessionId={workspaceSessionId}
+          workspaceId={workspaceId}
+          workflowFilePath={workflowFilePath}
+          storageDigest={storageDigest}
+          onOpenFile={onOpenFile}
+        />
       </section>
     );
   }
@@ -2545,14 +2630,33 @@ function WorkflowRecoveryReadyConcept({
     /^sha256:([a-f0-9]{64})$/.exec(persistedSemanticDigest)?.[1] ?? null;
   const layoutDigest = useSha256(canonicalLayoutBytes(layout));
   const inspectionWorkflow = proposal !== null ? candidateWorkflow : workflow;
-  const resultBlocks = useMemo(() => workflowResultBlocks({
-    workflow: inspectionWorkflow,
-    results: presentedRun?.results ?? observed?.results ?? nativePartialResults,
-    outputs: presentedRun?.outputs ?? observed?.execution?.outputs ?? [],
-    checkpoint: presentedRun?.approval ?? observed?.approval,
-    sourceMismatch: observedSourceMismatch || semanticDirty || sourceDirty || proposal !== null,
-  }), [inspectionWorkflow, presentedRun, observed, nativePartialResults, observedSourceMismatch, semanticDirty, sourceDirty, proposal]);
-  const selectedResult = resultBlocks.find((result) => result.id === selectedId) ?? null;
+  const resultBlocks = useMemo(
+    () =>
+      workflowResultBlocks({
+        workflow: inspectionWorkflow,
+        results:
+          presentedRun?.results ?? observed?.results ?? nativePartialResults,
+        outputs: presentedRun?.outputs ?? observed?.execution?.outputs ?? [],
+        checkpoint: presentedRun?.approval ?? observed?.approval,
+        sourceMismatch:
+          observedSourceMismatch ||
+          semanticDirty ||
+          sourceDirty ||
+          proposal !== null,
+      }),
+    [
+      inspectionWorkflow,
+      presentedRun,
+      observed,
+      nativePartialResults,
+      observedSourceMismatch,
+      semanticDirty,
+      sourceDirty,
+      proposal,
+    ],
+  );
+  const selectedResult =
+    resultBlocks.find((result) => result.id === selectedId) ?? null;
   const selectedBlock = findBlock(inspectionWorkflow, selectedId);
   const selectedRelationship =
     inspectionWorkflow.relationships.find((item) => item.id === selectedId) ??
@@ -3844,7 +3948,10 @@ function WorkflowRecoveryReadyConcept({
                 workflow={workflow}
                 onSelect={(id) => selectObject(id)}
               />
-              <WorkflowResultsNavigator results={resultBlocks} onSelect={(id) => selectObject(id)} />
+              <WorkflowResultsNavigator
+                results={resultBlocks}
+                onSelect={(id) => selectObject(id)}
+              />
               <button
                 type="button"
                 className="recovery-button recovery-button--secondary"
@@ -4147,7 +4254,11 @@ function WorkflowRecoveryReadyConcept({
                   }
                 />
               ) : (
-                <h2>{selectedResult?.title ?? selectedPort?.name ?? selectedRelationship?.label}</h2>
+                <h2>
+                  {selectedResult?.title ??
+                    selectedPort?.name ??
+                    selectedRelationship?.label}
+                </h2>
               )}
               <small>
                 {selectedBlock
@@ -4167,15 +4278,23 @@ function WorkflowRecoveryReadyConcept({
                               : selectedBlock.executionKind === "human"
                                 ? "Engineer review"
                                 : "Task"
-                  : selectedResult ? "Output files · read-only"
-                  : selectedPort
-                    ? selectedOwner?.title
-                    : "Connection between steps"}
+                  : selectedResult
+                    ? "Output files · read-only"
+                    : selectedPort
+                      ? selectedOwner?.title
+                      : "Connection between steps"}
               </small>
             </div>
             <div className="recovery-inspector__body">
-              {selectedResult && <WorkflowResultInspector key={selectedResult.id} result={selectedResult}
-                sessionId={workspaceSessionId} onOpenFile={onOpenFile} onSelectProducer={(id) => selectObject(id)} />}
+              {selectedResult && (
+                <WorkflowResultInspector
+                  key={selectedResult.id}
+                  result={selectedResult}
+                  sessionId={workspaceSessionId}
+                  onOpenFile={onOpenFile}
+                  onSelectProducer={(id) => selectObject(id)}
+                />
+              )}
               {selectedBlock && (
                 <EngineeringStepContext
                   block={selectedBlock}

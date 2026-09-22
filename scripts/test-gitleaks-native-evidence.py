@@ -20,7 +20,14 @@ BROWSER_PATHS = (
     "specs/079-wright-native-authoring/evidence/native-browser-runs-997e5610.json",
 )
 ENV_PATH = "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt"
-TRANSITION_PATH = "docs/programs/engineering-process-platform/evidence/transitions/TR-0091.json"
+TRANSITION_PATH = (
+    "docs/programs/engineering-process-platform/evidence/transitions/TR-0091.json"
+)
+JIG_PATH = "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-03.json"
+LOCAL_RUN_PREFIX = (
+    "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/"
+)
+DOCKER_MAP_PATH = "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt"
 
 
 def write_json(root: Path, name: str, value: object) -> None:
@@ -125,6 +132,64 @@ def main() -> int:
                 ]
             },
         )
+    # Historical snapshot tokens are public compare-and-swap identities, not
+    # bearer credentials. Verify their enclosing versioned document structure.
+    local_paths = []
+    for name in ("actual-native-runs.json", "actual-native-example-runs.json"):
+        historical = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "96f36a9e6d21001114b8386a6f80855292f4c54e:"
+                    + LOCAL_RUN_PREFIX
+                    + name,
+                ],
+                cwd=ROOT,
+            )
+        )
+        runs = historical.values() if isinstance(historical, dict) else historical
+        values = []
+        for run in runs:
+            if not isinstance(run, dict) or "snapshot" not in run:
+                continue
+            snapshot = run["snapshot"]
+            assert {
+                "definition",
+                "semantic_digest",
+                "revision",
+                "token",
+            } <= snapshot.keys()
+            values.append(snapshot["token"])
+        assert len(values) == (3 if name == "actual-native-runs.json" else 2)
+        for suffix in ("", ".txt"):
+            path = LOCAL_RUN_PREFIX + name + suffix
+            write_json(
+                positive,
+                path,
+                {"runs": [{"snapshot": {"token": value}} for value in values]},
+            )
+            local_paths.append(path)
+    docker_map = json.loads((ROOT / DOCKER_MAP_PATH).read_text(encoding="utf-8"))
+    write_json(
+        positive,
+        DOCKER_MAP_PATH,
+        {"auth_addition_lf_sha256": docker_map["source_hook_lf_sha256"]},
+    )
+    jig = positive / JIG_PATH
+    jig.parent.mkdir(parents=True, exist_ok=True)
+    jig.write_bytes((ROOT / JIG_PATH).read_bytes())
+
+    # A second historical commit contains the byte-identical already-classified
+    # disposable browser environment. Never print or use its token.
+    auth_blobs = [
+        subprocess.check_output(["git", "show", commit + ":" + ENV_PATH], cwd=ROOT)
+        for commit in (
+            "c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba",
+            "a48069a97477b58c2debf8029455291eee5af5d3",
+        )
+    ]
+    assert json.loads(auth_blobs[0]) == json.loads(auth_blobs[1])
     code, findings = scan(positive, work / "positive-report")
     if code or findings:
         raise AssertionError(
@@ -162,9 +227,32 @@ def main() -> int:
         TRANSITION_PATH,
         {"checks": [{"evidence": [f"api_body_sha256:{synthetic}"]}]},
     )
+    for path in (*local_paths, DOCKER_MAP_PATH):
+        value = json.loads((negative / path).read_text(encoding="utf-8"))
+        value["api_key"] = synthetic
+        value["token"] = synthetic
+        write_json(negative, path, value)
+    changed_jig = json.loads((negative / JIG_PATH).read_bytes())
+    changed_jig["api_key"] = synthetic
+    (negative / JIG_PATH).write_text(
+        json.dumps(changed_jig, separators=(",", ":")), encoding="utf-8"
+    )
+    wrong_jig_path = "unapproved/parametric-drill-jig-03.json"
+    (negative / wrong_jig_path).parent.mkdir(parents=True)
+    (negative / wrong_jig_path).write_bytes((ROOT / JIG_PATH).read_bytes())
     code, findings = scan(negative, work / "negative-report")
     actual = {str(row["File"]).removeprefix("/scan/") for row in findings}
-    expected = {MAP_PATH, *BROWSER_PATHS, wrong_path, ENV_PATH, TRANSITION_PATH}
+    expected = {
+        MAP_PATH,
+        *BROWSER_PATHS,
+        wrong_path,
+        ENV_PATH,
+        TRANSITION_PATH,
+        *local_paths,
+        DOCKER_MAP_PATH,
+        JIG_PATH,
+        wrong_jig_path,
+    }
     if code != 1 or not expected <= actual:
         raise AssertionError(
             "A neighboring credential or changed hash escaped the scanner"
@@ -172,7 +260,8 @@ def main() -> int:
     report = {
         "observed_at": datetime.now(timezone.utc).isoformat(),
         "image": IMAGE,
-        "positive_integrity_values": 13,
+        "positive_integrity_values": 24,
+        "positive_requirement_labels": 1,
         "positive_findings": 0,
         "negative_contexts": len(expected),
         "negative_findings": len(findings),

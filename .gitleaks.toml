@@ -87,7 +87,7 @@ regexes = [
 description = "Historical Playwright list captured a generated local Wright bearer token that was scrubbed in its successor; exact introducing commit, evidence path, rule and field shape only."
 targetRules = ["generic-api-key"]
 condition = "AND"
-commits = ["c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba"]
+commits = ["c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba", "a48069a97477b58c2debf8029455291eee5af5d3"]
 paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list\.json\.txt$''']
 regexTarget = "match"
 regexes = ['''^WRIGHT_API_TOKEN": "[0-9a-f]{64}"$''']
@@ -100,3 +100,42 @@ commits = ["80e7e19d53e42c6c01990731d7cc111cef3009d8"]
 paths = ['''^docs/programs/engineering-process-platform/evidence/transitions/TR-0091\.json$''']
 regexTarget = "match"
 regexes = ['''^api_body_sha256:[0-9a-f]{64}"$''']
+
+[[allowlists]]
+description = "The fixed JIG03-KEEPOUTS engineering requirement beside JIG03-KEY is not an API key; exact profile, rule and public label only."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-03\.json$''']
+regexTarget = "secret"
+regexes = ['''^JIG03-KEEPOUTS$''']
+
+[[allowlists]]
+description = "Historical mass-example snapshot tokens are versioned document CAS hashes, not authentication; exact evidence paths, rule, key and values only."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/actual-native-runs\.json(\.txt)?$''']
+regexTarget = "match"
+regexes = [
+  '''^token": "8a93ed58c3f18c38e0a627b4b7d0898f363c3b4c18474ff40babc017edd2d40a"$''',
+  '''^token": "47167320f73b9b0993c886b1e0c116435d58fd3990946a7e289fac60db6d39dd"$''',
+  '''^token": "a0951a3525a7af772a37cc4330bcdcf8e35377d2a15258c8e0426ec05483fc4c"$''',
+]
+
+[[allowlists]]
+description = "Historical concept-example snapshot tokens are versioned document CAS hashes, not authentication; exact evidence paths, rule, key and values only."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/actual-native-example-runs\.json(\.txt)?$''']
+regexTarget = "match"
+regexes = [
+  '''^token": "4f4b7b6f98ae29556fc727e7ce00b039c0031667ddaaff9156b49e401c31375e"$''',
+  '''^token": "ef41b97ad0ccebe40935ed1564c9c6906cea7ab1754be094a4b37438ff7be85a"$''',
+]
+
+[[allowlists]]
+description = "Independently reviewed Docker browser setup-hook source hash; exact evidence path, rule, historical field and value only."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map\.json\.txt$''']
+regexTarget = "match"
+regexes = ['''^auth_addition_lf_sha256": "f62195c547fae4fc4164f3d8d7bb7b7ac924acb4566a7fdb4fb7ae1c28d38277"$''']

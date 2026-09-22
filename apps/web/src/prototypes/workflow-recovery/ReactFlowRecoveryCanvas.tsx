@@ -55,7 +55,10 @@ import {
 } from "./model";
 import { WorkflowObjectIcon } from "./WorkflowObjectIcon";
 import { canConnectAuthoringPorts } from "./authoring-objects";
-import { resultAvailability, type WorkflowResultBlock } from "./workflow-result-blocks";
+import {
+  resultAvailability,
+  type WorkflowResultBlock,
+} from "./workflow-result-blocks";
 
 interface RecoveryCanvasRuntime {
   readonly resultBlocks?: readonly WorkflowResultBlock[];
@@ -145,7 +148,10 @@ interface RecoveryNodeData extends Record<string, unknown> {
 }
 
 type RecoveryFlowNode = Node<RecoveryNodeData, "recovery">;
-type ResultFlowNode = Node<{ result: WorkflowResultBlock; onSelect: (id: string) => void }, "result">;
+type ResultFlowNode = Node<
+  { result: WorkflowResultBlock; onSelect: (id: string) => void },
+  "result"
+>;
 type CanvasNode = RecoveryFlowNode | ResultFlowNode;
 
 const stateGlyph: Record<RecoveryRunState, string> = {
@@ -686,19 +692,42 @@ function RecoveryEdge({
 
 function ResultBlockNode({ data, selected }: NodeProps<ResultFlowNode>) {
   const available = data.result.files.filter((file) => file.available).length;
-  return <article className={`recovery-result-block${selected ? " is-selected" : ""}${available ? "" : " is-waiting"}`}
-    data-testid="workflow-result-block" data-result-id={data.result.id} role="group"
-    aria-label={`${data.result.title} result`}>
-    <Handle type="target" position={Position.Left} isConnectable={false} className="recovery-result-handle" />
-    <span className="recovery-result-block__kind">↗ RESULT</span>
-    <h3>{data.result.title}</h3>
-    <p className="recovery-result-block__producer" title={data.result.producerTitle}>{data.result.producerTitle}</p>
-    <p>{resultAvailability(data.result)}</p>
-    {data.result.reviewLabel && <small>{data.result.reviewLabel}</small>}
-    <button type="button" className="nodrag nopan" onClick={(event) => {
-      event.stopPropagation(); data.onSelect(data.result.id);
-    }}>{available ? "View results" : "View expected files"} ↗</button>
-  </article>;
+  return (
+    <article
+      className={`recovery-result-block${selected ? " is-selected" : ""}${available ? "" : " is-waiting"}`}
+      data-testid="workflow-result-block"
+      data-result-id={data.result.id}
+      role="group"
+      aria-label={`${data.result.title} result`}
+    >
+      <Handle
+        type="target"
+        position={Position.Left}
+        isConnectable={false}
+        className="recovery-result-handle"
+      />
+      <span className="recovery-result-block__kind">↗ RESULT</span>
+      <h3>{data.result.title}</h3>
+      <p
+        className="recovery-result-block__producer"
+        title={data.result.producerTitle}
+      >
+        {data.result.producerTitle}
+      </p>
+      <p>{resultAvailability(data.result)}</p>
+      {data.result.reviewLabel && <small>{data.result.reviewLabel}</small>}
+      <button
+        type="button"
+        className="nodrag nopan"
+        onClick={(event) => {
+          event.stopPropagation();
+          data.onSelect(data.result.id);
+        }}
+      >
+        {available ? "View results" : "View expected files"} ↗
+      </button>
+    </article>
+  );
 }
 
 const nodeTypes = { recovery: RecoveryBlockNode, result: ResultBlockNode };
@@ -786,7 +815,10 @@ function RecoveryCanvasViewport({
     const viewport = getViewport();
     const left = node.position.x * viewport.zoom + viewport.x;
     const top = node.position.y * viewport.zoom + viewport.y;
-    const right = left + (node.measured?.width ?? (node.type === "result" ? 270 : 220)) * viewport.zoom;
+    const right =
+      left +
+      (node.measured?.width ?? (node.type === "result" ? 270 : 220)) *
+        viewport.zoom;
     const bottom = top + (node.measured?.height ?? 160) * viewport.zoom;
     const dx =
       left < 30 ? 30 - left : right > width - 30 ? width - 30 - right : 0;
@@ -1192,16 +1224,32 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
     ],
   );
   const projectedNodes = useMemo<CanvasNode[]>(() => {
-    const right = Math.max(0, ...blocks.map((block) => block.position.x + 300)) + 100;
+    const right =
+      Math.max(0, ...blocks.map((block) => block.position.x + 300)) + 100;
     const top = Math.min(0, ...blocks.map((block) => block.position.y));
-    const resultNodes: ResultFlowNode[] = (runtime.resultBlocks ?? []).map((result, index) => ({
-      id: result.id, type: "result", position: { x: right, y: top + index * 285 },
-      draggable: false, deletable: false, connectable: false,
-      selected: selectedSemanticId === result.id,
-      data: { result, onSelect: (semanticId) => onIntent({ type: "select", semanticId }) },
-    }));
+    const resultNodes: ResultFlowNode[] = (runtime.resultBlocks ?? []).map(
+      (result, index) => ({
+        id: result.id,
+        type: "result",
+        position: { x: right, y: top + index * 285 },
+        draggable: false,
+        deletable: false,
+        connectable: false,
+        selected: selectedSemanticId === result.id,
+        data: {
+          result,
+          onSelect: (semanticId) => onIntent({ type: "select", semanticId }),
+        },
+      }),
+    );
     return [...projectedTaskNodes, ...resultNodes];
-  }, [projectedTaskNodes, runtime.resultBlocks, blocks, selectedSemanticId, onIntent]);
+  }, [
+    projectedTaskNodes,
+    runtime.resultBlocks,
+    blocks,
+    selectedSemanticId,
+    onIntent,
+  ]);
   const [nodes, setNodes, applyPreviewNodeChanges] =
     useNodesState<CanvasNode>(projectedNodes);
 
@@ -1354,13 +1402,33 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
       <ReactFlow
         data-testid="workflow-recovery-reactflow-pane"
         nodes={nodes}
-        edges={[...edges, ...(runtime.resultBlocks ?? []).filter((result) => result.producerId && blockIds.has(result.producerId)).map((result): Edge => ({
-          id: `result-link.${result.id}`, source: result.producerId!, target: result.id,
-          sourceHandle: recoveryRelationshipHandleId(result.producerId!, "flow", "source"),
-          type: "smoothstep", selectable: false, deletable: false, focusable: false,
-          style: { stroke: "#54cbb6", strokeWidth: 2, strokeDasharray: "5 4" },
-          markerEnd: { type: MarkerType.ArrowClosed, color: "#54cbb6" },
-        }))]}
+        edges={[
+          ...edges,
+          ...(runtime.resultBlocks ?? [])
+            .filter(
+              (result) => result.producerId && blockIds.has(result.producerId),
+            )
+            .map((result): Edge => ({
+              id: `result-link.${result.id}`,
+              source: result.producerId!,
+              target: result.id,
+              sourceHandle: recoveryRelationshipHandleId(
+                result.producerId!,
+                "flow",
+                "source",
+              ),
+              type: "smoothstep",
+              selectable: false,
+              deletable: false,
+              focusable: false,
+              style: {
+                stroke: "#54cbb6",
+                strokeWidth: 2,
+                strokeDasharray: "5 4",
+              },
+              markerEnd: { type: MarkerType.ArrowClosed, color: "#54cbb6" },
+            })),
+        ]}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         minZoom={0.4}
@@ -1377,7 +1445,8 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
           onIntent({ type: "select", semanticId: node.id })
         }
         onEdgeClick={(_, edge) => {
-          if (!edge.id.startsWith("result-link.")) onIntent({ type: "select", semanticId: edge.id });
+          if (!edge.id.startsWith("result-link."))
+            onIntent({ type: "select", semanticId: edge.id });
         }}
         onNodeDragStop={(_, node) => {
           if (node.type === "result") return;
@@ -1393,14 +1462,18 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
           onIntent({ type: "move-block", semanticId: node.id, x, y });
         }}
         onEdgesDelete={(deleted) =>
-          deleted.filter((edge) => !edge.id.startsWith("result-link.")).forEach((edge) =>
-            onIntent({ type: "delete-connection", semanticId: edge.id }),
-          )
+          deleted
+            .filter((edge) => !edge.id.startsWith("result-link."))
+            .forEach((edge) =>
+              onIntent({ type: "delete-connection", semanticId: edge.id }),
+            )
         }
         onNodesDelete={(deleted) =>
-          deleted.filter((node) => node.type !== "result").forEach((node) =>
-            onIntent({ type: "delete-concept", semanticId: node.id }),
-          )
+          deleted
+            .filter((node) => node.type !== "result")
+            .forEach((node) =>
+              onIntent({ type: "delete-concept", semanticId: node.id }),
+            )
         }
         onConnect={connect}
         onConnectStart={() => setConnectionMessage("")}
@@ -1473,7 +1546,11 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
         {minimapVisible && (
           <MiniMap
             bgColor="#0b1628"
-            nodeColor={runtime.resultBlocks?.length ? (node) => node.type === "result" ? "#23695f" : "#1e3a5f" : "#1e3a5f"}
+            nodeColor={
+              runtime.resultBlocks?.length
+                ? (node) => (node.type === "result" ? "#23695f" : "#1e3a5f")
+                : "#1e3a5f"
+            }
             nodeStrokeColor="#38bdf8"
             nodeStrokeWidth={3}
             maskColor="rgba(7, 17, 31, 0.48)"
@@ -1507,7 +1584,10 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
         <RecoveryCanvasViewport
           selectedNodeId={
             (selectedSemanticId &&
-              (blockIds.has(selectedSemanticId) || runtime.resultBlocks?.some((result) => result.id === selectedSemanticId)
+              (blockIds.has(selectedSemanticId) ||
+              runtime.resultBlocks?.some(
+                (result) => result.id === selectedSemanticId,
+              )
                 ? selectedSemanticId
                 : (portLookup.get(selectedSemanticId)?.owner_block_id ??
                   edges.find((edge) => edge.id === selectedSemanticId)

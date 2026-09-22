@@ -71,3 +71,32 @@ case denominator or campaign metric is relaxed to make this checkpoint green.
 
 The next process discussion should start from these completed boundaries and
 explicit gaps, rather than resume the old goal automatically.
+
+### Publication verification follow-up
+
+Implementation checkpoint `403adca2` and the separately approved product-direction
+documents `bcace4ea` are saved. The observer exit was confirmed, and the normal
+API still reports the exact Heat 902 review pending with actor null. The expanded
+harness/review/preparer regression suite passed 76 tests.
+
+The clean-archive image built successfully, including TypeScript and the
+production frontend. Its exact-image scan passed with zero policy findings using
+the current 22 September vulnerability database. The cumulative gate then stopped
+at its early occupied-port guard (18000); no unrelated listener was terminated.
+Use freshly checked isolated ports for the continuation of publication checks.
+
+Prettier found 12 frontend files needing mechanical formatting. Each resulting
+file was independently checked against the formatter output of its committed
+predecessor; no UI behavior change is intended. Python syntax-tree comparison
+likewise confirmed the formatting-only source/test changes.
+
+The first full-history Gitleaks scan found 15 matches. Classification identified
+the exact `JIG03-KEEPOUTS` requirement label, five document-version CAS hashes in
+two historical evidence representations, a reviewed browser-hook source hash,
+and a byte-identical second commit of the previously classified disposable test
+environment. Exact path/rule/key/value allowances preserve detection elsewhere;
+the historical environment allowance is limited to the two exact commits.
+Actual scanner regression: 24 integrity-value occurrences and one requirement
+label accepted; 18 neighboring credential findings detected across 13 negative
+contexts. Seven security-configuration tests pass. This does not itself claim
+a clean rerun of the complete history or a completed cumulative gate.

@@ -268,7 +268,8 @@ function isExpectedFilePortsObject(key: string, value: unknown): boolean {
     typeof value === "object" &&
     !Array.isArray(value) &&
     Object.entries(value).every(
-      ([port, file]) => port.length > 0 && typeof file === "string" && file.length > 0,
+      ([port, file]) =>
+        port.length > 0 && typeof file === "string" && file.length > 0,
     )
   );
 }
@@ -1474,9 +1475,10 @@ export function parseRecoveryAuthoringSource(
     delete configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];
     delete configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
     const approvalObjects = Object.fromEntries(
-      Object.entries(configuration).filter(([key, value]) =>
-        isApprovalObject(configuration, key, value) ||
-        isExpectedFilePortsObject(key, value),
+      Object.entries(configuration).filter(
+        ([key, value]) =>
+          isApprovalObject(configuration, key, value) ||
+          isExpectedFilePortsObject(key, value),
       ),
     );
     if (Object.keys(approvalObjects).length) {
