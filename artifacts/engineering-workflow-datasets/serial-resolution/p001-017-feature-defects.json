@@ -1,0 +1,144 @@
+{
+  "source_sha256": "4c4fd617acf790c91869cd9502da018f7d8928c20cf9084b8800303e02a49255",
+  "triangles": 21588,
+  "method": "Actual binary-STL triangles: exact X-slab clipping, bore plane sections, and oriented surface areas.",
+  "bounds_mm": [
+    [
+      -8.999920845031738,
+      -11.999500274658203,
+      0.0
+    ],
+    [
+      104.99907684326172,
+      11.999500274658203,
+      33.999000549316406
+    ]
+  ],
+  "central_span_x_mm": [
+    15.5,
+    80.5
+  ],
+  "minimum_clearance_mm": 24.814040138432475,
+  "minimum_at_mm": [
+    80.5,
+    2.1593458793036064,
+    24.814040138432475
+  ],
+  "required_clearance_mm": 25.0,
+  "clearance_pass": false,
+  "bore_sections": [
+    {
+      "z_mm": 1.5,
+      "holes": [
+        {
+          "center_xy_mm": [
+            0.0,
+            2.884789407353594e-08
+          ],
+          "diameter_xy_mm": [
+            4.369742798372486,
+            4.369598851246497
+          ],
+          "minimum_centered_clearance_diameter_mm": 4.369571091127902,
+          "maximum_centered_diameter_mm": 4.499886378638282,
+          "section_segments": 40
+        },
+        {
+          "center_xy_mm": [
+            95.99744413089924,
+            9.011953960857966e-08
+          ],
+          "diameter_xy_mm": [
+            4.358932538982771,
+            4.466958830058248
+          ],
+          "minimum_centered_clearance_diameter_mm": 4.358783808706019,
+          "maximum_centered_diameter_mm": 4.486335567064704,
+          "section_segments": 36
+        }
+      ],
+      "center_spacing_mm": 95.99744413089924
+    },
+    {
+      "z_mm": 2.5,
+      "holes": [
+        {
+          "center_xy_mm": [
+            0.0,
+            1.5886523874186764e-08
+          ],
+          "diameter_xy_mm": [
+            4.370729813611983,
+            4.370586047208786
+          ],
+          "minimum_centered_clearance_diameter_mm": 4.370585920035587,
+          "maximum_centered_diameter_mm": 4.499886360304234,
+          "section_segments": 40
+        },
+        {
+          "center_xy_mm": [
+            95.99745394180437,
+            0.0
+          ],
+          "diameter_xy_mm": [
+            4.358919529631052,
+            4.4669575691223145
+          ],
+          "minimum_centered_clearance_diameter_mm": 4.358918512462233,
+          "maximum_centered_diameter_mm": 4.485820444003812,
+          "section_segments": 36
+        }
+      ],
+      "center_spacing_mm": 95.99745394180437
+    },
+    {
+      "z_mm": 3.5,
+      "holes": [
+        {
+          "center_xy_mm": [
+            0.0,
+            -4.3642142122379823e-08
+          ],
+          "diameter_xy_mm": [
+            4.37005795571952,
+            4.369914038182026
+          ],
+          "minimum_centered_clearance_diameter_mm": 4.36967014055935,
+          "maximum_centered_diameter_mm": 4.49988639955596,
+          "section_segments": 40
+        },
+        {
+          "center_xy_mm": [
+            95.99756706173201,
+            1.4799854408664714e-07
+          ],
+          "diameter_xy_mm": [
+            4.359335043204766,
+            4.466965946532442
+          ],
+          "minimum_centered_clearance_diameter_mm": 4.359242845281247,
+          "maximum_centered_diameter_mm": 4.4866984448256835,
+          "section_segments": 36
+        }
+      ],
+      "center_spacing_mm": 95.99756706173201
+    }
+  ],
+  "orientation_comparison": [
+    {
+      "orientation": "pads_down",
+      "build_height_mm": 33.999000549316406,
+      "flat_bed_contact_area_mm2": 547.1778560448503,
+      "downward_surface_area_beyond_45_degrees_mm2": 914.5573627147481
+    },
+    {
+      "orientation": "side",
+      "build_height_mm": 23.999000549316406,
+      "flat_bed_contact_area_mm2": 46.96762956795598,
+      "downward_surface_area_beyond_45_degrees_mm2": 628.4992966480227
+    }
+  ],
+  "orientation_selection": "pads_down",
+  "orientation_reason": "Pads-down keeps both mounting faces on the bed and bolt bores vertical; supports may contact the rear/underside of the raised bow. Side orientation makes the bores horizontal and places the grip flank/edges at support or bed contact. Inspect the actual selected slice support preview before acceptance.",
+  "limitations": "The 45-degree surface-area measure is a geometric comparison indicator, not a slicer support prediction or acceptance threshold. Bore sections do not replace full engineering review. No physical fit, strength or printing claim."
+}

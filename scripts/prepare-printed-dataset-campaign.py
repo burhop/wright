@@ -212,6 +212,27 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "expected_file_ports": {"source_mesh": f"{output_root}/source_mesh.stl"},
         "task_guidance": "Use only execute_blender_code, get_scene_info, get_viewport_screenshot. Do not access external asset or inference services. Preserve the exact original user prompt in every tool call. Return a compact operation and measurement summary; Wright records exact submitted source and file hashes in canonical evidence outside Blender. Never request raw file, hash, runpy, subprocess, persistent callback or text-datablock mechanisms. Blender safe mode rejects user-defined callables passed as callbacks or invoked indirectly: do not pass lambda functions or helper-function parameters that are later called; compute vertices and values explicitly. Explicitly import mathutils before calling mathutils.Vector; do not import and call Vector directly. Construct and export in the first authoring call when possible. Call bpy.ops.wm.stl_export(...) directly; never inspect bpy.ops or its module namespaces with hasattr or use an operator namespace as a value. Verify actual world-space bounds plus boundary and non-manifold edge counts, correct discrepancies, re-export, then finish immediately without a viewport screenshot once the requested bounds and zero boundary/non-manifold edges are reported. Never rebuild already-watertight geometry merely to restate measurements. Never report a file that was not generated.",
     })
+    if scenario_id == "printed-replacement-part-02":
+        source_task["fields"]["prompt"] += (
+            " Review correction: preserve the 96 mm mounting frame and every supplied dimension. "
+            "The previous source's nominal 25 mm clearance measured only 24.8168 mm "
+            "because a sweep segment crossed the central-span boundary. Explicitly include "
+            "X=15.5 and X=80.5 in the construction and keep the complete triangulated "
+            "underside at Z>=25 throughout that interval, with outer Z<=34. "
+            "A nominal dimension in your report is not a measurement. Retain the oval "
+            "12 by 9 mm section, 1.5 mm recess, required edge rounding and internal blends; "
+            "explain any where-space-permits blend limitation. Preserve exact bores and "
+            "flat mounting faces; the repair now cleans planar topology without forcing "
+            "a voxel remesh of a valid solid. Save the actual editable Blender scene with "
+            f"bpy.ops.wm.save_as_mainfile(filepath='{(workspace / output_root / 'native-design.blend').as_posix()}') "
+            "after authoring, as well as source_mesh.stl. Compare pads-down and side "
+            "orientations in the source report, including bed contact, bore direction, "
+            "grip surface support contact and why pads-down is selected for this process. "
+            "Final mesh measurements and the actual support preview remain subject to review."
+        )
+        source_task["fields"]["outputs"].append(port("native_design", "workspace_file"))
+        source_task["fields"]["settings"]["expected_files"] += f"\n{output_root}/native-design.blend"
+        source_task["fields"]["settings"]["expected_file_ports"]["native_design"] = f"{output_root}/native-design.blend"
     add_reference(sections, prompt_ref, source_task, "natural_prompt")
     add_reference(sections, context_ref, source_task, "supplied_context")
 
@@ -224,8 +245,10 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "triangle_limit": 24000 if scenario_id == "printed-replacement-part-02" else 80000,
         "merge_tolerance_mm": 0.001,
         "degenerate_tolerance_mm": 0.000001,
-        "force_voxel_remesh": scenario_id == "printed-replacement-part-02",
-        "envelope_margin_mm": 0.001 if scenario_id == "printed-replacement-part-02" else 0.0,
+        "force_voxel_remesh": False,
+        "envelope_margin_mm": 0.0,
+        "planar_cleanup": scenario_id == "printed-replacement-part-02",
+        "measure_handle_features": scenario_id == "printed-replacement-part-02",
     }
     repair_recipe_path = f"{input_root}/mesh-repair-operation.json"
     repair_recipe_bytes = (json.dumps(repair_config, indent=2) + "\n").encode()
@@ -395,6 +418,9 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     }
     sections.append(final_review)
     add_reference(sections, source_task["id"] + "." + source_result_key, final_review, "source_report")
+    if scenario_id == "printed-replacement-part-02":
+        add_reference(sections, source_task["id"] + ".native_design", final_review, "native_design")
+        add_reference(sections, repair["id"] + "." + repair_result_key, final_review, "final_feature_measurements")
     validation_sources = {
         "source_mesh": (source_task, "source_mesh", "workspace_file"),
         "source_report": (source_task, source_result_key, "engineering_document"),

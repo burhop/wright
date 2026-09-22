@@ -10,11 +10,124 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from pathlib import Path
+import struct
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _clip_x(points, boundary, keep_above):
+    """Clip a triangle polygon; extrema include edge/plane intersections."""
+    result = []
+    for a, b in zip(points, points[1:] + points[:1]):
+        inside_a = a[0] >= boundary if keep_above else a[0] <= boundary
+        inside_b = b[0] >= boundary if keep_above else b[0] <= boundary
+        if inside_a:
+            result.append(a)
+        if inside_a != inside_b:
+            fraction = (boundary - a[0]) / (b[0] - a[0])
+            result.append(tuple(a[i] + fraction * (b[i] - a[i]) for i in range(3)))
+    return result
+
+
+def measure_handle_features(path: Path) -> dict:
+    """Read actual STL bytes in the supplied mounting frame, independently of CAD claims.
+
+    Circle sections are measurements for human review, not new acceptance
+    tolerances. The clearance minimum is exact for the linear triangle surface.
+    """
+    data = path.read_bytes()
+    if len(data) < 84:
+        raise ValueError("Handle measurement needs a binary STL")
+    count = struct.unpack_from("<I", data, 80)[0]
+    if not 0 < count <= 80000 or len(data) != 84 + 50 * count:
+        raise ValueError("Handle measurement requires a bounded binary STL")
+    triangles = []
+    for offset in range(84, len(data), 50):
+        values = struct.unpack_from("<12fH", data, offset)
+        points = [tuple(values[i:i + 3]) for i in (3, 6, 9)]
+        if not all(math.isfinite(v) for p in points for v in p):
+            raise ValueError("Handle mesh contains nonfinite coordinates")
+        triangles.append(points)
+    bounds = [[min(p[i] for t in triangles for p in t) for i in range(3)],
+              [max(p[i] for t in triangles for p in t) for i in range(3)]]
+    minimum = None
+    for triangle in triangles:
+        polygon = _clip_x(_clip_x(triangle, 15.5, True), 80.5, False)
+        for point in polygon:
+            if minimum is None or point[2] < minimum[2]:
+                minimum = point
+    if minimum is None:
+        raise ValueError("Handle has no surface in the required central span")
+
+    sections = []
+    # Three planes through the straight part of each 5 mm mounting pad.
+    # Segment distances also expose the inscribed (faceted) bore clearance.
+    for z in (1.5, 2.5, 3.5):
+        holes = []
+        for nominal_x in (0.0, 96.0):
+            segments = []
+            for triangle in triangles:
+                hits = []
+                for a, b in zip(triangle, triangle[1:] + triangle[:1]):
+                    if (a[2] <= z < b[2]) or (b[2] <= z < a[2]):
+                        fraction = (z - a[2]) / (b[2] - a[2])
+                        hits.append(tuple(a[i] + fraction * (b[i] - a[i]) for i in (0, 1)))
+                if len(hits) == 2 and all(math.hypot(p[0] - nominal_x, p[1]) < 4.0 for p in hits):
+                    segments.append(hits)
+            if not segments:
+                raise ValueError(f"No bore section found at X={nominal_x}, Z={z}")
+            points = [p for segment in segments for p in segment]
+            # The midpoint of opposite extrema does not assume that voxelized
+            # holes remain circular. Report anisotropy and radius range explicitly.
+            low = [min(p[i] for p in points) for i in (0, 1)]
+            high = [max(p[i] for p in points) for i in (0, 1)]
+            center = [(a + b) / 2 for a, b in zip(low, high)]
+            distances = []
+            for a, b in segments:
+                dx, dy = b[0] - a[0], b[1] - a[1]
+                length2 = dx * dx + dy * dy
+                fraction = 0 if length2 == 0 else max(0, min(1, ((center[0] - a[0]) * dx + (center[1] - a[1]) * dy) / length2))
+                distances.append(math.hypot(a[0] + fraction * dx - center[0], a[1] + fraction * dy - center[1]))
+            holes.append({'center_xy_mm': center, 'diameter_xy_mm': [high[i] - low[i] for i in (0, 1)],
+                          'minimum_centered_clearance_diameter_mm': 2 * min(distances),
+                          'maximum_centered_diameter_mm': 2 * max(math.dist(p, center) for p in points),
+                          'section_segments': len(segments)})
+        sections.append({'z_mm': z, 'holes': holes,
+                         'center_spacing_mm': math.dist(holes[0]['center_xy_mm'], holes[1]['center_xy_mm'])})
+
+    orientations = []
+    for name, axis, sign in (('pads_down', 2, 1), ('side', 1, -1)):
+        bed = min(sign * p[axis] for t in triangles for p in t)
+        contact_area = overhang_area = 0.0
+        for triangle in triangles:
+            a, b, c = triangle
+            u = [b[i] - a[i] for i in range(3)]
+            v = [c[i] - a[i] for i in range(3)]
+            cross = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
+            length = math.sqrt(sum(value * value for value in cross))
+            if length == 0:
+                continue
+            at_bed = all(abs(sign * p[axis] - bed) <= 1e-6 for p in triangle)
+            if at_bed:
+                contact_area += length / 2
+            elif sign * cross[axis] / length < -math.sqrt(0.5):
+                overhang_area += length / 2
+        orientations.append({'orientation': name, 'build_height_mm': bounds[1][axis] - bounds[0][axis],
+                             'flat_bed_contact_area_mm2': contact_area,
+                             'downward_surface_area_beyond_45_degrees_mm2': overhang_area})
+    return {'source_sha256': hashlib.sha256(data).hexdigest(), 'triangles': count,
+            'method': 'Actual binary-STL triangles: exact X-slab clipping, bore plane sections, and oriented surface areas.',
+            'bounds_mm': bounds, 'central_span_x_mm': [15.5, 80.5],
+            'minimum_clearance_mm': minimum[2], 'minimum_at_mm': minimum,
+            'required_clearance_mm': 25.0, 'clearance_pass': minimum[2] >= 25.0,
+            'bore_sections': sections, 'orientation_comparison': orientations,
+            'orientation_selection': 'pads_down',
+            'orientation_reason': 'Pads-down keeps both mounting faces on the bed and bolt bores vertical; supports may contact the rear/underside of the raised bow. Side orientation makes the bores horizontal and places the grip flank/edges at support or bed contact. Inspect the actual selected slice support preview before acceptance.',
+            'limitations': 'The 45-degree surface-area measure is a geometric comparison indicator, not a slicer support prediction or acceptance threshold. Bore sections do not replace full engineering review. No physical fit, strength or printing claim.'}
 
 
 def blender_code(configuration: dict) -> str:
@@ -27,6 +140,7 @@ def blender_code(configuration: dict) -> str:
         configuration.get("degenerate_tolerance_mm", 0.000001)
     )
     force_voxel_remesh = configuration.get("force_voxel_remesh", False) is True
+    planar_cleanup = configuration.get("planar_cleanup", False) is True
     envelope_margin = float(configuration.get("envelope_margin_mm", 0.0))
     if not 0.0 <= envelope_margin <= 0.005:
         raise ValueError("Envelope margin must be between 0 and 0.005 mm")
@@ -40,6 +154,7 @@ triangle_limit = {triangle_limit!r}
 merge_tolerance = {merge_tolerance!r}
 degenerate_tolerance = {degenerate_tolerance!r}
 force_voxel_remesh = {force_voxel_remesh!r}
+planar_cleanup = {planar_cleanup!r}
 envelope_margin = {envelope_margin!r}
 object_name = {object_name!r}
 
@@ -98,6 +213,12 @@ bm = bmesh.new()
 bm.from_mesh(obj.data)
 bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=merge_tolerance)
 bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=degenerate_tolerance)
+planar_faces_before = len(bm.faces)
+if planar_cleanup:
+    # Remove redundant coplanar triangulation without moving dimensioned vertices.
+    # A byte-distinct repair must not require lossy voxelization of a valid solid.
+    bmesh.ops.dissolve_limit(bm, angle_limit=0.000001, verts=list(bm.verts), edges=list(bm.edges), use_dissolve_boundaries=False)
+planar_faces_after = len(bm.faces)
 bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
 bm.normal_update()
 if bm.calc_volume(signed=True) < 0:
@@ -206,6 +327,11 @@ if export_result != {{'FINISHED'}}:
     raise RuntimeError('Repaired STL export failed: ' + str(export_result))
 
 scene = bpy.context.scene
+# Show only this repaired object among mesh objects in the diagnostic render;
+# restore visibility afterwards so the authored design remains intact.
+previous_visibility = [(item, item.hide_render) for item in scene.objects if item.type == 'MESH']
+for item, was_hidden in previous_visibility:
+    item.hide_render = item != obj
 scene.unit_settings.system = 'METRIC'
 scene.unit_settings.length_unit = 'MILLIMETERS'
 scene.unit_settings.scale_length = 0.001
@@ -236,10 +362,13 @@ camera.data.type = 'ORTHO'
 camera.data.ortho_scale = span*1.55
 scene.camera = camera
 render_result = bpy.ops.render.render(write_still=True)
+for item, was_hidden in previous_visibility:
+    item.hide_render = was_hidden
 if render_result != {{'FINISHED'}}:
     raise RuntimeError('Preview render failed: ' + str(render_result))
 
 report = {{'operation':'fixed_native_blender_mesh_repair','source_preserved':source,'artifacts':[repaired,preview],'before':{{'dimensions_mm':before_dimensions,'mesh':before_metrics}},'after':{{'dimensions_mm':final_dimensions,'mesh':final_metrics}},'repair':{{'merge_tolerance_mm':merge_tolerance,'degenerate_tolerance_mm':degenerate_tolerance,'force_voxel_remesh':force_voxel_remesh,'envelope_margin_mm':envelope_margin,'voxel_remesh_used':voxel_remesh_used,'voxel_size_mm':voxel_size_mm,'voxel_iterations':voxel_iterations,'discarded_components':discarded_components,'decimation_used':decimation_used,'triangle_limit':triangle_limit}},'orientation':{{'action':'preserved_model_axes_and_translated_minimum_z_to_build_plate','supports':'assigned by the pinned slicer operation'}},'checks':{{'closed_manifold':True,'outward_normals':final_metrics['signed_volume_mm3']>0,'single_component':True,'within_triangle_limit':True,'fits_p1s_256mm_cube':True}},'content_validated':False}}
+report['repair']['planar_cleanup'] = {{'enabled':planar_cleanup,'faces_before':planar_faces_before,'faces_after':planar_faces_after,'angle_limit_radians':0.000001}}
 print(json.dumps(report,separators=(',',':')))
 '''
 
@@ -261,4 +390,8 @@ def run(configuration_path: Path, *, blender_connection, validate_code) -> dict:
         {"path": str(path), "size_bytes": path.stat().st_size, "sha256": _sha256(path)}
         for path in output_files
     ]
+    if configuration.get("measure_handle_features", False) is True:
+        report["final_feature_measurements"] = measure_handle_features(Path(configuration["repaired"]))
+        if not report["final_feature_measurements"]["clearance_pass"]:
+            raise ValueError("Final handle fails the unchanged 25 mm clearance: " + json.dumps(report["final_feature_measurements"]))
     return report

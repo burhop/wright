@@ -802,3 +802,15 @@ end-to-end completion.
 Historical Robot 010 remains protected: run `1e10a25958694ce2ab4d9454029b1fcf`,
 checkpoint `checkpoint-46ef3ff2d5107b0b5f55455e`, pending actual human review.
 No approval, retry reset, push, merge, publication or physical action is authorized.
+
+## P001 canonical attempt 017: human requested changes
+
+P001 Printed 02 attempt 017: human requested changes; final finger clearance 24.814 mm < 25 mm, native .blend and orientation comparison missing. All 17 automated checks pass but no canonical approval. Owned native runtime cleaned. Preparing one bounded correction; P001 remains active.
+
+[Exact human decision](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-017.json). No pass or output completion credit awarded.
+
+## P001 review correction qualification
+
+P001 Printed 02: isolated native correction measures 25.000 mm clearance and 96.000 mm bore spacing, preserves 114 x 24 x 34 mm envelope, exports native .blend and compares orientations. Bores are 4.500 mm across axes, with 4.4946 mm faceted minimum disclosed for review. 11 focused checks passed. Canonical successor and human review still required; no campaign credit.
+
+[Native proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-feature-repair-qualification.json). The proof reuses the retained AI-authored design with explicit endpoint rings; it is not a canonical workflow execution.

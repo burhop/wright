@@ -56,3 +56,19 @@ P001 Printed 02: reader limit repaired; 16 automated checks pass, Z=34.0000038 m
 ## P001 attempt 2
 
 P001 Printed 02: native repair/reslice passes all 17 automated checks; height 33.9990 mm. Current canonical execution and human review still pending; case remains active. Displayed automated passes now derive to **18**. [Native proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-native-successor.json), [full inspection](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-native-validation.json). Requirements unchanged; isolated proof earns no canonical credit.
+
+## P001 canonical continuation
+
+One-case preflight passed. Actual inference returned READY through the unchanged Sol campaign route. Attempt `attempt-017`, run `1f472a8acb4a430a816895f1ed85f5cc`, is authoring the current source mesh. No second case or broad wave. [Exact start/ownership checkpoint](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical-start.json). Local repair commit: `f98bec1f`; no push.
+
+## P001 canonical attempt 017: human requested changes
+
+P001 Printed 02 attempt 017: human requested changes; final finger clearance 24.814 mm < 25 mm, native .blend and orientation comparison missing. All 17 automated checks pass but no canonical approval. Owned native runtime cleaned. Preparing one bounded correction; P001 remains active.
+
+[Exact human decision](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-017.json). No pass or output completion credit awarded.
+
+## P001 review correction qualification
+
+P001 Printed 02: isolated native correction measures 25.000 mm clearance and 96.000 mm bore spacing, preserves 114 x 24 x 34 mm envelope, exports native .blend and compares orientations. Bores are 4.500 mm across axes, with 4.4946 mm faceted minimum disclosed for review. 11 focused checks passed. Canonical successor and human review still required; no campaign credit.
+
+[Native proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-feature-repair-qualification.json). The proof reuses the retained AI-authored design with explicit endpoint rings; it is not a canonical workflow execution.

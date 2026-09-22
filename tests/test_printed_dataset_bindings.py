@@ -96,9 +96,11 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
             / f"campaign/printed-replacement-part-0{number}/isolated/inputs/mesh-repair-operation.json"
         ).read_text()
     )
-    assert repair_configuration["force_voxel_remesh"] is (number == 2)
+    assert repair_configuration["force_voxel_remesh"] is False
     assert repair_configuration["triangle_limit"] == (24000 if number == 2 else 80000)
-    assert repair_configuration["envelope_margin_mm"] == (0.001 if number == 2 else 0.0)
+    assert repair_configuration["envelope_margin_mm"] == 0.0
+    assert repair_configuration["planar_cleanup"] is (number == 2)
+    assert repair_configuration["measure_handle_features"] is (number == 2)
     assert len(plan.steps) == 6
     assert all(step.id.endswith("api_created_identity") for step in plan.steps[:4])
     assert all(step.expected_files for step in plan.steps[:3])
@@ -116,9 +118,14 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     assert "runpy.run_path" not in plan.steps[2].prompt
     assert "runpy.run_path" not in plan.steps[0].prompt
     assert "runpy.run_path" not in plan.steps[1].prompt
-    assert plan.steps[0].expected_files == (
+    expected_source_files = (
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/source_mesh.stl",
     )
+    if number == 2:
+        expected_source_files += ("campaign/printed-replacement-part-02/isolated/artifacts/native-design.blend",)
+        assert "X=15.5 and X=80.5" in plan.steps[0].prompt
+        assert "save_as_mainfile" in plan.steps[0].prompt
+    assert plan.steps[0].expected_files == expected_source_files
     assert plan.steps[1].expected_files == (
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/repaired_mesh.stl",
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/mesh-preview.png",
@@ -151,7 +158,7 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     }
     assert plan.steps[3].external_action["settings"]["nozzle_mm"] == "0.4"
     assert plan.steps[3].output_ports == (("receipt", "workspace_file"),)
-    assert set(plan.steps[0].expected_file_ports) == {"source_mesh"}
+    assert set(plan.steps[0].expected_file_ports) == ({"source_mesh", "native_design"} if number == 2 else {"source_mesh"})
     assert set(plan.steps[1].expected_file_ports) == {"repaired_mesh"}
     assert set(plan.steps[2].expected_file_ports) == {
         "support_preview",
@@ -184,6 +191,9 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
         "reference"
     ]
     assert configured_review["requirement_ids"]
+    if number == 2:
+        assert any("native design" in reference[0].lower() for reference in review.references), review.references
+        assert any("final feature measurements" in reference[0].lower() for reference in review.references), review.references
     assert plan.revisions == {}
     sections = prepare._parse(bound)
     connections = [s["fields"] for s in sections if s["kind"] == "connection"]

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T22:33:41.332968+00:00",
+  "updated_at": "2026-09-22T22:54:24.360881+00:00",
   "goal_authority": "campaign-serial-resolution-goal.md",
   "active_problem": "P001",
   "initial_metrics": {
@@ -48,9 +48,9 @@
       "missing_historical_output": false,
       "difficulty": "easy",
       "status": "in_progress",
-      "diagnosis": "Five checks hit reader.entity_limit on an actual retained repaired mesh.",
-      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
-      "smallest_repair": "Measure the actual mesh and reader budget; qualify a bounded reader repair or a requirement-preserving mesh simplification, then verify the full case.",
+      "diagnosis": "Reader/envelope repaired; canonical 017 has measured internal clearance defect and missing engineering review deliverables.",
+      "hypothesis": "Sweep tessellation and voxel remesh lower the underside near the central-span endpoints; independent feature measurements will verify correction.",
+      "smallest_repair": "Correct bow clearance, retain native design, compare orientations and measure final bores; prepare a linked bounded successor for fresh review.",
       "dependencies": [
         "Exact current source/profile/artifact identity",
         "Mandatory engineering review"
@@ -216,24 +216,65 @@
           "native_cleanup": "cleaned",
           "canonical_run": false,
           "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T22:47:20.840358+00:00",
+          "kind": "canonical_human_changes_requested",
+          "attempt_id": "attempt-017",
+          "run_id": "1f472a8acb4a430a816895f1ed85f5cc",
+          "checkpoint_id": "checkpoint-8e310e7cc440f53f219c9ebe",
+          "subject_digest": "f35423d9cd6951dc046efc2b10867e5eb9941aea4273bda2bf9fb6a142ad0eed",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-017.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-final-clearance.json"
+          ],
+          "native_cleanup": "cleaned",
+          "canonical_run": true,
+          "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T22:54:24.360881+00:00",
+          "kind": "isolated_native_feature_repair",
+          "attempt_id": "qualification-p001-009",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-feature-repair-qualification.json"
+          ],
+          "native_cleanup": "cleaned",
+          "canonical_run": false,
+          "campaign_credit": false
         }
       ],
-      "latest_result": "P001 Printed 02: native repair/reslice passes all 17 automated checks; height 33.9990 mm. Current canonical execution and human review still pending; case remains active.",
+      "latest_result": "P001 Printed 02: isolated native correction measures 25.000 mm clearance and 96.000 mm bore spacing, preserves 114 x 24 x 34 mm envelope, exports native .blend and compares orientations. Bores are 4.500 mm across axes, with 4.4946 mm faceted minimum disclosed for review. 11 focused checks passed. Canonical successor and human review still required; no campaign credit.",
       "dashboard_verification": {
-        "status": "browser_verified",
-        "at": "2026-09-22T22:33:58.699Z",
-        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-native-dashboard.json",
-        "counts": {
+        "status": "qualified correction verified in browser",
+        "at": "2026-09-22T22:54:25.943Z",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-feature-qualified-dashboard.json",
+        "displayed_counts": {
           "datasets_created": 30,
           "combinations_run": 30,
           "processes_with_outputs": 24,
           "valid_data": 18
         },
-        "current": [
-          "1",
+        "current_runs_outputs_approvals": [
+          "2",
           "0",
           "0"
         ]
+      },
+      "canonical_attempt": {
+        "observed_at": "2026-09-22T22:38:11.007216+00:00",
+        "problem_id": "P001",
+        "scenario_id": "printed-replacement-part-02",
+        "attempt_id": "attempt-017",
+        "run_id": "1f472a8acb4a430a816895f1ed85f5cc",
+        "state": "running_source_authoring",
+        "manifest": ".local-run/feature-081-live/campaign-execution/printing-02-attempt-017-pilot.json",
+        "preflight": ".local-run/feature-081-live/campaign-execution/printing-02-attempt-017-preflight.json",
+        "runner_state": ".local-run/feature-081-live/campaign-runner-state/validator082-printing02-attempt-017/printed-replacement-part-02/attempt-017.json",
+        "runner_session": 60164,
+        "native_receipt": ".local-run/feature-081-live/printing02-runtime-attempt-017/lifecycle.json",
+        "local_commit": "f98bec1f",
+        "next": "Observe this exact owned run; do not dispatch duplicate. Preserve mandatory review. P001 remains active."
       }
     },
     {
