@@ -29,6 +29,7 @@ from .workflow_run_record import (
 from .workflow_source_execution import (
     prepare_prompt_workflow,
     execute_prompt_workflow,
+    _approval_settings,
     _error,
 )
 from .workspace_path import WorkspacePath
@@ -112,7 +113,13 @@ async def _prepare(
             != checkpoint.subject.get("input_digests")
             or any(
                 checkpoint.subject.get(key) != plan.steps[cursor].external_action[key]
-                for key in ("binding", "destination", "settings", "action")
+                for key in ("binding", "destination", "action")
+            )
+            or checkpoint.subject.get("settings")
+            != _approval_settings(
+                pending_action=plan.steps[cursor],
+                plan=plan,
+                workspace_dir=workspace_dir,
             )
         ):
             raise WorkflowExternalActionError(

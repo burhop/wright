@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import importlib.util
 import json
 from pathlib import Path
@@ -101,7 +102,26 @@ def prepare(args, directory, tools):
             h.add_reference(sections, brief, step, "original_customer_context")
         return step["id"] + "." + step["id"] + "_result"
 
-    basis = bind(original["define_thermal_case"], "Produce the thermal basis from all original human inputs and sketch. Preserve every CSV candidate, SI conversion, conductivity, density, heat flux, cold temperature, insulation and limit. For the copper case preserve total interface resistance0.15K/W, converted separately using each actual interface area. Do not invent material certifications or extra physics. Record that the supplied numerical source is a real FE operation and analytical comparison is separate.", filename="thermal-basis.md", format="markdown")
+    with (directory / "alternatives.csv").open(encoding="utf-8", newline="") as stream:
+        alternatives = csv.DictReader(stream)
+        has_contact_resistance = "total_contact_resistance_k_per_w" in (alternatives.fieldnames or [])
+        cases = [row["case_id"] for row in alternatives]
+    boundary_guidance = (
+        "Preserve each candidate's total_contact_resistance_k_per_w from its CSV row; "
+        "convert total resistance using each actual interface area. K/W is not an area-specific resistance. "
+        "Use the declared external rail temperature and retain this contact boundary in every required solve. "
+        if has_contact_resistance else
+        "This case has no contact resistance: apply the prescribed cold temperature directly to the full cold face. "
+        "Do not add contact boundaries or sections about other scenarios or materials. "
+    )
+    basis = bind(original["define_thermal_case"],
+        f"Produce the thermal basis for only this scenario ({identity}) from its original human inputs, sketch and attached approved engineering brief. "
+        "Preserve every CSV candidate, SI conversion, conductivity, density, heat flux, cold temperature, insulation and limit. "
+        + boundary_guidance
+        + "Do not invent material certifications or extra physics. Follow the approved engineering brief for the current verification obligations; historical file-presence checks alone do not establish acceptance. "
+        "Describe the staged solver source as a planned numerical operation, not an already computed FE result. Keep analytical screening separate from later actual numerical fields and checks.",
+        filename="thermal-basis.md", format="markdown")
+    h.add_reference(sections, engineering_brief, original["define_thermal_case"], "approved_engineering_brief")
     h.add_reference(sections, image, original["define_thermal_case"], "input_sketch", "reference_images")
     h.add_reference(
         sections, vector, original["define_thermal_case"], "input_vector_sketch", "workspace_file"
@@ -118,7 +138,6 @@ def prepare(args, directory, tools):
     preflight = task("preflight_heat_project", "Verify disposable AgentCAD project")
     preflight_result = bind(preflight, f"Current task: verify the already initialized disposable project and retrieve its source-authoring documentation. Call actual AgentCAD context(cwd={str(project)!r},build_dir='build'), then docs(section='quickstart',cwd={str(project)!r},build_dir='build') and docs(section='helpers',cwd={str(project)!r},build_dir='build'). Success means the response identifies the initialized build123d project at this cwd and retains the actual import/export/show_object documentation for the next authoring stage. An empty model registry and absence of plate source or solver outputs are expected at this stage: subsequent authoring, CAD and FE tasks create them. Return the actual project identity and ready_for_authoring=true when initialization is present; otherwise report the concrete initialization failure. Full-workflow customer goals are background context, not completion criteria for this project check.", "agentcad", customer_context=False)
     author = task("author_plate_source", "Author actual parametric plates and measurements")
-    cases = [line.split(",")[0] for line in (directory / "alternatives.csv").read_text(encoding="utf-8").splitlines()[1:] if line]
     cad_source = str(workspace / output / "plate-source.py")
     authored = bind(author,
         f"Use write_text_document to create {output}/plate-source.py text/plain with real build123d source for all exact alternatives in {workspace / inputs / 'alternatives.csv'}. "
@@ -146,7 +165,9 @@ def prepare(args, directory, tools):
     h.write_once(h.confined(workspace, call_path), data)
     staged.append({"path": call_path, "sha256": h.digest(data), "role": "exact_recorded_numerical_operation"})
     invocation_ref = h.add_file_input(sections, suffix, "exact_solver_arguments", call_path)
-    prepared = bind(solver_inputs, "Review the supplied exact solver invocation against reviewed input and actual CAD measurements. Report geometry hashes, boundary units, total-resistance area conversion and all candidate names. Preserve the invocation byte content; no invented critic approval. Stop with an actionable error if its setup differs from approved input.", filename="solver-preflight.json")
+    prepared = bind(solver_inputs, "Review the supplied exact solver invocation against reviewed input and actual CAD measurements. Report geometry hashes, boundary units and all candidate names. "
+        + boundary_guidance
+        + "Preserve the invocation byte content; no invented critic approval. Stop with an actionable error if its setup differs from approved input.", filename="solver-preflight.json")
     h.add_reference(sections, invocation_ref, solver_inputs, "exact_solver_call")
     h.add_reference(sections, geometry, solver_inputs, "actual_cad_and_measurements")
     h.add_reference(sections, observed, solver_inputs, "observed_measurements_and_hashes")

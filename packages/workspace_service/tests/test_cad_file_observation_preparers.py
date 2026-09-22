@@ -299,6 +299,37 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             for path in manifest["expected_tool_created_files"]
         )
     if script == "heat":
+        basis = next(
+            step for step in plan.steps if step.id.startswith("define_thermal_case_")
+        )
+        solver_setup = next(
+            step for step in plan.steps if step.id.startswith("prepare_exact_fe_call_")
+        )
+        assert "only this scenario" in basis.prompt
+        assert "planned numerical operation" in basis.prompt
+        assert "not an already computed FE result" in basis.prompt
+        assert "approved engineering brief" in basis.prompt
+        brief_input = next(
+            section
+            for section in _parse(source)
+            if section["kind"] == "input"
+            and section["fields"].get("settings", {}).get("workspace_file", "")
+            .endswith("/approved-engineering-brief.json")
+        )
+        assert any(
+            reference.split(".")[0] == brief_input["id"]
+            for _, reference in basis.references
+        )
+        for prompt in (basis.prompt, solver_setup.prompt):
+            if ordinal == 3:
+                assert "total_contact_resistance_k_per_w" in prompt
+                assert "each actual interface area" in prompt
+                assert "K/W is not an area-specific resistance" in prompt
+            else:
+                assert "no contact resistance" in prompt
+                assert "copper" not in prompt.lower()
+                assert "0.15" not in prompt
+                assert "area conversion" not in prompt
         execution = next(
             step
             for step in plan.steps

@@ -17,7 +17,39 @@ User selected Astra for implementation; actual campaign inference remains
   The active goal authorizes broad execution after these gates; the older
   renewal instruction to finish ready but stopped is superseded.
 
-## Latest checkpoint — API deployed, 22 September, 20:50 UTC
+## Latest checkpoint — Heat scope correction, 22 September, 21:08 UTC
+
+Heat 01 attempt 901 reached its first engineering review after actual selected
+AgentCAD/OASiS provider checks. There are now ten isolated canonical renewal
+dispatches, zero broad waves and no additional complete-package/full-pass credit.
+The generated basis added an unrelated copper/contact-resistance section.
+The user explicitly requested changes and an aluminum-only successor, retaining
+4 W, 25 °C cold face, 100 mm length, 2 mm thickness, 40/60 mm widths, k=200 W/(m K),
+no contact resistance and the 45 °C limit. This is not successor approval.
+
+The first normal decision POST was rejected as `approval_stale`; no decision was
+recorded. Read-only comparison found unchanged source/input hashes and exact
+agreement with recomputed enriched review settings, but disagreement with raw
+settings lacking the displayed requirement details. Decision validation now
+recomputes the same pinned settings as checkpoint creation. Altered requirement
+text, source references, profile pins and inputs still reject; deleting displayed
+requirements also rejects. A red/green regression and adjacent review/resume,
+validation and heat/preparer tests report **73 passed**. The fix awaits deployment.
+
+The Heat preparer now selects boundary instructions from this case's actual CSV,
+attaches the approved engineering brief to the basis task and excludes unrelated
+materials/scenarios. Copper/contact-resistance instructions remain for the actual
+contact case only. Attempt 901 is preserved; no successor has been staged yet.
+
+Actual isolated KiCad export through Wright's gateway also succeeded, and the
+independent native reader rejected the retained missing-B1-splice design despite
+a false producer pass flag. Receipt:
+`.local-run/renewal-qualification/harness-native-gateway-proof/receipt.json`,
+SHA-256 `c71e89ce6d7a7dd8a4c2a6fff867bd7c49e686a62e8e2d118709e429d07da848`.
+This is gateway/negative-control evidence, not a correct harness or campaign pass.
+Missing-input assumptions remain unapplied; Solid Edge remains untouched.
+
+## Earlier checkpoint — API deployed, 22 September, 20:50 UTC
 
 The user's API-control clarification has been acted on. The one authorized
 restart completed successfully: API PID **50148** serves commit `ab864f9f`.
