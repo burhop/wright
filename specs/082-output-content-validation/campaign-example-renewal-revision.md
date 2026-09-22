@@ -26,9 +26,9 @@ attempt, reuse an approval, reset a retry budget, or award campaign credit.
 | robot-tracking-diagnosis-01 | `e9984e1231ca` | `a46d4b244494` | aligned_timeline, trajectory_overlay, tracking_metrics, evidence_diagnosis, corrective_hardware_cad, corrective_hardware_fea, commissioning_package |
 | robot-tracking-diagnosis-02 | `2c7662d7ea99` | `10bd909a84e6` | aligned_timeline, trajectory_overlay, tracking_metrics, evidence_diagnosis, corrective_hardware_cad, corrective_hardware_fea, commissioning_package |
 | robot-tracking-diagnosis-03 | `6dd179b77b84` | `83b48192aa2a` | aligned_timeline, trajectory_overlay, tracking_metrics, evidence_diagnosis, corrective_hardware_cad, corrective_hardware_fea, commissioning_package |
-| sensor-fan-harness-01 | `578a06017a82` | `a7cbe8599c73` | harness_plan, pin_schedule, wire_cut_list, bill_of_materials, assembly_instructions, voltage_drop_report, independent_interconnect_check |
-| sensor-fan-harness-02 | `2b2da84918df` | `50b23b4a3692` | harness_plan, pin_schedule, wire_cut_list, bill_of_materials, assembly_instructions, voltage_drop_report, independent_interconnect_check |
-| sensor-fan-harness-03 | `8ef631f19818` | `627ea819ef3d` | harness_plan, pin_schedule, wire_cut_list, bill_of_materials, assembly_instructions, voltage_drop_report, independent_interconnect_check |
+| sensor-fan-harness-01 | `578a06017a82` | `0d25644d3770` | harness_plan, pin_schedule, wire_cut_list, bill_of_materials, assembly_instructions, voltage_drop_report, independent_interconnect_check |
+| sensor-fan-harness-02 | `2b2da84918df` | `18f19982e186` | harness_plan, pin_schedule, wire_cut_list, bill_of_materials, assembly_instructions, voltage_drop_report, independent_interconnect_check |
+| sensor-fan-harness-03 | `8ef631f19818` | `1d2479bb3acb` | harness_plan, pin_schedule, wire_cut_list, bill_of_materials, assembly_instructions, voltage_drop_report, independent_interconnect_check |
 | sensor-interface-pcb-01 | `7e6ca1ae045e` | `7feca0634fbf` | editable_schematic, editable_board, bill_of_materials, fabrication_copper, fabrication_outline, drill_file, electrical_rule_report, design_rule_report |
 | sensor-interface-pcb-02 | `114acb14a26a` | `fc53c00f53c6` | editable_schematic, editable_board, bill_of_materials, fabrication_copper, fabrication_outline, drill_file, electrical_rule_report, design_rule_report |
 | sensor-interface-pcb-03 | `71cf89052a11` | `fecdbda349e2` | editable_schematic, editable_board, bill_of_materials, fabrication_copper, fabrication_outline, drill_file, electrical_rule_report, design_rule_report |

@@ -67,6 +67,43 @@ def expected_connections(directory):
         ]
 
 
+def native_interconnect_contract(directory):
+    """Freeze the released representation independently of generated artifacts.
+
+    Named splice potentials use numbered schematic terminals, not claims about
+    supplier cavity positions. Numeric connector pins retain their exact IDs.
+    The already-declared zone pigtails preserve the original electrical nets.
+    """
+    connections = expected_connections(directory)
+    path = ROOT / "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness" / directory / "connector-requirements.csv"
+    connector_pins = set()
+    with path.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            for reference in row["connector"].split(";"):
+                if not reference.endswith("_power_splices"):
+                    connector_pins.update(f"{reference}:{number}" for number in range(1, int(row["pins"]) + 1))
+    if directory == SOURCES["sensor-fan-harness-03"]:
+        for reference in ("ZX", "ZY"):
+            original, splice = reference + ":1", "S_" + reference + ":POWER"
+            outgoing = [row for row in connections if row["from"] == original and row["net"] == "24V"]
+            if len(outgoing) != 2:
+                raise ValueError("The frozen zone fork no longer has its two declared branches")
+            for row in outgoing:
+                row["from"] = splice
+            connections.append({"from": original, "to": splice, "net": "24V"})
+    connected = {row[key] for row in connections for key in ("from", "to")}
+    endpoints = connected | connector_pins
+    mapping = {endpoint: endpoint for endpoint in sorted(endpoints) if endpoint.split(":")[1].isdigit()}
+    for reference in sorted({endpoint.split(":")[0] for endpoint in endpoints}):
+        labels = sorted(endpoint for endpoint in endpoints if endpoint.startswith(reference + ":") and not endpoint.split(":")[1].isdigit())
+        for number, endpoint in enumerate(labels, 1):
+            mapping[endpoint] = f"{reference}:{number}"
+    if len(set(mapping.values())) != len(mapping):
+        raise ValueError("Native schematic terminal mapping is not one-to-one")
+    return {"expected_connections": connections, "native_pin_map": mapping,
+            "reserved_endpoints": sorted(connector_pins - connected)}
+
+
 def build(scenario_id, directory):
     baseline = load_baseline(scenario_id).model_dump(mode="json")
     prefix = "HARNESS" + scenario_id[-2:]
@@ -148,15 +185,19 @@ def build(scenario_id, directory):
             method="independent_measurement",
             parameters={
                 "operation": "kicad_correspondence",
+                **native_interconnect_contract(directory),
                 "related_roles": [
                     "kicad_schematic",
                     "pin_schedule",
                     "netlist",
                     "kicad_erc",
+                    "kicad_native_netlist",
+                    "kicad_native_inspection",
                 ],
             },
         ),
     ]
+    next(item for item in checks if item["id"] == "kicad-correspondence")["version"] = "2"
     if scenario_id.endswith("03"):
         checks.extend(
             [
@@ -227,7 +268,7 @@ def build(scenario_id, directory):
     return ValidationProfile.model_validate(
         {
             "id": scenario_id + "-full",
-            "version": "1",
+            "version": "2",
             "baseline": baseline,
             "checks": checks,
             "excluded_scope": [],

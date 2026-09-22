@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 from types import SimpleNamespace
+import pytest
 
 from workspace_service.workflow_source_execution import compile_prompt_workflow
 from workspace_service.process_validation.configuration import ValidatorConfiguration
@@ -62,12 +63,15 @@ def test_all_harnesses_bind_wireviz_to_independent_kicad_check(tmp_path: Path) -
         assert author.server_id == "kicad-test"
         assert verify.server_id == "kicad-test"
         assert author.expected_file_ports["kicad_schematic"].endswith("/interconnect/harness.kicad_sch")
-        assert verify.expected_file_ports["kicad_erc"].endswith("/interconnect/erc.json")
+        assert verify.expected_file_ports["kicad_erc"].endswith("/interconnect/native/erc.json")
+        assert verify.expected_file_ports["kicad_native_netlist"].endswith("/interconnect/native/netlist.xml")
+        assert verify.expected_file_ports["kicad_native_inspection"].endswith("/interconnect/native/inspection.json")
+        assert "native_interconnect_export" in verify.prompt
         assert verify.expected_file_ports["net_correspondence"].endswith(
             "/interconnect/net-correspondence.json"
         )
         assert "Zero ERC errors alone is not correspondence" in verify.prompt
-        assert {"kicad_schematic", "kicad_erc", "net_correspondence"}.issubset(
+        assert {"kicad_schematic", "kicad_erc", "net_correspondence", "kicad_native_netlist", "kicad_native_inspection"}.issubset(
             validator.validation["subjects"]
         )
         coverage = json.loads(PREPARER.VALIDATION_COVERAGE.read_text(encoding="utf-8"))
@@ -98,3 +102,11 @@ def test_all_harnesses_bind_wireviz_to_independent_kicad_check(tmp_path: Path) -
         assert "independent_interconnect_check" in {
             item["role"] for item in manifest["expected_outputs"]
         }
+
+
+def test_missing_native_export_tool_blocks_staging_before_writing_files(tmp_path):
+    directory = ROOT / "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/01-desktop-incubator"
+    tools = [tool for tool in _tools() if tool["tool_name"] != "native_interconnect_export"]
+    with pytest.raises(ValueError, match="native_interconnect_export"):
+        PREPARER.prepare(SimpleNamespace(workspace_root=str(tmp_path / "workspace")), directory, tools)
+    assert not (tmp_path / "workspace").exists()

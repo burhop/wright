@@ -85,6 +85,29 @@ Its source is `workflows/campaign-bracket-01-attempt-901.workflow.wflow`.
 No Solid Edge binding, probe or deployment change is involved. Human reviews and
 all numerical limits remain mandatory. There is no output/pass credit yet.
 
+## Harness native correspondence integration — 20:12 UTC
+
+The prospective three-case handoff now requires actual `kicad-cli` XML nets,
+complete ERC and a source-bound inspection, alongside the native schematic and
+released WireViz tables. Version-2 full profiles independently compare actual
+connectors, named splice terminals, exact net membership, separated returns,
+reserve pins and cable/conductor rows against frozen inputs. Named splice pin
+numbers are schematic representations, not claimed supplier cavity positions.
+The original engineering baselines and numerical limits are unchanged.
+
+An actual retained-native wrong-content control rejects the omitted B1 splice
+despite zero native ERC errors and a deliberately false in-memory producer pass
+flag. All six retained input artifacts were unchanged. Evidence is
+`artifacts/campaign-example-renewal/qualification/harness-native-missing-splice-control.json`.
+Sixty-seven focused tests pass; four opt-in native qualification tests are
+explicitly skipped because their completed-runtime fixture is not supplied.
+Ruff, generated-profile/coverage/revision reproducibility and diff checks pass.
+
+This code is **not live-deployed**. Do not restart the API during the active
+Bracket 01 run. Actual gateway qualification, a correct native schematic and a
+complete canonical harness result remain pending. No new harness attempt or
+reviewed resistance assumption was introduced.
+
 ## Proven now
 
 - The approved R1 revision maps all 30 historical scenarios to prospective

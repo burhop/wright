@@ -5,6 +5,8 @@ import importlib.util
 import json
 from pathlib import Path
 import shutil
+from collections import defaultdict
+from xml.etree import ElementTree as ET
 
 import pytest
 
@@ -50,7 +52,7 @@ def automated(profile):
     return ValidationProfile.model_validate(raw)
 
 
-def evaluate(tmp_path, scenario_id, *, corrupt_kicad_binding=False):
+def evaluate(tmp_path, scenario_id, *, corrupt_kicad_binding=False, native_defect=None):
     profile = automated(load_profile(scenario_id))
     source = RETAINED / scenario_id / ATTEMPTS[scenario_id] / "artifacts"
     workspace = tmp_path / "workspace"
@@ -82,7 +84,37 @@ def evaluate(tmp_path, scenario_id, *, corrupt_kicad_binding=False):
     schematic = workspace / "harness.kicad_sch"
     schematic.write_text("(kicad_sch (version 20231120) (generator wright-test))\n", encoding="utf-8")
     erc = workspace / "erc.json"
-    erc.write_text(json.dumps({"errors": [], "warnings": []}), encoding="utf-8")
+    erc.write_text(json.dumps({"$schema": "https://schemas.kicad.org/erc.v1.json", "sheets": [{"violations": []}]}), encoding="utf-8")
+    # Synthetic native fixtures exercise the full reader boundary, not KiCad
+    # provider qualification. Actual native-export evidence is kept separately.
+    parameters = next(check.parameters for check in profile.checks if check.id == "kicad-correspondence")
+    mapping = parameters["native_pin_map"]
+    root = ET.Element("export", version="E")
+    components = ET.SubElement(root, "components")
+    libraries = ET.SubElement(root, "libparts")
+    nets = ET.SubElement(root, "nets")
+    grouped_pins, grouped_nets = defaultdict(set), defaultdict(set)
+    for endpoint in mapping.values():
+        reference, number = endpoint.split(":")
+        grouped_pins[reference].add(number)
+    for reference, numbers in grouped_pins.items():
+        component = ET.SubElement(components, "comp", ref=reference)
+        ET.SubElement(component, "libsource", lib="synthetic", part=reference)
+        library = ET.SubElement(libraries, "libpart", lib="synthetic", part=reference)
+        pins = ET.SubElement(library, "pins")
+        for number in sorted(numbers):
+            ET.SubElement(pins, "pin", num=number)
+    for row in parameters["expected_connections"]:
+        grouped_nets[row["net"]].update((mapping[row["from"]], mapping[row["to"]]))
+    for code, (name, endpoints) in enumerate(grouped_nets.items(), 1):
+        net = ET.SubElement(nets, "net", code=str(code), name="/" + name)
+        for endpoint in sorted(endpoints):
+            reference, number = endpoint.split(":")
+            ET.SubElement(net, "node", ref=reference, pin=number)
+    if native_defect == "missing_splice":
+        components.remove(components.find("comp[@ref='B1']"))
+    native_netlist = workspace / "netlist.xml"
+    native_netlist.write_bytes(ET.tostring(root))
 
     def add_subject(role, path, fmt, step="ecad"):
         subjects.append(
@@ -103,7 +135,17 @@ def evaluate(tmp_path, scenario_id, *, corrupt_kicad_binding=False):
 
     add_subject("kicad_schematic", schematic, "kicad_sch")
     add_subject("kicad_erc", erc, "json")
+    if native_defect != "missing_native_netlist":
+        add_subject("kicad_native_netlist", native_netlist, "xml")
     digests = {item.role: item.sha256 for item in subjects}
+    native_proof = workspace / "inspection.json"
+    native_proof.write_text(json.dumps({
+        "schema": "wright-native-kicad-interconnect-v1", "engine": "kicad-cli",
+        "status": "exported_not_design_approval", "source_sha256": digests["kicad_schematic"],
+        "netlist_sha256": hashlib.sha256(native_netlist.read_bytes()).hexdigest(),
+        "erc_sha256": digests["kicad_erc"], "erc_error_count": 0, "erc_warning_count": 0,
+    }), encoding="utf-8")
+    add_subject("kicad_native_inspection", native_proof, "json")
     correspondence = workspace / "net-correspondence.json"
     correspondence.write_text(
         json.dumps(
@@ -169,3 +211,13 @@ def test_kicad_correspondence_rejects_a_wrong_schematic_hash(tmp_path):
         for finding in outcome.assessment.findings
     )
     assert not outcome.release_eligible
+
+
+@pytest.mark.parametrize("defect", ["missing_native_netlist", "missing_splice"])
+def test_full_profile_cannot_accept_a_pass_report_without_matching_native_wiring(tmp_path, defect):
+    outcome = evaluate(tmp_path, "sensor-fan-harness-01", native_defect=defect)
+    assert not outcome.release_eligible
+    findings = {finding.check_id: finding for finding in outcome.assessment.findings}
+    assert set(findings) == {"voltage-drop", "kicad-correspondence"}
+    if defect == "missing_splice":
+        assert findings["kicad-correspondence"].code == "harness.kicad_correspondence"

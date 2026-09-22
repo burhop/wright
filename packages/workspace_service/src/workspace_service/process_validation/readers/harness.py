@@ -10,6 +10,7 @@ import math
 from core.process_validation import Measurement, ReaderIdentity, canonical_digest
 
 from .base import ValidationIssue
+from .harness_interconnect import compare_native
 
 
 def _defect(code, message):
@@ -59,7 +60,8 @@ class HarnessReader:
         config_digest=canonical_digest(
             {
                 "checks": ["topology", "reserve", "cut-length", "voltage-drop", "kicad-correspondence"],
-                "version": 2,
+                "version": 3,
+                "kicad_correspondence": "native-xml-erc-frozen-pin-map-v1",
             }
         ),
         method="independent_measurement",
@@ -131,6 +133,8 @@ class HarnessReader:
                 related = {
                     item.subject.role: item for item in context.related_snapshots
                 }
+                if len(related) != len(context.related_snapshots):
+                    raise ValueError("Related harness roles must be unique")
                 expected = {
                     "schematic_sha256": related["kicad_schematic"].subject.sha256,
                     "pin_schedule_sha256": related["pin_schedule"].subject.sha256,
@@ -149,10 +153,13 @@ class HarnessReader:
                     or int(document.get("erc_error_count", -1)) != 0
                 ):
                     raise ValueError("correspondence")
-            except (UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+                compare_native(related, check.parameters, context)
+            except ValidationIssue:
+                raise
+            except (UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError, AttributeError, csv.Error) as exc:
                 raise _defect(
                     "harness.kicad_correspondence",
-                    "KiCad schematic, source tables, ERC and exact pin/net correspondence do not agree.",
+                    "KiCad schematic, source tables, native ERC and exact pin/net correspondence do not agree. " + str(exc),
                 ) from exc
             value, unit = True, None
         else:

@@ -513,6 +513,45 @@ and no new final-output/full-pass credit. Printed 01 was rechecked pending with
 actor null and its unchanged source; its review has not been impersonated.
 Solid Edge remains deferred. Missing engineering assumptions remain unapplied.
 
+### Harness native reader integrated; Bracket 01 still running — 20:12 UTC
+
+The earlier unfinished harness reader boundary is now coherently implemented in
+the prospective preparer, version-2 full profiles, coverage identities and R1
+revision ledger. It requires actual native XML/complete ERC/inspection rather than
+trusting correspondence flags. Frozen tables cover all three cases, preserve
+numeric connector pins and reserves, and include B1/B0 plus the already-declared
+zone pigtail splices. Named splice terminal numbering is explicitly a schematic
+representation, not a sourced physical pin layout. Baseline requirement hashes
+are unchanged; missing resistance inputs are still not adopted.
+
+Malformed XML now becomes a normal actionable validation finding; byte/entity/time
+budgets and cancellation are preserved. Tests cover wrong pins/nets, missing
+splices, shorts, reserves, mismatched source/table hashes, fake/incomplete ERC,
+XML entities, equivalent native ordering and all-case profile/preparer/credit
+contracts. **67 focused tests pass; four opt-in native-operation tests skip**
+because no explicit completed native qualification fixture is configured. The
+skips are not qualification passes. Selected Ruff and diff checks pass.
+
+The new reader was also exercised read-only against actual retained attempt-907
+KiCad source, native-export XML/ERC and WireViz tables. Despite zero ERC errors
+and a deliberately false in-memory pass report, it rejects the actual missing
+B1 splice. No native file was edited or recreated. Receipt:
+`artifacts/campaign-example-renewal/qualification/harness-native-missing-splice-control.json`,
+SHA-256 `55a89e5ecd5ec142e47c30b9efed8a55e41487591f66113faf0bce836cf7ea92`.
+This is a real wrong-content reader control, not a correct design, new native
+execution, full-profile assessment, gateway qualification or campaign credit.
+
+**Do not restart the live API yet.** These changes are not loaded into the live
+service. Bracket 01 is still actively authoring CAD after its basis and real
+AgentCAD project preflight. Canonical run ID is
+`9ccf3bd8f9c4438aaaaad725f004fa1c`. Existing integration-only grant recorded the
+intermediate local-generation review; the final engineering review is separate
+and must remain human. No numerical result or final output/pass is claimed.
+Next harness steps: qualify native export through Wright's actual gateway using
+the pinned isolated image, prove the corrected native correspondence boundary,
+then deploy coherently once active execution is safe. Do not dispatch a harness
+successor until missing resistance assumptions are actually reviewed/approved.
+
 ### Interrupted implementation checkpoint and throughput review (earlier snapshot)
 
 The user asked why the campaign graph remains flat. Fresh read-only checks

@@ -1,0 +1,55 @@
+{
+  "at": "2026-09-22T20:11:58.944426+00:00",
+  "status": "passed_actual_native_wrong_content_control",
+  "scope": "Actual retained KiCad schematic/XML/ERC and WireViz tables, deliberate in-memory false pass report; not a correct design, new native execution, gateway qualification, human approval or campaign credit.",
+  "finding": {
+    "code": "harness.kicad_correspondence",
+    "state": "fail",
+    "message": "KiCad schematic, source tables, native ERC and exact pin/net correspondence do not agree. Native KiCad is missing a connector/splice or has the wrong physical pin counts"
+  },
+  "profile_ref": {
+    "id": "sensor-fan-harness-01-full",
+    "version": "2",
+    "sha256": "0d25644d3770b289a24e42bcd241836d3808c88f752a435063e1fce58a2c9149"
+  },
+  "reader": {
+    "id": "harness",
+    "version": "1",
+    "config_digest": "023bb5560b5666c6a479ec2638c4b59c598ec0a667b7defc93fa7e036f17bb63",
+    "method": "independent_measurement",
+    "tool_identity": "wright bounded harness reader v1",
+    "formats": [
+      "csv",
+      "json"
+    ]
+  },
+  "evidence": {
+    "kicad_schematic": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\interconnect-qualification\\harness.kicad_sch",
+      "sha256": "665e59cc33eb81edd3c67bacd70b2867c559b6bad9e1ae8f7cbaf599291714f4"
+    },
+    "pin_schedule": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\generated\\pin-schedule.csv",
+      "sha256": "a24fafac243492a2dffe6cc867d6298a294c51e2e99955b141e20c15aba15335"
+    },
+    "netlist": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\verified\\independent-netlist.csv",
+      "sha256": "4e256022add4b8f89934e34afa74c692b739641bb6c18b5590eef906973c439a"
+    },
+    "kicad_native_netlist": {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\kicad-native-export-proof\\check\\netlist.xml",
+      "sha256": "ff11ca6c1acd4b7c1ac71634dc779f6f056afb7eb147f6d84d5b43ff15cda4c2"
+    },
+    "kicad_erc": {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\kicad-native-export-proof\\check\\erc.json",
+      "sha256": "3803504e24f4b3cf1ec154a403ff88995e63f69d20276cb37c7e531d3b7b7597"
+    },
+    "kicad_native_inspection": {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\kicad-native-export-proof\\check\\inspection.json",
+      "sha256": "d610d8a680a2da09318f3857451c23e3c49203f50c17da233e82ef0d230949a0"
+    }
+  },
+  "inputs_unchanged": true,
+  "native_calls": 0,
+  "campaign_dispatches": 0
+}

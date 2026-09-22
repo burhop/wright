@@ -4,10 +4,12 @@
   "implementation": "WireViz 0.4.1 + Graphviz + source-bound selected engineering operations; explicit Splice alternative",
   "server_alias": "wright-campaign-harness",
   "allowed_tools": ["retrieve_harness_component_records", "generate_harness_package", "verify_harness_package"],
-  "kicad_tools": ["schematic", "analyze", "native_rule_check"],
+  "kicad_tools": ["schematic", "analyze", "native_rule_check", "native_interconnect_export"],
   "kicad_handoff": {
     "schematic": "interconnect/harness.kicad_sch",
-    "erc": "interconnect/erc.json",
+    "erc": "interconnect/native/erc.json",
+    "native_netlist": "interconnect/native/netlist.xml",
+    "native_inspection": "interconnect/native/inspection.json",
     "correspondence": "interconnect/net-correspondence.json"
   },
   "scenarios": {

@@ -308,18 +308,18 @@ IMPLEMENTED_PROFILES = {
 }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sensor-fan-harness-01", "a7cbe8599c739bcfcf8e8f8e20516065a4883d7095f7f9fc7f598cea555bc1f6", "0a90382e419db11f20b5c8d71a2840fa3cee3f9d726d8d5d191298c7d27f4b1b"),
-    ("sensor-fan-harness-02", "50b23b4a36923d6e4b3f34726303441c25c59ef44fd2fd728a8950abc928d6d5", "e2c7a00f6d0f3e6fcf30f642e1f1912f17de5fe71094fa18ac41cc815111b8d6"),
-    ("sensor-fan-harness-03", "627ea819ef3da577411c185d08aec86d4b75e16fe2e14dde84931f229292e62e", "15ae0bc6732aeab953b73b20b6b56d4f088e985fd7159676145cdb0065d4a3a2"),
+    ("sensor-fan-harness-01", "0d25644d3770b289a24e42bcd241836d3808c88f752a435063e1fce58a2c9149", "0a90382e419db11f20b5c8d71a2840fa3cee3f9d726d8d5d191298c7d27f4b1b"),
+    ("sensor-fan-harness-02", "18f19982e186926fceb25053736fb33e64d966dee3f76bec5aa5db66562b4638", "e2c7a00f6d0f3e6fcf30f642e1f1912f17de5fe71094fa18ac41cc815111b8d6"),
+    ("sensor-fan-harness-03", "1d2479bb3acbd5b09823e0719d54cfefa3c92274dd72f80dac35e39b4bdfafa1", "15ae0bc6732aeab953b73b20b6b56d4f088e985fd7159676145cdb0065d4a3a2"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
-        "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
+        "profile_ref": {"id": _scenario_id + "-full", "version": "2", "sha256": _profile_sha},
         "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
         "reader_ids": ["harness@1", "structured@1"],
-        "scope": "Source-schedule topology, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
+        "scope": "Source-schedule topology, independently read native KiCad XML/ERC correspondence including named splice terminals, reserve pins, unique cut arithmetic, contact-inclusive voltage drop, deliverables and required engineering reviews.",
         "limitations": "Retained voltage evidence omits total contact/splice drop and required reviews are not yet authenticated; physical production remains excluded.",
-        "evidence": ["tests/external/process_validation/test_harness.py", "tests/external/process_validation/test_harness_profiles.py"],
+        "evidence": ["tests/external/process_validation/test_harness.py", "tests/external/process_validation/test_harness_profiles.py", "packages/workspace_service/tests/test_harness_native_correspondence.py"],
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
