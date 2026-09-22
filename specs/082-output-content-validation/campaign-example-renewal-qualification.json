@@ -2,6 +2,15 @@
   "schema": "wright.campaign-example-renewal-qualification/1",
   "revision_id": "campaign-example-renewal-r1-2026-09-21",
   "observed_at": "2026-09-22",
+  "execution_hold": {
+    "reason": "user_requested_stop_for_cleanup_and_process_redesign",
+    "resume_requires_user_direction": true,
+    "checkpoint": "specs/082-output-content-validation/campaign-stop-checkpoint-20260922.md",
+    "native_harness_evidence": "artifacts/campaign-example-renewal/qualification/harness-native-20260922/README.md",
+    "native_correspondence_passed": ["sensor-fan-harness-01", "sensor-fan-harness-02"],
+    "native_correspondence_failed": {"sensor-fan-harness-03": "Selected tool rejects reference S_ZX; no correction dispatched"},
+    "new_campaign_credit": false
+  },
   "campaign_dispatch_count": 11,
   "broad_campaign_dispatch_count": 0,
   "isolated_qualification_dispatch_count": 11,

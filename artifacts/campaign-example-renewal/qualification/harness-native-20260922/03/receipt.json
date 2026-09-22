@@ -1,0 +1,70 @@
+{
+  "status": "failed",
+  "started_at": "2026-09-22T21:33:42.696712+00:00",
+  "image": "sha256:5203521497814b23db6eab50ebd2a5cef208ee0bf164bbdf4164eb3268f72cd9",
+  "scenario_id": "sensor-fan-harness-03",
+  "planner_sha256": "6c9b3faee9fdee3069548bc6f69f409ad633373ede47e47d584bae47d3af3f22",
+  "scope": "Actual KiCad create/connect/save/native-export through Wright plus independent pin/net/splice correspondence. No total voltage-drop qualification, resistance assumptions, human approval or canonical campaign credit.",
+  "source_inputs": {
+    "pin_schedule": {
+      "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\harness-campaign\\probe-006\\sensor-fan-harness-03\\artifacts\\generated\\pin-schedule.csv",
+      "sha256": "a2a1eccf8b57e34efb8308914a16388a8f50e2be65a70454f6c522d26ef5f77e"
+    },
+    "netlist": {
+      "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\harness-campaign\\probe-006\\sensor-fan-harness-03\\artifacts\\verified\\independent-netlist.csv",
+      "sha256": "2ce061384ea19e09c6a0ca3b0226ea5cd3bdd0b354171ea4f9346fd149ab7163"
+    }
+  },
+  "profile_ref": {
+    "id": "sensor-fan-harness-03-full",
+    "version": "2",
+    "sha256": "1d2479bb3acbd5b09823e0719d54cfefa3c92274dd72f80dac35e39b4bdfafa1"
+  },
+  "calls": [
+    {
+      "index": 0,
+      "operation": "create",
+      "is_error": false
+    },
+    {
+      "index": 1,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 2,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 3,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 4,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 5,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 6,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 7,
+      "operation": "add_component",
+      "is_error": true
+    }
+  ],
+  "campaign_dispatches": 0,
+  "solid_edge_operations": 0,
+  "error_type": "AssertionError",
+  "error": "{'operation': 'add_component', 'lib_id': 'Connector_Generic:Conn_01x01', 'position': [60, 190], 'reference': 'S_ZX', 'value': 'S_ZX interconnect representation'}",
+  "finished_at": "2026-09-22T21:33:55.676951+00:00"
+}

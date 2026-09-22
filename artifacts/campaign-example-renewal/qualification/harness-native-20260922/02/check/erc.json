@@ -1,0 +1,90 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-09-22T21:33:15+0000",
+    "kicad_version": "9.0.2",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/fa76f886-dd2e-4dd7-9e65-8705d2840ce3",
+            "violations": [
+                {
+                    "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+                    "items": [
+                        {
+                            "description": "Symbol B0 [Conn_01x02]",
+                            "pos": {
+                                "x": 0.5969,
+                                "y": 0.4953
+                            },
+                            "uuid": "828f142b-bec8-469b-ac7b-65e0860e74eb"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+                    "items": [
+                        {
+                            "description": "Symbol JB [Conn_01x03]",
+                            "pos": {
+                                "x": 0.5969,
+                                "y": 1.1938
+                            },
+                            "uuid": "d1b5619f-d703-44e5-99b1-2e218e781f22"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+                    "items": [
+                        {
+                            "description": "Symbol J0 [Conn_01x06]",
+                            "pos": {
+                                "x": 1.2446,
+                                "y": 0.4953
+                            },
+                            "uuid": "fa7842af-3c05-427b-9cba-79b40b8e886a"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+                    "items": [
+                        {
+                            "description": "Symbol JH [Conn_01x03]",
+                            "pos": {
+                                "x": 1.2446,
+                                "y": 1.1938
+                            },
+                            "uuid": "1689a524-34b1-450e-a525-3f1873d7e882"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+                    "items": [
+                        {
+                            "description": "Symbol JA [Conn_01x03]",
+                            "pos": {
+                                "x": 1.905,
+                                "y": 0.4953
+                            },
+                            "uuid": "715f66c2-3ad8-487e-ac44-f64f0e0520d5"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                }
+            ]
+        }
+    ],
+    "source": "harness.kicad_sch"
+}

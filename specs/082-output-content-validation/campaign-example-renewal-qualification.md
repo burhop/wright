@@ -1,5 +1,13 @@
 # Campaign example renewal qualification
 
+**Stopping checkpoint, 22 September 2026:** The user requested cleanup and
+publication before redesigning the process. Campaign continuation is suspended.
+The latest total is 11 isolated canonical qualification dispatches, zero broad
+waves and no new full-package/full-pass credit. Actual isolated native harness
+correspondence passed for 01/02; 03 rejected `S_ZX` before export. See
+[the stopping checkpoint](campaign-stop-checkpoint-20260922.md) and its portable
+evidence bundle. The dated intermediate observations below remain history.
+
 Date: 22 September 2026. Broad campaign dispatches: **zero**. Isolated canonical
 qualification dispatches: **nine** (Bracket 01 attempt 901 started at 20:00:11 UTC;
 Printed 01 attempt 901 awaits human review;

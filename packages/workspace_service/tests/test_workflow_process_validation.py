@@ -130,7 +130,8 @@ def test_profile_preflight_requires_pinned_related_subject_roles(tmp_path):
         },
         "baseline": profile.baseline.reference().model_dump(),
         "subjects": {
-            role: f"port_{index}" for index, role in enumerate(sorted(primary | related))
+            role: f"port_{index}"
+            for index, role in enumerate(sorted(primary | related))
         },
     }
     assert ValidatorConfiguration.model_validate(config).load(str(tmp_path)) == profile

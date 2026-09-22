@@ -24,12 +24,29 @@ def test_successor_runtime_preserves_the_historical_name_and_identity():
         MODULE.selected_runtime("sensor-fan-harness", "../../other-runtime")
 
 
-@pytest.mark.parametrize("defect", [None, "image", "identity", "stopped", "missing", "extra", "writable_input"])
+@pytest.mark.parametrize(
+    "defect",
+    [None, "image", "identity", "stopped", "missing", "extra", "writable_input"],
+)
 def test_runtime_readback_checks_identity_and_exact_mount_modes(tmp_path, defect):
-    mounts = MODULE.campaign_mount_specs(tmp_path.resolve(), "sensor-fan-harness", "attempt-908")
+    mounts = MODULE.campaign_mount_specs(
+        tmp_path.resolve(), "sensor-fan-harness", "attempt-908"
+    )
     receipt = {"container_id": "owned", "image": MODULE.IMAGE, "mounts": mounts}
-    observed = {"Id": "owned", "Image": MODULE.IMAGE, "State": {"Running": True},
-        "Mounts": [{"Type":"bind", "Source":str(m["host"]), "Destination":m["container"], "RW":not m["read_only"]} for m in mounts]}
+    observed = {
+        "Id": "owned",
+        "Image": MODULE.IMAGE,
+        "State": {"Running": True},
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": str(m["host"]),
+                "Destination": m["container"],
+                "RW": not m["read_only"],
+            }
+            for m in mounts
+        ],
+    }
     if defect == "image":
         observed["Image"] = "another-image"
     elif defect == "identity":
@@ -39,7 +56,14 @@ def test_runtime_readback_checks_identity_and_exact_mount_modes(tmp_path, defect
     elif defect == "missing":
         observed["Mounts"].pop()
     elif defect == "extra":
-        observed["Mounts"].append({"Type":"bind", "Source":str(tmp_path), "Destination":"/whole-workspace", "RW":True})
+        observed["Mounts"].append(
+            {
+                "Type": "bind",
+                "Source": str(tmp_path),
+                "Destination": "/whole-workspace",
+                "RW": True,
+            }
+        )
     elif defect == "writable_input":
         observed["Mounts"][0]["RW"] = True
     if defect:
@@ -53,9 +77,7 @@ def test_harness_runtime_uses_separate_exact_attempt_mounts(tmp_path):
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
-    mounts = MODULE.campaign_mount_specs(
-        workspace, "sensor-fan-harness", "attempt-907"
-    )
+    mounts = MODULE.campaign_mount_specs(workspace, "sensor-fan-harness", "attempt-907")
 
     assert len(mounts) == 6
     assert {mount["read_only"] for mount in mounts} == {True, False}
@@ -64,9 +86,7 @@ def test_harness_runtime_uses_separate_exact_attempt_mounts(tmp_path):
         and "attempt-907" in mount["container"]
         for mount in mounts
     )
-    assert all(
-        mount["host"].is_relative_to(workspace.resolve()) for mount in mounts
-    )
+    assert all(mount["host"].is_relative_to(workspace.resolve()) for mount in mounts)
     assert (
         MODULE.RUNTIMES["sensor-fan-harness"]["container"]
         != MODULE.RUNTIMES["sensor-interface-pcb"]["container"]
@@ -83,10 +103,12 @@ def test_pcb_runtime_keeps_original_family_mount_contract(tmp_path):
 
     destinations = {mount["container"] for mount in mounts}
     assert "/work/campaign/sensor-interface-pcb-01/attempt-001/inputs" in destinations
-    assert "/work/campaign/sensor-interface-pcb-03/attempt-001/artifacts" in destinations
+    assert (
+        "/work/campaign/sensor-interface-pcb-03/attempt-001/artifacts" in destinations
+    )
 
 
-def test_harness_qualification_replays_all_released_nets():
+def test_harness_qualification_uses_case_bound_schedules_not_fixed_connector_shortcuts():
     spec = importlib.util.spec_from_file_location(
         "qualify_harness_kicad_runtime",
         ROOT / "scripts/qualify-harness-kicad-runtime.py",
@@ -94,12 +116,6 @@ def test_harness_qualification_replays_all_released_nets():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    assert {row[-1] for row in module.NET_CALLS} == {
-        "24V",
-        "FAN_GND",
-        "PWM",
-        "TACH",
-        "TEMP_SIGNAL",
-        "SIGNAL_RETURN",
-    }
-    assert {row["reference"] for row in module.CONNECTOR_CALLS} == {"J0", "JF", "JS"}
+    assert callable(module.schematic_calls)
+    assert not hasattr(module, "NET_CALLS")
+    assert not hasattr(module, "CONNECTOR_CALLS")

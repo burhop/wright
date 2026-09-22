@@ -98,41 +98,79 @@ def _package_numbers(document, measurements, field, parameters, context):
         efficiency = _finite_number(parameters["heater_efficiency"], positive=True)
         target = _finite_number(parameters["target_temperature_c"])
         ambient = _finite_number(parameters["ambient_temperature_c"])
-        carrier_k = _finite_number(fixed["carrier_thermal_conductivity_w_mk"], positive=True)
-        insulation_k = _finite_number(fixed["insulation_thermal_conductivity_w_mk"], positive=True)
-        film = _finite_number(fixed["external_film_coefficient_w_m2k"], positive=True)
-        contact_max = _finite_number(fixed["maximum_heater_contact_diameter_mm"], positive=True)
-        insulation_min, insulation_max = (
-            _finite_number(v, positive=True) for v in fixed["insulation_thickness_range_mm"]
+        carrier_k = _finite_number(
+            fixed["carrier_thermal_conductivity_w_mk"], positive=True
         )
-        envelope_max = [_finite_number(v, positive=True) for v in fixed["maximum_envelope_mm"]]
+        insulation_k = _finite_number(
+            fixed["insulation_thermal_conductivity_w_mk"], positive=True
+        )
+        film = _finite_number(fixed["external_film_coefficient_w_m2k"], positive=True)
+        contact_max = _finite_number(
+            fixed["maximum_heater_contact_diameter_mm"], positive=True
+        )
+        insulation_min, insulation_max = (
+            _finite_number(v, positive=True)
+            for v in fixed["insulation_thickness_range_mm"]
+        )
+        envelope_max = [
+            _finite_number(v, positive=True) for v in fixed["maximum_envelope_mm"]
+        ]
         mass_max = _finite_number(fixed["maximum_dry_package_mass_kg"], positive=True)
         carrier_max = _finite_number(fixed["maximum_carrier_temperature_c"])
-        shell_key = ("maximum_accessible_shell_temperature_c" if "maximum_accessible_shell_temperature_c" in fixed
-                     else "maximum_other_accessible_shell_temperature_c")
+        shell_key = (
+            "maximum_accessible_shell_temperature_c"
+            if "maximum_accessible_shell_temperature_c" in fixed
+            else "maximum_other_accessible_shell_temperature_c"
+        )
         shell_max = _finite_number(fixed[shell_key])
-        if len(envelope_max) != 3 or insulation_min > insulation_max or efficiency > 1 or target <= ambient:
+        if (
+            len(envelope_max) != 3
+            or insulation_min > insulation_max
+            or efficiency > 1
+            or target <= ambient
+        ):
             raise ValueError("Invalid fixed screening parameters")
     except (KeyError, TypeError, ValueError) as exc:
-        raise ValidationIssue("profile.water_package_parameters",
+        raise ValidationIssue(
+            "profile.water_package_parameters",
             "Package checks require the approved fixed numeric limits and thermal conditions.",
-            category="source_conflict") from exc
+            category="source_conflict",
+        ) from exc
 
     diameter = _finite_number(measurements["heater_contact_diameter_mm"], positive=True)
-    carrier_thickness = _finite_number(measurements["carrier_thickness_mm"], positive=True) / 1000
-    insulation_mm = _finite_number(measurements["insulation_thickness_mm"], positive=True)
+    carrier_thickness = (
+        _finite_number(measurements["carrier_thickness_mm"], positive=True) / 1000
+    )
+    insulation_mm = _finite_number(
+        measurements["insulation_thickness_mm"], positive=True
+    )
     insulation_thickness = insulation_mm / 1000
     mass = _finite_number(measurements["dry_mass_kg"], positive=True)
     envelope = [_finite_number(v, positive=True) for v in measurements["envelope_mm"]]
-    if (diameter > contact_max or not insulation_min <= insulation_mm <= insulation_max
-            or len(envelope) != 3 or any(a > b for a, b in zip(envelope, envelope_max)) or mass > mass_max):
-        raise _defect("water.package_numeric_limit", "Package measurements exceed an approved geometry or mass limit.")
+    if (
+        diameter > contact_max
+        or not insulation_min <= insulation_mm <= insulation_max
+        or len(envelope) != 3
+        or any(a > b for a, b in zip(envelope, envelope_max))
+        or mass > mass_max
+    ):
+        raise _defect(
+            "water.package_numeric_limit",
+            "Package measurements exceed an approved geometry or mass limit.",
+        )
     heat = power * efficiency
-    if not _same_number(document["heater_efficiency"], efficiency) or not _same_number(document["thermal_power_w"], heat):
-        raise _defect("water.package_heat_input", "Package heat input differs from the selected power and frozen efficiency.")
-    area = math.pi * (diameter / 1000)**2 / 4
+    if not _same_number(document["heater_efficiency"], efficiency) or not _same_number(
+        document["thermal_power_w"], heat
+    ):
+        raise _defect(
+            "water.package_heat_input",
+            "Package heat input differs from the selected power and frozen efficiency.",
+        )
+    area = math.pi * (diameter / 1000) ** 2 / 4
     carrier_peak = target + heat / area * carrier_thickness / carrier_k
-    shell_surface = (insulation_k / insulation_thickness * target + film * ambient) / (insulation_k / insulation_thickness + film)
+    shell_surface = (insulation_k / insulation_thickness * target + film * ambient) / (
+        insulation_k / insulation_thickness + film
+    )
     models = {"carrier": [], "insulation": []}
     reader = csv.DictReader(io.StringIO(field.content.decode("utf-8-sig")), strict=True)
     if tuple(reader.fieldnames or ()) != ("model", "x_m", "temperature_c"):
@@ -141,35 +179,72 @@ def _package_numbers(document, measurements, field, parameters, context):
         context.checkpoint(entities=count * 3)
         if None in row or row["model"] not in models:
             raise ValueError("Unexpected thermal field model or columns")
-        models[row["model"]].append((_finite_number(row["x_m"]), _finite_number(row["temperature_c"])))
+        models[row["model"]].append(
+            (_finite_number(row["x_m"]), _finite_number(row["temperature_c"]))
+        )
     for name, thickness, end_temperature in (
         ("carrier", carrier_thickness, carrier_peak),
         ("insulation", insulation_thickness, shell_surface),
     ):
         rows = models[name]
-        if (len(rows) < 2 or abs(rows[0][0]) > 1e-12 or not math.isclose(rows[-1][0], thickness, rel_tol=1e-8, abs_tol=1e-12)
-                or any(right[0] <= left[0] for left, right in zip(rows, rows[1:]))):
-            raise _defect("water.package_field_domain", "Both thermal fields must span their exact measured thicknesses.")
-        if any(not _same_number(t, target + x / thickness * (end_temperature - target)) for x, t in rows):
-            raise _defect("water.package_field_physics", "The field differs from the independently recomputed declared one-dimensional thermal case.")
+        if (
+            len(rows) < 2
+            or abs(rows[0][0]) > 1e-12
+            or not math.isclose(rows[-1][0], thickness, rel_tol=1e-8, abs_tol=1e-12)
+            or any(right[0] <= left[0] for left, right in zip(rows, rows[1:]))
+        ):
+            raise _defect(
+                "water.package_field_domain",
+                "Both thermal fields must span their exact measured thicknesses.",
+            )
+        if any(
+            not _same_number(t, target + x / thickness * (end_temperature - target))
+            for x, t in rows
+        ):
+            raise _defect(
+                "water.package_field_physics",
+                "The field differs from the independently recomputed declared one-dimensional thermal case.",
+            )
     actual_carrier = max(t for _, t in models["carrier"])
     actual_shell = models["insulation"][-1][1]
     if actual_carrier > carrier_max or actual_shell > shell_max:
-        raise _defect("water.package_temperature_limit", "The actual field exceeds an approved temperature limit.")
+        raise _defect(
+            "water.package_temperature_limit",
+            "The actual field exceeds an approved temperature limit.",
+        )
     checks = document["checks"]
     for name, observed_key, observed, limit_key, limit in (
         ("carrier_temperature", "observed_c", actual_carrier, "limit_c", carrier_max),
-        ("accessible_shell_temperature", "observed_c", actual_shell, "limit_c", shell_max),
+        (
+            "accessible_shell_temperature",
+            "observed_c",
+            actual_shell,
+            "limit_c",
+            shell_max,
+        ),
         ("dry_mass", "observed_kg", mass, "limit_kg", mass_max),
     ):
         item = checks[name]
-        if not _same_number(item[observed_key], observed) or _finite_number(item[limit_key]) != limit:
-            raise _defect("water.package_report_numbers", "Reported observations or limits differ from the bound field, measurements or fixed requirements.")
+        if (
+            not _same_number(item[observed_key], observed)
+            or _finite_number(item[limit_key]) != limit
+        ):
+            raise _defect(
+                "water.package_report_numbers",
+                "Reported observations or limits differ from the bound field, measurements or fixed requirements.",
+            )
     item = checks["envelope"]
     reported = [_finite_number(v) for v in item["observed_mm"]]
     limits = [_finite_number(v) for v in item["limit_mm"]]
-    if len(reported) != 3 or limits != envelope_max or not all(_same_number(a, b) for a, b in zip(reported, envelope)):
-        raise _defect("water.package_report_numbers", "Reported envelope values differ from the bound measurements or fixed limits.")
+    if (
+        len(reported) != 3
+        or limits != envelope_max
+        or not all(_same_number(a, b) for a, b in zip(reported, envelope))
+    ):
+        raise _defect(
+            "water.package_report_numbers",
+            "Reported envelope values differ from the bound measurements or fixed limits.",
+        )
 
 
 class WaterHeaterTimelineReader:
@@ -177,7 +252,12 @@ class WaterHeaterTimelineReader:
         id="water-heater-timeline",
         version="1",
         config_digest=canonical_digest(
-            {"schema": _COLUMNS, "crossing": "linear", "package": "hash-bound-numeric-1d-v2", "version": 3}
+            {
+                "schema": _COLUMNS,
+                "crossing": "linear",
+                "package": "hash-bound-numeric-1d-v2",
+                "version": 3,
+            }
         ),
         method="independent_measurement",
         tool_identity="wright bounded water-heater trajectory reader v1",
@@ -335,14 +415,19 @@ class WaterHeaterTimelineReader:
                     "water.package_geometry_identity",
                     "Package verification does not bind the current CAD STEP.",
                 )
-            if document["geometry"]["measurements_sha256"] != measurements.subject.sha256:
+            if (
+                document["geometry"]["measurements_sha256"]
+                != measurements.subject.sha256
+            ):
                 raise _defect(
                     "water.package_measurement_identity",
                     "Package verification does not bind the current CAD measurements.",
                 )
             if measured.get("step_sha256") != geometry.subject.sha256:
-                raise _defect("water.package_measurement_geometry_identity",
-                    "CAD measurements do not identify the current package STEP.")
+                raise _defect(
+                    "water.package_measurement_geometry_identity",
+                    "CAD measurements do not identify the current package STEP.",
+                )
             if document["field"]["sha256"] != field.subject.sha256:
                 raise _defect(
                     "water.package_field_identity",
@@ -381,7 +466,15 @@ class WaterHeaterTimelineReader:
             _package_numbers(document, measured, field, check.parameters, context)
         except ValidationIssue:
             raise
-        except (KeyError, TypeError, ValueError, AttributeError, csv.Error, UnicodeError, ArithmeticError) as exc:
+        except (
+            KeyError,
+            TypeError,
+            ValueError,
+            AttributeError,
+            csv.Error,
+            UnicodeError,
+            ArithmeticError,
+        ) as exc:
             raise _defect(
                 "water.invalid_package_verification",
                 "Thermal-package verification is incomplete or malformed.",

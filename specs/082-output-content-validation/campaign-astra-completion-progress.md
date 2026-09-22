@@ -1,5 +1,18 @@
 # Astra campaign completion progress
 
+## User-directed stop — 22 September 2026
+
+Campaign continuation is suspended at the user's request. Finish cleanup,
+verification, commits and GitHub publication only; do not restart examples.
+The controlling handoff is [the stopping checkpoint](campaign-stop-checkpoint-20260922.md).
+Harness 01 and 02 passed actual isolated Gateway/native correspondence, with
+retained ERC warnings. Harness 03 failed on native reference `S_ZX` and remains
+unqualified; no further correction was dispatched. The completed planner has
+61 passing focused tests. Exact unchanged native receipts and source tables are
+in `artifacts/campaign-example-renewal/qualification/harness-native-20260922/`.
+These proofs do not add campaign credit. Heat 902 and the other human decisions
+remain pending. The older continuation instructions below are historical.
+
 Updated: 22 September 2026. Active goal: `campaign-astra-completion-goal.md`.
 User selected Astra for implementation; actual campaign inference remains
 `openai-codex::gpt-5.6-sol`. One agent, no broad campaign dispatch yet.

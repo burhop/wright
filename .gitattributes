@@ -64,3 +64,7 @@ integrations/rivet/runner/dist/** -text -whitespace
 integrations/rivet/editor/patches/** text eol=lf -whitespace
 integrations/rivet/editor/wrapper/** text eol=lf
 integrations/rivet/runner/src/** text eol=lf
+
+# Captured native qualification files are hash-bound; do not normalize bytes.
+artifacts/campaign-example-renewal/qualification/harness-native-20260922/** -text whitespace=cr-at-eol
+artifacts/engineering-workflow-datasets/retry-evidence/heat01-aluminum-scope-902.json -text whitespace=cr-at-eol

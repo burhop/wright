@@ -1,0 +1,25 @@
+{
+  "endpoint": "/api/workspace/workflow-sources/runs",
+  "execution": {
+    "event_count": 5
+  },
+  "kind": "wright.normal-api-run-lifecycle.v1",
+  "matched_run_id": "ee67fdbdde5a46689b79bf8c3c7b9e73",
+  "matching_mode": "log_source_start_run_id_unavailable",
+  "observed_at": "2026-09-22T15:34:12.664631+00:00",
+  "run": {
+    "path": "runs/campaign-sensor-fan-harness-01-attempt-906/20260922T153351Z-1e6f78fd7d76.json",
+    "run_id": null,
+    "source_digest": "4d0ce2b6a05ad3db768e40cd214c746a9db58cb05464db2da995caa28f715380",
+    "source_matches_current": true,
+    "started_at": "2026-09-22T15:33:51.734816+00:00",
+    "status": "running"
+  },
+  "runtime_evidence": {
+    "path": "runs/campaign-sensor-fan-harness-01-attempt-906/20260922T153351Z-1e6f78fd7d76.json",
+    "sha256": "005afa01f37607e16c60adb8bc3c2b0af50b8f62ba13658902fe1267647ab882"
+  },
+  "schema_version": 1,
+  "workflow_path": "workflows/campaign-sensor-fan-harness-01-attempt-906.workflow.wflow",
+  "workspace_id": "c33593b1-73a8-4056-a7f4-a07a9903dd2d"
+}

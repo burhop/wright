@@ -1,0 +1,19 @@
+{
+  "arguments": {
+    "operation": "add_component",
+    "lib_id": "Connector_Generic:Conn_01x03",
+    "position": [
+      190,
+      50
+    ],
+    "reference": "JFX",
+    "value": "JFX interconnect representation"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"reference\":\"JFX\",\"lib_id\":\"Connector_Generic:Conn_01x03\",\"value\":\"JFX interconnect representation\",\"position\":[190.5,49.53]}"
+    }
+  ]
+}

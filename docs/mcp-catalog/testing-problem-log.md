@@ -2179,3 +2179,16 @@ Result:
   completed Modelica/CAD/thermal-package campaign. See
   `artifacts/campaign-example-renewal/qualification/modelica-renewal-native-export.json`
   and the renewal recipe below the historical Modelica setup notes.
+
+### 2026-09-22 — Selected KiCad harness correspondence
+
+The old native-save qualification omitted required splices. The planner now
+uses the actual released schedule and frozen profile map. Real Wright Gateway
+execution and independent native XML/ERC comparison passed cases 01/02, including
+B1/B0; 4/5 library-configuration warnings are retained with zero ERC errors.
+Case 03 stopped at `add_component`: the selected MCP rejects `S_ZX`. No alias
+repair, reserve-pin/ERC qualification or complete case-03 proof is claimed.
+The user then stopped campaign work for cleanup and process redesign. Keep the
+failure and resume only with new direction. This changes neither public catalog
+qualification nor engineering limits. Portable exact evidence:
+`artifacts/campaign-example-renewal/qualification/harness-native-20260922/`.

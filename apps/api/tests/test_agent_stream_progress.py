@@ -83,7 +83,9 @@ class _AttachFailureRegistry:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("ready_after", [0, 59, None])
-async def test_gateway_readiness_allows_cold_start_but_remains_bounded(monkeypatch, ready_after):
+async def test_gateway_readiness_allows_cold_start_but_remains_bounded(
+    monkeypatch, ready_after
+):
     clock = {"seconds": 0.0}
     monkeypatch.setattr(
         "api.routers.agent.time", SimpleNamespace(monotonic=lambda: clock["seconds"])
@@ -93,7 +95,11 @@ async def test_gateway_readiness_allows_cold_start_but_remains_bounded(monkeypat
         clock["seconds"] += seconds
 
     async def health():
-        return {"state": "connected" if ready_after is not None and clock["seconds"] >= ready_after else "disconnected"}
+        return {
+            "state": "connected"
+            if ready_after is not None and clock["seconds"] >= ready_after
+            else "disconnected"
+        }
 
     monkeypatch.setattr("api.routers.agent.asyncio.sleep", sleep)
     engine = SimpleNamespace(check_health=health)

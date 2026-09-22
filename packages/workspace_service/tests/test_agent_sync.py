@@ -54,7 +54,9 @@ def test_gateway_restart_remains_pending_until_chat_refreshes_it(tmp_path) -> No
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("separate_readiness", [False, True])
-async def test_concurrent_chat_turns_share_one_gateway_refresh(tmp_path, separate_readiness) -> None:
+async def test_concurrent_chat_turns_share_one_gateway_refresh(
+    tmp_path, separate_readiness
+) -> None:
     def sync(_session_id: str, _db_path: str) -> bool:
         return True
 

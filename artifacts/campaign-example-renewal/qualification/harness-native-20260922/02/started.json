@@ -1,0 +1,26 @@
+{
+  "status": "started",
+  "started_at": "2026-09-22T21:32:59.779692+00:00",
+  "image": "sha256:5203521497814b23db6eab50ebd2a5cef208ee0bf164bbdf4164eb3268f72cd9",
+  "scenario_id": "sensor-fan-harness-02",
+  "planner_sha256": "6c9b3faee9fdee3069548bc6f69f409ad633373ede47e47d584bae47d3af3f22",
+  "scope": "Actual KiCad create/connect/save/native-export through Wright plus independent pin/net/splice correspondence. No total voltage-drop qualification, resistance assumptions, human approval or canonical campaign credit.",
+  "source_inputs": {
+    "pin_schedule": {
+      "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\harness-campaign\\probe-006\\sensor-fan-harness-02\\artifacts\\generated\\pin-schedule.csv",
+      "sha256": "4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02"
+    },
+    "netlist": {
+      "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\harness-campaign\\probe-006\\sensor-fan-harness-02\\artifacts\\verified\\independent-netlist.csv",
+      "sha256": "3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8"
+    }
+  },
+  "profile_ref": {
+    "id": "sensor-fan-harness-02-full",
+    "version": "2",
+    "sha256": "18f19982e186926fceb25053736fb33e64d966dee3f76bec5aa5db66562b4638"
+  },
+  "calls": [],
+  "campaign_dispatches": 0,
+  "solid_edge_operations": 0
+}

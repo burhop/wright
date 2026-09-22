@@ -8,48 +8,111 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+from collections import Counter, defaultdict
+import csv
 from datetime import UTC, datetime
 import hashlib
 import json
 from pathlib import Path
+import re
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 
-CONNECTOR_CALLS = (
-    {
-        "operation": "add_component",
-        "lib_id": "Connector_Generic:Conn_01x06",
-        "position": [80, 80],
-        "reference": "J0",
-        "value": "Controller 6-pin",
-    },
-    {
-        "operation": "add_component",
-        "lib_id": "Connector_Generic:Conn_01x04",
-        "position": [140, 70],
-        "reference": "JF",
-        "value": "Fan 4-pin",
-    },
-    {
-        "operation": "add_component",
-        "lib_id": "Connector_Generic:Conn_01x03",
-        "position": [140, 100],
-        "reference": "JS",
-        "value": "Temperature transmitter 3-pin",
-    },
-)
+def schematic_calls(pin_schedule: Path, contract: dict, output_path: str) -> list[dict]:
+    """Plan actual native operations from the produced schedule and fixed map.
 
-NET_CALLS = (
-    ("J0", "1", "JF", "1", "24V"),
-    ("JF", "1", "JS", "1", "24V"),
-    ("J0", "2", "JF", "2", "FAN_GND"),
-    ("J0", "3", "JF", "3", "PWM"),
-    ("JF", "4", "J0", "4", "TACH"),
-    ("JS", "3", "J0", "5", "TEMP_SIGNAL"),
-    ("J0", "6", "JS", "2", "SIGNAL_RETURN"),
-)
+    Named splice terminal numbers are schematic representation only. Numeric
+    connector pin numbers and unconnected reserves remain exactly as declared.
+    This plan is not a native export, ERC result or correspondence measurement.
+    """
+    with pin_schedule.open(encoding="utf-8-sig", newline="") as stream:
+        rows = list(csv.DictReader(stream, strict=True))
+    if not rows or len(rows) > 1000:
+        raise ValueError("A bounded nonempty physical pin schedule is required")
+    mapping = contract["native_pin_map"]
+    required = contract["expected_connections"]
+    reserved = set(contract["reserved_endpoints"])
+
+    def edge(left, right, net):
+        if left == right or not isinstance(net, str) or not net.strip():
+            raise ValueError("Invalid physical connection")
+        return (*sorted((left, right)), net)
+
+    observed = Counter(
+        edge(
+            f"{r['from_connector']}:{r['from_pin']}",
+            f"{r['to_connector']}:{r['to_pin']}",
+            r["net"],
+        )
+        for r in rows
+    )
+    expected = Counter(edge(r["from"], r["to"], r["net"]) for r in required)
+    connected = {endpoint for left, right, _ in observed for endpoint in (left, right)}
+    if (
+        observed != expected
+        or any(count != 1 for count in observed.values())
+        or connected & reserved
+        or set(mapping) != connected | reserved
+        or len(set(mapping.values())) != len(mapping)
+    ):
+        raise ValueError(
+            "Physical schedule or native pin map differs from the fixed interconnect contract"
+        )
+    components = defaultdict(set)
+    for original, native in mapping.items():
+        reference, pin = original.split(":")
+        native_reference, number = native.split(":")
+        if (
+            reference != native_reference
+            or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", reference)
+            or not number.isdigit()
+            or (pin.isdigit() and pin != number)
+        ):
+            raise ValueError(
+                "Native mapping must preserve connector references and physical pin numbers"
+            )
+        components[reference].add(int(number))
+    calls = [{"operation": "create", "name": output_path}]
+    for index, (reference, pins) in enumerate(sorted(components.items())):
+        count = len(pins)
+        if not 1 <= count <= 40 or pins != set(range(1, count + 1)):
+            raise ValueError(
+                "Native connector symbol requires contiguous declared pins"
+            )
+        calls.append(
+            {
+                "operation": "add_component",
+                "lib_id": f"Connector_Generic:Conn_01x{count:02d}",
+                "position": [60 + 65 * (index % 3), 50 + 70 * (index // 3)],
+                "reference": reference,
+                "value": reference + " interconnect representation",
+            }
+        )
+    for row in rows:
+        left, left_pin = mapping[f"{row['from_connector']}:{row['from_pin']}"].split(
+            ":"
+        )
+        right, right_pin = mapping[f"{row['to_connector']}:{row['to_pin']}"].split(":")
+        calls.append(
+            {
+                "operation": "connect_pins_with_labels",
+                "comp1_ref": left,
+                "pin1": left_pin,
+                "comp2_ref": right,
+                "pin2": right_pin,
+                "net_name": row["net"],
+            }
+        )
+    calls.extend(
+        (
+            {"operation": "check_pin_collisions"},
+            {"operation": "validate"},
+            {"operation": "save", "schematic_path": output_path},
+        )
+    )
+    return calls
 
 
 def sha256(path: Path) -> str:
@@ -68,7 +131,14 @@ async def qualify(args: argparse.Namespace) -> dict:
     }
     for path in sources.values():
         if not path.is_file() or not path.read_bytes():
-            raise ValueError(f"Required actual harness evidence is unavailable: {path.name}")
+            raise ValueError(
+                f"Required actual harness evidence is unavailable: {path.name}"
+            )
+
+    from workspace_service.process_validation.profiles import load_profile
+
+    profile = load_profile(args.scenario)
+    check = next(item for item in profile.checks if item.id == "kicad-correspondence")
 
     output_directory = attempt / "artifacts/interconnect-qualification"
     if output_directory.exists():
@@ -78,6 +148,7 @@ async def qualify(args: argparse.Namespace) -> dict:
         f"/work/{relative.as_posix()}/artifacts/interconnect-qualification/"
         "harness.kicad_sch"
     )
+    calls = schematic_calls(sources["pin_schedule"], check.parameters, container_output)
     command = [
         "docker",
         "exec",
@@ -99,26 +170,6 @@ async def qualify(args: argparse.Namespace) -> dict:
             if "schematic" not in advertised:
                 raise ValueError("Selected runtime did not advertise schematic")
 
-            calls = [{"operation": "create", "name": container_output}]
-            calls.extend(CONNECTOR_CALLS)
-            calls.extend(
-                {
-                    "operation": "connect_pins_with_labels",
-                    "comp1_ref": left,
-                    "pin1": left_pin,
-                    "comp2_ref": right,
-                    "pin2": right_pin,
-                    "net_name": net,
-                }
-                for left, left_pin, right, right_pin, net in NET_CALLS
-            )
-            calls.extend(
-                (
-                    {"operation": "check_pin_collisions"},
-                    {"operation": "validate"},
-                    {"operation": "save", "schematic_path": container_output},
-                )
-            )
             for arguments in calls:
                 result = await client.call_tool("schematic", arguments)
                 row = {
@@ -146,6 +197,8 @@ async def qualify(args: argparse.Namespace) -> dict:
         ),
         "container": args.container,
         "scenario_id": args.scenario,
+        "profile_ref": profile.reference().model_dump(mode="json"),
+        "native_pin_map": check.parameters["native_pin_map"],
         "attempt_id": args.attempt,
         "server": server,
         "advertised_tools": advertised,

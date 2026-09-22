@@ -1,5 +1,11 @@
 # Astra goal: complete the approved renewed campaign
 
+> **User stop override — 22 September 2026:** The user requested cleanup, commit
+> and GitHub push before changing the process. Do not continue campaign runs or
+> qualification probes under the earlier goal. Complete checkpoint verification
+> and publication only, then await new direction. See
+> [the stopping checkpoint](campaign-stop-checkpoint-20260922.md).
+
 Prepared 22 September 2026. Select GPT-6 Astra with High reasoning in the task.
 The prompt does not change model settings. Preserve the campaign's separately
 configured inference provider/model unless the user explicitly changes it.

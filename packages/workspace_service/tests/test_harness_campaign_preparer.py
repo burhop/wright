@@ -58,7 +58,10 @@ def test_harness_keeps_original_review_nets_and_all_outputs(tmp_path, ordinal):
     assert "native-interconnect-contract.json" in source
     assert "named splice" in author.prompt
     assert set(native_check.expected_file_ports) == {
-        "kicad_erc", "net_correspondence", "kicad_native_netlist", "kicad_native_inspection",
+        "kicad_erc",
+        "net_correspondence",
+        "kicad_native_netlist",
+        "kicad_native_inspection",
     }
     assert plan.steps[6].id.startswith("collect_harness_")
     review = plan.steps[7]
@@ -106,7 +109,9 @@ def test_harness_keeps_original_review_nets_and_all_outputs(tmp_path, ordinal):
     assert "never zero" in source and "WireViz" in manifest["recorded_substitution"]
     assert "following process validator" in source
     assert "No correctness-validation dashboard credit" not in source
-    assert "independent_interconnect_check" in {item["role"] for item in manifest["expected_outputs"]}
+    assert "independent_interconnect_check" in {
+        item["role"] for item in manifest["expected_outputs"]
+    }
     assert not any(
         path.endswith(".py") for path in manifest["expected_tool_created_files"]
     )

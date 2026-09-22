@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "operation": "connect_pins_with_labels",
+    "comp1_ref": "J0",
+    "pin1": "3",
+    "comp2_ref": "JF",
+    "pin2": "3",
+    "net_name": "PWM"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"net_name\":\"PWM\",\"labels_created\":2,\"label_uuids\":[\"844d2a8e-9e47-470e-a50d-30166bbf4afc\",\"4f742385-a5f9-4f08-bc3c-79505e6cbb34\"]}"
+    }
+  ]
+}

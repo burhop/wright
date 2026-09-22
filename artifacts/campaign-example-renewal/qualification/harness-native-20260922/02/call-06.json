@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "operation": "connect_pins_with_labels",
+    "comp1_ref": "J0",
+    "pin1": "1",
+    "comp2_ref": "B0",
+    "pin2": "1",
+    "net_name": "24V"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"net_name\":\"24V\",\"labels_created\":2,\"label_uuids\":[\"1870a0a6-5ecf-41f4-a03a-73b4957798e0\",\"3ff06e20-fb5f-47e6-909e-aa802dce545d\"]}"
+    }
+  ]
+}

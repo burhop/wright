@@ -109,7 +109,9 @@ class AgentSyncManager:
                 if wait_ready is not None:
                     await wait_ready()
                 if revision != self._gateway_binding_revision:
-                    raise RuntimeError("Workspace binding changed during gateway refresh")
+                    raise RuntimeError(
+                        "Workspace binding changed during gateway refresh"
+                    )
             except Exception as exc:
                 self._gateway_refresh_error = str(exc)
                 raise

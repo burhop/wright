@@ -1,0 +1,11 @@
+{
+  "schema": "wright-native-kicad-interconnect-v1",
+  "status": "exported_not_design_approval",
+  "engine": "kicad-cli",
+  "source_path": "/work/output/harness.kicad_sch",
+  "source_sha256": "4bc7c3997642caf6829849db3f51ff0578f18d462ed74a5f06dea48bc471c789",
+  "netlist_sha256": "d6487d72a6bb2d70c287b06a71eb4f0119f87dd3aeb784d8eb642e01448c4020",
+  "erc_sha256": "3d00eba0299fc339460215b15dffc6fb856342f2dbdd73ba87f985794dbdb9dc",
+  "erc_error_count": 0,
+  "erc_warning_count": 4
+}

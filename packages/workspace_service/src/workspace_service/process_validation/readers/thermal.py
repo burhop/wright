@@ -122,9 +122,7 @@ class ThermalFieldReader:
             observed = self._selection(snapshot, check, context, related, evidence)
             unit = None
         elif operation == "geometry_analysis_correspondence":
-            observed = self._correspondence(
-                snapshot, check, context, related, evidence
-            )
+            observed = self._correspondence(snapshot, check, context, related, evidence)
             unit = None
         else:
             if snapshot.subject.format != "csv":
@@ -316,7 +314,10 @@ class ThermalFieldReader:
             )
         try:
             document = json.loads(snapshot.content)
-            if document.get("schema") != "wright-heat-geometry-analysis-correspondence-v1":
+            if (
+                document.get("schema")
+                != "wright-heat-geometry-analysis-correspondence-v1"
+            ):
                 raise ValueError("schema")
             records = document["cases"]
             if not isinstance(records, list):
@@ -324,7 +325,13 @@ class ThermalFieldReader:
             by_id = {record["case_id"]: record for record in records}
             if len(by_id) != len(records):
                 raise ValueError("duplicate case")
-        except (UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        except (
+            UnicodeError,
+            json.JSONDecodeError,
+            KeyError,
+            TypeError,
+            ValueError,
+        ) as exc:
             raise _defect(
                 "thermal.invalid_correspondence",
                 "Thermal correspondence must contain one uniquely identified record per case.",

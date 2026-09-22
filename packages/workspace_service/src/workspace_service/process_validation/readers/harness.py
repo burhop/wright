@@ -59,7 +59,13 @@ class HarnessReader:
         version="1",
         config_digest=canonical_digest(
             {
-                "checks": ["topology", "reserve", "cut-length", "voltage-drop", "kicad-correspondence"],
+                "checks": [
+                    "topology",
+                    "reserve",
+                    "cut-length",
+                    "voltage-drop",
+                    "kicad-correspondence",
+                ],
                 "version": 3,
                 "kicad_correspondence": "native-xml-erc-frozen-pin-map-v1",
             }
@@ -142,10 +148,11 @@ class HarnessReader:
                     "erc_sha256": related["kicad_erc"].subject.sha256,
                 }
                 if (
-                    document.get("schema")
-                    != "wright-harness-kicad-correspondence-v1"
+                    document.get("schema") != "wright-harness-kicad-correspondence-v1"
                     or document.get("status") != "pass"
-                    or any(document.get(key) != digest for key, digest in expected.items())
+                    or any(
+                        document.get(key) != digest for key, digest in expected.items()
+                    )
                     or any(
                         document.get(key) != []
                         for key in ("missing_rows", "extra_rows", "mismatched_rows")
@@ -156,10 +163,19 @@ class HarnessReader:
                 compare_native(related, check.parameters, context)
             except ValidationIssue:
                 raise
-            except (UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError, AttributeError, csv.Error) as exc:
+            except (
+                UnicodeError,
+                json.JSONDecodeError,
+                KeyError,
+                TypeError,
+                ValueError,
+                AttributeError,
+                csv.Error,
+            ) as exc:
                 raise _defect(
                     "harness.kicad_correspondence",
-                    "KiCad schematic, source tables, native ERC and exact pin/net correspondence do not agree. " + str(exc),
+                    "KiCad schematic, source tables, native ERC and exact pin/net correspondence do not agree. "
+                    + str(exc),
                 ) from exc
             value, unit = True, None
         else:

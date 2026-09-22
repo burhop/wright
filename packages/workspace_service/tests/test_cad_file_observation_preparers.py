@@ -194,7 +194,10 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
         assert "centers and tangent endpoints" in basis.prompt
         assert "uniquely determines them" in basis.prompt
         assert "Delete an optional" in basis.prompt
-        assert "source authoring may not choose its geometry after approval" in basis.prompt
+        assert (
+            "source authoring may not choose its geometry after approval"
+            in basis.prompt
+        )
         assert "original target as an unproven acceptance criterion" in basis.prompt
         assert "genuine conflict among mandatory constraints" in basis.prompt
         assert (
@@ -313,7 +316,8 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
 
         thermal_profile = load_profile(f"heat-spreader-sizing-{ordinal:02d}-full")
         numerical_requirements = [
-            requirement.text for requirement in thermal_profile.baseline.requirements
+            requirement.text
+            for requirement in thermal_profile.baseline.requirements
             if requirement.id.endswith(("-ANALYTICAL", "-BALANCE", "-REFINEMENT"))
         ]
         assert len(numerical_requirements) == 3
@@ -323,7 +327,9 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             section
             for section in _parse(source)
             if section["kind"] == "input"
-            and section["fields"].get("settings", {}).get("workspace_file", "")
+            and section["fields"]
+            .get("settings", {})
+            .get("workspace_file", "")
             .endswith("/approved-engineering-brief.json")
         )
         assert any(

@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "operation": "connect_pins_with_labels",
+    "comp1_ref": "JS",
+    "pin1": "3",
+    "comp2_ref": "J0",
+    "pin2": "5",
+    "net_name": "TEMP_SIGNAL"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"net_name\":\"TEMP_SIGNAL\",\"labels_created\":2,\"label_uuids\":[\"b3298fbb-3159-4e54-b463-6a0ed7e9073a\",\"40da5205-b2f2-4184-aec1-9305430eedfd\"]}"
+    }
+  ]
+}

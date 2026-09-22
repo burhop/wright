@@ -1,0 +1,9 @@
+wire_id,cable_id,conductor,from_connector,from_pin,to_connector,to_pin,net,view,color_requirement
+W001,W001,1,J0,1,B1,POWER,24V,numbered mating-face cavities; source drawing controls position,red
+W002,W002,1,B1,POWER,JF,1,24V,numbered mating-face cavities; source drawing controls position,red
+W003,W003,1,B1,POWER,JS,1,24V,numbered mating-face cavities; source drawing controls position,red
+W004,W004,1,J0,2,JF,2,FAN_GND,numbered mating-face cavities; source drawing controls position,black
+W005,W005,1,J0,3,JF,3,PWM,numbered mating-face cavities; source drawing controls position,blue
+W006,W006,1,JF,4,J0,4,TACH,numbered mating-face cavities; source drawing controls position,yellow
+W007,W007,1,JS,3,J0,5,TEMP_SIGNAL,numbered mating-face cavities; source drawing controls position,white
+W008,W008,1,J0,6,JS,2,SIGNAL_RETURN,numbered mating-face cavities; source drawing controls position,gray

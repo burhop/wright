@@ -86,7 +86,9 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     }
     assert diagnosis.output_path.endswith("/diagnosis.md")
     assert "What remains unknown; Next inexpensive test" in diagnosis.prompt
-    assert "[Path and sideways error](analysis/trajectory-overlay.svg)" in diagnosis.prompt
+    assert (
+        "[Path and sideways error](analysis/trajectory-overlay.svg)" in diagnosis.prompt
+    )
     assert review.title == "Review findings and choose the next test"
     if ordinal == 1:
         workflow = next(s for s in _parse(source) if s["kind"] == "workflow")
@@ -145,7 +147,13 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     )
     assert configured_review["requirement_ids"]
     assert plan.revisions == {}
-    assert set(measurement.expected_file_ports) == {"timeline", "plot", "metrics", "alignment_plot", "plot_guide"}
+    assert set(measurement.expected_file_ports) == {
+        "timeline",
+        "plot",
+        "metrics",
+        "alignment_plot",
+        "plot_guide",
+    }
     assert "time-linked sideways error in millimetres" in measurement.prompt
     assert "plot reading guide" in diagnosis.prompt
     assert set(plan.steps[0].expected_file_ports) == {"conversion_manifest"}

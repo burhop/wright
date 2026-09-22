@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "operation": "connect_pins_with_labels",
+    "comp1_ref": "B1",
+    "pin1": "1",
+    "comp2_ref": "JS",
+    "pin2": "1",
+    "net_name": "24V"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"net_name\":\"24V\",\"labels_created\":2,\"label_uuids\":[\"5d295f9b-3389-4a2b-b6e7-c5885d3c1252\",\"02da208d-f858-4094-a264-b4f28b35d343\"]}"
+    }
+  ]
+}
