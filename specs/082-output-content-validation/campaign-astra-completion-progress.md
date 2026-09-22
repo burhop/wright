@@ -138,15 +138,53 @@ registered its exact long named-file result in an **isolated** validation DB:
 `.local-run/renewal-qualification/water01-result-identity-repair/proof.json`.
 The live database and historical failure were not changed; no solver/model rerun
 or campaign credit was created. This is material repair proof, not a passed case.
-Deploy the committed fix with a verified owned API restart before any successor.
-The three failed water attempts trigger the no-progress gate: no expensive retry
-until repair deployment/readiness and exact successor mounts/grants are verified.
+The three failed water attempts triggered the no-progress gate. The following
+successor was permitted only after isolated repair proof, verified deployment,
+actual inference and exact successor mount/grant checks; no retry ledger was reset.
+
+## Latest live case: water 904
+
+- Result-identity fix: committed `acb4ea77`. Verified API restart completed at
+  18:20:52 UTC, listener PID 43776. All 309 reviewed workflow documents, all local
+  workflow bytes, source revisions, committed runtime identity and the five
+  explicitly preserved dirty Markdown documents matched before/after. Receipt:
+  `.local-run/renewal-qualification/result-identity-api-restart/verification.json`.
+- The broader validator sweep exposed reader-list metadata drift in nine renewed
+  profiles. Commit `e5e7127d` reconciles those lists with the already pinned actual
+  checks. No profile hash, engineering limit or qualification outcome changed.
+  The complete follow-up sweep passed **106 tests**; Ruff/diff checks passed.
+- Fresh no-network runtime `wright-082-modelica-r904` passed actual native
+  simulation, ten-file export/readback/idempotence and all six manifest reads.
+  The manifests are byte-identical to the retained qualified kit catalog.
+  Registration: `2a1008b4-9345-4dbc-b04f-5e2d1be27f30`, 15 tools. Exact mounts:
+  qualification `attempt-export-qualification-904` plus `attempt-904` for the
+  three approved water subjects. Prior 903 runtime/evidence remain untouched.
+  Runtime receipts: `.local-run/renewal-qualification/modelica-runtime-904/`.
+- The actual campaign model returned `READY` after provider rebinding at
+  18:23:51 UTC, no tools/errors. Receipt:
+  `.local-run/renewal-qualification/campaign-inference-result-identity-deployment-20260922.json`.
+- Water 904 was prepared from an actual template instance, with an isolated
+  AgentCAD project and the corrected path handoff. Preflight: zero errors,
+  the same four reviewed native `scenario.json` basename warnings, no prior runs.
+- It was dispatched **once** at 18:24:28 UTC; run
+  `3c5c5df74d654915a82a6b02fcade9b8`. At 18:26:34 UTC the 350 W and 500 W
+  simulations and native exports had completed (20 evidence files); 700 W was
+  running. The formerly failing result-registration boundary is cleared in actual
+  canonical execution. Initial integration review used its exact grant. Manifest:
+  `.local-run/renewal-qualification/water01-canonical-904/modelica-attempt-904-linked.json`.
+  State: `.local-run/renewal-qualification/water01-canonical-904/runner-state/`.
+  This is the **sixth isolated qualification dispatch**, not a broad campaign wave
+  or a full-scope pass. The global `water01-canonical-result-identity` episode links
+  retained attempt 903 and the isolated native registration proof with at most
+  two corrections. Observe this runner; do not redispatch when a tool wait ends.
+- Both dashboard HTML/status endpoints responded after recovery. Their retained
+  historical/current projections are not automatically credits for isolated runs.
 
 ## Next safe work
 
-1. Finish verified deployment of the result-identity fix. Preserve 903's failure
-   and native artifacts. Stage a separate successor only after exact provider
-   mount and grant checks; the present Modelica runtime mounts 903, not 904.
+1. Observe the existing water 904 runner through its next meaningful checkpoint.
+   Verify the formerly failing registration boundary, then the CAD/thermal
+   artifacts and every required review. Preserve all failed historical attempts.
 2. Preserve the recovered API/profile and actual inference receipt. A dashboard
    or health response alone is not an engineering result. Check existing runtime
    and retry state before any follow-on dispatch.

@@ -1,11 +1,13 @@
 # Campaign example renewal qualification
 
 Date: 22 September 2026. Broad campaign dispatches: **zero**. Isolated canonical
-qualification dispatches: **five** (harness 906/907 and water 901/902 retained
+qualification dispatches: **six** (harness 906/907 and water 901/902 retained
 failures; water 903 failed after successful native simulation/export at 18:07:16
 UTC due to a composite result-identifier length defect). Separate provider probes
 are not canonical workflow dispatches. Exact evidence, repair proof and deployment
 state are recorded in `campaign-astra-completion-progress.md`; no pass is claimed.
+Water 904 started at 18:24:28 UTC after the material repair, verified deployment,
+actual inference and a separate qualified native runtime; observe its live state.
 
 ## Proven now
 
