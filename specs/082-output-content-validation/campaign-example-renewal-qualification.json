@@ -91,7 +91,7 @@
       {"attempt_id": "attempt-902", "run_id": "9a39d55ceead467e84524ccc83d1be21", "status": "failed", "failure": "native export child_unavailable; historical runtime lacked same-attempt export mounts"},
       {"attempt_id": "attempt-903", "run_id": "61a39518aefe46f5beb7983b39660f43", "status": "failed", "observed_at": "2026-09-22T18:07:16Z", "failure": "Native simulation and ten-file export succeeded; registering the exact composite result identity exceeded SubjectBinding's single-identifier length bound", "manifest": ".local-run/renewal-qualification/water01-canonical-903/path-correction/modelica-attempt-903.json"},
       {"attempt_id": "attempt-904", "run_id": "3c5c5df74d654915a82a6b02fcade9b8", "status": "failed", "observed_at": "2026-09-22T18:29:09Z", "failure": "Completed native candidate/refined study, then the shared instruction incorrectly required the other mobile-brewer scenario's battery inputs", "manifest": ".local-run/renewal-qualification/water01-canonical-904/modelica-attempt-904-linked.json", "server_id": "2a1008b4-9345-4dbc-b04f-5e2d1be27f30"},
-      {"attempt_id": "attempt-905", "run_id": "7b07f263952c4a0da10616cf936ea9f3", "status": "running", "observed_at": "2026-09-22T18:48:14Z", "scope": "Scenario-specific Modelica study followed by actual CAD/package qualification and version-2 numeric validator; no complete package or pass yet", "manifest": ".local-run/renewal-qualification/water01-canonical-905/modelica-attempt-905-linked.json", "server_id": "7d9e7af6-e1f3-4463-9749-8ccdf5a39918"}
+      {"attempt_id": "attempt-905", "run_id": "7b07f263952c4a0da10616cf936ea9f3", "status": "failed", "observed_at": "2026-09-22T18:53:06Z", "failure": "Full native Modelica study and CAD preflight completed, then source authoring correctly refused missing insulation density and outer-shell material/density. No package or full pass. Engineering addendum proposed for human review, not adopted.", "manifest": ".local-run/renewal-qualification/water01-canonical-905/modelica-attempt-905-linked.json", "server_id": "7d9e7af6-e1f3-4463-9749-8ccdf5a39918"}
     ],
     "registered_server_id": "4328a581-59ea-49d4-a90e-fb40fe8f75b7",
     "evidence": {
@@ -101,11 +101,23 @@
     "scope": "Actual native simulation, ten-file sealed export, host byte/hash verification and repeated-export idempotence; not canonical full-package or public catalog qualification."
   },
   "remaining_native_gates": [
-    "Harness: run the corrected dedicated KiCad path canonically through ERC and correspondence; targeted swapped-pin and omitted-net checks already pass statically.",
+    "Harness: isolated native XML/ERC export is proven, but the independent reader must compare actual pins/nets (including missing B1 splice), not producer pass flags. Qualify the new gateway/canonical handoff and obtain the missing resistance basis before claiming completion.",
     "Sheet metal: produce an actual Solid Edge flat pattern and prove headless reopen/preservation against it.",
     "Water heater: run the approved Modelica-to-AgentCAD-to-scikit-fem package chain and reopen the exact CAD/field evidence.",
     "Robot: run the approved diagnosis-to-corrective-CAD-to-CalculiX chain in an isolated successor; do not approve or reuse Robot 010.",
     "Run one representative normal-workspace workflow per family or bind still-current sufficient prior native evidence, then verify result access through Workflows."
   ],
+  "missing_input_proposal": {
+    "path": "specs/082-output-content-validation/campaign-missing-inputs-addendum-proposal.md",
+    "status": "prepared_for_review_not_approved_or_applied",
+    "scope": "Water 01-03 material/density basis and Harness 01-03 contact/splice resistance allowances",
+    "authority": "User approved preparing the proposal; actual engineering values still need a decision."
+  },
+  "native_interconnect_export_followup": {
+    "status": "direct_native_export_pass_consumer_and_gateway_pending",
+    "evidence": "artifacts/campaign-example-renewal/qualification/kicad-native-interconnect-export.json",
+    "focused_tests": 29,
+    "campaign_runs": 0
+  },
   "overall_status": "qualification_in_progress_not_campaign_ready"
 }

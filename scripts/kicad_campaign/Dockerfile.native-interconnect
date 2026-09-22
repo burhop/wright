@@ -1,0 +1,5 @@
+# Selected-provider follow-on only; never adds KiCad to Wright's base image.
+FROM wright:kicad-campaign-qualified-base-20260912
+USER root
+COPY native_rule_check.py /opt/wright-kicad/native_rule_check.py
+USER agent

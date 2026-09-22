@@ -15,9 +15,18 @@ campaign-model assessment against the retained native study. No complete package
 or full-scope pass is claimed; see `qualification/water01-study-scope-repair.json`
 under `artifacts/campaign-example-renewal/`.
 Water 905 was dispatched once at 18:46:25 UTC with that correction and the
-stricter version-2 package validator. All candidate runs/exports completed; the
-study assessment was running at the latest 18:48:14 step snapshot. Observe the
-existing runner rather than dispatching a duplicate. No package/pass is claimed.
+stricter version-2 package validator. The complete study finished at 18:50:50;
+CAD preflight finished at 18:51:36. At 18:53:06 the run failed because source
+authoring correctly refused missing insulation density and outer-shell
+material/density. All 46 native/study files remain; no package/pass is claimed.
+The user authorized preparing missing assumptions for review, not adopting them.
+See `campaign-missing-inputs-addendum-proposal.md`. No successor is dispatched.
+
+A separate native KiCad exporter passed an actual direct MCP check at 18:59:16,
+preserving the retained schematic and exporting its XML netlist, complete ERC
+and source/result hashes. The known omitted B1 splice remains a defect; the
+new reader/canonical handoff and gateway qualification are still pending.
+Evidence: `artifacts/campaign-example-renewal/qualification/kicad-native-interconnect-export.json`.
 
 ## Proven now
 

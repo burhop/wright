@@ -279,12 +279,65 @@ actual container/image identity and exact read-only/read-write mounts before
 registration. Twelve focused installer/handoff tests pass; no new KiCad runtime
 has been created yet and no provider rebinding is performed during Water 905.
 
+## Water 905 terminal state and proposed missing inputs
+
+At 18:53:06 UTC Water 905 failed in `author_package_cad_source` after the full
+Modelica study completed (18:50:50) and AgentCAD preflight completed (18:51:36).
+All 46 native/study files are retained. The author correctly refused to invent
+insulation density and outer-shell material/density for the dry-mass calculation.
+The approved brief was inspected and does omit those values. The runtime log is
+terminal `failed`; runner state is `blocked`, not an active worker. The runner
+also records `Lifecycle API event snapshot differs from raw evidence`; preserve
+this diagnostic and reconcile it before claiming complete evidence export.
+Do not relabel this as a human-review checkpoint or a completed design.
+
+The user explicitly authorized **preparing** source-backed material selections
+and contact/splice resistance assumptions for review. The new
+`campaign-missing-inputs-addendum-proposal.md` proposes stainless shell/vessel
+density 7900 kg/m³, aluminum carrier density 2700 kg/m³ and a mineral-wool
+screening density of 100 kg/m³, with manufacturer references and limitations.
+It proposes 10 mΩ per mated connector endpoint and 10 mΩ per occupied splice
+port. The splice value is explicitly an allocated fictional allowance, not a
+verified WAGO rating. These values are **not approved or applied**. No existing
+requirement, mass/temperature/drop limit, staged input or profile was changed.
+
+## Isolated native KiCad export helper
+
+The selected-provider helper now exports actual KiCad XML nets and complete ERC
+in a new confined directory, binding their hashes to the unchanged schematic.
+Seventeen focused helper tests pass, including nine new fail-closed export
+tests. The combined helper/installer/handoff sweep passes 29 tests; Ruff and
+diff checks pass (only the existing unwritable pytest cache warning remains).
+
+A no-network layer over the retained selected KiCad base produced image
+`sha256:5203521497814b23db6eab50ebd2a5cef208ee0bf164bbdf4164eb3268f72cd9`.
+An isolated direct MCP run at 18:59:16 advertised 19 tools and successfully
+exported the real retained 907 qualification schematic. It was mounted read-only,
+its hash stayed unchanged, and the temporary container exited with `--rm`.
+Native ERC still has zero errors and three retained warnings. The missing B1
+splice remains a defect. This is **not** an exact correspondence pass, gateway
+qualification, deployment or canonical credit. Compact evidence is
+`artifacts/campaign-example-renewal/qualification/kicad-native-interconnect-export.json`;
+raw artifacts are `.local-run/renewal-qualification/kicad-native-export-proof/`.
+
+The existing installer/provider remains on the historical 18-tool image. Before
+a successor: integrate actual XML/inspection roles, independently check all
+native pins/nets and ERC against frozen requirements and the released WireViz
+schedule, version the profile, then prove the 19-tool path through Wright's
+gateway. The current reader still trusts the producer's empty discrepancy lists
+and must not be treated as sufficient qualification. Also inspect harness
+`resistance_terms`: its name-prefix classifier misses B0/B1 splice ports; fix
+that counting boundary before applying any reviewed resistance basis.
+
+Both dashboard HTML URLs returned HTTP 200 after these checks. No additional
+canonical case or broad wave was launched. Counts are not earned by these probes.
+
 ## Next safe work
 
-1. Observe the existing Water 905 runner through CAD/thermal artifacts and every
-   required review. Water 904 is terminal and must not be redispatched,
-   overwritten or relabeled. Do not restart the API or rebind providers while
-   the current case is executing.
+1. Obtain the actual decision on the proposed engineering addendum before using
+   its values. Water 904 and 905 are terminal and must not be redispatched,
+   overwritten or relabeled. Continue independent repair work without treating
+   approval to prepare a proposal as approval of its assumptions.
 2. Preserve the recovered API/profile and actual inference receipt. A dashboard
    or health response alone is not an engineering result. Check existing runtime
    and retry state before any follow-on dispatch.
