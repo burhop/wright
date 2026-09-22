@@ -84,6 +84,17 @@ def test_all_harnesses_bind_wireviz_to_independent_kicad_check(tmp_path: Path) -
             Path(result["draft"]).with_name("staging-manifest.json").read_text(encoding="utf-8")
         )
         assert manifest["kicad_server_id"] == "kicad-test"
+        assert manifest["prepared_output_directories"] == [
+            f"campaign/{result['scenario_id']}/renewal-unit/artifacts/interconnect"
+        ]
+        assert (
+            tmp_path
+            / f"workspace-{ordinal}"
+            / "campaign"
+            / result["scenario_id"]
+            / "renewal-unit"
+            / "artifacts/interconnect"
+        ).is_dir()
         assert "independent_interconnect_check" in {
             item["role"] for item in manifest["expected_outputs"]
         }

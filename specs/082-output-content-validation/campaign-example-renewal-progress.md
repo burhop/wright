@@ -7,7 +7,7 @@ Updated: 22 September 2026. Model: GPT-5.6 Sol, reasoning High, one agent.
 | R0 safe baseline | complete | See `campaign-example-renewal-baseline.md`. Robot 010 remains exported and awaiting manual approval; no broad queue is running. |
 | R1 revised lineup | complete | Explicitly approved 22 September 2026. See `campaign-example-renewal-decision.md` and `.json`; feasibility findings remain in `campaign-example-renewal-feasibility.md`. |
 | R2 implementation | complete | The prospective revision ledger maps all 30 cases. Ten canonical preparers stage the approved brief; the six expanded families have coherent tool handoffs, outputs and full-profile validation contracts. Historical attempts and credit remain unchanged. |
-| R3 isolated qualification | in progress | 106 focused tests pass. Actual jig-to-Bambu and clean-container headless-DXF-provider qualification pass. Real KiCad harness, Solid Edge-to-DXF preservation, water-package and Robot corrective-design canonical runs remain. |
+| R3 isolated qualification | in progress | Actual jig-to-Bambu, clean-container headless DXF and the corrected dedicated harness KiCad native-save path pass. Harness attempt 907 completed the WireViz stages but exposed the old PCB-only KiCad mount; its failed history is preserved and the replacement runtime was proven without another dispatch. Full harness correspondence/ERC, Solid Edge-to-DXF preservation, water-package and Robot corrective-design canonical runs remain. |
 | R4 restart readiness | not started | Broad dispatch remains prohibited; finish ready to run and stopped. |
 
 ## Current decision
@@ -39,3 +39,21 @@ wrapper cannot be reused unchanged for jigs; the harness-to-KiCad translation
 needs an independent pin/net correspondence check in addition to ERC; and the
 catalog-qualified headless DXF server is not active in the current workspace and
 has not yet consumed a representative Solid Edge flat pattern.
+
+## Harness qualification checkpoint
+
+Isolated canonical attempt 906 stopped at the first harness call because the
+retained WireViz container was not running. After the exact container was restored,
+native MCP initialize/list passed with all three selected tools. Attempt 907 then
+completed component retrieval, WireViz generation and independent harness checks,
+but the KiCad authoring step could not save because the selected KiCad container
+contained only historical PCB mounts.
+
+The repair does not alter or reuse either failed run. The KiCad installer now
+supports a separate `sensor-fan-harness` runtime with six exact per-attempt mounts,
+and harness staging creates the empty confined `artifacts/interconnect` directory
+before the unprivileged native tool starts. An isolated replay against the actual
+attempt-907 pin schedule and independent netlist created three connector symbols,
+connected all six released net identities, validated, and saved a 17,487-byte
+native schematic. Full canonical ERC/correspondence remains pending; attempt 908
+was not created or dispatched.

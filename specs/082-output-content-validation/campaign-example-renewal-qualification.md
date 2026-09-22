@@ -1,6 +1,7 @@
 # Campaign example renewal qualification
 
-Date: 22 September 2026. Campaign dispatches: **zero**.
+Date: 22 September 2026. Broad campaign dispatches: **zero**. Isolated harness
+qualification dispatches: **two** (attempts 906 and 907, both retained failures).
 
 ## Proven now
 
@@ -17,15 +18,29 @@ Date: 22 September 2026. Campaign dispatches: **zero**.
   tools: direct MCP, Wright gateway and Wright gateway MCP all created, saved,
   reopened and independently inspected the same mechanical DXF geometry; the
   out-of-workspace write was rejected and cleanup passed.
+- The recovered WireViz provider passed MCP initialize/list with its three selected
+  operations. Canonical attempt 907 then completed exact component retrieval,
+  native WireViz generation and independent harness verification before exposing
+  a separate KiCad mount defect.
+- A dedicated no-network harness KiCad runtime now mounts only the three exact
+  attempt inputs read-only and artifact roots read/write. Against attempt 907's
+  actual pin schedule and independent netlist it performed 14 native operations
+  and saved a 17,487-byte `.kicad_sch` with SHA-256
+  `665e59cc33eb81edd3c67bacd70b2867c559b6bad9e1ae8f7cbaf599291714f4`.
 
 ## Not yet proven
 
+The harness evidence proves the corrected native save boundary, not a completed
+canonical result: attempt 907 remains failed at the original PCB-only KiCad
+server, and ERC plus exact WireViz/KiCad correspondence have not yet run in one
+canonical execution. No attempt 908 was created.
+
 The AutoCAD result qualifies the selected headless provider, not the actual
 Solid Edge-to-DXF handoff. No retained sheet-metal attempt contains a Solid Edge
-flat-pattern DXF, so producer-to-consumer preservation remains open. The new
-WireViz-to-KiCad, water-package and Robot corrective-design paths also still need
-real isolated canonical runs. Existing unit/profile evidence proves fail-closed
-contracts but is not a substitute for those native executions.
+flat-pattern DXF, so producer-to-consumer preservation remains open. The
+water-package and Robot corrective-design paths also still need real isolated
+canonical runs. Existing unit/profile evidence proves fail-closed contracts but
+is not a substitute for those native executions.
 
 Therefore R3 remains in progress and R4 campaign readiness has not been claimed.
 The broad queue remains stopped. Robot 010 remains pending human review and is

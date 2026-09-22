@@ -19,6 +19,14 @@ def main():
     parser.add_argument("--workspace-root", required=True)
     parser.add_argument("--database", required=True)
     parser.add_argument("--server-id", required=True)
+    parser.add_argument("--agentcad-server-id", default="agentcad")
+    parser.add_argument("--workspace-file-server-id", default="wright-workspace-files")
+    parser.add_argument("--oasis-server-id", required=True)
+    parser.add_argument(
+        "--initialize-agentcad",
+        action="store_true",
+        help="Initialize a fresh isolated AgentCAD project for each staged case",
+    )
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--attempt", default="attempt-001")
     parser.add_argument("--campaign-state", default="artifacts/engineering-workflow-datasets/status.json")
@@ -58,7 +66,33 @@ def main():
         draft_root = directory / "prepared"
         prepared = draft_root / identity / args.attempt / "staging-manifest.json"
         if not prepared.exists():
-            subprocess.run([sys.executable, "scripts/prepare-modelica-dataset-campaign.py", "--workspace-root", args.workspace_root, "--draft-root", str(draft_root), "--server-id", args.server_id, "--scenario", identity, "--instance-source", str(original), "--tool-catalog", str(tool_path), "--attempt", args.attempt], check=True, timeout=120)
+            command = [
+                sys.executable,
+                "scripts/prepare-modelica-dataset-campaign.py",
+                "--workspace-root",
+                args.workspace_root,
+                "--draft-root",
+                str(draft_root),
+                "--server-id",
+                args.server_id,
+                "--agentcad-server-id",
+                args.agentcad_server_id,
+                "--workspace-file-server-id",
+                args.workspace_file_server_id,
+                "--oasis-server-id",
+                args.oasis_server_id,
+                "--scenario",
+                identity,
+                "--instance-source",
+                str(original),
+                "--tool-catalog",
+                str(tool_path),
+                "--attempt",
+                args.attempt,
+            ]
+            if args.initialize_agentcad:
+                command.append("--initialize-agentcad")
+            subprocess.run(command, check=True, timeout=360)
         subprocess.run([sys.executable, "scripts/enroll_engineering_dataset_case.py", "--prepared", str(prepared), "--campaign-state", args.campaign_state, "--database", args.database, "--session", args.session, "--source-path", path, "--output", str(execution), "--api", args.api], check=True, timeout=180)
         cases.append(json.loads(execution.read_text(encoding="utf-8")))
     combined = root / ("modelica-" + args.attempt + ".json")

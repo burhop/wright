@@ -15,6 +15,17 @@ from workspace_service.workflow_source_execution import compile_prompt_workflow,
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_modelica_enroller_forwards_the_selected_package_servers():
+    source = (ROOT / "scripts/enroll-modelica-dataset-campaign.py").read_text(
+        encoding="utf-8"
+    )
+
+    assert 'parser.add_argument("--oasis-server-id", required=True)' in source
+    assert '"--agentcad-server-id"' in source
+    assert '"--workspace-file-server-id"' in source
+    assert '"--initialize-agentcad"' in source
+
+
 def module(name, relative):
     spec = importlib.util.spec_from_file_location(name, ROOT / relative)
     value = importlib.util.module_from_spec(spec)

@@ -36,6 +36,8 @@ def prepare(args,directory,available):
     inputs=f"campaign/{identity}/{args.attempt}/inputs"
     output=f"campaign/{identity}/{args.attempt}/artifacts"
     workspace=Path(args.workspace_root).resolve()
+    interconnect_directory=helpers.confined(workspace,output+"/interconnect")
+    interconnect_directory.mkdir(parents=True,exist_ok=False)
     draft=Path(args.draft_root).resolve()/identity/args.attempt
     if draft.exists():
         raise ValueError("Preserve prior draft; choose a fresh attempt")
@@ -234,7 +236,7 @@ def prepare(args,directory,available):
     target=draft/"bound.workflow.wflow"
     target.write_text(result,encoding="utf-8")
     report={"schema_version":1,"scenario_id":identity,"template_id":manifest["template_id"],"attempt_id":args.attempt,"status":"prepared_not_dispatched","source":str(target),"source_sha256":helpers.digest(result.encode()),"template_source_sha256":helpers.digest(TEMPLATE.read_bytes()),
-            "requires_template_instance_api":not bool(args.instance_source),"workspace_root":str(workspace),"output_root":output,"input_manifest":staged,"tool_allowlist":selected,"expected_outputs":renewal.expected_outputs(manifest),"compiled_stages":[step.id for step in plan.steps],"preserved_original_stages":original_tasks,"preserved_original_edges":[edge["id"] for edge in original_edges],"expected_tool_created_files":[path for step in plan.steps for path in step.expected_files],"approval_policy_request":{"mode":"auto","scope":"integration_test","test_destinations":[]},"recorded_substitution":config["implementation"],"kicad_server_id":kicad_server}
+            "requires_template_instance_api":not bool(args.instance_source),"workspace_root":str(workspace),"output_root":output,"prepared_output_directories":[output+"/interconnect"],"input_manifest":staged,"tool_allowlist":selected,"expected_outputs":renewal.expected_outputs(manifest),"compiled_stages":[step.id for step in plan.steps],"preserved_original_stages":original_tasks,"preserved_original_edges":[edge["id"] for edge in original_edges],"expected_tool_created_files":[path for step in plan.steps for path in step.expected_files],"approval_policy_request":{"mode":"auto","scope":"integration_test","test_destinations":[]},"recorded_substitution":config["implementation"],"kicad_server_id":kicad_server}
     helpers.publish_input_binding_evidence(report, directory)
     (draft/"staging-manifest.json").write_text(json.dumps(report,indent=2)+"\n")
     return {"scenario_id":identity,"draft":str(target),"stages":len(plan.steps),"executed":False}

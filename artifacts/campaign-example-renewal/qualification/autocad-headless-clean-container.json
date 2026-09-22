@@ -1,0 +1,219 @@
+{
+  "server_id": "autocad-mcp-u-c4n",
+  "observed_at": "2026-09-22T14:31:07.674101+00:00",
+  "wright_revision": "5a9650522f0aa5d2e1d86d6145c12d8da52d3e2d",
+  "environment": "renewal-r1-clean-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/U-C4N/Autocad-MCP",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_path_boundary_error",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "AutoCAD headless mechanical DXF authoring",
+  "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+  "installed_items": [
+    "autocad-mcp-pro 1.5.1 source abc2a82e7128358b9e228a7d9442b37019aa3fe5"
+  ],
+  "source_references": [],
+  "prerequisites": [
+    "git and ezdxf installed only inside disposable container"
+  ],
+  "server_info": {
+    "name": "AutoCAD MCP Pro",
+    "title": null,
+    "version": "3.4.7",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "04d85c86a8331dd9f96b6edf3434fe0cb36735934032fce0fe08a8f369f89bf2",
+  "tool_count": 47,
+  "save_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "path": {
+        "description": "Full destination path including extension",
+        "type": "string"
+      },
+      "format": {
+        "default": "",
+        "description": "Output format override: dwg, dxf, dwt. Default: derive from the path extension (the extension is authoritative).",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 15714,
+    "sha256": "39672a215cef2c08ae0561006b6bd6babc5b5a1a8a4cf56c0d5bc81a70d1ad81",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "gateway_outcome": {
+    "bytes": 15714,
+    "sha256": "19742a5a684c9607c5edafebfce2080285c2588051b2c7d27c722589737f8bf4",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 15714,
+    "sha256": "574848aca5427382fb147a78552d784e5d03073f614ac58882d4a9bf65f71a39",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "cleanup": "passed",
+  "finished_at": "2026-09-22T14:32:27.122790+00:00",
+  "duration_seconds": 83.46,
+  "duration_source": "monotonic_clock"
+}

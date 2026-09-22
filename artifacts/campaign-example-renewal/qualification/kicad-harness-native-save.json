@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "status": "passed_actual_native_save",
+  "observed_at": "2026-09-22T16:15:35.002331+00:00",
+  "scope": "Isolated selected-provider initialize/list/create/connect/validate/save using actual harness attempt evidence; no canonical campaign credit",
+  "container": "wright-082-harness-kicad-runtime",
+  "scenario_id": "sensor-fan-harness-01",
+  "attempt_id": "attempt-907",
+  "server": {
+    "meta": null,
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "experimental": {},
+      "logging": {},
+      "prompts": {
+        "listChanged": false
+      },
+      "resources": {
+        "subscribe": false,
+        "listChanged": false
+      },
+      "tools": {
+        "listChanged": true
+      },
+      "completions": null,
+      "tasks": null,
+      "extensions": {
+        "io.modelcontextprotocol/ui": {}
+      }
+    },
+    "serverInfo": {
+      "name": "KiCad",
+      "title": null,
+      "version": "3.4.6",
+      "websiteUrl": null,
+      "icons": null
+    },
+    "instructions": "KiCad EDA \u2014 design schematics and lay out PCBs. Most tools are routers that dispatch on an `operation=` argument (e.g. pcb(operation=\"place_footprint\"), drc(operation=\"autofix\"), library(operation=\"search\")); the rest are standalone (build_pcb_from_schematic, estimate_board_size, suggest_placement, panelize_pcb).\n\nCritical rules:\n- NEVER hand-route. Don't use pcb add_trace/add_via to route a board \u2014 use autoroute(operation=\"run\") (wraps FreeRouter). LLM-placed traces short and violate clearances.\n- NEVER guess library/footprint names \u2014 they change between KiCad versions. Search first with library(operation=\"search\").\n- NEVER modify one PCB file with concurrent calls. PCB ops are load/modify/save subprocesses; parallel writes corrupt the file. Serialize them.\n- Verify with drc(operation=\"run\") and audit(operation=\"all\") before finishing.\n\nSee AGENT-INSTRUCTIONS.md for the full workflow, TOOLS.md for the operation reference."
+  },
+  "advertised_tools": [
+    "analyze",
+    "analyze_placement_telemetry",
+    "audit",
+    "autoroute",
+    "build_pcb_from_schematic",
+    "design",
+    "drc",
+    "estimate_board_size",
+    "export",
+    "lcsc",
+    "library",
+    "native_rule_check",
+    "panelize_pcb",
+    "pcb",
+    "project",
+    "schematic",
+    "schematic_layout",
+    "suggest_placement"
+  ],
+  "calls": [
+    {
+      "operation": "create",
+      "is_error": false
+    },
+    {
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "operation": "check_pin_collisions",
+      "is_error": false
+    },
+    {
+      "operation": "validate",
+      "is_error": false
+    },
+    {
+      "operation": "save",
+      "is_error": false
+    }
+  ],
+  "inputs": {
+    "pin_schedule": {
+      "path": "campaign/sensor-fan-harness-01/attempt-907/artifacts/generated/pin-schedule.csv",
+      "sha256": "a24fafac243492a2dffe6cc867d6298a294c51e2e99955b141e20c15aba15335"
+    },
+    "independent_netlist": {
+      "path": "campaign/sensor-fan-harness-01/attempt-907/artifacts/verified/independent-netlist.csv",
+      "sha256": "4e256022add4b8f89934e34afa74c692b739641bb6c18b5590eef906973c439a"
+    }
+  },
+  "output": {
+    "path": "campaign/sensor-fan-harness-01/attempt-907/artifacts/interconnect-qualification/harness.kicad_sch",
+    "sha256": "665e59cc33eb81edd3c67bacd70b2867c559b6bad9e1ae8f7cbaf599291714f4",
+    "bytes": 17487
+  },
+  "campaign_runs": 0
+}
