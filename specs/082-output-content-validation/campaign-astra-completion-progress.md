@@ -237,11 +237,54 @@ for the three approved water cases, plus its isolated native store. **No canonic
 905 source has been enrolled or dispatched yet.** Commit and load the repaired
 validator with the existing scoped restart helper before enrolling that source.
 
+## Live Water 905 and harness preparation
+
+Commit `df928bd2` contains the numeric validator repair. The owned API restart
+completed at 18:44:16 UTC, listener 41624, with source/module identity, all
+workspace workflow files, all reviewed document revisions and the five named
+dirty Markdown documents preserved. Receipt:
+`.local-run/renewal-qualification/water-numeric-validator-api-restart/verification.json`.
+Actual Sol inference returned `READY` at 18:45:28 UTC without tools/errors;
+receipt `campaign-inference-water-numeric-20260922.json` in the qualification root.
+
+Water 905 is enrolled and **dispatched once** at 18:46:25 UTC. Run:
+`7b07f263952c4a0da10616cf936ea9f3`. Source digest:
+`d3cf19889ec4baf3de0ca2b19b37e9b03221c84d89940e9af4314136bcff9b57`.
+The pinned full profile is version 2, digest
+`bb5f22e55ccfe857ff60a612a950d80486a9f2cdbb3514854ef9986fc49b4bbd`.
+Manifest: `.local-run/renewal-qualification/water01-canonical-905/modelica-attempt-905-linked.json`.
+State and exports are sibling `runner-state/` and `exports/` directories.
+The distinct persisted `water01-canonical-study-scope` correction episode links
+failed 904 and the actual read-only scope-repair proof, maximum two corrections.
+Prior export/identifier retry episodes remain intact. Preflight had zero errors,
+four reviewed native metadata basename warnings, no prior runs, exact runtime
+mount/image readback and unchanged qualified manifests. All three baseline
+simulations/exports completed; the selected study stage began at 18:48:14 UTC.
+This is the seventh isolated qualification dispatch, not a broad queue wave.
+
+An independent read-only probe of the retained 907 **qualification** schematic
+used actual KiCad CLI netlist extraction and ERC, leaving the schematic hash
+unchanged. Native ERC reported zero errors and three library-configuration
+warnings; retain those warnings. The netlist contains three connectors and six
+nets, but the human pin schedule explicitly includes splice B1:POWER, absent
+from that qualification schematic. Thus this is **not** an exact correspondence
+pass. Evidence: `.local-run/renewal-qualification/harness907-erc-inspection.json`.
+No 908 dispatch is authorized by this result alone. The harness correspondence
+reader also needs actual native-net comparison rather than trusting the AI's
+empty missing/extra row lists. Total voltage drop still lacks an approved contact
+and splice resistance basis in 907; do not substitute zero or claim a full pass.
+
+The KiCad installer now supports a separately named successor and validates
+actual container/image identity and exact read-only/read-write mounts before
+registration. Twelve focused installer/handoff tests pass; no new KiCad runtime
+has been created yet and no provider rebinding is performed during Water 905.
+
 ## Next safe work
 
-1. Load the numeric validator repair, then prepare and preflight the scope-corrected water successor; observe it through
-   CAD/thermal artifacts and every required review. Water 904 is terminal and
-   must not be redispatched, overwritten or relabeled.
+1. Observe the existing Water 905 runner through CAD/thermal artifacts and every
+   required review. Water 904 is terminal and must not be redispatched,
+   overwritten or relabeled. Do not restart the API or rebind providers while
+   the current case is executing.
 2. Preserve the recovered API/profile and actual inference receipt. A dashboard
    or health response alone is not an engineering result. Check existing runtime
    and retry state before any follow-on dispatch.

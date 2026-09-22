@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import subprocess
 import urllib.parse
 import urllib.request
@@ -29,6 +30,30 @@ RUNTIMES = {
         ),
     },
 }
+
+
+def selected_runtime(family, container=None):
+    runtime = dict(RUNTIMES[family])
+    if container is not None:
+        if not re.fullmatch(r"wright-[a-zA-Z0-9-]{1,80}", container):
+            raise ValueError("Use an explicit confined Wright runtime name")
+        if container != runtime["container"]:
+            runtime["name"] += " (" + container + ")"
+        runtime["container"] = container
+    return runtime
+
+
+def validate_runtime(info, report):
+    if info.get("Id") != report.get("container_id") or info.get("Image") != report.get("image"):
+        raise ValueError("Observed KiCad runtime identity/image differs from the setup receipt")
+    if not info.get("State", {}).get("Running"):
+        raise ValueError("Selected KiCad runtime is stopped")
+    actual = {(str(Path(m["Source"]).resolve()).casefold(), m["Destination"], not m["RW"])
+              for m in info.get("Mounts", []) if m["Type"] == "bind"}
+    expected = {(str(Path(m["host"]).resolve()).casefold(), m["container"], m["read_only"])
+                for m in report["mounts"]}
+    if actual != expected:
+        raise ValueError("Observed KiCad mounts differ from the exact attempt receipt")
 
 
 def campaign_mount_specs(workspace: Path, family: str, attempt: str) -> list[dict]:
@@ -62,6 +87,7 @@ def main():
     parser.add_argument("--workspace-root", type=Path, required=True)
     parser.add_argument("--family", choices=sorted(RUNTIMES), default="sensor-interface-pcb")
     parser.add_argument("--attempt", default="attempt-001")
+    parser.add_argument("--container", help="Separate owned runtime for a successor; never replaces an existing container")
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--session", default="wright-local-e3dc0ef1-06da-45dd-83b9-290347814f8a")
     parser.add_argument("--output", type=Path, required=True)
@@ -69,7 +95,7 @@ def main():
     if not args.attempt or any(character not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_" for character in args.attempt):
         raise ValueError("Invalid attempt component")
     workspace = args.workspace_root.resolve(strict=True)
-    runtime = RUNTIMES[args.family]
+    runtime = selected_runtime(args.family, args.container)
     container = runtime["container"]
     report = json.loads(args.output.read_text(encoding="utf-8")) if args.output.exists() else {
         "operations": [],
@@ -78,7 +104,7 @@ def main():
         "family": args.family,
         "attempt": args.attempt,
     }
-    if report.get("container") != container or report.get("family") != args.family or report.get("attempt") != args.attempt:
+    if report.get("container") != container or report.get("family") != args.family or report.get("attempt") != args.attempt or report.get("image") != IMAGE:
         raise ValueError("Existing setup receipt belongs to a different runtime family or attempt")
     def persist():
         args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -99,6 +125,8 @@ def main():
         launched = subprocess.run(command, capture_output=True, text=True, timeout=60, check=True)
         report.update(container_started=True, container_id=launched.stdout.strip(), mounts=mounts)
         persist()
+    observed = json.loads(subprocess.check_output(["docker", "inspect", container], text=True, timeout=30))[0]
+    validate_runtime(observed, report)
     if "server_id" not in report:
         result = request(args.api, "POST", "/api/mcp/servers", {"name": runtime["name"], "type": "stdio", "command": ["docker", "exec", "-i", "-e", "PYTHONPATH=", container, "/opt/kicad-mcp/.venv/bin/python", "/opt/wright-kicad/server.py"], "category": "electronics", "description": runtime["description"], "source_url": "https://github.com/blwfish/kicad-mcp/tree/bcc6f11de92e5f47cb7dde1d24565f7779b2fbed", "default_enabled": False, "risk_level": "medium", "deployment_mode": "local-only"})
         report["server_id"] = result["server_id"]

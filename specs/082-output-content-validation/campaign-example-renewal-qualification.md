@@ -1,7 +1,7 @@
 # Campaign example renewal qualification
 
 Date: 22 September 2026. Broad campaign dispatches: **zero**. Isolated canonical
-qualification dispatches: **six** (harness 906/907 and water 901/902 retained
+qualification dispatches: **seven** (harness 906/907 and water 901/902 retained
 failures; water 903 failed after successful native simulation/export at 18:07:16
 UTC due to a composite result-identifier length defect). Separate provider probes
 are not canonical workflow dispatches. Exact evidence, repair proof and deployment
@@ -14,6 +14,10 @@ Scenario-specific instructions now pass 30 focused tests and a read-only actual
 campaign-model assessment against the retained native study. No complete package
 or full-scope pass is claimed; see `qualification/water01-study-scope-repair.json`
 under `artifacts/campaign-example-renewal/`.
+Water 905 was dispatched once at 18:46:25 UTC with that correction and the
+stricter version-2 package validator. All candidate runs/exports completed; the
+study assessment was running at the latest 18:48:14 step snapshot. Observe the
+existing runner rather than dispatching a duplicate. No package/pass is claimed.
 
 ## Proven now
 

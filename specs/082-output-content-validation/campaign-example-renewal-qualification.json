@@ -2,9 +2,9 @@
   "schema": "wright.campaign-example-renewal-qualification/1",
   "revision_id": "campaign-example-renewal-r1-2026-09-21",
   "observed_at": "2026-09-22",
-  "campaign_dispatch_count": 6,
+  "campaign_dispatch_count": 7,
   "broad_campaign_dispatch_count": 0,
-  "isolated_qualification_dispatch_count": 6,
+  "isolated_qualification_dispatch_count": 7,
   "static_qualification": {
     "status": "pass",
     "scenario_contracts": 30,
@@ -90,7 +90,8 @@
       {"attempt_id": "attempt-901", "run_id": "86088c0fe4db4788a053ba98e14560a6", "status": "failed", "failure": "historical Modelica container stopped"},
       {"attempt_id": "attempt-902", "run_id": "9a39d55ceead467e84524ccc83d1be21", "status": "failed", "failure": "native export child_unavailable; historical runtime lacked same-attempt export mounts"},
       {"attempt_id": "attempt-903", "run_id": "61a39518aefe46f5beb7983b39660f43", "status": "failed", "observed_at": "2026-09-22T18:07:16Z", "failure": "Native simulation and ten-file export succeeded; registering the exact composite result identity exceeded SubjectBinding's single-identifier length bound", "manifest": ".local-run/renewal-qualification/water01-canonical-903/path-correction/modelica-attempt-903.json"},
-      {"attempt_id": "attempt-904", "run_id": "3c5c5df74d654915a82a6b02fcade9b8", "status": "failed", "observed_at": "2026-09-22T18:29:09Z", "failure": "Completed native candidate/refined study, then the shared instruction incorrectly required the other mobile-brewer scenario's battery inputs", "manifest": ".local-run/renewal-qualification/water01-canonical-904/modelica-attempt-904-linked.json", "server_id": "2a1008b4-9345-4dbc-b04f-5e2d1be27f30"}
+      {"attempt_id": "attempt-904", "run_id": "3c5c5df74d654915a82a6b02fcade9b8", "status": "failed", "observed_at": "2026-09-22T18:29:09Z", "failure": "Completed native candidate/refined study, then the shared instruction incorrectly required the other mobile-brewer scenario's battery inputs", "manifest": ".local-run/renewal-qualification/water01-canonical-904/modelica-attempt-904-linked.json", "server_id": "2a1008b4-9345-4dbc-b04f-5e2d1be27f30"},
+      {"attempt_id": "attempt-905", "run_id": "7b07f263952c4a0da10616cf936ea9f3", "status": "running", "observed_at": "2026-09-22T18:48:14Z", "scope": "Scenario-specific Modelica study followed by actual CAD/package qualification and version-2 numeric validator; no complete package or pass yet", "manifest": ".local-run/renewal-qualification/water01-canonical-905/modelica-attempt-905-linked.json", "server_id": "7d9e7af6-e1f3-4463-9749-8ccdf5a39918"}
     ],
     "registered_server_id": "4328a581-59ea-49d4-a90e-fb40fe8f75b7",
     "evidence": {
