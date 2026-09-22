@@ -110,7 +110,7 @@ def prepare(args, directory):
     )
     thermal_source = (ROOT / "scripts/engineering/water_heater_package_skfem.py").read_bytes()
     thermal_source_path = stage(
-        "water-heater-package-skfem.py",
+        "water-heater-package-skfem-" + h.digest(thermal_source)[:12] + ".py",
         thermal_source,
         role="reviewable_thermal_screen_source",
     )
@@ -274,7 +274,8 @@ Write a clear engineering assessment of the actual outputs and limitations. For 
         "Use the approved fixed requirements exactly: " + json.dumps(fixed, sort_keys=True) + ". "
         "Choose only permitted carrier profile/thickness, insulation thickness within its range, shell geometry and stated non-interface styling. "
         "Create a single inspectable digital package containing the vessel wall/base, carrier, insulation and outer shell; preserve the heater contact limit, useful liquid depth/freeboard, mount/keepout interfaces and maximum envelope. "
-        f"Export the exact package to {step_path} and write {measurements_path} with step_path, step_sha256, envelope_mm [x,y,z], dry_mass_kg, carrier_thickness_mm, insulation_thickness_mm and heater_contact_diameter_mm, all measured or calculated from the authored solids. "
+        f"Use the connected AgentCAD context and quickstart instructions. The script executes inside the CAD project, not the workspace root. Export the exact package to the absolute host path {(workspace / step_path).as_posix()} and write {(workspace / measurements_path).as_posix()} with step_path, step_sha256, envelope_mm [x,y,z], dry_mass_kg, carrier_thickness_mm, insulation_thickness_mm and heater_contact_diameter_mm, all measured or calculated from the authored solids. "
+        f"Set the measurements step_path to the exact workspace-relative POSIX reference {step_path!r}; do not put a Windows absolute path or project-relative path in that field. Compute step_sha256 from the exported STEP bytes. "
         "The source must reject a violated fixed requirement and must not claim electrical, food-contact, pressure or physical qualification.",
         file_server,
         ("thermal-package-source.py",),
@@ -300,7 +301,9 @@ Write a clear engineering assessment of the actual outputs and limitations. For 
     container_workspace = getattr(args, "container_workspace", "/campaign-workspace").rstrip("/")
     container_output = container_workspace + "/" + output
     screen_config = {
+        "workspace_root": container_workspace,
         "output_root": container_output,
+        "geometry_step": container_output + "/thermal-package.step",
         "geometry_measurements": container_output + "/thermal-package-measurements.json",
         "power_comparison": container_output + "/power-comparison.csv",
         "approved_engineering_brief": container_workspace + "/" + renewal_path,
@@ -364,6 +367,7 @@ Write a clear engineering assessment of the actual outputs and limitations. For 
     package_report["fields"]["settings"]["output_filename"] = output + "/thermal-package-report.md"
     h.add_reference(sections, study_producer["id"] + ".comparison", author_cad, "selected_power_evidence", "workspace_file")
     h.add_reference(sections, engineering_brief, author_cad, "approved_package_requirements")
+    h.add_reference(sections, preflight_cad["id"] + ".preflight_package_cad_result", author_cad, "actual_cad_project_context")
     h.add_reference(sections, author_cad["id"] + ".thermal_package_source", build_cad, "authored_package_source", "workspace_file")
     h.add_reference(sections, build_cad["id"] + ".thermal_package_step", package_report, "final_cad", "workspace_file")
     h.add_reference(sections, thermal_screen["id"] + ".thermal_package_field", package_report, "thermal_field", "workspace_file")

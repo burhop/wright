@@ -147,6 +147,13 @@ def test_every_generated_heater_node_resolves_and_keeps_original_stages(tmp_path
         "thermal_package_field",
         "thermal_package_verification",
     }
+    source = Path(result["source"]).read_text()
+    assert "geometry_step" in source
+    assert "workspace_root" in source
+    assert str(tmp_path / "workspace" / package.expected_file_ports["thermal_package_step"]).replace("\\", "/") in source
+    author = next(step for step in plan.steps if step.id.startswith("author_package_cad_source_"))
+    assert any("preflight_package_cad_" in upstream for _, upstream in author.references)
+    assert "workspace-relative POSIX" in source
     configured_review = review.external_action["settings"]["validation_review"]
     assert configured_review["profile_ref"] == validator.validation["profile"][
         "reference"

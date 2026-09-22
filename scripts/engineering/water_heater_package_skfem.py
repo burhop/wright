@@ -14,13 +14,23 @@ import json
 from pathlib import Path
 import sys
 
-import numpy as np
-from skfem import Basis, BilinearForm, ElementLineP1, LinearForm, MeshLine, asm, solve
-from skfem.helpers import dot, grad
-
-
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _bound_geometry(config, measurements):
+    """Resolve one pinned runtime path, never a producer's host-specific path."""
+    workspace = Path(config["workspace_root"]).resolve(strict=True)
+    output = Path(config["output_root"]).resolve()
+    step = Path(config["geometry_step"]).resolve(strict=True)
+    if not output.is_relative_to(workspace) or step.parent != output:
+        raise ValueError("CAD geometry must be in the same-attempt output directory")
+    expected_reference = step.relative_to(workspace).as_posix()
+    if measurements.get("step_path") != expected_reference:
+        raise ValueError("CAD measurements must use the exact workspace-relative POSIX reference")
+    if digest(step) != measurements.get("step_sha256"):
+        raise ValueError("CAD measurement identity differs from current STEP")
+    return step
 
 
 def _selected_power(path: Path) -> float:
@@ -45,6 +55,10 @@ def _selected_power(path: Path) -> float:
 
 def _slab(thickness_m, conductivity, left_temperature_c, right_flux_w_m2, *,
           convection=None, nodes=81):
+    import numpy as np
+    from skfem import Basis, BilinearForm, ElementLineP1, LinearForm, MeshLine, asm, solve
+    from skfem.helpers import dot, grad
+
     mesh = MeshLine(np.linspace(0.0, thickness_m, nodes)[None, :])
     basis = Basis(mesh, ElementLineP1())
 
@@ -81,12 +95,15 @@ def _slab(thickness_m, conductivity, left_temperature_c, right_flux_w_m2, *,
 
 
 def run(config):
+    import numpy as np
+
     output = Path(config["output_root"]).resolve()
     output.mkdir(parents=True, exist_ok=True)
     measurements_path = Path(config["geometry_measurements"])
     comparison_path = Path(config["power_comparison"])
     requirements_path = Path(config["approved_engineering_brief"])
     measurements = json.loads(measurements_path.read_text(encoding="utf-8"))
+    step_path = _bound_geometry(config, measurements)
     contract = json.loads(requirements_path.read_text(encoding="utf-8"))
     fixed = contract["approved_engineering_inputs"]["new_fixed_requirements"]
     power = _selected_power(comparison_path)
@@ -127,9 +144,6 @@ def run(config):
         if key in fixed
     )
     shell_limit = float(fixed[shell_limit_key])
-    step_path = Path(measurements["step_path"])
-    if digest(step_path) != measurements["step_sha256"]:
-        raise ValueError("CAD measurement identity differs from current STEP")
     checks = {
         "carrier_temperature": {
             "observed_c": float(carrier_t.max()),
