@@ -201,6 +201,10 @@ def main() -> None:
                     capture=True,
                 ).stdout
             )
+            if cleanup.get("status") != "cleaned" or cleanup.get("post_cleanup_identity") is not None:
+                receipt.update(status="native_cleanup_blocked", cleanup_required=True, cleanup=cleanup)
+                write_receipt(receipt_path, receipt)
+                raise RuntimeError("Owned Blender cleanup or process exit was not verified")
             receipt.update(
                 cleanup_required=False,
                 cleanup=cleanup,

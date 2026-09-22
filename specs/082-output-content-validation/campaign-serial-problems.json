@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T23:07:00.953885+00:00",
+  "updated_at": "2026-09-22T23:37:40.219776+00:00",
   "goal_authority": "campaign-serial-resolution-goal.md",
   "active_problem": "P001",
   "initial_metrics": {
@@ -48,9 +48,9 @@
       "missing_historical_output": false,
       "difficulty": "easy",
       "status": "in_progress",
-      "diagnosis": "Reader/envelope repaired; canonical 017 has measured internal clearance defect and missing engineering review deliverables.",
-      "hypothesis": "Sweep tessellation and voxel remesh lower the underside near the central-span endpoints; independent feature measurements will verify correction.",
-      "smallest_repair": "Correct bow clearance, retain native design, compare orientations and measure final bores; prepare a linked bounded successor for fresh review.",
+      "diagnosis": "Canonical 018 was rejected for grip geometry. Same-case analytic root/shoulder correction now passes native repair and independent final-triangle measurements.",
+      "hypothesis": "The qualified construction plus explicit final triangulation resolves the grip and export defects; current canonical execution remains to be proven.",
+      "smallest_repair": "Bind the audited same-case construction into canonical correction 2, preserve the retry episode, inspect its exact outputs and obtain required human review.",
       "dependencies": [
         "Exact current source/profile/artifact identity",
         "Mandatory engineering review"
@@ -271,23 +271,96 @@
           ],
           "native_cleanup": "cleaned",
           "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T23:22:08.524588+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification.json"
+          ],
+          "result": "Fixed repair MCP failed: Error executing tool repair_model_file: Communication error with Blender: Code execution error: Repair did not satisfy normals or triangle limit: {\"vertices\": 12855, \"edges\": 37155, \"faces\": 24298, \"triangles\": 25714, \"boundary_edges\": 0, \"nonmanifold_edges\": 0, \"degenerate_faces\": 0, \"connected_components\": 1, \"signed_volume_mm3\": 11270.43776}",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-density-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:24:45.068775+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v2.json"
+          ],
+          "result": "P001 Printed 02: reduced mesh passes repair (22,642 triangles), but global bevel distorts mounting pads: height 34.454 > 34 mm and no flat bed contact. Restrict rounding to bow roots; no canonical dispatch or credit.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-pad-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:26:51.593394+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v3.json"
+          ],
+          "result": "P001 Printed 02: root-only geometry precheck stopped before export; 112.78-degree junction needs a wider offset to preserve at least 1 mm radius. Derive round size from actual angles; no canonical dispatch or credit.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-radius-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:31:06.286764+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v4.json"
+          ],
+          "result": "P001 Printed 02: envelope and clearance pass isolated repair, but independent triangle inspection finds folded root faces. Reject bevel candidate; construct tangent roots and perpendicular shoulder sections. No canonical credit.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-fold-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:34:19.709391+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v5.json"
+          ],
+          "result": "P001 Printed 02: actual mesh confirms 1.05 mm roots, >=3.69 mm inner shoulders and full 40 mm recess. Planar export leaves 3 collinear triangles; correct final triangulation on unchanged source before canonical correction 2.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-export-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:37:40.219776+00:00",
+          "kind": "qualified_same_case_grip_correction",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v6.json"
+          ],
+          "result": "P001 Printed 02: isolated correction verified at 25 mm clearance, 1.05 mm roots, >=3.69 mm inner shoulders, full 40 mm recess, zero degenerate triangles. Prepare canonical correction 2; no approval or credit yet.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-final-grip-qualified-dashboard.json"
         }
       ],
-      "latest_result": "018 human request changes recorded and native runtime cleaned. User-reported chart mixed automated inspections with current approvals; projection and update writer repaired, 4 focused checks and actual SVG verification passed. Continuing authorized grip correction 2.",
+      "latest_result": "P001 Printed 02: isolated correction verified at 25 mm clearance, 1.05 mm roots, >=3.69 mm inner shoulders, full 40 mm recess, zero degenerate triangles. Prepare canonical correction 2; no approval or credit yet.",
       "dashboard_verification": {
-        "status": "chart bug fixed and exact SVG verified; 018 request changes visible",
-        "at": "2026-09-22T23:11:34.266Z",
-        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-chart-fixed.json",
+        "status": "verified",
+        "at": "2026-09-22T23:37:55.285Z",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-final-grip-qualified-dashboard.json",
         "displayed_counts": {
           "datasets_created": 30,
           "combinations_run": 30,
           "processes_with_outputs": 24,
           "valid_data": 18
         },
-        "current_runs_outputs_approvals": [
-          "2",
-          "0",
-          "0"
+        "current_counts": [
+          30,
+          2,
+          0,
+          0
         ]
       },
       "canonical_attempt": {

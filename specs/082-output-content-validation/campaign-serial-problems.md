@@ -82,3 +82,29 @@ P001 Printed 02/018: 17 automated checks pass; clearance/native/orientation gaps
 ## P001: second human decision and chart correction
 
 The user requested changes on attempt 018 and authorized grip correction 2. The runner terminated and recorded native cleanup. The user also identified false zero drops in the chart: ordinary current-approval counts were mixed with retained automated inspection counts. The update writer now records a separate optional automated count, and the chart carries each actual inspection observation forward; explicit lower/zero inspections still reduce it. Three chart regressions and one update-writer regression passed. The actual served SVG was checked against the entire derived history; it remains at 17 then 18 with no false zero drops. Canonical approval counts remain zero. [Browser evidence](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-chart-fixed.json). No historical event was rewritten and no campaign credit was added.
+
+## P001 grip correction: isolated mesh-density finding
+
+P001 Printed 02: isolated grip correction exceeds 24,000 triangles (25,714); closed connected mesh, native session exited. Reduce central sampling while preserving rounds/recess; no canonical dispatch or credit. [Native proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification.json). Canonical correction 2 has not been dispatched.
+
+Earlier cleanup wording for qualification 009 and attempt 018 relied on a wrapper label. Inspection found guarded closure had stopped after native save changed the document path. Both exact owned sessions were subsequently reconciled against unchanged saved-file hashes and exited through normal guarded cleanup; no force kill. [Cleanup correction evidence](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-saved-design-cleanup.json). Native export now saves a copy, preserving active document identity, and the runner rejects a cleanup label with a surviving process. Thirteen focused checks passed. Qualification 010 independently confirms save-as-copy followed by completed guarded cleanup and no remaining owned process.
+
+## P001 grip correction: pad distortion finding
+
+P001 Printed 02: reduced mesh passes repair (22,642 triangles), but global bevel distorts mounting pads: height 34.454 > 34 mm and no flat bed contact. Restrict rounding to bow roots; no canonical dispatch or credit. [Isolated repair proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v2.json). Its qualified status means the native repair operation succeeded, not that the complete engineering requirements passed; subsequent measurements reject this candidate. Earlier qualification already preserved immutable files.
+
+## P001 grip correction: root-radius precheck
+
+P001 Printed 02: root-only geometry precheck stopped before export; 112.78-degree junction needs a wider offset to preserve at least 1 mm radius. Derive round size from actual angles; no canonical dispatch or credit. [Isolated evidence](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v3.json). Native session exited normally. No output from this candidate is credited.
+
+## P001 grip correction: folded-surface finding
+
+P001 Printed 02: envelope and clearance pass isolated repair, but independent triangle inspection finds folded root faces. Reject bevel candidate; construct tangent roots and perpendicular shoulder sections. No canonical credit. [Actual mesh inspection](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-correction-measurements.json). Native topology checks did not prove absence of folded surfaces; no campaign correction was dispatched.
+
+## P001 grip correction: final export triangulation
+
+P001 Printed 02: actual mesh confirms 1.05 mm roots, >=3.69 mm inner shoulders and full 40 mm recess. Planar export leaves 3 collinear triangles; correct final triangulation on unchanged source before canonical correction 2. [Actual STL profile measurements](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-analytic-grip-measurements.json). Root-round profile radii measure 1.0494–1.0505 mm; inner shoulder profile minimum is 3.6939 mm; clearance remains 25 mm. Three exactly collinear top triangles mean this export is not yet qualified for canonical use. Native runtime exited normally.
+
+## P001 grip correction qualified for canonical correction 2
+
+P001 Printed 02: isolated correction verified at 25 mm clearance, 1.05 mm roots, >=3.69 mm inner shoulders, full 40 mm recess, zero degenerate triangles. Prepare canonical correction 2; no approval or credit yet. [Native proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v6.json), [independent final STL measurements](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-final-grip-qualification-measurements.json). Four final-byte regressions and four binding cases passed, including rejection of a changed correction-source hash. Canonical reuse must perform real authoring, repair, slicing and review; qualification does not provide campaign credit.

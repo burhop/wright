@@ -29,16 +29,18 @@ def wrapper(monkeypatch, tmp_path):
     return module
 
 
-@pytest.mark.parametrize("phase,runtime,cleanup", [
-    ("completed", "completed", True),
-    ("failed", "failed", True),
-    ("awaiting_manual_approval", "awaiting_approval", False),
-    ("outcome_unknown", "running", False),
-    ("runner_blocked", "running", False),
-    ("completed", "running", False),
-    ("process_exception", "running", False),
+@pytest.mark.parametrize("phase,runtime,cleanup,cleanup_problem", [
+    ("completed", "completed", True, None),
+    ("failed", "failed", True, None),
+    ("awaiting_manual_approval", "awaiting_approval", False, None),
+    ("outcome_unknown", "running", False, None),
+    ("runner_blocked", "running", False, None),
+    ("completed", "running", False, None),
+    ("process_exception", "running", False, None),
+    ("failed", "failed", True, {"status": "cleanup_blocked"}),
+    ("failed", "failed", True, {"status": "cleaned", "post_cleanup_identity": {"pid": 123}}),
 ])
-def test_wrapper_retains_nonterminal_resources(wrapper, monkeypatch, phase, runtime, cleanup):
+def test_wrapper_retains_nonterminal_resources(wrapper, monkeypatch, phase, runtime, cleanup, cleanup_problem):
     calls = []
 
     def fake_run(arguments, *, capture=False):
@@ -52,7 +54,7 @@ def test_wrapper_retains_nonterminal_resources(wrapper, monkeypatch, phase, runt
                 lifecycle.write_text("{}")
                 output = {"server_id": "owned", "repair_server_id": "repair", "session_id": "native", "pid": 123}
             else:
-                output = {"status": "cleaned"}
+                output = cleanup_problem or {"status": "cleaned"}
         elif script == "audit-engineering-batch-preflight.py":
             Path(arguments[arguments.index("--output") + 1]).write_text(json.dumps({"summary": {"cases": 1, "passed": 1, "review": 0, "failed": 0}}))
         elif script == "run_engineering_dataset_campaign.py":
@@ -70,13 +72,18 @@ def test_wrapper_retains_nonterminal_resources(wrapper, monkeypatch, phase, runt
     if phase == "process_exception":
         with pytest.raises(subprocess.CalledProcessError):
             wrapper.main()
+    elif cleanup_problem:
+        with pytest.raises(RuntimeError, match="process exit was not verified"):
+            wrapper.main()
     else:
         wrapper.main()
     cleanup_calls = [call for call in calls if Path(call[1]).name == "manage-printing03-blender-runtime.py" and call[2] == "cleanup"]
     assert bool(cleanup_calls) == cleanup
     receipt = json.loads((wrapper.EXECUTION / f"printing-01-{ATTEMPT}-validator082-managed.json").read_text())
-    assert receipt["cleanup_required"] is (not cleanup)
-    if phase == "completed" and runtime == "completed":
+    assert receipt["cleanup_required"] is (bool(cleanup_problem) or not cleanup)
+    if cleanup_problem:
+        assert receipt["status"] == "native_cleanup_blocked"
+    elif phase == "completed" and runtime == "completed":
         assert receipt["status"] == "completed_and_cleaned"
         assert receipt["workflow_completed"] is True
     elif not cleanup:

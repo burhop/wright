@@ -61,3 +61,15 @@ def test_rejects_truncated_mesh(tmp_path):
     path.write_bytes(b"\0" * 80 + struct.pack("<I", 1))
     with pytest.raises(ValueError, match="bounded binary STL"):
         repair.measure_handle_features(path)
+
+
+def test_rejects_collinear_export_triangle(tmp_path):
+    path = tmp_path / "collinear.stl"
+    mesh(path, 25.0)
+    data = bytearray(path.read_bytes())
+    count = struct.unpack_from("<I", data, 80)[0]
+    struct.pack_into("<I", data, 80, count + 1)
+    data.extend(struct.pack("<12fH", 0, 0, 0, 34, 6.2, 34, 36, 6.2, 34, 38, 6.2, 34, 0))
+    path.write_bytes(data)
+    with pytest.raises(ValueError, match="zero-area triangle"):
+        repair.measure_handle_features(path)

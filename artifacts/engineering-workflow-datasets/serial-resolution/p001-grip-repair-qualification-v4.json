@@ -1,0 +1,289 @@
+{
+  "scope": "Isolated native qualification of correction 2 to the exact retained AI-authored case: tangent 5 mm shoulders, full-span 40 mm recess, post-union junction rounds, and native save-as-copy. No canonical dispatch, approval, or campaign credit.",
+  "attempt": "qualification-p001-013",
+  "source_code_before_sha256": "79f71889d9c234b19c9d137d1ffb7305ed07f3aafc574a7d05aa9e5fe61635f3",
+  "source_code_after_sha256": "34926df9c55e1f6749e2fe6da94a522564ffbaf98f37a95523235e0014e8da9f",
+  "operation_sha256": "95dcb6b22a69fd94a90b665c115d47e36bf809b855c6badb0327dc5845b70f80",
+  "campaign_credit": false,
+  "launch": {
+    "status": "ready",
+    "server_id": "0df386fb-4ffd-4d45-883d-2225a60b7636",
+    "repair_server_id": "76790024-1d00-4202-92e5-4f041e912363",
+    "session_id": "blender-3e6db7856e024bdc8e445004c496a8a5",
+    "pid": 44828,
+    "post_cleanup_identity": null
+  },
+  "author_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Code executed successfully: {'rounded_root_edges': 165, 'root_turn_degrees': [76.2481884220337, 76.88782197742705, 76.49268870375265, 75.45471168577498, 75.26391035131067, 104.97480976913761, 104.94132135163703, 111.06189484802047, 107.57709818253412, 107.30662952159079, 112.77968742427868, 83.87020142252604, 96.17818864651068, 107.2712081605551, 76.77179755399605, 76.68756766115145, 75.54685093767846, 76.24819525222287, 76.24819525222287, 76.97356817226739, 76.30082868996699, 83.01325173831039, 107.15903596381598, 104.94132135163703, 106.26511446562306, 106.61326969818612, 107.5383368589943, 107.44005043683781, 106.7670172564031, 108.61161912479176, 111.53022725902991, 102.63869382769649, 107.2712081605551, 96.80555518215468, 76.41643647185863, 76.8878356378054, 76.49270236413099, 77.35981536983162, 77.35981536983162, 76.40783043350442, 77.02472628915079, 76.30082868996699, 75.26391035131067, 75.74910649938087, 83.01325173831039, 96.98411681762633, 106.68797830732771, 112.7793185940635, 112.29449810639765, 106.89788368090055, 107.45600575873897, 107.52876093377795, 106.7670172564031, 111.53022725902991, 102.6386869975073, 102.6386869975073, 104.34411010117863, 77.670862184634, 76.44114126608656, 76.97349304018653, 76.19867638074028, 75.18428400596667, 74.92156077954213, 76.32569740873501, 77.03851644108505, 76.03975836932159, 96.02043859744006, 110.39847857393714, 110.39847857393714, 107.1269135841494, 107.32976337230961, 107.57404508797512, 110.31666656805872, 76.65565701734916, 76.65565701734916, 105.83708700090587, 108.16419392283174, 104.34411010117863, 96.80555518215468, 76.44114126608656, 77.0246784778266, 76.19867638074028, 76.40783043350442, 77.01304666567007, 76.03975836932159, 78.58726866557461, 76.68239720794975, 96.02043859744006, 108.24858091002724, 108.22432690828452, 112.29449810639765, 107.30671148386082, 106.26509397505554, 106.61316041515938, 107.57703671083159, 108.61161912479176, 110.31666656805872, 82.92780607179353, 76.54875772664928, 77.03851644108505, 75.89373575505589, 74.92156077954213, 76.32569740873501, 76.57908376656414, 76.94684847223431, 75.74893574465162, 83.79474149257574, 78.58726866557461, 102.12681896072822, 108.22432690828452, 110.7410535419483, 109.04341002374163, 107.4402143613779, 107.53822757596758, 110.3241661157674, 111.92150830601243, 108.95547816836688, 105.83708700090587, 76.54875772664928, 77.01306032604842, 75.89373575505589, 75.39158707746573, 75.39158707746573, 76.16263347249013, 76.57908376656414, 76.83869925691633, 75.74893574465162, 83.79474149257574, 102.12681896072822, 108.24858091002724, 109.61547251767604, 110.7410535419483, 107.52891119793968, 106.89777439787382, 107.45587598514473, 110.3241661157674, 111.92150830601243, 82.92780607179353, 108.16419392283174, 109.29006181504913, 76.63841078969487, 76.67845618879866, 76.94679383072095, 75.54685093767846, 76.16263347249013, 76.77179755399605, 76.68756083096228, 75.45471168577498, 104.97480976913761, 108.24858774021641, 96.98411681762633, 109.61547251767604, 109.04341002374163, 107.57411338986682, 107.12686577282523, 107.32978386287714, 83.87020142252604, 78.61032738421257, 96.17818864651068, 76.63841078969487, 76.41643647185863, 76.67845618879866, 76.83863095502463, 75.54683727730011, 75.18428400596667], 'root_round_offset_mm': 1.5797694433653, 'root_round_segments': 8}\nInfo: File exported successfully\nInfo: Saved copy as \"native-design.blend\"\n{'object': 'Wright_Handle_GripCorrection2_001_FinalSource', 'stl': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-013/artifacts/source_mesh.stl', 'blend': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-013/artifacts/native-design.blend', 'design': {'bolt_centers_mm': 96.0, 'pads_mm': [18.0, 24.0, 5.0], 'bores_diameter_mm': 4.5, 'grip_section_mm': [12.0, 9.0], 'clearance_span_x_mm': [15.5, 80.5], 'clearance_min_z_mm': 25.0, 'outer_max_z_mm': 34.0, 'thumb_recess_max_mm': 1.5}}\n"
+      }
+    ],
+    "structuredContent": {
+      "result": "Code executed successfully: {'rounded_root_edges': 165, 'root_turn_degrees': [76.2481884220337, 76.88782197742705, 76.49268870375265, 75.45471168577498, 75.26391035131067, 104.97480976913761, 104.94132135163703, 111.06189484802047, 107.57709818253412, 107.30662952159079, 112.77968742427868, 83.87020142252604, 96.17818864651068, 107.2712081605551, 76.77179755399605, 76.68756766115145, 75.54685093767846, 76.24819525222287, 76.24819525222287, 76.97356817226739, 76.30082868996699, 83.01325173831039, 107.15903596381598, 104.94132135163703, 106.26511446562306, 106.61326969818612, 107.5383368589943, 107.44005043683781, 106.7670172564031, 108.61161912479176, 111.53022725902991, 102.63869382769649, 107.2712081605551, 96.80555518215468, 76.41643647185863, 76.8878356378054, 76.49270236413099, 77.35981536983162, 77.35981536983162, 76.40783043350442, 77.02472628915079, 76.30082868996699, 75.26391035131067, 75.74910649938087, 83.01325173831039, 96.98411681762633, 106.68797830732771, 112.7793185940635, 112.29449810639765, 106.89788368090055, 107.45600575873897, 107.52876093377795, 106.7670172564031, 111.53022725902991, 102.6386869975073, 102.6386869975073, 104.34411010117863, 77.670862184634, 76.44114126608656, 76.97349304018653, 76.19867638074028, 75.18428400596667, 74.92156077954213, 76.32569740873501, 77.03851644108505, 76.03975836932159, 96.02043859744006, 110.39847857393714, 110.39847857393714, 107.1269135841494, 107.32976337230961, 107.57404508797512, 110.31666656805872, 76.65565701734916, 76.65565701734916, 105.83708700090587, 108.16419392283174, 104.34411010117863, 96.80555518215468, 76.44114126608656, 77.0246784778266, 76.19867638074028, 76.40783043350442, 77.01304666567007, 76.03975836932159, 78.58726866557461, 76.68239720794975, 96.02043859744006, 108.24858091002724, 108.22432690828452, 112.29449810639765, 107.30671148386082, 106.26509397505554, 106.61316041515938, 107.57703671083159, 108.61161912479176, 110.31666656805872, 82.92780607179353, 76.54875772664928, 77.03851644108505, 75.89373575505589, 74.92156077954213, 76.32569740873501, 76.57908376656414, 76.94684847223431, 75.74893574465162, 83.79474149257574, 78.58726866557461, 102.12681896072822, 108.22432690828452, 110.7410535419483, 109.04341002374163, 107.4402143613779, 107.53822757596758, 110.3241661157674, 111.92150830601243, 108.95547816836688, 105.83708700090587, 76.54875772664928, 77.01306032604842, 75.89373575505589, 75.39158707746573, 75.39158707746573, 76.16263347249013, 76.57908376656414, 76.83869925691633, 75.74893574465162, 83.79474149257574, 102.12681896072822, 108.24858091002724, 109.61547251767604, 110.7410535419483, 107.52891119793968, 106.89777439787382, 107.45587598514473, 110.3241661157674, 111.92150830601243, 82.92780607179353, 108.16419392283174, 109.29006181504913, 76.63841078969487, 76.67845618879866, 76.94679383072095, 75.54685093767846, 76.16263347249013, 76.77179755399605, 76.68756083096228, 75.45471168577498, 104.97480976913761, 108.24858774021641, 96.98411681762633, 109.61547251767604, 109.04341002374163, 107.57411338986682, 107.12686577282523, 107.32978386287714, 83.87020142252604, 78.61032738421257, 96.17818864651068, 76.63841078969487, 76.41643647185863, 76.67845618879866, 76.83863095502463, 75.54683727730011, 75.18428400596667], 'root_round_offset_mm': 1.5797694433653, 'root_round_segments': 8}\nInfo: File exported successfully\nInfo: Saved copy as \"native-design.blend\"\n{'object': 'Wright_Handle_GripCorrection2_001_FinalSource', 'stl': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-013/artifacts/source_mesh.stl', 'blend': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-013/artifacts/native-design.blend', 'design': {'bolt_centers_mm': 96.0, 'pads_mm': [18.0, 24.0, 5.0], 'bores_diameter_mm': 4.5, 'grip_section_mm': [12.0, 9.0], 'clearance_span_x_mm': [15.5, 80.5], 'clearance_min_z_mm': 25.0, 'outer_max_z_mm': 34.0, 'thumb_recess_max_mm': 1.5}}\n"
+    },
+    "isError": false
+  },
+  "repair": {
+    "operation": "fixed_native_blender_mesh_repair",
+    "source_preserved": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\source_mesh.stl",
+    "artifacts": [
+      "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\repaired_mesh.stl",
+      "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\mesh-preview.png"
+    ],
+    "before": {
+      "dimensions_mm": [
+        114.0,
+        24.0,
+        34.0
+      ],
+      "mesh": {
+        "vertices": 8119,
+        "edges": 24363,
+        "faces": 16242,
+        "triangles": 16242,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_faces": 0,
+        "connected_components": 1,
+        "signed_volume_mm3": 11309.691937
+      }
+    },
+    "after": {
+      "dimensions_mm": [
+        114.0,
+        24.0,
+        34.0
+      ],
+      "mesh": {
+        "vertices": 8119,
+        "edges": 23287,
+        "faces": 15166,
+        "triangles": 16242,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_faces": 0,
+        "connected_components": 1,
+        "signed_volume_mm3": 11309.691946
+      }
+    },
+    "repair": {
+      "merge_tolerance_mm": 0.001,
+      "degenerate_tolerance_mm": 1e-06,
+      "force_voxel_remesh": false,
+      "envelope_margin_mm": 0.0,
+      "voxel_remesh_used": false,
+      "voxel_size_mm": null,
+      "voxel_iterations": 0,
+      "discarded_components": 0,
+      "decimation_used": false,
+      "triangle_limit": 24000,
+      "planar_cleanup": {
+        "enabled": true,
+        "faces_before": 16242,
+        "faces_after": 15166,
+        "angle_limit_radians": 1e-06
+      }
+    },
+    "orientation": {
+      "action": "preserved_model_axes_and_translated_minimum_z_to_build_plate",
+      "supports": "assigned by the pinned slicer operation"
+    },
+    "checks": {
+      "closed_manifold": true,
+      "outward_normals": true,
+      "single_component": true,
+      "within_triangle_limit": true,
+      "fits_p1s_256mm_cube": true
+    },
+    "content_validated": false,
+    "produced_files": [
+      {
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\repaired_mesh.stl",
+        "size_bytes": 812184,
+        "sha256": "54f38e806bc3e7df2adb2872ffc0a3d04bd2a82c65153c032b6d0c97d1e0f84d"
+      },
+      {
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\mesh-preview.png",
+        "size_bytes": 226724,
+        "sha256": "536b6f6c40039fa778cfdc956c35703e40f09d315ac4215898ba1fe3d354885e"
+      }
+    ],
+    "final_feature_measurements": {
+      "source_sha256": "54f38e806bc3e7df2adb2872ffc0a3d04bd2a82c65153c032b6d0c97d1e0f84d",
+      "triangles": 16242,
+      "method": "Actual binary-STL triangles: exact X-slab clipping, bore plane sections, and oriented surface areas.",
+      "bounds_mm": [
+        [
+          -9.0,
+          -12.0,
+          0.0
+        ],
+        [
+          105.0,
+          12.0,
+          34.0
+        ]
+      ],
+      "central_span_x_mm": [
+        15.5,
+        80.5
+      ],
+      "minimum_clearance_mm": 25.0,
+      "minimum_at_mm": [
+        30.0,
+        4.02423620223999,
+        25.0
+      ],
+      "required_clearance_mm": 25.0,
+      "clearance_pass": true,
+      "bore_sections": [
+        {
+          "z_mm": 1.5,
+          "holes": [
+            {
+              "center_xy_mm": [
+                0.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.49457942699016,
+              "maximum_centered_diameter_mm": 4.5,
+              "section_segments": 132
+            },
+            {
+              "center_xy_mm": [
+                96.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.494575569087958,
+              "maximum_centered_diameter_mm": 4.500003101712807,
+              "section_segments": 132
+            }
+          ],
+          "center_spacing_mm": 96.0
+        },
+        {
+          "z_mm": 2.5,
+          "holes": [
+            {
+              "center_xy_mm": [
+                0.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.49457942699016,
+              "maximum_centered_diameter_mm": 4.5,
+              "section_segments": 132
+            },
+            {
+              "center_xy_mm": [
+                96.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.494575569087962,
+              "maximum_centered_diameter_mm": 4.500003101712807,
+              "section_segments": 132
+            }
+          ],
+          "center_spacing_mm": 96.0
+        },
+        {
+          "z_mm": 3.5,
+          "holes": [
+            {
+              "center_xy_mm": [
+                0.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.49457942699016,
+              "maximum_centered_diameter_mm": 4.5,
+              "section_segments": 132
+            },
+            {
+              "center_xy_mm": [
+                96.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.494575569087958,
+              "maximum_centered_diameter_mm": 4.500003101712807,
+              "section_segments": 132
+            }
+          ],
+          "center_spacing_mm": 96.0
+        }
+      ],
+      "orientation_comparison": [
+        {
+          "orientation": "pads_down",
+          "build_height_mm": 34.0,
+          "flat_bed_contact_area_mm2": 649.8218209793283,
+          "downward_surface_area_beyond_45_degrees_mm2": 1004.3781904693536
+        },
+        {
+          "orientation": "side",
+          "build_height_mm": 24.0,
+          "flat_bed_contact_area_mm2": 98.34799658428892,
+          "downward_surface_area_beyond_45_degrees_mm2": 598.096639824484
+        }
+      ],
+      "orientation_selection": "pads_down",
+      "orientation_reason": "Pads-down keeps both mounting faces on the bed and bolt bores vertical; supports may contact the rear/underside of the raised bow. Side orientation makes the bores horizontal and places the grip flank/edges at support or bed contact. Inspect the actual selected slice support preview before acceptance.",
+      "limitations": "The 45-degree surface-area measure is a geometric comparison indicator, not a slicer support prediction or acceptance threshold. Bore sections do not replace full engineering review. No physical fit, strength or printing claim."
+    }
+  },
+  "outputs": [
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\mesh-preview.png",
+      "sha256": "536b6f6c40039fa778cfdc956c35703e40f09d315ac4215898ba1fe3d354885e",
+      "size_bytes": 226724
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\native-design.blend",
+      "sha256": "4a23953efc8136cf87d2a66d622e2af19d4814e02078a6ff4fd80c5a9fd840c4",
+      "size_bytes": 1590050
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\repaired_mesh.stl",
+      "sha256": "54f38e806bc3e7df2adb2872ffc0a3d04bd2a82c65153c032b6d0c97d1e0f84d",
+      "size_bytes": 812184
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-013\\artifacts\\source_mesh.stl",
+      "sha256": "cb74dd204242fcf186da1d7eeed618779127cb4d992b765848b177ff06686467",
+      "size_bytes": 813784
+    }
+  ],
+  "status": "qualified",
+  "cleanup": {
+    "status": "cleaned",
+    "server_id": "0df386fb-4ffd-4d45-883d-2225a60b7636",
+    "repair_server_id": "76790024-1d00-4202-92e5-4f041e912363",
+    "session_id": "blender-3e6db7856e024bdc8e445004c496a8a5",
+    "pid": 44828,
+    "post_cleanup_identity": null
+  }
+}

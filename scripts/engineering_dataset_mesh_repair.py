@@ -51,6 +51,12 @@ def measure_handle_features(path: Path) -> dict:
         points = [tuple(values[i:i + 3]) for i in (3, 6, 9)]
         if not all(math.isfinite(v) for p in points for v in p):
             raise ValueError("Handle mesh contains nonfinite coordinates")
+        a, b, c = points
+        u = [b[i] - a[i] for i in range(3)]
+        v = [c[i] - a[i] for i in range(3)]
+        cross = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
+        if all(value == 0 for value in cross):
+            raise ValueError("Final handle STL contains a zero-area triangle")
         triangles.append(points)
     bounds = [[min(p[i] for t in triangles for p in t) for i in range(3)],
               [max(p[i] for t in triangles for p in t) for i in range(3)]]
@@ -297,6 +303,19 @@ if force_voxel_remesh or clean_metrics['boundary_edges'] != 0 or clean_metrics['
     clean_metrics = metrics(obj)
     voxel_remesh_used = True
 decimation_used = False
+
+# Inspect the triangles that will actually be exported. Planar n-gons can
+# tessellate into collinear triangles even when the polygon itself has area.
+if planar_cleanup:
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method='BEAUTY', ngon_method='EAR_CLIP')
+    bmesh.ops.dissolve_degenerate(bm, dist=degenerate_tolerance, edges=list(bm.edges))
+    bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method='BEAUTY', ngon_method='EAR_CLIP')
+    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.update()
 
 post_metrics = metrics(obj)
 if post_metrics['boundary_edges'] != 0 or post_metrics['nonmanifold_edges'] != 0:

@@ -43,8 +43,8 @@ repair_operation = importlib.util.module_from_spec(repair_spec)
 repair_spec.loader.exec_module(repair_operation)
 
 
-@pytest.mark.parametrize("number", [1, 2, 3])
-def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
+@pytest.mark.parametrize("number, with_correction", [(1, False), (2, False), (2, True), (3, False)])
+def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, with_correction):
     folder = next(
         (
             ROOT
@@ -65,6 +65,18 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
         instance_source=str(instance),
         blender_server=blender_server,
     )
+    if with_correction:
+        correction = tmp_path / "retained-correction.py"
+        correction.write_bytes(b"import bpy\n# Test of input binding only; never executed.\n")
+        proof = tmp_path / "qualification.json"
+        proof.write_text(json.dumps({
+            "status": "qualified",
+            "source_code_after_sha256": prepare.digest(correction.read_bytes()),
+            "operation_sha256": prepare.digest(prepare.REPAIR_OPERATION.read_bytes()),
+            "cleanup": {"status": "cleaned", "post_cleanup_identity": None},
+        }), encoding="utf-8")
+        args.review_correction_source = str(correction)
+        args.review_correction_proof = str(proof)
     names = json.loads(prepare.BINDING.read_text())["allowed_tools"]
     tools = {
         (blender_server, name): {
@@ -125,7 +137,19 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
         expected_source_files += ("campaign/printed-replacement-part-02/isolated/artifacts/native-design.blend",)
         assert "X=15.5 and X=80.5" in plan.steps[0].prompt
         assert "save_as_mainfile" in plan.steps[0].prompt
+        assert "copy=True" in plan.steps[0].prompt
     assert plan.steps[0].expected_files == expected_source_files
+    if with_correction:
+        assert "changing only the two export paths" in plan.steps[0].prompt
+        assert any("review correction source" in reference[0] for reference in plan.steps[0].references)
+        staged = Path(args.workspace_root) / "campaign/printed-replacement-part-02/isolated/inputs/review-correction-source.py"
+        assert staged.read_bytes() == correction.read_bytes()
+        # A changed source cannot reuse this qualification in a fresh attempt.
+        correction.write_bytes(b"# Modified and not qualified\n")
+        args.attempt = "tampered"
+        with pytest.raises(ValueError, match="qualification identity"):
+            prepare.prepare(args, folder, tools)
+        assert not (Path(args.workspace_root) / "campaign/printed-replacement-part-02/tampered").exists()
     assert plan.steps[1].expected_files == (
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/repaired_mesh.stl",
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/mesh-preview.png",
@@ -207,7 +231,7 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     ) == 1
     image = next(s for s in sections if s["id"].startswith("image_and_scale_"))
     assert image["fields"]["settings"]["workspace_file"].endswith("/concept.png")
-    assert len(plan.steps[0].references) == 4
+    assert len(plan.steps[0].references) == (6 if with_correction else 4)
     # PNG, natural prompt, assembled human context, approved engineering brief.
     record = json.loads(
         Path(result["draft"]).with_name("staging-manifest.json").read_text()

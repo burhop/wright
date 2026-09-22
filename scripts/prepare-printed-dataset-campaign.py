@@ -129,6 +129,27 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     slicer_server = getattr(args, "slicer_server", None) or config["slicer_server"]
     manifest = json.loads((scenario_dir / "scenario.json").read_text(encoding="utf-8"))
     scenario_id = manifest["scenario_id"]
+    correction_source = getattr(args, "review_correction_source", None)
+    correction_proof = getattr(args, "review_correction_proof", None)
+    correction_files = {}
+    if correction_source or correction_proof:
+        if scenario_id != "printed-replacement-part-02" or not (correction_source and correction_proof):
+            raise ValueError("Printed 02 review correction requires its paired source and qualification proof")
+        source_bytes = Path(correction_source).read_bytes()
+        proof_bytes = Path(correction_proof).read_bytes()
+        proof = json.loads(proof_bytes)
+        if (
+            proof.get("status") != "qualified"
+            or proof.get("source_code_after_sha256") != digest(source_bytes)
+            or proof.get("operation_sha256") != digest(REPAIR_OPERATION.read_bytes())
+            or proof.get("cleanup", {}).get("status") != "cleaned"
+            or proof.get("cleanup", {}).get("post_cleanup_identity") is not None
+        ):
+            raise ValueError("Printed 02 review correction qualification identity is not current")
+        correction_files = {
+            "review-correction-source.py": source_bytes,
+            "review-correction-qualification.json": proof_bytes,
+        }
     coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
     support = next(
         row for row in coverage["scenarios"] if row["scenario_id"] == scenario_id
@@ -174,6 +195,11 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     write_once(confined(workspace, brief_path), brief.encode())
     inputs.append({"path": brief_path, "sha256": digest(brief.encode()), "size_bytes": len(brief.encode()),
                    "derived_from": [f"{input_root}/user-profile.md", f"{input_root}/context.md"]})
+    for name, data in correction_files.items():
+        relative = f"{input_root}/{name}"
+        write_once(confined(workspace, relative), data)
+        inputs.append({"path": relative, "sha256": digest(data), "size_bytes": len(data),
+                       "role": "same_case_review_correction"})
     source = Path(args.instance_source).read_text(encoding="utf-8") if args.instance_source else TEMPLATE.read_text(encoding="utf-8").replace("__instance__", suffix)
     sections = _parse(source)
     def stage(prefix):
@@ -224,7 +250,8 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
             "explain any where-space-permits blend limitation. Preserve exact bores and "
             "flat mounting faces; the repair now cleans planar topology without forcing "
             "a voxel remesh of a valid solid. Save the actual editable Blender scene with "
-            f"bpy.ops.wm.save_as_mainfile(filepath='{(workspace / output_root / 'native-design.blend').as_posix()}') "
+            f"bpy.ops.wm.save_as_mainfile(filepath='{(workspace / output_root / 'native-design.blend').as_posix()}', copy=True) "
+            "to save a native copy while preserving the owned lifecycle document path "
             "after authoring, as well as source_mesh.stl. Compare pads-down and side "
             "orientations in the source report, including bed contact, bore direction, "
             "grip surface support contact and why pads-down is selected for this process. "
@@ -233,6 +260,23 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         source_task["fields"]["outputs"].append(port("native_design", "workspace_file"))
         source_task["fields"]["settings"]["expected_files"] += f"\n{output_root}/native-design.blend"
         source_task["fields"]["settings"]["expected_file_ports"]["native_design"] = f"{output_root}/native-design.blend"
+    if correction_files:
+        for name in correction_files:
+            key = name.replace(".", "_").replace("-", "_")
+            reference = add_file_input(sections, suffix, key, f"{input_root}/{name}")
+            add_reference(sections, reference, source_task, key)
+        source_task["fields"]["prompt"] += (
+            " The supplied review-correction-source.py is the audited correction of this exact "
+            "case's rejected design. Reuse its construction through execute_blender_code, changing "
+            "only the two export paths to this attempt's source_mesh.stl and native-design.blend "
+            "paths above. Submit its source directly as the tool's code argument; do not use exec, "
+            "runpy or file-reading code inside Blender. This preserves independently measured "
+            "tangent root rounds, perpendicular oval shoulder sections and the full X=28..68 "
+            "thumb recess. Do not replace it with a newly invented sweep or post-union bevel. "
+            "Generate and inspect actual current-attempt files, then report the measurements "
+            "and orientation comparison. Qualification evidence is not approval and does not "
+            "substitute for the current native execution or final engineering review."
+        )
     add_reference(sections, prompt_ref, source_task, "natural_prompt")
     add_reference(sections, context_ref, source_task, "supplied_context")
 
@@ -529,6 +573,8 @@ def main():
     parser.add_argument("--blender-server", help="Registered server ID for the lifecycle-owned guarded Blender endpoint")
     parser.add_argument("--repair-server", help="Registered server ID for the fixed same-attempt Blender repair endpoint")
     parser.add_argument("--slicer-server", help="Registered server ID for the fixed local slicer")
+    parser.add_argument("--review-correction-source", help="Audited same-case Printed 02 construction to reuse through MCP")
+    parser.add_argument("--review-correction-proof", help="Current native qualification bound to the correction source and repair operation")
     args = parser.parse_args()
     if args.instance_source and not args.scenario:
         parser.error("--instance-source requires --scenario")
