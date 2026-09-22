@@ -17,7 +17,34 @@ User selected Astra for implementation; actual campaign inference remains
   The active goal authorizes broad execution after these gates; the older
   renewal instruction to finish ready but stopped is superseded.
 
-## Latest completion-focused checkpoint — 22 September, 20:33 UTC
+## Latest checkpoint — API deployed, 22 September, 20:50 UTC
+
+The user's API-control clarification has been acted on. The one authorized
+restart completed successfully: API PID **50148** serves commit `ab864f9f`.
+The helper verified unchanged code identity, all saved workflow files, and 6,091
+input files. The earlier deployment-hold statements below are historical and
+superseded. The syntax-publication repair and harness native reader are now
+loaded; deployment alone is not native engineering qualification.
+
+`WRIGHT_API_MCP_AUTOSTART=0` was preserved. No Solid Edge child was started, its
+saved command is unchanged, and no Solid Edge server call/start/stop was issued.
+Its examples remain deferred. Startup catalog reconciliation reset AgentCAD's
+saved command; restored and verified its exact previously qualified bootstrap
+using the existing installer receipt. This restoration does not establish fresh
+native readiness; check the owned selected providers before Heat dispatch.
+
+Actual inference through `/api/agent/chat` returned **READY** at 20:49:17 UTC
+using unchanged `openai-codex::gpt-5.6-sol`, without tools. Printed 01 attempt 901
+and historical Robot 010 still have pending reviews, null actors and unchanged
+sources. Neither was approved or resumed. Heat 01 remains staged/preflighted,
+not dispatched; its first thermal-basis review requires the real engineer.
+
+Evidence: `artifacts/campaign-example-renewal/qualification/api-deployment-20260922T2046.json`
+links the detailed deployment and inference receipts. No new complete package or
+full-scope pass was earned. Bracket's topology hold, missing-input approvals and
+the pending per-case scheduling question remain unchanged.
+
+## Earlier completion-focused checkpoint — 22 September, 20:33 UTC
 
 The preceding status-only turn is classified **no progress**. This continuation
 made a bounded runtime repair and gathered actual native evidence that changes
