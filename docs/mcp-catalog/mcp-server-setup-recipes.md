@@ -2752,3 +2752,39 @@ Normal local API discovery lists 18 tools; renewed canonical gateway
 qualification remains pending. Exact build, mount restrictions, probe evidence
 and staged bindings: [selected prerequisite recipe](https://github.com/burhop/wright/blob/dev/specs/081-engineering-workflow-templates/dataset-campaign/kicad-prerequisite.md).
 No Wright base-image additions or public catalog promotion.
+
+## Selected Modelica renewal runtime — 2026-09-22
+
+The historical provider and original kit remain unchanged. This is a confined
+local derivative of Casys 0.6.5 with OpenModelica 1.27/MSL 4.1 and the separately
+approved `wright-water-heater-v1@0.1.0` kit. Native applications stay in the
+selected sidecar, not the Wright base image. Exact retained image:
+`sha256:b0d440001684993a8c754e738bbe633bba41f078c67cda441f8aff2b219f5a1a`.
+
+Executed sequence from `D:/repos/wright` (do not replay existing evidence):
+
+```powershell
+.\.venv\Scripts\python.exe scripts/install-modelica-campaign-mcp.py --execute --prepare-only --container wright-082-modelica-renewal --image sha256:b0d440001684993a8c754e738bbe633bba41f078c67cda441f8aff2b219f5a1a --workspace-root 'C:\Users\markb\wright-feature-081\engineering-workflow-demos' --attempt attempt-export-qualification --attempt attempt-903 --output '.local-run/renewal-qualification/modelica-runtime/installation.json'
+.\.venv\Scripts\python.exe scripts/modelica_campaign/production_gateway_probe.py --root '.local-run/renewal-qualification/modelica-runtime' --exercise-export --attempt attempt-export-qualification
+```
+
+Only after the exact-container proof passes, run the same installer command with
+`--prepare-only` omitted. It records server identity, enables the selected tools
+for the demo workspace and checks discovery; it never dispatches a workflow.
+Registration yielded `4328a581-59ea-49d4-a90e-fb40fe8f75b7` with 15 tools.
+
+The recorded MCP launch command is:
+
+```text
+docker exec -i wright-082-modelica-renewal deno run --cached-only --allow-read=/app,/runs,/exports --allow-write=/runs,/exports --allow-run=omc,perl --allow-env=MODELICA_RUN_DIR,OPENMODELICALIBRARY /app/server.ts --stdio
+```
+
+The installer uses no container network, a fresh `/runs` store and six exact
+exports (three datasets × the two named attempts). Subsequent attempts need their
+own verified mounts; a new workflow path cannot make an old container ready.
+Never refresh/remove a runtime after registration or after native evidence exists.
+The installer fails on mount/image/container drift; the probe refuses to replace
+an existing receipt. Distinct runtime registration names avoid overwriting the
+historical provider. Proof includes real simulation, all ten native files,
+host-visible byte/hash readback and repeated-export idempotence. It does not
+prove the downstream CAD/thermal package or qualify the public catalog anew.

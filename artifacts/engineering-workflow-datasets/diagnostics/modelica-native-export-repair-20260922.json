@@ -1,0 +1,110 @@
+{
+  "schema": "wright.campaign-retry-correction-proof/1",
+  "observed_at": "2026-09-22",
+  "scenario_id": "water-heater-sizing-01",
+  "baseline_attempt_ids": [
+    "attempt-901",
+    "attempt-902"
+  ],
+  "correction": "Dedicated no-network runtime with exact same-attempt export mounts; actual native simulation/export/readback/idempotence passed before successor dispatch.",
+  "source_evidence": {
+    "path": ".local-run/renewal-qualification/modelica-runtime/production-stdio-gateway.json",
+    "sha256": "da573d5565c42b3da51073ab8b1d81f7126773b4fbbee75810913332381ce833"
+  },
+  "campaign_run": false,
+  "native_simulation_dispatched": true,
+  "command": [
+    "docker",
+    "exec",
+    "-i",
+    "wright-082-modelica-renewal",
+    "deno",
+    "run",
+    "--cached-only",
+    "--allow-read=/app,/runs,/exports",
+    "--allow-write=/runs,/exports",
+    "--allow-run=omc,perl",
+    "--allow-env=MODELICA_RUN_DIR,OPENMODELICALIBRARY",
+    "/app/server.ts",
+    "--stdio"
+  ],
+  "image": "sha256:b0d440001684993a8c754e738bbe633bba41f078c67cda441f8aff2b219f5a1a",
+  "container_id": "014f81e1f43ae9c1d2bba0db62e8d5639c4943ed1bed192b3794b72e77e2d3f0",
+  "exported_files": [
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/request.json",
+      "output_bytes": 1000,
+      "sha256": "9002ce92876cf4384e4b4ac2d4807ef4a66271efc767dc2effb68d997e5094c0",
+      "output_format": "json",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/request.json"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/resolved-parameters.json",
+      "output_bytes": 594,
+      "sha256": "378078f34230e46ab6b4e441d6b897917e59353bd11ce0181c93d975bbbf1e93",
+      "output_format": "json",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/resolved-parameters.json"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/WrightWaterHeater.mo",
+      "output_bytes": 3032,
+      "sha256": "172bc5f3eb26679d2905eea4e9e70788703c04be863568d292d9698c90a2bda4",
+      "output_format": "text",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/WrightWaterHeater.mo"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/scenario.json",
+      "output_bytes": 376,
+      "sha256": "63db7d159a461da3f67d169abcf66fd9aa4e890b4830531a43b01480c2848cad",
+      "output_format": "json",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/scenario.json"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/parameter-schema.json",
+      "output_bytes": 2102,
+      "sha256": "c14899df5a69b228963b14c15a113fe23cfcb01c5b559e07cd30433fb2a0f9f4",
+      "output_format": "json",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/parameter-schema.json"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/run.mos",
+      "output_bytes": 551,
+      "sha256": "213c34290db0176bf17f913c6e19aeae35fd50c85e7fc4f8df8757c39c499891",
+      "output_format": "text",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/run.mos"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/omc.log",
+      "output_bytes": 1049,
+      "sha256": "de03ae7a1fb2defbd3d1295cd1864d7bb2d6b376efc516537b6577acffddbabf",
+      "output_format": "text",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/omc.log"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/result.csv",
+      "output_bytes": 108061,
+      "sha256": "66172c33da3bfaaa8f80e2b17fb88d50f0779831a7fefc9176cad6bd8e58e2d7",
+      "output_format": "csv",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/result.csv"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/evidence.json",
+      "output_bytes": 1804,
+      "sha256": "47af5bfb6325139b1a69976b833bdefed7979ef3e2223614cb2f67288a352201",
+      "output_format": "json",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/artifacts/evidence.json"
+    },
+    {
+      "output_path": "campaign/water-heater-sizing-01/attempt-export-qualification/artifacts/water-heater-sizing-01-attempt-export-qualification-native-export-proof/run.json",
+      "output_bytes": 13655,
+      "sha256": "89bc87e725b98e3ed78de686ef9f7df49f66fdf0811ca16d7c46c725d2b7ae52",
+      "output_format": "json",
+      "source_uri": "casys://modelica/requests/water-heater-sizing-01-attempt-export-qualification-native-export-proof/run.json"
+    }
+  ],
+  "export_verified": true,
+  "export_idempotence_verified": true,
+  "status": "passed",
+  "tool_count": 15,
+  "backend_touch": "Actual OMC/MSL manifest plus native simulation and sealed export/readback/idempotence"
+}

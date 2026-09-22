@@ -29,6 +29,10 @@ def main():
     )
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--attempt", default="attempt-001")
+    parser.add_argument(
+        "--scenario",
+        choices=[f"water-heater-sizing-{index:02d}" for index in range(1, 4)],
+    )
     parser.add_argument("--campaign-state", default="artifacts/engineering-workflow-datasets/status.json")
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--session", default="wright-local-e3dc0ef1-06da-45dd-83b9-290347814f8a")
@@ -39,12 +43,22 @@ def main():
     root.mkdir(parents=True, exist_ok=True)
     template = request(args.api, "GET", "/api/workspace/workflow-source-templates/water-heater-sizing")["template"]
     catalog = request(args.api, "GET", "/api/workspace/workflow-sources/tools?session_id=" + args.session)
-    catalog["tools"] = [tool for tool in catalog["tools"] if tool["server_id"] == args.server_id]
+    selected_servers = {
+        args.server_id,
+        args.agentcad_server_id,
+        args.workspace_file_server_id,
+        args.oasis_server_id,
+    }
+    catalog["tools"] = [
+        tool for tool in catalog["tools"] if tool["server_id"] in selected_servers
+    ]
     tool_path = root / ("modelica-tool-catalog-" + args.attempt + ".json")
     tool_path.write_text(json.dumps(catalog, indent=2) + "\n", encoding="utf-8")
     cases = []
     for index in range(1, 4):
         identity = f"water-heater-sizing-{index:02d}"
+        if args.scenario and identity != args.scenario:
+            continue
         directory = root / identity / args.attempt
         directory.mkdir(parents=True, exist_ok=True)
         execution = directory / "execution.json"

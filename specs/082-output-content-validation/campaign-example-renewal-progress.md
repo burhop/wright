@@ -1,14 +1,19 @@
 # Campaign example renewal progress
 
-Updated: 22 September 2026. Model: GPT-5.6 Sol, reasoning High, one agent.
+Updated: 22 September 2026. Implementation has moved to the user's Astra goal;
+the campaign's separately configured Sol inference route is preserved. One agent.
+
+The active `campaign-astra-completion-goal.md` supersedes the former instruction
+to finish ready but stopped: finish R3/R4 first, then execute the revised campaign.
+It does not waive engineering review, qualification, retry or readiness gates.
 
 | Work package | State | Evidence / next action |
 | --- | --- | --- |
 | R0 safe baseline | complete | See `campaign-example-renewal-baseline.md`. Robot 010 remains exported and awaiting manual approval; no broad queue is running. |
 | R1 revised lineup | complete | Explicitly approved 22 September 2026. See `campaign-example-renewal-decision.md` and `.json`; feasibility findings remain in `campaign-example-renewal-feasibility.md`. |
 | R2 implementation | complete | The prospective revision ledger maps all 30 cases. Ten canonical preparers stage the approved brief; the six expanded families have coherent tool handoffs, outputs and full-profile validation contracts. Historical attempts and credit remain unchanged. |
-| R3 isolated qualification | in progress | Actual jig-to-Bambu, clean-container headless DXF and the corrected dedicated harness KiCad native-save path pass. Harness attempt 907 completed the WireViz stages but exposed the old PCB-only KiCad mount; its failed history is preserved and the replacement runtime was proven without another dispatch. Full harness correspondence/ERC, Solid Edge-to-DXF preservation, water-package and Robot corrective-design canonical runs remain. |
-| R4 restart readiness | not started | Broad dispatch remains prohibited; finish ready to run and stopped. |
+| R3 isolated qualification | in progress | Jig-to-Bambu, clean-container headless DXF, dedicated harness KiCad native-save and dedicated Modelica simulation/export proofs pass. Failed attempts remain preserved. Full harness correspondence/ERC, Solid Edge-to-DXF preservation, water-package and Robot corrective-design canonical runs remain. |
+| R4 restart readiness | not started | Broad dispatch is now authorized only after qualification and readiness pass; the full queue has not launched. |
 
 ## Current decision
 
@@ -57,3 +62,21 @@ attempt-907 pin schedule and independent netlist created three connector symbols
 connected all six released net identities, validated, and saved a 17,487-byte
 native schematic. Full canonical ERC/correspondence remains pending; attempt 908
 was not created or dispatched.
+
+## Modelica qualification checkpoint
+
+Water 901 stopped because the historical Modelica container was stopped. Water
+902 completed its first native simulation, then failed at native export; the
+historical container had no attempt-902 output mount. Both failures are preserved.
+The replacement runtime is a new no-network container with the retained immutable
+qualified image, a fresh native store and exact qualification/903 export mounts.
+It completed a real simulation, exported all ten required native files, verified
+their host-visible bytes/hashes, and repeated the export without changing them.
+
+The installer now rejects observed image, container, mount or running-state drift
+and requires same-container export proof before registering a renewal runtime.
+Distinct registration names preserve the historical provider. New server
+`4328a581-59ea-49d4-a90e-fb40fe8f75b7` exposes all 15 tools. The 18 focused
+binding/export/runtime tests, Ruff and diff checks passed. See the active Astra
+progress record before continuing water 903; no new final-design credit is earned
+by this repair proof.

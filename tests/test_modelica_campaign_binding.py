@@ -24,6 +24,8 @@ def test_modelica_enroller_forwards_the_selected_package_servers():
     assert '"--agentcad-server-id"' in source
     assert '"--workspace-file-server-id"' in source
     assert '"--initialize-agentcad"' in source
+    assert "selected_servers" in source
+    assert "tool[\"server_id\"] in selected_servers" in source
 
 
 def module(name, relative):
@@ -36,6 +38,14 @@ def module(name, relative):
 preparer = module("modelica_binding_test", "scripts/prepare-modelica-dataset-campaign.py")
 enroller = module("modelica_enrollment_test", "scripts/enroll_engineering_dataset_case.py")
 installer = module("modelica_installer_test", "scripts/install-modelica-campaign-mcp.py")
+
+
+def test_isolated_modelica_registration_preserves_historical_name():
+    historical = installer.registration_name(installer.CONTAINER)
+    assert historical == "Modelica — selected bounded water-heater campaign kit"
+    renewal = installer.registration_name("wright-082-modelica-renewal")
+    assert renewal == historical + " (wright-082-modelica-renewal)"
+    assert renewal != installer.registration_name("wright-082-modelica-other")
 
 
 @pytest.fixture
@@ -199,3 +209,50 @@ def test_existing_container_cannot_claim_new_attempt_mounts(tmp_path, monkeypatc
     with pytest.raises(ValueError, match="lacks requested attempt mounts"):
         installer.main()
     assert json.loads(receipt.read_text())["mounts"] == installer.attempt_mounts(tmp_path, ["attempt-001"])
+
+
+@pytest.mark.parametrize("defect", [None, "missing", "extra", "readonly", "image", "identity", "stopped"])
+def test_runtime_readback_rejects_mount_or_identity_drift(tmp_path, defect):
+    mounts = installer.attempt_mounts(tmp_path, ["attempt-903"])
+    receipt = {"container_id": "owned", "image": "sha256:" + "a" * 64, "mounts": mounts}
+    observed = {"Id": "owned", "Image": receipt["image"], "State": {"Running": True},
+                "Mounts": [{"Type": "bind", "Source": m["host"], "Destination": m["container"], "RW": True} for m in mounts]}
+    if defect == "missing":
+        observed["Mounts"].pop()
+    elif defect == "extra":
+        observed["Mounts"].append({"Type": "bind", "Source": str(tmp_path), "Destination": "/whole-workspace", "RW": True})
+    elif defect == "readonly":
+        observed["Mounts"][0]["RW"] = False
+    elif defect == "image":
+        observed["Image"] = "sha256:" + "b" * 64
+    elif defect == "identity":
+        observed["Id"] = "foreign"
+    elif defect == "stopped":
+        observed["State"]["Running"] = False
+    if defect:
+        with pytest.raises(ValueError):
+            installer.validate_runtime(observed, receipt)
+    else:
+        installer.validate_runtime(observed, receipt)
+
+
+def test_native_export_proof_checks_actual_bytes_and_complete_set(tmp_path):
+    import hashlib
+
+    probe = module("modelica_export_probe_test", "scripts/modelica_campaign/production_gateway_probe.py")
+    dataset, attempt = "water-heater-sizing-01", "attempt-proof"
+    directory = tmp_path / "request"
+    directory.mkdir()
+    names = ("request.json", "resolved-parameters.json", "WrightWaterHeater.mo", "scenario.json", "parameter-schema.json", "run.mos", "omc.log", "result.csv", "evidence.json", "run.json")
+    files = []
+    for name in names:
+        data = ("native-" + name).encode()
+        (directory / name).write_bytes(data)
+        files.append({"output_path": f"campaign/{dataset}/{attempt}/artifacts/request/{name}", "sha256": hashlib.sha256(data).hexdigest(), "output_bytes": len(data)})
+    installation = {"mounts": [{"container": f"/exports/{dataset}/{attempt}", "host": str(tmp_path)}]}
+    assert probe.verify_export_files(installation, {"produced_files": files}, dataset, attempt) == files
+    with pytest.raises(ValueError, match="complete native artifact set"):
+        probe.verify_export_files(installation, {"produced_files": files[:-1]}, dataset, attempt)
+    (directory / "result.csv").write_text("different solver results")
+    with pytest.raises(ValueError, match="differs from sealed"):
+        probe.verify_export_files(installation, {"produced_files": files}, dataset, attempt)

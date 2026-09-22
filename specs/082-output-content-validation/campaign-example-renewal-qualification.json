@@ -2,14 +2,15 @@
   "schema": "wright.campaign-example-renewal-qualification/1",
   "revision_id": "campaign-example-renewal-r1-2026-09-21",
   "observed_at": "2026-09-22",
-  "campaign_dispatch_count": 2,
+  "campaign_dispatch_count": 4,
   "broad_campaign_dispatch_count": 0,
-  "isolated_qualification_dispatch_count": 2,
+  "isolated_qualification_dispatch_count": 4,
   "static_qualification": {
     "status": "pass",
     "scenario_contracts": 30,
     "validator_profiles": 30,
     "focused_tests": 106,
+    "modelica_followup_focused_tests": 18,
     "ruff": "pass",
     "git_diff_check": "pass"
   },
@@ -83,6 +84,19 @@
       "remaining": "Run the corrected path canonically through native ERC and exact WireViz/KiCad correspondence. No attempt 908 was dispatched during this checkpoint."
     }
   ],
+  "modelica_followup": {
+    "status": "native_export_pass_canonical_package_pending",
+    "canonical_attempts": [
+      {"attempt_id": "attempt-901", "run_id": "86088c0fe4db4788a053ba98e14560a6", "status": "failed", "failure": "historical Modelica container stopped"},
+      {"attempt_id": "attempt-902", "run_id": "9a39d55ceead467e84524ccc83d1be21", "status": "failed", "failure": "native export child_unavailable; historical runtime lacked same-attempt export mounts"}
+    ],
+    "registered_server_id": "4328a581-59ea-49d4-a90e-fb40fe8f75b7",
+    "evidence": {
+      "path": "artifacts/campaign-example-renewal/qualification/modelica-renewal-native-export.json",
+      "sha256": "7d4e53f584f95c0d79979bbd7b07cf1b730d43f765f2cd185b19641145d2568a"
+    },
+    "scope": "Actual native simulation, ten-file sealed export, host byte/hash verification and repeated-export idempotence; not canonical full-package or public catalog qualification."
+  },
   "remaining_native_gates": [
     "Harness: run the corrected dedicated KiCad path canonically through ERC and correspondence; targeted swapped-pin and omitted-net checks already pass statically.",
     "Sheet metal: produce an actual Solid Edge flat pattern and prove headless reopen/preservation against it.",
