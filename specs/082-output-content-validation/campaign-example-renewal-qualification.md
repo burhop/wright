@@ -1,7 +1,8 @@
 # Campaign example renewal qualification
 
 Date: 22 September 2026. Broad campaign dispatches: **zero**. Isolated canonical
-qualification dispatches: **seven** (harness 906/907 and water 901/902 retained
+qualification dispatches: **eight** (Printed 01 attempt 901 is newly running;
+harness 906/907 and water 901/902 are retained
 failures; water 903 failed after successful native simulation/export at 18:07:16
 UTC due to a composite result-identifier length defect). Separate provider probes
 are not canonical workflow dispatches. Exact evidence, repair proof and deployment
@@ -21,6 +22,23 @@ authoring correctly refused missing insulation density and outer-shell
 material/density. All 46 native/study files remain; no package/pass is claimed.
 The user authorized preparing missing assumptions for review, not adopting them.
 See `campaign-missing-inputs-addendum-proposal.md`. No successor is dispatched.
+
+Printed 01 attempt 901 is the independent representative prescribed by R3.
+It started at 19:16:51 UTC on 22 September after native readiness, exact
+input/source/grant/profile preflight and actual campaign inference passed.
+Run: `8877a99cc7054faab6b4d586b05845cb`. Its source STL exists and independent
+inspection found 5,786 triangles, 38.0 × 34.524563 × 18.0 mm bounds, zero
+degenerate triangles, zero boundary edges and zero non-manifold edges. These
+limited checks do not prove socket/grip details or complete engineering acceptance.
+The first Blender topology-inspection script errored; its in-run correction
+returned geometry measurements successfully at 19:20:37 UTC. Slicing, final
+package, human review and full validation are not yet claimed. Isolated evidence:
+`.local-run/renewal-qualification/printed01-canonical-901/`.
+
+**User-directed deferment:** do not run Solid Edge-dependent examples while
+another agent improves that MCP. The three sheet-metal subjects remain in the
+approved 30-case target with prior quarantine intact. No Solid Edge deployment
+or qualification work is authorized in this task until the updated handoff.
 
 A separate native KiCad exporter passed an actual direct MCP check at 18:59:16,
 preserving the retained schematic and exporting its XML netlist, complete ERC

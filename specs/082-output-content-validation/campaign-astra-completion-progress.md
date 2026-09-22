@@ -334,6 +334,88 @@ canonical case or broad wave was launched. Counts are not earned by these probes
 
 ## Next safe work
 
+### User-directed Solid Edge deferment — 22 September 2026
+
+Do not execute or repair Solid Edge paths while the other agent improves its MCP.
+The current approved lineup/binding inspection identifies three affected cases:
+`sheet-metal-supplier-handoff-01`, `sheet-metal-supplier-handoff-02` and
+`sheet-metal-supplier-handoff-03`. Preserve their requirements, native evidence,
+quarantine and place in the 30-case target. Exclude Solid Edge-dependent cases
+from any newly assembled executable manifest until an updated handoff is reviewed.
+No provider, process, deployment, historical ledger or counter was changed.
+Printed 01 uses Blender/mesh repair/Bambu and remains independent; its isolated
+run `8877a99cc7054faab6b4d586b05845cb` is running. As of 19:19:16 UTC it had
+completed its first actual Blender call and was reviewing the returned geometry.
+
+### Printed 01 isolated qualification — 22 September, 19:16 UTC
+
+The throughput review shifted execution to the representative explicitly named
+first in R3: Printed Part 01. This does not amend the all-family readiness gate
+or release the broad campaign. Water/harness assumption values remain proposed,
+not approved or applied. No other workflow runner or active native lease was
+found before starting the separate lifecycle-owned Blender session.
+
+Fresh attempt 901 uses source digest
+`f5ff66cf111a07498550d82b110d1f88c2ca2ead328ea78989742fc6c27e00b6`.
+It preserves the actual template instance and stages twelve input files for six
+canonical stages. Complete grant/source/port/profile/input preflight passes 1/1,
+with zero warnings. The actual campaign inference route returned `READY` at
+19:15:43 UTC using unchanged `openai-codex::gpt-5.6-sol`, no tools or errors.
+Blender's pinned guarded endpoint returned the owned empty scene at 19:16:18;
+the staged fixed-slicer configuration passed confinement checks. The unchanged
+native-tested slicing operation and Bambu executable match the retained actual
+jig slicing proof. Printed 01's previous guarded-export correction completed;
+its retry history is not reset. Printed 02 remains separately quarantined.
+
+Lifecycle: `.local-run/feature-081-live/printing01-runtime-attempt-901/lifecycle.json`.
+Blender provider: `2fc7272e-5f3c-41da-b492-50777aa226e4`; repair provider:
+`40826e9e-32d8-4e5c-97a0-299b1581616d`. Native PID at launch: 26772.
+Manifest: `.local-run/feature-081-live/campaign-execution/printing-01-attempt-901-pilot.json`.
+Qualification-only state, exports and readiness proofs:
+`.local-run/renewal-qualification/printed01-canonical-901/`.
+The existing canonical runner has been invoked once with those isolated state
+and export roots and the unchanged global retry ledger. Reconcile its durable
+state before any resume or cleanup. Preserve the native process if the workflow
+awaits human review or its outcome is uncertain. Do not credit qualification as
+renewed broad-campaign completion or approve the geometry review automatically.
+
+Actual run ID: `8877a99cc7054faab6b4d586b05845cb`, started 19:16:51 UTC.
+Source-mesh inspection independently reads 5,786 triangles and bounds
+38.0 × 34.524563 × 18.0 mm; no degenerate triangles, boundary edges or
+non-manifold edges. The workflow corrected its own BMesh lookup-table inspection
+error and obtained measurements at 19:20:37 UTC. Do not mistake those bounded
+checks for grip/socket, slicing or full-scope acceptance. A read-only results
+walkthrough script is prepared at the isolated root's `capture-results.mjs`,
+reusing the existing screenshot utility; it has passed syntax checking but has
+not run. Run it only when the slicing files exist, then validate the walkthrough
+report before claiming normal-workspace result access.
+
+### Interrupted implementation checkpoint and throughput review
+
+The user asked why the campaign graph remains flat. Fresh read-only checks
+confirmed historical API metrics 30/30/24/0 (the separate retained automated
+inspection supplies the displayed 17), current metrics 1/0/0, and **no live
+canonical campaign runner**. Seven isolated qualification dispatches and zero
+broad campaign dispatches remain recorded. The last actual inference proof is
+still `openai-codex::gpt-5.6-sol`; selecting Astra for the implementation task
+did not change workflow inference. The all-family readiness-before-broad-dispatch
+gate is still in force; a per-case readiness/completion lane is a proposed
+sequencing change, not yet an approved plan amendment.
+
+Before that question interrupted implementation, 24 crafted invalid native
+harness cases demonstrated that the old correspondence reader accepted all of
+them. New uncommitted `harness_interconnect.py`, its call from `harness.py`, and
+`test_harness_native_correspondence.py` now pass all 25 targeted reader tests.
+The tests cover actual XML pins/nets, splices, reserve pins, fixed source tables,
+WireViz edges, native ERC and hash bindings. This is **unfinished integration**:
+Ruff reported two test-only E702 statements, packaged profiles/preparer bindings
+have not been upgraded with the required XML/inspection roles, and no new reader
+deployment/native correspondence or campaign pass is claimed. Finish those
+coherent boundaries and malformed-XML/resource tests before restarting/loading
+this code or spending another canonical attempt. Preserve the uncommitted work
+and the five unrelated dirty documents; do not treat the 25 unit tests as
+end-to-end completion.
+
 1. Obtain the actual decision on the proposed engineering addendum before using
    its values. Water 904 and 905 are terminal and must not be redispatched,
    overwritten or relabeled. Continue independent repair work without treating

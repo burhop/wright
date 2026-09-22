@@ -37,6 +37,19 @@ Finish only after an independent audit of the actual artifacts proves all four c
 
 ## Resume checkpoint (reverify before action)
 
+### User scheduling override — 22 September 2026
+
+The user instructed: avoid examples using Solid Edge for now because another
+agent is improving its MCP. Defer `sheet-metal-supplier-handoff-01`, `-02` and
+`-03`, and any other workflow whose actual bindings depend on Solid Edge.
+Do not dispatch their qualification/campaign runs, probe or restart Solid Edge,
+or modify its MCP deployment in this task. Continue independent non-Solid-Edge
+examples. Keep all three subjects in the approved 30-case lineup; deferment is
+not a pass, a removed requirement, or a reset of their prior quarantine.
+Before returning to them, obtain the updated MCP handoff and verify its exact
+version/bindings and native proof under the existing retry rules. The other
+agent's work alone does not establish qualification of these workflows.
+
 - Renewal R0/R1/R2 are recorded complete; R3 is in progress and R4 is pending.
 - Campaign API: historical ledger `30/30/24/0`; retained automated inspections
   supply 17 passes to the displayed `30/30/24/17`. Current metrics are 1 run,
