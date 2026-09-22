@@ -207,9 +207,39 @@ Full receipt: `.local-run/renewal-qualification/water01-scope-repair/proof.json`
 The broad queue remains gated. Prepare a separately identified successor only
 with this proven correction, exact new mounts/grants and preserved retry history.
 
+## Numeric package-validation repair before Water 905
+
+Before another dispatch, source inspection found that the package reader checked
+hashes but trusted producer `pass` flags for temperature and mass. Seventeen
+targeted invalid numeric fixtures were accepted by the previous implementation.
+The repaired reader now independently checks both actual 1-D field domains and
+temperature profiles against the closed-form conduction/convection equations,
+selected power and fixed efficiency; verifies the reported observations/limits;
+and rejects nonfinite, negative, missing, out-of-range or mismatched measurements.
+Engineering thresholds were not relaxed. Native STEP envelope checks and the
+required human package-contract review remain separate and mandatory.
+
+Water full profiles are prospectively version 2 with the unchanged requirement
+baselines and explicit approved numeric conditions. The reader identity digest,
+coverage pins and all-30 prospective revision ledger were updated. Old attempts
+and approvals remain historical. The combined regression suite passed **160
+tests**, including the now-rejected producer-flag shortcuts; Ruff/diff checks pass.
+This is validator repair evidence, not native package qualification or campaign
+credit. The declared 1-D screen does not prove 3-D geometry/material attribution,
+mount/keepout compliance, handle thermal paths, vents or physical safety.
+
+Fresh runtime `wright-082-modelica-r905` has already passed a real native
+simulation, all ten exported files, hash readback/idempotence and all six pinned
+manifest reads. Server `7d9e7af6-e1f3-4463-9749-8ccdf5a39918` exposes 15 tools.
+Receipts: `.local-run/renewal-qualification/modelica-runtime-905/`.
+It mounts only new attempt-905 and attempt-export-qualification-905 output roots
+for the three approved water cases, plus its isolated native store. **No canonical
+905 source has been enrolled or dispatched yet.** Commit and load the repaired
+validator with the existing scoped restart helper before enrolling that source.
+
 ## Next safe work
 
-1. Prepare and preflight the scope-corrected water successor; observe it through
+1. Load the numeric validator repair, then prepare and preflight the scope-corrected water successor; observe it through
    CAD/thermal artifacts and every required review. Water 904 is terminal and
    must not be redispatched, overwritten or relabeled.
 2. Preserve the recovered API/profile and actual inference receipt. A dashboard

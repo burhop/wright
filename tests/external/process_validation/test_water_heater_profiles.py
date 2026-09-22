@@ -169,17 +169,16 @@ def test_generated_profiles_are_reproducible():
 
 
 @pytest.mark.parametrize("scenario_id", sorted(ATTEMPTS))
-def test_retained_trajectories_pass_independent_checks_but_expose_missing_kit_identity(
+def test_retained_trajectories_pass_but_missing_kit_and_nonpackage_fixture_fail(
     tmp_path, scenario_id
 ):
     outcome = evaluate(tmp_path, scenario_id)
     findings = {item.check_id: item for item in outcome.assessment.findings}
-    assert set(findings) == {"kit-id", "kit-version"}, [
+    assert set(findings) == {"kit-id", "kit-version", "package-verification"}, [
         (item.check_id, item.code, item.summary) for item in findings.values()
     ]
-    assert {item.code for item in findings.values()} == {
-        "output.required_value_missing"
-    }
+    assert findings["kit-id"].code == findings["kit-version"].code == "output.required_value_missing"
+    assert findings["package-verification"].code == "water.package_measurement_geometry_identity"
     passing = {
         item.check_id for item in outcome.assessment.checks if item.state == "pass"
     }

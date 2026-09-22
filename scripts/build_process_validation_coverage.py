@@ -323,19 +323,20 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("water-heater-sizing-01", "d6cce9cb089f7ff1d0dc86877ade6110fad0a6f9a1164954a22f9b4a87cae294", "b5f8d63ee4f36b3ee3c32ac9f74fc7a0d769fa21ebc62592232d3494b09016d0"),
-    ("water-heater-sizing-02", "0a2143584bcfa594f4c4e2b13db2208160f30ec720394792c769f9c933308de6", "258b0675125c6fe50fb0943110e1d9e50b0eab1b5410718baa8e4492ff64fb51"),
-    ("water-heater-sizing-03", "d303b67680f34b941ec7e52c26064873c3489148a9a434d86edb5f4ecbdf59dc", "ebe3698bbd89b09479ed3a38c87a9fd4c5a1a136881d32e6be0899b6c33b9af1"),
+    ("water-heater-sizing-01", "bb5f22e55ccfe857ff60a612a950d80486a9f2cdbb3514854ef9986fc49b4bbd", "b5f8d63ee4f36b3ee3c32ac9f74fc7a0d769fa21ebc62592232d3494b09016d0"),
+    ("water-heater-sizing-02", "45a9591cf084719ec081e3b0f30caa9f4caadfc336d6724bf1d67bba6f32f7c3", "258b0675125c6fe50fb0943110e1d9e50b0eab1b5410718baa8e4492ff64fb51"),
+    ("water-heater-sizing-03", "9b5d98220c2e2aafb8a1a43865cca2926e19b8897d0e5253a3e69aebf260c988", "ebe3698bbd89b09479ed3a38c87a9fd4c5a1a136881d32e6be0899b6c33b9af1"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
         "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
         "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
         "reader_ids": ["step-bounding-box@1", "structured@1", "water-heater-timeline@1"],
-        "scope": "Exact Modelica candidate/loss grid and selection plus an exact-correspondence AgentCAD package and scikit-fem carrier/shell screen, package envelope, deliverables and required reviews.",
+        "scope": "Exact Modelica candidate/loss grid and selection plus a hash-bound AgentCAD package, independently recomputed one-dimensional carrier/shell fields and fixed numeric limits, native package envelope, deliverables and required reviews.",
         "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
-        "evidence": ["tests/external/process_validation/test_water_heater.py", "tests/external/process_validation/test_water_heater_profiles.py"],
+        "evidence": ["tests/external/process_validation/test_water_heater.py", "tests/external/process_validation/test_water_heater_profiles.py", "packages/workspace_service/tests/test_water_package_numeric_validation.py"],
     }
+    IMPLEMENTED_PROFILES[_scenario_id]["profile_ref"]["version"] = "2"
 
 for _scenario_id, _profile_sha, _baseline_sha in (
     ("parametric-drill-jig-02", "95ce88043e9fa2c690d888135e648e921214d7928a5a11bc721a47107a0e2350", "895744b1726ba48ef18b9582151d5cde4402afd0b2378957de3d7c884a67c14e"),

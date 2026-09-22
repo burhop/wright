@@ -207,6 +207,10 @@ def build(scenario_id, config):
             parameters={
                 "operation": "package_verification",
                 "selected_power_w": config["selected"],
+                "heater_efficiency": config["efficiency"],
+                "target_temperature_c": 90.0,
+                "ambient_temperature_c": 20.0,
+                "fixed_requirements": fixed,
                 "geometry_role": "package_step",
                 "measurements_role": "package_measurements",
                 "field_role": "package_field",
@@ -265,12 +269,13 @@ def build(scenario_id, config):
     return ValidationProfile.model_validate(
         {
             "id": scenario_id + "-full",
-            "version": "1",
+            "version": "2",
             "baseline": baseline,
             "checks": checks,
             "excluded_scope": [],
             "limitations": [
-                "Physical heater operation, safety, wiring, purchasing and certification remain outside this digital validation gate."
+                "Physical heater operation, safety, wiring, purchasing and certification remain outside this digital validation gate.",
+                "Thermal verification independently checks the declared one-dimensional carrier/insulation screen, not a three-dimensional thermal qualification. CAD thickness/material/mass attribution, interfaces, keepouts, handle paths and vents still require the explicit package-contract review."
             ],
             "supported_kinds": ["file"],
         }
