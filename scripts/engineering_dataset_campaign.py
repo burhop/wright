@@ -432,8 +432,10 @@ class Campaign:
             raise ValueError("Validator passes must be an integer from 0 to 30")
         with self.lock, self.connect() as db:
             metrics = self.metrics(db)
-            if validator_passes is not None:
-                metrics["valid_data"] = validator_passes
+            # Keep retained automated inspections separate from fully approved
+            # current outputs. Null means this update has no new inspection,
+            # while an explicit zero is a real observed decline to zero.
+            metrics["automated_validation_passes"] = validator_passes
             self.event(db, "campaign_update", note, metrics)
 
     def scan(self, *, full_audit: bool = False):

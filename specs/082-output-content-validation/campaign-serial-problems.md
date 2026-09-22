@@ -72,3 +72,13 @@ P001 Printed 02 attempt 017: human requested changes; final finger clearance 24.
 P001 Printed 02: isolated native correction measures 25.000 mm clearance and 96.000 mm bore spacing, preserves 114 x 24 x 34 mm envelope, exports native .blend and compares orientations. Bores are 4.500 mm across axes, with 4.4946 mm faceted minimum disclosed for review. 11 focused checks passed. Canonical successor and human review still required; no campaign credit.
 
 [Native proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-feature-repair-qualification.json). The proof reuses the retained AI-authored design with explicit endpoint rings; it is not a canonical workflow execution.
+
+## P001 canonical attempt 018: grip review pending
+
+P001 Printed 02/018: 17 automated checks pass; clearance/native/orientation gaps repaired. Human review still pending: sharp shoulders (~81 degrees) and thumb recess shorter than required 40 mm. Request-changes recommendation prepared; no canonical approval.
+
+[Exact review brief](printed02-attempt018-engineering-review.md). Correction 1/2 remains in its preserved retry episode. Current counters 30/2/0/0; displayed retained inspection 30/30/24/18. P001 remains active.
+
+## P001: second human decision and chart correction
+
+The user requested changes on attempt 018 and authorized grip correction 2. The runner terminated and recorded native cleanup. The user also identified false zero drops in the chart: ordinary current-approval counts were mixed with retained automated inspection counts. The update writer now records a separate optional automated count, and the chart carries each actual inspection observation forward; explicit lower/zero inspections still reduce it. Three chart regressions and one update-writer regression passed. The actual served SVG was checked against the entire derived history; it remains at 17 then 18 with no false zero drops. Canonical approval counts remain zero. [Browser evidence](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-chart-fixed.json). No historical event was rewritten and no campaign credit was added.

@@ -219,11 +219,18 @@ def test_campaign_update_records_zero_delta_history_step(corpus):
     after = corpus.status()
     assert len(after["history"]) == len(before["history"]) + 1
     assert after["history"][-1]["kind"] == "campaign_update"
-    assert after["history"][-1]["metrics"] == before["metrics"]
+    assert after["history"][-1]["metrics"] == {
+        **before["metrics"], "automated_validation_passes": None
+    }
 
     corpus.record_update("Validator results unchanged", validator_passes=17)
     overridden = corpus.status()["history"][-1]
-    assert overridden["metrics"] == {**before["metrics"], "valid_data": 17}
+    assert overridden["metrics"] == {
+        **before["metrics"], "automated_validation_passes": 17
+    }
+    assert corpus.status()["metrics"] == before["metrics"]
+    corpus.record_update("Retained outputs invalidated", validator_passes=0)
+    assert corpus.status()["history"][-1]["metrics"]["automated_validation_passes"] == 0
 
 
 def test_dashboard_reads_do_not_reassert_wal_behind_an_active_writer(corpus):
