@@ -31,6 +31,21 @@ installer = module("modelica_installer_test", "scripts/install-modelica-campaign
 def catalog(tmp_path):
     tools = [GatewayTool(name="selected-modelica__" + name, server_id="selected-modelica", tool_name=name,
                          description="Static binding test", input_schema={"type": "object"}) for name in preparer.TOOLS]
+    tools.extend(
+        GatewayTool(
+            name=server + "__" + name,
+            server_id=server,
+            tool_name=name,
+            description="Static package-chain binding test",
+            input_schema={"type": "object"},
+        )
+        for server, names in {
+            "agentcad": ("context", "docs", "run"),
+            "wright-workspace-files": ("write_text_document", "inspect_file"),
+            "oasis": ("run_simulation",),
+        }.items()
+        for name in names
+    )
     runtime = WorkflowMcpRuntime.__new__(WorkflowMcpRuntime)
     runtime.gateway = SimpleNamespace(list_tools=lambda _: tools)
     runtime.session_id = "static-test"
@@ -50,7 +65,7 @@ def catalog(tmp_path):
     return runtime, projected, tool_path, manifest_path
 
 
-@pytest.mark.parametrize("index,steps,direct", [(1, 11, 7), (2, 11, 7), (3, 27, 23)])
+@pytest.mark.parametrize("index,steps,direct", [(1, 16, 8), (2, 16, 8), (3, 32, 24)])
 def test_every_generated_heater_node_resolves_and_keeps_original_stages(tmp_path, catalog, index, steps, direct):
     runtime, projected, tool_path, manifest_path = catalog
     directory = next((ROOT / "tests/datasets/engineering-workflows/scenarios/water-heater-sizing").glob(f"{index:02}-*"))
@@ -88,10 +103,29 @@ def test_every_generated_heater_node_resolves_and_keeps_original_stages(tmp_path
         step for step in plan.steps if step.id.startswith("validate_heater_content_")
     )
     assert review.external_action["action_kind"] == "local_review"
-    assert {role for role, _ in validator.validation_sources} == set(
-        preparer.STUDY_OUTPUTS
-    )
+    assert {role for role, _ in validator.validation_sources} == {
+        *preparer.STUDY_OUTPUTS,
+        "package_step",
+        "package_measurements",
+        "package_field",
+        "package_verification",
+    }
     assert validator.validation["profile"]["name"] == f"water-heater-sizing-0{index}"
+    package = next(
+        step for step in plan.steps if step.id.startswith("build_package_cad_")
+    )
+    assert set(package.expected_file_ports) == {
+        "thermal_package_step",
+        "thermal_package_measurements",
+    }
+    screen = next(
+        step for step in plan.steps if step.id.startswith("screen_package_thermal_")
+    )
+    assert screen.server_id == "oasis"
+    assert set(screen.expected_file_ports) == {
+        "thermal_package_field",
+        "thermal_package_verification",
+    }
     configured_review = review.external_action["settings"]["validation_review"]
     assert configured_review["profile_ref"] == validator.validation["profile"][
         "reference"

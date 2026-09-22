@@ -58,8 +58,8 @@ class HarnessReader:
         version="1",
         config_digest=canonical_digest(
             {
-                "checks": ["topology", "reserve", "cut-length", "voltage-drop"],
-                "version": 1,
+                "checks": ["topology", "reserve", "cut-length", "voltage-drop", "kicad-correspondence"],
+                "version": 2,
             }
         ),
         method="independent_measurement",
@@ -125,6 +125,36 @@ class HarnessReader:
                     )
                 maximum = max(maximum, total)
             value, unit = maximum, "V"
+        elif operation == "kicad_correspondence":
+            try:
+                document = json.loads(snapshot.content)
+                related = {
+                    item.subject.role: item for item in context.related_snapshots
+                }
+                expected = {
+                    "schematic_sha256": related["kicad_schematic"].subject.sha256,
+                    "pin_schedule_sha256": related["pin_schedule"].subject.sha256,
+                    "netlist_sha256": related["netlist"].subject.sha256,
+                    "erc_sha256": related["kicad_erc"].subject.sha256,
+                }
+                if (
+                    document.get("schema")
+                    != "wright-harness-kicad-correspondence-v1"
+                    or document.get("status") != "pass"
+                    or any(document.get(key) != digest for key, digest in expected.items())
+                    or any(
+                        document.get(key) != []
+                        for key in ("missing_rows", "extra_rows", "mismatched_rows")
+                    )
+                    or int(document.get("erc_error_count", -1)) != 0
+                ):
+                    raise ValueError("correspondence")
+            except (UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+                raise _defect(
+                    "harness.kicad_correspondence",
+                    "KiCad schematic, source tables, ERC and exact pin/net correspondence do not agree.",
+                ) from exc
+            value, unit = True, None
         else:
             raise ValidationIssue(
                 "profile.harness_operation",

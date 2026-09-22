@@ -29,6 +29,11 @@ MATERIAL_PAGES = {
 _spec = importlib.util.spec_from_file_location("sheet_campaign_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 helpers = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(helpers)
+_renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(_renewal_spec)
+_renewal_spec.loader.exec_module(renewal)
 
 
 def prepare(args, directory, available):
@@ -37,6 +42,32 @@ def prepare(args, directory, available):
     if "cad-design-choices-revision-r3.md" not in manifest["files"]["context"]:
         raise ValueError("Publish the explicit R3 CAD design-choice input revision before preparing a fresh sheet-metal attempt")
     scenario = manifest["scenario_id"]
+    requested_dxf_server = getattr(args, "dxf_server_id", None)
+    dxf_server_candidates = {
+        tool["server_id"] for tool in available if tool["tool_name"] == "drawing_open"
+    }
+    if requested_dxf_server:
+        dxf_server_candidates = {
+            server for server in dxf_server_candidates if server == requested_dxf_server
+        }
+    dxf_server = next(
+        (
+            server
+            for server in sorted(dxf_server_candidates)
+            if all(
+                any(
+                    tool["server_id"] == server and tool["tool_name"] == name
+                    for tool in available
+                )
+                for name in config["headless_dxf_review"]["tools"]
+            )
+        ),
+        None,
+    )
+    if dxf_server is None:
+        raise ValueError(
+            "A selected qualified headless DXF server with open/info/save-as is required"
+        )
     scenario_config = config["scenarios"][scenario]
     coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
     support = next(row for row in coverage["scenarios"] if row["scenario_id"] == scenario)
@@ -82,6 +113,11 @@ def prepare(args, directory, available):
             helpers.write_once(helpers.confined(workspace, relative), data)
             staged.append({"path": relative, "sha256": helpers.digest(data), "size_bytes": len(data),
                            "original": path.relative_to(ROOT).as_posix()})
+    renewal_data = renewal.contract_bytes(manifest)
+    renewal_path = inputs_root + "/approved-engineering-brief.json"
+    helpers.write_once(helpers.confined(workspace, renewal_path), renewal_data)
+    staged.append({"path": renewal_path, "sha256": helpers.digest(renewal_data),
+                   "size_bytes": len(renewal_data), "role": "approved_engineering_brief"})
     human_files = [manifest["files"]["user_profile"], manifest["files"]["prompt"], *manifest["files"]["context"]]
     # Include every human table exactly, even when authored outside files.context.
     human_files += [p.name for p in directory.glob("*.csv") if p.name not in human_files]
@@ -91,6 +127,9 @@ def prepare(args, directory, available):
     staged.append({"path": context_path, "sha256": helpers.digest(context.encode()), "size_bytes": len(context.encode()),
                    "derived_from": [inputs_root + "/" + name for name in human_files]})
     brief = helpers.add_file_input(sections, suffix, "human_context", context_path)
+    engineering_brief = helpers.add_file_input(
+        sections, suffix, "approved_engineering_brief", renewal_path
+    )
     operation_source = ROOT / "scripts/engineering_evidence_mcp.py"
     operation_path = inputs_root + "/engineering-evidence-operation.py"
     helpers.write_once(helpers.confined(workspace, operation_path), operation_source.read_bytes())
@@ -200,6 +239,9 @@ def prepare(args, directory, available):
         "State unresolved supplier differences separately; auto review confirms the test's chosen bounded revision, not manufacturability or supplier acceptance. A release HOLD does not waive any mandatory DFM/geometry requirement. "
         "Name each required part with the runtime part labels and its separate PSM/STEP/developed DXF outputs; runtime-supplied indexed paths are authoritative. Retain manufacturing_release=HOLD and supplier_acceptance=unverified.",
         "manufacturing-intent.md", fmt="markdown")
+    helpers.add_reference(
+        sections, engineering_brief, intent, "approved_engineering_brief"
+    )
     nominal_outputs = {part: {extension: output_root + "/" + part + "." + extension
                              for extension in ("psm", "step", "dxf", "jpg")}
                        for part in scenario_config["parts"]}
@@ -334,6 +376,61 @@ def prepare(args, directory, available):
         order(lid, lid_check, "separate lid identity")
         order(lid_check, lid_export, "checked lid before export")
         order(lid_export, preview, "both parts before supplier preview")
+    dxf_reviews = {}
+    for part_name in scenario_config["parts"]:
+        token = part_name.replace("-", "_")
+        export_task, export_port, _ = part_sources[token]["dxf"]
+        review_task = new_task(
+            "review_" + token + "_flat_dxf",
+            "Independently reopen and inspect the " + part_name + " flat pattern",
+        )
+        source_path = output_root + "/" + part_name + ".dxf"
+        reviewed_path = output_root + "/" + part_name + "-review.dxf"
+        report_path = output_root + "/" + part_name + "-dxf-review.json"
+        review_dxf_port = token + "_review_dxf"
+        review_report_port = token + "_review_report"
+        review_ref = bind(
+            review_task,
+            "Use the selected AutoCAD MCP Pro 3.4.7 headless ezdxf backend only. "
+            f"Call drawing_open(path={source_path!r}), then drawing_info() to read the actual flat-pattern entity inventory, extents and units. "
+            f"Without editing geometry, call drawing_save_as(path={reviewed_path!r},format='dxf'), reopen that saved copy and call drawing_info again. "
+            "Compare the source and reopened-copy inventory/extents and report exact differences. Write schema='wright-headless-dxf-review-v1', status='pass' only when reopen succeeds and inventory/extents are equal, source_sha256, reviewed_sha256, inventories_equal, exact differences, provider/version and unsupported semantic checks. Retain the upstream native flat-pattern identity. "
+            "This is not desktop AutoCAD, a dimensioned drawing, supplier DFM approval or proof that the folded and flat geometries correspond; those remain separate checks.",
+            part_name + "-dxf-review.json",
+            dxf_server,
+            (part_name + "-review.dxf",),
+        )
+        review_task["fields"]["settings"].update(
+            max_tool_calls=6,
+            task_guidance=config["headless_dxf_review"]["claim_limit"],
+        )
+        review_task["fields"]["outputs"].extend(
+            [
+                helpers.port(review_dxf_port, "workspace_file"),
+                helpers.port(review_report_port, "workspace_file"),
+            ]
+        )
+        review_task["fields"]["settings"]["expected_files"] = "\n".join(
+            (reviewed_path, report_path)
+        )
+        review_task["fields"]["settings"]["expected_file_ports"] = {
+            review_dxf_port: reviewed_path,
+            review_report_port: report_path,
+        }
+        helpers.add_reference(
+            sections,
+            export_task["id"] + "." + export_port,
+            review_task,
+            "solid_edge_flat_pattern",
+            "workspace_file",
+        )
+        order(export_task, review_task, "native flat DXF before independent headless review")
+        order(review_task, preview, "independent flat review before supplier preview")
+        dxf_reviews[token] = {
+            "review_dxf": (review_task, review_dxf_port, "workspace_file"),
+            "review_report": (review_task, review_report_port, "workspace_file"),
+            "result": review_ref,
+        }
     destination = f"test://{args.campaign_id}/supplier/{scenario}"
     for task, kind, filename, receipt_key in (
         (preview, "supplier_upload_preview", "supplier-preview.json", "preview_receipt"),
@@ -400,6 +497,12 @@ def prepare(args, directory, available):
     for token, sources in part_sources.items():
         producer, producer_port, _ = sources["check"]
         helpers.add_reference(sections, producer["id"] + "." + producer_port, final_review, token + "_check")
+        helpers.add_reference(
+            sections,
+            dxf_reviews[token]["result"],
+            final_review,
+            token + "_headless_dxf_review",
+        )
     helpers.add_reference(sections, final["id"] + "." + final["id"] + "_report", final_review, "engineering_handoff")
 
     validation_sources = {
@@ -413,6 +516,13 @@ def prepare(args, directory, available):
     }
     for token, sources in part_sources.items():
         validation_sources.update({token + "_" + role: source for role, source in sources.items()})
+        validation_sources.update(
+            {
+                token + "_" + role: source
+                for role, source in dxf_reviews[token].items()
+                if role != "result"
+            }
+        )
     validator = new_task("validate_sheet_content", "Validate current sheet-metal outputs")
     validator["fields"].update(
         performed_by="configured_tool",
@@ -458,7 +568,19 @@ def prepare(args, directory, available):
             if not tool:
                 raise ValueError("Required workspace tool unavailable: " + server + "/" + name)
             selected.append(tool)
-    expected = list(manifest["expected_outputs"])
+    for name in config["headless_dxf_review"]["tools"]:
+        tool = next(
+            (
+                item
+                for item in available
+                if item["server_id"] == dxf_server and item["tool_name"] == name
+            ),
+            None,
+        )
+        if not tool:
+            raise ValueError("Required headless DXF review tool unavailable: " + name)
+        selected.append(tool)
+    expected = renewal.expected_outputs(manifest)
     # The complex case must produce both parts; broad glob matching is not enough.
     for name in scenario_config["parts"]:
         for role, extension in (("native_sheet_metal", "psm"), ("folded_neutral_model", "step"), ("developed_flat_pattern", "dxf")):
@@ -472,6 +594,7 @@ def prepare(args, directory, available):
               "requires_template_instance_api": not bool(args.instance_source), "preserved_original_stages": original_tasks,
               "compiled_stages": [step.id for step in plan.steps], "preserved_original_edges": [s["id"] for s in original_edges],
               "input_manifest": staged, "tool_allowlist": selected, "expected_outputs": expected,
+              "headless_dxf_review": {"server_id": dxf_server, **config["headless_dxf_review"]},
               "expected_tool_created_files": [p for s in plan.steps for p in s.expected_files],
               "approval_policy_request": {"mode": "auto", "scope": "integration_test", "test_destinations": [destination]},
               "blockers": ["Solid Edge must connect on the licensed Windows desktop; read-only probe found MK_E_UNAVAILABLE before connection",
@@ -497,6 +620,7 @@ def main():
     parser.add_argument("--scenario")
     parser.add_argument("--instance-source")
     parser.add_argument("--evidence-server-id", default="wright-engineering-evidence")
+    parser.add_argument("--dxf-server-id")
     args = parser.parse_args()
     if args.instance_source and not args.scenario:
         parser.error("--instance-source requires --scenario")

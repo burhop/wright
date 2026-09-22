@@ -1,0 +1,58 @@
+{
+  "schema": "wright.campaign-example-renewal-qualification/1",
+  "revision_id": "campaign-example-renewal-r1-2026-09-21",
+  "observed_at": "2026-09-22",
+  "campaign_dispatch_count": 0,
+  "static_qualification": {
+    "status": "pass",
+    "scenario_contracts": 30,
+    "validator_profiles": 30,
+    "focused_tests": 106,
+    "ruff": "pass",
+    "git_diff_check": "pass"
+  },
+  "targeted_wrong_content": [
+    "wrong jig STL digest in Bambu slice evidence",
+    "wrong KiCad schematic digest in harness correspondence",
+    "wrong reviewed DXF digest in headless review evidence",
+    "wrong heat-spreader STEP digest in field correspondence",
+    "wrong water-package CAD digest",
+    "missing or invalid Robot corrective-design evidence"
+  ],
+  "native_qualification": [
+    {
+      "branch": "jig-to-bambu",
+      "status": "pass",
+      "scope": "Retained jig-01 STL processed by Bambu Studio 2.8.2.61 with pinned P1S/PETG/support settings; no printer connection or physical print.",
+      "source_sha256": "9031bd2a495a143903e9d331880845f2cfb500d8ab8fd3c476d68c79116a5eef",
+      "package_sha256": "4363a2a47dd326a07f6b0383eb79cd56a211badb735a33a611f3ec9808c1fbf4",
+      "package_bytes": 4739275,
+      "extrusion_moves": 128252,
+      "support_moves": 66120,
+      "evidence": {
+        "path": ".local-run/renewal-qualification/jig01/workspace/campaign/parametric-drill-jig-01/qualification/artifacts/additive-manufacturing/slice-evidence.json",
+        "sha256": "17979e2c1bf92ebeec6c9ba0705f0f26c032d04d2c966e61940b5b5831faa403"
+      }
+    },
+    {
+      "branch": "headless-dxf-provider",
+      "status": "provider_pass_handoff_pending",
+      "scope": "Pinned AutoCAD MCP Pro 3.4.7 headless ezdxf server passed direct MCP, Wright gateway, Wright gateway MCP, save/reopen and workspace-boundary checks in a disposable clean container.",
+      "tool_count": 47,
+      "cleanup": "pass",
+      "evidence": {
+        "path": "artifacts/campaign-example-renewal/qualification/autocad-headless-clean-container.json",
+        "sha256": "869c8abf49b2e64119b851c992296f1253284c48a33763ae0cd385b0885bb16f"
+      },
+      "remaining": "Qualify reopen/preservation of an actual Solid Edge flat-pattern DXF; no retained sheet attempt currently contains one."
+    }
+  ],
+  "remaining_native_gates": [
+    "Harness: run a real WireViz-to-KiCad schematic/ERC/correspondence workflow, including swapped-pin and omitted-net defects.",
+    "Sheet metal: produce an actual Solid Edge flat pattern and prove headless reopen/preservation against it.",
+    "Water heater: run the approved Modelica-to-AgentCAD-to-scikit-fem package chain and reopen the exact CAD/field evidence.",
+    "Robot: run the approved diagnosis-to-corrective-CAD-to-CalculiX chain in an isolated successor; do not approve or reuse Robot 010.",
+    "Run one representative normal-workspace workflow per family or bind still-current sufficient prior native evidence, then verify result access through Workflows."
+  ],
+  "overall_status": "qualification_in_progress_not_campaign_ready"
+}

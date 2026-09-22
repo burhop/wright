@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
@@ -100,6 +101,20 @@ def build(scenario_id, config):
     checks = []
     field_roles = []
     selection_cases = []
+    scenario_root = ROOT / "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing"
+    matching = [
+        path
+        for path in scenario_root.iterdir()
+        if json.loads((path / "scenario.json").read_text(encoding="utf-8"))[
+            "scenario_id"
+        ]
+        == scenario_id
+    ]
+    if len(matching) != 1:
+        raise ValueError("Unable to locate exact heat-spreader scenario: " + scenario_id)
+    with (matching[0] / "alternatives.csv").open(newline="", encoding="utf-8") as stream:
+        approved_rows = {row["case_id"]: row for row in csv.DictReader(stream)}
+    correspondence_cases = []
     for case_id, width, passes in config["candidates"]:
         dimensions = [config["length"], width, config["thickness"]]
         geometry_role = case_id + "_geometry"
@@ -226,6 +241,15 @@ def build(scenario_id, config):
                 "dimensions_mm": dimensions,
             }
         )
+        correspondence_cases.append(
+            {
+                "id": case_id,
+                "geometry_role": geometry_role,
+                "coarse_role": coarse,
+                "fine_role": fine,
+                "solver_input": approved_rows[case_id],
+            }
+        )
     checks.append(
         check(
             "candidate-selection",
@@ -240,6 +264,30 @@ def build(scenario_id, config):
                 "temperature_limit_c": config["limit"],
                 "cases": selection_cases,
                 "related_roles": [item["role"] for item in selection_cases],
+            },
+        )
+    )
+    checks.append(
+        check(
+            "geometry-analysis-correspondence",
+            [rid("GEOMETRY"), rid("FIELDS"), rid("DELIVERABLES")],
+            "correspondence",
+            reader="thermal-field",
+            selector="correspondence/cases",
+            constraint={"operator": "equals", "expected": True},
+            method="independent_measurement",
+            parameters={
+                "operation": "geometry_analysis_correspondence",
+                "cases": correspondence_cases,
+                "related_roles": [
+                    role
+                    for case in correspondence_cases
+                    for role in (
+                        case["geometry_role"],
+                        case["coarse_role"],
+                        case["fine_role"],
+                    )
+                ],
             },
         )
     )
@@ -265,6 +313,11 @@ def build(scenario_id, config):
                 method="human_review",
             ),
             check("deliverable-decision", [rid("DELIVERABLES")], "decision"),
+            check(
+                "deliverable-correspondence",
+                [rid("DELIVERABLES")],
+                "correspondence",
+            ),
             check("deliverable-basis", [rid("DELIVERABLES")], "basis"),
         ]
     )

@@ -27,6 +27,11 @@ CIRCLE_CENTER_GUIDANCE = (
 _spec = importlib.util.spec_from_file_location("campaign_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 helpers = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(helpers)
+_renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(_renewal_spec)
+_renewal_spec.loader.exec_module(renewal)
 
 
 def prepare(args, directory, tools):
@@ -75,12 +80,40 @@ def prepare(args, directory, tools):
             helpers.write_once(helpers.confined(workspace, relative), data)
             staged.append({"path": relative, "sha256": helpers.digest(data), "size_bytes": len(data),
                            "original": path.relative_to(ROOT).as_posix()})
+    renewal_data = renewal.contract_bytes(manifest)
+    renewal_path = inputs_root + "/approved-engineering-brief.json"
+    helpers.write_once(helpers.confined(workspace, renewal_path), renewal_data)
+    staged.append({"path": renewal_path, "sha256": helpers.digest(renewal_data),
+                   "size_bytes": len(renewal_data), "role": "approved_engineering_brief"})
+    slice_config = {
+        "slicer": str((ROOT / config["slicer"]["executable"]).resolve()),
+        "profiles_root": str((ROOT / config["slicer"]["profiles_root"]).resolve()),
+        "machine": config["slicer"]["machine"],
+        "filament": config["slicer"]["filament"],
+        "process": config["slicer"]["process"],
+        "workspace_root": str(workspace),
+        "source": output + "/jig.stl",
+        "output_root": output + "/additive-manufacturing",
+    }
+    slice_config_path = inputs_root + "/jig-slice-operation.json"
+    slice_config_data = (json.dumps(slice_config, indent=2) + "\n").encode()
+    helpers.write_once(helpers.confined(workspace, slice_config_path), slice_config_data)
+    staged.append({"path": slice_config_path, "sha256": helpers.digest(slice_config_data),
+                   "size_bytes": len(slice_config_data), "role": "reviewed_operation_configuration"})
+    slice_operation_path = inputs_root + "/engineering_dataset_slice.py"
+    slice_operation_data = (ROOT / "scripts/engineering_dataset_slice.py").read_bytes()
+    helpers.write_once(helpers.confined(workspace, slice_operation_path), slice_operation_data)
+    staged.append({"path": slice_operation_path, "sha256": helpers.digest(slice_operation_data),
+                   "size_bytes": len(slice_operation_data), "role": "reviewed_executed_source"})
     names = [manifest["files"]["user_profile"], manifest["files"]["prompt"], *manifest["files"]["context"]]
     text = "\n\n".join("## Uploaded file: " + name + "\n\n" + (directory / name).read_text(encoding="utf-8") for name in names)
     context_path = inputs_root + "/assembled-context.md"
     helpers.write_once(helpers.confined(workspace, context_path), text.encode())
     staged.append({"path": context_path, "sha256": helpers.digest(text.encode()), "derived_from": names})
     brief = helpers.add_file_input(sections, suffix, "human_context", context_path)
+    engineering_brief = helpers.add_file_input(
+        sections, suffix, "approved_engineering_brief", renewal_path
+    )
     image = helpers.add_file_input(sections, suffix, "jig_sketch", inputs_root + "/concept.png")
     next(s for s in sections if s["id"] == image.split(".")[0])["fields"]["outputs"][0]["kind"] = "reference_images"
     vector = helpers.add_file_input(
@@ -131,6 +164,9 @@ def prepare(args, directory, tools):
         "Tables control geometry. Their bushing sizes are synthetic customer data, not retrieved supplier facts. "
         "Record unresolved physical retention/fit/machining matters without altering holes or guessing tolerances. Preserve each specific rail, tube or keyed annular design intent.",
         filename="jig-design-basis.md", format="markdown")
+    helpers.add_reference(
+        sections, engineering_brief, stages["validate_inputs"], "approved_engineering_brief"
+    )
     helpers.add_reference(sections, image, stages["validate_inputs"], "original_sketch", "reference_images")
     helpers.add_reference(
         sections, vector, stages["validate_inputs"], "original_vector_sketch", "workspace_file"
@@ -173,6 +209,7 @@ def prepare(args, directory, tools):
     generated = bind_native_run(stages["generate_jig"], code_path, "jig", config["expected_generated_files"])
     generated_files = {
         "jig_step": output + "/jig.step",
+        "jig_stl": output + "/jig.stl",
         "dxf": output + "/hole-layout.dxf",
     }
     stages["generate_jig"]["fields"]["outputs"].extend(
@@ -207,6 +244,58 @@ def prepare(args, directory, tools):
     stages["check_alignment"]["fields"]["settings"]["output_filename"] = output + "/inspection-execution.json"
     observe = task("inspect_jig_exports", "Read actual independent jig inspection and native file identities")
     bind(observe, f"Call inspect_file(includeText=true,maxTextBytes=8192,offsetBytes=0) for {output}/dimension-report.json and {output}/cad-lineage.json, following nextOffsetBytes until complete with maxTextBytes=8192 on every page. Do not request larger pages or embed native execution JSON; retain the complete files and observe every page. Call inspect_file(includeText=false) for {output}/jig.step, {output}/jig.stl and {output}/hole-layout.dxf. Preserve the actual independent dimensional failures, unresolved evidence and file hashes in the observation report. Never infer physical-fit qualification from successful execution or file presence.", "wright-workspace-files", filename="cad-file-observations.json", customer_context=False)
+    slicer = task("slice_jig_for_review", "Prepare the checked jig for additive manufacturing review")
+    slicer_binding = next(
+        (
+            item
+            for item in tools
+            if item["server_id"] == config["slicer"]["server"]
+            and item["tool_name"] == config["slicer"]["tool"]
+        ),
+        None,
+    )
+    if slicer_binding is None:
+        raise ValueError("Required confined drill-jig slicer is unavailable")
+    slice_files = config["expected_slice_files"]
+    slicer["fields"].update(
+        performed_by="configured_tool",
+        prompt="",
+        instructions=(
+            "Slice the exact same-attempt jig STL with the reviewed pinned Bambu Studio "
+            "configuration. Retain actual toolpaths, profiles and previews. This is digital "
+            "manufacturing preparation only; do not connect to a printer or claim a physical fit."
+        ),
+        outputs=[
+            helpers.port(slicer["id"] + "_result"),
+            helpers.port("slice_package", "workspace_file"),
+            helpers.port("slice_evidence", "workspace_file"),
+            helpers.port("support_preview", "workspace_file"),
+        ],
+        settings={
+            "authoring_template": "mcp-tool",
+            "mcp_server": config["slicer"]["server"],
+            "mcp_tool": slicer_binding["name"],
+            "mcp_schema_digest": slicer_binding["schema_digest"],
+            "mcp_arguments": json.dumps(
+                {
+                    "configuration_document": slice_config_path,
+                    "operation_source_document": slice_operation_path,
+                },
+                separators=(",", ":"),
+            ),
+            "output_format": "json",
+            "save_output": True,
+            "output_filename": output + "/jig-slice-operation-report.json",
+            "file_policy": "overwrite",
+            "timeout_seconds": 600,
+            "expected_files": "\n".join(output + "/" + path for path in slice_files),
+            "expected_file_ports": {
+                "slice_package": output + "/additive-manufacturing/slice_package.gcode.3mf",
+                "slice_evidence": output + "/additive-manufacturing/slice-evidence.json",
+                "support_preview": output + "/additive-manufacturing/support-preview.svg",
+            },
+        },
+    )
     coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
     support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
     profile = support.get("full_profile")
@@ -228,11 +317,15 @@ def prepare(args, directory, tools):
             "approval_action": {"kind": "local_review", "mode": "review_only"}},
     )
     helpers.add_reference(sections, stages["check_alignment"]["id"] + ".report", final_review, "dimension_report", "workspace_file")
+    helpers.add_reference(sections, slicer["id"] + ".slice_evidence", final_review, "slice_evidence", "workspace_file")
     validator = task("validate_jig_content", "Validate current jig geometry and evidence")
     validation_sources = {
         "jig_step": (stages["generate_jig"], "jig_step"),
+        "jig_stl": (stages["generate_jig"], "jig_stl"),
         "dxf": (stages["generate_jig"], "dxf"),
         "report": (stages["check_alignment"], "report"),
+        "slice_package": (slicer, "slice_package"),
+        "slice_evidence": (slicer, "slice_evidence"),
     }
     validator["fields"].update(
         performed_by="configured_tool",
@@ -249,7 +342,7 @@ def prepare(args, directory, tools):
     # This task reads the sealed files directly. Order edges below require both
     # native runs to finish without embedding their redundant response bodies.
     chain = [stages["validate_inputs"], review, init, author, stages["generate_jig"],
-             checker, stages["check_alignment"], observe, final_review, validator]
+             checker, stages["check_alignment"], observe, slicer, final_review, validator]
     for earlier, later in zip(chain, chain[1:]):
         sections.append(dict(kind="connection", id="sequence_" + later["id"], fields={"type": "order",
             "from": earlier["id"], "to": later["id"], "label": "full jig engineering sequence", "when": None}))
@@ -271,13 +364,16 @@ def prepare(args, directory, tools):
         "template_source_sha256": helpers.digest(TEMPLATE.read_bytes()), "source_sha256": helpers.digest(rendered.encode()),
         "workspace_root": str(workspace), "output_root": output,
         "requires_template_instance_api": not bool(args.instance_source), "preserved_original_stages": [s.id for s in plan.steps],
-        "input_manifest": staged, "tool_allowlist": allowlist, "expected_outputs": manifest["expected_outputs"],
+        "input_manifest": staged, "tool_allowlist": allowlist,
+        "expected_outputs": renewal.expected_outputs(manifest),
         "expected_tool_created_files": [p for s in plan.steps for p in s.expected_files],
         "approval_policy_request": {"mode": "auto", "scope": "integration_test", "test_destinations": []},
         "selected_substitution": config["selected_substitution"],
         "native_project_initialization": initialization,
         "blockers": ["Native AgentCAD initialization prerequisite and real MCP context preflight must pass before CAD generation",
-                     "Generated CAD, extracted-geometry DXF and independent inspection source have not executed"]}
+                     "Generated CAD, extracted-geometry DXF, inspection and additive slice have not executed"],
+        "slicer_wrapper": {"path": str(ROOT / "scripts/engineering_jig_slice_mcp.py"),
+                           "sha256": helpers.digest((ROOT / "scripts/engineering_jig_slice_mcp.py").read_bytes())}}
     helpers.publish_input_binding_evidence(report, directory)
     (draft / "staging-manifest.json").write_text(json.dumps(report, indent=2) + "\n")
     return {"scenario_id": identity, "draft": str(target), "stages": len(plan.steps), "files": len(staged), "executed": False}

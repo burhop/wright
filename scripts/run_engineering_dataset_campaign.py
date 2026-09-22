@@ -279,7 +279,59 @@ class HttpTransport:
                     raise ValueError("Runtime response exceeds bound")
                 return {"ok":True,"data":json.loads(raw)}
         except urllib.error.HTTPError as error:
-            return {"ok":False,"http_status":error.code,"error_type":"HTTPError"}
+            detail = None
+            try:
+                # Validation frameworks may echo a bounded source/input value in
+                # their raw body. Read enough to parse and then retain only the
+                # explicit safe diagnostic fields below.
+                raw = error.read(1024 * 1024 + 1)
+                if len(raw) <= 1024 * 1024:
+                    document = json.loads(raw)
+                    candidate = document.get("detail") if isinstance(document, dict) else None
+                    if isinstance(candidate, dict):
+                        detail = {
+                            key: candidate[key]
+                            for key in ("code", "message", "correction")
+                            if isinstance(candidate.get(key), str)
+                        }
+                    elif isinstance(candidate, str):
+                        detail = {"message": candidate}
+                    elif isinstance(candidate, list):
+                        errors = []
+                        for item in candidate[:20]:
+                            if not isinstance(item, dict):
+                                continue
+                            errors.append(
+                                {
+                                    key: item[key]
+                                    for key in ("loc", "msg", "type")
+                                    if key in item
+                                    and isinstance(item[key], (str, int, float, bool, list))
+                                }
+                            )
+                        if errors:
+                            detail = {"validation_errors": errors}
+                    if detail is None and isinstance(document, dict):
+                        normalized = {
+                            key: document[key]
+                            for key in ("error_code", "message", "trace_id")
+                            if isinstance(document.get(key), str)
+                        }
+                        extra = document.get("details")
+                        if isinstance(extra, dict) and isinstance(
+                            extra.get("correction"), str
+                        ):
+                            normalized["correction"] = extra["correction"]
+                        if normalized:
+                            detail = normalized
+            except (OSError, UnicodeError, ValueError, AttributeError):
+                pass
+            return {
+                "ok": False,
+                "http_status": error.code,
+                "error_type": "HTTPError",
+                "error_detail": detail,
+            }
         except (OSError, ValueError, TimeoutError, http.client.HTTPException) as error:
             return {"ok":False,"error_type":type(error).__name__}
 
@@ -487,7 +539,7 @@ class Runner:
                         reply = future.result()
                     except Exception as error:
                         reply = {"ok":False,"error_type":type(error).__name__}
-                    state["operations"][operation].update(state="response_received" if reply["ok"] else "response_failed",http_status=reply.get("http_status"),error_type=reply.get("error_type"),finished_at=now())
+                    state["operations"][operation].update(state="response_received" if reply["ok"] else "response_failed",http_status=reply.get("http_status"),error_type=reply.get("error_type"),error_detail=reply.get("error_detail"),finished_at=now())
                     self.save(state_path,state,"observing",active_operation=None)
                     self.emit(case,"dispatch_response",operation=operation,ok=reply["ok"],http_status=reply.get("http_status"))
                     future = None

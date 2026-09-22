@@ -64,6 +64,7 @@ def test_all_heat_cases_compile_with_full_validator(tmp_path):
         expected_roles = {
             "basis",
             "decision",
+            "correspondence",
             *(
                 candidate + "_" + suffix
                 for candidate in candidates

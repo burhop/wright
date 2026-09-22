@@ -24,6 +24,13 @@
       "cad.list_reference_frames", "cad.get_inspection_capabilities", "cad.verify_inspection_requirements"
     ]
   },
+  "headless_dxf_review": {
+    "provider": "AutoCAD MCP Pro 3.4.7 headless ezdxf backend",
+    "catalog_server_id": "autocad-mcp-u-c4n",
+    "source_commit": "abc2a82e7128358b9e228a7d9442b37019aa3fe5",
+    "tools": ["drawing_open", "drawing_info", "drawing_save_as"],
+    "claim_limit": "Headless DXF reopen, inventory and confined save only; no desktop AutoCAD or supplier acceptance claim."
+  },
   "host_requirements": {
     "platform": "Windows with separately installed/licensed Solid Edge",
     "server_id": "solid-edge-mcp-burhop",

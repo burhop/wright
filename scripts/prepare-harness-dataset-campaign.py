@@ -16,12 +16,22 @@ VALIDATION_COVERAGE=ROOT/"packages/workspace_service/src/workspace_service/proce
 spec=importlib.util.spec_from_file_location("harness_prepare_helpers",ROOT/"scripts/prepare-printed-dataset-campaign.py")
 helpers=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
+renewal_spec=importlib.util.spec_from_file_location("campaign_example_renewal",ROOT/"scripts/campaign_example_renewal.py")
+renewal=importlib.util.module_from_spec(renewal_spec)
+renewal_spec.loader.exec_module(renewal)
 
 
 def prepare(args,directory,available):
     config=json.loads(BINDING.read_text(encoding="utf-8"))
     manifest=json.loads((directory/"scenario.json").read_text(encoding="utf-8"))
     identity=manifest["scenario_id"]
+    requested_kicad=getattr(args,"kicad_server_id",None)
+    kicad_servers={tool["server_id"] for tool in available if tool["tool_name"]=="schematic"}
+    if requested_kicad:
+        kicad_servers={server for server in kicad_servers if server==requested_kicad}
+    kicad_server=next((server for server in sorted(kicad_servers) if all(any(tool["server_id"]==server and tool["tool_name"]==name for tool in available) for name in config["kicad_tools"])),None)
+    if kicad_server is None:
+        raise ValueError("A single selected KiCad server with schematic, analyze and native_rule_check is required")
     suffix=identity.replace("-","_")+"_"+args.attempt.replace("-","_")
     inputs=f"campaign/{identity}/{args.attempt}/inputs"
     output=f"campaign/{identity}/{args.attempt}/artifacts"
@@ -41,6 +51,7 @@ def prepare(args,directory,available):
     for path in sorted(directory.iterdir()):
         if path.is_file():
             stage_file(inputs+"/"+path.name,path.read_bytes(),{"original":path.relative_to(ROOT).as_posix()})
+    stage_file(inputs+"/approved-engineering-brief.json",renewal.contract_bytes(manifest),{"role":"approved_engineering_brief"})
     for name in ("harness_engineering_operations.py","harness_engineering_mcp.py","harness_component_sources.json"):
         stage_file(inputs+"/"+name,(ROOT/"scripts"/name).read_bytes(),{"authored_source":"scripts/"+name})
     design_contract = dict(config["scenarios"][identity])
@@ -65,6 +76,7 @@ def prepare(args,directory,available):
     human="\n\n".join((directory/name).read_text(encoding="utf-8") for name in ["user-profile.md","prompt.txt",*manifest["files"]["context"]])
     stage_file(inputs+"/assembled-context.md",human.encode(),{"derived_from":manifest["files"]})
     context=helpers.add_file_input(sections,suffix,"human_context",inputs+"/assembled-context.md")
+    engineering_brief=helpers.add_file_input(sections,suffix,"approved_engineering_brief",inputs+"/approved-engineering-brief.json")
     operation=helpers.add_file_input(sections,suffix,"authored_operation",inputs+"/harness_engineering_operations.py")
     design=helpers.add_file_input(sections,suffix,"engineering_design_contract",inputs+"/design.json")
     sources=helpers.add_file_input(sections,suffix,"primary_component_research",inputs+"/harness_component_sources.json")
@@ -87,6 +99,7 @@ def prepare(args,directory,available):
     docs=json.loads((ROOT/"scripts/harness_component_sources.json").read_text(encoding="utf-8"))["documents"]
     expected_research=["research/component-records.json"]+["research/"+d["id"]+(".pdf" if d["url"].endswith(".pdf") else ".html") for d in docs]
     research_ref=bind(research,f"Call retrieve_harness_component_records once with source_specification={inputs+'/harness_component_sources.json'!r}, output_directory={output+'/research'!r}, operation_source_document={inputs+'/harness_engineering_operations.py'!r}. Actively retrieve actual manufacturer bytes, not cached assumed ratings. Review exact record identities and unresolved loaded-contact derating/contact resistance/fan-interface evidence against the human requirements. Present the approved net/design basis using the attached route sketch and exact uploaded schedule.","research-and-design-basis.md",expected_research)
+    helpers.add_reference(sections,engineering_brief,research,"approved_engineering_brief")
     helpers.add_reference(sections,image,research,"route_image","reference_images")
     gate=stages["define_harness"]
     gate["fields"].update(step_type="review",performed_by="engineer",instructions="Review exact uploaded pin-to-pin nets, source-indexed candidate parts, explicit WireViz substitution, service/pigtail choices, retained human policies and unresolved release HOLD conditions. Auto integration review authorizes this local generation only; it is not production electrical approval.",inputs=[],outputs=[],
@@ -114,10 +127,61 @@ def prepare(args,directory,available):
     stages["verify_harness"]["fields"]["outputs"].extend(helpers.port(role,"workspace_file") for role in verified_files)
     stages["verify_harness"]["fields"]["settings"]["expected_file_ports"]=verified_files
     helpers.add_reference(sections,generated,stages["verify_harness"],"actual_native_package")
+    kicad_author=new_task("author_kicad_interconnect","Create the independent KiCad interconnect schematic")
+    kicad_author_ref=bind(
+        kicad_author,
+        f"Use only the selected native KiCad schematic tool to create {('/work/'+output+'/'+config['kicad_handoff']['schematic'])!r}. Read the connected generated pin schedule and independent netlist. Create one connector symbol for every released connector with its exact reference and pin count, then connect or label every exact net without merging distinct returns or reserves. Save the native schematic once after all connections are complete. This is an independent interconnect representation, not a PCB or a replacement for WireViz. Report concrete unsupported pins or tool errors; never fabricate a saved file or clean check.",
+        config["kicad_handoff"]["correspondence"].replace("net-correspondence","kicad-authoring"),
+        (config["kicad_handoff"]["schematic"],),
+        tool=False,
+    )
+    kicad_author["fields"]["settings"].update(
+        authoring_template="mcp-task",
+        mcp_server=kicad_server,
+        max_tool_calls=24,
+        timeout_seconds=600,
+        expected_files=output+"/"+config["kicad_handoff"]["schematic"],
+        task_guidance="Use actual selected KiCad operations only. Preserve every released pin and net; no PCB, fabrication, supplier or physical action.",
+    )
+    kicad_author["fields"]["outputs"].append(helpers.port("kicad_schematic","workspace_file"))
+    kicad_author["fields"]["settings"]["expected_file_ports"]={"kicad_schematic":output+"/"+config["kicad_handoff"]["schematic"]}
+    helpers.add_reference(sections,stages["generate_harness"]["id"]+".pin_schedule",kicad_author,"released_pin_schedule","workspace_file")
+    helpers.add_reference(sections,stages["verify_harness"]["id"]+".netlist",kicad_author,"independent_netlist","workspace_file")
+    kicad_verify=new_task("verify_kicad_interconnect","Check KiCad connectivity, correspondence and ERC")
+    kicad_verify_ref=bind(
+        kicad_verify,
+        f"Reopen the immutable native schematic {('/work/'+output+'/'+config['kicad_handoff']['schematic'])!r}. Use KiCad analyze operations to obtain its actual connector pins and nets. Compare every released pin/net row against the connected pin schedule and independent WireViz netlist, including reserves and separated returns. Then call native_rule_check(kind='erc',source_path={('/work/'+output+'/'+config['kicad_handoff']['schematic'])!r},report_path={('/work/'+output+'/'+config['kicad_handoff']['erc'])!r}). Write the task response to the declared correspondence JSON with schema='wright-harness-kicad-correspondence-v1', status='pass' only when exact correspondence passes, schematic_sha256, pin_schedule_sha256, netlist_sha256, erc_sha256, missing_rows, extra_rows, mismatched_rows and native erc_error_count. Zero ERC errors alone is not correspondence. Do not edit the schematic during this check and do not downgrade findings.",
+        config["kicad_handoff"]["correspondence"],
+        (config["kicad_handoff"]["erc"],),
+        tool=False,
+    )
+    kicad_verify["fields"]["settings"].update(
+        authoring_template="mcp-task",
+        mcp_server=kicad_server,
+        max_tool_calls=10,
+        timeout_seconds=600,
+        expected_files="\n".join(
+            output+"/"+config["kicad_handoff"][key]
+            for key in ("erc","correspondence")
+        ),
+        task_guidance="Read and compare the actual immutable KiCad schematic. ERC is native evidence but never substitutes for exact pin/net correspondence.",
+    )
+    kicad_verify["fields"]["outputs"].extend([
+        helpers.port("kicad_erc","workspace_file"),
+        helpers.port("net_correspondence","workspace_file"),
+    ])
+    kicad_verify["fields"]["settings"]["expected_file_ports"]={
+        "kicad_erc":output+"/"+config["kicad_handoff"]["erc"],
+        "net_correspondence":output+"/"+config["kicad_handoff"]["correspondence"],
+    }
+    helpers.add_reference(sections,kicad_author_ref,kicad_verify,"kicad_authoring_result")
+    helpers.add_reference(sections,stages["generate_harness"]["id"]+".pin_schedule",kicad_verify,"released_pin_schedule","workspace_file")
+    helpers.add_reference(sections,stages["verify_harness"]["id"]+".netlist",kicad_verify,"wireviz_netlist","workspace_file")
     final=new_task("collect_harness","Collect generated harness documents and engineering findings")
     handoff=bind(final,"Write the final engineering handoff index for this real attempt, with exact links to native diagram/YAML/BOM, pins/cuts, assembly, source records and independent voltage/net checks. Address original human prompt/context and preserve all release HOLD/rejected findings. Report a total voltage drop only when voltage-drop.json contains the closed reviewed resistance assumption and distinguish assumed values from measured production data; never claim electrical release. Include missing exact device/chassis/derating evidence as next engineering actions. The following process validator determines requirements-compliance credit from the exact current outputs.","harness-handoff.md",tool=False)
     helpers.add_reference(sections,verified,final,"independent_findings")
     helpers.add_reference(sections,generated,final,"native_package")
+    helpers.add_reference(sections,kicad_verify_ref,final,"independent_kicad_check")
     coverage=json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
     support=next(row for row in coverage["scenarios"] if row["scenario_id"]==identity)
     profile=support.get("full_profile")
@@ -138,6 +202,9 @@ def prepare(args,directory,available):
         "basis":(research,research["fields"]["outputs"][0]["key"],"engineering_document"),
         **{role:(stages["generate_harness"],role,"workspace_file") for role in generated_files},
         **{role:(stages["verify_harness"],role,"workspace_file") for role in verified_files},
+        "kicad_schematic":(kicad_author,"kicad_schematic","workspace_file"),
+        "kicad_erc":(kicad_verify,"kicad_erc","workspace_file"),
+        "net_correspondence":(kicad_verify,"net_correspondence","workspace_file"),
         "handoff":(final,final["fields"]["outputs"][0]["key"],"engineering_document"),
     }
     validator=new_task("validate_harness_content","Validate current harness outputs")
@@ -145,7 +212,7 @@ def prepare(args,directory,available):
         settings={"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"packaged","name":profile["profile_resource"],"reference":profile["profile_ref"]},"baseline":profile["baseline_ref"],"subjects":{role:"validate_"+role for role in validation_sources}}})
     for role,(producer,producer_port,_) in validation_sources.items():
         sections.append({"kind":"connection","id":"bind_"+validator["id"]+"_"+role,"fields":{"type":"item","from":producer["id"]+"."+producer_port,"to":validator["id"]+".validate_"+role,"label":"current harness output to validate","when":None}})
-    for left,right in ((research["id"],gate["id"]),(stages["verify_harness"]["id"],final["id"]),(final["id"],final_review["id"]),(final_review["id"],validator["id"])):
+    for left,right in ((research["id"],gate["id"]),(stages["verify_harness"]["id"],kicad_author["id"]),(kicad_author["id"],kicad_verify["id"]),(kicad_verify["id"],final["id"]),(final["id"],final_review["id"]),(final_review["id"],validator["id"])):
         sections.append({"kind":"connection","id":"order_"+left+"_"+right,"fields":{"type":"order","from":left,"to":right,"label":"same canonical execution","when":None}})
     result=helpers.render(sections)
     validate_workspace_authoring_shape(result)
@@ -158,11 +225,16 @@ def prepare(args,directory,available):
         if len(matches)!=1:
             raise ValueError("Required scoped harness operation unavailable: "+name)
         selected.append(matches[0])
+    for name in config["kicad_tools"]:
+        matches=[tool for tool in available if tool["server_id"]==kicad_server and tool["tool_name"]==name]
+        if len(matches)!=1:
+            raise ValueError("Required selected KiCad tool unavailable: "+name)
+        selected.append(matches[0])
     draft.mkdir(parents=True)
     target=draft/"bound.workflow.wflow"
     target.write_text(result,encoding="utf-8")
     report={"schema_version":1,"scenario_id":identity,"template_id":manifest["template_id"],"attempt_id":args.attempt,"status":"prepared_not_dispatched","source":str(target),"source_sha256":helpers.digest(result.encode()),"template_source_sha256":helpers.digest(TEMPLATE.read_bytes()),
-            "requires_template_instance_api":not bool(args.instance_source),"workspace_root":str(workspace),"output_root":output,"input_manifest":staged,"tool_allowlist":selected,"expected_outputs":manifest["expected_outputs"],"compiled_stages":[step.id for step in plan.steps],"preserved_original_stages":original_tasks,"preserved_original_edges":[edge["id"] for edge in original_edges],"expected_tool_created_files":[path for step in plan.steps for path in step.expected_files],"approval_policy_request":{"mode":"auto","scope":"integration_test","test_destinations":[]},"recorded_substitution":config["implementation"]}
+            "requires_template_instance_api":not bool(args.instance_source),"workspace_root":str(workspace),"output_root":output,"input_manifest":staged,"tool_allowlist":selected,"expected_outputs":renewal.expected_outputs(manifest),"compiled_stages":[step.id for step in plan.steps],"preserved_original_stages":original_tasks,"preserved_original_edges":[edge["id"] for edge in original_edges],"expected_tool_created_files":[path for step in plan.steps for path in step.expected_files],"approval_policy_request":{"mode":"auto","scope":"integration_test","test_destinations":[]},"recorded_substitution":config["implementation"],"kicad_server_id":kicad_server}
     helpers.publish_input_binding_evidence(report, directory)
     (draft/"staging-manifest.json").write_text(json.dumps(report,indent=2)+"\n")
     return {"scenario_id":identity,"draft":str(target),"stages":len(plan.steps),"executed":False}
@@ -172,6 +244,7 @@ if __name__ == "__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace-root",required=True)
     parser.add_argument("--server-id",required=True)
+    parser.add_argument("--kicad-server-id")
     parser.add_argument("--draft-root",default=str(ROOT/".local-run/feature-081-live/harness-campaign-drafts"))
     parser.add_argument("--attempt",default="attempt-001")
     parser.add_argument("--scenario")

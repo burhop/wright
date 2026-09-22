@@ -26,6 +26,16 @@ REPAIR_OPERATION = ROOT / "scripts/engineering_dataset_mesh_repair.py"
 VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 
 
+def _renewal_module():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def _agentcad_guidance():
     import importlib.util
     spec = importlib.util.spec_from_file_location("agentcad_source_contract",ROOT/"scripts/agentcad_source_contract.py")
@@ -112,6 +122,7 @@ def publish_input_binding_evidence(report, scenario_directory):
 
 
 def prepare(args, scenario_dir: Path, tools: dict) -> dict:
+    renewal = _renewal_module()
     config = json.loads(BINDING.read_text(encoding="utf-8"))
     blender_server = getattr(args, "blender_server", None) or SERVER
     repair_server = getattr(args, "repair_server", None) or config["repair_server"]
@@ -152,6 +163,11 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
             write_once(confined(workspace, relative), data)
             inputs.append({"path": relative, "sha256": digest(data), "size_bytes": len(data),
                            "original": source.relative_to(ROOT).as_posix()})
+    renewal_data = renewal.contract_bytes(manifest)
+    renewal_path = f"{input_root}/approved-engineering-brief.json"
+    write_once(confined(workspace, renewal_path), renewal_data)
+    inputs.append({"path": renewal_path, "sha256": digest(renewal_data),
+                   "size_bytes": len(renewal_data), "role": "approved_engineering_brief"})
     brief = "\n\n".join((scenario_dir / name).read_text(encoding="utf-8")
                           for name in ["user-profile.md", "context.md"])
     brief_path = f"{input_root}/assembled-context.md"
@@ -169,7 +185,13 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     image["fields"]["settings"].update(workspace_file=f"{input_root}/concept.png", rights_file=f"{input_root}/scenario.json", reference_dimension_mm=config["scenarios"][scenario_id]["reference_dimension_mm"])
     prompt_ref = add_file_input(sections, suffix, "user_prompt", f"{input_root}/prompt.txt")
     context_ref = add_file_input(sections, suffix, "user_and_business_context", brief_path)
+    engineering_brief_ref = add_file_input(
+        sections, suffix, "approved_engineering_brief", renewal_path
+    )
     source_task = stage("create_mesh")
+    add_reference(
+        sections, engineering_brief_ref, source_task, "approved_engineering_brief"
+    )
     source_config = config["stages"]["create_mesh"]
     source_result_key = source_task["id"] + "_result"
     source_task["fields"].update(
@@ -449,7 +471,7 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
             "output_hashes": "produced_files[].sha256",
             "persistence": "canonical run/step evidence written by Wright outside Blender",
         },
-        "expected_outputs": manifest["expected_outputs"], "expected_tool_created_files": [p for s in compiled.steps for p in s.expected_files],
+        "expected_outputs": renewal.expected_outputs(manifest), "expected_tool_created_files": [p for s in compiled.steps for p in s.expected_files],
         "approval_policy_request": {"mode": "auto", "scope": "integration_test", "destination": f"test://{args.campaign_id}/printer/{scenario_id}"},
         "blockers": ["Exact integration enrollment and test destination binding must be supplied by authoritative runtime before dispatch"],
     }

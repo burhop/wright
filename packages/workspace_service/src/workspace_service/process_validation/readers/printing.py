@@ -207,7 +207,7 @@ class PrintingArtifactReader:
                     "safe-package-inventory",
                     "simulator-transfer-binding",
                 ],
-                "version": 1,
+                "version": 2,
             }
         ),
         method="independent_measurement",
@@ -294,7 +294,14 @@ class PrintingArtifactReader:
                 f"subject:{source.subject.id}@{source.subject.sha256}#mesh-lineage"
             )
         elif operation == "slice_binding":
-            repaired, package = _related(context, "repaired_mesh", "slice_package")
+            input_role = check.parameters.get("input_role", "repaired_mesh")
+            if not isinstance(input_role, str) or not input_role:
+                raise ValidationIssue(
+                    "profile.printing_input_role",
+                    "Slice binding requires a nonempty input mesh role.",
+                    category="source_conflict",
+                )
+            repaired, package = _related(context, input_role, "slice_package")
             value = _json_object(snapshot.content, "Slice evidence")
             valid = (
                 value.get("operation")

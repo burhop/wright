@@ -4,6 +4,7 @@ import argparse
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
 import urllib.parse
 import urllib.request
 from workspace_service.workflow_source_execution import _parse, compile_prompt_workflow, validate_workspace_authoring_shape
@@ -16,6 +17,11 @@ VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/p
 spec = importlib.util.spec_from_file_location("robot_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
+renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(renewal_spec)
+renewal_spec.loader.exec_module(renewal)
 
 
 INSPECTION_STAGE_GUIDANCE = (
@@ -47,6 +53,21 @@ def prepare(args, directory, available):
         raise ValueError("Attempt already staged; preserve it and choose a fresh attempt")
     inputs = f"campaign/{identity}/{args.attempt}/inputs"
     output = f"campaign/{identity}/{args.attempt}/artifacts"
+    project = workspace / output / "agentcad-project"
+    if getattr(args, "initialize_agentcad", False):
+        if project.exists():
+            raise ValueError("Native init requires a fresh isolated AgentCAD project")
+        project.mkdir(parents=True)
+        command = [
+            "uv", "run", "--isolated", "--python", "3.12", "--with",
+            "agentcad[mcp]==0.6.0", "agentcad", "init", "--name",
+            "robot-corrective-hardware", "--build-dir", "build",
+        ]
+        initialized = subprocess.run(
+            command, cwd=project, capture_output=True, text=True, timeout=300
+        )
+        if initialized.returncode:
+            raise RuntimeError("Actual corrective-hardware CAD initialization failed")
     source = Path(args.instance_source).read_text(encoding="utf-8") if args.instance_source else TEMPLATE.read_text(encoding="utf-8").replace("__instance__", suffix)
     sections = _parse(source)
     if identity == "robot-tracking-diagnosis-01":
@@ -65,12 +86,21 @@ def prepare(args, directory, available):
     for path in sorted(directory.iterdir()):
         if path.is_file():
             stage_file(inputs + "/" + path.name, path.read_bytes(), {"original": path.relative_to(ROOT).as_posix()})
+    stage_file(
+        inputs + "/approved-engineering-brief.json",
+        renewal.contract_bytes(manifest),
+        {"role": "approved_engineering_brief"},
+    )
+    renewal_contract = renewal.case_contract(manifest)
     human = "\n\n".join((directory / name).read_text(encoding="utf-8") for name in ["user-profile.md", "prompt.txt", *manifest["files"]["context"]])
     stage_file(inputs + "/assembled-context.md", human.encode(), {"derived_from": manifest["files"]})
     stage_file(inputs + "/alignment.json", (json.dumps(config["scenarios"][identity], indent=2) + "\n").encode(), {"derived_from": ["context.md", "bag-conversion.md"], "purpose": "Explicit user-supplied survey and clock contract"})
     for name in ("robot_tracking_operations.py", "robot_tracking_mcp.py"):
         stage_file(inputs + "/" + name, (ROOT / "scripts" / name).read_bytes(), {"operation_source": "scripts/" + name})
     context = helpers.add_file_input(sections, suffix, "human_context", inputs + "/assembled-context.md")
+    engineering_brief = helpers.add_file_input(
+        sections, suffix, "approved_engineering_brief", inputs + "/approved-engineering-brief.json"
+    )
     alignment = helpers.add_file_input(sections, suffix, "alignment_contract", inputs + "/alignment.json")
     operation = helpers.add_file_input(sections, suffix, "authored_operation_source", inputs + "/robot_tracking_operations.py")
     image = helpers.add_file_input(sections, suffix, "route_sketch", inputs + "/concept.png")
@@ -124,6 +154,9 @@ def prepare(args, directory, available):
     helpers.add_reference(sections, inspection, stages["align_and_measure"], "native_bag_evidence")
     diagnosis_task = new_task("draft_diagnosis", "Write the evidence-linked diagnosis for engineer review")
     diagnosis = bind(diagnosis_task, "Write the requested engineering diagnosis from the actual supplied original prompt, route sketch, bag evidence and computed metrics. Cite time ranges, retained counts, frame/time correction, event correlation, missing intervals and uncertainties. Compare raw and aligned interpretations. Link the actual path/error plot, separate alignment comparison and plot reading guide from the measurement output. Explain what each plot shows in engineering language, including the independent axis scales and the difference between external measurement and wheel-based estimate. State measured observations separately from hypotheses; command/odometry disagreement alone is not evidence of wheel slip. Include the requested inexpensive next observation. These are fictional input logs and no real robot commands are authorized.", filename="diagnosis.md")
+    helpers.add_reference(
+        sections, engineering_brief, diagnosis_task, "approved_engineering_brief"
+    )
     diagnosis_task["fields"]["prompt"] += (
         " Organize the report under: Why this analysis matters; What the plots show; "
         "Measured findings; What remains unknown; Next inexpensive test. "
@@ -143,6 +176,149 @@ def prepare(args, directory, available):
                   "approval_binding": LOCAL_REVIEW_BINDING, "approval_destination": LOCAL_REVIEW_DESTINATION,
                   "approval_settings": {"review_task_id": review["id"]}, "approval_action": {"kind": "local_review", "mode": "review_only"}})
     helpers.add_reference(sections, diagnosis, review, "diagnosis_for_review")
+    agentcad_server = getattr(args, "agentcad_server_id", "agentcad")
+    file_server = getattr(args, "workspace_file_server_id", "wright-workspace-files")
+    solver_server = getattr(args, "solver_server_id", "calculix")
+    field_server = getattr(args, "field_server_id", "calculix-fields")
+    fixed = renewal_contract["approved_engineering_inputs"]["new_fixed_requirements"]
+    preflight_cad = new_task(
+        "preflight_corrective_cad", "Verify isolated corrective-hardware CAD project"
+    )
+    bind(
+        preflight_cad,
+        f"Call context(cwd={str(project)!r},build_dir='build') and docs(section='quickstart',cwd={str(project)!r},build_dir='build'). Report the actual project identity. An empty project is expected; do not claim corrective hardware exists yet.",
+        agentcad_server,
+    )
+    author_cad = new_task(
+        "author_corrective_cad_source", "Author corrective hardware from independent site requirements"
+    )
+    source_path = output + "/corrective-hardware-source.py"
+    step_path = output + "/corrective-hardware.step"
+    measurements_path = output + "/corrective-hardware-measurements.json"
+    request_path = output + "/corrective-fea-request.json"
+    bind(
+        author_cad,
+        "Call write_text_document to create " + source_path + " as actual build123d Python for this approved corrective-hardware job. "
+        "Use these independently approved site/interface/material/load requirements exactly: " + json.dumps(fixed, sort_keys=True) + ". "
+        "The tracking diagnosis is context only and does not prove a cause or authorize changing these fixed requirements. Choose only the explicitly permitted topology/mechanism details. "
+        f"Export one connected final part or assembly envelope to {step_path}. Reopen it and write {measurements_path} with step_path, step_sha256, envelope_mm, mass_kg and every fixed interface/load-location measurement. "
+        f"Write {request_path} with coarse and fine CalculiX requests bound to the exact STEP SHA-256, E=69000 MPa, nu=0.33, density=2700 kg/m3, the approved load and support interfaces, and the approved stress/deflection limits. "
+        "Reject missing load/support geometry or a violated fixed requirement. Do not claim installation, causal proof, trip-risk acceptance, visibility performance or physical robot testing.",
+        file_server,
+        ("corrective-hardware-source.py",),
+    )
+    author_cad["fields"]["outputs"].append(
+        helpers.port("corrective_hardware_source", "workspace_file")
+    )
+    author_cad["fields"]["settings"]["expected_file_ports"] = {
+        "corrective_hardware_source": source_path
+    }
+    build_cad = new_task(
+        "build_corrective_hardware", "Build and reopen the corrective hardware CAD"
+    )
+    bind(
+        build_cad,
+        f"Call run(script={str(workspace / source_path)!r},output='corrective-hardware',cwd={str(project)!r},build_dir='build',preview=False,view=False,diff=False). Preserve actual native execution and generated files. Fail if the STEP, measurements or closed FEA request are missing.",
+        agentcad_server,
+        ("corrective-hardware.step", "corrective-hardware-measurements.json", "corrective-fea-request.json"),
+    )
+    build_outputs = {
+        "corrective_step": step_path,
+        "corrective_measurements": measurements_path,
+        "corrective_request": request_path,
+    }
+    build_cad["fields"]["outputs"].extend(
+        helpers.port(role, "workspace_file") for role in build_outputs
+    )
+    build_cad["fields"]["settings"]["expected_file_ports"] = build_outputs
+    helpers.add_reference(
+        sections,
+        author_cad["id"] + ".corrective_hardware_source",
+        build_cad,
+        "authored_corrective_source",
+        "workspace_file",
+    )
+    solve = new_task(
+        "solve_corrective_hardware", "Run coarse and fine corrective-hardware CalculiX checks"
+    )
+    solved = bind(
+        solve,
+        "Read the exact connected corrective-fea-request. For both coarse and fine records, call calculix_mesh_preflight with only its closed supported arguments, require nonempty supports and load selections, then call calculix_solve_static_recorded with the unchanged request. Preserve actual run IDs, STEP hashes, mesh counts, solver results and errors. Do not enlarge supports/loads, add gravity, change limits, or infer correctness from solver completion.",
+        solver_server,
+        filename="corrective-solver-runs.json",
+    )
+    helpers.add_reference(
+        sections,
+        build_cad["id"] + ".corrective_request",
+        solve,
+        "closed_corrective_fea_request",
+        "workspace_file",
+    )
+    expand = new_task(
+        "export_corrective_fields", "Export displacement, stress and reactions for both meshes"
+    )
+    field_expected = tuple(
+        f"corrective-fea/{mesh}/{name}"
+        for mesh in ("coarse", "fine")
+        for name in (
+            "field-expansion-receipt.json",
+            "native-field-expansion/displacement-field.csv",
+            "native-field-expansion/stress-field.csv",
+            "reaction-forces.json",
+        )
+    )
+    fields_result = bind(
+        expand,
+        f"For each exact coarse/fine run in the connected solver result, call export_recorded_fields_and_reactions(run_id=<actual>,expected_step_sha256=<actual>,output_directory='{output}/corrective-fea/<mesh>'). Preserve original and output-only solve lineage, complete displacement/stress fields and reactions. Never fabricate a successful field export.",
+        field_server,
+        field_expected,
+        filename="corrective-field-exports.json",
+    )
+    helpers.add_reference(sections, solved, expand, "actual_corrective_solver_runs")
+    expand_outputs = {}
+    for mesh in ("coarse", "fine"):
+        for short, name in (
+            ("receipt", "field-expansion-receipt.json"),
+            ("displacement", "native-field-expansion/displacement-field.csv"),
+            ("stress", "native-field-expansion/stress-field.csv"),
+            ("reaction", "reaction-forces.json"),
+        ):
+            role = f"corrective_{mesh}_{short}"
+            expand_outputs[role] = output + f"/corrective-fea/{mesh}/{name}"
+    expand["fields"]["outputs"].extend(
+        helpers.port(role, "workspace_file") for role in expand_outputs
+    )
+    expand["fields"]["settings"]["expected_file_ports"] = expand_outputs
+    fea_report = new_task(
+        "verify_corrective_design", "Verify the exact corrective design against its fixed requirements"
+    )
+    verified_design = bind(
+        fea_report,
+        f"Call inspect_file(includeText=true) for {measurements_path}, {request_path}, both corrective displacement/stress CSVs, both reaction JSONs and both expansion receipts. Call inspect_file(includeText=false) for {step_path}. Produce an evidence-linked JSON document at {output}/corrective-fea.json with schema='wright-robot-corrective-fea-v1', status='pass' only when every approved digital check passes, step_sha256, requirements[] entries containing expected/observed/status/evidence, coarse/fine sensitivity, force equilibrium, maximum displacement, evaluated stress and mass. Preserve raw stress peaks and limitations. A solver run or tracking correlation is not causal proof or physical qualification.",
+        file_server,
+        ("corrective-fea.json",),
+        filename="corrective-fea.json",
+    )
+    fea_report["fields"]["outputs"].append(
+        helpers.port("corrective_fea", "workspace_file")
+    )
+    fea_report["fields"]["settings"]["expected_file_ports"] = {
+        "corrective_fea": output + "/corrective-fea.json"
+    }
+    helpers.add_reference(sections, fields_result, fea_report, "actual_field_exports")
+    helpers.add_reference(
+        sections, build_cad["id"] + ".corrective_step", fea_report, "exact_corrective_cad", "workspace_file"
+    )
+    commissioning = new_task(
+        "write_commissioning_package", "Write the bounded installation and commissioning package"
+    )
+    bind(
+        commissioning,
+        "Write a concise engineering commissioning package from the approved independent site requirements, reviewed non-causal diagnosis, exact CAD and FEA verification. Include installation prerequisites, inspection dimensions, torque/anchor items that remain for engineer approval, and a measurement plan that would test the original tracking issue after installation. Clearly mark installation, physical proof, causal attribution and robot testing as not performed.",
+        filename="commissioning-package.md",
+    )
+    helpers.add_reference(sections, verified_design, commissioning, "corrective_design_verification")
+    helpers.add_reference(sections, diagnosis, commissioning, "reviewed_noncausal_diagnosis")
     coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
     support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
     profile = support.get("full_profile")
@@ -173,6 +349,18 @@ def prepare(args, directory, available):
         "diagnosis": (
             diagnosis_task,
             diagnosis_task["fields"]["outputs"][0]["key"],
+            "engineering_document",
+        ),
+        "corrective_step": (build_cad, "corrective_step", "workspace_file"),
+        "corrective_measurements": (
+            build_cad,
+            "corrective_measurements",
+            "workspace_file",
+        ),
+        "corrective_fea": (fea_report, "corrective_fea", "workspace_file"),
+        "commissioning": (
+            commissioning,
+            commissioning["fields"]["outputs"][0]["key"],
             "engineering_document",
         ),
     }
@@ -222,7 +410,18 @@ def prepare(args, directory, available):
         collection,
         "process_validation_assessment",
     )
-    for start, end in ((normalize["id"], stages["inspect_bag"]["id"]), (diagnosis_task["id"], review["id"]), (review["id"], validator["id"])):
+    for start, end in (
+        (normalize["id"], stages["inspect_bag"]["id"]),
+        (diagnosis_task["id"], review["id"]),
+        (review["id"], preflight_cad["id"]),
+        (preflight_cad["id"], author_cad["id"]),
+        (author_cad["id"], build_cad["id"]),
+        (build_cad["id"], solve["id"]),
+        (solve["id"], expand["id"]),
+        (expand["id"], fea_report["id"]),
+        (fea_report["id"], commissioning["id"]),
+        (commissioning["id"], validator["id"]),
+    ):
         sections.append({"kind": "connection", "id": "order_" + start + "_" + end, "fields": {"type": "order", "from": start, "to": end, "label": "same canonical execution", "when": None}})
     sections.append({
         "kind": "connection",
@@ -247,6 +446,27 @@ def prepare(args, directory, available):
             if len(matches) != 1:
                 raise ValueError("Required selected workspace tool unavailable: " + server + "/" + name)
             selected.append(matches[0])
+    for server, names in {
+        agentcad_server: ("context", "docs", "run"),
+        file_server: ("write_text_document", "inspect_file"),
+        solver_server: (
+            "calculix_mesh_preflight",
+            "calculix_solve_static_recorded",
+            "calculix_run_get",
+        ),
+        field_server: ("export_recorded_fields_and_reactions",),
+    }.items():
+        for name in names:
+            matches = [
+                tool
+                for tool in available
+                if tool["server_id"] == server and tool["tool_name"] == name
+            ]
+            if len(matches) != 1:
+                raise ValueError(
+                    "Required corrective-design tool unavailable: " + server + "/" + name
+                )
+            selected.append(matches[0])
     draft.mkdir(parents=True)
     target = draft / "bound.workflow.wflow"
     target.write_text(result, encoding="utf-8")
@@ -254,7 +474,8 @@ def prepare(args, directory, available):
               "status": "prepared_not_dispatched", "source": str(target), "source_sha256": helpers.digest(result.encode()),
               "template_source_sha256": helpers.digest(TEMPLATE.read_bytes()),
               "requires_template_instance_api": not bool(args.instance_source), "workspace_root": str(workspace), "output_root": output,
-              "input_manifest": staged, "tool_allowlist": selected, "expected_outputs": manifest["expected_outputs"],
+              "input_manifest": staged, "tool_allowlist": selected,
+              "expected_outputs": renewal.expected_outputs(manifest),
               "compiled_stages": [step.id for step in plan.steps], "preserved_original_stages": originals,
               "preserved_original_edges": [s["id"] for s in edges], "expected_tool_created_files": [p for step in plan.steps for p in step.expected_files],
               "approval_policy_request": {"mode": "auto", "scope": "integration_test", "test_destinations": []}}
@@ -271,6 +492,11 @@ def main():
     parser.add_argument("--scenario")
     parser.add_argument("--instance-source")
     parser.add_argument("--server-map", help="Normal API registration report containing alias-to-UUID server_map")
+    parser.add_argument("--agentcad-server-id", default="agentcad")
+    parser.add_argument("--workspace-file-server-id", default="wright-workspace-files")
+    parser.add_argument("--solver-server-id", default="calculix")
+    parser.add_argument("--field-server-id", default="calculix-fields")
+    parser.add_argument("--initialize-agentcad", action="store_true")
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--session", default="wright-local-e3dc0ef1-06da-45dd-83b9-290347814f8a")
     args = parser.parse_args()

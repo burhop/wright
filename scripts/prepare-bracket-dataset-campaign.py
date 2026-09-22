@@ -18,6 +18,11 @@ VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/p
 spec = importlib.util.spec_from_file_location("bracket_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
+renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(renewal_spec)
+renewal_spec.loader.exec_module(renewal)
 
 
 PROVISIONAL_REVISION_SCOPES = {
@@ -117,7 +122,11 @@ def prepare(args, directory, tools):
         }}
     stage("selected-solver-contract.json", json.dumps(selected, indent=2).encode(), "explicit_operation_and_approximation")
     stage("calculix_recorded_fields.py", (ROOT / "scripts/engineering/calculix_recorded_fields.py").read_bytes(), "reviewable_output_only_native_operation")
+    stage("approved-engineering-brief.json", renewal.contract_bytes(manifest), "approved_engineering_brief")
     brief = h.add_file_input(sections, suffix, "human_context", inputs + "/assembled-context.md")
+    engineering_brief = h.add_file_input(
+        sections, suffix, "approved_engineering_brief", inputs + "/approved-engineering-brief.json"
+    )
     contract = h.add_file_input(sections, suffix, "solver_contract", inputs + "/selected-solver-contract.json")
     image = h.add_file_input(sections, suffix, "bracket_sketch", inputs + "/concept.png")
     next(s for s in sections if s["id"] == image.split(".")[0])["fields"]["outputs"][0]["kind"] = "reference_images"
@@ -143,6 +152,9 @@ def prepare(args, directory, tools):
 
     basis = bind(original["define_load_case"], "Create the exact baseline/revision design and mechanical basis from every uploaded prompt, dimension/hole/load table, manufacturing rule and sketch. Preserve all coordinates, single-solid design, tool radius/wall/keepouts, material69000MPa/nu0.33/density2700 and actual load vector. Explicitly declare Casys equal-selected-node total-force distribution as an approximation to uniform patch traction; optional gravity is excluded, never silently merged. Declare an evaluated stress region/singularity treatment while preserving all unfiltered stress values, mesh comparison3mm/2mm and original target. Require exact load-pad face imprints and a centroid vertex for actual displacement sampling. Describe the explicit separate output-only reaction/FRD solve and original-vs-second-run lineage before review. Unknown measured or supplier evidence stays unresolved. " + PROVISIONAL_REVISION_GUIDANCE, filename="mechanical-basis.md", format="markdown")
     h.add_reference(sections, image, original["define_load_case"], "original_sketch", "reference_images")
+    h.add_reference(
+        sections, engineering_brief, original["define_load_case"], "approved_engineering_brief"
+    )
     review = task("review_bracket_basis", "Review exact loads, geometry and solver assumptions")
     review["fields"].update(step_type="review", performed_by="engineer", instructions="Review the exact dimensional and mechanical basis, loading approximation and explicit second output-only solve. Review the fully dimensioned provisional revision operation table, each disclosed authored assumption and every protected-region/manufacturing constraint before authoring. Provisional approval authorizes the recorded study geometry, not a claim that acceptance targets pass or production release.",
         settings={"authoring_template": "external-action-approval", "action_kind": "local_review",
@@ -267,7 +279,8 @@ def prepare(args, directory, tools):
     report = {"schema_version": 1, "scenario_id": identity, "attempt_id": args.attempt, "template_id": manifest["template_id"],
         "status": "prepared_not_dispatched", "source": str(target), "source_sha256": h.digest(rendered.encode()),
         "template_source_sha256": h.digest(TEMPLATE.read_bytes()), "workspace_root": str(workspace), "output_root": output,
-        "input_manifest": staged, "tool_allowlist": allowed, "expected_outputs": manifest["expected_outputs"],
+        "input_manifest": staged, "tool_allowlist": allowed,
+        "expected_outputs": renewal.expected_outputs(manifest),
         "expected_tool_created_files": [p for s in plan.steps for p in s.expected_files], "requires_template_instance_api": not bool(args.instance_source),
         "approval_policy_request": {"mode": "auto", "scope": "integration_test", "test_destinations": []},
         "native_initialization_requested": args.initialize_agentcad,

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import io
 import math
 import re
@@ -80,14 +81,16 @@ class WaterHeaterTimelineReader:
         id="water-heater-timeline",
         version="1",
         config_digest=canonical_digest(
-            {"schema": _COLUMNS, "crossing": "linear", "version": 1}
+            {"schema": _COLUMNS, "crossing": "linear", "package": "hash-bound-v1", "version": 2}
         ),
         method="independent_measurement",
         tool_identity="wright bounded water-heater trajectory reader v1",
-        formats=("csv",),
+        formats=("csv", "json"),
     )
 
     def measure(self, snapshot, check, context):
+        if check.parameters.get("operation") == "package_verification":
+            return self._measure_package(snapshot, check, context)
         groups = _trajectories(snapshot, context)
         parameters = check.parameters
         try:
@@ -212,4 +215,96 @@ class WaterHeaterTimelineReader:
             evidence_refs=(
                 f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#trajectories",
             ),
+        )
+
+    def _measure_package(self, snapshot, check, context):
+        if snapshot.subject.format != "json":
+            raise _defect(
+                "water.package_format", "Thermal-package verification must be JSON."
+            )
+        related = {item.subject.role: item for item in context.related_snapshots}
+        try:
+            document = json.loads(snapshot.content)
+            if document.get("schema") != "wright-water-thermal-package-verification-v1":
+                raise ValueError("schema")
+            geometry = related[check.parameters["geometry_role"]]
+            field = related[check.parameters["field_role"]]
+            comparison = related[check.parameters["comparison_role"]]
+            measurements = related[check.parameters["measurements_role"]]
+            if document["geometry"]["sha256"] != geometry.subject.sha256:
+                raise _defect(
+                    "water.package_geometry_identity",
+                    "Package verification does not bind the current CAD STEP.",
+                )
+            if document["geometry"]["measurements_sha256"] != measurements.subject.sha256:
+                raise _defect(
+                    "water.package_measurement_identity",
+                    "Package verification does not bind the current CAD measurements.",
+                )
+            if document["field"]["sha256"] != field.subject.sha256:
+                raise _defect(
+                    "water.package_field_identity",
+                    "Package verification does not bind the current thermal field.",
+                )
+            if document["modelica_selection_sha256"] != comparison.subject.sha256:
+                raise _defect(
+                    "water.package_selection_identity",
+                    "Package verification does not bind the current Modelica selection.",
+                )
+            if float(document["selected_electrical_power_w"]) != float(
+                check.parameters["selected_power_w"]
+            ):
+                raise _defect(
+                    "water.package_selected_power",
+                    "Package screen did not use the independently selected power.",
+                )
+            checks = document["checks"]
+            required = {
+                "carrier_temperature",
+                "accessible_shell_temperature",
+                "envelope",
+                "dry_mass",
+            }
+            if set(checks) != required or any(
+                item.get("pass") is not True for item in checks.values()
+            ):
+                raise _defect(
+                    "water.package_requirement_failure",
+                    "The final package does not pass every approved digital screen.",
+                )
+            if document.get("status") != "pass":
+                raise _defect(
+                    "water.package_status", "Thermal-package status is not pass."
+                )
+        except ValidationIssue:
+            raise
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError, UnicodeError) as exc:
+            raise _defect(
+                "water.invalid_package_verification",
+                "Thermal-package verification is incomplete or malformed.",
+            ) from exc
+        evidence = [f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#package"]
+        evidence.extend(
+            f"subject:{item.subject.id}@{item.subject.sha256}#bound"
+            for item in (geometry, measurements, field, comparison)
+        )
+        identity = canonical_digest(
+            {
+                "subject": snapshot.subject,
+                "check": check,
+                "reader": self.identity,
+                "related": tuple(item.subject for item in context.related_snapshots),
+            }
+        )
+        return Measurement(
+            id="m-" + identity,
+            subject_id=snapshot.subject.id,
+            subject_sha256=snapshot.subject.sha256,
+            selector=check.selector,
+            value=True,
+            unit=None,
+            frame=check.frame,
+            uncertainty=0.0,
+            reader=self.identity,
+            evidence_refs=tuple(evidence),
         )

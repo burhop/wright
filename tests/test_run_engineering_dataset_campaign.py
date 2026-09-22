@@ -329,6 +329,96 @@ def test_external_api_and_duplicate_process_lock_are_rejected(tmp_path):
                 pass
 
 
+def test_transport_preserves_bounded_structured_http_error(monkeypatch):
+    class ResponseError(__import__("urllib.error").error.HTTPError):
+        def read(self, _limit=-1):
+            return json.dumps(
+                {
+                    "detail": {
+                        "code": "workflow_not_ready",
+                        "message": "A required input is unavailable.",
+                        "correction": "Bind the missing input.",
+                        "ignored": {"internal": True},
+                    }
+                }
+            ).encode()
+
+    def reject(*_args, **_kwargs):
+        raise ResponseError("http://127.0.0.1:8000/test", 422, "bad", {}, None)
+
+    monkeypatch.setattr(runner_module.urllib.request, "urlopen", reject)
+    result = runner_module.HttpTransport("http://127.0.0.1:8000").request("/test")
+    assert result == {
+        "ok": False,
+        "http_status": 422,
+        "error_type": "HTTPError",
+        "error_detail": {
+            "code": "workflow_not_ready",
+            "message": "A required input is unavailable.",
+            "correction": "Bind the missing input.",
+        },
+    }
+
+
+def test_transport_preserves_safe_request_validation_errors(monkeypatch):
+    class ResponseError(__import__("urllib.error").error.HTTPError):
+        def read(self, _limit=-1):
+            return json.dumps(
+                {
+                    "detail": [
+                        {
+                            "loc": ["body", "path"],
+                            "msg": "Field required",
+                            "type": "missing",
+                            "input": "not retained",
+                        }
+                    ]
+                }
+            ).encode()
+
+    monkeypatch.setattr(
+        runner_module.urllib.request,
+        "urlopen",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            ResponseError("http://127.0.0.1:8000/test", 422, "bad", {}, None)
+        ),
+    )
+    result = runner_module.HttpTransport("http://127.0.0.1:8000").request("/test")
+    assert result["error_detail"] == {
+        "validation_errors": [
+            {"loc": ["body", "path"], "msg": "Field required", "type": "missing"}
+        ]
+    }
+
+
+def test_transport_preserves_normalized_api_error(monkeypatch):
+    class ResponseError(__import__("urllib.error").error.HTTPError):
+        def read(self, _limit=-1):
+            return json.dumps(
+                {
+                    "error_code": "workflow_not_ready",
+                    "message": "The pinned validation profile changed.",
+                    "trace_id": "trace-1",
+                    "details": {"correction": "Restart the owned profile registry."},
+                }
+            ).encode()
+
+    monkeypatch.setattr(
+        runner_module.urllib.request,
+        "urlopen",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            ResponseError("http://127.0.0.1:8000/test", 422, "bad", {}, None)
+        ),
+    )
+    result = runner_module.HttpTransport("http://127.0.0.1:8000").request("/test")
+    assert result["error_detail"] == {
+        "error_code": "workflow_not_ready",
+        "message": "The pinned validation profile changed.",
+        "trace_id": "trace-1",
+        "correction": "Restart the owned profile registry.",
+    }
+
+
 def test_transient_windows_reader_blocks_only_publication_retry(tmp_path,monkeypatch):
     path=tmp_path/"state.json"
     original=Path.replace

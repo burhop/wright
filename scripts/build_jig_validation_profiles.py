@@ -1,5 +1,6 @@
 """Build full-scope drill-jig profiles from frozen baselines."""
 
+import hashlib
 from pathlib import Path
 
 from core.process_validation import ValidationProfile, canonical_json
@@ -78,9 +79,26 @@ def check(
 
 
 def build(scenario_id, config):
-    baseline = load_baseline(scenario_id)
+    baseline = load_baseline(scenario_id).model_dump(mode="json")
     prefix = "JIG" + scenario_id[-2:]
-    known = {r.id for r in baseline.requirements}
+    approved = ROOT / "specs/082-output-content-validation/campaign-example-renewal-lineup.json"
+    source = {
+        "artifact_ref": approved.relative_to(ROOT).as_posix(),
+        "locator": "cases/" + scenario_id + "/final_deliverable",
+        "sha256": hashlib.sha256(approved.read_bytes()).hexdigest(),
+    }
+    baseline["requirements"].append(
+        {
+            "id": prefix + "-ADDITIVE-PACKAGE",
+            "text": "The checked same-attempt jig STL is processed by the pinned Bambu Studio configuration into an actual hash-bound additive-manufacturing package; physical printing and fit remain unperformed.",
+            "mandatory": True,
+            "scope": "content",
+            "sources": [source],
+            "review_required": False,
+        }
+    )
+    baseline["amendments"].append(source)
+    known = {r["id"] for r in baseline["requirements"]}
 
     def rid(suffix):
         value = prefix + "-" + suffix
@@ -167,12 +185,27 @@ def build(scenario_id, config):
         )
     covered = {r for c in checks for r in c["requirement_ids"]}
     review_ids = [
-        r.id
-        for r in baseline.requirements
-        if r.id not in covered and not r.id.endswith("-DELIVERABLES")
+        r["id"]
+        for r in baseline["requirements"]
+        if r["id"] not in covered and not r["id"].endswith("-DELIVERABLES")
     ]
     checks.extend(
         [
+            check(
+                "slice-binding",
+                [rid("ADDITIVE-PACKAGE"), rid("DELIVERABLES")],
+                "slice_evidence",
+                reader="printing",
+                selector="slice/binding",
+                constraint={"operator": "equals", "expected": True},
+                method="independent_measurement",
+                parameters={
+                    "operation": "slice_binding",
+                    "expected_operation": "actual_local_bambu_slice",
+                    "input_role": "jig_stl",
+                    "related_roles": ["jig_stl", "slice_package"],
+                },
+            ),
             check(
                 "design-review",
                 review_ids,
@@ -190,7 +223,6 @@ def build(scenario_id, config):
         if item["constraint"]["operator"] == "review"
         for requirement_id in item["requirement_ids"]
     }
-    baseline = baseline.model_dump(mode="json")
     for requirement in baseline["requirements"]:
         requirement["review_required"] = requirement["id"] in review_ids
     return ValidationProfile.model_validate(

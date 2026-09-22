@@ -121,7 +121,8 @@ def run(config):
                            "relative_analytical_rise_error": abs(maximum - analytical) / max(abs(analytical - cold), 1e-15),
                            "cold_boundary": "total-resistance Robin" if resistance else "Dirichlet",
                            "interface_coefficient_w_m2k": coefficient,
-                           "field": {"path": str(target), "sha256": digest(target), "bytes": target.stat().st_size}})
+                           "field": {"path": str(target), "sha256": digest(target), "bytes": target.stat().st_size},
+                           "field_csv": {"path": str(csv_path), "sha256": digest(csv_path), "bytes": csv_path.stat().st_size}})
         fine = levels[-1]
         sensitivity = abs(levels[0]["maximum_temperature_c"] - fine["maximum_temperature_c"]) / max(abs(fine["maximum_temperature_c"] - cold), 1e-15)
         result = {"case_id": name, "geometry": geometry, "input": row, "mesh_levels": levels,
@@ -141,9 +142,36 @@ def run(config):
                 "limitations": ["Synthetic constant-property conduction model only; no physical qualification.",
                                 "Uniform end loading gives a linear field exactly representable by P1 elements; mesh stability does not independently validate the physics.",
                                 "Campaign correctness-validation count remains zero."]}
+    correspondence = {
+        "schema": "wright-heat-geometry-analysis-correspondence-v1",
+        "operation": decision["operation"],
+        "cases": [
+            {
+                "case_id": item["case_id"],
+                "geometry": item["geometry"],
+                "solver_input": item["input"],
+                "fields": {
+                    level["mesh"]: {
+                        "csv": level["field_csv"],
+                        "vtu": level["field"],
+                    }
+                    for level in item["mesh_levels"]
+                },
+            }
+            for item in summary
+        ],
+        "claim": (
+            "The listed field files were generated from the measured dimensions and "
+            "SHA-256 identity of the listed same-attempt STEP. This digital identity "
+            "check does not establish physical thermal performance."
+        ),
+    }
     (output / "sizing-decision.json").write_text(json.dumps(decision, indent=2) + "\n")
     (output / "heat-balance.json").write_text(json.dumps({r["case_id"]: r["mesh_levels"] for r in summary}, indent=2) + "\n")
     (output / "mesh-comparison.json").write_text(json.dumps({r["case_id"]: r["relative_mesh_sensitivity"] for r in summary}, indent=2) + "\n")
+    (output / "geometry-analysis-correspondence.json").write_text(
+        json.dumps(correspondence, indent=2) + "\n"
+    )
     print(json.dumps({"status": decision["status"], "case_count": len(summary), "output_root": str(output)}))
     return decision
 

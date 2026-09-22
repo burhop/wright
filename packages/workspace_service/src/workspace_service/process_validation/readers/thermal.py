@@ -102,12 +102,13 @@ class ThermalFieldReader:
                     "heat-balance",
                     "refinement",
                     "selection",
+                    "geometry-analysis-correspondence",
                 ],
-                "version": 1,
+                "version": 2,
             }
         ),
         method="independent_measurement",
-        tool_identity="wright bounded thermal field reader v1",
+        tool_identity="wright bounded thermal field reader v2",
         formats=("csv", "json"),
     )
 
@@ -119,6 +120,11 @@ class ThermalFieldReader:
         ]
         if operation == "selection":
             observed = self._selection(snapshot, check, context, related, evidence)
+            unit = None
+        elif operation == "geometry_analysis_correspondence":
+            observed = self._correspondence(
+                snapshot, check, context, related, evidence
+            )
             unit = None
         else:
             if snapshot.subject.format != "csv":
@@ -301,3 +307,87 @@ class ThermalFieldReader:
                 "Sizing decision does not select the narrowest bound candidate meeting the source limit.",
             )
         return selected
+
+    def _correspondence(self, snapshot, check, context, related, evidence):
+        if snapshot.subject.format != "json":
+            raise _defect(
+                "thermal.correspondence_format",
+                "Geometry-analysis correspondence must be JSON.",
+            )
+        try:
+            document = json.loads(snapshot.content)
+            if document.get("schema") != "wright-heat-geometry-analysis-correspondence-v1":
+                raise ValueError("schema")
+            records = document["cases"]
+            if not isinstance(records, list):
+                raise ValueError("cases")
+            by_id = {record["case_id"]: record for record in records}
+            if len(by_id) != len(records):
+                raise ValueError("duplicate case")
+        except (UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+            raise _defect(
+                "thermal.invalid_correspondence",
+                "Thermal correspondence must contain one uniquely identified record per case.",
+            ) from exc
+        cases = check.parameters.get("cases")
+        if not isinstance(cases, list) or not cases:
+            raise ValidationIssue(
+                "profile.thermal_correspondence_cases",
+                "Correspondence checks require source-derived case and role mappings.",
+                category="source_conflict",
+            )
+        expected_ids = {str(case.get("id")) for case in cases if isinstance(case, dict)}
+        if set(by_id) != expected_ids or len(expected_ids) != len(cases):
+            raise _defect(
+                "thermal.correspondence_case_set",
+                "Thermal correspondence case set differs from the approved candidates.",
+            )
+        for case in cases:
+            case_id = str(case["id"])
+            record = by_id[case_id]
+            geometry = related.get(case.get("geometry_role"))
+            coarse = related.get(case.get("coarse_role"))
+            fine = related.get(case.get("fine_role"))
+            if geometry is None or coarse is None or fine is None:
+                raise ValidationIssue(
+                    "subject.related_role_missing",
+                    f"Correspondence for '{case_id}' requires its STEP and both field CSVs.",
+                )
+            try:
+                geometry_sha = record["geometry"]["sha256"]
+                coarse_sha = record["fields"]["coarse"]["csv"]["sha256"]
+                fine_sha = record["fields"]["fine"]["csv"]["sha256"]
+                solver_input = record["solver_input"]
+            except (KeyError, TypeError) as exc:
+                raise _defect(
+                    "thermal.correspondence_incomplete",
+                    f"Thermal correspondence for '{case_id}' is incomplete.",
+                ) from exc
+            if geometry_sha != geometry.subject.sha256:
+                raise _defect(
+                    "thermal.geometry_identity_mismatch",
+                    f"Thermal case '{case_id}' was not analyzed from the bound STEP identity.",
+                )
+            if coarse_sha != coarse.subject.sha256 or fine_sha != fine.subject.sha256:
+                raise _defect(
+                    "thermal.field_identity_mismatch",
+                    f"Thermal case '{case_id}' correspondence does not bind both current field CSVs.",
+                )
+            approved = case.get("solver_input")
+            if not isinstance(approved, dict) or any(
+                str(solver_input.get(key)) != str(value)
+                for key, value in approved.items()
+            ):
+                raise _defect(
+                    "thermal.solver_input_mismatch",
+                    f"Thermal case '{case_id}' correspondence uses inputs outside the approved case row.",
+                )
+            evidence.extend(
+                (
+                    f"subject:{geometry.subject.id}@{geometry.subject.sha256}#geometry",
+                    f"subject:{coarse.subject.id}@{coarse.subject.sha256}#coarse-field",
+                    f"subject:{fine.subject.id}@{fine.subject.sha256}#fine-field",
+                )
+            )
+            context.checkpoint(entities=4)
+        return True

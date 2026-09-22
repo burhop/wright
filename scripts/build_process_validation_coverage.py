@@ -232,15 +232,15 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-01-full",
             "version": "1",
-            "sha256": "0e6216a75e586a9966cd961cceb8068e9563dd0c7263c7a31425078080911da0",
+            "sha256": "a46d4b244494a2f25b5baa5858f19c665301b5ea4aa0914f74180c80d6ba33fd",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-01-basis",
             "version": "1",
-            "sha256": "a1b6db09fddaaf3f80acfa2914daf3e0850160f9b09693879024425fe9020e26",
+            "sha256": "2b35e75c35ca1b5f6b77962d422e58f19840597a814125fa945f09e0ad61be91",
         },
         "reader_ids": ["structured@1", "tracking-timeline@1"],
-        "scope": "Traceable conversion, alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "scope": "Traceable conversion, alignment and non-causal diagnosis followed by independently governed corrective CAD, CalculiX verification and bounded commissioning review.",
         "limitations": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
         "evidence": [
             "tests/external/process_validation/test_tracking.py",
@@ -252,15 +252,15 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-02-full",
             "version": "1",
-            "sha256": "6787b9682d664e90fd73bece5dcddf31079f23e69bd88cdadcdfe5881643474e",
+            "sha256": "10bd909a84e6d2815e752863cf47b684a7a298a4ccc391be0740c8255741c7d5",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-02-basis",
             "version": "1",
-            "sha256": "4caf51cc91a953004bce257b90216e83d50b7836a3b83196fbaf5a0a3842a9b1",
+            "sha256": "5dfce036c856742d45304ba7574919b0bd8b1cdad6c46044e9b492f7dbc36ecc",
         },
         "reader_ids": ["structured@1", "tracking-timeline@1"],
-        "scope": "Traceable conversion, spatial/time alignment, retained timeline metrics, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "scope": "Traceable conversion, spatial/time alignment and non-causal diagnosis followed by independently governed corrective CAD, CalculiX verification and bounded commissioning review.",
         "limitations": "The retained output contains false gap records and required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
         "evidence": [
             "tests/external/process_validation/test_tracking.py",
@@ -272,15 +272,15 @@ IMPLEMENTED_PROFILES = {
         "profile_ref": {
             "id": "robot-tracking-diagnosis-03-full",
             "version": "1",
-            "sha256": "11f5ca4b297e60132c541f55bce8720ee987e61924ed340dbff058eb814375cf",
+            "sha256": "83b48192aa2abd72d94ef18ab23df19671ab9eccefaa936cb14ecbe4118558ec",
         },
         "baseline_ref": {
             "id": "robot-tracking-diagnosis-03-basis",
             "version": "1",
-            "sha256": "c08adf5cd747d36651e57e565fb5a63b4c989b7f25041321eec44ccbaee257ce",
+            "sha256": "dbfe7ca5291922c53e8d939311cc8de0f637f78c1c8520a152f48c8ef52b4e7d",
         },
         "reader_ids": ["structured@1", "tracking-timeline@1"],
-        "scope": "Traceable conversion, missing-sample preservation, retained timeline metrics, wrapped yaw, event correspondence, deliverable presence and required plot/diagnosis reviews.",
+        "scope": "Traceable conversion, missing-sample preservation and non-causal diagnosis followed by independently governed corrective CAD, CalculiX verification and bounded commissioning review.",
         "limitations": "Required human reviews are not yet authenticated; physical operation and causal proof remain excluded.",
         "evidence": [
             "tests/external/process_validation/test_tracking.py",
@@ -289,28 +289,28 @@ IMPLEMENTED_PROFILES = {
     },
     "heat-spreader-sizing-02": {
         "profile_resource": "heat-spreader-sizing-02-full",
-        "profile_ref": {"id": "heat-spreader-sizing-02-full", "version": "1", "sha256": "8c4b48a93163b03936315af2060f47ab154553264ecaeeac2d998db6abc57851"},
+        "profile_ref": {"id": "heat-spreader-sizing-02-full", "version": "1", "sha256": "dec64d294490d091abcdf1052ce8affb8d17c038ea907e584787cd517c93a4e6"},
         "baseline_ref": {"id": "heat-spreader-sizing-02-basis", "version": "1", "sha256": "e8f86603db3713c227be1f311485f150e2cf1fbe4aae35998678429c7822c139"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
-        "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
+        "scope": "Actual STEP envelopes, exact STEP-to-field identity correspondence, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
         "limitations": "Required basis review is not yet authenticated; physical thermal qualification and certification remain excluded.",
         "evidence": ["tests/external/process_validation/test_step_box.py", "tests/external/process_validation/test_heat_profiles.py"],
     },
     "heat-spreader-sizing-03": {
         "profile_resource": "heat-spreader-sizing-03-full",
-        "profile_ref": {"id": "heat-spreader-sizing-03-full", "version": "1", "sha256": "99bd9a4b009cee5540eb88d0ea6f2c91dba76857fc1a37b3b44a9f8ed14ee9a5"},
+        "profile_ref": {"id": "heat-spreader-sizing-03-full", "version": "1", "sha256": "c23b8537593e1200d1e0a01361d164cf7aec0db6c29ad56b1387fee277098ba7"},
         "baseline_ref": {"id": "heat-spreader-sizing-03-basis", "version": "1", "sha256": "c30c4e62e2048071105e830ad347b6d5a9341ce6e4d1b94ad31a50651a4949b7"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
-        "scope": "Actual STEP envelopes, contact-resistance fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required design review.",
+        "scope": "Actual STEP envelopes, exact STEP-to-field identity correspondence, contact-resistance fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required design review.",
         "limitations": "Required design review is not yet authenticated; physical thermal qualification and certification remain excluded.",
         "evidence": ["tests/external/process_validation/test_step_box.py", "tests/external/process_validation/test_heat_profiles.py"],
     },
 }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sensor-fan-harness-01", "97a33702f0b514d708acc230b9050b4fe008e26b07cfd971bcce319a3c4fa361", "0a17c7a175b00f57d758068762bc76bf294dfe19028b400bedaf893a24c68eb1"),
-    ("sensor-fan-harness-02", "c69a16f21c8186de0c9d5d2ae00f1a2b8ef7e8624584be7e61372874eebbd547", "f2d5bbbddc28104471bd5ee9da4434fe18288e082f3f3ed145c0549cef091c6c"),
-    ("sensor-fan-harness-03", "f7ecf7d518f54d2269dd9cdbe550c69601d2c310d80911f3af7a8785ab5bb88e", "fa7d92b76771ed1305ef37510c65b4756a16ae6541291d9bdd67aaeb1eec7d87"),
+    ("sensor-fan-harness-01", "a7cbe8599c739bcfcf8e8f8e20516065a4883d7095f7f9fc7f598cea555bc1f6", "0a90382e419db11f20b5c8d71a2840fa3cee3f9d726d8d5d191298c7d27f4b1b"),
+    ("sensor-fan-harness-02", "50b23b4a36923d6e4b3f34726303441c25c59ef44fd2fd728a8950abc928d6d5", "e2c7a00f6d0f3e6fcf30f642e1f1912f17de5fe71094fa18ac41cc815111b8d6"),
+    ("sensor-fan-harness-03", "627ea819ef3da577411c185d08aec86d4b75e16fe2e14dde84931f229292e62e", "15ae0bc6732aeab953b73b20b6b56d4f088e985fd7159676145cdb0065d4a3a2"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
@@ -323,23 +323,23 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("water-heater-sizing-01", "d04f0c7cf7a074ee2f5e26141c6673e2a3304ea8c8cc37b03bad1ecc2857d2c1", "83dc0e6d9877a46c9b0c5ba0c84941ffcfff06fa32eadfab4cccf3248bd8bde5"),
-    ("water-heater-sizing-02", "5ef2ef688dd957f0e0294ea36ef5926ab8f948bdb2f9ef6089b1e2f8e0a29f54", "4f3aaa8fac7278c69de7fbca166477a151cfd07869d9c37db493c337c8f99f34"),
-    ("water-heater-sizing-03", "df62db9766be2c52fb616f620b3917a2087f31c996570030a3496bf0d66e7d28", "c8303d44b3d63733d64cd03270f3b3cd4f1786edf5b187d824227dd476ca863c"),
+    ("water-heater-sizing-01", "d6cce9cb089f7ff1d0dc86877ade6110fad0a6f9a1164954a22f9b4a87cae294", "b5f8d63ee4f36b3ee3c32ac9f74fc7a0d769fa21ebc62592232d3494b09016d0"),
+    ("water-heater-sizing-02", "0a2143584bcfa594f4c4e2b13db2208160f30ec720394792c769f9c933308de6", "258b0675125c6fe50fb0943110e1d9e50b0eab1b5410718baa8e4492ff64fb51"),
+    ("water-heater-sizing-03", "d303b67680f34b941ec7e52c26064873c3489148a9a434d86edb5f4ecbdf59dc", "ebe3698bbd89b09479ed3a38c87a9fd4c5a1a136881d32e6be0899b6c33b9af1"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
         "profile_ref": {"id": _scenario_id + "-full", "version": "1", "sha256": _profile_sha},
         "baseline_ref": {"id": _scenario_id + "-basis", "version": "1", "sha256": _baseline_sha},
         "reader_ids": ["structured@1", "water-heater-timeline@1"],
-        "scope": "Exact candidate/loss grid, initial state, electrical/thermal power, complete one-second baseline grid, independent target crossings, selection, deliverables and required reviews.",
+        "scope": "Exact Modelica candidate/loss grid and selection plus an exact-correspondence AgentCAD package and scikit-fem carrier/shell screen, package envelope, deliverables and required reviews.",
         "limitations": "Retained parameter summaries omit required kit identity/version and required reviews are not authenticated; physical heater qualification remains excluded.",
         "evidence": ["tests/external/process_validation/test_water_heater.py", "tests/external/process_validation/test_water_heater_profiles.py"],
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("parametric-drill-jig-02", "fd39181e0c3a7d5262b27b17ff837f4cbd86fab7d67a524f101d9cd259bec754", "01ab65b9f751d126beb09c310e17339bd32fbae19581f86b27313b4e443df4b0"),
-    ("parametric-drill-jig-03", "381bdca15a9d7e6345290436d1cb9d92dd7f086c47feed64373faeb528c48052", "6c26d73189485eaba89e07ab551c83afa40fae40fda86b43ec8a36ac891f38cc"),
+    ("parametric-drill-jig-02", "95ce88043e9fa2c690d888135e648e921214d7928a5a11bc721a47107a0e2350", "895744b1726ba48ef18b9582151d5cde4402afd0b2378957de3d7c884a67c14e"),
+    ("parametric-drill-jig-03", "e135566d247a456f3d3df312ca9fcd5ae9c5e64b367bd7ab32651ea5fb556903", "b6d98dc15c5823c3356a4ecbd13bee82851d1d092b6b80a3b7fd456c3cf7318b"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
@@ -412,9 +412,9 @@ for _scenario_id, _profile_sha, _baseline_sha in (
     }
 
 for _scenario_id, _profile_sha, _baseline_sha in (
-    ("sheet-metal-supplier-handoff-01", "68383082bc607ccbe1c34bd2ac99bce51656620391cda4cedc06eb0c9a3a89d2", "efdfe67c2abba893af484c8412163b863fb39b20aef3d2c5be58b17b6e81643a"),
-    ("sheet-metal-supplier-handoff-02", "e7ddabb706322ddc35a14bc84ebd83533f9a2a23d4a1a0a5be52050c009ca991", "ef692463cafec8fee996bcd53ec00d0556b1d9d1e77f745316536f0fa7676818"),
-    ("sheet-metal-supplier-handoff-03", "6cd2d25ff58fbc103f6816a0ff78cbba17dcf70c61ffc305aee80aa2168407ba", "0b12b72d01a9e54b720b54d5a35f94f9b014eef2a532e16f307352a24175784f"),
+    ("sheet-metal-supplier-handoff-01", "44ff3131eaa32b44a0a097be3ccecc826bd0c5cc336b701de1fa5d85592c59e9", "2e5196ddb55f07c75639de648520cee58e239789778ed344951175243c61a42d"),
+    ("sheet-metal-supplier-handoff-02", "bf2744717cad61c440a6e38a0a4fef3025a586b4268a7074f169f5fa0fb92269", "5b8fd20be00fb9f2d5e41223f45ef9669f2c7e785456c02a249af54c4d6fb53b"),
+    ("sheet-metal-supplier-handoff-03", "9c95cb1d67a78922e479c835bc2d5aa9b83c48014ab268535980386ff10db927", "8b3cb122f5d030d1b66f34022100222532b33c8d42f1f9d5bf727b927362080d"),
 ):
     IMPLEMENTED_PROFILES[_scenario_id] = {
         "profile_resource": _scenario_id,
@@ -430,17 +430,17 @@ FULL_SCOPE_IMPLEMENTED = {
     **IMPLEMENTED_PROFILES,
     "heat-spreader-sizing-01": {
         "profile_resource": "heat-spreader-sizing-01-full",
-        "profile_ref": {"id": "heat-spreader-sizing-01-full", "version": "1", "sha256": "3528aa7740b1ab0b7f0ab98ee02904aa37195e11eb8e600d6123ea1371cce1f5"},
+        "profile_ref": {"id": "heat-spreader-sizing-01-full", "version": "1", "sha256": "da8e16b33bd69313b020c0aabc21ce6e0e6fb21bd465941b92ad224a86756252"},
         "baseline_ref": {"id": "heat-spreader-sizing-01-basis", "version": "1", "sha256": "648762c15d9461eedc7067bc51272e7fcc5e75e1a785efdfaa47efc123dd4e20"},
         "reader_ids": ["step-bounding-box@1", "structured@1", "thermal-field@1"],
-        "scope": "Actual STEP envelopes, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
+        "scope": "Actual STEP envelopes, exact STEP-to-field identity correspondence, coarse/refined fields, analytical agreement, balance, refinement, outcomes, selection, deliverables and required basis review.",
         "limitations": "Required basis review is not yet authenticated; physical thermal qualification and certification remain excluded.",
         "evidence": ["tests/external/process_validation/test_step_box.py", "tests/external/process_validation/test_heat_profiles.py"],
     },
     "parametric-drill-jig-01": {
         "profile_resource": "parametric-drill-jig-01-full",
-        "profile_ref": {"id": "parametric-drill-jig-01-full", "version": "1", "sha256": "0d1cbca11861a0fe8b18f47887568b1420a72b553baf413180c70892d5647724"},
-        "baseline_ref": {"id": "parametric-drill-jig-01-basis", "version": "1", "sha256": "71f0fad592432ba092f5f2a170012875417044daeeb6306faa9f93446f21f3a4"},
+        "profile_ref": {"id": "parametric-drill-jig-01-full", "version": "1", "sha256": "2563e2ae025694cdb029bad8dc67250107f3772351048de7d78150f656a34bb8"},
+        "baseline_ref": {"id": "parametric-drill-jig-01-basis", "version": "1", "sha256": "3c360740760a99eb71b63690b3a6a3bf69814e74d26ea1aa90c84a595c544a67"},
         "reader_ids": ["step-seat-geometry@1", "structured@1"],
         "scope": "Actual STEP body/flange seat coordinates and diameters, required DXF/report deliverables and authenticated review of remaining geometry/design obligations.",
         "limitations": "Required design reviews are not authenticated; physical fit, machining, drilling and supplier qualification remain excluded.",
@@ -505,6 +505,19 @@ def _campaign_credit(root: Path, scenario_id: str, metadata: dict) -> dict:
     if not mandatory or not mandatory.issubset(assessed):
         raise ValueError(f"Full profile misses mandatory requirements: {scenario_id}")
     subject_roles = {check["subject_role"] for check in profile["checks"]}
+    # Some independent correspondence checks consume one primary evidence file
+    # and hash-bind additional submitted artifacts. Those related artifacts are
+    # part of the immutable validation request and therefore part of campaign
+    # credit scope even though they do not each need a duplicate check row.
+    for check in profile["checks"]:
+        related_roles = (check.get("parameters") or {}).get("related_roles", [])
+        if not isinstance(related_roles, list) or any(
+            not isinstance(role, str) or not role for role in related_roles
+        ):
+            raise ValueError(
+                f"Invalid related subject roles in packaged profile: {scenario_id}"
+            )
+        subject_roles.update(related_roles)
     subject_roles.update(CAMPAIGN_AUXILIARY_SUBJECT_ROLES.get(scenario_id, set()))
     if not subject_roles:
         raise ValueError(f"Full profile has no campaign subjects: {scenario_id}")

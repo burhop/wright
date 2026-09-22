@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 from pathlib import Path
 
 from core.process_validation import ValidationProfile, canonical_json
@@ -67,9 +68,26 @@ def expected_connections(directory):
 
 
 def build(scenario_id, directory):
-    baseline = load_baseline(scenario_id)
+    baseline = load_baseline(scenario_id).model_dump(mode="json")
     prefix = "HARNESS" + scenario_id[-2:]
-    known = {item.id for item in baseline.requirements}
+    approved = ROOT / "specs/082-output-content-validation/campaign-example-renewal-lineup.json"
+    source = {
+        "artifact_ref": approved.relative_to(ROOT).as_posix(),
+        "locator": "cases/" + scenario_id + "/final_deliverable",
+        "sha256": hashlib.sha256(approved.read_bytes()).hexdigest(),
+    }
+    baseline["requirements"].append(
+        {
+            "id": prefix + "-INDEPENDENT-ECAD",
+            "text": "The released pin/net schedule is represented in a native KiCad interconnect schematic and independently checked for exact schedule/netlist correspondence and zero native ERC errors.",
+            "mandatory": True,
+            "scope": "content",
+            "sources": [source],
+            "review_required": False,
+        }
+    )
+    baseline["amendments"].append(source)
+    known = {item["id"] for item in baseline["requirements"]}
 
     def rid(suffix):
         value = prefix + "-" + suffix
@@ -120,6 +138,24 @@ def build(scenario_id, directory):
             method="independent_measurement",
             parameters={"operation": "voltage_drop"},
         ),
+        check(
+            "kicad-correspondence",
+            [rid("INDEPENDENT-ECAD"), rid("DELIVERABLES")],
+            "net_correspondence",
+            reader="harness",
+            selector="harness/kicad-correspondence",
+            constraint={"operator": "equals", "expected": True},
+            method="independent_measurement",
+            parameters={
+                "operation": "kicad_correspondence",
+                "related_roles": [
+                    "kicad_schematic",
+                    "pin_schedule",
+                    "netlist",
+                    "kicad_erc",
+                ],
+            },
+        ),
     ]
     if scenario_id.endswith("03"):
         checks.extend(
@@ -162,11 +198,11 @@ def build(scenario_id, directory):
         "TEST-INSTRUCTIONS": "assembly",
         "ACTION-SCOPE": "handoff",
     }
-    for requirement in baseline.requirements:
-        if requirement.id in automated or requirement.id.endswith("-DELIVERABLES"):
+    for requirement in baseline["requirements"]:
+        if requirement["id"] in automated or requirement["id"].endswith("-DELIVERABLES"):
             continue
-        suffix = requirement.id.removeprefix(prefix + "-")
-        review_roles[preferred.get(suffix, "basis")].append(requirement.id)
+        suffix = requirement["id"].removeprefix(prefix + "-")
+        review_roles[preferred.get(suffix, "basis")].append(requirement["id"])
     for role, requirement_ids in review_roles.items():
         if requirement_ids:
             checks.append(
@@ -186,7 +222,6 @@ def build(scenario_id, directory):
         if item["constraint"]["operator"] == "review"
         for requirement_id in item["requirement_ids"]
     }
-    baseline = baseline.model_dump(mode="json")
     for requirement in baseline["requirements"]:
         requirement["review_required"] = requirement["id"] in review_ids
     return ValidationProfile.model_validate(

@@ -50,8 +50,9 @@ class SheetMetalEvidenceReader:
                     "dxf_contract",
                     "manifest_binding",
                     "simulated_handoff",
+                    "dxf_review_binding",
                 ],
-                "version": 1,
+                "version": 2,
             }
         ),
         method="independent_measurement",
@@ -73,6 +74,34 @@ class SheetMetalEvidenceReader:
             observed = self._manifest_binding(snapshot, check, related, evidence)
         elif operation == "simulated_handoff":
             observed = self._simulated_handoff(snapshot, check, related, evidence)
+        elif operation == "dxf_review_binding":
+            value = _json(snapshot)
+            source = related.get(check.parameters.get("source_role"))
+            reviewed = related.get(check.parameters.get("reviewed_role"))
+            if source is None or reviewed is None:
+                raise ValidationIssue(
+                    "subject.related_role_missing",
+                    "DXF review requires the source and independently reopened copy.",
+                )
+            if (
+                value.get("schema") != "wright-headless-dxf-review-v1"
+                or value.get("status") != "pass"
+                or value.get("source_sha256") != source.subject.sha256
+                or value.get("reviewed_sha256") != reviewed.subject.sha256
+                or value.get("inventories_equal") is not True
+                or value.get("differences") not in ([], {})
+            ):
+                raise _defect(
+                    "sheet_metal.dxf_review_mismatch",
+                    "Independent DXF reopen evidence does not bind equal source and reviewed flat-pattern content.",
+                )
+            observed = True
+            evidence.extend(
+                (
+                    f"subject:{source.subject.id}@{source.subject.sha256}#source-dxf",
+                    f"subject:{reviewed.subject.id}@{reviewed.subject.sha256}#reviewed-dxf",
+                )
+            )
         else:
             raise ValidationIssue(
                 "profile.sheet_metal_operation",

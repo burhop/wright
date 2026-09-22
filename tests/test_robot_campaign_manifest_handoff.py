@@ -30,6 +30,14 @@ def _tools() -> list[dict[str, str]]:
             "normalize_csv_to_ros2",
             "calculate_tracking_metrics",
         ),
+        "agentcad": ("context", "docs", "run"),
+        "wright-workspace-files": ("write_text_document", "inspect_file"),
+        "calculix": (
+            "calculix_mesh_preflight",
+            "calculix_solve_static_recorded",
+            "calculix_run_get",
+        ),
+        "calculix-fields": ("export_recorded_fields_and_reactions",),
     }
     return [
         {
@@ -74,3 +82,18 @@ def test_conversion_counts_are_available_to_bag_inspection(tmp_path):
         source == f"{normalize.id}.{normalize.id}_result"
         for _, source in inspect.references
     )
+    corrective = next(
+        step for step in plan.steps if step.id.startswith("build_corrective_hardware_")
+    )
+    assert set(corrective.expected_file_ports) == {
+        "corrective_step",
+        "corrective_measurements",
+        "corrective_request",
+    }
+    validator = next(step for step in plan.steps if step.validation)
+    assert {
+        "corrective_step",
+        "corrective_measurements",
+        "corrective_fea",
+        "commissioning",
+    } <= {role for role, _ in validator.validation_sources}

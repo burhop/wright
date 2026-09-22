@@ -1,5 +1,7 @@
 """Build full-scope water-heater profiles from frozen baselines."""
 
+import hashlib
+import json
 from pathlib import Path
 
 from core.process_validation import ValidationProfile, canonical_json
@@ -67,9 +69,41 @@ def check(
 
 
 def build(scenario_id, config):
-    baseline = load_baseline(scenario_id)
+    baseline = load_baseline(scenario_id).model_dump(mode="json")
     prefix = "WATER" + scenario_id[-2:]
-    known = {item.id for item in baseline.requirements}
+    approved_path = (
+        ROOT
+        / "specs/082-output-content-validation/campaign-example-renewal-engineering-input-proposal.json"
+    )
+    approved_document = json.loads(approved_path.read_text(encoding="utf-8"))
+    approved_case = next(
+        item for item in approved_document["cases"] if item["scenario_id"] == scenario_id
+    )
+    fixed = approved_case["new_fixed_requirements"]
+    source = {
+        "artifact_ref": approved_path.relative_to(ROOT).as_posix(),
+        "locator": "cases/" + scenario_id + "/new_fixed_requirements",
+        "sha256": hashlib.sha256(approved_path.read_bytes()).hexdigest(),
+    }
+    additions = {
+        "PACKAGE-CONTRACT": "The CAD package preserves every approved vessel, heater, insulation, envelope, mounting, keepout, material, temperature and mass requirement; only the explicitly permitted geometry choices may vary.",
+        "PACKAGE-CORRESPONDENCE": "The final CAD STEP, its reopened measurements, the selected Modelica power and the downstream scikit-fem fields retain exact same-attempt identity correspondence.",
+        "PACKAGE-THERMAL": "The selected package passes the approved maximum carrier and accessible-shell temperature limits using the selected demonstrated power and declared material/film inputs.",
+        "PACKAGE-DELIVERABLES": "The final design package contains the exact CAD STEP, CAD measurements, thermal field and evidence-linked package verification.",
+    }
+    baseline["requirements"].extend(
+        {
+            "id": prefix + "-" + suffix,
+            "text": text,
+            "mandatory": True,
+            "scope": "design" if suffix != "PACKAGE-DELIVERABLES" else "content",
+            "sources": [source],
+            "review_required": False,
+        }
+        for suffix, text in additions.items()
+    )
+    baseline["amendments"].append(source)
+    known = {item["id"] for item in baseline["requirements"]}
 
     def rid(suffix):
         value = prefix + "-" + suffix
@@ -158,16 +192,74 @@ def build(scenario_id, config):
             constraint={"operator": "review"},
             method="human_review",
         ),
+        check(
+            "package-verification",
+            [
+                rid("PACKAGE-CORRESPONDENCE"),
+                rid("PACKAGE-THERMAL"),
+                rid("PACKAGE-CONTRACT"),
+            ],
+            "package_verification",
+            reader="water-heater-timeline",
+            selector="package/verified",
+            constraint={"operator": "equals", "expected": True},
+            method="independent_measurement",
+            parameters={
+                "operation": "package_verification",
+                "selected_power_w": config["selected"],
+                "geometry_role": "package_step",
+                "measurements_role": "package_measurements",
+                "field_role": "package_field",
+                "comparison_role": "comparison",
+                "related_roles": [
+                    "package_step",
+                    "package_measurements",
+                    "package_field",
+                    "comparison",
+                ],
+            },
+        ),
+        check(
+            "package-contract-review",
+            [rid("PACKAGE-CONTRACT")],
+            "package_measurements",
+            constraint={"operator": "review"},
+            method="human_review",
+        ),
     ]
+    for axis, maximum in zip(("x", "y", "z"), fixed["maximum_envelope_mm"], strict=True):
+        checks.append(
+            check(
+                "package-envelope-" + axis,
+                [rid("PACKAGE-CONTRACT")],
+                "package_step",
+                reader="step-bounding-box",
+                selector="box/" + axis + "_span_mm",
+                constraint={"operator": "range", "maximum": maximum},
+                unit="mm",
+                method="native_inspection",
+            )
+        )
     for role in ("timeline", "comparison", "energy", "curve", "report", "parameters"):
         checks.append(check("deliverable-" + role, [rid("DELIVERABLES")], role))
+    for role in (
+        "package_measurements",
+        "package_field",
+        "package_verification",
+    ):
+        checks.append(
+            check(
+                "deliverable-" + role,
+                [rid("PACKAGE-DELIVERABLES")],
+                role,
+            )
+        )
     review_ids = {
         requirement_id
         for item in checks
         if item["constraint"]["operator"] == "review"
         for requirement_id in item["requirement_ids"]
     }
-    baseline = baseline.model_dump(mode="json")
     for requirement in baseline["requirements"]:
         requirement["review_required"] = requirement["id"] in review_ids
     return ValidationProfile.model_validate(

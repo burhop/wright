@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import shutil
 
@@ -49,7 +50,7 @@ def automated(profile):
     return ValidationProfile.model_validate(raw)
 
 
-def evaluate(tmp_path, scenario_id):
+def evaluate(tmp_path, scenario_id, *, corrupt_kicad_binding=False):
     profile = automated(load_profile(scenario_id))
     source = RETAINED / scenario_id / ATTEMPTS[scenario_id] / "artifacts"
     workspace = tmp_path / "workspace"
@@ -78,6 +79,52 @@ def evaluate(tmp_path, scenario_id):
                 sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
             )
         )
+    schematic = workspace / "harness.kicad_sch"
+    schematic.write_text("(kicad_sch (version 20231120) (generator wright-test))\n", encoding="utf-8")
+    erc = workspace / "erc.json"
+    erc.write_text(json.dumps({"errors": [], "warnings": []}), encoding="utf-8")
+
+    def add_subject(role, path, fmt, step="ecad"):
+        subjects.append(
+            SubjectBinding(
+                id=role.replace("_", "-"),
+                role=role,
+                result_id=f"run:{step}:{role}",
+                producer=ProducerIdentity(
+                    run_id="run", step_id=step, attempt=1, output_port=role
+                ),
+                kind="file",
+                locator=path.name,
+                format=fmt,
+                encoding="raw-bytes",
+                sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            )
+        )
+
+    add_subject("kicad_schematic", schematic, "kicad_sch")
+    add_subject("kicad_erc", erc, "json")
+    digests = {item.role: item.sha256 for item in subjects}
+    correspondence = workspace / "net-correspondence.json"
+    correspondence.write_text(
+        json.dumps(
+            {
+                "schema": "wright-harness-kicad-correspondence-v1",
+                "status": "pass",
+                "schematic_sha256": (
+                    "0" * 64 if corrupt_kicad_binding else digests["kicad_schematic"]
+                ),
+                "pin_schedule_sha256": digests["pin_schedule"],
+                "netlist_sha256": digests["netlist"],
+                "erc_sha256": digests["kicad_erc"],
+                "missing_rows": [],
+                "extra_rows": [],
+                "mismatched_rows": [],
+                "erc_error_count": 0,
+            }
+        ),
+        encoding="utf-8",
+    )
+    add_subject("net_correspondence", correspondence, "json")
     request = ValidationRequest(
         trace_id="harness-profile-qualification",
         workspace_id="workspace",
@@ -111,3 +158,14 @@ def test_retained_outputs_reach_contact_inclusive_drop_failure(tmp_path, scenari
     assert set(findings) == {"voltage-drop"}
     assert findings["voltage-drop"].code == "harness.invalid_number"
     assert findings["voltage-drop"].correction.target_step_id == "analysis"
+
+
+def test_kicad_correspondence_rejects_a_wrong_schematic_hash(tmp_path):
+    outcome = evaluate(
+        tmp_path, "sensor-fan-harness-01", corrupt_kicad_binding=True
+    )
+    assert any(
+        finding.code == "harness.kicad_correspondence"
+        for finding in outcome.assessment.findings
+    )
+    assert not outcome.release_eligible

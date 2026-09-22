@@ -50,6 +50,11 @@ spec = importlib.util.spec_from_file_location(
 )
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
+renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(renewal_spec)
+renewal_spec.loader.exec_module(renewal)
 
 
 def add_scoped_file_inspection(
@@ -212,6 +217,11 @@ def prepare(args, directory, available):
                 path.read_bytes(),
                 {"original": path.relative_to(ROOT).as_posix()},
             )
+    stage(
+        "approved-engineering-brief.json",
+        renewal.contract_bytes(scenario),
+        {"role": "approved_engineering_brief"},
+    )
     sources = [
         ROOT / "scripts" / name
         for name in (
@@ -331,13 +341,13 @@ def prepare(args, directory, available):
             ("compiler_source", "pi_cfd_operations.py"),
             ("reference_source", "pi_reference_visual_mcp.py"),
             ("native_setup", "native-initialization.json"),
+            ("approved_engineering_brief", "approved-engineering-brief.json"),
             ("styling_image", "concept.png"),
         )
     }
     next(s for s in sections if s["id"] == references["styling_image"].split(".")[0])[
         "fields"
     ]["outputs"][0]["kind"] = "reference_images"
-
     def new(prefix, title):
         task = {
             "kind": "task",
@@ -444,6 +454,12 @@ def prepare(args, directory, available):
         "Write the complete engineering design basis from actual manufacturer evidence, original prompt/context/image and fixed CFD contract. Preserve both actual requested styled variants, heat locations/loads, shell conduction, dimensions, mounts/service features where actually requested. Explicitly map board-local load coordinates to CAD coordinates. Name actual fluid/shell/board/source regions and exterior boundary planes before CAD. Use laminar ideal-gas buoyant air and disclosed material assumptions. Explain whether an exterior air region resolves shell convection or exterior solid faces are prescribed ambient; never silently equate them. For a steady heating brief, propose the version2 steady iteration/write profile and CAD-surface mesh grading in the fixed contract, preserving actual loads, regions, materials and domain. State iterations as iterations, never seconds; retain unvalidated convergence and targets. Use a legacy transient only when the brief explicitly needs time behavior, with a separately justified measured execution budget. Distinguish manufacturer facts from your own prototype design choices: select seam height, fillets, feet, light opening, clearances, screw lengths and boss layout as documented design assumptions within the customer constraints; use sourced board/insert geometry. Do not demand production qualification to generate the requested prototype. Preserve unresolved fit/rating checks in the document without claiming validation. Keep the complete document at or below 12000 characters by using compact tables and avoiding repeated rationale. "
         + fan_guidance,
         "design-basis.md",
+    )
+    helpers.add_reference(
+        sections,
+        references["approved_engineering_brief"],
+        stages["design_basis"],
+        "approved_engineering_brief",
     )
     helpers.add_reference(
         sections, research, stages["design_basis"], "retrieved_primary_evidence"
@@ -822,7 +838,7 @@ def prepare(args, directory, available):
         "output_root": output,
         "input_manifest": staged,
         "tool_allowlist": selected,
-        "expected_outputs": scenario["expected_outputs"],
+        "expected_outputs": renewal.expected_outputs(scenario),
         "compiled_stages": [step.id for step in plan.steps],
         "preserved_original_stages": original,
         "preserved_original_edges": [edge["id"] for edge in edges],

@@ -34,6 +34,11 @@ spec = importlib.util.spec_from_file_location(
 )
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
+renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(renewal_spec)
+renewal_spec.loader.exec_module(renewal)
 
 
 def prepare(args, directory):
@@ -112,6 +117,11 @@ def prepare(args, directory):
                     "original": path.relative_to(ROOT).as_posix(),
                 }
             )
+    renewal_data = renewal.contract_bytes(manifest)
+    renewal_path = inputs + "/approved-engineering-brief.json"
+    h.write_once(h.confined(workspace, renewal_path), renewal_data)
+    staged.append({"path": renewal_path, "sha256": h.digest(renewal_data),
+                   "size_bytes": len(renewal_data), "role": "approved_engineering_brief"})
     names = [
         manifest["files"]["user_profile"],
         manifest["files"]["prompt"],
@@ -130,6 +140,9 @@ def prepare(args, directory):
         {"path": relative, "sha256": h.digest(context.encode()), "derived_from": names}
     )
     brief = h.add_file_input(sections, suffix, "electrical_context", relative)
+    engineering_brief = h.add_file_input(
+        sections, suffix, "approved_engineering_brief", renewal_path
+    )
     image = h.add_file_input(
         sections, suffix, "electrical_sketch", inputs + "/concept.png"
     )
@@ -185,6 +198,12 @@ def prepare(args, directory):
         editable_image,
         stages["capture_electrical_basis"],
         "editable_image_source",
+    )
+    h.add_reference(
+        sections,
+        engineering_brief,
+        stages["capture_electrical_basis"],
+        "approved_engineering_brief",
     )
     review = {
         "kind": "task",
@@ -540,6 +559,7 @@ def prepare(args, directory):
         "workspace_root": str(workspace),
         "output_root": output,
         "input_manifest": staged,
+        "expected_outputs": renewal.expected_outputs(manifest),
         "required_step_ids": [step.id for step in plan.steps],
         "preserved_original_stages": [
             stages[p]["id"] for p in config["original_stages"]

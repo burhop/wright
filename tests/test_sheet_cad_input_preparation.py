@@ -11,6 +11,30 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = ROOT / "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff"
+DXF_SERVER = "autocad-headless-fixture"
+
+
+def available_tools(binding):
+    tools = [
+        {
+            "server_id": server,
+            "tool_name": tool,
+            "name": server + "__" + tool,
+            "schema_digest": "a" * 64,
+        }
+        for server, names in binding["allowed_tools"].items()
+        for tool in names
+    ]
+    tools.extend(
+        {
+            "server_id": DXF_SERVER,
+            "tool_name": tool,
+            "name": DXF_SERVER + "__" + tool,
+            "schema_digest": "b" * 64,
+        }
+        for tool in binding["headless_dxf_review"]["tools"]
+    )
+    return tools
 
 
 @pytest.fixture
@@ -24,15 +48,14 @@ def preparer():
 @pytest.mark.parametrize("directory", sorted(SCENARIOS.iterdir()), ids=lambda path: path.name)
 def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, preparer, directory):
     binding = json.loads(preparer.BINDING.read_text(encoding="utf-8"))
-    available = [{"server_id": server, "tool_name": tool, "name": server + "__" + tool, "schema_digest": "a" * 64}
-                 for server, names in binding["allowed_tools"].items() for tool in names]
+    available = available_tools(binding)
     args = SimpleNamespace(workspace_root=str(tmp_path / "workspace"), draft_root=str(tmp_path / "draft"),
                            attempt="attempt-test", campaign_id="fixture-campaign", instance_source=None)
     result = preparer.prepare(args, directory, available)
     text = Path(result["draft"]).read_text(encoding="utf-8")
     plan = compile_prompt_workflow(text)
     report = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text(encoding="utf-8"))
-    assert len(plan.steps) == (16 if directory.name.startswith("03") else 13)
+    assert len(plan.steps) == (18 if directory.name.startswith("03") else 14)
     assert len(report["preserved_original_stages"]) == len(report["preserved_original_edges"]) == 6
     assert set(report["preserved_original_stages"]).issubset({step.id for step in plan.steps})
     workspace = Path(args.workspace_root)
@@ -94,7 +117,23 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
     for part in binding["scenarios"][report["scenario_id"]]["parts"]:
         token = part.replace("-", "_")
         expected_roles.update(token + "_" + role for role in ("native", "check", "step", "dxf", "screenshot"))
+        expected_roles.update(token + "_" + role for role in ("review_dxf", "review_report"))
+        review = next(
+            step
+            for step in plan.steps
+            if step.id.startswith("review_" + token + "_flat_dxf_")
+        )
+        assert review.server_id == DXF_SERVER
+        assert review.tool_name == ""
+        assert "AutoCAD MCP Pro 3.4.7 headless ezdxf backend" in review.prompt
+        assert set(review.expected_file_ports) == {
+            token + "_review_dxf",
+            token + "_review_report",
+        }
     assert {role for role, _ in validator.validation_sources} == expected_roles
+    assert report["headless_dxf_review"]["server_id"] == DXF_SERVER
+    assert report["headless_dxf_review"]["provider"] == "AutoCAD MCP Pro 3.4.7 headless ezdxf backend"
+    assert report["headless_dxf_review"]["claim_limit"].startswith("Headless DXF")
     assert validator.validation["profile"]["name"] == report["scenario_id"]
     validation_review = next(
         step.external_action["settings"]["validation_review"]
@@ -147,8 +186,7 @@ def test_fresh_research_retains_material_identity_and_complete_table_contract(
 ):
     binding_before = preparer.BINDING.read_bytes()
     binding = json.loads(binding_before)
-    available = [{"server_id": server, "tool_name": tool, "name": server + "__" + tool, "schema_digest": "a" * 64}
-                 for server, names in binding["allowed_tools"].items() for tool in names]
+    available = available_tools(binding)
     args = SimpleNamespace(workspace_root=str(tmp_path / "workspace"), draft_root=str(tmp_path / "draft"),
                            attempt="attempt-research-repair", campaign_id="fixture-campaign", instance_source=None)
     result = preparer.prepare(args, directory, available)

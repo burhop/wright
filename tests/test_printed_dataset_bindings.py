@@ -188,9 +188,8 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     sections = prepare._parse(bound)
     image = next(s for s in sections if s["id"].startswith("image_and_scale_"))
     assert image["fields"]["settings"]["workspace_file"].endswith("/concept.png")
-    assert (
-        len(plan.steps[0].references) == 3
-    )  # PNG, natural prompt, assembled human context.
+    assert len(plan.steps[0].references) == 4
+    # PNG, natural prompt, assembled human context, approved engineering brief.
     record = json.loads(
         Path(result["draft"]).with_name("staging-manifest.json").read_text()
     )

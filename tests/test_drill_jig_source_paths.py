@@ -80,7 +80,14 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     scenario_id = f"parametric-drill-jig-{ordinal:02d}"
     expected_resource = scenario_id + ("-full" if ordinal == 1 else "")
     assert validator.validation["profile"]["name"] == expected_resource
-    assert set(validator.validation["subjects"]) == {"jig_step", "dxf", "report"}
+    assert set(validator.validation["subjects"]) == {
+        "jig_step",
+        "jig_stl",
+        "dxf",
+        "report",
+        "slice_package",
+        "slice_evidence",
+    }
     assert generated.expected_file_ports["jig_step"].endswith("/jig.step")
     assert generated.expected_file_ports["dxf"].endswith("/hole-layout.dxf")
     assert {Path(path).name for path in inspected.expected_files} == {"dimension-report.json"}
@@ -92,6 +99,18 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     assert any(node["kind"] == "connection" and node["fields"].get("type") == "order"
         and node["fields"].get("from") == inspected.id and node["fields"].get("to") == observer.id
         for node in _parse(source))
+    slicer = next(step for step in plan.steps if step.id.startswith("slice_jig_for_review_"))
+    assert slicer.tool_name == "wright-drill-jig-slicer__slice_jig_file"
+    assert slicer.expected_file_ports["slice_package"].endswith(
+        "/additive-manufacturing/slice_package.gcode.3mf"
+    )
+    assert any(
+        node["kind"] == "connection"
+        and node["fields"].get("type") == "order"
+        and node["fields"].get("from") == observer.id
+        and node["fields"].get("to") == slicer.id
+        for node in _parse(source)
+    )
     final_review = next(
         step for step in plan.steps if step.id.startswith("review_jig_outputs_")
     )

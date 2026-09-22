@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 from core.process_validation import ValidationProfile, canonical_json
@@ -61,6 +62,23 @@ def check(
 def build(scenario_id: str, values: dict) -> ValidationProfile:
     prefix = "SHEET" + scenario_id[-2:]
     baseline = load_baseline(scenario_id).model_dump(mode="json")
+    approved = ROOT / "specs/082-output-content-validation/campaign-example-renewal-lineup.json"
+    source = {
+        "artifact_ref": approved.relative_to(ROOT).as_posix(),
+        "locator": "cases/" + scenario_id + "/final_deliverable",
+        "sha256": hashlib.sha256(approved.read_bytes()).hexdigest(),
+    }
+    baseline["requirements"].append(
+        {
+            "id": prefix + "-INDEPENDENT-DXF-REVIEW",
+            "text": "Each Solid Edge flat-pattern DXF is independently reopened and saved by the pinned headless DXF provider with hash-bound equal entity inventory and extents; this is not desktop AutoCAD or supplier approval.",
+            "mandatory": True,
+            "scope": "content",
+            "sources": [source],
+            "review_required": False,
+        }
+    )
+    baseline["amendments"].append(source)
     known = {item["id"] for item in baseline["requirements"]}
 
     def ids(*suffixes):
@@ -143,6 +161,32 @@ def build(scenario_id: str, values: dict) -> ValidationProfile:
                     constraint={"operator": "review"},
                     reader="structured",
                     method="human_review",
+                ),
+                check(
+                    f"{part}-reviewed-dxf",
+                    ids("INDEPENDENT-DXF-REVIEW"),
+                    f"{token}_review_dxf",
+                    selector=f"sheet-metal/{part}/reviewed-dxf-entity-count",
+                    constraint={"operator": "range", "minimum": 1},
+                    parameters={"operation": "dxf_contract"},
+                    unit="1",
+                    frame="flat_pattern_mm",
+                ),
+                check(
+                    f"{part}-dxf-review-binding",
+                    ids("INDEPENDENT-DXF-REVIEW", "CORRESPONDENCE"),
+                    f"{token}_review_report",
+                    selector=f"sheet-metal/{part}/dxf-review-binding",
+                    constraint={"operator": "equals", "expected": True},
+                    parameters={
+                        "operation": "dxf_review_binding",
+                        "source_role": f"{token}_dxf",
+                        "reviewed_role": f"{token}_review_dxf",
+                        "related_roles": [
+                            f"{token}_dxf",
+                            f"{token}_review_dxf",
+                        ],
+                    },
                 ),
             ]
         )

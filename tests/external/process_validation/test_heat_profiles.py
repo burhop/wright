@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import shutil
 
@@ -67,10 +68,50 @@ def _evaluate(tmp_path: Path, scenario_id: str, *, mutate=None):
                 case_id + "_fine": (case_id + "-fine-temperature.csv", "csv"),
             }
         )
+    role_files["correspondence"] = ("geometry-analysis-correspondence.json", "json")
     subjects = []
     for role, (name, fmt) in role_files.items():
         target = workspace / name
-        shutil.copyfile(source / name, target)
+        if role == "correspondence":
+            decision = json.loads((workspace / "sizing-decision.json").read_text())
+            by_id = {item["case_id"]: item for item in decision["cases"]}
+            document = {
+                "schema": "wright-heat-geometry-analysis-correspondence-v1",
+                "operation": decision["operation"],
+                "cases": [
+                    {
+                        "case_id": case_id,
+                        "geometry": {
+                            "path": str(workspace / f"{case_id}.step"),
+                            "sha256": hashlib.sha256(
+                                (workspace / f"{case_id}.step").read_bytes()
+                            ).hexdigest(),
+                        },
+                        "solver_input": by_id[case_id]["input"],
+                        "fields": {
+                            level: {
+                                "csv": {
+                                    "path": str(
+                                        workspace
+                                        / f"{case_id}-{level}-temperature.csv"
+                                    ),
+                                    "sha256": hashlib.sha256(
+                                        (
+                                            workspace
+                                            / f"{case_id}-{level}-temperature.csv"
+                                        ).read_bytes()
+                                    ).hexdigest(),
+                                }
+                            }
+                            for level in ("coarse", "fine")
+                        },
+                    }
+                    for case_id in CANDIDATES[scenario_id]
+                ],
+            }
+            target.write_text(json.dumps(document, indent=2) + "\n")
+        else:
+            shutil.copyfile(source / name, target)
         if mutate is not None:
             mutate(role, target)
         subjects.append(
@@ -126,6 +167,23 @@ def test_retained_outputs_pass_every_automated_full_profile_check(
     assert {
         measurement.reader.id for measurement in outcome.assessment.measurements
     } >= {"step-bounding-box", "thermal-field", "structured"}
+
+
+def test_geometry_analysis_correspondence_rejects_wrong_step_identity(tmp_path):
+    def corrupt_correspondence(role, path):
+        if role != "correspondence":
+            return
+        document = json.loads(path.read_text())
+        document["cases"][0]["geometry"]["sha256"] = "0" * 64
+        path.write_text(json.dumps(document) + "\n")
+
+    outcome = _evaluate(
+        tmp_path, "heat-spreader-sizing-01", mutate=corrupt_correspondence
+    )
+    failures = {item.check_id: item for item in outcome.assessment.findings}
+    assert failures["geometry-analysis-correspondence"].code == (
+        "thermal.geometry_identity_mismatch"
+    )
 
 
 def test_case_three_ideal_contact_substitution_reaches_analytical_check(tmp_path):

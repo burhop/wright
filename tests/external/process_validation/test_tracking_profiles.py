@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import shutil
 
@@ -62,6 +63,53 @@ def _evaluate(tmp_path: Path, scenario_id: str):
         source_file = source / relative
         target = workspace / Path(relative).name
         shutil.copyfile(source_file, target)
+        subjects.append(
+            SubjectBinding(
+                id=role.replace("_", "-"),
+                role=role,
+                result_id=f"run:analysis:{role}",
+                producer=ProducerIdentity(
+                    run_id="run", step_id="analysis", attempt=1, output_port=role
+                ),
+                kind="file",
+                locator=target.name,
+                format=fmt,
+                encoding="raw-bytes",
+                sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
+            )
+        )
+    step_fixture = (
+        RETAINED
+        / "heat-spreader-sizing-01/attempt-008/artifacts/baseline_40.step"
+    )
+    if not step_fixture.is_file():
+        pytest.skip("Retained STEP fixture is unavailable")
+    corrective = workspace / "corrective-hardware.step"
+    shutil.copyfile(step_fixture, corrective)
+    generated = {
+        "corrective_measurements": (
+            "corrective-hardware-measurements.json",
+            "json",
+            json.dumps({"step_sha256": hashlib.sha256(corrective.read_bytes()).hexdigest()}),
+        ),
+        "corrective_fea": (
+            "corrective-fea.json",
+            "json",
+            json.dumps({"schema": "wright-robot-corrective-fea-v1", "status": "pass"}),
+        ),
+        "commissioning": (
+            "commissioning-package.md",
+            "markdown",
+            "# Commissioning fixture\n\nPhysical work not performed.\n",
+        ),
+    }
+    generated_files = []
+    for role, (name, fmt, content) in generated.items():
+        target = workspace / name
+        target.write_text(content + "\n")
+        generated_files.append((role, target, fmt))
+    generated_files.append(("corrective_step", corrective, "step"))
+    for role, target, fmt in generated_files:
         subjects.append(
             SubjectBinding(
                 id=role.replace("_", "-"),

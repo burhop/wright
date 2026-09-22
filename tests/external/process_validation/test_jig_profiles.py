@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import shutil
 
@@ -40,7 +41,7 @@ def automated(profile):
     return ValidationProfile.model_validate(raw)
 
 
-def evaluate(tmp_path, scenario_id):
+def evaluate(tmp_path, scenario_id, *, corrupt_slice_binding=False):
     resource = scenario_id + ("-full" if scenario_id.endswith("01") else "")
     profile = automated(load_profile(resource))
     source = (
@@ -55,6 +56,7 @@ def evaluate(tmp_path, scenario_id):
     subjects = []
     for role, name, fmt in (
         ("jig_step", "jig.step", "step"),
+        ("jig_stl", "jig.stl", "stl"),
         ("dxf", "hole-layout.dxf", "dxf"),
         ("report", "dimension-report.json", "json"),
     ):
@@ -73,6 +75,42 @@ def evaluate(tmp_path, scenario_id):
                 format=fmt,
                 encoding="raw-bytes",
                 sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
+            )
+        )
+    package = workspace / "jig-slice.3mf"
+    package.write_bytes(b"qualified-local-bambu-slice-package")
+    package_digest = hashlib.sha256(package.read_bytes()).hexdigest()
+    mesh_digest = next(item.sha256 for item in subjects if item.role == "jig_stl")
+    evidence = workspace / "jig-slice-evidence.json"
+    evidence.write_text(
+        json.dumps(
+            {
+                "operation": "actual_local_bambu_slice",
+                "simulation": False,
+                "exit_code": 0,
+                "source_sha256": "0" * 64 if corrupt_slice_binding else mesh_digest,
+                "package_sha256": package_digest,
+            }
+        ),
+        encoding="utf-8",
+    )
+    for role, path, fmt in (
+        ("slice_package", package, "3mf"),
+        ("slice_evidence", evidence, "json"),
+    ):
+        subjects.append(
+            SubjectBinding(
+                id=role,
+                role=role,
+                result_id=f"run:slice:{role}",
+                producer=ProducerIdentity(
+                    run_id="run", step_id="slice", attempt=1, output_port=role
+                ),
+                kind="file",
+                locator=path.name,
+                format=fmt,
+                encoding="raw-bytes",
+                sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
             )
         )
     request = ValidationRequest(
@@ -110,3 +148,14 @@ def test_retained_step_outputs_reach_every_automated_full_profile_check(
         (f.check_id, f.code, f.summary) for f in outcome.assessment.findings
     ]
     assert outcome.assessment.summary.content_verified
+
+
+def test_slice_evidence_rejects_the_wrong_source_mesh_hash(tmp_path):
+    outcome = evaluate(
+        tmp_path, "parametric-drill-jig-01", corrupt_slice_binding=True
+    )
+    assert any(
+        finding.code == "printing.slice_binding"
+        for finding in outcome.assessment.findings
+    )
+    assert not outcome.release_eligible

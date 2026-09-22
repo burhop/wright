@@ -17,6 +17,11 @@ VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/p
 spec = importlib.util.spec_from_file_location("heat_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
+renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(renewal_spec)
+renewal_spec.loader.exec_module(renewal)
 
 
 def prepare(args, directory, tools):
@@ -62,7 +67,15 @@ def prepare(args, directory, tools):
         relative = inputs + "/" + name
         h.write_once(h.confined(workspace, relative), data)
         staged.append({"path": relative, "sha256": h.digest(data), "role": "reviewable_operation_source" if name.endswith(".py") else "assembled_context"})
+    renewal_data = renewal.contract_bytes(manifest)
+    renewal_path = inputs + "/approved-engineering-brief.json"
+    h.write_once(h.confined(workspace, renewal_path), renewal_data)
+    staged.append({"path": renewal_path, "sha256": h.digest(renewal_data),
+                   "size_bytes": len(renewal_data), "role": "approved_engineering_brief"})
     brief = h.add_file_input(sections, suffix, "human_context", inputs + "/assembled-context.md")
+    engineering_brief = h.add_file_input(
+        sections, suffix, "approved_engineering_brief", renewal_path
+    )
     image = h.add_file_input(sections, suffix, "thermal_sketch", inputs + "/concept.png")
     next(s for s in sections if s["id"] == image.split(".")[0])["fields"]["outputs"][0]["kind"] = "reference_images"
     vector = h.add_file_input(
@@ -94,6 +107,9 @@ def prepare(args, directory, tools):
         sections, vector, original["define_thermal_case"], "input_vector_sketch", "workspace_file"
     )
     review = task("review_thermal_basis", "Review exact thermal boundaries and units")
+    h.add_reference(
+        sections, engineering_brief, review, "approved_engineering_brief"
+    )
     review["fields"].update(step_type="review", performed_by="engineer", instructions="Review the exact original thermal basis, interface units and candidate list.",
         settings={"authoring_template": "external-action-approval", "action_kind": "local_review",
             "approval_binding": {"server": "wright", "tool": "review_artifacts", "schema": h.digest(b"wright.local_review.v1")},
@@ -134,7 +150,7 @@ def prepare(args, directory, tools):
     h.add_reference(sections, invocation_ref, solver_inputs, "exact_solver_call")
     h.add_reference(sections, geometry, solver_inputs, "actual_cad_and_measurements")
     h.add_reference(sections, observed, solver_inputs, "observed_measurements_and_hashes")
-    expected = tuple(name + "-" + level + "-temperature." + extension for name in cases for level in ("coarse", "fine") for extension in ("vtu", "csv")) + ("heat-balance.json", "mesh-comparison.json", "sizing-decision.json")
+    expected = tuple(name + "-" + level + "-temperature." + extension for name in cases for level in ("coarse", "fine") for extension in ("vtu", "csv")) + ("heat-balance.json", "mesh-comparison.json", "sizing-decision.json", "geometry-analysis-correspondence.json")
     selected_solver = next((tool for tool in tools if tool["server_id"] == args.oasis_server_id and tool["tool_name"] == "run_simulation"), None)
     if not selected_solver or not selected_solver.get("name") or not selected_solver.get("schema_digest"):
         raise ValueError("Direct OASiS execution requires its actual qualified tool name and schema digest")
@@ -165,6 +181,7 @@ def prepare(args, directory, tools):
             for level in ("coarse", "fine")
         },
         "decision": output + "/sizing-decision.json",
+        "correspondence": output + "/geometry-analysis-correspondence.json",
     }
     fields["outputs"].extend(h.port(role, "workspace_file") for role in solver_files)
     fields["settings"]["expected_file_ports"] = solver_files
@@ -205,9 +222,9 @@ def prepare(args, directory, tools):
     h.add_reference(sections, invocation_ref, execute, "exact_solver_arguments")
     executed = execute["id"]+"."+execute["id"]+"_result"
     bind(original["solve_and_verify"],
-        f"Complete the original thermal sizing verification using the actual preceding native FE operation. Call inspect_file(includeText=true,maxTextBytes=4096) for {output}/heat-balance.json, {output}/mesh-comparison.json and {output}/sizing-decision.json; follow nextOffsetBytes until all three JSON documents are observed. "
+        f"Complete the original thermal sizing verification using the actual preceding native FE operation. Call inspect_file(includeText=true,maxTextBytes=4096) for {output}/heat-balance.json, {output}/mesh-comparison.json, {output}/sizing-decision.json and {output}/geometry-analysis-correspondence.json; follow nextOffsetBytes until all four JSON documents are observed. "
         f"Call inspect_file(includeText=false) for each computed raw field under {output}: {json.dumps([name for name in expected if name.endswith(('.vtu','.csv'))])}. Preserve actual hashes and byte counts for all files. "
-        "Report each candidate's computed temperature, mass, declared temperature limit, analytical agreement, mesh sensitivity, and input/removed heat balance. Preserve the original two-percent analytical agreement and mesh-stability checks, one-percent heat-balance check, and required selected maximum at or below its declared limit. Use the native JSON checks and values; retain observed failures, no-candidate outcomes and every numerical/model limitation without inventing passes. "
+        "Report each candidate's computed temperature, mass, declared temperature limit, analytical agreement, mesh sensitivity, input/removed heat balance, and exact STEP-to-field SHA-256 correspondence. Preserve the original two-percent analytical agreement and mesh-stability checks, one-percent heat-balance check, and required selected maximum at or below its declared limit. Use the native JSON checks and values; retain observed failures, no-candidate outcomes and every numerical/model limitation without inventing passes. "
         "The preceding OASiS call deliberately used critic_approved=false. Its result remains unverified pending an independent critic; preserve that warning explicitly. Successful execution, original numerical comparisons and file presence do not constitute OASiS verification or physical qualification. Do not dispatch a solver again, invent critic approval or replace raw fields. The following process validator determines requirements-compliance credit from the exact current outputs.",
         "wright-workspace-files", filename="thermal-verification-report.json", customer_context=False)
     original["solve_and_verify"]["fields"]["settings"]["max_tool_calls"] = 24
@@ -235,7 +252,8 @@ def prepare(args, directory, tools):
     report = {"schema_version": 1, "scenario_id": identity, "attempt_id": args.attempt, "template_id": manifest["template_id"],
         "status": "prepared_not_dispatched", "source": str(target), "source_sha256": h.digest(rendered.encode()),
         "template_source_sha256": h.digest(TEMPLATE.read_bytes()), "workspace_root": str(workspace), "output_root": output,
-        "input_manifest": staged, "tool_allowlist": allowed, "expected_outputs": manifest["expected_outputs"],
+        "input_manifest": staged, "tool_allowlist": allowed,
+        "expected_outputs": renewal.expected_outputs(manifest),
         "expected_tool_created_files": [p for s in plan.steps for p in s.expected_files], "requires_template_instance_api": not bool(args.instance_source),
         "approval_policy_request": {"mode": "auto", "scope": "integration_test", "test_destinations": []},
         "native_initialization_requested": args.initialize_agentcad, "blockers": ["Full CAD/solver workflow has not run; native init/context must succeed"],

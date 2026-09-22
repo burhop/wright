@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -76,9 +77,36 @@ def check(
 
 
 def build(scenario_id, config):
-    baseline = load_baseline(scenario_id)
+    baseline = load_baseline(scenario_id).model_dump(mode="json")
     prefix = "ROBOT" + scenario_id[-2:]
-    ids = {item.id for item in baseline.requirements}
+    approved_path = (
+        ROOT
+        / "specs/082-output-content-validation/campaign-example-renewal-engineering-input-proposal.json"
+    )
+    source = {
+        "artifact_ref": approved_path.relative_to(ROOT).as_posix(),
+        "locator": "cases/" + scenario_id + "/new_fixed_requirements",
+        "sha256": hashlib.sha256(approved_path.read_bytes()).hexdigest(),
+    }
+    additions = {
+        "DESIGN-CONTRACT": "Corrective hardware preserves every independently approved site, interface, material, load, envelope and mass requirement and changes only the permitted design choices; tracking correlation is not treated as causal proof.",
+        "CORRECTIVE-CAD": "The final corrective-hardware CAD is an inspectable same-attempt STEP with reopened measurements bound to the approved interfaces.",
+        "CORRECTIVE-FEA": "The exact final STEP is checked with coarse/fine CalculiX fields, reaction equilibrium, approved stress and deflection limits, and explicit limitations.",
+        "COMMISSIONING": "The final package includes a bounded installation and commissioning plan that preserves unperformed physical, causal and authority-dependent checks.",
+    }
+    baseline["requirements"].extend(
+        {
+            "id": prefix + "-" + suffix,
+            "text": text,
+            "mandatory": True,
+            "scope": "design" if suffix != "COMMISSIONING" else "content",
+            "sources": [source],
+            "review_required": False,
+        }
+        for suffix, text in additions.items()
+    )
+    baseline["amendments"].append(source)
+    ids = {item["id"] for item in baseline["requirements"]}
 
     def rid(suffix):
         value = prefix + "-" + suffix
@@ -235,6 +263,44 @@ def build(scenario_id, config):
                 "diagnosis",
                 constraint={"operator": "review"},
             ),
+            check(
+                "corrective-cad-native",
+                [rid("CORRECTIVE-CAD")],
+                "corrective_step",
+                reader="step-bounding-box",
+                selector="box/x_span_mm",
+                constraint={"operator": "range", "minimum": 0.1},
+                unit="mm",
+                method="native_inspection",
+            ),
+            check(
+                "corrective-design-review",
+                [rid("DESIGN-CONTRACT"), rid("CORRECTIVE-CAD")],
+                "corrective_measurements",
+                constraint={"operator": "review"},
+                method="human_review",
+            ),
+            check(
+                "corrective-fea-status",
+                [rid("CORRECTIVE-FEA")],
+                "corrective_fea",
+                selector="/status",
+                constraint={"operator": "equals", "expected": "pass"},
+            ),
+            check(
+                "corrective-fea-review",
+                [rid("CORRECTIVE-FEA")],
+                "corrective_fea",
+                constraint={"operator": "review"},
+                method="human_review",
+            ),
+            check(
+                "commissioning-review",
+                [rid("COMMISSIONING")],
+                "commissioning",
+                constraint={"operator": "review"},
+                method="human_review",
+            ),
         ]
     )
     if scenario_id.endswith("03"):
@@ -255,13 +321,20 @@ def build(scenario_id, config):
         checks.append(
             check("deliverable-" + role.replace("_", "-"), [rid("DELIVERABLES")], role)
         )
+    for role in ("corrective_measurements", "corrective_fea", "commissioning"):
+        checks.append(
+            check(
+                "deliverable-" + role.replace("_", "-"),
+                [rid("CORRECTIVE-CAD") if role == "corrective_measurements" else rid("CORRECTIVE-FEA") if role == "corrective_fea" else rid("COMMISSIONING")],
+                role,
+            )
+        )
     review_ids = {
         requirement_id
         for item in checks
         if item["constraint"]["operator"] == "review"
         for requirement_id in item["requirement_ids"]
     }
-    baseline = baseline.model_dump(mode="json")
     for requirement in baseline["requirements"]:
         requirement["review_required"] = requirement["id"] in review_ids
     return ValidationProfile.model_validate(
