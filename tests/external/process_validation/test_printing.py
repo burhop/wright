@@ -105,6 +105,33 @@ def test_binary_stl_envelope_and_integrity_are_measured():
     assert PrintingArtifactReader().measure(mesh, integrity, context).value is True
 
 
+@pytest.mark.parametrize("max_entities,allowed", [(10, True), (9, False), (3, False)])
+def test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit(
+    max_entities, allowed
+):
+    # Four tetrahedron faces share six edges: exactly ten entities, not sixteen.
+    mesh = subject(
+        "repaired_mesh",
+        binary_stl(((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))),
+        "stl",
+    )
+    context = ReaderContext.create(
+        ResourceBudget(max_entities=max_entities), "print-budget"
+    )
+    integrity = check(
+        "mesh_integrity",
+        selector="mesh/integrity",
+        parameters={"unit_convention": "mm"},
+    )
+    if allowed:
+        assert PrintingArtifactReader().measure(mesh, integrity, context).value is True
+    else:
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(mesh, integrity, context)
+        assert captured.value.code == "reader.entity_limit"
+        assert captured.value.action == "restore_capability"
+
+
 def test_identical_source_and_repaired_mesh_are_rejected():
     content = binary_stl(((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)))
     repaired = subject("repaired_mesh", content, "stl")

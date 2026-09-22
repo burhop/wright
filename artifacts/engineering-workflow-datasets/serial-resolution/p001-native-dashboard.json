@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-22T22:33:58.699Z",
+  "url": "http://127.0.0.1:8771/?view=recovery",
+  "row": "⌄\nReplace a repair-cart drawer handle that clears gloved fingers\nprinted-replacement-part-02\n\t3D printed replacement\tintermediate\t\nNot run\nAutomated validation · Passed\n2",
+  "detail": "EXECUTION OBSERVATIONS\n\nReadiness: P001 Printed 02 automated defects repaired; canonical/review outstanding · Accepted attempts: 2 · Runner: unknown\n\nLast successful stage: Unknown\n\nCurrent / failed stage: None recorded\n\nRun duration: Unknown · Native: Unknown · Model: Unknown · Tokens: Unknown\n\nQueue age: Unknown · Last fix age: Unknown · Accepted attempts since fix: Unknown\n\nNext action: P001 Printed 02: native repair/reslice passes all 17 automated checks; height 33.9990 mm. Current canonical execution and human review still pending; case remains active.",
+  "counts": {
+    "datasets_created": 30,
+    "combinations_run": 30,
+    "processes_with_outputs": 24,
+    "valid_data": 18
+  },
+  "current": [
+    "1",
+    "0",
+    "0"
+  ],
+  "reports": [
+    {
+      "text": "Validation findings",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-native-successor/printed-replacement-part-02/report.md"
+    },
+    {
+      "text": "Validation JSON",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-native-successor/printed-replacement-part-02/report.json"
+    },
+    {
+      "text": "Requirements matrix",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-native-successor/printed-replacement-part-02/rtm.csv"
+    }
+  ],
+  "errors": [],
+  "scope": "Read-only actual browser verification; no approval/run controls used."
+}

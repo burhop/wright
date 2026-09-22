@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-09-22T22:26:17.975971+00:00",
+  "scope": "Read-only actual retained mesh inspection; not a canonical run or engineering acceptance.",
+  "source": "D:\\repos\\wright\\artifacts\\process-validation\\retained-successors-20260918T001417Z\\printed-replacement-part-02\\workspace\\repaired_mesh.stl",
+  "source_sha256": "896dd18f569f96cf97bfa2bf2fb5114785eded3b84a3ab4967c50302682c818a",
+  "bytes": 1373084,
+  "triangles": 27460,
+  "unique_vertices": 13728,
+  "unique_edges": 41190,
+  "actual_entities_triangles_plus_unique_edges": 68650,
+  "default_entity_budget": 100000,
+  "reader_initial_worst_case_charge": 109840,
+  "independent_numpy": {
+    "span_mm": [
+      114.0,
+      24.0,
+      34.000003814697266
+    ],
+    "degenerate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0
+  },
+  "reader_before_fix": {
+    "status": "blocked",
+    "code": "reader.entity_limit",
+    "message": "The output exceeds this reader's entity limit."
+  }
+}

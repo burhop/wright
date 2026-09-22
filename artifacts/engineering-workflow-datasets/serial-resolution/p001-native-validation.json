@@ -1,0 +1,320 @@
+{
+  "scope": "Isolated native Blender/MCP repair and real Bambu reslice using existing configured 0.001 mm margin; direct immutable full-profile inspection. Canonical campaign execution and human engineering review remain outstanding.",
+  "observed_at": "2026-09-22T22:32:53.166199+00:00",
+  "assessment_id": "assessment-92c507629d114d409c95b5e71c5c2e3a",
+  "automated_checks": {
+    "pass": 17
+  },
+  "review_checks": {
+    "blocked": 1
+  },
+  "findings": [
+    {
+      "id": "f-a6b654bbb98c42c19ac42d5d7b5b41ef",
+      "code": "review.required",
+      "check_id": "engineering-review",
+      "requirement_ids": [
+        "PRINT02-ACTION-SCOPE",
+        "PRINT02-FINGER-CLEARANCE",
+        "PRINT02-GRIP",
+        "PRINT02-LABEL-KEEPOUT",
+        "PRINT02-MOUNTING",
+        "PRINT02-ORIENTATION"
+      ],
+      "state": "blocked",
+      "severity": "error",
+      "category": "review_required",
+      "subject_id": "source-report",
+      "owner": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "observed": null,
+      "unit": null,
+      "frame": null,
+      "observed_unit": null,
+      "observed_frame": null,
+      "evidence_refs": [],
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "mounting request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "arched bow and thumb recess"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "prototype limitation"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Work setting; Process and company policy"
+        }
+      ],
+      "summary": "An authenticated human review is required for this requirement.",
+      "explanation": "An authenticated human review is required for this requirement.",
+      "suggested_cause": null,
+      "correction": {
+        "action": "request_review",
+        "target_step_id": null,
+        "target": "An authenticated human review is required for this requirement.",
+        "preserve_requirement_ids": [],
+        "recheck_ids": [
+          "repaired-envelope-x",
+          "repaired-envelope-y",
+          "repaired-envelope-z",
+          "repaired-mesh-integrity",
+          "distinct-mesh-lineage",
+          "machine-name",
+          "machine-nozzle",
+          "filament-name",
+          "filament-type",
+          "layer-height",
+          "wall-loops",
+          "infill-density",
+          "slice-package-inventory",
+          "slice-lineage",
+          "simulated-transfer-binding",
+          "support-preview-present",
+          "source-report-present",
+          "engineering-review"
+        ]
+      }
+    }
+  ],
+  "profile_ref": {
+    "id": "printed-replacement-part-02-full",
+    "version": "1",
+    "sha256": "aa6e94d24ecf62de164767d63f7bbd5db59bfc5de1a90d3f1084496dfee64d59"
+  },
+  "report": "D:\\repos\\wright\\artifacts\\process-validation\\serial-p001-native-successor\\printed-replacement-part-02\\report.md",
+  "evidence": [
+    {
+      "role": "source_mesh",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\source_mesh.stl",
+      "source_sha256": "bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0",
+      "successor": "source_mesh.stl",
+      "successor_sha256": "bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0"
+    },
+    {
+      "role": "repaired_mesh",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\repaired_mesh.stl",
+      "source_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "successor": "repaired_mesh.stl",
+      "successor_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb"
+    },
+    {
+      "role": "support_preview",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\support-preview.svg",
+      "source_sha256": "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a",
+      "successor": "support-preview.svg",
+      "successor_sha256": "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a"
+    },
+    {
+      "role": "slice_package",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\slice_package.gcode.3mf",
+      "source_sha256": "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461",
+      "successor": "slice_package.gcode.3mf",
+      "successor_sha256": "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461"
+    },
+    {
+      "role": "slice_evidence",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\slice-evidence.json",
+      "source_sha256": "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f",
+      "successor": "slice-evidence.json",
+      "successor_sha256": "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f"
+    },
+    {
+      "role": "machine_profile",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\machine-profile.json",
+      "source_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "successor": "machine-profile.json",
+      "successor_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "role": "filament_profile",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\filament-profile.json",
+      "source_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "successor": "filament-profile.json",
+      "successor_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "role": "process_profile",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\process-profile.json",
+      "source_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+      "successor": "process-profile.json",
+      "successor_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993"
+    },
+    {
+      "role": "transfer_receipt",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\printer-transfer-receipt.json",
+      "source_sha256": "5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96",
+      "successor": "printer-transfer-receipt.json",
+      "successor_sha256": "5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96"
+    },
+    {
+      "role": "source_report",
+      "source": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\source-model-report.json",
+      "source_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "successor": "source-model-report.json",
+      "successor_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec"
+    }
+  ],
+  "campaign_credit": false,
+  "measurements": [
+    {
+      "id": "m-b74c262b27fe265a0648d0804aebe62d175a78bf84420e2eb84ff971cfb3b04b",
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "selector": "mesh/x_span_mm",
+      "value": 113.99899768829346,
+      "unit": "mm",
+      "frame": "model_axes",
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "2",
+        "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded print artifact reader v2",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/x_span_mm"
+      ]
+    },
+    {
+      "id": "m-528893c0f753a546206a4988c504c2505d91ce7ebb14ae04f5d313917be41460",
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "selector": "mesh/y_span_mm",
+      "value": 23.999000549316406,
+      "unit": "mm",
+      "frame": "model_axes",
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "2",
+        "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded print artifact reader v2",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/y_span_mm"
+      ]
+    },
+    {
+      "id": "m-44a3ed23cbcf0fdc1ed06a1765c970a5a7934e014972e5ed865858d6521e6e97",
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "selector": "mesh/z_span_mm",
+      "value": 33.999000549316406,
+      "unit": "mm",
+      "frame": "model_axes",
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "2",
+        "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded print artifact reader v2",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/z_span_mm"
+      ]
+    },
+    {
+      "id": "m-23ebd5526cda0c5e85a00ad6c08aa7236e527e75104e77da57c17309b861ef0b",
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "selector": "mesh/integrity",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "2",
+        "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded print artifact reader v2",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/integrity"
+      ]
+    },
+    {
+      "id": "m-1a622db0e24066b10bf45af715763f3911d5cdff2e792ab7089006a9d717e811",
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "selector": "mesh/lineage",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "2",
+        "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded print artifact reader v2",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/lineage",
+        "subject:source-mesh@bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0#mesh-lineage"
+      ]
+    }
+  ]
+}

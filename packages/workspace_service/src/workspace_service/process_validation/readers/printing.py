@@ -69,7 +69,10 @@ def _stl(content: bytes, context) -> dict:
             "printing.invalid_stl",
             "The binary STL triangle count does not match its exact byte length.",
         )
-    context.checkpoint(entities=count * 4)
+    # Charge the declared triangles now and unique edges before insertion. A
+    # closed mesh shares edges; charging three new edges for every triangle
+    # rejects meshes whose actual entity count is within the configured limit.
+    context.checkpoint(entities=count)
     minimum = [math.inf, math.inf, math.inf]
     maximum = [-math.inf, -math.inf, -math.inf]
     edges: Counter[tuple[tuple[float, float, float], tuple[float, float, float]]] = (
@@ -105,7 +108,10 @@ def _stl(content: bytes, context) -> dict:
             (vertices[1], vertices[2]),
             (vertices[2], vertices[0]),
         ):
-            edges[tuple(sorted((left, right)))] += 1
+            edge = tuple(sorted((left, right)))
+            if edge not in edges:
+                context.checkpoint(entities=count + len(edges) + 1)
+            edges[edge] += 1
         if index % 1024 == 0:
             context.checkpoint(entities=count + len(edges))
     context.checkpoint(entities=count + len(edges))
@@ -196,7 +202,7 @@ def _related(context, *roles):
 class PrintingArtifactReader:
     identity = ReaderIdentity(
         id="printing",
-        version="1",
+        version="2",
         config_digest=canonical_digest(
             {
                 "formats": ["binary-stl", "json-evidence", "3mf-zip"],
@@ -207,11 +213,12 @@ class PrintingArtifactReader:
                     "safe-package-inventory",
                     "simulator-transfer-binding",
                 ],
-                "version": 2,
+                "version": 3,
+                "stl_entity_accounting": "triangles-plus-unique-edges",
             }
         ),
         method="independent_measurement",
-        tool_identity="wright bounded print artifact reader v1",
+        tool_identity="wright bounded print artifact reader v2",
         formats=("stl", "json", "3mf"),
     )
 

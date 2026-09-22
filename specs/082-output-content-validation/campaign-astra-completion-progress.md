@@ -1,5 +1,11 @@
 # Astra campaign completion progress
 
+## Active serial-resolution goal — 22 September 2026
+
+The submitted [serial goal](campaign-serial-resolution-goal.md) supersedes the stopped/broad-wave sequencing below. No push is authorized. Use [the ranked ledger](campaign-serial-problems.md) and its JSON as the active next-action record. Initial live counts: retained display 30/30/24/17; current 30/1/0/0. Six missing-output cases overlap thirteen nonpassing cases.
+
+P001 Printed 02: reader budget repaired; seven focused tests pass. Actual isolated Blender/MCP repair and Bambu reslice passed all 17 automated checks at Z=33.9990 mm with unchanged requirements. Owned native session cleaned. Dashboard browser-verified at **30/30/24/18**, current **30/1/0/0**. The case remains active: canonical execution and human review are outstanding. Next: one current P001 campaign case after exact preflight and inference readiness; no broad wave or other problem. See the serial ledger for immutable before/after/native/browser proof. No image rebuild, API restart or push.
+
 ## User-directed stop — 22 September 2026
 
 Campaign continuation is suspended at the user's request. Finish cleanup,
