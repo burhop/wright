@@ -43,7 +43,8 @@ Finish only after an independent audit of the actual artifacts proves all four c
   0 complete output sets and 0 passes. These are not renewed campaign completion.
 - Focused commits: `9d24fdfc`, `fe512705`, `2492f8c6`, `f720f557`.
   Modelica enrollment, installer, native-export proof and binding-test changes
-  remain uncommitted; preserve them.
+  are saved alongside this checkpoint in a focused local commit; preserve any
+  follow-on edits and the unrelated worktree changes.
 - Harness 906/907 remain failed historical qualification attempts. Dedicated
   KiCad native-save proof passed; complete canonical ERC and correspondence remain.
   The dedicated runtime mounts attempt 907 only; recheck mounts for a successor.
