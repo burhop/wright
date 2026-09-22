@@ -108,3 +108,17 @@ P001 Printed 02: actual mesh confirms 1.05 mm roots, >=3.69 mm inner shoulders a
 ## P001 grip correction qualified for canonical correction 2
 
 P001 Printed 02: isolated correction verified at 25 mm clearance, 1.05 mm roots, >=3.69 mm inner shoulders, full 40 mm recess, zero degenerate triangles. Prepare canonical correction 2; no approval or credit yet. [Native proof](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v6.json), [independent final STL measurements](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-final-grip-qualification-measurements.json). Four final-byte regressions and four binding cases passed, including rejection of a changed correction-source hash. Canonical reuse must perform real authoring, repair, slicing and review; qualification does not provide campaign credit.
+
+## P001 canonical correction 2 started
+
+P001 Printed 02/019: canonical correction 2 running after exact preflight and qualified grip repair. Same retry episode, baseline 017, budget 2. Await actual files and human review; no completion or validation credit yet. [Exact dispatch](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-start.json). Local implementation commit `23b6e68d`; no push.
+
+## P001 pad-rounding finding and qualified correction
+
+P001 Printed 02/019: source pads measure 0.969 mm rounds (<1 mm); isolated unclamped correction measures 1.01 mm with grip preserved. Current run continues to exact review; an additional campaign correction needs budget authority. [Actual source-pad measurements](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-019-source-pad-rounds.json), [qualified correction](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v7.json). The earlier grip qualification did not measure retained pad fillet radii; this audit closes that measurement gap and does not rewrite its history. The proposed change requests 1.01 mm pad rounds and disables overlap clamping, preserving other construction. Actual final triangles show 1.01 mm pad rounds, unchanged 25 mm clearance, root/shoulder/recess measurements and zero degenerate triangles. Qualification 016 exited normally without touching the ongoing canonical session. No third correction is authorized.
+
+## P001 canonical attempt 019: pad-rounding review pending
+
+P001 Printed 02/019: 17 automated checks pass; grip repaired. Pad rounds measure 0.969 < 1 mm. Qualified fix measures 1.01 mm. Exact human decision and one extra correction in the preserved episode requested; no canonical credit.
+
+[Exact review brief](printed02-attempt019-engineering-review.md). Correction 2/2 remains in its preserved retry episode. Current counters 30/2/0/0; displayed retained inspection 30/30/24/18. P001 remains active.

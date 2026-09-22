@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T23:37:40.219776+00:00",
+  "updated_at": "2026-09-22T23:47:31.813160+00:00",
   "goal_authority": "campaign-serial-resolution-goal.md",
   "active_problem": "P001",
   "initial_metrics": {
@@ -48,9 +48,9 @@
       "missing_historical_output": false,
       "difficulty": "easy",
       "status": "in_progress",
-      "diagnosis": "Canonical 018 was rejected for grip geometry. Same-case analytic root/shoulder correction now passes native repair and independent final-triangle measurements.",
+      "diagnosis": "Current 019 passes 17 automated checks and fixes grip, but pad/bore radii measure 0.969205 mm versus required 1 mm.",
       "hypothesis": "The qualified construction plus explicit final triangulation resolves the grip and export defects; current canonical execution remains to be proven.",
-      "smallest_repair": "Bind the audited same-case construction into canonical correction 2, preserve the retry episode, inspect its exact outputs and obtain required human review.",
+      "smallest_repair": "Use qualified 1.01 mm unclamped pad rounds after an exact human request-changes decision and an explicit one-correction budget extension.",
       "dependencies": [
         "Exact current source/profile/artifact identity",
         "Mandatory engineering review"
@@ -343,13 +343,59 @@
           "canonical_run": false,
           "campaign_credit": false,
           "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-final-grip-qualified-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:41:13.605086+00:00",
+          "kind": "canonical_correction_2_started",
+          "attempt_id": "attempt-019",
+          "run_id": "4a16015946e94f898727b0a49b256dc1",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-start.json"
+          ],
+          "canonical_run": true,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-start-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:45:11.830933+00:00",
+          "kind": "pad_radius_finding_and_isolated_correction",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-019-source-pad-rounds.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v7.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-pad-corrected-round-measurements.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-pad-corrected-grip-measurements.json"
+          ],
+          "canonical_run": false,
+          "campaign_credit": false,
+          "retry_budget_extended": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-pad-correction-qualified-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:47:31.813160+00:00",
+          "kind": "canonical_successor_at_human_review",
+          "attempt_id": "attempt-019",
+          "run_id": "4a16015946e94f898727b0a49b256dc1",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-review/assessment.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-019-final-pad-rounds.json"
+          ],
+          "automated_checks": {
+            "pass": 17
+          },
+          "review_checks": {
+            "blocked": 1
+          },
+          "canonical_run": true,
+          "campaign_credit": false,
+          "native_cleanup": "retained at pending human review",
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-review-dashboard.json"
         }
       ],
-      "latest_result": "P001 Printed 02: isolated correction verified at 25 mm clearance, 1.05 mm roots, >=3.69 mm inner shoulders, full 40 mm recess, zero degenerate triangles. Prepare canonical correction 2; no approval or credit yet.",
+      "latest_result": "P001 Printed 02/019: 17 automated checks pass; grip repaired. Pad rounds measure 0.969 < 1 mm. Qualified fix measures 1.01 mm. Exact human decision and one extra correction in the preserved episode requested; no canonical credit.",
       "dashboard_verification": {
         "status": "verified",
-        "at": "2026-09-22T23:37:55.285Z",
-        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-final-grip-qualified-dashboard.json",
+        "at": "2026-09-22T23:47:50.488Z",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-review-dashboard.json",
         "displayed_counts": {
           "datasets_created": 30,
           "combinations_run": 30,
@@ -379,19 +425,47 @@
         "next": "Observe this exact owned run; do not dispatch duplicate. Preserve mandatory review. P001 remains active."
       },
       "canonical_successor": {
-        "attempt_id": "attempt-018",
-        "run_id": "a93d7c564c7544c7afcacaf22808c31c",
-        "source_sha256": "dd22d1d4c242888c330b047cfeaee6ef49f5d2151f6a753e117864a9c3132bba",
-        "status": "changes_requested",
-        "retry_episode": "printed02-final-feature-review",
-        "correction_number": 1,
-        "maximum_corrections": 2,
-        "exec_session": 5132,
-        "local_commit": "46d24f62",
-        "manifest": ".local-run/feature-081-live/campaign-execution/printing-02-attempt-018-pilot-linked.json",
-        "checkpoint_id": "checkpoint-36ca29b783528faed96b6456",
-        "subject_digest": "94e464fcfc14d725da036b7db92edd3e42734b6660efbbe5127d08cf35b76adf",
-        "native_cleanup": "cleaned"
+        "at": "2026-09-22T23:41:13.605086+00:00",
+        "scenario_id": "printed-replacement-part-02",
+        "attempt_id": "attempt-019",
+        "run_id": "4a16015946e94f898727b0a49b256dc1",
+        "run_log_path": "runs/campaign-printed-replacement-part-02-attempt-019/20260922T234050Z-8e799f01a395.json",
+        "source_sha256": "03c95f921bfc4569d14af5e626f7806df2a7a510eee55d29298dfd6b38eae1a0",
+        "retry_episode": {
+          "episode_id": "printed02-final-feature-review",
+          "failure_key": "review_changes_requested:clearance-native-orientation",
+          "boundary": "printed-replacement-part-02:engineering-review",
+          "max_corrections": 2,
+          "baseline_attempt_ids": [
+            "attempt-017"
+          ],
+          "correction": {
+            "id": "analytic-grip-rounds-and-full-span-recess-r2",
+            "evidence": [
+              {
+                "id": "user-decision-and-native-qualified-repair",
+                "path": "retry-evidence/printed02-review-correction-019.json",
+                "sha256": "a1a5c7e8880721ea7b70ca0e81998c02c978009b628252979fbcbdc17f876874"
+              }
+            ]
+          }
+        },
+        "status": "awaiting_manual_approval",
+        "campaign_credit": false,
+        "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
+        "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916"
+      },
+      "pending_decision": {
+        "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
+        "requested_decision": "changes_requested",
+        "proposed_budget_change": {
+          "episode_id": "printed02-final-feature-review",
+          "from": 2,
+          "to": 3,
+          "preserve_history": true
+        },
+        "budget_change_authorized": false,
+        "review_brief": "specs/082-output-content-validation/printed02-attempt019-engineering-review.md"
       }
     },
     {

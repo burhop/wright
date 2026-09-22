@@ -1,0 +1,29 @@
+{
+  "at": "2026-09-22T23:41:13.605086+00:00",
+  "scenario_id": "printed-replacement-part-02",
+  "attempt_id": "attempt-019",
+  "run_id": "4a16015946e94f898727b0a49b256dc1",
+  "run_log_path": "runs/campaign-printed-replacement-part-02-attempt-019/20260922T234050Z-8e799f01a395.json",
+  "source_sha256": "03c95f921bfc4569d14af5e626f7806df2a7a510eee55d29298dfd6b38eae1a0",
+  "retry_episode": {
+    "episode_id": "printed02-final-feature-review",
+    "failure_key": "review_changes_requested:clearance-native-orientation",
+    "boundary": "printed-replacement-part-02:engineering-review",
+    "max_corrections": 2,
+    "baseline_attempt_ids": [
+      "attempt-017"
+    ],
+    "correction": {
+      "id": "analytic-grip-rounds-and-full-span-recess-r2",
+      "evidence": [
+        {
+          "id": "user-decision-and-native-qualified-repair",
+          "path": "retry-evidence/printed02-review-correction-019.json",
+          "sha256": "a1a5c7e8880721ea7b70ca0e81998c02c978009b628252979fbcbdc17f876874"
+        }
+      ]
+    }
+  },
+  "status": "running",
+  "campaign_credit": false
+}
