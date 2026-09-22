@@ -38,7 +38,7 @@ registration names avoid collision with the historical provider. The enroller
 forwards every selected supplemental provider and AgentCAD initialization flag.
 Eighteen focused tests passed; Ruff and `git diff --check` passed.
 
-Water 903 was staged/enrolled, **not dispatched**:
+Water 903 was initially staged/enrolled without dispatch:
 
 `.local-run/renewal-qualification/water01-canonical-903/modelica-attempt-903.json`
 
@@ -50,9 +50,10 @@ review the exact contracts before release. The manifest now includes a bounded
 retry episode linked to 901/902 and the actual repair proof under the existing
 campaign-global ledger root. The follow-up `preflight-linked-retry.json` rechecked
 that exact manifest and again found zero errors and the same four review warnings.
-No episode authorization or attempt budget has been consumed for 903.
+That manifest is preserved as the pre-handoff-correction record, not the current
+dispatch manifest. See the live successor checkpoint below.
 
-## Inference readiness is not yet established
+## Earlier inference failures (preserved)
 
 Two minimal `/api/agent/chat` requests were made through the actual campaign
 session/model, with no workflow dispatch. Both were rejected before a model
@@ -69,22 +70,86 @@ answer; do not report authentication/inference as proven by health alone.
    request triggers another restart. This is a startup/readiness boundary to
    diagnose; no evidence currently establishes revoked credentials as its cause.
 
-Both receipts and the opt-in probe script are under
+Both failed receipts and the opt-in probe script are under
 `.local-run/renewal-qualification/`. Preserve them; do not overwrite or repeatedly
 probe until a material recovery is established. The selected model was unchanged.
 
+## Recovery and latest qualification checkpoint
+
+Local commit `dde97095` separates successful gateway restart from readiness
+observation. A still-starting gateway is re-observed for the same binding rather
+than repeatedly restarted; readiness is bounded at 120 seconds. Cancellation,
+concurrent requests and changed bindings are covered. Sixty-four focused gateway,
+agent and scoped API-restart tests passed.
+
+The authorized API restart helper timed out while the replacement PID 51012 was
+still checking the 2.7 GB database. No second restart was made. The API finished
+startup at 18:02:40 UTC. Follow-up readback verified the committed backend source
+and module origins, the exact staged water source, and Robot 010's protected
+pending checkpoint. The original all-workflow pre/post comparison did **not**
+finish; do not claim that missing verification. Evidence:
+`.local-run/renewal-qualification/gateway-readiness-api-restart/post-start-readback.json`.
+
+Actual campaign-route inference then returned exactly `READY` at 18:03:10 UTC,
+with no tools or errors, using the unchanged Sol model. Receipt:
+`.local-run/renewal-qualification/campaign-inference-readiness-fix-20260922.json`.
+
+Before first dispatch, local commit `f7c8a4e8` repaired the Windows-to-Linux CAD
+handoff: absolute host export locations, a canonical workspace-relative STEP
+reference, explicit container geometry binding and matching-byte verification
+before thermal calculation. The CAD author now receives the preceding actual
+AgentCAD context. Versioned operation-source inputs preserve the old staged
+bytes. Twenty-six focused binding/path tests passed; Ruff and diff checks passed.
+
+Water 903 was re-enrolled against those exact inputs/source and dispatched once
+at 18:05:34 UTC. Run: `61a39518aefe46f5beb7983b39660f43`. It terminated **failed**
+at 18:07:16 UTC; do not restart/re-enroll this historical attempt.
+Current manifest:
+`.local-run/renewal-qualification/water01-canonical-903/path-correction/modelica-attempt-903.json`.
+Runner state: `.local-run/renewal-qualification/water01-canonical-903/runner-state/`.
+The runner exited and saved its terminal summary; it is no longer executing.
+
+The final preflight again had zero errors and four reviewed basename warnings.
+Native exported `scenario.json` describes solver/time-grid controls, unlike the
+input dataset's identically named metadata file. Exact Modelica/OASiS mounts were
+read back; no concurrent campaign runner or retained active native lease was
+found. The global bounded retry episode remains attached. This is the fifth
+isolated qualification dispatch, not a broad campaign wave or a claimed pass.
+
+The first 350 W native simulation and actual ten-file export succeeded, proving
+the previous export repair in canonical execution. Registering the exported
+result then failed: its `run:step:port` identity exceeded SubjectBinding's erroneous
+single-component 160-character bound. There is no complete design package/pass.
+
+The correction preserves the exact result address and uses the finite composite
+bound of 482 (three valid 160-character components plus separators); producer
+components, digests, requirements and review authority are unchanged. Shared
+request/assessment/report schemas and contract documentation were regenerated.
+Eighty-six validator/core/canonical/review/report tests pass. Forty-one restart
+helper tests pass, including a simulated 455-second startup and bounded failure.
+The helper now persists its pre-restart source/code fingerprints and observes the
+single launch for up to 900 seconds rather than prematurely reporting failure.
+Four additional installed-wheel/offline-gateway/native-boundary checks pass.
+The retained proof is also saved in
+`artifacts/campaign-example-renewal/qualification/result-identity-repair.json`.
+
+Offline replay verified all ten actual 903 native files by size/hash and
+registered its exact long named-file result in an **isolated** validation DB:
+`.local-run/renewal-qualification/water01-result-identity-repair/proof.json`.
+The live database and historical failure were not changed; no solver/model rerun
+or campaign credit was created. This is material repair proof, not a passed case.
+Deploy the committed fix with a verified owned API restart before any successor.
+The three failed water attempts trigger the no-progress gate: no expensive retry
+until repair deployment/readiness and exact successor mounts/grants are verified.
+
 ## Next safe work
 
-1. Reconcile live Hermes startup and its readiness/rebinding timeout. Read the
-   current gateway log through the shared redactor; preserve the existing profile
-   and credentials. If code changes are needed, test the cold-start and failure
-   paths, then restart only the exact owned API using verified process identity
-   and private environment preservation. Do not switch profiles based on a stale
-   PID file (a retained profile PID has been reused by an unrelated OS process).
-2. Prove one actual inference response, finish warning review and re-run the
-   actual 903 preflight. Audit its provider mounts, leases, grants and final
-   package output paths before one isolated dispatch. Use the existing runner and
-   global retry ledger; inspect any existing state before launching.
+1. Finish verified deployment of the result-identity fix. Preserve 903's failure
+   and native artifacts. Stage a separate successor only after exact provider
+   mount and grant checks; the present Modelica runtime mounts 903, not 904.
+2. Preserve the recovered API/profile and actual inference receipt. A dashboard
+   or health response alone is not an engineering result. Check existing runtime
+   and retry state before any follow-on dispatch.
 3. Finish water's full Modelica → physical CAD package → thermal screening chain,
    then the remaining harness ERC/correspondence, Solid Edge flat-DXF preservation
    and Robot corrective CAD/CalculiX qualification. Preserve family/branch-specific

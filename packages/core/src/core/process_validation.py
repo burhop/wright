@@ -21,6 +21,12 @@ SCHEMA_VERSION = "wright.process-validation/1"
 Identifier = Annotated[
     str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)
 ]
+# Canonical result addresses join three independently valid identifiers with
+# two colons. Preserve that exact link instead of truncating/hashing the result
+# identity or incorrectly applying the single-component bound to the composite.
+ResultIdentifier = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=482)
+]
 Digest = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
 Text = Annotated[str, StringConstraints(min_length=1, max_length=8192)]
 Number = Annotated[float, Field(strict=True, allow_inf_nan=False)]
@@ -259,7 +265,7 @@ class ProducerIdentity(Contract):
 class SubjectBinding(Contract):
     id: Identifier
     role: Identifier
-    result_id: Identifier
+    result_id: ResultIdentifier
     producer: ProducerIdentity
     kind: Literal["value", "file", "provider"]
     sha256: Digest

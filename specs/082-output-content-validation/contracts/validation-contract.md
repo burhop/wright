@@ -23,6 +23,15 @@ Required: `schema_version`, `trace_id`, `workspace_id`, `invocation_id`, optiona
 
 Each subject identifies producer run/step/attempt/output port and a provider-neutral result representation with immutable digest/revision. Standalone imported files have an explicit import identity/authority and no automatic rework target. Require declared output roles; never scan arbitrary neighboring directories for likely files.
 
+`result_id` preserves the exact canonical `run:step:port` result address. Its
+bound is 482 characters (three independently bounded 160-character identifiers
+and two separators), not the 160-character limit of a single identifier.
+Producer components and subject IDs retain their existing limits. This corrects
+rejection of legitimate long native-output addresses without changing existing
+identities, evidence digests, requirements or review authority. Consumers should
+use the regenerated shared schemas rather than assuming a component-sized result
+reference.
+
 Typed inline values use `encoding: wright-json-v1` and a canonical JSON digest.
 Original text responses (including JSON text) may instead use `raw-bytes`; their
 value is a UTF-8 string and the digest identifies its original encoded bytes.

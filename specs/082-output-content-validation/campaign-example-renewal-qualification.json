@@ -2,9 +2,9 @@
   "schema": "wright.campaign-example-renewal-qualification/1",
   "revision_id": "campaign-example-renewal-r1-2026-09-21",
   "observed_at": "2026-09-22",
-  "campaign_dispatch_count": 4,
+  "campaign_dispatch_count": 5,
   "broad_campaign_dispatch_count": 0,
-  "isolated_qualification_dispatch_count": 4,
+  "isolated_qualification_dispatch_count": 5,
   "static_qualification": {
     "status": "pass",
     "scenario_contracts": 30,
@@ -88,7 +88,8 @@
     "status": "native_export_pass_canonical_package_pending",
     "canonical_attempts": [
       {"attempt_id": "attempt-901", "run_id": "86088c0fe4db4788a053ba98e14560a6", "status": "failed", "failure": "historical Modelica container stopped"},
-      {"attempt_id": "attempt-902", "run_id": "9a39d55ceead467e84524ccc83d1be21", "status": "failed", "failure": "native export child_unavailable; historical runtime lacked same-attempt export mounts"}
+      {"attempt_id": "attempt-902", "run_id": "9a39d55ceead467e84524ccc83d1be21", "status": "failed", "failure": "native export child_unavailable; historical runtime lacked same-attempt export mounts"},
+      {"attempt_id": "attempt-903", "run_id": "61a39518aefe46f5beb7983b39660f43", "status": "failed", "observed_at": "2026-09-22T18:07:16Z", "failure": "Native simulation and ten-file export succeeded; registering the exact composite result identity exceeded SubjectBinding's single-identifier length bound", "manifest": ".local-run/renewal-qualification/water01-canonical-903/path-correction/modelica-attempt-903.json"}
     ],
     "registered_server_id": "4328a581-59ea-49d4-a90e-fb40fe8f75b7",
     "evidence": {

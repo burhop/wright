@@ -20,6 +20,7 @@ import psutil
 
 
 BACKEND_SOURCE_FILES = (
+    "packages/core/src/core/process_validation.py",
     "apps/api/src/api/main.py",
     "apps/api/src/api/routers/setup.py",
     "apps/api/src/api/routers/agent.py",
@@ -28,17 +29,20 @@ BACKEND_SOURCE_FILES = (
     "packages/agent_adapters/src/agent_adapters/hermes.py",
     "packages/agent_adapters/src/agent_adapters/hermes_config.py",
     "packages/workspace_service/src/workspace_service/agent_sync.py",
+    "packages/workspace_service/src/workspace_service/process_validation/process.py",
     "packages/workspace_service/src/workspace_service/workflow_sources.py",
     "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 )
 OPERATOR_SOURCE_FILE = "scripts/recovery/restart_authoring_api.py"
 MODULE_SOURCE_FILES = {
+    "core.process_validation": "packages/core/src/core/process_validation.py",
     "api.main": "apps/api/src/api/main.py",
     "api.routers.setup": "apps/api/src/api/routers/setup.py",
     "api.routers.agent": "apps/api/src/api/routers/agent.py",
     "agent_adapters.hermes": "packages/agent_adapters/src/agent_adapters/hermes.py",
     "agent_adapters.hermes_config": "packages/agent_adapters/src/agent_adapters/hermes_config.py",
     "workspace_service.agent_sync": "packages/workspace_service/src/workspace_service/agent_sync.py",
+    "workspace_service.process_validation.process": "packages/workspace_service/src/workspace_service/process_validation/process.py",
     "workspace_service.workflow_sources": "packages/workspace_service/src/workspace_service/workflow_sources.py",
     "workspace_service.workflow_source_execution": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 }
@@ -296,6 +300,21 @@ def preserved_integrity_error(
         return False
 
 
+def wait_for_source(get, route, child, timeout_seconds):
+    """Observe this launch through bounded database/native startup, never relaunch."""
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        try:
+            return get(route, timeout=min(10, deadline - time.monotonic()))
+        except (OSError, ValueError):
+            if child.poll() is not None:
+                raise RuntimeError("Restarted API exited; inspect the scoped restart log")
+            remaining = deadline - time.monotonic()
+            if remaining > 0:
+                time.sleep(min(1, remaining))
+    raise RuntimeError("Restarted API is not ready within the observation deadline; inspect its process and scoped logs before taking further action")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--pid", type=int, required=True)
@@ -305,8 +324,11 @@ def main() -> None:
     parser.add_argument("--workspace", required=True)
     parser.add_argument("--source", required=True)
     parser.add_argument("--evidence", type=Path, required=True)
+    parser.add_argument("--startup-timeout", type=float, default=900, help="Bounded observation of the one launched process, including database integrity checks (seconds, maximum 1800).")
     parser.add_argument("--preserve-document", action="append", default=[], help="Explicit tracked Markdown documentation allowed to remain dirty; bytes must stay unchanged. Runtime code must remain committed and clean.")
     args = parser.parse_args()
+    if not 0 < args.startup_timeout <= 1800:
+        parser.error("--startup-timeout must be positive and at most 1800 seconds")
     repo = args.repo.resolve(strict=True)
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(repo / ".local-run"):
@@ -324,8 +346,8 @@ def main() -> None:
         raise RuntimeError("The requested process does not own the API listening port")
     base = f"http://127.0.0.1:{args.port}"
 
-    def get(route: str):
-        with urllib.request.urlopen(base + route, timeout=10) as response:
+    def get(route: str, *, timeout=10):
+        with urllib.request.urlopen(base + route, timeout=timeout) as response:
             if "application/json" not in response.headers.get("Content-Type", ""):
                 raise RuntimeError("The API route did not return JSON")
             return json.load(response)
@@ -371,6 +393,16 @@ def main() -> None:
     if snapshot_local_workflows(local_workspace) != local_before:
         raise RuntimeError("Workspace files changed during restart preflight")
     evidence.mkdir(parents=True, exist_ok=False)
+    (evidence / "before-restart.json").write_text(json.dumps({
+        "previous_pid": args.pid,
+        "code_provenance": code_before,
+        "local_workflow_file_sha256": local_before,
+        "source_identities": {
+            path: {key: document[key] for key in ("workspace_id", "path", "storage_revision", "storage_digest", "definition_revision")}
+            for path, document in before_documents.items()
+        },
+        "preexisting_integrity_errors_preserved": preserved_invalid_documents,
+    }, indent=2) + "\n", encoding="utf-8")
     process.terminate()
     process.wait(timeout=15)
     with (
@@ -385,16 +417,7 @@ def main() -> None:
             stderr=stderr,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
-    for attempt in range(30):
-        try:
-            after = get(source_route)
-            break
-        except (OSError, ValueError):
-            if child.poll() is not None or attempt == 29:
-                raise RuntimeError(
-                    "Restarted API is unavailable; inspect the scoped restart log"
-                )
-            time.sleep(1)
+    after = wait_for_source(get, source_route, child, args.startup_timeout)
     keys = (
         "workspace_id",
         "path",

@@ -201,6 +201,10 @@ def test_other_dirty_source_still_blocks_with_document_exemption(tmp_path, monke
 
 
 def test_module_origin_validation_rejects_another_checkout(tmp_path):
+    for relative in helper.MODULE_SOURCE_FILES.values():
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# expected module\n", encoding="utf-8")
     origins = {
         name: str(tmp_path / relative)
         for name, relative in helper.MODULE_SOURCE_FILES.items()
@@ -297,7 +301,7 @@ def test_nested_module_origin_probe_never_imports_application_packages(
         name: str((tmp_path / relative).resolve())
         for name, relative in helper.MODULE_SOURCE_FILES.items()
     }
-    assert set(top_level_calls) == {"api", "agent_adapters", "workspace_service"}
+    assert set(top_level_calls) == {"api", "agent_adapters", "workspace_service", "core"}
     assert "api.routers" in nested_calls
 
 
@@ -389,3 +393,38 @@ def test_no_listener_in_launched_tree_fails_without_scanning_unrelated_processes
     monkeypatch.setattr(helper.psutil, "Process", lambda _pid: launcher)
     with pytest.raises(RuntimeError, match="does not own"):
         helper.find_launched_api_listener(101, tmp_path, 8018)
+
+
+def test_startup_observation_allows_slow_database_checks_without_restarting(monkeypatch):
+    from types import SimpleNamespace
+
+    clock = [0.0]
+    calls = []
+    monkeypatch.setattr(helper.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(helper.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0] + seconds))
+
+    def get(route, *, timeout):
+        calls.append((route, timeout))
+        if clock[0] < 455:
+            raise OSError("still checking database")
+        return {"source": "unchanged"}
+
+    child = SimpleNamespace(poll=lambda: None)
+    assert helper.wait_for_source(get, "/exact-source", child, 900) == {"source":"unchanged"}
+    assert clock[0] == 455
+    assert all(route == "/exact-source" and 0 < timeout <= 10 for route, timeout in calls)
+
+
+@pytest.mark.parametrize("exited", [False, True])
+def test_startup_observation_is_bounded_and_stops_for_exited_process(monkeypatch, exited):
+    from types import SimpleNamespace
+
+    clock = [0.0]
+    monkeypatch.setattr(helper.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(helper.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0] + seconds))
+    def get(route, *, timeout):
+        raise OSError("not ready")
+    child = SimpleNamespace(poll=lambda: 1 if exited else None)
+    with pytest.raises(RuntimeError, match="Restarted API"):
+        helper.wait_for_source(get, "/exact-source", child, 5)
+    assert clock[0] == (0 if exited else 5)

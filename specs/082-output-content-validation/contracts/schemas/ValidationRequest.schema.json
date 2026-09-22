@@ -88,7 +88,7 @@
           "type": "string"
         },
         "result_id": {
-          "maxLength": 160,
+          "maxLength": 482,
           "minLength": 1,
           "title": "Result Id",
           "type": "string"
