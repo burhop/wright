@@ -221,6 +221,19 @@ def prepare(args, directory, tools):
     profile_document = json.loads(
         (ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles" / (profile["profile_resource"] + ".json")).read_text(encoding="utf-8")
     )
+    numerical_requirements = [
+        req["text"] for req in profile_document["baseline"]["requirements"]
+        if req["mandatory"] and req["id"].endswith(("-ANALYTICAL", "-BALANCE", "-REFINEMENT"))
+    ]
+    if len(numerical_requirements) != 3:
+        raise ValueError("The heat basis requires its existing analytical, balance and refinement limits")
+    original["define_thermal_case"]["fields"]["prompt"] += (
+        "\n\nExisting mandatory numerical acceptance requirements from this case's pinned validation baseline "
+        "(not optional aims or unspecified limits):\n"
+        + "\n".join("- " + text for text in numerical_requirements)
+        + "\nState these exact criteria in the basis as requirements to be tested later, not as results already achieved. "
+        "Do not treat historical file-only acceptance wording as the current acceptance rule."
+    )
     review["fields"]["settings"]["approval_settings"]["validation_review"] = {
         "profile_ref": profile["profile_ref"],
         "requirement_ids": sorted(

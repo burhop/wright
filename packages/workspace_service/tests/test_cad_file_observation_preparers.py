@@ -309,6 +309,16 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
         assert "planned numerical operation" in basis.prompt
         assert "not an already computed FE result" in basis.prompt
         assert "approved engineering brief" in basis.prompt
+        from workspace_service.process_validation.profiles import load_profile
+
+        thermal_profile = load_profile(f"heat-spreader-sizing-{ordinal:02d}-full")
+        numerical_requirements = [
+            requirement.text for requirement in thermal_profile.baseline.requirements
+            if requirement.id.endswith(("-ANALYTICAL", "-BALANCE", "-REFINEMENT"))
+        ]
+        assert len(numerical_requirements) == 3
+        assert all(text in basis.prompt for text in numerical_requirements)
+        assert "not optional aims or unspecified limits" in basis.prompt
         brief_input = next(
             section
             for section in _parse(source)

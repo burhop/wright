@@ -2,9 +2,9 @@
   "schema": "wright.campaign-example-renewal-qualification/1",
   "revision_id": "campaign-example-renewal-r1-2026-09-21",
   "observed_at": "2026-09-22",
-  "campaign_dispatch_count": 9,
+  "campaign_dispatch_count": 11,
   "broad_campaign_dispatch_count": 0,
-  "isolated_qualification_dispatch_count": 9,
+  "isolated_qualification_dispatch_count": 11,
   "static_qualification": {
     "status": "pass",
     "scenario_contracts": 30,
@@ -101,7 +101,7 @@
     "scope": "Actual native simulation, ten-file sealed export, host byte/hash verification and repeated-export idempotence; not canonical full-package or public catalog qualification."
   },
   "remaining_native_gates": [
-    "Harness: independent native XML/ERC reader and prospective three-case handoff are implemented; actual retained missing-B1 control is rejected correctly. Qualify the new gateway/canonical handoff and obtain the missing resistance basis before claiming completion.",
+    "Harness: independent native XML/ERC reader and prospective three-case handoff are implemented and deployed; actual gateway native export and retained missing-B1 rejection pass. Correct native correspondence, obtain the resistance-basis decision and complete the canonical handoff before claiming completion.",
     "Sheet metal: deferred by user while another agent improves Solid Edge MCP. Preserve all three cases and quarantine; no dispatch, probes or deployment changes until updated handoff.",
     "Water heater: run the approved Modelica-to-AgentCAD-to-scikit-fem package chain and reopen the exact CAD/field evidence.",
     "Robot: run the approved diagnosis-to-corrective-CAD-to-CalculiX chain in an isolated successor; do not approve or reuse Robot 010.",
@@ -114,12 +114,13 @@
     "authority": "User approved preparing the proposal; actual engineering values still need a decision."
   },
   "native_interconnect_export_followup": {
-    "status": "direct_native_export_and_reader_control_pass_gateway_pending",
+    "status": "direct_and_gateway_native_export_and_reader_control_pass_correct_design_pending",
     "evidence": "artifacts/campaign-example-renewal/qualification/kicad-native-interconnect-export.json",
+    "gateway_evidence": "artifacts/campaign-example-renewal/qualification/harness-native-gateway-control.json",
     "focused_tests": 29,
     "campaign_runs": 0,
     "reader_integration": {
-      "status": "implemented_not_live_deployed",
+      "status": "implemented_live_deployed",
       "profile_version": "2",
       "baseline_changes": false,
       "tests_passed": 67,
@@ -130,7 +131,7 @@
         "sha256": "55a89e5ecd5ec142e47c30b9efed8a55e41487591f66113faf0bce836cf7ea92"
       },
       "finding": "The actual native schematic omits B1 despite zero ERC errors; a false producer pass report cannot conceal it.",
-      "scope": "Three-case preparer/profile/credit-scope wiring, bounded independent native comparison and actual retained negative control. No correct new schematic, live gateway qualification, human approval or campaign pass."
+      "scope": "Three-case preparer/profile/credit-scope wiring, bounded independent native comparison and actual retained negative control. Actual selected gateway export also passed; no correct new schematic, human approval or campaign pass."
     }
   },
   "printed01_followup": {
@@ -185,8 +186,11 @@
     "campaign_credit": false
   },
   "heat01_followup": {
-    "status": "staged_enrolled_static_preflight_pass_not_dispatched",
+    "status": "original_changes_requested_successor_pending_with_mesh_limit_error",
     "attempt_id": "attempt-901",
+    "run_id": "4079f5e988bb4442a9b7c3d4ea37ebbe",
+    "human_decision": "changes_requested",
+    "scope_repair": "artifacts/campaign-example-renewal/qualification/heat01-review-scope-repair.json",
     "source_path": "workflows/campaign-heat-01-attempt-901.workflow.wflow",
     "source_sha256": "13a1fca405a36c2d87281eacd42352c546a848d4ab73696063091203c63bb793",
     "manifest": ".local-run/renewal-qualification/heat01-canonical-901/manifest.json",
@@ -200,7 +204,34 @@
     "preflight_warnings": 0,
     "campaign_credit": false,
     "solid_edge_used": false,
-    "remaining": "Reconcile deployed repair/provider identities and actual inference readiness before isolated qualification dispatch; preserve no-progress pause and all review gates."
+    "successor": {
+      "attempt_id": "attempt-902",
+      "run_id": "a01fefe4badd4e6bb7418d4704f75a65",
+      "source_sha256": "13c936025776e25d126d693ed0dcfdc333a5227b81176767bfe01d39e72483bd",
+      "manifest": ".local-run/renewal-qualification/heat01-canonical-902/manifest-linked.json",
+      "manifest_sha256": "0803a340615c65670556a7d80c762d7746267cbf1f140c6bbc68e2a45a6e9946",
+      "status": "awaiting_actual_review_remaining_mesh_limit_error",
+      "checkpoint_id": "checkpoint-875a69002c5f61ec041f3b25",
+      "subject_digest": "d9a7b3eb2a0a3f58d1516fb422bc8ba2c3ab89d050f468d79ce142c89cedd7f5",
+      "basis_sha256": "78e2c8d1e5fe8e5e9578c0501899a6656193dee621779f15f3476c72c69463e2",
+      "review_actor": null,
+      "scope_correction": "Unrelated copper/contact case removed; approved aluminum inputs, analytical 50/41.667 C results and claim boundaries retained.",
+      "remaining_finding": "Section 8.6 incorrectly says no mesh-sensitivity threshold is supplied; original context and HEAT01-REFINEMENT require at most 2% hot-end temperature-rise change.",
+      "approved": false,
+      "original_input_files_unchanged": 7,
+      "retry_episode": "heat01-aluminum-basis-scope",
+      "corrections_used": 1,
+      "max_corrections": 2
+    },
+    "prospective_mesh_limit_repair": {
+      "status": "implemented_tested_not_dispatched",
+      "change": "Include the exact analytical/balance/refinement requirements from the same pinned baseline in the basis prompt, instead of relying on ambiguous historic aims wording.",
+      "focused_tests_passed": 15,
+      "engineering_limits_changed": false,
+      "review_decision_requested": true,
+      "review_decision_received": false
+    },
+    "remaining": "Obtain the actual decision on attempt 902; do not approve the contradictory basis or overwrite it. The second linked correction is prepared in code but not staged or dispatched. Full CAD-to-FE qualification remains."
   },
   "overall_status": "qualification_in_progress_not_campaign_ready"
 }

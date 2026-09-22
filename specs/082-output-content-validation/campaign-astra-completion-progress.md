@@ -17,7 +17,61 @@ User selected Astra for implementation; actual campaign inference remains
   The active goal authorizes broad execution after these gates; the older
   renewal instruction to finish ready but stopped is superseded.
 
-## Latest checkpoint — Heat scope correction, 22 September, 21:08 UTC
+## Latest checkpoint — Scope fixed; another review finding, 21:23 UTC
+
+Heat 01 attempt 902 finished its basis at 21:19:56 UTC and is pending actual
+review. It removed the unrelated copper/contact case and retained the correct
+aluminum dimensions, loads, analytical screening and digital-only claim boundary.
+However, section 8.6 incorrectly calls the mesh-refinement threshold unspecified;
+the original context and `HEAT01-REFINEMENT` require a maximum 2% temperature-rise
+change. Do not approve this contradiction or claim the basis is fully acceptable.
+
+The user was asked whether to record **request changes** on this new checkpoint
+and prepare the second bounded correction. No answer has yet been received. The
+new checkpoint remains pending with actor null and unchanged files. Review brief:
+`heat01-attempt902-engineering-review.md`. The original explicit rejection applies
+to attempt 901 only; it is not silently reused as a decision on attempt 902.
+
+The prospective preparer fix is implemented: carry the exact analytical, balance
+and refinement requirements from the same pinned profile into the basis prompt.
+Three missing-requirement regressions were reproduced first; all **15 focused
+preparer/heat-profile tests pass**, as do selected Ruff checks. No requirement,
+profile, existing basis, approval, budget or campaign count is altered. No 903 is
+staged or dispatched. Runner session 58112 observes the pending 902 review;
+observation timeout would not authorize replay. The full CAD/FE chain has not run.
+
+## Earlier checkpoint — User rejection recorded and successor running, 21:19 UTC
+
+Commit `c1e9977e` is deployed in API PID **49572**. The restart finished at
+21:15:11 UTC with saved workflow files and the five unrelated dirty documents
+unchanged. MCP autostart remains disabled; no Solid Edge operation occurred.
+The exact qualified AgentCAD command was restored after startup reconciliation.
+Actual configured inference returned READY at 21:16:03 UTC with no tools.
+
+The normal review endpoint recorded the user's **changes requested** decision on
+Heat 01 attempt 901 at 21:15:56 UTC. Its original basis and protected input files
+are unchanged. The previous runner stopped its observation while the API was
+restarting; rerunning the same manifest/state observed and exported the terminal
+decision without another start or resume. The stale-review safeguard was not
+bypassed; the real successful decision confirms the deployed identity repair.
+
+Attempt 902 is a linked isolated correction, not an unbounded retry. All seven
+original engineering input files are identical; preflight passes with no errors
+or warnings. Its run `a01fefe4badd4e6bb7418d4704f75a65` started at 21:17:52 UTC
+and is generating the corrected basis. It must stop for actual human review.
+Source SHA-256: `13c936025776e25d126d693ed0dcfdc333a5227b81176767bfe01d39e72483bd`.
+Linked manifest: `.local-run/renewal-qualification/heat01-canonical-902/manifest-linked.json`.
+Retry episode `heat01-aluminum-basis-scope` has used one of two corrections,
+with attempt 901 preserved as the baseline. No successor approval is inferred.
+
+There are now **11 isolated canonical qualification dispatches**, zero broad
+waves and no new complete-package/full-pass credit. Solid Edge, all-family
+readiness, missing-input decisions and other pending reviews remain unchanged.
+Receipts: `artifacts/campaign-example-renewal/qualification/heat01-review-scope-repair.json`
+and `harness-native-gateway-control.json`. The latter records actual gateway
+native export and known missing-splice rejection, not a correct harness package.
+
+## Earlier checkpoint — Heat scope correction, 22 September, 21:08 UTC
 
 Heat 01 attempt 901 reached its first engineering review after actual selected
 AgentCAD/OASiS provider checks. There are now ten isolated canonical renewal

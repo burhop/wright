@@ -1,0 +1,68 @@
+{
+  "schema": "wright.campaign-repair-evidence/1",
+  "observed_at": "2026-09-22T21:23:00Z",
+  "status": "user_changes_requested_recorded_successor_pending_remaining_mesh_limit_error",
+  "scenario_id": "heat-spreader-sizing-01",
+  "fix_commit": "c1e9977ea785b9d81cfcd24e1b9c3b9c871d67d8",
+  "defects": [
+    "Shared thermal-basis instructions inserted unrelated copper/contact-resistance content into the aluminum-only case.",
+    "Decision-time identity compared enriched checkpoint settings against raw settings and falsely rejected the unchanged engineering review."
+  ],
+  "repairs": [
+    "Derive boundary instructions from the actual scenario CSV, attach the approved brief, and distinguish planned numerical analysis from computed results.",
+    "Recompute the same pinned review settings for decision validation; retain input, artifact, source, profile and displayed requirement identity checks."
+  ],
+  "tests": {
+    "approach": "Red/green regression followed by adjacent review, resume, validation, preparer and heat-profile coverage",
+    "passed": 73,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deployment": {
+    "api_pid": 49572,
+    "completed_at": "2026-09-22T21:15:11Z",
+    "all_saved_workflow_files_unchanged": true,
+    "mcp_autostart": "0",
+    "solid_edge_operations": 0,
+    "receipt": ".local-run/renewal-qualification/review-settings-api-deployment/verification.json",
+    "receipt_sha256": "300d7c5138317a05b4e9a261480c2d184361cb9da222f96b2f4aaefa86530ebe"
+  },
+  "human_decision": {
+    "instruction": "Request changes and correct the scope",
+    "run_id": "4079f5e988bb4442a9b7c3d4ea37ebbe",
+    "checkpoint_id": "checkpoint-f39e3eaead17a4ff4e941024",
+    "state": "changes_requested",
+    "auto": false,
+    "original_basis_preserved": true,
+    "receipt": ".local-run/renewal-qualification/heat01-canonical-901/human-scope-decision.json",
+    "receipt_sha256": "65725dcfe138c353eafe4b7a5869461ce2eb7af115b6bf45044d7536bec8bfc1"
+  },
+  "successor": {
+    "attempt_id": "attempt-902",
+    "run_id": "a01fefe4badd4e6bb7418d4704f75a65",
+    "source_sha256": "13c936025776e25d126d693ed0dcfdc333a5227b81176767bfe01d39e72483bd",
+    "manifest": ".local-run/renewal-qualification/heat01-canonical-902/manifest-linked.json",
+    "manifest_sha256": "0803a340615c65670556a7d80c762d7746267cbf1f140c6bbc68e2a45a6e9946",
+    "preflight": "1 passed, zero errors or warnings",
+    "original_engineering_input_files_unchanged": 7,
+    "retry_episode": "heat01-aluminum-basis-scope",
+    "corrections_used": 1,
+    "max_corrections": 2,
+    "human_approval": false,
+    "checkpoint_id": "checkpoint-875a69002c5f61ec041f3b25",
+    "subject_digest": "d9a7b3eb2a0a3f58d1516fb422bc8ba2c3ab89d050f468d79ce142c89cedd7f5",
+    "basis_sha256": "78e2c8d1e5fe8e5e9578c0501899a6656193dee621779f15f3476c72c69463e2",
+    "state": "pending",
+    "scope_fix_observed": true,
+    "remaining_finding": "Basis section 8.6 omits the existing 2% mesh-refinement temperature-rise criterion. No second human rejection is inferred."
+  },
+  "prospective_followup": {
+    "status": "tested_not_staged_or_dispatched",
+    "change": "Basis prompt now carries the exact existing numerical requirements from its pinned validation baseline.",
+    "tests": "Three missing-requirement regressions reproduced first; 15 preparer/heat-profile tests pass after the fix.",
+    "user_decision_pending": true,
+    "remaining_correction_budget": 1
+  },
+  "campaign_credit": false,
+  "scope": "Runtime/scope repair, actual user rejection and one linked isolated successor; not a completed design or full-scope pass."
+}
