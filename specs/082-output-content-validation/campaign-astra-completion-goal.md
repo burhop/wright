@@ -50,6 +50,13 @@ Before returning to them, obtain the updated MCP handoff and verify its exact
 version/bindings and native proof under the existing retry rules. The other
 agent's work alone does not establish qualification of these workflows.
 
+The user subsequently explicitly chose **wait for the other agent's handoff**
+instead of allowing the Wright API restart to briefly restart its active Solid
+Edge connector. Do not restart that API/connector to deploy the committed syntax
+publication or harness-reader repairs until this handoff or new authority is
+received. Preserve the running services and distinguish committed from deployed
+code. Independent non-disruptive work remains in scope.
+
 - Renewal R0/R1/R2 are recorded complete; R3 is in progress and R4 is pending.
 - Campaign API: historical ledger `30/30/24/0`; retained automated inspections
   supply 17 passes to the displayed `30/30/24/17`. Current metrics are 1 run,

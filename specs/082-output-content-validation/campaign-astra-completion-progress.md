@@ -72,9 +72,10 @@ Do not replay staging. The existing audit CLI successfully checked that same
 manifest without another enrollment or workflow dispatch. A passing static
 preflight does not establish live solver readiness or engineering success.
 
-Two specific questions are pending: permit per-case scheduling without the
-all-family barrier, and permit the API restart's brief Solid Edge connector
-restart or wait for its owner's handoff. Neither permission is assumed. Before
+The per-case scheduling question is pending; the all-family barrier is not
+silently waived. The user explicitly chose **wait for the other agent's handoff**
+for API deployment. Do not restart the API or its active Solid Edge connector.
+Before
 Heat dispatch, reconcile the actual code/provider identities and test the actual
 inference route; retain the three-no-progress dispatch pause until the relevant
 material repair is deployed/proven. The API remains PID 41624. No new workflow
