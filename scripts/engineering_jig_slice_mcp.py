@@ -60,4 +60,3 @@ def slice_jig_file(configuration_document: str, operation_source_document: str) 
 
 if __name__ == "__main__":
     SERVER.run(transport="stdio")
-
