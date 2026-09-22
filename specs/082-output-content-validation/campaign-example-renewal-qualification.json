@@ -2,9 +2,9 @@
   "schema": "wright.campaign-example-renewal-qualification/1",
   "revision_id": "campaign-example-renewal-r1-2026-09-21",
   "observed_at": "2026-09-22",
-  "campaign_dispatch_count": 8,
+  "campaign_dispatch_count": 9,
   "broad_campaign_dispatch_count": 0,
-  "isolated_qualification_dispatch_count": 8,
+  "isolated_qualification_dispatch_count": 9,
   "static_qualification": {
     "status": "pass",
     "scenario_contracts": 30,
@@ -143,6 +143,27 @@
     },
     "review_brief": "specs/082-output-content-validation/printed01-attempt901-engineering-review.md",
     "scope": "Actual Blender design and repair, Bambu slice and simulated transfer. No human approval, canonical final validation, physical printing or campaign completion credit."
+  },
+  "bracket01_followup": {
+    "status": "isolated_canonical_running_not_qualified",
+    "attempt_id": "attempt-901",
+    "started_at": "2026-09-22T20:00:11Z",
+    "run_path": "runs/campaign-bracket-01-attempt-901/20260922T200011Z-c03989178397.json",
+    "source_sha256": "1bab748705d8cbc4bc04db515092ca54c725036827adbc7d1e67011fbc614d0d",
+    "manifest": ".local-run/renewal-qualification/bracket01-canonical-901/manifest-linked.json",
+    "manifest_sha256": "3e82724d10507ae1f97fa17ef9685eac34a097ea2adcb17f76e9954ae9e60b4f",
+    "retry_episode": "bracket01-deterministic-reviewed-geometry",
+    "baseline_attempts": ["attempt-006"],
+    "max_corrections": 2,
+    "evidence": {
+      "path": "artifacts/engineering-workflow-datasets/retry-evidence/bracket01-reviewed-geometry-901.json",
+      "sha256": "b78159f30c9599de0f530896b9a552d35fe6fddb232f5d92da7603f585fcba9b"
+    },
+    "focused_tests": 13,
+    "preflight": "1 case passed, no errors or warnings, 14 steps and 12 inputs",
+    "native_proof_scope": "Actual tiny AgentCAD STEP and CalculiX retained-geometry mesh/selection preflight; not the new bracket design or strength solution.",
+    "solid_edge_used": false,
+    "campaign_credit": false
   },
   "overall_status": "qualification_in_progress_not_campaign_ready"
 }

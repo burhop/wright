@@ -1,7 +1,8 @@
 # Campaign example renewal qualification
 
 Date: 22 September 2026. Broad campaign dispatches: **zero**. Isolated canonical
-qualification dispatches: **eight** (Printed 01 attempt 901 awaits human review;
+qualification dispatches: **nine** (Bracket 01 attempt 901 started at 20:00:11 UTC;
+Printed 01 attempt 901 awaits human review;
 harness 906/907 and water 901/902 are retained
 failures; water 903 failed after successful native simulation/export at 18:07:16
 UTC due to a composite result-identifier length defect). Separate provider probes
@@ -64,6 +65,25 @@ preserving the retained schematic and exporting its XML netlist, complete ERC
 and source/result hashes. The known omitted B1 splice remains a defect; the
 new reader/canonical handoff and gateway qualification are still pending.
 Evidence: `artifacts/campaign-example-renewal/qualification/kicad-native-interconnect-export.json`.
+
+## Bracket 01 independent continuation — 20:00 UTC
+
+The owned AgentCAD registration had drifted back to the non-bootstrap command.
+Its exact previously qualified Windows bootstrap was restored. The activation
+client timed out, but the original operation subsequently succeeded; a separate
+read-only reconciliation confirms active status without another restart. Fresh
+native qualification produced an actual tiny STEP through Wright's gateway.
+CalculiX independently passed retained-geometry meshing and fixture/load selection.
+Neither proof establishes the new bracket design or its strength.
+
+Attempt 901 passed 14-stage/12-input preflight and the unchanged campaign model
+answered the actual inference readiness request. Thirteen regression/profile
+tests passed, including the requirement to define exact curve transitions before
+basis review. The canonical run is linked to failed attempt 006 through the
+persisted two-correction episode; a fresh ID does not erase the old ambiguity.
+Its source is `workflows/campaign-bracket-01-attempt-901.workflow.wflow`.
+No Solid Edge binding, probe or deployment change is involved. Human reviews and
+all numerical limits remain mandatory. There is no output/pass credit yet.
 
 ## Proven now
 

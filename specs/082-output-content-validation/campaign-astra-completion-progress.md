@@ -467,7 +467,53 @@ snapshot diagnostic is not represented as resolved by this independent check.
 Eight isolated canonical renewal dispatches have occurred; zero broad waves.
 Solid Edge remains deferred and proposed water/harness assumptions remain unapplied.
 
-### Interrupted implementation checkpoint and throughput review
+### Bracket 01 qualified prerequisites and isolated start — 20:00 UTC
+
+Following the approved Printed 01 then Bracket 01 qualification order, Bracket 01
+attempt 901 started at **20:00:11 UTC**. Its initial persisted runtime record is
+`runs/campaign-bracket-01-attempt-901/20260922T200011Z-c03989178397.json`;
+the first observed step is defining geometry, material, fixtures and load.
+Source SHA-256: `1bab748705d8cbc4bc04db515092ca54c725036827adbc7d1e67011fbc614d0d`.
+Linked manifest: `.local-run/renewal-qualification/bracket01-canonical-901/manifest-linked.json`,
+SHA-256 `3e82724d10507ae1f97fa17ef9685eac34a097ea2adcb17f76e9954ae9e60b4f`.
+Runner state and exports are confined below the same qualification root.
+Do not dispatch this start again if observation is interrupted.
+
+AgentCAD's active registry had reverted to the old non-bootstrap command.
+Restored the exact previous qualified bootstrap for this owned idle provider;
+activation's client timed out at 19:49:36 but the same operation later succeeded.
+The separate `bracket01-prerequisites/agentcad-late-success-reconciliation.json`
+records live active status and identical pinned command; no repeated restart,
+API restart or Solid Edge operation occurred. Fresh native tiny-CAD proof passed
+through the actual Wright gateway (STEP SHA-256
+`79bd1877505de0ffef1622bbc69deb2d9dfbb969cea77dfe5c0076cff44b118c`).
+Old/fresh bootstrap snapshots differ only in CRLF versus LF; normalized bytes
+were independently compared. CalculiX passed retained-geometry mesh/selection
+preflight, not a new Bracket 01 solve. These are selected-provider prerequisites,
+not whole-design or public catalog qualification.
+
+Preflight passed one case, no warnings/errors, 14 stages, 12 inputs and the full
+validator. Actual unchanged `openai-codex::gpt-5.6-sol` inference answered READY
+at 19:53:39 despite transient health-check timeouts; Hermes was not restarted.
+Thirteen preparer/profile regression tests and selected Ruff passed. Updated
+stale test fixtures include the already-approved jig slicer binding and extra
+heat geometry-correspondence output; no engineering requirement was removed.
+
+Historical Bracket 01 attempt 006 failed because the reviewed transition was
+underdefined. Its immutable run/hash is bound in
+`artifacts/engineering-workflow-datasets/retry-evidence/bracket01-reviewed-geometry-901.json`
+(SHA-256 `b78159f30c9599de0f530896b9a552d35fe6fddb232f5d92da7603f585fcba9b`).
+The new `bracket01-deterministic-reviewed-geometry` episode preserves that baseline,
+allows at most two corrections, and records the first at dispatch. Regression
+tests ensure exact transition construction is required before review; actual
+candidate correctness remains to be demonstrated. Bracket 03 quarantine remains.
+
+There are now **nine isolated canonical renewal dispatches**, zero broad waves,
+and no new final-output/full-pass credit. Printed 01 was rechecked pending with
+actor null and its unchanged source; its review has not been impersonated.
+Solid Edge remains deferred. Missing engineering assumptions remain unapplied.
+
+### Interrupted implementation checkpoint and throughput review (earlier snapshot)
 
 The user asked why the campaign graph remains flat. Fresh read-only checks
 confirmed historical API metrics 30/30/24/0 (the separate retained automated

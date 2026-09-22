@@ -1,0 +1,60 @@
+{
+  "at": "2026-09-22T19:59:21.209136+00:00",
+  "scenario_id": "lightweight-equipment-bracket-01",
+  "attempt_id": "attempt-901",
+  "scope": "Exact geometry-definition instruction regression plus restored native provider prerequisites; not proof of the new bracket design or a campaign pass.",
+  "baseline": {
+    "attempt_id": "attempt-006",
+    "run_id": "faaa359018954ef29f40c061ca36ee92",
+    "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\runs\\campaign-bracket-01-attempt-006\\20260912T222635Z-97d42bd1a1bc.json",
+    "sha256": "4c98d7d9d763b04b360ddc388f54096fb244ed4d3117beb810d9b92510b97d62"
+  },
+  "material_change": "Basis must define exact transition construction before review; remove optional undefined treatments. Source author must not select geometry after approval.",
+  "native_scope": "Actual tiny AgentCAD STEP; CalculiX retained geometry meshing/selection only, no Bracket01 solve.",
+  "source_sha256": "1bab748705d8cbc4bc04db515092ca54c725036827adbc7d1e67011fbc614d0d",
+  "manifest_sha256": "830c34990da9324c174b077cd5b4c4b8d95bf87f182a854c5a8d076f3e94fcb4",
+  "tests": {
+    "returncode": 0,
+    "stdout": ".............                                                            [100%]\n13 passed in 2.50s\n",
+    "stderr": ""
+  },
+  "evidence": [
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\bracket01-prerequisites\\agentcad-native\\qualification.json",
+      "sha256": "178d1da90c21b7adc949ce5873107d4c7d40dfe40ca8df87280106349154d349"
+    },
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\bracket01-prerequisites\\calculix-preflight.json",
+      "sha256": "48f7ae529c77159e58e13948e8495dd53cf4f59aa5c672873f70c4315da378b0"
+    },
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\bracket01-prerequisites\\agentcad-late-success-reconciliation.json",
+      "sha256": "5fadd2a2d7d959fa85985f012feea61ad80f815ce75d14fb931e380f939b750e"
+    },
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\bracket01-canonical-901\\preflight.json",
+      "sha256": "598bac88f4749c02a129c6f1a2cff05a4e30d212cc3e589a836022ecfafc96e5"
+    },
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\bracket01-canonical-901\\inference-readiness.json",
+      "sha256": "801720c4a14f80ba7b839b6ce761f8a89f9873a7c9c519167624d723595fddc3"
+    },
+    {
+      "path": "D:\\repos\\wright\\scripts\\prepare-bracket-dataset-campaign.py",
+      "sha256": "5c45b1a946a96d691f9c68bd3302e53f54674ae03de5472ff6d19faa32b5194f"
+    },
+    {
+      "path": "D:\\repos\\wright\\packages\\workspace_service\\tests\\test_cad_file_observation_preparers.py",
+      "sha256": "b785e0b7f54a73b81eca90359279733752883ee619e7c4f3898313d1d6949cdd"
+    }
+  ],
+  "protected_printed_review": {
+    "run_id": "8877a99cc7054faab6b4d586b05845cb",
+    "checkpoint_id": "checkpoint-e4ec7f837b7f20acbc7f91df",
+    "state": "pending",
+    "actor": null
+  },
+  "workflow_dispatches": 0,
+  "campaign_credit": false,
+  "solid_edge_touched": false
+}

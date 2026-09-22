@@ -54,6 +54,7 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             "calculix_run_get",
         ],
         "fields": ["export_recorded_fields_and_reactions"],
+        "wright-drill-jig-slicer": ["slice_jig_file"],
     }
     tools = [
         {
@@ -187,6 +188,13 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
         )
         assert authority["selection_and_disclosure"] in basis.prompt
         assert "numbered Boolean-operation/parameter table" in basis.prompt
+        # Bracket 01 previously stopped because an approved pocket transition
+        # specified only a minimum radius and left its actual shape undecided.
+        assert "state the exact radius, construction side" in basis.prompt
+        assert "centers and tangent endpoints" in basis.prompt
+        assert "uniquely determines them" in basis.prompt
+        assert "Delete an optional" in basis.prompt
+        assert "source authoring may not choose its geometry after approval" in basis.prompt
         assert "original target as an unproven acceptance criterion" in basis.prompt
         assert "genuine conflict among mandatory constraints" in basis.prompt
         assert (
@@ -317,8 +325,12 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             - 1
         )
         assert (
-            len(execution.expected_files) == candidate_count * 4 + 3
+            len(execution.expected_files) == candidate_count * 4 + 4
             and not verification.expected_files
+        )
+        assert any(
+            path.endswith("/geometry-analysis-correspondence.json")
+            for path in execution.expected_files
         )
         assert (
             verification.agent_task
