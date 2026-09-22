@@ -73,13 +73,24 @@ manifest without another enrollment or workflow dispatch. A passing static
 preflight does not establish live solver readiness or engineering success.
 
 The per-case scheduling question is pending; the all-family barrier is not
-silently waived. The user explicitly chose **wait for the other agent's handoff**
-for API deployment. Do not restart the API or its active Solid Edge connector.
-Before
+silently waived. The initial conservative API hold below was superseded by the
+user's explicit API ownership clarification (see next paragraph). Before
 Heat dispatch, reconcile the actual code/provider identities and test the actual
 inference route; retain the three-no-progress dispatch pause until the relevant
 material repair is deployed/proven. The API remains PID 41624. No new workflow
 run, engineering approval or campaign completion credit was recorded this turn.
+
+### API authority clarified and actual ownership verified
+
+The user has full-authorized control of Wright API while forbidding changes to
+the Solid Edge MCP server. The earlier inference that an active registry entry
+meant the API owned a running Solid Edge child was incorrect. A read-only process
+inspection found no Solid Edge child beneath PID 41624 and no SolidEdge-named
+process on the host. Its actual environment has `WRIGHT_API_MCP_AUTOSTART=0`;
+startup code skips active-server autostart with that setting. Therefore the API
+may be restarted with its existing environment, without touching the Solid Edge
+server. Verify these conditions and preserve that server's configuration before
+and after deployment. The no-Solid-Edge-examples restriction remains in force.
 
 ## Modelica repair and staged successor
 
