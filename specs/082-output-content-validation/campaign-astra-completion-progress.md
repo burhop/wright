@@ -44,6 +44,42 @@ bracket retry episode is preserved; the separate two-correction topology hold
 must not be erased by a fresh attempt name. Earlier sections below are history,
 including their once-current statement that Bracket 01 was still running.
 
+### Independent Heat 01 staged — 20:39 UTC
+
+The source-publication repair and bracket evidence are committed as `bf0d6044`.
+The final focused suite reports **111 passed, one host-dependent symlink skip**.
+The optional blanket Spec Kit commit hook was skipped; unrelated documents remain
+unchanged and unstaged.
+
+Heat 01 is the approved sign-controller conduction-strap design: actual AgentCAD
+candidate geometry → OASiS/scikit-fem fields and heat balance → selected exact
+STEP and requirements validation. Its fixed 4 W, 100 mm length, 2 mm thickness,
+40/60 mm alternatives and 45 °C hot-end limit are unchanged. New attempt 901 is
+staged/enrolled, **not dispatched**. The actual template-instance API and normal
+preparer produced 10 steps, 11 staged inputs and eight exact authorized tools;
+none is Solid Edge. Preflight passed with no errors or warnings at 20:38:40 UTC.
+
+- Source: `workflows/campaign-heat-01-attempt-901.workflow.wflow`, SHA-256
+  `13a1fca405a36c2d87281eacd42352c546a848d4ab73696063091203c63bb793`.
+- Manifest: `.local-run/renewal-qualification/heat01-canonical-901/manifest.json`,
+  SHA-256 `7995c7f5af108898082e24f23cdcbcb297435fcbb43f0c2718130cd58729fe3a`.
+- Preflight: same directory `preflight.json`, SHA-256
+  `1cb49e2b31b9e34817894f6b9994a1d2eda3d96492bbb3b23203d76df4aeb46a`.
+- Grant: `e4eb22c4ec26ada46a32f6058eaa361d14692efb2450e4cf1fce14b5171abb86`.
+
+The staging helper's in-process audit import initially failed **after enrollment**.
+Do not replay staging. The existing audit CLI successfully checked that same
+manifest without another enrollment or workflow dispatch. A passing static
+preflight does not establish live solver readiness or engineering success.
+
+Two specific questions are pending: permit per-case scheduling without the
+all-family barrier, and permit the API restart's brief Solid Edge connector
+restart or wait for its owner's handoff. Neither permission is assumed. Before
+Heat dispatch, reconcile the actual code/provider identities and test the actual
+inference route; retain the three-no-progress dispatch pause until the relevant
+material repair is deployed/proven. The API remains PID 41624. No new workflow
+run, engineering approval or campaign completion credit was recorded this turn.
+
 ## Modelica repair and staged successor
 
 Water 901/902 are preserved failures. The new no-network

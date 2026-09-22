@@ -184,5 +184,23 @@
     "solid_edge_used": false,
     "campaign_credit": false
   },
+  "heat01_followup": {
+    "status": "staged_enrolled_static_preflight_pass_not_dispatched",
+    "attempt_id": "attempt-901",
+    "source_path": "workflows/campaign-heat-01-attempt-901.workflow.wflow",
+    "source_sha256": "13a1fca405a36c2d87281eacd42352c546a848d4ab73696063091203c63bb793",
+    "manifest": ".local-run/renewal-qualification/heat01-canonical-901/manifest.json",
+    "manifest_sha256": "7995c7f5af108898082e24f23cdcbcb297435fcbb43f0c2718130cd58729fe3a",
+    "preflight": ".local-run/renewal-qualification/heat01-canonical-901/preflight.json",
+    "preflight_sha256": "1cb49e2b31b9e34817894f6b9994a1d2eda3d96492bbb3b23203d76df4aeb46a",
+    "required_steps": 10,
+    "staged_inputs": 11,
+    "authorized_tools": 8,
+    "preflight_errors": 0,
+    "preflight_warnings": 0,
+    "campaign_credit": false,
+    "solid_edge_used": false,
+    "remaining": "Reconcile deployed repair/provider identities and actual inference readiness before isolated qualification dispatch; preserve no-progress pause and all review gates."
+  },
   "overall_status": "qualification_in_progress_not_campaign_ready"
 }
