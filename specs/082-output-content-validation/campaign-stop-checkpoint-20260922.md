@@ -8,6 +8,13 @@ launch more examples, provider probes, corrections or engineering reviews until
 the user gives new direction.** Finish verification and publication of this
 checkpoint only. This is not achievement of the 30/30/30/30 goal.
 
+**Final user stop:** The user subsequently asked to stop sooner if remaining work
+would exceed five minutes. The cumulative gate was interrupted during its
+control-plane test suite; do not automatically restart it. All work is committed
+locally, but the feature branch has **not been pushed**. Complete the outstanding
+verification and publication only after new user direction. No PR, merge or
+deployment was performed by this cleanup.
+
 ## Implemented versus unfinished
 
 - The runtime output validator, full-scope profiles, evidence/currentness rules,
@@ -125,3 +132,21 @@ proof tests pass. Pre-recovery local copies were preserved under
 byte-preserving Git attributes protect the corrected evidence on future checkouts.
 This repairs portability of historical proof; it does not create a new run or
 campaign pass. Full cumulative and fast-push gates remain pending at this point.
+
+### Final interrupted verification boundary
+
+The complete deterministic external output-validation suite passed **114 tests**.
+The cumulative gate passed the runtime vulnerability audit, exact-image scan,
+867-file Python formatting check, Python lint, frontend formatting and TypeScript,
+the required 41-file release/control-plane type check, distribution metadata and
+workflow-policy checks. Its broader optional type-check invocation reported a
+duplicate `conftest` module in the gate's existing warning mode; it was not a full
+type-check pass. ESLint retained ten warnings and zero errors.
+
+The control-plane suite was still running when the user stopped the work. Its
+partial progress is not a passing suite. Later full-gate packaging, repository
+test suites and browser checks were not completed in this cleanup. The fast push
+gate also remains incomplete. No gate or acceptance condition was weakened to
+permit a push. Logs remain under `.local-run/stop-checkpoint-20260922/`; no retained
+run data was deleted. The live API and dashboards were left available, campaign
+runners remain stopped, and the Solid Edge MCP server was not touched.
