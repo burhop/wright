@@ -1044,3 +1044,31 @@ review. Do not launch a duplicate while its start operation is active. Next:
 verify the produced named file bindings, review the new engineering evidence,
 then complete canonical validation before qualifying broader campaign waves.
 UI acceptance did not approve any engineering requirement.
+
+## 2026-09-21 — product demonstration purpose clarified and retained
+
+The user clarified that Wright's fundamental demonstration is the application
+of multiple existing engineering tools through MCP servers in an extended
+process solving an overall engineering problem. Their example is image/concept
+to CAD, then FEA strength assessment, then a manufacturing drawing. The actual
+engineering output of one tool must feed meaningful downstream work. Tools and
+their engineering contributions are central; raw JSON, IDs and campaign plumbing
+remain secondary in the user experience.
+
+Recorded the durable decision and review criteria in
+`docs/design/engineering-demonstration-principles.md`, with mandatory read
+guidance in root `AGENTS.md`, links in the continuation plan and example guide,
+and the principle inside the saved continuation prompt. Corrected the previous
+Robot engineering brief so it cannot be mistaken for qualification of that
+example as a strong product demonstration. Robot's current record preparation,
+analysis, plotting and diagnosis chain may be a useful technical test, but its
+many stages and valid files do not establish the extended engineering-tool
+process the user wants to show.
+
+The user still wants focused alignment of the existing 30 examples, not a
+wholesale rewrite. Future case reviews should identify objective, tools/MCP
+servers, substantive sequence, real artifact handoffs, outcome and the smallest
+justified adjustment. No all-30 suitability audit has been performed here.
+Product suitability is separate from campaign correctness; this documentation
+change does not alter counters, baselines, runtime files, review decisions,
+runner state or an active goal. No push, merge or physical action is performed.

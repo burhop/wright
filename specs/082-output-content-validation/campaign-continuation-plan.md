@@ -3,6 +3,19 @@
 **Date:** 2026-09-17. **Branch:** `codex/082-output-content-validation`.
 **Status:** Active follow-on plan; the saved goal was submitted and approved implementation and campaign execution.
 
+## Product purpose clarification recorded 21 September 2026
+
+Read the user's [engineering demonstration principles](../../docs/design/engineering-demonstration-principles.md)
+before evaluating or changing these examples. Wright must demonstrate extended
+processes that apply multiple existing engineering tools through MCP servers,
+with actual outputs handed between meaningful stages to accomplish an overall
+engineering job. This purpose is not satisfied by a long graph or validated
+files alone. Product-demonstration suitability is distinct from the four
+execution/validation counters below; their definitions and retained evidence
+are unchanged. Align useful existing cases with focused adjustments rather than
+automatically rewriting all 30. Recording this clarification does not launch
+or stop execution or approve new engineering requirements.
+
 ## Objective and authority
 
 Resume the existing 30-case campaign and extend the delivered runtime process

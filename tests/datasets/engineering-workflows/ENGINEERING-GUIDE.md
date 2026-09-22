@@ -1,5 +1,15 @@
 # Engineering jobs illustrated by the 30 examples
 
+**Product-purpose clarification, 21 September 2026:** Read the
+[engineering demonstration principles](../../../docs/design/engineering-demonstration-principles.md).
+Wright's central value is an extended process applying multiple existing
+engineering tools through MCP servers, with actual outputs passed between
+meaningful stages to accomplish an overall engineering job. The descriptions
+below explain the current cases; they do not establish that every case meets
+that demonstration standard. In particular, the current floor-seam analysis is
+a weak multi-tool product demonstration even if its calculations are valid.
+Align and reuse the existing examples; do not automatically rewrite all 30.
+
 These are the existing thirty examples, described in terms of the work an
 engineer wants to accomplish. The scenarios, input data, calculations, models,
 and requested deliverables are retained. The purpose is to make their value

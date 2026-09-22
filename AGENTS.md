@@ -13,6 +13,16 @@ demonstrations. The reporting UI
 belongs to another branch; publish a shared result contract here.
 <!-- SPECKIT END -->
 
+Before selecting, describing, changing, or evaluating engineering workflow
+examples or planning their campaign, read
+`docs/design/engineering-demonstration-principles.md`. Wright's central
+demonstration is an extended process using multiple existing engineering tools
+through MCP servers, with actual engineering outputs handed between meaningful
+stages to accomplish an overall job. A long graph, valid files, or campaign
+counts alone do not establish demonstration value. Show engineering tools and
+their contributions; keep software plumbing secondary. Align and reuse the
+existing 30 examples, not a wholesale rewrite without explicit agreement.
+
 Before changing the workflow/process editor or its workspace entry point, read
 `docs/contributing/workflow-ui-integration.md`. Locate the latest reviewed UI
 implementation and preserve its authoring capabilities when integrating runtime
