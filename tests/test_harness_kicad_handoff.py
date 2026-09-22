@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from workspace_service.workflow_source_execution import compile_prompt_workflow
+from workspace_service.process_validation.configuration import ValidatorConfiguration
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,6 +77,9 @@ def test_all_harnesses_bind_wireviz_to_independent_kicad_check(tmp_path: Path) -
         assert set(validator.validation["subjects"]) == set(
             support["campaign_credit"]["subject_roles"]
         )
+        assert ValidatorConfiguration.model_validate(validator.validation).load(
+            str(tmp_path / f"workspace-{ordinal}")
+        ).reference().model_dump() == validator.validation["profile"]["reference"]
         manifest = json.loads(
             Path(result["draft"]).with_name("staging-manifest.json").read_text(encoding="utf-8")
         )

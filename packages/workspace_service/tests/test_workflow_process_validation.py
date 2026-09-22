@@ -109,6 +109,36 @@ def test_profile_preflight_accepts_the_exact_frozen_profile(tmp_path):
     ) == load_profile("structured-demo")
 
 
+def test_profile_preflight_requires_pinned_related_subject_roles(tmp_path):
+    from workspace_service.process_validation.configuration import (
+        ValidatorConfiguration,
+    )
+
+    profile = load_profile("sensor-fan-harness-01")
+    related = {
+        role
+        for check in profile.checks
+        for role in check.parameters.get("related_roles", [])
+    }
+    primary = {check.subject_role for check in profile.checks}
+    assert {"kicad_schematic", "kicad_erc"}.issubset(related)
+    config = {
+        "profile": {
+            "source": "packaged",
+            "name": "sensor-fan-harness-01",
+            "reference": profile.reference().model_dump(),
+        },
+        "baseline": profile.baseline.reference().model_dump(),
+        "subjects": {
+            role: f"port_{index}" for index, role in enumerate(sorted(primary | related))
+        },
+    }
+    assert ValidatorConfiguration.model_validate(config).load(str(tmp_path)) == profile
+    del config["subjects"]["kicad_erc"]
+    with pytest.raises(ValueError, match="exactly the subject roles"):
+        ValidatorConfiguration.model_validate(config).load(str(tmp_path))
+
+
 @pytest.mark.parametrize(
     "fault",
     [

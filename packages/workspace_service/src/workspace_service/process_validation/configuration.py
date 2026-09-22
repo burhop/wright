@@ -58,7 +58,15 @@ class ValidatorConfiguration(Contract):
         )
         if profile.baseline.reference() != self.baseline:
             raise ValueError("Requirement baseline differs from the pinned baseline")
-        if {check.subject_role for check in profile.checks} != set(self.subjects):
+        required_roles = {check.subject_role for check in profile.checks}
+        for check in profile.checks:
+            related_roles = check.parameters.get("related_roles", [])
+            if not isinstance(related_roles, list) or any(
+                not isinstance(role, str) or not role for role in related_roles
+            ):
+                raise ValueError("Profile related subject roles are invalid")
+            required_roles.update(related_roles)
+        if required_roles != set(self.subjects):
             raise ValueError("Bind exactly the subject roles declared in this profile")
         return profile
 
