@@ -163,6 +163,43 @@ def test_code_identity_records_commit_tree_and_exact_source_hashes(
     ]
 
 
+def test_explicit_dirty_document_is_hashed_without_claiming_clean_worktree(tmp_path, monkeypatch):
+    for relative in (*helper.BACKEND_SOURCE_FILES, helper.OPERATOR_SOURCE_FILE, "docs/user-notes.md"):
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(relative.encode())
+
+    def git(_repo, *args):
+        if args[0] == "status":
+            return "" if ":(literal,exclude)docs/user-notes.md" in args else " M docs/user-notes.md"
+        return ""
+
+    monkeypatch.setattr(helper, "git_output", git)
+    result = helper.snapshot_code_identity(tmp_path, preserve_documents=("docs/user-notes.md",))
+    assert result["tracked_worktree_clean"] is False
+    assert result["preserved_document_sha256"] == {
+        "docs/user-notes.md": hashlib.sha256(b"docs/user-notes.md").hexdigest()
+    }
+
+
+@pytest.mark.parametrize("relative", ["apps/api/src/unsafe.py", "apps/api/src/runtime.md", "docs/../runtime.md"])
+def test_preserve_document_cannot_exempt_runtime_or_traversal(tmp_path, relative):
+    path = tmp_path / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("not an allowed document")
+    with pytest.raises(RuntimeError, match="explicit in-repository documentation"):
+        helper.snapshot_code_identity(tmp_path, preserve_documents=(relative,))
+
+
+def test_other_dirty_source_still_blocks_with_document_exemption(tmp_path, monkeypatch):
+    document = tmp_path / "docs/notes.md"
+    document.parent.mkdir()
+    document.write_text("user notes")
+    monkeypatch.setattr(helper, "git_output", lambda _repo, *args: " M changed.py" if args[0] == "status" else "")
+    with pytest.raises(RuntimeError, match="clean committed"):
+        helper.snapshot_code_identity(tmp_path, preserve_documents=("docs/notes.md",))
+
+
 def test_module_origin_validation_rejects_another_checkout(tmp_path):
     origins = {
         name: str(tmp_path / relative)

@@ -107,18 +107,17 @@ def _restart_hermes_gateway_process() -> None:
     )
 
 
-async def _refresh_hermes_gateway(engine: BaseAgentEngine) -> None:
-    """Reload Hermes' persistent MCP connection after an explicit rebind."""
-    await asyncio.to_thread(_restart_hermes_gateway_process)
-    deadline = time.monotonic() + 45.0
-    while time.monotonic() < deadline:
+async def _wait_for_hermes_gateway(engine: BaseAgentEngine) -> None:
+    """Observe the issued restart, including bounded cold native initialization."""
+    deadline = time.monotonic() + 120.0
+    while (remaining := deadline - time.monotonic()) > 0:
         try:
-            health = await engine.check_health()
+            health = await asyncio.wait_for(engine.check_health(), min(5.0, remaining))
             if str(health.get("state") or "").lower() == "connected":
                 return
         except Exception:
             pass
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(min(0.25, max(0.0, deadline - time.monotonic())))
     raise RuntimeError("Hermes gateway did not become ready after workspace rebinding")
 
 
@@ -982,7 +981,8 @@ async def chat(
     ):
         try:
             await sync_manager.refresh_gateway_if_needed(
-                lambda: _refresh_hermes_gateway(engine)
+                lambda: asyncio.to_thread(_restart_hermes_gateway_process),
+                wait_ready=lambda: _wait_for_hermes_gateway(engine),
             )
         except Exception as exc:
             log.exception("workspace_gateway_rebind_failed", error=str(exc))

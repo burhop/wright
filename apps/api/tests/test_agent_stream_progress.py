@@ -10,6 +10,7 @@ from api.routers.agent import (
     ChatRequest,
     ChatStreamJob,
     _restart_hermes_gateway_process,
+    _wait_for_hermes_gateway,
     chat,
 )
 from fastapi import HTTPException
@@ -78,6 +79,31 @@ class _AttachFailureJob:
 class _AttachFailureRegistry:
     async def start(self, request, engine):
         return _AttachFailureJob()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("ready_after", [0, 59, None])
+async def test_gateway_readiness_allows_cold_start_but_remains_bounded(monkeypatch, ready_after):
+    clock = {"seconds": 0.0}
+    monkeypatch.setattr(
+        "api.routers.agent.time", SimpleNamespace(monotonic=lambda: clock["seconds"])
+    )
+
+    async def sleep(seconds):
+        clock["seconds"] += seconds
+
+    async def health():
+        return {"state": "connected" if ready_after is not None and clock["seconds"] >= ready_after else "disconnected"}
+
+    monkeypatch.setattr("api.routers.agent.asyncio.sleep", sleep)
+    engine = SimpleNamespace(check_health=health)
+    if ready_after is None:
+        with pytest.raises(RuntimeError, match="did not become ready"):
+            await _wait_for_hermes_gateway(engine)
+        assert clock["seconds"] == 120.0
+    else:
+        await _wait_for_hermes_gateway(engine)
+        assert clock["seconds"] == ready_after
 
 
 def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):

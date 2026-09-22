@@ -27,6 +27,7 @@ BACKEND_SOURCE_FILES = (
     "apps/api/src/api/schemas/workspace.py",
     "packages/agent_adapters/src/agent_adapters/hermes.py",
     "packages/agent_adapters/src/agent_adapters/hermes_config.py",
+    "packages/workspace_service/src/workspace_service/agent_sync.py",
     "packages/workspace_service/src/workspace_service/workflow_sources.py",
     "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 )
@@ -37,6 +38,7 @@ MODULE_SOURCE_FILES = {
     "api.routers.agent": "apps/api/src/api/routers/agent.py",
     "agent_adapters.hermes": "packages/agent_adapters/src/agent_adapters/hermes.py",
     "agent_adapters.hermes_config": "packages/agent_adapters/src/agent_adapters/hermes_config.py",
+    "workspace_service.agent_sync": "packages/workspace_service/src/workspace_service/agent_sync.py",
     "workspace_service.workflow_sources": "packages/workspace_service/src/workspace_service/workflow_sources.py",
     "workspace_service.workflow_source_execution": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 }
@@ -81,8 +83,30 @@ def git_output(repo: Path, *args: str) -> str:
     return result.stdout.strip()
 
 
-def snapshot_code_identity(repo: Path) -> dict[str, object]:
-    if git_output(repo, "status", "--porcelain", "--untracked-files=no") or git_output(
+def snapshot_code_identity(
+    repo: Path, *, preserve_documents: tuple[str, ...] = ()
+) -> dict[str, object]:
+    preserved = {}
+    exclusions = []
+    for relative in preserve_documents:
+        path = (repo / relative).resolve(strict=True)
+        if (
+            Path(relative).is_absolute()
+            or not path.is_relative_to(repo.resolve())
+            or Path(relative).as_posix() != path.relative_to(repo.resolve()).as_posix()
+            or path.suffix.lower() != ".md"
+            or not (
+                relative == "AGENTS.md"
+                or relative.startswith(("docs/", "specs/", "tests/datasets/"))
+            )
+        ):
+            raise RuntimeError("Only explicit in-repository documentation may be preserved")
+        git_output(repo, "ls-files", "--error-unmatch", "--", relative)
+        preserved[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+        exclusions.append(f":(literal,exclude){relative}")
+    status_args = ("status", "--porcelain", "--untracked-files=no")
+    scoped_status = git_output(repo, *status_args, "--", ".", *exclusions) if exclusions else git_output(repo, *status_args)
+    if scoped_status or git_output(
         repo,
         "ls-files",
         "--others",
@@ -114,7 +138,8 @@ def snapshot_code_identity(repo: Path) -> dict[str, object]:
     return {
         "git_commit": git_output(repo, "rev-parse", "HEAD"),
         "git_tree": git_output(repo, "rev-parse", "HEAD^{tree}"),
-        "tracked_worktree_clean": True,
+        "tracked_worktree_clean": not bool(git_output(repo, *status_args)) if preserved else True,
+        "preserved_document_sha256": preserved,
         "backend_files": [file_identity(relative) for relative in BACKEND_SOURCE_FILES],
         "operator_helper": file_identity(OPERATOR_SOURCE_FILE),
     }
@@ -164,11 +189,14 @@ def probe_module_origins(
 
 
 def capture_code_provenance(
-    repo: Path, environment: dict[str, str]
+    repo: Path, environment: dict[str, str], *, preserve_documents: tuple[str, ...] = ()
 ) -> dict[str, object]:
-    before = snapshot_code_identity(repo)
+    def snapshot():
+        return snapshot_code_identity(repo, preserve_documents=preserve_documents) if preserve_documents else snapshot_code_identity(repo)
+
+    before = snapshot()
     origins = probe_module_origins(repo, environment)
-    if snapshot_code_identity(repo) != before:
+    if snapshot() != before:
         raise RuntimeError("Backend code changed during the module-origin probe")
     hashes = {value["path"]: value["sha256"] for value in before["backend_files"]}
     if any(
@@ -277,6 +305,7 @@ def main() -> None:
     parser.add_argument("--workspace", required=True)
     parser.add_argument("--source", required=True)
     parser.add_argument("--evidence", type=Path, required=True)
+    parser.add_argument("--preserve-document", action="append", default=[], help="Explicit tracked Markdown documentation allowed to remain dirty; bytes must stay unchanged. Runtime code must remain committed and clean.")
     args = parser.parse_args()
     repo = args.repo.resolve(strict=True)
     evidence = args.evidence.resolve()
@@ -337,7 +366,8 @@ def main() -> None:
                     raise
                 preserved_invalid_documents.append(choice["path"])
     environment = process.environ()  # carried in memory only, never printed
-    code_before = capture_code_provenance(repo, environment)
+    preserve_documents = tuple(args.preserve_document)
+    code_before = capture_code_provenance(repo, environment, preserve_documents=preserve_documents)
     if snapshot_local_workflows(local_workspace) != local_before:
         raise RuntimeError("Workspace files changed during restart preflight")
     evidence.mkdir(parents=True, exist_ok=False)
@@ -397,7 +427,7 @@ def main() -> None:
     if files["workspace_id"] != args.workspace:
         raise RuntimeError("File choices were not scoped to the requested workspace")
     listener = find_launched_api_listener(child.pid, repo, args.port)
-    code_after = capture_code_provenance(repo, listener.environ())
+    code_after = capture_code_provenance(repo, listener.environ(), preserve_documents=preserve_documents)
     if code_after != code_before:
         raise RuntimeError("Committed code or module origins changed across restart")
     if snapshot_local_workflows(local_workspace) != local_before:

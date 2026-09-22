@@ -53,7 +53,8 @@ def test_gateway_restart_remains_pending_until_chat_refreshes_it(tmp_path) -> No
 
 
 @pytest.mark.asyncio
-async def test_concurrent_chat_turns_share_one_gateway_refresh(tmp_path) -> None:
+@pytest.mark.parametrize("separate_readiness", [False, True])
+async def test_concurrent_chat_turns_share_one_gateway_refresh(tmp_path, separate_readiness) -> None:
     def sync(_session_id: str, _db_path: str) -> bool:
         return True
 
@@ -72,13 +73,21 @@ async def test_concurrent_chat_turns_share_one_gateway_refresh(tmp_path) -> None
         refresh_started.set()
         await allow_refresh_to_finish.wait()
 
-    first = asyncio.create_task(manager.refresh_gateway_if_needed(refresh))
+    ready_calls = 0
+
+    async def ready():
+        nonlocal ready_calls
+        ready_calls += 1
+
+    options = {"wait_ready": ready} if separate_readiness else {}
+    first = asyncio.create_task(manager.refresh_gateway_if_needed(refresh, **options))
     await refresh_started.wait()
-    second = asyncio.create_task(manager.refresh_gateway_if_needed(refresh))
+    second = asyncio.create_task(manager.refresh_gateway_if_needed(refresh, **options))
     allow_refresh_to_finish.set()
 
     assert await asyncio.gather(first, second) == [True, False]
     assert calls == 1
+    assert ready_calls == int(separate_readiness)
     assert manager.gateway_refresh_in_progress is False
     assert manager.gateway_refresh_pending is False
 
@@ -103,3 +112,82 @@ async def test_failed_gateway_refresh_exposes_error_and_stops_pending_state(
     assert manager.gateway_refresh_in_progress is False
     assert manager.gateway_refresh_pending is False
     assert manager.gateway_refresh_error == "restart failed"
+
+
+@pytest.mark.asyncio
+async def test_readiness_timeout_rechecks_same_restart_without_restarting(tmp_path):
+    changed = True
+
+    def sync(_session_id, _db_path):
+        nonlocal changed
+        result, changed = changed, False
+        return result
+
+    manager = AgentSyncManager(_workspace_db(tmp_path), workspace_sync=sync)
+    manager.sync_workspace_tools("session-1")
+    restarts = 0
+    observations = 0
+
+    async def restart():
+        nonlocal restarts
+        restarts += 1
+
+    async def wait_ready():
+        nonlocal observations
+        observations += 1
+        if observations == 1:
+            raise TimeoutError("Gateway still starting")
+
+    with pytest.raises(TimeoutError, match="still starting"):
+        await manager.refresh_gateway_if_needed(restart, wait_ready=wait_ready)
+    assert manager.sync_workspace_tools("session-1") is True
+    assert await manager.refresh_gateway_if_needed(restart, wait_ready=wait_ready)
+    assert restarts == 1
+    assert observations == 2
+    assert manager.gateway_refresh_error is None
+    assert manager.sync_workspace_tools("session-1") is False
+
+
+@pytest.mark.asyncio
+async def test_changed_binding_during_readiness_cannot_be_marked_refreshed(tmp_path):
+    manager = AgentSyncManager(_workspace_db(tmp_path), workspace_sync=lambda *_: True)
+    manager.sync_workspace_tools("session-1")
+    restarts = 0
+
+    async def restart():
+        nonlocal restarts
+        restarts += 1
+
+    async def wait_ready():
+        if restarts == 1:
+            manager.sync_workspace_tools("session-1")
+
+    with pytest.raises(RuntimeError, match="binding changed"):
+        await manager.refresh_gateway_if_needed(restart, wait_ready=wait_ready)
+    assert manager.gateway_refresh_error
+    assert await manager.refresh_gateway_if_needed(restart, wait_ready=wait_ready)
+    assert restarts == 2  # A new binding really does require another restart.
+    assert manager.gateway_refresh_pending is False
+
+
+@pytest.mark.asyncio
+async def test_cancelled_observation_preserves_successful_restart(tmp_path):
+    manager = AgentSyncManager(_workspace_db(tmp_path), workspace_sync=lambda *_: True)
+    manager.sync_workspace_tools("session-1")
+    restarts = 0
+
+    async def restart():
+        nonlocal restarts
+        restarts += 1
+
+    async def cancelled():
+        raise asyncio.CancelledError
+
+    async def ready():
+        return None
+
+    with pytest.raises(asyncio.CancelledError):
+        await manager.refresh_gateway_if_needed(restart, wait_ready=cancelled)
+    assert manager.gateway_refresh_in_progress is False
+    assert await manager.refresh_gateway_if_needed(restart, wait_ready=ready)
+    assert restarts == 1

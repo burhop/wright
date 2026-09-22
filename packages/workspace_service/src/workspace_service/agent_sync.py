@@ -26,6 +26,8 @@ class AgentSyncManager:
         self._gateway_refresh_in_progress = False
         self._gateway_refresh_error: str | None = None
         self._gateway_refresh_lock = asyncio.Lock()
+        self._gateway_binding_revision = 0
+        self._gateway_restarted_revision: int | None = None
         self._active_agent = "hermes"
         self._load_active_agent()
 
@@ -58,6 +60,7 @@ class AgentSyncManager:
             restart_required = bool(self._workspace_sync(session_id, self.db_path))
             if restart_required:
                 self._gateway_refresh_error = None
+                self._gateway_binding_revision += 1
             self._gateway_restart_required = (
                 restart_required or self._gateway_restart_required
             )
@@ -73,6 +76,7 @@ class AgentSyncManager:
     def mark_gateway_refreshed(self) -> None:
         self._gateway_restart_required = False
         self._gateway_refresh_error = None
+        self._gateway_restarted_revision = None
 
     @property
     def gateway_refresh_in_progress(self) -> bool:
@@ -87,15 +91,25 @@ class AgentSyncManager:
         return self._gateway_refresh_error
 
     async def refresh_gateway_if_needed(
-        self, refresh: Callable[[], Awaitable[None]]
+        self,
+        refresh: Callable[[], Awaitable[None]],
+        *,
+        wait_ready: Callable[[], Awaitable[None]] | None = None,
     ) -> bool:
-        """Run at most one pending gateway refresh across concurrent chat turns."""
+        """Serialize refresh; a readiness timeout must not repeat a proven restart."""
         async with self._gateway_refresh_lock:
             if not self._gateway_restart_required:
                 return False
+            revision = self._gateway_binding_revision
             self._gateway_refresh_in_progress = True
             try:
-                await refresh()
+                if wait_ready is None or self._gateway_restarted_revision != revision:
+                    await refresh()
+                    self._gateway_restarted_revision = revision
+                if wait_ready is not None:
+                    await wait_ready()
+                if revision != self._gateway_binding_revision:
+                    raise RuntimeError("Workspace binding changed during gateway refresh")
             except Exception as exc:
                 self._gateway_refresh_error = str(exc)
                 raise
