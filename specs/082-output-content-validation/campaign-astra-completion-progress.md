@@ -176,15 +176,42 @@ actual inference and exact successor mount/grant checks; no retry ledger was res
   This is the **sixth isolated qualification dispatch**, not a broad campaign wave
   or a full-scope pass. The global `water01-canonical-result-identity` episode links
   retained attempt 903 and the isolated native registration proof with at most
-  two corrections. Observe this runner; do not redispatch when a tool wait ends.
+  two corrections. The terminal follow-up below supersedes that running snapshot.
 - Both dashboard HTML/status endpoints responded after recovery. Their retained
   historical/current projections are not automatically credits for isolated runs.
 
+## Water 904 terminal state and scope correction
+
+The runner exited failed at 18:29:09 UTC. All three native candidate simulations
+and ten-file exports completed. The independent refined 700 W simulation and
+study summary also completed on disk, but their enclosing AI step then rejected
+missing **mobile-brewer** battery inputs. The source incorrectly included that
+other scenario's assignment for the countertop case. No CAD/package stage ran.
+
+Actual study: 700 W was the lowest supplied time-compliant candidate, reaching
+90 C at 174.56056247 s against 180 s; refined crossing difference 2.42e-7 s.
+The 350 W candidate did not reach target in 300 s and 500 W took 247.82 s.
+These are retained native results, not a full design-package pass. The failed
+canonical run and retry ledger remain unchanged.
+
+The preparer now selects explicit instructions for the three approved identities;
+only Water 02 gets battery accounting, using energy to first target crossing
+rather than full-run thermostat holding energy. Three new scope assertions failed
+before the repair; 30 focused tests then passed, plus Ruff and diff checks.
+At 18:32:37 UTC the unchanged campaign Sol route completed a **read-only** scope
+assessment using the actual retained context and study files: no missing required
+inputs, 700 W and the actual target time. No tools, workflow dispatch, review or
+campaign credit; source bytes were unchanged. Compact material repair proof:
+`artifacts/campaign-example-renewal/qualification/water01-study-scope-repair.json`.
+Full receipt: `.local-run/renewal-qualification/water01-scope-repair/proof.json`.
+The broad queue remains gated. Prepare a separately identified successor only
+with this proven correction, exact new mounts/grants and preserved retry history.
+
 ## Next safe work
 
-1. Observe the existing water 904 runner through its next meaningful checkpoint.
-   Verify the formerly failing registration boundary, then the CAD/thermal
-   artifacts and every required review. Preserve all failed historical attempts.
+1. Prepare and preflight the scope-corrected water successor; observe it through
+   CAD/thermal artifacts and every required review. Water 904 is terminal and
+   must not be redispatched, overwritten or relabeled.
 2. Preserve the recovered API/profile and actual inference receipt. A dashboard
    or health response alone is not an engineering result. Check existing runtime
    and retry state before any follow-on dispatch.

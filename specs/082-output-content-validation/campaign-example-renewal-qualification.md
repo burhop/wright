@@ -7,7 +7,13 @@ UTC due to a composite result-identifier length defect). Separate provider probe
 are not canonical workflow dispatches. Exact evidence, repair proof and deployment
 state are recorded in `campaign-astra-completion-progress.md`; no pass is claimed.
 Water 904 started at 18:24:28 UTC after the material repair, verified deployment,
-actual inference and a separate qualified native runtime; observe its live state.
+actual inference and a separate qualified native runtime. It failed at 18:29:09
+UTC after completing the native candidate/refined study: the shared prompt
+incorrectly asked this countertop scenario for mobile-brewer battery inputs.
+Scenario-specific instructions now pass 30 focused tests and a read-only actual
+campaign-model assessment against the retained native study. No complete package
+or full-scope pass is claimed; see `qualification/water01-study-scope-repair.json`
+under `artifacts/campaign-example-renewal/`.
 
 ## Proven now
 

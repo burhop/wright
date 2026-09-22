@@ -1,0 +1,75 @@
+{
+  "status": "scope_assessment_pass",
+  "started_at": "2026-09-22T18:32:20.505165+00:00",
+  "route": "/api/agent/chat",
+  "model": "openai-codex::gpt-5.6-sol",
+  "workflow_dispatches": 0,
+  "campaign_credit": false,
+  "retained_run_id": "3c5c5df74d654915a82a6b02fcade9b8",
+  "scope": "This is the single-cup countertop brewer study (water-heater-sizing-01). Assess only its supplied heat-up, energy-balance and numerical-stability requirements. The mobile field-brewer power-budget assignment is a different scenario and does not apply here.",
+  "source_evidence": [
+    {
+      "path": "D:\\repos\\wright\\tests\\datasets\\engineering-workflows\\scenarios\\water-heater-sizing\\01-single-cup-countertop\\context.md",
+      "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+      "bytes": 3511
+    },
+    {
+      "path": "D:\\repos\\wright\\tests\\datasets\\engineering-workflows\\scenarios\\water-heater-sizing\\01-single-cup-countertop\\prompt.txt",
+      "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+      "bytes": 468
+    },
+    {
+      "path": "D:\\repos\\wright\\tests\\datasets\\engineering-workflows\\scenarios\\water-heater-sizing\\01-single-cup-countertop\\parameters.csv",
+      "sha256": "4d22025c16331782912713803c7b31504aa342c28b415815130785f5fbb2c28b",
+      "bytes": 548
+    },
+    {
+      "path": "D:\\repos\\wright\\tests\\datasets\\engineering-workflows\\scenarios\\water-heater-sizing\\01-single-cup-countertop\\power-candidates.csv",
+      "sha256": "bd6fb78377423bd5ea6cad311ed14cd1f1159333414caae20bcbd1c7621d665b",
+      "bytes": 160
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\water-heater-sizing-01\\attempt-904\\artifacts\\power-comparison.csv",
+      "sha256": "2964321a28251f577d95cf38e62ac686b7e7c88afbf2640579dd06c81e1daddb",
+      "bytes": 596
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\water-heater-sizing-01\\attempt-904\\artifacts\\energy-summary.csv",
+      "sha256": "76d74c9c44800f110095959456ee37f22147cd618b2db1e07156f37143b1f9d3",
+      "bytes": 891
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\water-heater-sizing-01\\attempt-904\\artifacts\\heater-selection.md",
+      "sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225",
+      "bytes": 1410
+    }
+  ],
+  "message_sha256": "7b008b464783c80b76dde8a178fd54c8230dc1860e216ef82cfd193300eacd52",
+  "response_text": "{\"scenario_id\":\"water-heater-sizing-01\",\"missing_required_inputs\":[],\"selected_electrical_power_w\":700,\"time_to_target_s\":174.56056246993037,\"time_limit_s\":180,\"engineering_explanation\":\"For this single-cup brewer scope, all required heat-up, energy-balance, and numerical-stability inputs are supplied. The 350 W case did not reach 90°C within the 300 s study duration, and the 500 W case reached it in 247.8201508770297 s, exceeding the 180 s limit. The 700 W case reached 90°C in 174.56056246993037 s and is therefore the lowest supplied candidate meeting the limit. Its refined-run crossing-time difference was 2.417310440705478e-7 s and relative energy difference was 8.878792781746648e-10, supporting numerical stability. Its reported thermal balance residual was approximately 0.0011 J against 117401.85 J modeled thermal input, supporting energy consistency. This read-only assessment does not change the retained source run's failed status, award campaign credit, or assert completion of CAD packaging, thermal screening, review, or product-safety work.\"}",
+  "event_types": [
+    "stream_start",
+    "progress",
+    "token",
+    "stream_end"
+  ],
+  "assessment": {
+    "scenario_id": "water-heater-sizing-01",
+    "missing_required_inputs": [],
+    "selected_electrical_power_w": 700,
+    "time_to_target_s": 174.56056246993037,
+    "time_limit_s": 180,
+    "engineering_explanation": "For this single-cup brewer scope, all required heat-up, energy-balance, and numerical-stability inputs are supplied. The 350 W case did not reach 90°C within the 300 s study duration, and the 500 W case reached it in 247.8201508770297 s, exceeding the 180 s limit. The 700 W case reached 90°C in 174.56056246993037 s and is therefore the lowest supplied candidate meeting the limit. Its refined-run crossing-time difference was 2.417310440705478e-7 s and relative energy difference was 8.878792781746648e-10, supporting numerical stability. Its reported thermal balance residual was approximately 0.0011 J against 117401.85 J modeled thermal input, supporting energy consistency. This read-only assessment does not change the retained source run's failed status, award campaign credit, or assert completion of CAD packaging, thermal screening, review, or product-safety work."
+  },
+  "source_bytes_unchanged": true,
+  "finished_at": "2026-09-22T18:32:37.164482+00:00",
+  "full_receipt_path": ".local-run/renewal-qualification/water01-scope-repair/proof.json",
+  "regression_tests": {
+    "passed": 30,
+    "commands": [
+      "pytest tests/test_modelica_campaign_binding.py tests/test_water_heater_package_handoff.py tests/test_campaign_example_renewal.py",
+      "ruff check scripts/prepare-modelica-dataset-campaign.py tests/test_modelica_campaign_binding.py",
+      "git diff --check"
+    ],
+    "baseline_tests_failed": 3
+  }
+}

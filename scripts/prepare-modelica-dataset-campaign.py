@@ -39,6 +39,36 @@ def csv_rows(path):
         return list(csv.DictReader(stream))
 
 
+def study_scope(identity):
+    """Keep each approved study's requirements out of the other variants."""
+    scopes = {
+        "water-heater-sizing-01": (
+            "This is the single-cup countertop brewer study (water-heater-sizing-01). "
+            "Assess only its supplied heat-up, energy-balance and numerical-stability requirements. "
+            "The mobile field-brewer power-budget assignment is a different scenario and does not apply here."
+        ),
+        "water-heater-sizing-02": (
+            "This is the mobile field-brewer study (water-heater-sizing-02). "
+            "Also account for the inverter efficiency and battery nominal Wh, usable-energy allowance, "
+            "continuous-output limit and per-batch constraints supplied in energy-budget.csv and context.md. "
+            "Calculate battery-side energy to the first target-temperature crossing from the actual "
+            "electrical-energy trajectory divided by the supplied inverter efficiency; "
+            "do not substitute full-run energy including the later thermostat holding period for heat-up energy. "
+            "Distinguish battery-side input, AC heater input and delivered thermal energy, report usable "
+            "batch count and exclusions, and preserve any real failed energy limit."
+        ),
+        "water-heater-sizing-03": (
+            "This is the pilot batch-dispenser study (water-heater-sizing-03). "
+            "Retain the complete low/nominal/high loss grid and assess its supplied thermal requirements. "
+            "The mobile field-brewer power-budget assignment is a different scenario and does not apply here."
+        ),
+    }
+    try:
+        return scopes[identity]
+    except KeyError as exc:
+        raise ValueError("Unknown approved water-heater study " + identity) from exc
+
+
 def prepare(args, directory):
     data = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
     identity = data["scenario_id"]
@@ -164,13 +194,15 @@ def prepare(args, directory):
             observed.append({"request_id": request_id, "expected_manifest_sha256": baseline["manifest_sha256"], "output": export["id"] + "." + evidence_port})
     verify = stages["verify_selection"]
     selected_ids = [f"{identity}-{args.attempt}-selected-{label}-refined" for label, _ in loss_cases]
-    prompt = f"""Use the actual completed baseline request results and original uploaded context to select the lowest electrical power meeting the {quantities['heat_up_limit']:g}s time limit for90degC across every supplied loss case. Never substitute model reasoning for a missing simulation. Every baseline candidate/loss run is required. If none meets the time limit, perform the tighter rerun on the fastest candidate for diagnosis and report no demonstrated setting.
+    prompt = f"""{study_scope(identity)}
+
+Use the actual completed baseline request results and original uploaded context to select the lowest electrical power meeting the {quantities['heat_up_limit']:g}s time limit for90degC across every supplied loss case. Never substitute model reasoning for a missing simulation. Every baseline candidate/loss run is required. If none meets the time limit, perform the tighter rerun on the fastest candidate for diagnosis and report no demonstrated setting.
 
 Get modelica_simulation_manifest_get for wright-water-heater-v1 version0.1.0 scenario wright-{horizon}-refined, requiring exact manifest digest {refined['manifest_sha256']}. For each supplied loss case, submit the selected power with every physical parameter unchanged from that case's baseline and only the separate refined scenario changed. Required refined request IDs in loss-case order are {json.dumps(selected_ids)}; loss cases are {json.dumps(loss_cases)}. Use request_template_get if helpful; full parameters and units are in the binding context. The fixed refined scenario uses real DASSL maxStepSize0.25s and tolerance1e-8; output grid remains1s. Submit timeout_ms120000; do not retry with changed values under a reused request ID. Use request_get for an uncertain response.
 
 After each actual successful refined submission, call modelica_export_recorded_result with dataset_id={identity}, attempt_id={args.attempt}, exact refined request_id and expected_manifest_sha256={refined['manifest_sha256']}. Then call modelica_summarize_recorded_study ONCE after every required run with dataset_id,attempt_id, all baseline requests {json.dumps([{k: v for k, v in item.items() if k != 'output'} for item in observed])} plus every refined request/digest, time_limit_s={quantities['heat_up_limit']}, candidate_powers_w={json.dumps(candidates)}, loss_conductances_w_per_k={json.dumps([loss for _, loss in loss_cases])}. This computes independent target crossing, trapezoidal energy, capacity/loss balance and numerical stability from actual sealed CSVs and creates the comparison/energy/plot/report files. It must reject missing candidate/loss evidence.
 
-Write a clear engineering assessment of the actual outputs and limitations. For the mobile brewer, additionally account for the supplied inverter efficiency and battery Wh/usable-energy/per-batch constraints using actual electrical energy; distinguish battery input from delivered thermal energy. Do not claim supplier release. The following process validator determines requirements-compliance credit from the exact current study files. Keep the original engineering requirement review, every baseline run, independent tighter rerun and final study artifacts. Never use the unrelated original kit or an ODE surrogate."""
+Write a clear engineering assessment of this scenario's actual outputs and limitations. Do not import requirements from another scenario or claim supplier release. The following process validator determines requirements-compliance credit from the exact current study files. Keep the original engineering requirement review, every baseline run, independent tighter rerun and final study artifacts. Never use the unrelated original kit or an ODE surrogate."""
     verify["fields"].update(step_type="work", performed_by="ai_assisted", tool=None, reusable_step=None, inputs=[], outputs=[h.port(verify["id"] + "_result")], prompt=prompt, instructions=prompt)
     verify["fields"]["settings"] = {"authoring_template": "mcp-task", "mcp_server": args.server_id, "max_tool_calls": 24, "timeout_seconds": 600, "timestep_sensitivity_required": True, "arbitrary_source": False, "task_guidance": "Only the enrolled selected Modelica tools are available. Preserve actual sealed identities and complete all original engineering stages. Exported native evidence is immutable; no physical actions.", "output_format": "markdown", "save_output": True, "output_filename": output + "/workflow-heater-selection.md", "file_policy": "overwrite", "expected_files": "\n".join(output + "/" + name for name in [*STUDY_FILES, *[request_id + "/" + name for request_id in selected_ids for name in NATIVE_FILES]])}
     # The canonical compiler caps each node at16 declared native files. Retain

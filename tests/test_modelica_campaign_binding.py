@@ -99,6 +99,16 @@ def test_every_generated_heater_node_resolves_and_keeps_original_stages(tmp_path
     assert all(any(step.id.startswith(prefix + "_") for step in plan.steps) for prefix in preparer.ORIGINAL)
     assert any(step.external_action for step in plan.steps)
     verify = next(step for step in plan.steps if step.id.startswith("verify_selection_"))
+    if index == 2:
+        assert "battery-side" in verify.prompt
+        assert "energy-budget.csv" in verify.prompt
+        assert "first target-temperature crossing" in verify.prompt
+        assert "full-run" in verify.prompt
+    else:
+        assert "For the mobile brewer" not in verify.prompt
+        assert "per-batch constraints" not in verify.prompt
+        expected_scope = "single-cup countertop" if index == 1 else "pilot batch-dispenser"
+        assert "This is the " + expected_scope in verify.prompt
     evidence_sources = [source for name, source in verify.references if "native baseline " in name]
     baseline_exports = [step for step in plan.steps if step.id.startswith("export_native_")]
     assert len(evidence_sources) == len(baseline_exports)
@@ -186,6 +196,11 @@ def test_enrollment_rejects_current_catalog_drift(catalog, change):
         current[0]["schema_digest" if change == "schema" else "server_id"] = "c" * 64
     with pytest.raises(ValueError, match="unavailable or stale"):
         enroller.validate_tool_bindings(SimpleNamespace(steps=[]), projected, current)
+
+
+def test_unknown_heater_scenario_cannot_borrow_another_study_scope():
+    with pytest.raises(ValueError, match="Unknown approved water-heater study"):
+        preparer.study_scope("water-heater-sizing-04")
 
 
 def test_selected_modelica_mounts_keep_attempts_separate(tmp_path):
