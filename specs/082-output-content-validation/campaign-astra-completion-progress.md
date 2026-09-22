@@ -390,6 +390,41 @@ reusing the existing screenshot utility; it has passed syntax checking but has
 not run. Run it only when the slicing files exist, then validate the walkthrough
 report before claiming normal-workspace result access.
 
+### Printed 01 review checkpoint and UI access failure — 19:24 UTC
+
+Source authoring, mesh repair and actual Bambu slicing finished; the existing
+explicit integration-test grant authorized only the simulated transfer receipt.
+The distinct engineering review remains **pending, actor null**:
+`checkpoint-e4ec7f837b7f20acbc7f91df`, subject digest
+`2325cd6d89464536ad478d250a5368dd619ff29fa25f05dbae12ee47829be31a`.
+The runner is `awaiting_manual_approval`, reason `validation_review_requires_human`.
+Fifteen artifact files are bound to this review. Preserve the owned Blender
+session and immutable workflow/evidence; do not cleanup as if it were terminal.
+
+Independent file readback found distinct source/repaired meshes, an actual
+285,708-byte 3MF with valid ZIP CRC and 1,210,943 bytes of embedded G-code.
+The slicing evidence records 5,608 extrusion moves and zero support moves;
+package and repaired-input hashes match. Repaired SHA-256:
+`8822fff420129c7253143dc767c8e0f02b679aca7773da35f505fc3187316c06`;
+package SHA-256:
+`3747fed90e09e239c398e6bf66207477990b7db8c87d13538aa7f8cf88d20386`.
+These are limited independent checks, not the final full-profile assessment.
+No physical printer was contacted and no human approval/pass is claimed.
+
+The read-only UI walkthrough entered the normal workspace, clicked Workflows,
+File, Open workflow and selected the exact attempt. The editor then rejected
+the graph: `WFR-RELATIONSHIP-DUPLICATE`; the explicit create-mesh→repair order
+connection duplicates the endpoints of the existing mesh-to-repair connection.
+The runtime had accepted/executed this same definition. Stop evidence, raw and
+annotated screenshots, trace and valid report structure are retained at
+`artifacts/ui-walkthrough/printed01-results/20260922T1922Z/`. Results access is
+**not verified**. No workflow write, resume or approval was issued by the browser.
+Next: investigate the editor's projection of item/reference and order edges and
+repair the compatibility boundary without changing this reviewed run's source
+or artifacts. Preserve this failed walkthrough and use a new continuation root.
+Also reconcile the runner's retained `Raw runtime snapshot changed during
+evidence observation` diagnostic before claiming fully consistent final export.
+
 ### Interrupted implementation checkpoint and throughput review
 
 The user asked why the campaign graph remains flat. Fresh read-only checks

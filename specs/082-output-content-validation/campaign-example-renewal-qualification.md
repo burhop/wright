@@ -1,7 +1,7 @@
 # Campaign example renewal qualification
 
 Date: 22 September 2026. Broad campaign dispatches: **zero**. Isolated canonical
-qualification dispatches: **eight** (Printed 01 attempt 901 is newly running;
+qualification dispatches: **eight** (Printed 01 attempt 901 awaits human review;
 harness 906/907 and water 901/902 are retained
 failures; water 903 failed after successful native simulation/export at 18:07:16
 UTC due to a composite result-identifier length defect). Separate provider probes
@@ -34,6 +34,15 @@ The first Blender topology-inspection script errored; its in-run correction
 returned geometry measurements successfully at 19:20:37 UTC. Slicing, final
 package, human review and full validation are not yet claimed. Isolated evidence:
 `.local-run/renewal-qualification/printed01-canonical-901/`.
+
+Update at 19:24 UTC: mesh repair and actual slicing have finished. The simulated
+transfer used its explicit grant; the separate engineering review remains pending.
+The normal-workspace walkthrough stopped because the editor rejects duplicate
+create-mesh→repair connection endpoints in this runtime-accepted workflow. No
+source or review was changed, and no results-access/full-scope pass is claimed.
+Details and exact review identity are in `campaign-astra-completion-progress.md`;
+the validated walkthrough report is at
+`artifacts/ui-walkthrough/printed01-results/20260922T1922Z/report.html`.
 
 **User-directed deferment:** do not run Solid Edge-dependent examples while
 another agent improves that MCP. The three sheet-metal subjects remain in the
