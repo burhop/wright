@@ -108,6 +108,42 @@ const focus = () =>
     window.dispatchEvent(new Event("focus"));
   });
 
+it("keeps saved results accessible when the diagram source is invalid, without restoring editing authority", async () => {
+  const current = snapshot("completed");
+  current.execution!.outputs = [{
+    task_id: "document_2", task_title: "Slicing the final part",
+    output_path: "campaign/part/artifacts/slice.gcode.3mf", output_bytes: 123,
+    output_format: "3mf",
+  }];
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([current]);
+  const onRun = vi.fn(), onSave = vi.fn(), onOpenFile = vi.fn();
+  render(<WorkflowRecoveryConcept {...props} workflowSource="workflow malformed\nend\n"
+    onRun={onRun} onSave={onSave} onOpenFile={onOpenFile} />);
+  expect(screen.getByRole("alert")).toHaveTextContent("Workflow file needs correction");
+  fireEvent.click(await screen.findByTestId("workflow-results-toggle"));
+  fireEvent.click(screen.getByRole("button", {name: /Slicing the final part/}));
+  fireEvent.click(screen.getByTestId("workflow-result-open"));
+  expect(onOpenFile).toHaveBeenCalledWith("campaign/part/artifacts/slice.gcode.3mf");
+  expect(screen.queryByTestId("workflow-recovery-canvas")).toBeNull();
+  expect(screen.queryByTestId("workflow-recovery-run-start")).toBeNull();
+  expect(onSave).not.toHaveBeenCalled();
+  expect(onRun).not.toHaveBeenCalled();
+});
+
+it("does not carry invalid-source result links into another workflow while its status is loading", async () => {
+  const current = snapshot("completed");
+  current.execution!.outputs = [{task_id: "document_2", task_title: "Old result",
+    output_path: "old/result.md", output_bytes: 1, output_format: "md"}];
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockImplementation(
+    async (_session, path) => path === props.workflowFilePath ? [current] : new Promise(() => {}));
+  const invalid = {...props, workflowSource: "workflow malformed\nend\n", onOpenFile: vi.fn()};
+  const view = render(<WorkflowRecoveryConcept {...invalid} />);
+  await screen.findByTestId("workflow-result-open");
+  view.rerender(<WorkflowRecoveryConcept {...invalid} workflowFilePath="workflows/another.wflow" />);
+  expect(screen.queryByTestId("workflow-result-open")).toBeNull();
+  expect(screen.getByRole("status")).toHaveTextContent("Loading saved run");
+});
+
 it("recovers an external run into the existing graph and viewer links without POST or inert Cancel", async () => {
   let current = snapshot();
   const get = vi

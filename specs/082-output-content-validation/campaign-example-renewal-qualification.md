@@ -49,6 +49,16 @@ another agent improves that MCP. The three sheet-metal subjects remain in the
 approved 30-case target with prior quarantine intact. No Solid Edge deployment
 or qualification work is authorized in this task until the updated handoff.
 
+Update at 19:41 UTC: the preparer duplicate-connection defect is fixed for future
+definitions. Attempt 901's source and 15 review files remain unchanged. The UI
+now exposes saved results even when the diagram is invalid; the separate
+`20260922T1932Z-recovery` normal-workspace walkthrough passed all nine steps,
+including the actual slicing preview in a file tab. The unchanged full profile's
+isolated read-only inspection passes 17 automated checks and remains blocked on
+human review. No canonical final pass or campaign credit is claimed. See
+`printed01-attempt901-engineering-review.md` for the actual files and open
+edge-round, tolerance, socket/grip and support-review items.
+
 A separate native KiCad exporter passed an actual direct MCP check at 18:59:16,
 preserving the retained schematic and exporting its XML netlist, complete ERC
 and source/result hashes. The known omitted B1 splice remains a defect; the

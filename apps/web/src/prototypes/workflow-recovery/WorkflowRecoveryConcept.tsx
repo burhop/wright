@@ -1347,6 +1347,45 @@ export interface WorkflowRecoveryStoredSource {
   readonly layout?: RecoveryLayout | null;
 }
 
+/** Recorded evidence remains inspectable even when authoring fails closed. */
+function InvalidSourceRunResults({ workspaceSessionId, workspaceId, workflowFilePath,
+  storageDigest, onOpenFile }: Pick<WorkflowRecoveryConceptProps,
+  "workspaceSessionId" | "workspaceId" | "workflowFilePath" | "storageDigest" | "onOpenFile">) {
+  const observer = useWorkflowRunObserver(workspaceSessionId, workspaceId,
+    workflowFilePath ?? "", storageDigest ?? "");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const record = observer.record;
+  const mismatch = Boolean(record && (record.source_matches_current === false ||
+    (storageDigest && record.source_digest !== storageDigest)));
+  const results = workflowResultBlocks({workflow: null, results: record?.results,
+    outputs: record?.execution?.outputs, checkpoint: record?.approval, sourceMismatch: mismatch});
+  const selected = results.find(result => result.id === selectedId) ?? results[0];
+  if (!observer.enabled) return null;
+  return <section className="recovery-saved-run-results" data-testid="workflow-invalid-source-results">
+    <h2>Results from the saved run</h2>
+    <p>The diagram needs correction, but files already produced remain available.
+      Viewing these results does not correct the workflow or approve the design.</p>
+    {observer.error && <p role="status">Could not refresh run status: {observer.error}
+      <button type="button" onClick={observer.refresh}>Refresh saved run</button></p>}
+    {!observer.checked && <p role="status">Loading saved run…</p>}
+    {observer.checked && !record && !observer.error && <p>No saved run was found for this workflow.</p>}
+    {record && <>
+      <p>{approvalPresentation(record.approval)?.label ??
+        (record.status === "running" ? "Workflow running" : "Saved execution")}</p>
+      {mismatch && <p role="status">These results belong to a different saved workflow version.
+        They do not verify the current file.</p>}
+      <WorkflowResultsNavigator results={results} onSelect={setSelectedId} />
+      {selected && <WorkflowResultInspector key={selected.id} result={selected}
+        sessionId={workspaceSessionId} onOpenFile={onOpenFile} onSelectProducer={() => undefined} />}
+      {onOpenFile && <button type="button" className="recovery-button recovery-button--secondary"
+        onClick={() => onOpenFile(record.path)}>Open saved run log</button>}
+      {record.approval && workspaceSessionId && <WorkflowExternalApprovalPanel
+        key={`${record.run_id}:${record.approval.checkpoint_id}`} initial={record.approval}
+        sessionId={workspaceSessionId} onOpenFile={onOpenFile} onUpdate={observer.refresh} />}
+    </>}
+  </section>;
+}
+
 export function WorkflowRecoveryConcept({
   simulationPreview = false,
   surfaceState = "ready",
@@ -1408,11 +1447,11 @@ export function WorkflowRecoveryConcept({
     const issue = loaded.diagnostics[0];
     return (
       <section
-        className="workflow-recovery recovery-boundary-state"
+        className="workflow-recovery recovery-invalid-source"
         data-testid="workflow-recovery-concept"
         data-surface-state="invalid-source"
-        role="alert"
       >
+        <div className="recovery-invalid-source__warning" role="alert">
         <b>Workflow file needs correction.</b>
         <span>
           {issue?.explanation ?? "The saved engineering source is invalid."}
@@ -1421,6 +1460,10 @@ export function WorkflowRecoveryConcept({
           {issue?.code ?? "WFR-SOURCE-INVALID"} · The accepted diagram was not
           replaced with fallback content.
         </small>
+        </div>
+        <InvalidSourceRunResults key={`${workspaceSessionId}:${workspaceId}:${workflowFilePath}`}
+          workspaceSessionId={workspaceSessionId} workspaceId={workspaceId}
+          workflowFilePath={workflowFilePath} storageDigest={storageDigest} onOpenFile={onOpenFile} />
       </section>
     );
   }

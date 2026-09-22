@@ -2,9 +2,9 @@
   "schema": "wright.campaign-example-renewal-qualification/1",
   "revision_id": "campaign-example-renewal-r1-2026-09-21",
   "observed_at": "2026-09-22",
-  "campaign_dispatch_count": 7,
+  "campaign_dispatch_count": 8,
   "broad_campaign_dispatch_count": 0,
-  "isolated_qualification_dispatch_count": 7,
+  "isolated_qualification_dispatch_count": 8,
   "static_qualification": {
     "status": "pass",
     "scenario_contracts": 30,
@@ -102,7 +102,7 @@
   },
   "remaining_native_gates": [
     "Harness: isolated native XML/ERC export is proven, but the independent reader must compare actual pins/nets (including missing B1 splice), not producer pass flags. Qualify the new gateway/canonical handoff and obtain the missing resistance basis before claiming completion.",
-    "Sheet metal: produce an actual Solid Edge flat pattern and prove headless reopen/preservation against it.",
+    "Sheet metal: deferred by user while another agent improves Solid Edge MCP. Preserve all three cases and quarantine; no dispatch, probes or deployment changes until updated handoff.",
     "Water heater: run the approved Modelica-to-AgentCAD-to-scikit-fem package chain and reopen the exact CAD/field evidence.",
     "Robot: run the approved diagnosis-to-corrective-CAD-to-CalculiX chain in an isolated successor; do not approve or reuse Robot 010.",
     "Run one representative normal-workspace workflow per family or bind still-current sufficient prior native evidence, then verify result access through Workflows."
@@ -118,6 +118,31 @@
     "evidence": "artifacts/campaign-example-renewal/qualification/kicad-native-interconnect-export.json",
     "focused_tests": 29,
     "campaign_runs": 0
+  },
+  "printed01_followup": {
+    "status": "awaiting_human_review_not_qualified",
+    "attempt_id": "attempt-901",
+    "run_id": "8877a99cc7054faab6b4d586b05845cb",
+    "checkpoint_id": "checkpoint-e4ec7f837b7f20acbc7f91df",
+    "review_state": "pending",
+    "review_actor": null,
+    "source_sha256": "f5ff66cf111a07498550d82b110d1f88c2ca2ead328ea78989742fc6c27e00b6",
+    "immutable_review_files": 15,
+    "isolated_full_profile_inspection": {
+      "pass": 17,
+      "blocked": 1,
+      "release_eligible": false,
+      "path": ".local-run/renewal-qualification/printed01-canonical-901/pre-review-inspection/assessment.json",
+      "sha256": "14c967cd545660adf53c722a7759e971159fb2c7ef30a85381a2de14aeae1108"
+    },
+    "results_access": {
+      "status": "verified_saved_results_with_invalid_diagram_warning",
+      "steps_passed": 9,
+      "report": "artifacts/ui-walkthrough/printed01-results/20260922T1932Z-recovery/report.html",
+      "status_sha256": "b098a1bc67afef418dbfce3bf68fd05e929eb7a80db8ec4f3c531a94f5c53394"
+    },
+    "review_brief": "specs/082-output-content-validation/printed01-attempt901-engineering-review.md",
+    "scope": "Actual Blender design and repair, Bambu slice and simulated transfer. No human approval, canonical final validation, physical printing or campaign completion credit."
   },
   "overall_status": "qualification_in_progress_not_campaign_ready"
 }

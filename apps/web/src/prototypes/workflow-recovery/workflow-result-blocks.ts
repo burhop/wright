@@ -22,6 +22,8 @@ export interface WorkflowResultBlock {
 
 export function safeResultPath(value: unknown): value is string {
   return typeof value === "string" && !!value.trim() &&
+    // Intentionally reject control characters in untrusted artifact paths.
+    // eslint-disable-next-line no-control-regex
     !/^[\\/]|[:\\?#\x00-\x1f]/.test(value) &&
     !value.split("/").some((part) => part === ".." || part === "." || !part);
 }
@@ -50,7 +52,7 @@ function resultTitle(files: ResultFile[]): string {
 }
 
 export function workflowResultBlocks({ workflow, results = [], outputs = [], checkpoint, sourceMismatch = false }: {
-  workflow: RecoveryWorkflow;
+  workflow: RecoveryWorkflow | null;
   results?: readonly WorkspaceEngineeringResult[];
   outputs?: readonly WorkspaceWorkflowOutput[];
   checkpoint?: WorkflowApprovalCheckpoint | null;
@@ -63,13 +65,13 @@ export function workflowResultBlocks({ workflow, results = [], outputs = [], che
     const id = `result.${detached ? "saved." : ""}${producerId}`;
     let value = groups.get(id);
     if (!value) {
-      const producer = workflow.blocks.find((block) => block.id === producerId);
+      const producer = workflow?.blocks.find((block) => block.id === producerId);
       value = { id, producerId: detached ? null : producer?.id ?? null,
         producerTitle: producerTitle || (!detached ? producer?.title : undefined) || "Saved workflow step",
         title: "", files: [], sourceMismatch: detached, reviewLabel: "" };
       groups.set(id, value);
     }
-    if (detached && producerTitle) value.producerTitle = producerTitle;
+    if ((detached || !workflow) && producerTitle) value.producerTitle = producerTitle;
     return value;
   }
   function add(target: WorkflowResultBlock, path: string, available: boolean, sha256?: string | null) {
@@ -79,7 +81,7 @@ export function workflowResultBlocks({ workflow, results = [], outputs = [], che
     if (prior) { prior.available ||= available; prior.sha256 = digest ?? prior.sha256; }
     else target.files.push({ path, available, sha256: digest });
   }
-  for (const block of workflow.blocks) {
+  for (const block of workflow?.blocks ?? []) {
     const files = expectedFiles(block.configuration);
     for (const path of files) add(group(block.id), path, false);
   }

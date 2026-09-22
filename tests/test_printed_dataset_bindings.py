@@ -186,6 +186,15 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number):
     assert configured_review["requirement_ids"]
     assert plan.revisions == {}
     sections = prepare._parse(bound)
+    connections = [s["fields"] for s in sections if s["kind"] == "connection"]
+    endpoint_pairs = [(s["from"], s["to"]) for s in connections]
+    assert len(endpoint_pairs) == len(set(endpoint_pairs))
+    assert sum(
+        s["type"] == "order"
+        and s["from"] == plan.steps[0].id
+        and s["to"] == plan.steps[1].id
+        for s in connections
+    ) == 1
     image = next(s for s in sections if s["id"].startswith("image_and_scale_"))
     assert image["fields"]["settings"]["workspace_file"].endswith("/concept.png")
     assert len(plan.steps[0].references) == 4

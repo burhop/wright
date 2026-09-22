@@ -3951,3 +3951,35 @@
   background: white;
   margin-bottom: 0.75rem;
 }
+
+.workflow-recovery.recovery-invalid-source {
+  display: block;
+  min-width: 0;
+  overflow: auto;
+  padding: 16px;
+}
+.recovery-invalid-source__warning {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.recovery-saved-run-results { max-width: 960px; margin: 20px auto; min-width: 0; }
+.recovery-saved-run-results .recovery-results-menu {
+  position: static;
+  width: auto;
+  max-width: 100%;
+  margin: 8px 0;
+}
+.recovery-saved-run-results .recovery-results-menu > button {
+  display: grid;
+  width: 100%;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  margin: 6px 0;
+  padding: 8px;
+}
+.recovery-saved-run-results .recovery-result-inspector { margin: 16px 0; }

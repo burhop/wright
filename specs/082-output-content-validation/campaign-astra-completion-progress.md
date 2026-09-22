@@ -425,6 +425,48 @@ or artifacts. Preserve this failed walkthrough and use a new continuation root.
 Also reconcile the runner's retained `Raw runtime snapshot changed during
 evidence observation` diagnostic before claiming fully consistent final export.
 
+### Printed 01 results-access repair and independent inspection — 19:41 UTC
+
+The duplicate is two unconditional order connections, not a legitimate data/order
+pair. The preparer now preserves the existing template connection. Three
+regression cases first reproduced the defect and now pass. Attempt 901 remains
+immutable: no restaging, diagram normalization or validator weakening was used.
+
+The editor's invalid-source boundary now retains read-only access to recorded
+results and the existing exact review panel, while authoring/run actions remain
+unavailable. It does not invent a graph. Source mismatch warnings, artifact
+hashes and workflow-switch isolation are retained. The original failed browser
+walkthrough is preserved; the new nine-step normal-workspace walkthrough passes
+at `artifacts/ui-walkthrough/printed01-results/20260922T1932Z-recovery/`.
+Its report structure passed; the slicing image opened in a selected file tab.
+Only two expected cancelled GETs were recorded during navigation, with no
+console/page/HTTP errors or submitted source/run/review mutations.
+
+Verification: 68 UI tests across observer integration, result blocks and the
+editor concept; 21 Python preparer/wrapper/profile tests; TypeScript build and
+selected Ruff passed. ESLint has zero errors and one existing unrelated
+`presentedRun` hook-dependency warning. This is verified result access, not new
+user acceptance or full diagram/authoring qualification.
+
+The unchanged full Printed 01 profile was evaluated separately against the exact
+review files in an isolated database: **17 automated passes, one blocked human
+review, release ineligible**. Evidence is
+`.local-run/renewal-qualification/printed01-canonical-901/pre-review-inspection/assessment.json`,
+SHA-256 `14c967cd545660adf53c722a7759e971159fb2c7ef30a85381a2de14aeae1108`.
+All 15 artifact hashes and original source digest matched before/after; live
+review remains pending, actor null, same checkpoint/subject as above. This is
+not the canonical final validation step and grants no campaign credit.
+
+The engineering review brief is `printed01-attempt901-engineering-review.md`.
+It flags the actual authored 0.8 mm hub bevel versus nominal 1.0 mm exposed-edge
+round requirement, missing explicit ±0.25 mm non-mating tolerance in the source
+report, and the remaining internal/socket/grip review. Recommended disposition
+is request changes; no human decision has been recorded. Original artifacts,
+native lease and review identity remain protected. The runner's earlier evidence
+snapshot diagnostic is not represented as resolved by this independent check.
+Eight isolated canonical renewal dispatches have occurred; zero broad waves.
+Solid Edge remains deferred and proposed water/harness assumptions remain unapplied.
+
 ### Interrupted implementation checkpoint and throughput review
 
 The user asked why the campaign graph remains flat. Fresh read-only checks

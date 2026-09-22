@@ -256,17 +256,27 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "timeout_seconds": 600,
         "expected_file_ports": {"repaired_mesh": f"{output_root}/repaired_mesh.stl"},
     }
-    sections.append({
-        "kind": "connection",
-        "id": f"order_{source_task['id']}_{repair['id']}",
-        "fields": {
-            "type": "order",
-            "from": source_task["id"],
-            "to": repair["id"],
-            "label": "repair the completed source mesh",
-            "when": None,
-        },
-    })
+    # The original template already orders these stages. Retain that identity
+    # rather than adding a duplicate that the diagram correctly rejects.
+    if not any(
+        section["kind"] == "connection"
+        and section["fields"].get("type") == "order"
+        and section["fields"].get("from") == source_task["id"]
+        and section["fields"].get("to") == repair["id"]
+        and section["fields"].get("when") is None
+        for section in sections
+    ):
+        sections.append({
+            "kind": "connection",
+            "id": f"order_{source_task['id']}_{repair['id']}",
+            "fields": {
+                "type": "order",
+                "from": source_task["id"],
+                "to": repair["id"],
+                "label": "repair the completed source mesh",
+                "when": None,
+            },
+        })
     profile = config["scenarios"][scenario_id]["process"]
     slicer_config = {
         "slicer": str((ROOT / config["slicer"]["executable"]).resolve()),

@@ -25,6 +25,22 @@ function setup() {
 }
 
 describe("read-only workflow result blocks", () => {
+  it("projects recorded files without inventing a diagram when the source is unavailable", () => {
+    const {result} = setup();
+    const before = JSON.stringify(result);
+    const blocks = workflowResultBlocks({workflow: null, results: [result], outputs: [{
+      task_id: "generate_geometry", task_title: "Create the final geometry",
+      output_path: "run/plot.svg", output_bytes: 100, output_format: "svg",
+    }]});
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].producerId).toBeNull();
+    expect(blocks[0].producerTitle).toBe("Create the final geometry");
+    expect(blocks[0].files).toEqual([{path: "run/plot.svg", available: true, sha256: digest}]);
+    expect(blocks[0].sourceMismatch).toBe(false);
+    expect(JSON.stringify(result)).toBe(before);
+    expect(workflowResultBlocks({workflow: null})).toEqual([]);
+    expect(workflowResultBlocks({workflow: null, results: [result], sourceMismatch: true})[0].sourceMismatch).toBe(true);
+  });
   it("groups declared and actual files by their exact producer, without changing the workflow", () => {
     const {workflow, result} = setup();
     const before = JSON.stringify(workflow);
