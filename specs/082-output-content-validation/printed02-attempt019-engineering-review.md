@@ -57,3 +57,9 @@ The prepared correction changes both pad bevel settings from 1.00 mm with defaul
 - Sliced package SHA-256: `a82cdbb07581ca0d713fb29a55ac2adb508253e7e7a423c3a862d9fda6d85269`
 
 The [submitted goal](campaign-serial-resolution-goal.md) requires preserving human-review authority and bounded correction budgets. The runtime explicitly requires a human decision for this engineering review. Those requirements are why the exact checkpoint decision and one additional correction need the user's authorization. Displayed retained counts remain 30/30/24/18; current counts remain 30/2/0/0. P001 remains active.
+
+## User decision and correction-budget extension
+
+P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.
+
+[Exact decision](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-019.json), [preserved budget and cleanup](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-approved-extra-correction.json). P002 read-only findings saved and requeued. Prior attempts remain unchanged.

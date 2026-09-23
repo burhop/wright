@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T23:47:31.813160+00:00",
+  "updated_at": "2026-09-22T23:59:18.648457+00:00",
   "goal_authority": "campaign-serial-resolution-goal.md",
   "active_problem": "P001",
   "initial_metrics": {
@@ -50,7 +50,7 @@
       "status": "in_progress",
       "diagnosis": "Current 019 passes 17 automated checks and fixes grip, but pad/bore radii measure 0.969205 mm versus required 1 mm.",
       "hypothesis": "The qualified construction plus explicit final triangulation resolves the grip and export defects; current canonical execution remains to be proven.",
-      "smallest_repair": "Use qualified 1.01 mm unclamped pad rounds after an exact human request-changes decision and an explicit one-correction budget extension.",
+      "smallest_repair": "Execute qualified 1.01 mm pad-round fix through canonical attempt 020, then inspect exact outputs and obtain human review.",
       "dependencies": [
         "Exact current source/profile/artifact identity",
         "Mandatory engineering review"
@@ -389,13 +389,24 @@
           "campaign_credit": false,
           "native_cleanup": "retained at pending human review",
           "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-review-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:59:18.648457+00:00",
+          "kind": "human_decision_and_budget_extension",
+          "attempt_id": "attempt-019",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-approved-extra-correction.json"
+          ],
+          "result": "P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.",
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-user-approved-extra-correction-dashboard.json"
         }
       ],
-      "latest_result": "P001 Printed 02/019: 17 automated checks pass; grip repaired. Pad rounds measure 0.969 < 1 mm. Qualified fix measures 1.01 mm. Exact human decision and one extra correction in the preserved episode requested; no canonical credit.",
+      "latest_result": "P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.",
       "dashboard_verification": {
         "status": "verified",
-        "at": "2026-09-22T23:47:50.488Z",
-        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-review-dashboard.json",
+        "at": "2026-09-22T23:59:48.842Z",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-user-approved-extra-correction-dashboard.json",
         "displayed_counts": {
           "datasets_created": 30,
           "combinations_run": 30,
@@ -450,10 +461,11 @@
             ]
           }
         },
-        "status": "awaiting_manual_approval",
+        "status": "changes_requested",
         "campaign_credit": false,
         "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
-        "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916"
+        "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916",
+        "native_cleanup": "verified cleaned"
       },
       "pending_decision": {
         "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
@@ -464,8 +476,26 @@
           "to": 3,
           "preserve_history": true
         },
-        "budget_change_authorized": false,
-        "review_brief": "specs/082-output-content-validation/printed02-attempt019-engineering-review.md"
+        "budget_change_authorized": true,
+        "review_brief": "specs/082-output-content-validation/printed02-attempt019-engineering-review.md",
+        "status": "answered",
+        "decision_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-019.json"
+      },
+      "disposition": {
+        "category": "external_dependency_or_authority",
+        "temporary": true,
+        "permanent_infeasibility": false,
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-authority-block-current.json",
+        "technical_fix_available": true,
+        "reopening_condition": "Exact current review decision and explicit authority for one additional correction in the preserved episode.",
+        "unmet_counters": [
+          "current_complete_output_packages",
+          "current_fully_validated_outputs"
+        ],
+        "at": "2026-09-22T23:50:45.531554+00:00",
+        "status": "reopened",
+        "reopened_at": "2026-09-22T23:59:18.648457+00:00",
+        "reopened_by": "User approved exact 019 changes-requested decision and one additional correction."
       }
     },
     {
@@ -499,7 +529,7 @@
       "current_status": "not_run",
       "current_complete": false,
       "attempts_this_goal": [],
-      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "latest_result": "Read-only 901 checkpoint and artifacts reconciled; findings saved in p002-before.json. Requeued when user authorized P001 continuation; no P002 repair or successor started.",
       "dashboard_verification": {
         "status": "baseline API snapshots captured; browser check pending",
         "at": "2026-09-22T22:24:52.379188+00:00",

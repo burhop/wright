@@ -2,7 +2,7 @@
 
 Observed: 2026-09-22T22:24:52.379188+00:00. Active goal: [submitted authority](campaign-serial-resolution-goal.md).
 
-The live dashboard displays retained **30/30/24/17**. Its ledger is **30/30/24/0**; 17 is a separate detached automated-inspection count, not current campaign acceptance. Current campaign metrics are **30/1/0/0**. All 24 retained inspected packages have human-review holds.
+Latest dashboard: retained **30/30/24/18**; current **30/2/0/0**. Eighteen is the detached automated-inspection count, not current campaign acceptance. Historical baseline was 30/30/24/17, current 30/1/0/0. Mandatory human reviews remain separate.
 
 **Six missing-output cases overlap the thirteen nonpassing-validation cases: thirteen distinct original cases, not nineteen.** The additional seventeen rows below track current-revision completion/review gaps so historical passes cannot be substituted for renewed evidence.
 
@@ -12,7 +12,7 @@ Difficulty is estimated from inspected findings and retained checkpoints, not pr
 
 | Rank / ID | Exact case | Gap | Difficulty | Observed issue / smallest next repair | Status |
 |---|---|---|---|---|---|
-| 1 / P001 | `printed-replacement-part-02` | validation | easy; geometric finding exposed | Reader repaired within unchanged 100,000-entity budget; actual native mesh repair/reslice now passes all 17 automated checks at Z=33.9990 mm. Canonical execution and human review remain outstanding. | in progress |
+| 1 / P001 | `printed-replacement-part-02` | validation | easy; geometric finding exposed | 019 rejected for 0.969 mm pad rounds; qualified fix measures 1.01 mm. One extra correction explicitly authorized in the same episode; canonical 020 and human review required. | in progress |
 | 2 / P002 | `printed-replacement-part-01` | additional current evidence | easy-medium | Renewed attempt 901 has 17 automated passes but open edge-round/tolerance findings and a mandatory human decision. Resolve the exact review findings through a linked correction and downstream revalidation after the required decision. | queued |
 | 3 / P003 | `printed-replacement-part-03` | additional current evidence | easy-medium | Retained automated checks pass; renewed canonical package and review are unproven. Check current bindings and reuse qualified printing stages for one canonical case with actual review. | queued |
 | 4 / P004 | `sensor-interface-pcb-01` | additional current evidence | medium | Retained native artifacts and ten automated passes exist; current canonical full-scope receipt is absent. Inspect whether retained artifacts can be validly bound; otherwise run only the required current case and obtain review. | queued |
@@ -122,3 +122,13 @@ P001 Printed 02/019: source pads measure 0.969 mm rounds (<1 mm); isolated uncla
 P001 Printed 02/019: 17 automated checks pass; grip repaired. Pad rounds measure 0.969 < 1 mm. Qualified fix measures 1.01 mm. Exact human decision and one extra correction in the preserved episode requested; no canonical credit.
 
 [Exact review brief](printed02-attempt019-engineering-review.md). Correction 2/2 remains in its preserved retry episode. Current counters 30/2/0/0; displayed retained inspection 30/30/24/18. P001 remains active.
+
+## P001 temporary authority disposition
+
+P001 Printed 02: temporarily unsolvable under current authority. Exact 019 human decision and one additional correction remain unapproved; qualified 1.01 mm pad fix exists. Preserve pending run and retry history; no campaign credit. [Current audit](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-authority-block-current.json). The prior goal turn made concrete progress through canonical execution, exact-file validation, geometry measurements, a qualified remaining fix and verified dashboard updates. This continuation rechecked the live checkpoint and runner. The pending decision is unchanged. After browser verification, proceed to P002 under the submitted goal’s independent-item rule; no technical impossibility or full campaign success is claimed.
+
+## User decision and correction-budget extension
+
+P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.
+
+[Exact decision](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-019.json), [preserved budget and cleanup](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-approved-extra-correction.json). P002 read-only findings saved and requeued. Prior attempts remain unchanged.

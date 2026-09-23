@@ -864,3 +864,13 @@ P001 Printed 02/019: source pads measure 0.969 mm rounds (<1 mm); isolated uncla
 P001 Printed 02/019: 17 automated checks pass; grip repaired. Pad rounds measure 0.969 < 1 mm. Qualified fix measures 1.01 mm. Exact human decision and one extra correction in the preserved episode requested; no canonical credit.
 
 [Exact review brief](printed02-attempt019-engineering-review.md). Correction 2/2 remains in its preserved retry episode. Current counters 30/2/0/0; displayed retained inspection 30/30/24/18. P001 remains active.
+
+## P001 temporary authority disposition
+
+P001 Printed 02: temporarily unsolvable under current authority. Exact 019 human decision and one additional correction remain unapproved; qualified 1.01 mm pad fix exists. Preserve pending run and retry history; no campaign credit. [Current audit](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-authority-block-current.json). The prior goal turn made concrete progress through canonical execution, exact-file validation, geometry measurements, a qualified remaining fix and verified dashboard updates. This continuation rechecked the live checkpoint and runner. The pending decision is unchanged. After browser verification, proceed to P002 under the submitted goal’s independent-item rule; no technical impossibility or full campaign success is claimed.
+
+## User decision and correction-budget extension
+
+P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.
+
+[Exact decision](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-019.json), [preserved budget and cleanup](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-approved-extra-correction.json). P002 read-only findings saved and requeued. Prior attempts remain unchanged.

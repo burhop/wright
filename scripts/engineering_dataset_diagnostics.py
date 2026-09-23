@@ -129,7 +129,8 @@ def build_diagnostics(campaign, *, runner_root=None, native_database=None, recov
     """Project persisted evidence afresh on every poll, including after restart.
 
     Optional recovery journal: {families: {template_id: {readiness, next_action,
-    queued_at, fixes: [{at, evidence}]}}, scenarios: {scenario_id: {queued_at}}}.
+    queued_at, fixes: [{at, evidence}]}}, scenarios: {scenario_id: {queued_at,
+    readiness, next_action}}}. Per-case notes override the family fallback.
     Only timestamped fixes with an evidence reference qualify for fix age/counts.
     """
     observed_at = observed_at or datetime.now(timezone.utc).isoformat()
@@ -189,10 +190,11 @@ def build_diagnostics(campaign, *, runner_root=None, native_database=None, recov
         latest = current[-1] if current else {}
         runner = runners.get((scenario, latest.get("attempt_id")), {})
         family_plan = recovery.get("families", {}).get(family, {})
+        scenario_plan = recovery.get("scenarios", {}).get(scenario, {})
         candidate_fixes = family_plan.get("fixes") or []
         fixes = [fix for fix in candidate_fixes if isinstance(fix, dict) and timestamp(fix.get("at")) and fix.get("evidence")]
         last_fix = max(fixes, key=lambda fix: timestamp(fix["at"])) if fixes else None
-        queued_at = recovery.get("scenarios", {}).get(scenario, {}).get("queued_at") or family_plan.get("queued_at")
+        queued_at = scenario_plan.get("queued_at") or family_plan.get("queued_at")
         terminal = latest.get("status") in {"failed", "cancelled", "timed_out", "completed", "succeeded", "blocked"}
         end = latest.get("finished_at") or (runner.get("updated_at") if terminal else None)
         completed = any(receipt.get("completed_with_outputs") for receipt in current)
@@ -214,8 +216,8 @@ def build_diagnostics(campaign, *, runner_root=None, native_database=None, recov
             "fix_age_seconds": seconds(last_fix["at"], observed_at) if last_fix else None,
             "attempts_since_fix": sum(timestamp(receipt.get("started_at")) >= timestamp(last_fix["at"]) for receipt in history if timestamp(receipt.get("started_at"))) if last_fix else None,
             "queue_age_seconds": seconds(queued_at, observed_at) if not completed else None,
-            "readiness": "complete" if completed else family_plan.get("readiness", "not recorded"),
-            "next_action": family_plan.get("next_action"),
+            "readiness": "complete" if completed else scenario_plan.get("readiness", family_plan.get("readiness", "not recorded")),
+            "next_action": scenario_plan.get("next_action", family_plan.get("next_action")),
         })
     finished = [receipt["finished_at"] for receipt in runs if receipt.get("completed_with_outputs") and timestamp(receipt.get("finished_at"))]
     last_completion = max(finished, key=timestamp) if finished else None

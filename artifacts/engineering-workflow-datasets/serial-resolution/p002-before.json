@@ -1,0 +1,77 @@
+{
+  "at": "2026-09-22T23:51:52.675172+00:00",
+  "run_id": "8877a99cc7054faab6b4d586b05845cb",
+  "checkpoint_id": "checkpoint-e4ec7f837b7f20acbc7f91df",
+  "subject_digest": "2325cd6d89464536ad478d250a5368dd619ff29fa25f05dbae12ee47829be31a",
+  "review_state": "pending",
+  "review_actor": null,
+  "source_path": "workflows/campaign-printed-replacement-part-01-attempt-901.workflow.wflow",
+  "source_sha256": "f5ff66cf111a07498550d82b110d1f88c2ca2ead328ea78989742fc6c27e00b6",
+  "artifacts": [
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/filament-profile.json",
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/machine-profile.json",
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/mesh-preview.png",
+      "sha256": "87b633fd7a170e8455866dd0a8cef231418d3f2b669a034911e57a779dca8865"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/printer-transfer-receipt.json",
+      "sha256": "d124729d92333cb03599616e5dcf8b2416b9c8f31fc5d8ee954d46dee4a78d39"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/process-profile.json",
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/repair-model-report.json",
+      "sha256": "0a2e82abe72dc3760a01df662322c5889a8c6063f5f64da40b194d5f807ac1e4"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/repaired_mesh.stl",
+      "sha256": "8822fff420129c7253143dc767c8e0f02b679aca7773da35f505fc3187316c06"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/slice-evidence.json",
+      "sha256": "064b557170fd3e8b55cc0ad8fbd86aac336e043dd56662176e673ac0dd99458e"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/slice-operation-report.json",
+      "sha256": "1b94f685764034eea8e3fd1c8bd5dad14c498d92be0cdbbc6def132f2f47b506"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/slice-preview.png",
+      "sha256": "02c98f6bb3cf321d203a279e956ee79d2dd88d6c131c4bf4725cfcb03dc2c503"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/slice_package.gcode.3mf",
+      "sha256": "3747fed90e09e239c398e6bf66207477990b7db8c87d13538aa7f8cf88d20386"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/slicer.stdout.log",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/source-model-report.json",
+      "sha256": "1db6540e9a3cb6bff288a782431170aa48b9ad2bc07b29f12df393b4ecd395f1"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/source_mesh.stl",
+      "sha256": "5c28288541436514e82787f62c031dd348776203c8e6faa257986736cdf3bea3"
+    },
+    {
+      "path": "campaign/printed-replacement-part-01/attempt-901/artifacts/support-preview.svg",
+      "sha256": "0280945cf721d3a354f55b604cf04979440264cc45a5e8542548fac724cb7908"
+    }
+  ],
+  "prior_full_profile_inspection": {
+    "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\printed01-canonical-901\\pre-review-inspection\\assessment.json",
+    "sha256": "14c967cd545660adf53c722a7759e971159fb2c7ef30a85381a2de14aeae1108"
+  },
+  "scope": "Read-only live checkpoint and exact-file revalidation; no new native run, decision or campaign credit."
+}

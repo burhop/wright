@@ -108,6 +108,57 @@ class RetryEpisodeLedger:
             raise ValueError("Retry episode ledger is invalid")
         return document
 
+    def _extended_limit(self, episode_id, episode, evidence):
+        """Check a byte-bound operator decision; manifests cannot raise the limit."""
+        try:
+            path = (self.path.parent / evidence["path"]).resolve()
+            path.relative_to(self.path.parent)
+            raw = path.read_bytes()
+            if hashlib.sha256(raw).hexdigest() != evidence["sha256"]:
+                raise ValueError("Decision bytes changed")
+            decision = json.loads(raw)
+            authority = decision["retry_budget_authorization"]
+            maximum = episode["max_corrections"]
+            if (
+                decision["actor"] != "local_workspace_user"
+                or decision["state"] != "changes_requested"
+                or decision["automatic_approval"] is not False
+                or not decision["user_instruction"]
+                or authority != {
+                    "episode_id": episode_id,
+                    "from_max_corrections": maximum,
+                    "to_max_corrections": maximum + 1,
+                    "additional_corrections": 1,
+                    "preserve_history": True,
+                }
+            ):
+                raise ValueError("Decision does not authorize this extension")
+            return maximum + 1
+        except (KeyError, TypeError, OSError, ValueError) as exc:
+            raise ValueError("Retry budget extension evidence is invalid") from exc
+
+    def record_human_budget_extension(self, episode_id, evidence):
+        """Operator-only action after explicit user authority, never automatic retry."""
+        document = self._load()
+        episode = document["episodes"][episode_id]
+        maximum = self._extended_limit(episode_id, episode, evidence)
+        if episode.get("human_budget_extension"):
+            raise ValueError("Retry budget extension already recorded")
+        if (
+            len(episode["attempts"]) != episode["max_corrections"]
+            or any(row["outcome"] not in TERMINAL for row in episode["attempts"])
+        ):
+            raise ValueError("Retry budget extension requires exhausted terminal attempts")
+        episode["human_budget_extension"] = {
+            "evidence": evidence,
+            "authorized_max_corrections": maximum,
+            "prior_attempts_sha256": fingerprint(episode["attempts"]),
+            "prior_attempt_count": len(episode["attempts"]),
+            "recorded_at": now(),
+        }
+        atomic_json(self.path, document)
+        return episode["human_budget_extension"]
+
     def authorize(self, case):
         configured = case.get("retry_episode")
         if configured is None:
@@ -176,6 +227,15 @@ class RetryEpisodeLedger:
             episodes[episode_id] = episode
         elif any(episode.get(key) != value for key, value in identity.items()):
             raise ValueError("Retry episode identity changed")
+        extension = episode.get("human_budget_extension")
+        if extension:
+            maximum = self._extended_limit(episode_id, episode, extension["evidence"])
+            if (
+                maximum != extension["authorized_max_corrections"]
+                or fingerprint(episode["attempts"][:extension["prior_attempt_count"]])
+                != extension["prior_attempts_sha256"]
+            ):
+                raise ValueError("Retry budget extension history changed")
         attempt_identity = (case["scenario_id"], case["attempt_id"])
         existing = next(
             (

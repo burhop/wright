@@ -120,6 +120,29 @@ def test_completed_current_revision_and_last_completion_are_independent_of_clean
     assert result["native"]["available"] is False
 
 
+def test_case_disposition_does_not_replace_sibling_family_fallback(tmp_path):
+    ledger = campaign(tmp_path, [receipt()])
+    with sqlite3.connect(ledger.db) as db:
+        db.execute("INSERT INTO datasets VALUES (?,?)", ("family-02", json.dumps({
+            "scenario_id": "family-02", "template_id": "family",
+            "digest": "current", "template_digest": "template",
+        })))
+    before = ledger.db.read_bytes()
+    journal = tmp_path / "recovery.json"
+    write_json(journal, {
+        "families": {"family": {"readiness": "queued", "next_action": "Inspect remaining cases"}},
+        "scenarios": {"family-01": {"readiness": "temporary authority block", "next_action": "Await exact human decision"}},
+    })
+    result = build_diagnostics(ledger, recovery_path=journal)
+    first, second = result["scenarios"]
+    assert first["readiness"] == "temporary authority block"
+    assert first["next_action"] == "Await exact human decision"
+    assert second["readiness"] == "queued"
+    assert second["next_action"] == "Inspect remaining cases"
+    assert result["families"][0]["readiness"] == "queued"
+    assert ledger.db.read_bytes() == before
+
+
 def test_native_read_only_projection_filters_private_fields(tmp_path):
     path = tmp_path / "native.db"
     with sqlite3.connect(path) as db:

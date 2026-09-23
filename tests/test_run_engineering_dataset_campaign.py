@@ -191,6 +191,49 @@ def test_retry_episode_recomputes_bounded_fix_evidence(tmp_path, case):
         runner_module.RetryEpisodeLedger(ledger_path).authorize(configured)
 
 
+def test_human_extension_preserves_exhausted_episode_and_allows_only_one_more(tmp_path, case):
+    ledger = runner_module.RetryEpisodeLedger(tmp_path / "episodes.json")
+    fix = tmp_path / "fix.txt"
+    fix.write_text("measured material correction")
+    proof = {"id": "measured-fix", "path": fix.name,
+             "sha256": hashlib.sha256(fix.read_bytes()).hexdigest()}
+
+    def attempt(number):
+        return {**case, "attempt_id": f"attempt-{number}", "retry_episode": {
+            "episode_id": "review", "failure_key": "rounding", "boundary": "review",
+            "max_corrections": 2, "baseline_attempt_ids": ["baseline"],
+            "correction": {"id": f"fix-{number}", "evidence": [proof]}}}
+
+    for number in (1, 2):
+        ledger.authorize(attempt(number))
+        ledger.record_outcome(attempt(number), "changes_requested")
+    before = ledger._load()["episodes"]["review"]
+    with pytest.raises(ValueError, match="correction limit"):
+        ledger.authorize(attempt(3))
+    decision = tmp_path / "decision.json"
+    document = {
+        "actor": "local_workspace_user", "state": "changes_requested",
+        "automatic_approval": False, "user_instruction": "approved",
+        "retry_budget_authorization": {"episode_id": "review", "from_max_corrections": 2,
+            "to_max_corrections": 3, "additional_corrections": 1, "preserve_history": True}}
+    decision.write_text(json.dumps(document))
+    evidence = {"path": decision.name, "sha256": hashlib.sha256(decision.read_bytes()).hexdigest()}
+    ledger.record_human_budget_extension("review", evidence)
+    with pytest.raises(ValueError, match="already recorded"):
+        ledger.record_human_budget_extension("review", evidence)
+    restarted = runner_module.RetryEpisodeLedger(ledger.path)
+    restarted.authorize(attempt(3))
+    after = restarted._load()["episodes"]["review"]
+    assert after["attempts"][:2] == before["attempts"]
+    assert after["baseline_attempt_ids"] == before["baseline_attempt_ids"]
+    assert after["max_corrections"] == 2
+    with pytest.raises(ValueError, match="correction limit"):
+        restarted.authorize(attempt(4))
+    decision.write_text("changed decision")
+    with pytest.raises(ValueError, match="extension evidence"):
+        restarted.authorize(attempt(3))
+
+
 def test_disk_probe_error_blocks_only_new_start(case,tmp_path,make_runner,monkeypatch):
     def unavailable(path):
         raise OSError("volume unavailable")

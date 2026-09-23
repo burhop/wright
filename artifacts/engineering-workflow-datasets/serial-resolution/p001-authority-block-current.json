@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-22T23:50:15.489934+00:00",
+  "scope": "Live read-only approval and retry-budget audit. No decision, budget change, cancellation or approval posted.",
+  "run_id": "4a16015946e94f898727b0a49b256dc1",
+  "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
+  "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916",
+  "review_state": "pending",
+  "review_actor": null,
+  "artifact_hashes_unchanged": 16,
+  "retry_episode": {
+    "failure_key": "review_changes_requested:clearance-native-orientation",
+    "boundary": "printed-replacement-part-02:engineering-review",
+    "max_corrections": 2,
+    "baseline_attempt_ids": [
+      "attempt-017"
+    ],
+    "attempts": [
+      {
+        "scenario_id": "printed-replacement-part-02",
+        "attempt_id": "attempt-018",
+        "integration_policy_digest": "78c3b1d082794206310e3d4271f78a969c93c867e49799d7c77be7197aa92e1b",
+        "correction": {
+          "id": "preserve-dimensioned-mesh-and-review-evidence-r1",
+          "evidence": [
+            {
+              "id": "user-decision-and-native-qualified-repair",
+              "path": "retry-evidence/printed02-review-correction-018.json",
+              "sha256": "4a0db43913885580ba0827920e1bbd805e156f95497ae38cd384486087acb698"
+            }
+          ]
+        },
+        "authorized_at": "2026-09-22T22:55:35.273039+00:00",
+        "outcome": "changes_requested",
+        "observed_at": "2026-09-22T23:08:17.751945+00:00"
+      },
+      {
+        "scenario_id": "printed-replacement-part-02",
+        "attempt_id": "attempt-019",
+        "integration_policy_digest": "0f5b2014feeebf2908927592cfbef0b6f0458dc59c0d2053e539834a44ed6f56",
+        "correction": {
+          "id": "analytic-grip-rounds-and-full-span-recess-r2",
+          "evidence": [
+            {
+              "id": "user-decision-and-native-qualified-repair",
+              "path": "retry-evidence/printed02-review-correction-019.json",
+              "sha256": "a1a5c7e8880721ea7b70ca0e81998c02c978009b628252979fbcbdc17f876874"
+            }
+          ]
+        },
+        "authorized_at": "2026-09-22T23:40:42.253252+00:00",
+        "outcome": "dispatch_authorized"
+      }
+    ]
+  },
+  "runner_handle": 67712,
+  "runner_handle_observation": "write_stdin returned the same live session on this goal continuation",
+  "disposition": "temporary external authority block; qualified technical correction exists",
+  "reopening_condition": "Exact current review decision and explicit authority for one additional correction in the preserved episode."
+}
