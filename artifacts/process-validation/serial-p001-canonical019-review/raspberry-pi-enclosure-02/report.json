@@ -1,0 +1,3577 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "2703245eff5dd8525058afc91f49de6d8ae6932afe7f2d9da899f3fa24be89e0",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:36.701655+00:00",
+    "selected_assessment_id": "assessment-98553e05aa984228bab9c9140e2b5f76",
+    "selected_attempt_id": "84b60133f6504b25aa87fb41b7f05b35",
+    "selected_subject_ids": [
+      "design-basis",
+      "manufacturer-research",
+      "cad-source",
+      "comparison",
+      "field-archive",
+      "enclosure-a",
+      "fluid-domain-a",
+      "board-a",
+      "contract-a",
+      "source-primary-a",
+      "source-secondary-a",
+      "enclosure-b",
+      "fluid-domain-b",
+      "board-b",
+      "contract-b",
+      "source-primary-b",
+      "source-secondary-b"
+    ],
+    "latest_attempt_id": "84b60133f6504b25aa87fb41b7f05b35",
+    "latest_assessment_id": "assessment-98553e05aa984228bab9c9140e2b5f76",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "PI02-SOURCE",
+      "PI02-ENCLOSURE",
+      "PI02-LOADS",
+      "PI02-VARIANTS",
+      "PI02-SCREEN",
+      "PI02-CFD",
+      "PI02-DELIVERABLES",
+      "PI02-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Manufacturer-source authority, detailed CAD features and physical thermal, ingress, electrical, EMC, material and release claims require authenticated engineering review. Mesh-refinement evidence is not present in the retained output."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "step-bounding-box",
+      "version": "1",
+      "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+      "method": "native_inspection",
+      "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+      "formats": [
+        "step",
+        "stp"
+      ]
+    },
+    {
+      "id": "cfd-evidence",
+      "version": "1",
+      "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded CFD evidence reader v1",
+      "formats": [
+        "json",
+        "zip"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "PI02-ENCLOSURE",
+      "requirement_text": "The 130×95×60 mm body, 145 mm ear centers/4.5 mm holes, 2.8 mm walls, removable lid, external ears, 30×18 mm underside cable exit, 35 mm drip-loop clearance and status-light access are preserved.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Mounting and service requirements"
+        }
+      ],
+      "check_id": "enclosure-a-z",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/z_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 60.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        48.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-a@af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-a",
+      "subject_sha256": "af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-LOADS",
+      "requirement_text": "Matched models use 35 °C ambient, 6 W and 2 W sources at exact thermal-loads.csv geometry with 12 mm separation, gravity toward base and wall k=0.20 W/(m·K).",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/thermal-loads.csv",
+          "sha256": "0626fe34c83915276b205a57c3641bfd16d3bf31b0315f150c9c46607f0e6a64",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "contract-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-a@d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6#cfd/contract",
+        "subject:fluid-domain-a@4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91#cfd-region:air",
+        "subject:source-primary-a@2e83ebc541dfc9be669d104b9676fdf4bc7bd4fad7f28d3bac265ea3f62c6b8a#cfd-region:pi_source",
+        "subject:source-secondary-a@f4b175b20dcf12e3ce39257df05b988b75c3280cccbd408865af890fbcd1f0e7#cfd-region:sensor_source",
+        "subject:enclosure-a@af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce#cfd-region:shell"
+      ],
+      "subject_id": "contract-a",
+      "subject_sha256": "d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "contract-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-a@d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6#cfd/contract",
+        "subject:fluid-domain-a@4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91#cfd-region:air",
+        "subject:source-primary-a@2e83ebc541dfc9be669d104b9676fdf4bc7bd4fad7f28d3bac265ea3f62c6b8a#cfd-region:pi_source",
+        "subject:source-secondary-a@f4b175b20dcf12e3ce39257df05b988b75c3280cccbd408865af890fbcd1f0e7#cfd-region:sensor_source",
+        "subject:enclosure-a@af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce#cfd-region:shell"
+      ],
+      "subject_id": "contract-a",
+      "subject_sha256": "d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "patch-temperature-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/a/maximum_temperature_c",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 70.0,
+        "inclusive": true
+      },
+      "expected_unit": "degC",
+      "expected_frame": null,
+      "observed": [
+        35.18648681640627
+      ],
+      "observed_units": [
+        "degC"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#cfd/a/maximum_temperature_c"
+      ],
+      "subject_id": "field-archive",
+      "subject_sha256": "5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "field_archive"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "mass-balance-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/a/mass_balance_relative",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.001,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0.00043803129303383463
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/a/mass_balance_relative"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced basis, both measurable CAD/STEP cases, matching fluid domains and field-backed CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Organization policy"
+        }
+      ],
+      "check_id": "fluid-domain-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/x_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 1.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        250.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:fluid-domain-a@4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91#solid-vertex-envelope"
+      ],
+      "subject_id": "fluid-domain-a",
+      "subject_sha256": "4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fluid_domain_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-ENCLOSURE",
+      "requirement_text": "The 130×95×60 mm body, 145 mm ear centers/4.5 mm holes, 2.8 mm walls, removable lid, external ears, 30×18 mm underside cable exit, 35 mm drip-loop clearance and status-light access are preserved.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Mounting and service requirements"
+        }
+      ],
+      "check_id": "enclosure-b-z",
+      "check_version": "1",
+      "check_state": "fail",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/z_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 60.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        68.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-b",
+      "subject_sha256": "ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_b"
+      },
+      "finding_ids": [
+        "f-6a0205ab401d4422bdebad58f29aaa87"
+      ],
+      "action": "revise_output"
+    },
+    {
+      "requirement_id": "PI02-LOADS",
+      "requirement_text": "Matched models use 35 °C ambient, 6 W and 2 W sources at exact thermal-loads.csv geometry with 12 mm separation, gravity toward base and wall k=0.20 W/(m·K).",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/thermal-loads.csv",
+          "sha256": "0626fe34c83915276b205a57c3641bfd16d3bf31b0315f150c9c46607f0e6a64",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "contract-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-b@829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90#cfd/contract",
+        "subject:fluid-domain-b@2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722#cfd-region:air",
+        "subject:source-primary-b@d26502480828889b4ded602b76172f2b1a1549152bdccdb660d707ecb8c085ff#cfd-region:pi_source",
+        "subject:source-secondary-b@9f9585673dd0879ebb0a371e028c192aa664a2201ea7eed06af4bc5ecd5758a1#cfd-region:sensor_source",
+        "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#cfd-region:shell"
+      ],
+      "subject_id": "contract-b",
+      "subject_sha256": "829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "contract-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-b@829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90#cfd/contract",
+        "subject:fluid-domain-b@2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722#cfd-region:air",
+        "subject:source-primary-b@d26502480828889b4ded602b76172f2b1a1549152bdccdb660d707ecb8c085ff#cfd-region:pi_source",
+        "subject:source-secondary-b@9f9585673dd0879ebb0a371e028c192aa664a2201ea7eed06af4bc5ecd5758a1#cfd-region:sensor_source",
+        "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#cfd-region:shell"
+      ],
+      "subject_id": "contract-b",
+      "subject_sha256": "829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "patch-temperature-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/b/maximum_temperature_c",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 70.0,
+        "inclusive": true
+      },
+      "expected_unit": "degC",
+      "expected_frame": null,
+      "observed": [
+        35.1865173339844
+      ],
+      "observed_units": [
+        "degC"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#cfd/b/maximum_temperature_c"
+      ],
+      "subject_id": "field-archive",
+      "subject_sha256": "5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "field_archive"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "mass-balance-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/b/mass_balance_relative",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.001,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0.00040295234178203024
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/b/mass_balance_relative"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced basis, both measurable CAD/STEP cases, matching fluid domains and field-backed CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Organization policy"
+        }
+      ],
+      "check_id": "fluid-domain-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/x_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 1.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        250.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:fluid-domain-b@2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722#solid-vertex-envelope"
+      ],
+      "subject_id": "fluid-domain-b",
+      "subject_sha256": "2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fluid_domain_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "field-archive-binding",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/archive_records",
+      "expected": {
+        "operator": "equals",
+        "expected": 24,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        24
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/archive_records",
+        "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#fields"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced basis, both measurable CAD/STEP cases, matching fluid domains and field-backed CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Organization policy"
+        }
+      ],
+      "check_id": "field-archive-binding",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/archive_records",
+      "expected": {
+        "operator": "equals",
+        "expected": 24,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        24
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/archive_records",
+        "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#fields"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "convergence-evidence",
+      "check_version": "1",
+      "check_state": "fail",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/convergence",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [
+        "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/convergence"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [
+        "f-189e2e1ca7614d5cb71c3716206e4b24"
+      ],
+      "action": "revise_output"
+    },
+    {
+      "requirement_id": "PI02-CFD",
+      "requirement_text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "comparison request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "heat-balance-evidence",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/heat_balance_relative",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.01,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [
+        "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/heat_balance_relative"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [
+        "f-0cddc409324c4ae8a49cd6f510f6a014"
+      ],
+      "action": "supply_input"
+    },
+    {
+      "requirement_id": "PI02-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced basis, both measurable CAD/STEP cases, matching fluid domains and field-backed CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Organization policy"
+        }
+      ],
+      "check_id": "design-basis-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 15455,
+          "present": true,
+          "sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:design-basis@3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b#"
+      ],
+      "subject_id": "design-basis",
+      "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced basis, both measurable CAD/STEP cases, matching fluid domains and field-backed CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Organization policy"
+        }
+      ],
+      "check_id": "manufacturer-research-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 6006,
+          "present": true,
+          "sha256": "2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:manufacturer-research@2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b#"
+      ],
+      "subject_id": "manufacturer-research",
+      "subject_sha256": "2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "manufacturer_research"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced basis, both measurable CAD/STEP cases, matching fluid domains and field-backed CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Organization policy"
+        }
+      ],
+      "check_id": "editable-source-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 14061,
+          "present": true,
+          "sha256": "0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:cad-source@0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283#"
+      ],
+      "subject_id": "cad-source",
+      "subject_sha256": "0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "cad_source"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI02-SOURCE",
+      "requirement_text": "Board and connector geometry uses a cited official Pi 5 source; nominal sketch geometry and any unsourced gland, filter or insert remain assumptions/unresolved.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "research request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Field context and research"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-4ba5a801966a40d9bf652d555a572eb5"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI02-ENCLOSURE",
+      "requirement_text": "The 130×95×60 mm body, 145 mm ear centers/4.5 mm holes, 2.8 mm walls, removable lid, external ears, 30×18 mm underside cable exit, 35 mm drip-loop clearance and status-light access are preserved.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Mounting and service requirements"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-4ba5a801966a40d9bf652d555a572eb5"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI02-LOADS",
+      "requirement_text": "Matched models use 35 °C ambient, 6 W and 2 W sources at exact thermal-loads.csv geometry with 12 mm separation, gravity toward base and wall k=0.20 W/(m·K).",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/thermal-loads.csv",
+          "sha256": "0626fe34c83915276b205a57c3641bfd16d3bf31b0315f150c9c46607f0e6a64",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-4ba5a801966a40d9bf652d555a572eb5"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI02-VARIANTS",
+      "requirement_text": "Both variants share the lower inlet; one uses downward louvers and one a 20 mm top chimney, each within the body height envelope.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-4ba5a801966a40d9bf652d555a572eb5"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI02-SCREEN",
+      "requirement_text": "Screen resistance is included only as a documented supported assumption; otherwise clear-opening results explicitly leave pressure loss unresolved.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-4ba5a801966a40d9bf652d555a572eb5"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI02-SCOPE",
+      "requirement_text": "The result claims no waterproof/IP, contamination, UV, moisture or physical qualification and performs no manufacture, device command or supplier transaction.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+          "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+          "locator": "rating limitation"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+          "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+          "locator": "Thermal and flow inputs; Organization policy"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-4ba5a801966a40d9bf652d555a572eb5"
+      ],
+      "action": "request_review"
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-98553e05aa984228bab9c9140e2b5f76",
+    "attempt_id": "84b60133f6504b25aa87fb41b7f05b35",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "raspberry-pi-enclosure-02",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "design-basis",
+          "role": "design_basis",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:design_basis",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "design_basis"
+          },
+          "kind": "file",
+          "sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+          "value": null,
+          "locator": "design-basis.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "manufacturer-research",
+          "role": "manufacturer_research",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:manufacturer_research",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "manufacturer_research"
+          },
+          "kind": "file",
+          "sha256": "2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b",
+          "value": null,
+          "locator": "manufacturer-research.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "cad-source",
+          "role": "cad_source",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:cad_source",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "cad_source"
+          },
+          "kind": "file",
+          "sha256": "0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283",
+          "value": null,
+          "locator": "enclosure-source.py",
+          "format": "text",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "comparison",
+          "role": "comparison",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:comparison",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "comparison"
+          },
+          "kind": "file",
+          "sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+          "value": null,
+          "locator": "cfd-comparison.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "field-archive",
+          "role": "field_archive",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:field_archive",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "field_archive"
+          },
+          "kind": "file",
+          "sha256": "5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32",
+          "value": null,
+          "locator": "cfd-fields.zip",
+          "format": "zip",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "enclosure-a",
+          "role": "enclosure_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:enclosure_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "enclosure_a"
+          },
+          "kind": "file",
+          "sha256": "af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce",
+          "value": null,
+          "locator": "enclosure-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "fluid-domain-a",
+          "role": "fluid_domain_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:fluid_domain_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "fluid_domain_a"
+          },
+          "kind": "file",
+          "sha256": "4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91",
+          "value": null,
+          "locator": "fluid-domain-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "board-a",
+          "role": "board_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:board_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "board_a"
+          },
+          "kind": "file",
+          "sha256": "b719480313cf4c3cd5e7eeda22a109da18a9e45d424aeab6a2ea65b1fc3b27ca",
+          "value": null,
+          "locator": "board-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "contract-a",
+          "role": "contract_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:contract_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "contract_a"
+          },
+          "kind": "file",
+          "sha256": "d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6",
+          "value": null,
+          "locator": "cfd-contract-a.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-primary-a",
+          "role": "source_primary_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:source_primary_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_primary_a"
+          },
+          "kind": "file",
+          "sha256": "2e83ebc541dfc9be669d104b9676fdf4bc7bd4fad7f28d3bac265ea3f62c6b8a",
+          "value": null,
+          "locator": "pi_surrogate-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-secondary-a",
+          "role": "source_secondary_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:source_secondary_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_secondary_a"
+          },
+          "kind": "file",
+          "sha256": "f4b175b20dcf12e3ce39257df05b988b75c3280cccbd408865af890fbcd1f0e7",
+          "value": null,
+          "locator": "sensor_interface-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "enclosure-b",
+          "role": "enclosure_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:enclosure_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "enclosure_b"
+          },
+          "kind": "file",
+          "sha256": "ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a",
+          "value": null,
+          "locator": "enclosure-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "fluid-domain-b",
+          "role": "fluid_domain_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:fluid_domain_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "fluid_domain_b"
+          },
+          "kind": "file",
+          "sha256": "2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722",
+          "value": null,
+          "locator": "fluid-domain-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "board-b",
+          "role": "board_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:board_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "board_b"
+          },
+          "kind": "file",
+          "sha256": "e664afa90e5d6c9c8db975bdce534e43e0f07217c3dfab73580fb7a5d80c938f",
+          "value": null,
+          "locator": "board-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "contract-b",
+          "role": "contract_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:contract_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "contract_b"
+          },
+          "kind": "file",
+          "sha256": "829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90",
+          "value": null,
+          "locator": "cfd-contract-b.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-primary-b",
+          "role": "source_primary_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:source_primary_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_primary_b"
+          },
+          "kind": "file",
+          "sha256": "d26502480828889b4ded602b76172f2b1a1549152bdccdb660d707ecb8c085ff",
+          "value": null,
+          "locator": "pi_surrogate-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-secondary-b",
+          "role": "source_secondary_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-02:source_secondary_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_secondary_b"
+          },
+          "kind": "file",
+          "sha256": "9f9585673dd0879ebb0a371e028c192aa664a2201ea7eed06af4bc5ecd5758a1",
+          "value": null,
+          "locator": "sensor_interface-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "raspberry-pi-enclosure-02-full",
+        "version": "1",
+        "sha256": "8c6ecf39eeb3f893d499dccfcd16741fc99e3883e0eb93a5cd278fe2392e361a"
+      },
+      "baseline_ref": {
+        "id": "raspberry-pi-enclosure-02-basis",
+        "version": "1",
+        "sha256": "5947b499daff950b17b32fe8a2fb6c80b2c41e10e05567444ade1aa65a62f979"
+      },
+      "idempotency_key": "raspberry-pi-enclosure-02",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "raspberry-pi-enclosure-02-full",
+      "version": "1",
+      "baseline": {
+        "id": "raspberry-pi-enclosure-02-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "PI02-SOURCE",
+            "text": "Board and connector geometry uses a cited official Pi 5 source; nominal sketch geometry and any unsourced gland, filter or insert remain assumptions/unresolved.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+                "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+                "locator": "research request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Field context and research"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI02-ENCLOSURE",
+            "text": "The 130×95×60 mm body, 145 mm ear centers/4.5 mm holes, 2.8 mm walls, removable lid, external ears, 30×18 mm underside cable exit, 35 mm drip-loop clearance and status-light access are preserved.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Mounting and service requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI02-LOADS",
+            "text": "Matched models use 35 °C ambient, 6 W and 2 W sources at exact thermal-loads.csv geometry with 12 mm separation, gravity toward base and wall k=0.20 W/(m·K).",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/thermal-loads.csv",
+                "sha256": "0626fe34c83915276b205a57c3641bfd16d3bf31b0315f150c9c46607f0e6a64",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Thermal and flow inputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI02-VARIANTS",
+            "text": "Both variants share the lower inlet; one uses downward louvers and one a 20 mm top chimney, each within the body height envelope.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Thermal and flow inputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI02-SCREEN",
+            "text": "Screen resistance is included only as a documented supported assumption; otherwise clear-opening results explicitly leave pressure loss unresolved.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Thermal and flow inputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI02-CFD",
+            "text": "Actual comparable fields, convergence, balance and flow summaries evaluate the below-70 °C patch target and disclose debris/temperature tradeoffs.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+                "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+                "locator": "comparison request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Thermal and flow inputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PI02-DELIVERABLES",
+            "text": "The output set contains reviewed sourced basis, both measurable CAD/STEP cases, matching fluid domains and field-backed CFD comparison.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+                "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Organization policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PI02-SCOPE",
+            "text": "The result claims no waterproof/IP, contamination, UV, moisture or physical qualification and performs no manufacture, device command or supplier transaction.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+                "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+                "locator": "rating limitation"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+                "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+                "locator": "Thermal and flow inputs; Organization policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "enclosure-a-z",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_a",
+          "reader": "step-bounding-box",
+          "selector": "box/z_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 60.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "contract-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-LOADS",
+            "PI02-CFD"
+          ],
+          "subject_role": "contract_a",
+          "reader": "cfd-evidence",
+          "selector": "cfd/contract",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected": {
+              "ambient_k": 308.15,
+              "gravity_m_s2": [
+                0,
+                0,
+                -9.81
+              ],
+              "regions": {
+                "air": {
+                  "heat_w": 0,
+                  "kappa": 0.0267
+                },
+                "pi_source": {
+                  "heat_w": 6,
+                  "kappa": 120
+                },
+                "sensor_source": {
+                  "heat_w": 2,
+                  "kappa": 120
+                },
+                "shell": {
+                  "heat_w": 0,
+                  "kappa": 0.2
+                }
+              }
+            },
+            "operation": "contract",
+            "region_roles": {
+              "air": "fluid_domain_a",
+              "pi_source": "source_primary_a",
+              "sensor_source": "source_secondary_a",
+              "shell": "enclosure_a"
+            },
+            "related_roles": [
+              "enclosure_a",
+              "fluid_domain_a",
+              "source_primary_a",
+              "source_secondary_a"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "patch-temperature-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "subject_role": "field_archive",
+          "reader": "cfd-evidence",
+          "selector": "cfd/a/maximum_temperature_c",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 70.0,
+            "inclusive": true
+          },
+          "unit": "degC",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "member": "variant-a/pi_source.vtk",
+            "operation": "maximum_temperature"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "mass-balance-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/a/mass_balance_relative",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.001,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mass_balance_relative",
+            "variant": "variant-a"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "fluid-domain-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-DELIVERABLES"
+          ],
+          "subject_role": "fluid_domain_a",
+          "reader": "step-bounding-box",
+          "selector": "box/x_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": 1.0,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "enclosure-b-z",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_b",
+          "reader": "step-bounding-box",
+          "selector": "box/z_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 60.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "contract-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-LOADS",
+            "PI02-CFD"
+          ],
+          "subject_role": "contract_b",
+          "reader": "cfd-evidence",
+          "selector": "cfd/contract",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected": {
+              "ambient_k": 308.15,
+              "gravity_m_s2": [
+                0,
+                0,
+                -9.81
+              ],
+              "regions": {
+                "air": {
+                  "heat_w": 0,
+                  "kappa": 0.0267
+                },
+                "pi_source": {
+                  "heat_w": 6,
+                  "kappa": 120
+                },
+                "sensor_source": {
+                  "heat_w": 2,
+                  "kappa": 120
+                },
+                "shell": {
+                  "heat_w": 0,
+                  "kappa": 0.2
+                }
+              }
+            },
+            "operation": "contract",
+            "region_roles": {
+              "air": "fluid_domain_b",
+              "pi_source": "source_primary_b",
+              "sensor_source": "source_secondary_b",
+              "shell": "enclosure_b"
+            },
+            "related_roles": [
+              "enclosure_b",
+              "fluid_domain_b",
+              "source_primary_b",
+              "source_secondary_b"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "patch-temperature-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "subject_role": "field_archive",
+          "reader": "cfd-evidence",
+          "selector": "cfd/b/maximum_temperature_c",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 70.0,
+            "inclusive": true
+          },
+          "unit": "degC",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "member": "variant-b/pi_source.vtk",
+            "operation": "maximum_temperature"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "mass-balance-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/b/mass_balance_relative",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.001,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mass_balance_relative",
+            "variant": "variant-b"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "fluid-domain-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-DELIVERABLES"
+          ],
+          "subject_role": "fluid_domain_b",
+          "reader": "step-bounding-box",
+          "selector": "box/x_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": 1.0,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "field-archive-binding",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-CFD",
+            "PI02-DELIVERABLES"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/archive_records",
+          "constraint": {
+            "operator": "equals",
+            "expected": 24,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "archive_binding",
+            "related_roles": [
+              "field_archive"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "convergence-evidence",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/convergence",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "convergence",
+            "related_roles": [
+              "field_archive"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "heat-balance-evidence",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/heat_balance_relative",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.01,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "heat_balance",
+            "related_roles": [
+              "field_archive"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "design-basis-present",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-DELIVERABLES"
+          ],
+          "subject_role": "design_basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "manufacturer-research-present",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-DELIVERABLES"
+          ],
+          "subject_role": "manufacturer_research",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "editable-source-present",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-DELIVERABLES"
+          ],
+          "subject_role": "cad_source",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "engineering-review",
+          "version": "1",
+          "requirement_ids": [
+            "PI02-SOURCE",
+            "PI02-ENCLOSURE",
+            "PI02-LOADS",
+            "PI02-VARIANTS",
+            "PI02-SCREEN",
+            "PI02-SCOPE"
+          ],
+          "subject_role": "design_basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Manufacturer-source authority, detailed CAD features and physical thermal, ingress, electrical, EMC, material and release claims require authenticated engineering review. Mesh-refinement evidence is not present in the retained output."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:36.608657+00:00",
+    "measurements": [
+      {
+        "id": "m-91426424ddbd15e9466a2d9fc2c81ac7b6ad95319518a925351de80b2d41df6e",
+        "subject_id": "enclosure-a",
+        "subject_sha256": "af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce",
+        "selector": "box/z_span_mm",
+        "value": 48.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-a@af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-ad40f90d7e9d02b9f7bfff214acd984709049b16c129f1f7deec5252812dea9a",
+        "subject_id": "contract-a",
+        "subject_sha256": "d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6",
+        "selector": "cfd/contract",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:contract-a@d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6#cfd/contract",
+          "subject:fluid-domain-a@4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91#cfd-region:air",
+          "subject:source-primary-a@2e83ebc541dfc9be669d104b9676fdf4bc7bd4fad7f28d3bac265ea3f62c6b8a#cfd-region:pi_source",
+          "subject:source-secondary-a@f4b175b20dcf12e3ce39257df05b988b75c3280cccbd408865af890fbcd1f0e7#cfd-region:sensor_source",
+          "subject:enclosure-a@af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce#cfd-region:shell"
+        ]
+      },
+      {
+        "id": "m-f065f08b0e0f64f508c6c0f23a6a58e8d043904d1a667d17bc6f7fc62f1600df",
+        "subject_id": "field-archive",
+        "subject_sha256": "5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32",
+        "selector": "cfd/a/maximum_temperature_c",
+        "value": 35.18648681640627,
+        "unit": "degC",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#cfd/a/maximum_temperature_c"
+        ]
+      },
+      {
+        "id": "m-f24b1b412db3c60780d5301176e0ff8dd4d495d23ff2537c18bfee7ab6d21a63",
+        "subject_id": "comparison",
+        "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+        "selector": "cfd/a/mass_balance_relative",
+        "value": 0.00043803129303383463,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/a/mass_balance_relative"
+        ]
+      },
+      {
+        "id": "m-de3fba287de10c5d8afe66a88cc32c41305d0b43780f63e42bf3fc13fd11f748",
+        "subject_id": "fluid-domain-a",
+        "subject_sha256": "4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91",
+        "selector": "box/x_span_mm",
+        "value": 250.0,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:fluid-domain-a@4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-f201cc02fae2032542e7f61a8292de3760494eb01a0543ca544c040258010a3a",
+        "subject_id": "enclosure-b",
+        "subject_sha256": "ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a",
+        "selector": "box/z_span_mm",
+        "value": 68.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-1529132536853da85878221e23f98d63929a69edf96b43163f2f40023e4ba9aa",
+        "subject_id": "contract-b",
+        "subject_sha256": "829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90",
+        "selector": "cfd/contract",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:contract-b@829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90#cfd/contract",
+          "subject:fluid-domain-b@2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722#cfd-region:air",
+          "subject:source-primary-b@d26502480828889b4ded602b76172f2b1a1549152bdccdb660d707ecb8c085ff#cfd-region:pi_source",
+          "subject:source-secondary-b@9f9585673dd0879ebb0a371e028c192aa664a2201ea7eed06af4bc5ecd5758a1#cfd-region:sensor_source",
+          "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#cfd-region:shell"
+        ]
+      },
+      {
+        "id": "m-669e679ded92b1e8e9a8434abbcbf0053340d5c32411f161b276e903f2830506",
+        "subject_id": "field-archive",
+        "subject_sha256": "5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32",
+        "selector": "cfd/b/maximum_temperature_c",
+        "value": 35.1865173339844,
+        "unit": "degC",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#cfd/b/maximum_temperature_c"
+        ]
+      },
+      {
+        "id": "m-30d5eb7a1137b9809ec34bc9ae53c0b488888894786c02eb1c7ce2dcbbceb558",
+        "subject_id": "comparison",
+        "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+        "selector": "cfd/b/mass_balance_relative",
+        "value": 0.00040295234178203024,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/b/mass_balance_relative"
+        ]
+      },
+      {
+        "id": "m-27c7bb4d29b5900a3eb57ef84fcb3b1a40be62ad2570962b2eefee2d8840e40a",
+        "subject_id": "fluid-domain-b",
+        "subject_sha256": "2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722",
+        "selector": "box/x_span_mm",
+        "value": 250.0,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:fluid-domain-b@2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-1235ba819556c3d6da2fd9bd73e70cdec902f031c107fa128c3e81253a676e04",
+        "subject_id": "comparison",
+        "subject_sha256": "9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2",
+        "selector": "cfd/archive_records",
+        "value": 24,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/archive_records",
+          "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#fields"
+        ]
+      },
+      {
+        "id": "m-7c2dcc28c58b13035e050deb6189e9f02bdd361fe1b5f0aaa5c26a02e8d38b4c",
+        "subject_id": "design-basis",
+        "subject_sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b",
+        "selector": "",
+        "value": {
+          "bytes": 15455,
+          "present": true,
+          "sha256": "3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:design-basis@3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b#"
+        ]
+      },
+      {
+        "id": "m-54a6d62cb9ea626155f5317823f7e3c4ca557bded8212195539629a8af4a8b43",
+        "subject_id": "manufacturer-research",
+        "subject_sha256": "2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b",
+        "selector": "",
+        "value": {
+          "bytes": 6006,
+          "present": true,
+          "sha256": "2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:manufacturer-research@2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b#"
+        ]
+      },
+      {
+        "id": "m-38fc87a3a87d6f3234c81d48d1fec84b310c7dcdc59ef564e76fe36137b41629",
+        "subject_id": "cad-source",
+        "subject_sha256": "0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283",
+        "selector": "",
+        "value": {
+          "bytes": 14061,
+          "present": true,
+          "sha256": "0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:cad-source@0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "enclosure-a-z",
+        "requirement_ids": [
+          "PI02-ENCLOSURE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-91426424ddbd15e9466a2d9fc2c81ac7b6ad95319518a925351de80b2d41df6e"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-a@af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "contract-a",
+        "requirement_ids": [
+          "PI02-LOADS",
+          "PI02-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-ad40f90d7e9d02b9f7bfff214acd984709049b16c129f1f7deec5252812dea9a"
+        ],
+        "evidence_refs": [
+          "subject:contract-a@d64ad3684f36fc0b751670e52ec59178844a995e663b2b59dde0299c562acdd6#cfd/contract",
+          "subject:fluid-domain-a@4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91#cfd-region:air",
+          "subject:source-primary-a@2e83ebc541dfc9be669d104b9676fdf4bc7bd4fad7f28d3bac265ea3f62c6b8a#cfd-region:pi_source",
+          "subject:source-secondary-a@f4b175b20dcf12e3ce39257df05b988b75c3280cccbd408865af890fbcd1f0e7#cfd-region:sensor_source",
+          "subject:enclosure-a@af338d0bb795acf669c6e89384a099bee7af31cd369894540f7c0328daaa74ce#cfd-region:shell"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "patch-temperature-a",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f065f08b0e0f64f508c6c0f23a6a58e8d043904d1a667d17bc6f7fc62f1600df"
+        ],
+        "evidence_refs": [
+          "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#cfd/a/maximum_temperature_c"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "mass-balance-a",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f24b1b412db3c60780d5301176e0ff8dd4d495d23ff2537c18bfee7ab6d21a63"
+        ],
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/a/mass_balance_relative"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "fluid-domain-a",
+        "requirement_ids": [
+          "PI02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-de3fba287de10c5d8afe66a88cc32c41305d0b43780f63e42bf3fc13fd11f748"
+        ],
+        "evidence_refs": [
+          "subject:fluid-domain-a@4cd5c8d9acbf09707fced53ea195cc83dde082ad0dcd7c64d5413e3244593b91#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "enclosure-b-z",
+        "requirement_ids": [
+          "PI02-ENCLOSURE"
+        ],
+        "state": "fail",
+        "measurement_ids": [
+          "m-f201cc02fae2032542e7f61a8292de3760494eb01a0543ca544c040258010a3a"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#solid-vertex-envelope"
+        ],
+        "finding_ids": [
+          "f-6a0205ab401d4422bdebad58f29aaa87"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "contract-b",
+        "requirement_ids": [
+          "PI02-LOADS",
+          "PI02-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-1529132536853da85878221e23f98d63929a69edf96b43163f2f40023e4ba9aa"
+        ],
+        "evidence_refs": [
+          "subject:contract-b@829939fc8a54d79f2bba78d48b59eaceaaae0dc13fa021922e4e88b0ecc09d90#cfd/contract",
+          "subject:fluid-domain-b@2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722#cfd-region:air",
+          "subject:source-primary-b@d26502480828889b4ded602b76172f2b1a1549152bdccdb660d707ecb8c085ff#cfd-region:pi_source",
+          "subject:source-secondary-b@9f9585673dd0879ebb0a371e028c192aa664a2201ea7eed06af4bc5ecd5758a1#cfd-region:sensor_source",
+          "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#cfd-region:shell"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "patch-temperature-b",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-669e679ded92b1e8e9a8434abbcbf0053340d5c32411f161b276e903f2830506"
+        ],
+        "evidence_refs": [
+          "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#cfd/b/maximum_temperature_c"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "mass-balance-b",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-30d5eb7a1137b9809ec34bc9ae53c0b488888894786c02eb1c7ce2dcbbceb558"
+        ],
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/b/mass_balance_relative"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "fluid-domain-b",
+        "requirement_ids": [
+          "PI02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-27c7bb4d29b5900a3eb57ef84fcb3b1a40be62ad2570962b2eefee2d8840e40a"
+        ],
+        "evidence_refs": [
+          "subject:fluid-domain-b@2c870083b9ae8a5da8a2eabdbc2b7267e012dd7c279c4dd2aec340de9c0dc722#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "field-archive-binding",
+        "requirement_ids": [
+          "PI02-CFD",
+          "PI02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-1235ba819556c3d6da2fd9bd73e70cdec902f031c107fa128c3e81253a676e04"
+        ],
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/archive_records",
+          "subject:field-archive@5a9fdd6dd48ed516a543baf72ad351e1833786901336ab30102793a779f4dc32#fields"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "convergence-evidence",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "fail",
+        "measurement_ids": [],
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/convergence"
+        ],
+        "finding_ids": [
+          "f-189e2e1ca7614d5cb71c3716206e4b24"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "heat-balance-evidence",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/heat_balance_relative"
+        ],
+        "finding_ids": [
+          "f-0cddc409324c4ae8a49cd6f510f6a014"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "design-basis-present",
+        "requirement_ids": [
+          "PI02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7c2dcc28c58b13035e050deb6189e9f02bdd361fe1b5f0aaa5c26a02e8d38b4c"
+        ],
+        "evidence_refs": [
+          "subject:design-basis@3bdd9b8a3f2f438a942940ab927eea42afd43ab598b88f832eaae7dc422ad77b#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "manufacturer-research-present",
+        "requirement_ids": [
+          "PI02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-54a6d62cb9ea626155f5317823f7e3c4ca557bded8212195539629a8af4a8b43"
+        ],
+        "evidence_refs": [
+          "subject:manufacturer-research@2079be3967028c0a753367b5c462aafb5c450fad94bbc1e68622f84bab42467b#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "editable-source-present",
+        "requirement_ids": [
+          "PI02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-38fc87a3a87d6f3234c81d48d1fec84b310c7dcdc59ef564e76fe36137b41629"
+        ],
+        "evidence_refs": [
+          "subject:cad-source@0133ff72b1f2aa0f85b35e0aaea79fb82b8421431cfda19f63e79bab31f46283#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PI02-SOURCE",
+          "PI02-ENCLOSURE",
+          "PI02-LOADS",
+          "PI02-VARIANTS",
+          "PI02-SCREEN",
+          "PI02-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-4ba5a801966a40d9bf652d555a572eb5"
+        ],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-6a0205ab401d4422bdebad58f29aaa87",
+        "code": "requirement.out_of_bounds",
+        "check_id": "enclosure-b-z",
+        "requirement_ids": [
+          "PI02-ENCLOSURE"
+        ],
+        "state": "fail",
+        "severity": "error",
+        "category": "output_defect",
+        "subject_id": "enclosure-b",
+        "owner": {
+          "run_id": "retained-successor-raspberry-pi-enclosure-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "enclosure_b"
+        },
+        "selector": "box/z_span_mm",
+        "expected": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 60.0,
+          "inclusive": true
+        },
+        "observed": 68.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "observed_unit": "mm",
+        "observed_frame": "enclosure_axes",
+        "evidence_refs": [
+          "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#solid-vertex-envelope"
+        ],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+            "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+            "locator": "Mounting and service requirements"
+          }
+        ],
+        "summary": "Observed output does not meet the requirement.",
+        "explanation": "Observed 68.0. Satisfy PI02-ENCLOSURE at box/z_span_mm: {'operator': 'range', 'maximum': 60.0, 'inclusive': True}.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "revise_output",
+          "target_step_id": "deterministic-correction",
+          "target": "Satisfy PI02-ENCLOSURE at box/z_span_mm: {'operator': 'range', 'maximum': 60.0, 'inclusive': True}.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "enclosure-a-z",
+            "contract-a",
+            "patch-temperature-a",
+            "mass-balance-a",
+            "fluid-domain-a",
+            "enclosure-b-z",
+            "contract-b",
+            "patch-temperature-b",
+            "mass-balance-b",
+            "fluid-domain-b",
+            "field-archive-binding",
+            "convergence-evidence",
+            "heat-balance-evidence",
+            "design-basis-present",
+            "manufacturer-research-present",
+            "editable-source-present",
+            "engineering-review"
+          ]
+        }
+      },
+      {
+        "id": "f-189e2e1ca7614d5cb71c3716206e4b24",
+        "code": "cfd.convergence_failed",
+        "check_id": "convergence-evidence",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "fail",
+        "severity": "error",
+        "category": "output_defect",
+        "subject_id": "comparison",
+        "owner": {
+          "run_id": "retained-successor-raspberry-pi-enclosure-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "comparison"
+        },
+        "selector": "cfd/convergence",
+        "expected": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/convergence"
+        ],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+            "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+            "locator": "comparison request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+            "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+            "locator": "Thermal and flow inputs"
+          }
+        ],
+        "summary": "Continue the steady solve until the fixed convergence criteria pass. variant-a: initial residual 0.0374, final residual 2.73e-05, relative temperature change 7.32e-06; variant-b: initial residual 0.0366, final residual 2.33e-05, relative temperature change 7.32e-06.",
+        "explanation": "Continue the steady solve until the fixed convergence criteria pass. variant-a: initial residual 0.0374, final residual 2.73e-05, relative temperature change 7.32e-06; variant-b: initial residual 0.0366, final residual 2.33e-05, relative temperature change 7.32e-06.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "revise_output",
+          "target_step_id": "deterministic-correction",
+          "target": "Satisfy PI02-CFD at cfd/convergence: {'operator': 'equals', 'expected': True, 'inclusive': True}.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "enclosure-a-z",
+            "contract-a",
+            "patch-temperature-a",
+            "mass-balance-a",
+            "fluid-domain-a",
+            "enclosure-b-z",
+            "contract-b",
+            "patch-temperature-b",
+            "mass-balance-b",
+            "fluid-domain-b",
+            "field-archive-binding",
+            "convergence-evidence",
+            "heat-balance-evidence",
+            "design-basis-present",
+            "manufacturer-research-present",
+            "editable-source-present",
+            "engineering-review"
+          ]
+        }
+      },
+      {
+        "id": "f-0cddc409324c4ae8a49cd6f510f6a014",
+        "code": "cfd.heat_balance_missing",
+        "check_id": "heat-balance-evidence",
+        "requirement_ids": [
+          "PI02-CFD"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "missing_evidence",
+        "subject_id": "comparison",
+        "owner": {
+          "run_id": "retained-successor-raspberry-pi-enclosure-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "comparison"
+        },
+        "selector": "cfd/heat_balance_relative",
+        "expected": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.01,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": "1",
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [
+          "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/heat_balance_relative"
+        ],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+            "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+            "locator": "comparison request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+            "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+            "locator": "Thermal and flow inputs"
+          }
+        ],
+        "summary": "Both alternatives need field-derived heat-balance evidence.",
+        "explanation": "Both alternatives need field-derived heat-balance evidence.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "supply_input",
+          "target_step_id": null,
+          "target": "Both alternatives need field-derived heat-balance evidence.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "enclosure-a-z",
+            "contract-a",
+            "patch-temperature-a",
+            "mass-balance-a",
+            "fluid-domain-a",
+            "enclosure-b-z",
+            "contract-b",
+            "patch-temperature-b",
+            "mass-balance-b",
+            "fluid-domain-b",
+            "field-archive-binding",
+            "convergence-evidence",
+            "heat-balance-evidence",
+            "design-basis-present",
+            "manufacturer-research-present",
+            "editable-source-present",
+            "engineering-review"
+          ]
+        }
+      },
+      {
+        "id": "f-4ba5a801966a40d9bf652d555a572eb5",
+        "code": "review.required",
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PI02-SOURCE",
+          "PI02-ENCLOSURE",
+          "PI02-LOADS",
+          "PI02-VARIANTS",
+          "PI02-SCREEN",
+          "PI02-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "design-basis",
+        "owner": {
+          "run_id": "retained-successor-raspberry-pi-enclosure-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "design_basis"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+            "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+            "locator": "research request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+            "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+            "locator": "Field context and research"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+            "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+            "locator": "Mounting and service requirements"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/thermal-loads.csv",
+            "sha256": "0626fe34c83915276b205a57c3641bfd16d3bf31b0315f150c9c46607f0e6a64",
+            "locator": "all rows"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+            "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+            "locator": "Thermal and flow inputs"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/prompt.txt",
+            "sha256": "74ee2f275aa9a329f4bff83d02680efb854d3a99914ea73944cad5e2f58a458f",
+            "locator": "rating limitation"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md",
+            "sha256": "f290216d9269042ee2aa26d4fdd642757ddd048b6d23a665d6f6ced951031f13",
+            "locator": "Thermal and flow inputs; Organization policy"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "enclosure-a-z",
+            "contract-a",
+            "patch-temperature-a",
+            "mass-balance-a",
+            "fluid-domain-a",
+            "enclosure-b-z",
+            "contract-b",
+            "patch-temperature-b",
+            "mass-balance-b",
+            "fluid-domain-b",
+            "field-archive-binding",
+            "convergence-evidence",
+            "heat-balance-evidence",
+            "design-basis-present",
+            "manufacturer-research-present",
+            "editable-source-present",
+            "engineering-review"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": false,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 2,
+        "error": 0,
+        "fail": 2,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 13
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

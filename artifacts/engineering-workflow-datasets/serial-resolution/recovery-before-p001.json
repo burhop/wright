@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "native_database_path": "diagnostics/recovery-20260913/native-lifecycle.sqlite3",
+  "evidence": "diagnostics/recovery-20260913/reconciliation-01.json",
+  "dashboard": {
+    "url": "http://127.0.0.1:8771/?view=recovery",
+    "metrics": {
+      "datasets_created": 30,
+      "combinations_run": 30,
+      "processes_with_outputs": 20,
+      "valid_data": 0
+    },
+    "approval_mode": "auto",
+    "content_validation_enabled": false,
+    "last_observed_at": "2026-09-14T09:22:09.854089+00:00"
+  },
+  "families": {
+    "raspberry-pi-enclosure": {
+      "readiness": "cases01 and02 complete; case03 quarantined after two bounded source/CAD repair attempts",
+      "next_action": "Case01 attempt032 and case02 attempt031 remain complete and independently verified. Case03 attempt033 exposed the exact power-interface versus power_interface STEP filename mismatch; the reusable AgentCAD source preflight now rejects it. Fresh attempt034 used the corrected names, but its own source review stopped before AgentCAD because the fluid domain exposed the full Y=12.5 face instead of a unique 30 x 30 mm fan inlet. The write-once tool prevented mutation; no CAD or CFD operation ran. The two-attempt repair budget is exhausted. Preserve both attempts and require a disposable retained-source geometry-contract probe before another full case03 attempt. Combined recovery tests: 50 passed; Ruff clean."
+    },
+    "sheet-metal-supplier-handoff": {
+      "readiness": "quarantined after two targeted corrections",
+      "next_action": "Visibility and flange-before-cutout order both retain left_wall E_POINTER. Two managed native sessions cleaned up successfully; require new provider evidence before another attempt."
+    },
+    "printed-replacement-part": {
+      "readiness": "fixed Blender repair qualified; source authoring quarantined after attempts014/015",
+      "next_action": "The graph keeps model-authored image interpretation/source geometry, then uses qualified fixed Blender repair and fixed Bambu slicing. Qualification-repair-004 converted the retained attempt013 mesh to a closed, outward-facing, single-component 53,092-triangle result and cleaned its native session. Attempt014 produced a fresh 23,312,884-byte closed source STL, but Hermes returned None.rstrip on all three normal and all three tool-free completion decisions; no downstream stage ran and cleanup succeeded. The adapter now creates a minimal format-aware envelope from recorded successful calls after those six exact failures. Attempt015 used nine calls and built a valid 26 x 38 x 17 mm intermediate with two through bores and two counterbores, but an earlier rebuild left an empty 84-byte STL and the stage timed out before the pad recess and final export. No repair or slice ran; cleanup removed PID2364 and both bindings. Attempts014/015 exhaust this source-stage episode. Require a retained-source authoring probe proving a materially bounded contract before another full printing attempt. No physical printer action is authorized."
+    },
+    "parametric-drill-jig": {
+      "readiness": "all three complete; cases01/02 independently verified on attempt012",
+      "queued_at": "2026-09-12T21:57:40.015995-04:00",
+      "next_action": "Canonical Jig03 attempt011 remains complete. Jig01 attempt012 run fe86f96a2cf4403eacfe2c5ad92f960d and corrected Jig02 attempt012 run f4cd5dfc9f4b4db29d30958bbf9e737a each completed all eight stages under the zero-host-tool Hermes policy. Each produced 14 nonempty files; independent verification matched runtime/source/policy identity, automatic review, required output roles, sizes and SHA-256 hashes. The dashboard is now 30/30/15/0. Preserve all three cases without rerunning; content validation remains disabled."
+    },
+    "lightweight-equipment-bracket": {
+      "readiness": "diagnostic preparation",
+      "next_action": "Inspect and reproduce the retained underdefined-curve failure in a dedicated AgentCAD project."
+    },
+    "sensor-interface-pcb": {
+      "readiness": "case01 and PCB03 attempt015 complete; PCB02 attempt020 completed with qualified C3/C4/C2/TP1 placement",
+      "next_action": "PCB02 attempt015 stopped at the build approval boundary because H3-C2 and TP1-J3 courtyard collisions remained. A disposable native qualification proved C2 origin=(23.0,18.5) mm and TP1 origin=(10.0,14.0) mm with zero audit errors. Attempt016 then exposed a C3 rotation-90 geometry warning; a second disposable qualification proved C3 origin=(8.0,23.0) mm at rotation 0 degrees with zero audit errors. Attempt017 passed the build audit but stopped on a duplicate pcb call after its final silkscreen mutation. Attempt020 passed the 17-stage/9-input preflight and ran on the identity-verified 82-mount network-isolated KiCad runtime with the stricter terminal rule. Keep content validation disabled; preserve the raw runtime evidence and independently verify output hashes before credit.",
+      "pcb03_attempt015_verification": {
+        "status": "completed",
+        "accepted_by_runtime": true,
+        "required_steps_succeeded": true,
+        "produced_files": 32,
+        "hashes_verified": true,
+        "native_erc_errors": 0,
+        "native_drc_errors": 0,
+        "content_validated": false,
+        "lifecycle_evidence_error": "Lifecycle API event snapshot differs from raw evidence"
+      }
+    },
+    "heat-spreader-sizing": {
+      "readiness": "complete",
+      "next_action": "Cases01 and03 remain complete. Case02 attempt010 run ccff6df7f70744e2a076087dd74a48a0 completed all nine stages after restoring the exact OASiS child and teaching the fixed solver to read the provenance-wrapped cases map while retaining exact case, STEP-hash and dimension checks. All 28 output files independently match canonical sizes and SHA-256 hashes. Preserve without rerunning; content validation remains disabled."
+    },
+    "robot-tracking-diagnosis": {
+      "readiness": "all three complete; case03 independently verified",
+      "next_action": "Case03 attempt005 run aa2574e23d6e4735991f84231ec89e4a completed all six stages after the stopped robot runtime container was restarted with restart-unless-stopped and its MCP tools rediscovered. The run produced 11 nonempty files, including a real ROS2 bag, metadata, timeline, trajectory overlay, metrics, diagnosis and evidence index; every exported file matches the recorded byte count and SHA-256 hash. Cases01 and02 remain complete."
+    },
+    "water-heater-sizing": {
+      "readiness": "complete",
+      "next_action": "Canonical case01 attempt005 run 66b82651d9f1452f9a471d7a3418d64d completed all9 stages and sealed54 nonempty readable outputs with matching workspace/export tree hash 855c4c7a0f95e709929310f4e0253f6fb689875c8c58cd4adbd7b93dc1edc2d6. All four exact Modelica simulations completed; the durable store is25/25/25 completed with zero reserved claims. Modelica is inactive with no stdio/native worker. Cases02/03 remain complete and unchanged; content validation remains disabled."
+    },
+    "sensor-fan-harness": {
+      "readiness": "complete",
+      "next_action": "All three current-revision results rechecked; preserve them without rerunning."
+    }
+  },
+  "scenarios": {},
+  "campaign_worker": {
+    "attempt": "attempt-020",
+    "pid": 39620,
+    "state_root": ".local-run/feature-081-live/campaign-runner-state/pcb-attempt-020-live",
+    "stdout": "D:\\repos\\wright\\.local-run\\feature-081-live\\campaign-execution\\pcb-attempt-020.stdout.log",
+    "stderr": "D:\\repos\\wright\\.local-run\\feature-081-live\\campaign-execution\\pcb-attempt-020.stderr.log",
+    "status": "completed",
+    "started_at": "2026-09-14T08:40:52.3340784Z"
+  }
+}

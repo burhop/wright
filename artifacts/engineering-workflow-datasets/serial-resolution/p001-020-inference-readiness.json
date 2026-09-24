@@ -1,0 +1,19 @@
+{
+  "status": "ready",
+  "started_at": "2026-09-23T00:00:00.929268+00:00",
+  "model": "openai-codex::gpt-5.6-sol",
+  "route": "/api/agent/chat",
+  "session_id": "wright-local-e3dc0ef1-06da-45dd-83b9-290347814f8a",
+  "campaign_evidence": false,
+  "workflow_dispatches": 0,
+  "attempted_requests": 1,
+  "response_text": "READY",
+  "event_types": [
+    "stream_start",
+    "progress",
+    "token",
+    "stream_end"
+  ],
+  "errors": [],
+  "finished_at": "2026-09-23T00:00:52.837481+00:00"
+}

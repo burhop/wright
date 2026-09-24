@@ -1,0 +1,2481 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "18ff6596d188f1156384339713ddd84078c249123839f98321fef64655a529d8",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:27.647251+00:00",
+    "selected_assessment_id": "assessment-2e467f59775c41de95949bbe0698e5c9",
+    "selected_attempt_id": "99c1be517cd04c3286c3f8c34c89bab0",
+    "selected_subject_ids": [
+      "board",
+      "schematic",
+      "bom",
+      "fabrication",
+      "erc",
+      "drc",
+      "basis"
+    ],
+    "latest_attempt_id": "99c1be517cd04c3286c3f8c34c89bab0",
+    "latest_assessment_id": "assessment-2e467f59775c41de95949bbe0698e5c9",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "PCB03-CONNECTIVITY",
+      "PCB03-COMPATIBILITY",
+      "PCB03-PARTS",
+      "PCB03-POWER-ROUTING",
+      "PCB03-PLACEMENT",
+      "PCB03-BOARD-RULES",
+      "PCB03-CHECKS",
+      "PCB03-CORRESPONDENCE",
+      "PCB03-DELIVERABLES",
+      "PCB03-ACTION-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Warning disposition, production-source compatibility, full native-to-fabrication correspondence, physical performance and release authorization require authenticated engineering review."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "kicad",
+      "version": "1",
+      "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded KiCad and fabrication reader v1",
+      "formats": [
+        "kicad_pcb",
+        "csv",
+        "json",
+        "zip"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "PCB03-CONNECTIVITY",
+      "requirement_text": "Native schematic/PCB implement every supplied 24V/GND, 3V3, raw/output tach, pull-up, series-filter, capacitor and test-pad connection exactly, with no cross-channel bridge.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/netlist.csv",
+          "sha256": "9b3921fbbe3649577a2d9713568c898daf9f1415b4502d1f9f8228777f890210",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Business and system assumptions"
+        }
+      ],
+      "check_id": "native-netlist",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/netlist",
+      "expected": {
+        "operator": "equals",
+        "expected": 29,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        29
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#netlist"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-PARTS",
+      "requirement_text": "J1..J4, resistors, capacitors and TP1..TP5 match all declared footprints/values/ratings; exact production connectors remain unresolved until sourced.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/component-library.csv",
+          "sha256": "2d67e7c1cfa27391870f1440cfd745a0ea05089da95540ce6e6d933985bd2320",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "native-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/components",
+      "expected": {
+        "operator": "equals",
+        "expected": 15,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        15
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#components"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-PARTS",
+      "requirement_text": "J1..J4, resistors, capacitors and TP1..TP5 match all declared footprints/values/ratings; exact production connectors remain unresolved until sourced.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/component-library.csv",
+          "sha256": "2d67e7c1cfa27391870f1440cfd745a0ea05089da95540ce6e6d933985bd2320",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "bom-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/bom",
+      "expected": {
+        "operator": "equals",
+        "expected": 15,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        15
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:bom@c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a#bom"
+      ],
+      "subject_id": "bom",
+      "subject_sha256": "c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "bom"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-CORRESPONDENCE",
+      "requirement_text": "Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "bom-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/bom",
+      "expected": {
+        "operator": "equals",
+        "expected": 15,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        15
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:bom@c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a#bom"
+      ],
+      "subject_id": "bom",
+      "subject_sha256": "c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "bom"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-PLACEMENT",
+      "requirement_text": "J3/J4 centers remain (36,16.46)/(20,25.5) mm, TP3 center (32,14) mm, J2 origin (5,19) mm and TP1 origin (10,14) mm with required labels and routing corridor.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Layout requirements and limitations"
+        }
+      ],
+      "check_id": "required-placement",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/placement",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#placement"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-BOARD-RULES",
+      "requirement_text": "The board is 40 by 30 mm, 1.6 mm two-layer/35 µm copper with declared NPTH holes, 1.0 mm hole-edge copper clearance, 0.25/0.25 mm minimum track/clearance and 0.30 mm via drill.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "board-outline-holes",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/board_geometry",
+      "expected": {
+        "operator": "equals",
+        "expected": 1,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        1
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#board_geometry"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-CHECKS",
+      "requirement_text": "Native connectivity, ERC and DRC finish with zero unreviewed errors while preserving power/logic-domain constraints and the 0..500 Hz tach assumption.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Business and system assumptions; Deliverables"
+        }
+      ],
+      "check_id": "erc-errors",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/report",
+      "expected": {
+        "operator": "equals",
+        "expected": 0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:erc@41f2f8f71e7c3d5463717d8725b1b78bcfa2253dfff8b5e53f013632c7943369#report"
+      ],
+      "subject_id": "erc",
+      "subject_sha256": "41f2f8f71e7c3d5463717d8725b1b78bcfa2253dfff8b5e53f013632c7943369",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "erc"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-CHECKS",
+      "requirement_text": "Native connectivity, ERC and DRC finish with zero unreviewed errors while preserving power/logic-domain constraints and the 0..500 Hz tach assumption.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Business and system assumptions; Deliverables"
+        }
+      ],
+      "check_id": "drc-errors",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/report",
+      "expected": {
+        "operator": "equals",
+        "expected": 0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:drc@857f90535a29ad5590aa213eac8bd97185a5799607706c90dbd058ac987f0821#report"
+      ],
+      "subject_id": "drc",
+      "subject_sha256": "857f90535a29ad5590aa213eac8bd97185a5799607706c90dbd058ac987f0821",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "drc"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-DELIVERABLES",
+      "requirement_text": "The output set contains editable KiCad schematic/board, BOM, Gerber copper/outline, drill and ERC/DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/prompt.txt",
+          "sha256": "a5ed394604cd75c25a84820aa4a018fdf19802996b8b8da8818f318ad64c8e43",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "fabrication-members",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/fabrication_bundle",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:fabrication@58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1#fabrication_bundle"
+      ],
+      "subject_id": "fabrication",
+      "subject_sha256": "58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fabrication"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-CORRESPONDENCE",
+      "requirement_text": "Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "fabrication-members",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/fabrication_bundle",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:fabrication@58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1#fabrication_bundle"
+      ],
+      "subject_id": "fabrication",
+      "subject_sha256": "58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fabrication"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-DELIVERABLES",
+      "requirement_text": "The output set contains editable KiCad schematic/board, BOM, Gerber copper/outline, drill and ERC/DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/prompt.txt",
+          "sha256": "a5ed394604cd75c25a84820aa4a018fdf19802996b8b8da8818f318ad64c8e43",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "deliverable-schematic",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 37692,
+          "present": true,
+          "sha256": "4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:schematic@4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7#"
+      ],
+      "subject_id": "schematic",
+      "subject_sha256": "4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "schematic"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-DELIVERABLES",
+      "requirement_text": "The output set contains editable KiCad schematic/board, BOM, Gerber copper/outline, drill and ERC/DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/prompt.txt",
+          "sha256": "a5ed394604cd75c25a84820aa4a018fdf19802996b8b8da8818f318ad64c8e43",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "deliverable-basis",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 15835,
+          "present": true,
+          "sha256": "c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:basis@c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2#"
+      ],
+      "subject_id": "basis",
+      "subject_sha256": "c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-POWER-ROUTING",
+      "requirement_text": "Each fan power/return branch uses at least 1.0 mm track width, common supply/return at least 1.5 mm, and 24 V copper remains at least 0.8 mm from logic except defined ground connections.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Layout requirements and limitations"
+        }
+      ],
+      "check_id": "power-track-widths",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/track_widths",
+      "expected": {
+        "operator": "equals",
+        "expected": 2,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        2
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#track_widths"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB03-COMPATIBILITY",
+      "requirement_text": "The report requires sourced confirmation that selected fans provide open-collector tach compatible with a 3.3 V pull-up and never accepts a push-pull 24 V tach output.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Business and system assumptions"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-4a915d4626624f43b96dd0309285ccc2"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PCB03-ACTION-SCOPE",
+      "requirement_text": "The passive adapter is not represented as a fan/safety controller, isolation barrier, production-qualified board or authorization to order hardware.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/prompt.txt",
+          "sha256": "a5ed394604cd75c25a84820aa4a018fdf19802996b8b8da8818f318ad64c8e43",
+          "locator": "passive-adapter scope"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+          "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+          "locator": "Layout requirements and limitations; Deliverables"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-4a915d4626624f43b96dd0309285ccc2"
+      ],
+      "action": "request_review"
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-2e467f59775c41de95949bbe0698e5c9",
+    "attempt_id": "99c1be517cd04c3286c3f8c34c89bab0",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "sensor-interface-pcb-03",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "board",
+          "role": "board",
+          "result_id": "retained-successor:sensor-interface-pcb-03:board",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "board"
+          },
+          "kind": "file",
+          "sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+          "value": null,
+          "locator": "design.kicad_pcb",
+          "format": "kicad_pcb",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "schematic",
+          "role": "schematic",
+          "result_id": "retained-successor:sensor-interface-pcb-03:schematic",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "schematic"
+          },
+          "kind": "file",
+          "sha256": "4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7",
+          "value": null,
+          "locator": "design.kicad_sch",
+          "format": "kicad_sch",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "bom",
+          "role": "bom",
+          "result_id": "retained-successor:sensor-interface-pcb-03:bom",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "bom"
+          },
+          "kind": "file",
+          "sha256": "c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a",
+          "value": null,
+          "locator": "design_bom.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "fabrication",
+          "role": "fabrication",
+          "result_id": "retained-successor:sensor-interface-pcb-03:fabrication",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "fabrication"
+          },
+          "kind": "file",
+          "sha256": "58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1",
+          "value": null,
+          "locator": "design-gerbers.zip",
+          "format": "zip",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "erc",
+          "role": "erc",
+          "result_id": "retained-successor:sensor-interface-pcb-03:erc",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "erc"
+          },
+          "kind": "file",
+          "sha256": "41f2f8f71e7c3d5463717d8725b1b78bcfa2253dfff8b5e53f013632c7943369",
+          "value": null,
+          "locator": "erc.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "drc",
+          "role": "drc",
+          "result_id": "retained-successor:sensor-interface-pcb-03:drc",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "drc"
+          },
+          "kind": "file",
+          "sha256": "857f90535a29ad5590aa213eac8bd97185a5799607706c90dbd058ac987f0821",
+          "value": null,
+          "locator": "drc.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "basis",
+          "role": "basis",
+          "result_id": "retained-successor:sensor-interface-pcb-03:basis",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "basis"
+          },
+          "kind": "file",
+          "sha256": "c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2",
+          "value": null,
+          "locator": "electrical-basis.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "sensor-interface-pcb-03-full",
+        "version": "1",
+        "sha256": "fecdbda349e2d1c8ba476cb89bf8db0f7b6ff5cc1584af015797c6b5e017c037"
+      },
+      "baseline_ref": {
+        "id": "sensor-interface-pcb-03-basis",
+        "version": "1",
+        "sha256": "3073a159f73f58b8661f9aca13e40d8acca067636a0c05529854683c0239159b"
+      },
+      "idempotency_key": "sensor-interface-pcb-03",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "sensor-interface-pcb-03-full",
+      "version": "1",
+      "baseline": {
+        "id": "sensor-interface-pcb-03-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "PCB03-CONNECTIVITY",
+            "text": "Native schematic/PCB implement every supplied 24V/GND, 3V3, raw/output tach, pull-up, series-filter, capacitor and test-pad connection exactly, with no cross-channel bridge.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/netlist.csv",
+                "sha256": "9b3921fbbe3649577a2d9713568c898daf9f1415b4502d1f9f8228777f890210",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Business and system assumptions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-COMPATIBILITY",
+            "text": "The report requires sourced confirmation that selected fans provide open-collector tach compatible with a 3.3 V pull-up and never accepts a push-pull 24 V tach output.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Business and system assumptions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PCB03-PARTS",
+            "text": "J1..J4, resistors, capacitors and TP1..TP5 match all declared footprints/values/ratings; exact production connectors remain unresolved until sourced.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/component-library.csv",
+                "sha256": "2d67e7c1cfa27391870f1440cfd745a0ea05089da95540ce6e6d933985bd2320",
+                "locator": "all rows"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-POWER-ROUTING",
+            "text": "Each fan power/return branch uses at least 1.0 mm track width, common supply/return at least 1.5 mm, and 24 V copper remains at least 0.8 mm from logic except defined ground connections.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Layout requirements and limitations"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-PLACEMENT",
+            "text": "J3/J4 centers remain (36,16.46)/(20,25.5) mm, TP3 center (32,14) mm, J2 origin (5,19) mm and TP1 origin (10,14) mm with required labels and routing corridor.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Layout requirements and limitations"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-BOARD-RULES",
+            "text": "The board is 40 by 30 mm, 1.6 mm two-layer/35 µm copper with declared NPTH holes, 1.0 mm hole-edge copper clearance, 0.25/0.25 mm minimum track/clearance and 0.30 mm via drill.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Board and shop requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-CHECKS",
+            "text": "Native connectivity, ERC and DRC finish with zero unreviewed errors while preserving power/logic-domain constraints and the 0..500 Hz tach assumption.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Business and system assumptions; Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-CORRESPONDENCE",
+            "text": "Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-DELIVERABLES",
+            "text": "The output set contains editable KiCad schematic/board, BOM, Gerber copper/outline, drill and ERC/DRC reports.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/prompt.txt",
+                "sha256": "a5ed394604cd75c25a84820aa4a018fdf19802996b8b8da8818f318ad64c8e43",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB03-ACTION-SCOPE",
+            "text": "The passive adapter is not represented as a fan/safety controller, isolation barrier, production-qualified board or authorization to order hardware.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/prompt.txt",
+                "sha256": "a5ed394604cd75c25a84820aa4a018fdf19802996b8b8da8818f318ad64c8e43",
+                "locator": "passive-adapter scope"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+                "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+                "locator": "Layout requirements and limitations; Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "native-netlist",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-CONNECTIVITY"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/netlist",
+          "constraint": {
+            "operator": "equals",
+            "expected": 29,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_connections": [
+              {
+                "net": "24V",
+                "pin": "1",
+                "reference": "J1"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "J1"
+              },
+              {
+                "net": "24V",
+                "pin": "1",
+                "reference": "J2"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "J2"
+              },
+              {
+                "net": "TACH_A_RAW",
+                "pin": "3",
+                "reference": "J2"
+              },
+              {
+                "net": "24V",
+                "pin": "1",
+                "reference": "J3"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "J3"
+              },
+              {
+                "net": "TACH_B_RAW",
+                "pin": "3",
+                "reference": "J3"
+              },
+              {
+                "net": "3V3",
+                "pin": "1",
+                "reference": "J4"
+              },
+              {
+                "net": "TACH_A_OUT",
+                "pin": "2",
+                "reference": "J4"
+              },
+              {
+                "net": "TACH_B_OUT",
+                "pin": "3",
+                "reference": "J4"
+              },
+              {
+                "net": "GND",
+                "pin": "4",
+                "reference": "J4"
+              },
+              {
+                "net": "3V3",
+                "pin": "1",
+                "reference": "R1"
+              },
+              {
+                "net": "TACH_A_RAW",
+                "pin": "2",
+                "reference": "R1"
+              },
+              {
+                "net": "3V3",
+                "pin": "1",
+                "reference": "R2"
+              },
+              {
+                "net": "TACH_B_RAW",
+                "pin": "2",
+                "reference": "R2"
+              },
+              {
+                "net": "TACH_A_RAW",
+                "pin": "1",
+                "reference": "R3"
+              },
+              {
+                "net": "TACH_A_OUT",
+                "pin": "2",
+                "reference": "R3"
+              },
+              {
+                "net": "TACH_B_RAW",
+                "pin": "1",
+                "reference": "R4"
+              },
+              {
+                "net": "TACH_B_OUT",
+                "pin": "2",
+                "reference": "R4"
+              },
+              {
+                "net": "TACH_A_OUT",
+                "pin": "1",
+                "reference": "C1"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C1"
+              },
+              {
+                "net": "TACH_B_OUT",
+                "pin": "1",
+                "reference": "C2"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C2"
+              },
+              {
+                "net": "TACH_A_RAW",
+                "pin": "1",
+                "reference": "TP1"
+              },
+              {
+                "net": "TACH_A_OUT",
+                "pin": "1",
+                "reference": "TP2"
+              },
+              {
+                "net": "TACH_B_RAW",
+                "pin": "1",
+                "reference": "TP3"
+              },
+              {
+                "net": "TACH_B_OUT",
+                "pin": "1",
+                "reference": "TP4"
+              },
+              {
+                "net": "GND",
+                "pin": "1",
+                "reference": "TP5"
+              }
+            ],
+            "operation": "netlist"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "native-components",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-PARTS"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/components",
+          "constraint": {
+            "operator": "equals",
+            "expected": 15,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_components": {
+              "C1": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "1nF"
+              },
+              "C2": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "1nF"
+              },
+              "J1": {
+                "footprint_contains": "TerminalBlock_4Ucon_1x02_P3.50mm_Vertical",
+                "value": "24V_input"
+              },
+              "J2": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "fan_header"
+              },
+              "J3": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "fan_header"
+              },
+              "J4": {
+                "footprint_contains": "PinHeader_1x04_P2.54mm_Vertical",
+                "value": "logic_header"
+              },
+              "R1": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "10k_1_percent"
+              },
+              "R2": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "10k_1_percent"
+              },
+              "R3": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "R4": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "TP1": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP2": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP3": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP4": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP5": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              }
+            },
+            "operation": "components"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "bom-components",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-PARTS",
+            "PCB03-CORRESPONDENCE"
+          ],
+          "subject_role": "bom",
+          "reader": "kicad",
+          "selector": "pcb/bom",
+          "constraint": {
+            "operator": "equals",
+            "expected": 15,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_components": {
+              "C1": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "1nF"
+              },
+              "C2": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "1nF"
+              },
+              "J1": {
+                "footprint_contains": "TerminalBlock_4Ucon_1x02_P3.50mm_Vertical",
+                "value": "24V_input"
+              },
+              "J2": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "fan_header"
+              },
+              "J3": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "fan_header"
+              },
+              "J4": {
+                "footprint_contains": "PinHeader_1x04_P2.54mm_Vertical",
+                "value": "logic_header"
+              },
+              "R1": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "10k_1_percent"
+              },
+              "R2": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "10k_1_percent"
+              },
+              "R3": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "R4": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "TP1": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP2": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP3": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP4": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP5": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              }
+            },
+            "operation": "bom"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "required-placement",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-PLACEMENT"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/placement",
+          "constraint": {
+            "operator": "equals",
+            "expected": 5,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": "board_coordinates",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_placements": {
+              "J2": {
+                "xy_mm": [
+                  5,
+                  19
+                ]
+              },
+              "J3": {
+                "point": "pad_centroid",
+                "xy_mm": [
+                  36,
+                  16.46
+                ]
+              },
+              "J4": {
+                "point": "pad_centroid",
+                "xy_mm": [
+                  20,
+                  25.5
+                ]
+              },
+              "TP1": {
+                "xy_mm": [
+                  10,
+                  14
+                ]
+              },
+              "TP3": {
+                "xy_mm": [
+                  32,
+                  14
+                ]
+              }
+            },
+            "operation": "placement",
+            "tolerance_mm": 0.02
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "board-outline-holes",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-BOARD-RULES"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/board_geometry",
+          "constraint": {
+            "operator": "equals",
+            "expected": 1,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": "board_coordinates",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "holes": {
+              "H1": [
+                3,
+                3
+              ],
+              "H2": [
+                37,
+                3
+              ],
+              "H3": [
+                3,
+                27
+              ],
+              "H4": [
+                37,
+                27
+              ]
+            },
+            "operation": "board_geometry",
+            "size_mm": [
+              40,
+              30
+            ],
+            "tolerance_mm": 0.02
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "erc-errors",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-CHECKS"
+          ],
+          "subject_role": "erc",
+          "reader": "kicad",
+          "selector": "pcb/report",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "report"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "drc-errors",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-CHECKS"
+          ],
+          "subject_role": "drc",
+          "reader": "kicad",
+          "selector": "pcb/report",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "report"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "fabrication-members",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-DELIVERABLES",
+            "PCB03-CORRESPONDENCE"
+          ],
+          "subject_role": "fabrication",
+          "reader": "kicad",
+          "selector": "pcb/fabrication_bundle",
+          "constraint": {
+            "operator": "equals",
+            "expected": 5,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "fabrication_bundle",
+            "required_members": [
+              "design-F_Cu.gtl",
+              "design-B_Cu.gbl",
+              "design-Edge_Cuts.gm1",
+              "design.drl",
+              "design-job.gbrjob"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-schematic",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-DELIVERABLES"
+          ],
+          "subject_role": "schematic",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-basis",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-DELIVERABLES"
+          ],
+          "subject_role": "basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "power-track-widths",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-POWER-ROUTING"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/track_widths",
+          "constraint": {
+            "operator": "equals",
+            "expected": 2,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "minimum_by_net_mm": {
+              "24V": 1.5,
+              "GND": 1.5
+            },
+            "operation": "track_widths"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "engineering-review",
+          "version": "1",
+          "requirement_ids": [
+            "PCB03-COMPATIBILITY",
+            "PCB03-ACTION-SCOPE"
+          ],
+          "subject_role": "basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Warning disposition, production-source compatibility, full native-to-fabrication correspondence, physical performance and release authorization require authenticated engineering review."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:27.566716+00:00",
+    "measurements": [
+      {
+        "id": "m-f8eb9f47ea4a00d184362599c106f95324b1c75043f0ed324d07142774134b9c",
+        "subject_id": "board",
+        "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+        "selector": "pcb/netlist",
+        "value": 29,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#netlist"
+        ]
+      },
+      {
+        "id": "m-7ed896d1ec9f6bfa764db7a62fc3ed9947dfa341663939a4db774212c33131d3",
+        "subject_id": "board",
+        "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+        "selector": "pcb/components",
+        "value": 15,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#components"
+        ]
+      },
+      {
+        "id": "m-cc771e1a5a3cd783763891a02e40b9832366cf68c4c45b14a9e3367737a30077",
+        "subject_id": "bom",
+        "subject_sha256": "c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a",
+        "selector": "pcb/bom",
+        "value": 15,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:bom@c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a#bom"
+        ]
+      },
+      {
+        "id": "m-5e65be15d4dc5fcdea666ec1c4ca024510e7172893a25303dc876fc890354324",
+        "subject_id": "board",
+        "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+        "selector": "pcb/placement",
+        "value": 5,
+        "unit": "1",
+        "frame": "board_coordinates",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#placement"
+        ]
+      },
+      {
+        "id": "m-16751af2832c10dc1da1ac32eececa87c37518463119ca57bb1d832ab4543fe4",
+        "subject_id": "board",
+        "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+        "selector": "pcb/board_geometry",
+        "value": 1,
+        "unit": "1",
+        "frame": "board_coordinates",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#board_geometry"
+        ]
+      },
+      {
+        "id": "m-a39dccb78243e4ca1923ff1c8d799870bdef68ce3ec5b9e51e193d558714ed62",
+        "subject_id": "erc",
+        "subject_sha256": "41f2f8f71e7c3d5463717d8725b1b78bcfa2253dfff8b5e53f013632c7943369",
+        "selector": "pcb/report",
+        "value": 0,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:erc@41f2f8f71e7c3d5463717d8725b1b78bcfa2253dfff8b5e53f013632c7943369#report"
+        ]
+      },
+      {
+        "id": "m-94a1ba6737433f04dcbe899ca0fe33b024d846cd3e5271c57f9bead9ea9da21b",
+        "subject_id": "drc",
+        "subject_sha256": "857f90535a29ad5590aa213eac8bd97185a5799607706c90dbd058ac987f0821",
+        "selector": "pcb/report",
+        "value": 0,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:drc@857f90535a29ad5590aa213eac8bd97185a5799607706c90dbd058ac987f0821#report"
+        ]
+      },
+      {
+        "id": "m-d6d908d5c900b83386d8ea2b8a4061d6dfecb5fde2af89200bf986b82d18584b",
+        "subject_id": "fabrication",
+        "subject_sha256": "58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1",
+        "selector": "pcb/fabrication_bundle",
+        "value": 5,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:fabrication@58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1#fabrication_bundle"
+        ]
+      },
+      {
+        "id": "m-73f2ef6158fbdd9c99257f65c861814c7c943f66369f4f19b9b1333180d6801f",
+        "subject_id": "schematic",
+        "subject_sha256": "4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7",
+        "selector": "",
+        "value": {
+          "bytes": 37692,
+          "present": true,
+          "sha256": "4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:schematic@4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7#"
+        ]
+      },
+      {
+        "id": "m-762ce220c1454da15ade1d01e9d8d656caf9a2dcd3b09551fa06ecd210612f5b",
+        "subject_id": "basis",
+        "subject_sha256": "c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2",
+        "selector": "",
+        "value": {
+          "bytes": 15835,
+          "present": true,
+          "sha256": "c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:basis@c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2#"
+        ]
+      },
+      {
+        "id": "m-4a6ef2b361a0f9f377c4a1dbd4feb4955531c34027a1db1aa13d7893f31621ce",
+        "subject_id": "board",
+        "subject_sha256": "a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592",
+        "selector": "pcb/track_widths",
+        "value": 2,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#track_widths"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "native-netlist",
+        "requirement_ids": [
+          "PCB03-CONNECTIVITY"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f8eb9f47ea4a00d184362599c106f95324b1c75043f0ed324d07142774134b9c"
+        ],
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#netlist"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "native-components",
+        "requirement_ids": [
+          "PCB03-PARTS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7ed896d1ec9f6bfa764db7a62fc3ed9947dfa341663939a4db774212c33131d3"
+        ],
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#components"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "bom-components",
+        "requirement_ids": [
+          "PCB03-PARTS",
+          "PCB03-CORRESPONDENCE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cc771e1a5a3cd783763891a02e40b9832366cf68c4c45b14a9e3367737a30077"
+        ],
+        "evidence_refs": [
+          "subject:bom@c0f5cb366fd8b1aa29c7b23a3e242118fb3cb409b015438dbb744c4b3dd2793a#bom"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "required-placement",
+        "requirement_ids": [
+          "PCB03-PLACEMENT"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-5e65be15d4dc5fcdea666ec1c4ca024510e7172893a25303dc876fc890354324"
+        ],
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#placement"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "board-outline-holes",
+        "requirement_ids": [
+          "PCB03-BOARD-RULES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-16751af2832c10dc1da1ac32eececa87c37518463119ca57bb1d832ab4543fe4"
+        ],
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#board_geometry"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "erc-errors",
+        "requirement_ids": [
+          "PCB03-CHECKS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-a39dccb78243e4ca1923ff1c8d799870bdef68ce3ec5b9e51e193d558714ed62"
+        ],
+        "evidence_refs": [
+          "subject:erc@41f2f8f71e7c3d5463717d8725b1b78bcfa2253dfff8b5e53f013632c7943369#report"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "drc-errors",
+        "requirement_ids": [
+          "PCB03-CHECKS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-94a1ba6737433f04dcbe899ca0fe33b024d846cd3e5271c57f9bead9ea9da21b"
+        ],
+        "evidence_refs": [
+          "subject:drc@857f90535a29ad5590aa213eac8bd97185a5799607706c90dbd058ac987f0821#report"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "fabrication-members",
+        "requirement_ids": [
+          "PCB03-DELIVERABLES",
+          "PCB03-CORRESPONDENCE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d6d908d5c900b83386d8ea2b8a4061d6dfecb5fde2af89200bf986b82d18584b"
+        ],
+        "evidence_refs": [
+          "subject:fabrication@58dcf423876eb483dfcbfec3a8e1075a3dd246559c240ad6d4a64b3c6d1171d1#fabrication_bundle"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-schematic",
+        "requirement_ids": [
+          "PCB03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-73f2ef6158fbdd9c99257f65c861814c7c943f66369f4f19b9b1333180d6801f"
+        ],
+        "evidence_refs": [
+          "subject:schematic@4a91fdc4218632eeed04e6cd648a6fde11dd53bc2827c4ca5578c01cffe830f7#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-basis",
+        "requirement_ids": [
+          "PCB03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-762ce220c1454da15ade1d01e9d8d656caf9a2dcd3b09551fa06ecd210612f5b"
+        ],
+        "evidence_refs": [
+          "subject:basis@c3aaa77e2d8db530c19628f5d25912e6ff1662e1139226e812094721c9787ed2#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "power-track-widths",
+        "requirement_ids": [
+          "PCB03-POWER-ROUTING"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4a6ef2b361a0f9f377c4a1dbd4feb4955531c34027a1db1aa13d7893f31621ce"
+        ],
+        "evidence_refs": [
+          "subject:board@a22b6efc197ed2dce37335158e53a417cd17c5327221deb39fd6ce6f87c77592#track_widths"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PCB03-COMPATIBILITY",
+          "PCB03-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-4a915d4626624f43b96dd0309285ccc2"
+        ],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-4a915d4626624f43b96dd0309285ccc2",
+        "code": "review.required",
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PCB03-COMPATIBILITY",
+          "PCB03-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "basis",
+        "owner": {
+          "run_id": "retained-successor-sensor-interface-pcb-03",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "basis"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+            "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+            "locator": "Business and system assumptions"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/prompt.txt",
+            "sha256": "a5ed394604cd75c25a84820aa4a018fdf19802996b8b8da8818f318ad64c8e43",
+            "locator": "passive-adapter scope"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md",
+            "sha256": "16524edc56f179eb4e4405c58f50c891802d50d0f6368881c4ed0fec048a398e",
+            "locator": "Layout requirements and limitations; Deliverables"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "native-netlist",
+            "native-components",
+            "bom-components",
+            "required-placement",
+            "board-outline-holes",
+            "erc-errors",
+            "drc-errors",
+            "fabrication-members",
+            "deliverable-schematic",
+            "deliverable-basis",
+            "power-track-widths",
+            "engineering-review"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": true,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 11
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

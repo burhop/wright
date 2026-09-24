@@ -1,0 +1,32 @@
+{
+  "at": "2026-09-23T00:02:30.237200+00:00",
+  "scenario_id": "printed-replacement-part-02",
+  "attempt_id": "attempt-020",
+  "run_id": "81f485cf945747ada524dc575c2178b6",
+  "run_log_path": "runs/campaign-printed-replacement-part-02-attempt-020/20260923T000203Z-97037aa8ed97.json",
+  "source_sha256": "71cd02610e007a9bda310aa33e5e981bf59e06fa8c611a4532f3783ddf1d4301",
+  "retry_episode": {
+    "episode_id": "printed02-final-feature-review",
+    "failure_key": "review_changes_requested:clearance-native-orientation",
+    "boundary": "printed-replacement-part-02:engineering-review",
+    "max_corrections": 2,
+    "baseline_attempt_ids": [
+      "attempt-017"
+    ],
+    "correction": {
+      "id": "unclamped-pad-and-bore-rounds-r3",
+      "evidence": [
+        {
+          "id": "user-decision-and-native-qualified-repair",
+          "path": "retry-evidence/printed02-review-correction-020.json",
+          "sha256": "049d9dcef9ea45799f7aaa66cdd5a5aec81ce7052e183eb6103e00fb270e405b"
+        }
+      ]
+    }
+  },
+  "runner_session": 19375,
+  "native_receipt": ".local-run\\feature-081-live\\printing02-runtime-attempt-020\\lifecycle.json",
+  "local_commit": "8f9b22fb",
+  "status": "running_source_authoring",
+  "campaign_credit": false
+}

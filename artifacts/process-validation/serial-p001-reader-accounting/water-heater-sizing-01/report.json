@@ -1,0 +1,2514 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "7825046575457e90c507a0c8ca207c75c68ef533f9d9aeeafaef4fba19132613",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:41.374663+00:00",
+    "selected_assessment_id": "assessment-bb967157dc794dc9b9852b1430d3486a",
+    "selected_attempt_id": "af3a4ed6ab764c6aaa98e41d5b199157",
+    "selected_subject_ids": [
+      "timeline",
+      "comparison",
+      "energy",
+      "curve",
+      "report",
+      "parameters"
+    ],
+    "latest_attempt_id": "af3a4ed6ab764c6aaa98e41d5b199157",
+    "latest_assessment_id": "assessment-bb967157dc794dc9b9852b1430d3486a",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "WATER01-MODEL",
+      "WATER01-PHYSICS",
+      "WATER01-CONTROL",
+      "WATER01-CANDIDATES",
+      "WATER01-HORIZON",
+      "WATER01-TARGET",
+      "WATER01-SELECTION",
+      "WATER01-ENERGY",
+      "WATER01-REFINEMENT",
+      "WATER01-DELIVERABLES",
+      "WATER01-CLAIM-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Physical heater operation, safety, wiring, purchasing and certification remain outside this digital validation gate."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "water-heater-timeline",
+      "version": "1",
+      "config_digest": "4986474d87a6e2584253a2db0cf1eae9b8ba4169c84fc0fdb4dfce396e36fbca",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded water-heater trajectory reader v1",
+      "formats": [
+        "csv"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "WATER01-CANDIDATES",
+      "requirement_text": "The study retains actual results for all and only the declared P350, P500 and P700 electrical-power candidates.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/power-candidates.csv",
+          "sha256": "bd6fb78377423bd5ea6cad311ed14cd1f1159333414caae20bcbd1c7621d665b",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Comparison policy"
+        }
+      ],
+      "check_id": "trajectory-grid",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "water-heater-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "water/grid_count",
+      "expected": {
+        "operator": "equals",
+        "expected": 3,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        3
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-PHYSICS",
+      "requirement_text": "Runs use 0.350 kg water, 4180 J/(kg·K), 90 J/K vessel capacity, 20 °C initial/ambient temperature, UA=0.60 W/K and electrical-to-thermal efficiency 0.92 without silent substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/parameters.csv",
+          "sha256": "4d22025c16331782912713803c7b31504aa342c28b415815130785f5fbb2c28b",
+          "locator": "water_mass through electrical_to_thermal_efficiency"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Supplied model quantities; Shared physical assumptions"
+        }
+      ],
+      "check_id": "trajectory-grid",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "water-heater-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "water/grid_count",
+      "expected": {
+        "operator": "equals",
+        "expected": 3,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        3
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-CONTROL",
+      "requirement_text": "Constant electrical power is applied until the first 90 °C target crossing using the selected kit's declared 2 K hysteresis semantics; post-crossing energy is not counted as heat-up energy.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Shared physical assumptions"
+        },
+        {
+          "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+          "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+          "locator": "Physical and numerical contract"
+        }
+      ],
+      "check_id": "trajectory-grid",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "water-heater-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "water/grid_count",
+      "expected": {
+        "operator": "equals",
+        "expected": 3,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        3
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-HORIZON",
+      "requirement_text": "Each baseline run uses the accepted 300 s horizon and 1 s output grid; the comparison records if a candidate does not reach 90 °C within that horizon.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/parameters.csv",
+          "sha256": "4d22025c16331782912713803c7b31504aa342c28b415815130785f5fbb2c28b",
+          "locator": "requested_stop_time,requested_output_interval"
+        },
+        {
+          "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+          "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+          "locator": "Physical and numerical contract"
+        }
+      ],
+      "check_id": "trajectory-grid",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "water-heater-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "water/grid_count",
+      "expected": {
+        "operator": "equals",
+        "expected": 3,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        3
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-TARGET",
+      "requirement_text": "Candidate compliance uses the independently interpolated first 90 °C crossing and the inclusive 180 s heat-up limit.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/parameters.csv",
+          "sha256": "4d22025c16331782912713803c7b31504aa342c28b415815130785f5fbb2c28b",
+          "locator": "target_temperature,heat_up_limit"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Business and design context"
+        }
+      ],
+      "check_id": "trajectory-grid",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "water-heater-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "water/grid_count",
+      "expected": {
+        "operator": "equals",
+        "expected": 3,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        3
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-SELECTION",
+      "requirement_text": "The recommendation selects the lowest declared electrical power that meets 180 s, or reports no feasible candidate without changing mass or the power menu.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/power-candidates.csv",
+          "sha256": "bd6fb78377423bd5ea6cad311ed14cd1f1159333414caae20bcbd1c7621d665b",
+          "locator": "selection_rule"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Comparison policy"
+        }
+      ],
+      "check_id": "candidate-selection",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "water-heater-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "water/selected_power",
+      "expected": {
+        "operator": "equals",
+        "expected": 700,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "W",
+      "expected_frame": null,
+      "observed": [
+        700.0
+      ],
+      "observed_units": [
+        "W"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-MODEL",
+      "requirement_text": "Every candidate is executed with the approved wright-water-heater-v1@0.1.0 recorded Modelica kit and its accepted parameter schema; an analytical or Python substitute is not labeled as kit execution.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Model execution boundary"
+        },
+        {
+          "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+          "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+          "locator": "Physical and numerical contract"
+        }
+      ],
+      "check_id": "kit-id",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/kit_id",
+      "expected": {
+        "operator": "equals",
+        "expected": "wright-water-heater-v1",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "wright-water-heater-v1"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#/kit_id"
+      ],
+      "subject_id": "parameters",
+      "subject_sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "parameters"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-MODEL",
+      "requirement_text": "Every candidate is executed with the approved wright-water-heater-v1@0.1.0 recorded Modelica kit and its accepted parameter schema; an analytical or Python substitute is not labeled as kit execution.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Model execution boundary"
+        },
+        {
+          "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+          "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+          "locator": "Physical and numerical contract"
+        }
+      ],
+      "check_id": "kit-version",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/kit_version",
+      "expected": {
+        "operator": "equals",
+        "expected": "0.1.0",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "0.1.0"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#/kit_version"
+      ],
+      "subject_id": "parameters",
+      "subject_sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "parameters"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-ENERGY",
+      "requirement_text": "The report separates electrical input energy, thermal energy delivered to water/vessel, and modeled ambient loss over the declared target-crossing horizon.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Shared physical assumptions"
+        }
+      ],
+      "check_id": "energy-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "energy",
+      "subject_sha256": "ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "energy"
+      },
+      "finding_ids": [
+        "f-1733b984a43e4c6dae899b2b2ca7cb2a"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "WATER01-REFINEMENT",
+      "requirement_text": "The selected controlling candidate retains a separate refined run using the authorized tighter timestep/tolerance and reports target-time and final-energy sensitivity.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Requested outputs and initial validation"
+        },
+        {
+          "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+          "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+          "locator": "Physical and numerical contract; Real result export and study analysis"
+        }
+      ],
+      "check_id": "refinement-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "comparison",
+      "subject_sha256": "231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [
+        "f-31af3f7955ea4ae7a3836d8cec43696f"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "WATER01-CLAIM-SCOPE",
+      "requirement_text": "The study remains a simulation decision and does not claim appliance safety, physical heater control, wiring approval, purchasing, measured hardware performance, boil/steam behavior, or closed-loop overshoot.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Business and design context; Model execution boundary; Shared physical assumptions"
+        }
+      ],
+      "check_id": "claim-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-e63ed906c98049b086bada46ef034043"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "WATER01-DELIVERABLES",
+      "requirement_text": "The output set contains temperature-time.csv, power-comparison.csv, energy-summary.csv, temperature curves, heater-selection report, and kit-parameters.json with kit/version, accepted names, run IDs and integration settings.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/prompt.txt",
+          "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Requested outputs and initial validation"
+        }
+      ],
+      "check_id": "deliverable-timeline",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 135505,
+          "present": true,
+          "sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-DELIVERABLES",
+      "requirement_text": "The output set contains temperature-time.csv, power-comparison.csv, energy-summary.csv, temperature curves, heater-selection report, and kit-parameters.json with kit/version, accepted names, run IDs and integration settings.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/prompt.txt",
+          "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Requested outputs and initial validation"
+        }
+      ],
+      "check_id": "deliverable-comparison",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 596,
+          "present": true,
+          "sha256": "231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb#"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-DELIVERABLES",
+      "requirement_text": "The output set contains temperature-time.csv, power-comparison.csv, energy-summary.csv, temperature curves, heater-selection report, and kit-parameters.json with kit/version, accepted names, run IDs and integration settings.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/prompt.txt",
+          "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Requested outputs and initial validation"
+        }
+      ],
+      "check_id": "deliverable-energy",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 891,
+          "present": true,
+          "sha256": "ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:energy@ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a#"
+      ],
+      "subject_id": "energy",
+      "subject_sha256": "ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "energy"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-DELIVERABLES",
+      "requirement_text": "The output set contains temperature-time.csv, power-comparison.csv, energy-summary.csv, temperature curves, heater-selection report, and kit-parameters.json with kit/version, accepted names, run IDs and integration settings.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/prompt.txt",
+          "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Requested outputs and initial validation"
+        }
+      ],
+      "check_id": "deliverable-curve",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 30403,
+          "present": true,
+          "sha256": "4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:curve@4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48#"
+      ],
+      "subject_id": "curve",
+      "subject_sha256": "4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "curve"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-DELIVERABLES",
+      "requirement_text": "The output set contains temperature-time.csv, power-comparison.csv, energy-summary.csv, temperature curves, heater-selection report, and kit-parameters.json with kit/version, accepted names, run IDs and integration settings.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/prompt.txt",
+          "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Requested outputs and initial validation"
+        }
+      ],
+      "check_id": "deliverable-report",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1410,
+          "present": true,
+          "sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:report@5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225#"
+      ],
+      "subject_id": "report",
+      "subject_sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "WATER01-DELIVERABLES",
+      "requirement_text": "The output set contains temperature-time.csv, power-comparison.csv, energy-summary.csv, temperature curves, heater-selection report, and kit-parameters.json with kit/version, accepted names, run IDs and integration settings.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/prompt.txt",
+          "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+          "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+          "locator": "Requested outputs and initial validation"
+        }
+      ],
+      "check_id": "deliverable-parameters",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 6208,
+          "present": true,
+          "sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#"
+      ],
+      "subject_id": "parameters",
+      "subject_sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9",
+      "producer": {
+        "run_id": "retained-successor-water-heater-sizing-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "parameters"
+      },
+      "finding_ids": [],
+      "action": null
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-bb967157dc794dc9b9852b1430d3486a",
+    "attempt_id": "af3a4ed6ab764c6aaa98e41d5b199157",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "water-heater-sizing-01",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "timeline",
+          "role": "timeline",
+          "result_id": "retained-successor:water-heater-sizing-01:timeline",
+          "producer": {
+            "run_id": "retained-successor-water-heater-sizing-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "timeline"
+          },
+          "kind": "file",
+          "sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+          "value": null,
+          "locator": "temperature-time.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "comparison",
+          "role": "comparison",
+          "result_id": "retained-successor:water-heater-sizing-01:comparison",
+          "producer": {
+            "run_id": "retained-successor-water-heater-sizing-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "comparison"
+          },
+          "kind": "file",
+          "sha256": "231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb",
+          "value": null,
+          "locator": "power-comparison.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "energy",
+          "role": "energy",
+          "result_id": "retained-successor:water-heater-sizing-01:energy",
+          "producer": {
+            "run_id": "retained-successor-water-heater-sizing-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "energy"
+          },
+          "kind": "file",
+          "sha256": "ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a",
+          "value": null,
+          "locator": "energy-summary.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "curve",
+          "role": "curve",
+          "result_id": "retained-successor:water-heater-sizing-01:curve",
+          "producer": {
+            "run_id": "retained-successor-water-heater-sizing-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "curve"
+          },
+          "kind": "file",
+          "sha256": "4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48",
+          "value": null,
+          "locator": "temperature-curve.svg",
+          "format": "svg",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "report",
+          "role": "report",
+          "result_id": "retained-successor:water-heater-sizing-01:report",
+          "producer": {
+            "run_id": "retained-successor-water-heater-sizing-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "report"
+          },
+          "kind": "file",
+          "sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225",
+          "value": null,
+          "locator": "heater-selection.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "parameters",
+          "role": "parameters",
+          "result_id": "retained-successor:water-heater-sizing-01:parameters",
+          "producer": {
+            "run_id": "retained-successor-water-heater-sizing-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "parameters"
+          },
+          "kind": "file",
+          "sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9",
+          "value": null,
+          "locator": "kit-run-parameters.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "water-heater-sizing-01-full",
+        "version": "1",
+        "sha256": "d04f0c7cf7a074ee2f5e26141c6673e2a3304ea8c8cc37b03bad1ecc2857d2c1"
+      },
+      "baseline_ref": {
+        "id": "water-heater-sizing-01-basis",
+        "version": "1",
+        "sha256": "83dc0e6d9877a46c9b0c5ba0c84941ffcfff06fa32eadfab4cccf3248bd8bde5"
+      },
+      "idempotency_key": "water-heater-sizing-01",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "water-heater-sizing-01-full",
+      "version": "1",
+      "baseline": {
+        "id": "water-heater-sizing-01-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "WATER01-MODEL",
+            "text": "Every candidate is executed with the approved wright-water-heater-v1@0.1.0 recorded Modelica kit and its accepted parameter schema; an analytical or Python substitute is not labeled as kit execution.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Model execution boundary"
+              },
+              {
+                "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+                "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+                "locator": "Physical and numerical contract"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-PHYSICS",
+            "text": "Runs use 0.350 kg water, 4180 J/(kg·K), 90 J/K vessel capacity, 20 °C initial/ambient temperature, UA=0.60 W/K and electrical-to-thermal efficiency 0.92 without silent substitution.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/parameters.csv",
+                "sha256": "4d22025c16331782912713803c7b31504aa342c28b415815130785f5fbb2c28b",
+                "locator": "water_mass through electrical_to_thermal_efficiency"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Supplied model quantities; Shared physical assumptions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-CONTROL",
+            "text": "Constant electrical power is applied until the first 90 °C target crossing using the selected kit's declared 2 K hysteresis semantics; post-crossing energy is not counted as heat-up energy.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Shared physical assumptions"
+              },
+              {
+                "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+                "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+                "locator": "Physical and numerical contract"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-CANDIDATES",
+            "text": "The study retains actual results for all and only the declared P350, P500 and P700 electrical-power candidates.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/power-candidates.csv",
+                "sha256": "bd6fb78377423bd5ea6cad311ed14cd1f1159333414caae20bcbd1c7621d665b",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Comparison policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-HORIZON",
+            "text": "Each baseline run uses the accepted 300 s horizon and 1 s output grid; the comparison records if a candidate does not reach 90 °C within that horizon.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/parameters.csv",
+                "sha256": "4d22025c16331782912713803c7b31504aa342c28b415815130785f5fbb2c28b",
+                "locator": "requested_stop_time,requested_output_interval"
+              },
+              {
+                "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+                "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+                "locator": "Physical and numerical contract"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-TARGET",
+            "text": "Candidate compliance uses the independently interpolated first 90 °C crossing and the inclusive 180 s heat-up limit.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/parameters.csv",
+                "sha256": "4d22025c16331782912713803c7b31504aa342c28b415815130785f5fbb2c28b",
+                "locator": "target_temperature,heat_up_limit"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Business and design context"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-SELECTION",
+            "text": "The recommendation selects the lowest declared electrical power that meets 180 s, or reports no feasible candidate without changing mass or the power menu.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/power-candidates.csv",
+                "sha256": "bd6fb78377423bd5ea6cad311ed14cd1f1159333414caae20bcbd1c7621d665b",
+                "locator": "selection_rule"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Comparison policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-ENERGY",
+            "text": "The report separates electrical input energy, thermal energy delivered to water/vessel, and modeled ambient loss over the declared target-crossing horizon.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Shared physical assumptions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "WATER01-REFINEMENT",
+            "text": "The selected controlling candidate retains a separate refined run using the authorized tighter timestep/tolerance and reports target-time and final-energy sensitivity.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Requested outputs and initial validation"
+              },
+              {
+                "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+                "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+                "locator": "Physical and numerical contract; Real result export and study analysis"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "WATER01-DELIVERABLES",
+            "text": "The output set contains temperature-time.csv, power-comparison.csv, energy-summary.csv, temperature curves, heater-selection report, and kit-parameters.json with kit/version, accepted names, run IDs and integration settings.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/prompt.txt",
+                "sha256": "19061f48c1076342c0eaaa094be914d637f187f0efbf22fd600b13a8512ec40c",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Requested outputs and initial validation"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "WATER01-CLAIM-SCOPE",
+            "text": "The study remains a simulation decision and does not claim appliance safety, physical heater control, wiring approval, purchasing, measured hardware performance, boil/steam behavior, or closed-loop overshoot.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+                "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+                "locator": "Business and design context; Model execution boundary; Shared physical assumptions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": [
+          {
+            "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+            "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+            "locator": "Physical and numerical contract"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "id": "trajectory-grid",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-CANDIDATES",
+            "WATER01-PHYSICS",
+            "WATER01-CONTROL",
+            "WATER01-HORIZON",
+            "WATER01-TARGET"
+          ],
+          "subject_role": "timeline",
+          "reader": "water-heater-timeline",
+          "selector": "water/grid_count",
+          "constraint": {
+            "operator": "equals",
+            "expected": 3,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "efficiency": 0.92,
+            "horizon_s": 300,
+            "initial_temperature_c": 20.0,
+            "loss_labels": [
+              "nominal"
+            ],
+            "operation": "grid_count",
+            "powers_w": [
+              350,
+              500,
+              700
+            ],
+            "target_temperature_c": 90.0,
+            "time_limit_s": 180
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "candidate-selection",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-SELECTION"
+          ],
+          "subject_role": "timeline",
+          "reader": "water-heater-timeline",
+          "selector": "water/selected_power",
+          "constraint": {
+            "operator": "equals",
+            "expected": 700,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "W",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "efficiency": 0.92,
+            "horizon_s": 300,
+            "initial_temperature_c": 20.0,
+            "loss_labels": [
+              "nominal"
+            ],
+            "operation": "selection",
+            "powers_w": [
+              350,
+              500,
+              700
+            ],
+            "target_temperature_c": 90.0,
+            "time_limit_s": 180
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "kit-id",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-MODEL"
+          ],
+          "subject_role": "parameters",
+          "reader": "structured",
+          "selector": "/kit_id",
+          "constraint": {
+            "operator": "equals",
+            "expected": "wright-water-heater-v1",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "kit-version",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-MODEL"
+          ],
+          "subject_role": "parameters",
+          "reader": "structured",
+          "selector": "/kit_version",
+          "constraint": {
+            "operator": "equals",
+            "expected": "0.1.0",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "energy-review",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-ENERGY"
+          ],
+          "subject_role": "energy",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "refinement-review",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-REFINEMENT"
+          ],
+          "subject_role": "comparison",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "claim-review",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-CLAIM-SCOPE"
+          ],
+          "subject_role": "report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-timeline",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-DELIVERABLES"
+          ],
+          "subject_role": "timeline",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-comparison",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-DELIVERABLES"
+          ],
+          "subject_role": "comparison",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-energy",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-DELIVERABLES"
+          ],
+          "subject_role": "energy",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-curve",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-DELIVERABLES"
+          ],
+          "subject_role": "curve",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-report",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-DELIVERABLES"
+          ],
+          "subject_role": "report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-parameters",
+          "version": "1",
+          "requirement_ids": [
+            "WATER01-DELIVERABLES"
+          ],
+          "subject_role": "parameters",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Physical heater operation, safety, wiring, purchasing and certification remain outside this digital validation gate."
+      ],
+      "supported_kinds": [
+        "file"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:41.312261+00:00",
+    "measurements": [
+      {
+        "id": "m-a885719cc11aabb0e21c091a81b429fdb71810ec0ca4a515095240990499a705",
+        "subject_id": "timeline",
+        "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+        "selector": "water/grid_count",
+        "value": 3,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "water-heater-timeline",
+          "version": "1",
+          "config_digest": "4986474d87a6e2584253a2db0cf1eae9b8ba4169c84fc0fdb4dfce396e36fbca",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded water-heater trajectory reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+        ]
+      },
+      {
+        "id": "m-fbbf585217920399a57006454bdaca741c30c6989d50714baceb7f368d6726ed",
+        "subject_id": "timeline",
+        "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+        "selector": "water/selected_power",
+        "value": 700.0,
+        "unit": "W",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "water-heater-timeline",
+          "version": "1",
+          "config_digest": "4986474d87a6e2584253a2db0cf1eae9b8ba4169c84fc0fdb4dfce396e36fbca",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded water-heater trajectory reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+        ]
+      },
+      {
+        "id": "m-497c2a0e8db17d3678a6439942506b53c6c45a3e4ddfff038e130487caf29a29",
+        "subject_id": "parameters",
+        "subject_sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9",
+        "selector": "/kit_id",
+        "value": "wright-water-heater-v1",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#/kit_id"
+        ]
+      },
+      {
+        "id": "m-d18de13d9eca8b6851cbc1ff4c9d7d19f74b5fc6b19d0e25a20038a9e1fd91c2",
+        "subject_id": "parameters",
+        "subject_sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9",
+        "selector": "/kit_version",
+        "value": "0.1.0",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#/kit_version"
+        ]
+      },
+      {
+        "id": "m-627d8943acb06979ea7b9ca318d5176f4d685330818f0d1af5a4b1907ecf6671",
+        "subject_id": "timeline",
+        "subject_sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d",
+        "selector": "",
+        "value": {
+          "bytes": 135505,
+          "present": true,
+          "sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#"
+        ]
+      },
+      {
+        "id": "m-0c2fe470dfdf750fd678e6b2d9196579be30077c842ae4189c319dc6cd5f2dc3",
+        "subject_id": "comparison",
+        "subject_sha256": "231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb",
+        "selector": "",
+        "value": {
+          "bytes": 596,
+          "present": true,
+          "sha256": "231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:comparison@231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb#"
+        ]
+      },
+      {
+        "id": "m-5436ea6d74d5d57e1c2848bf3d87c87bbb0bab91a9039d56e9dca0227c4e86d8",
+        "subject_id": "energy",
+        "subject_sha256": "ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a",
+        "selector": "",
+        "value": {
+          "bytes": 891,
+          "present": true,
+          "sha256": "ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:energy@ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a#"
+        ]
+      },
+      {
+        "id": "m-9b550fdd2faf11359078254523a5d2019b8c9b00188a1cbc7706eddd0b5576d6",
+        "subject_id": "curve",
+        "subject_sha256": "4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48",
+        "selector": "",
+        "value": {
+          "bytes": 30403,
+          "present": true,
+          "sha256": "4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:curve@4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48#"
+        ]
+      },
+      {
+        "id": "m-187936a108ebd21cd6a7b08e18c9851e0e0b6747f8ecb302113c78863084c1c1",
+        "subject_id": "report",
+        "subject_sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225",
+        "selector": "",
+        "value": {
+          "bytes": 1410,
+          "present": true,
+          "sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:report@5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225#"
+        ]
+      },
+      {
+        "id": "m-3f02597bcfb0dac1d37ada672afa3c0a6db2e73beb0f77cb0bff4773debf4aed",
+        "subject_id": "parameters",
+        "subject_sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9",
+        "selector": "",
+        "value": {
+          "bytes": 6208,
+          "present": true,
+          "sha256": "f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "trajectory-grid",
+        "requirement_ids": [
+          "WATER01-CANDIDATES",
+          "WATER01-PHYSICS",
+          "WATER01-CONTROL",
+          "WATER01-HORIZON",
+          "WATER01-TARGET"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-a885719cc11aabb0e21c091a81b429fdb71810ec0ca4a515095240990499a705"
+        ],
+        "evidence_refs": [
+          "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "candidate-selection",
+        "requirement_ids": [
+          "WATER01-SELECTION"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-fbbf585217920399a57006454bdaca741c30c6989d50714baceb7f368d6726ed"
+        ],
+        "evidence_refs": [
+          "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#trajectories"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "kit-id",
+        "requirement_ids": [
+          "WATER01-MODEL"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-497c2a0e8db17d3678a6439942506b53c6c45a3e4ddfff038e130487caf29a29"
+        ],
+        "evidence_refs": [
+          "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#/kit_id"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "kit-version",
+        "requirement_ids": [
+          "WATER01-MODEL"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d18de13d9eca8b6851cbc1ff4c9d7d19f74b5fc6b19d0e25a20038a9e1fd91c2"
+        ],
+        "evidence_refs": [
+          "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#/kit_version"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "energy-review",
+        "requirement_ids": [
+          "WATER01-ENERGY"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-1733b984a43e4c6dae899b2b2ca7cb2a"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "refinement-review",
+        "requirement_ids": [
+          "WATER01-REFINEMENT"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-31af3f7955ea4ae7a3836d8cec43696f"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "claim-review",
+        "requirement_ids": [
+          "WATER01-CLAIM-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-e63ed906c98049b086bada46ef034043"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-timeline",
+        "requirement_ids": [
+          "WATER01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-627d8943acb06979ea7b9ca318d5176f4d685330818f0d1af5a4b1907ecf6671"
+        ],
+        "evidence_refs": [
+          "subject:timeline@4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-comparison",
+        "requirement_ids": [
+          "WATER01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-0c2fe470dfdf750fd678e6b2d9196579be30077c842ae4189c319dc6cd5f2dc3"
+        ],
+        "evidence_refs": [
+          "subject:comparison@231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-energy",
+        "requirement_ids": [
+          "WATER01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-5436ea6d74d5d57e1c2848bf3d87c87bbb0bab91a9039d56e9dca0227c4e86d8"
+        ],
+        "evidence_refs": [
+          "subject:energy@ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-curve",
+        "requirement_ids": [
+          "WATER01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-9b550fdd2faf11359078254523a5d2019b8c9b00188a1cbc7706eddd0b5576d6"
+        ],
+        "evidence_refs": [
+          "subject:curve@4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-report",
+        "requirement_ids": [
+          "WATER01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-187936a108ebd21cd6a7b08e18c9851e0e0b6747f8ecb302113c78863084c1c1"
+        ],
+        "evidence_refs": [
+          "subject:report@5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-parameters",
+        "requirement_ids": [
+          "WATER01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-3f02597bcfb0dac1d37ada672afa3c0a6db2e73beb0f77cb0bff4773debf4aed"
+        ],
+        "evidence_refs": [
+          "subject:parameters@f883d3532162760cc6b07671dc276c1d25a890b0cc5af246b7d9afc36efea2b9#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-1733b984a43e4c6dae899b2b2ca7cb2a",
+        "code": "review.required",
+        "check_id": "energy-review",
+        "requirement_ids": [
+          "WATER01-ENERGY"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "energy",
+        "owner": {
+          "run_id": "retained-successor-water-heater-sizing-01",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "energy"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+            "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+            "locator": "Shared physical assumptions"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "trajectory-grid",
+            "candidate-selection",
+            "kit-id",
+            "kit-version",
+            "energy-review",
+            "refinement-review",
+            "claim-review",
+            "deliverable-timeline",
+            "deliverable-comparison",
+            "deliverable-energy",
+            "deliverable-curve",
+            "deliverable-report",
+            "deliverable-parameters"
+          ]
+        }
+      },
+      {
+        "id": "f-31af3f7955ea4ae7a3836d8cec43696f",
+        "code": "review.required",
+        "check_id": "refinement-review",
+        "requirement_ids": [
+          "WATER01-REFINEMENT"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "comparison",
+        "owner": {
+          "run_id": "retained-successor-water-heater-sizing-01",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "comparison"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+            "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+            "locator": "Requested outputs and initial validation"
+          },
+          {
+            "artifact_ref": "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+            "sha256": "80d7746c5ef13d7198894f2ca7c112be95a1031fa794aa5e29b151f376d5cc56",
+            "locator": "Physical and numerical contract; Real result export and study analysis"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "trajectory-grid",
+            "candidate-selection",
+            "kit-id",
+            "kit-version",
+            "energy-review",
+            "refinement-review",
+            "claim-review",
+            "deliverable-timeline",
+            "deliverable-comparison",
+            "deliverable-energy",
+            "deliverable-curve",
+            "deliverable-report",
+            "deliverable-parameters"
+          ]
+        }
+      },
+      {
+        "id": "f-e63ed906c98049b086bada46ef034043",
+        "code": "review.required",
+        "check_id": "claim-review",
+        "requirement_ids": [
+          "WATER01-CLAIM-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "report",
+        "owner": {
+          "run_id": "retained-successor-water-heater-sizing-01",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "report"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md",
+            "sha256": "9a9e11da6dabf6b2d415f83376e9c262e99756082ceafd622859fbe4773dbc5d",
+            "locator": "Business and design context; Model execution boundary; Shared physical assumptions"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "trajectory-grid",
+            "candidate-selection",
+            "kit-id",
+            "kit-version",
+            "energy-review",
+            "refinement-review",
+            "claim-review",
+            "deliverable-timeline",
+            "deliverable-comparison",
+            "deliverable-energy",
+            "deliverable-curve",
+            "deliverable-report",
+            "deliverable-parameters"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 3,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 10
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

@@ -874,3 +874,7 @@ P001 Printed 02: temporarily unsolvable under current authority. Exact 019 human
 P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.
 
 [Exact decision](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-019.json), [preserved budget and cleanup](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-approved-extra-correction.json). P002 read-only findings saved and requeued. Prior attempts remain unchanged.
+
+## P001 correction 3: canonical attempt 020
+
+P001 Printed 02/020: correction 3 started after exact preflight; real Blender authoring uses qualified 1.01 mm pad rounds. Observe this one run through repair, slicing and human review; no canonical credit yet. [Start and retry identity](../../artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical020-start.json).

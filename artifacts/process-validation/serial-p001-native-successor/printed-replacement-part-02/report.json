@@ -1,0 +1,3301 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "51a982eda5b7ef4eb642c9e7f4c8e84f524903271885309946e424c217a5a579",
+  "currentness": {
+    "as_of": "2026-09-22T22:32:53.166199+00:00",
+    "selected_assessment_id": "assessment-92c507629d114d409c95b5e71c5c2e3a",
+    "selected_attempt_id": "c5a42654f3ea4527a20532a15f2c01fe",
+    "selected_subject_ids": [
+      "source-mesh",
+      "repaired-mesh",
+      "support-preview",
+      "slice-package",
+      "slice-evidence",
+      "machine-profile",
+      "filament-profile",
+      "process-profile",
+      "transfer-receipt",
+      "source-report"
+    ],
+    "latest_attempt_id": "c5a42654f3ea4527a20532a15f2c01fe",
+    "latest_assessment_id": "assessment-92c507629d114d409c95b5e71c5c2e3a",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "PRINT02-MOUNTING",
+      "PRINT02-LABEL-KEEPOUT",
+      "PRINT02-ENVELOPE",
+      "PRINT02-FINGER-CLEARANCE",
+      "PRINT02-GRIP",
+      "PRINT02-MESH-LINEAGE",
+      "PRINT02-SLICE",
+      "PRINT02-ORIENTATION",
+      "PRINT02-DELIVERABLES",
+      "PRINT02-ACTION-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and production release require authenticated engineering review."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "printing",
+      "version": "2",
+      "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded print artifact reader v2",
+      "formats": [
+        "stl",
+        "json",
+        "3mf"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "PRINT02-ENVELOPE",
+      "requirement_text": "The handle outer envelope is at most 118 mm wide, 28 mm high and 34 mm proud of the drawer.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        }
+      ],
+      "check_id": "repaired-envelope-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/x_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 118.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        113.99899768829346
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/x_span_mm"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-ENVELOPE",
+      "requirement_text": "The handle outer envelope is at most 118 mm wide, 28 mm high and 34 mm proud of the drawer.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        }
+      ],
+      "check_id": "repaired-envelope-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/y_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 28.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        23.999000549316406
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/y_span_mm"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-ENVELOPE",
+      "requirement_text": "The handle outer envelope is at most 118 mm wide, 28 mm high and 34 mm proud of the drawer.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        }
+      ],
+      "check_id": "repaired-envelope-z",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/z_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 34.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        33.999000549316406
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/z_span_mm"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-MESH-LINEAGE",
+      "requirement_text": "Source and repaired meshes remain distinct and the final 3MF and support preview bind to the reviewed repaired-mesh revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "build and repair request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "repaired-mesh-integrity",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/integrity",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/integrity"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-DELIVERABLES",
+      "requirement_text": "The output set contains source mesh, repaired mesh, support preview, final 3MF and a digest-bound clearly simulated local transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "requested package"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "repaired-mesh-integrity",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/integrity",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/integrity"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-MESH-LINEAGE",
+      "requirement_text": "Source and repaired meshes remain distinct and the final 3MF and support preview bind to the reviewed repaired-mesh revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "build and repair request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "distinct-mesh-lineage",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/lineage",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/lineage",
+        "subject:source-mesh@bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0#mesh-lineage"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "machine-name",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/name",
+      "expected": {
+        "operator": "equals",
+        "expected": "Bambu Lab P1S 0.4 nozzle",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "Bambu Lab P1S 0.4 nozzle"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+      ],
+      "subject_id": "machine-profile",
+      "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "machine_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "machine-nozzle",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/nozzle_diameter",
+      "expected": {
+        "operator": "equals",
+        "expected": [
+          "0.4"
+        ],
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        [
+          "0.4"
+        ]
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+      ],
+      "subject_id": "machine-profile",
+      "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "machine_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "filament-name",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/name",
+      "expected": {
+        "operator": "equals",
+        "expected": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "Bambu PETG HF @BBL P1S 0.4 nozzle"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+      ],
+      "subject_id": "filament-profile",
+      "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "filament_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "filament-type",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/filament_type",
+      "expected": {
+        "operator": "equals",
+        "expected": [
+          "PETG"
+        ],
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        [
+          "PETG"
+        ]
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+      ],
+      "subject_id": "filament-profile",
+      "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "filament_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "layer-height",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/layer_height",
+      "expected": {
+        "operator": "equals",
+        "expected": "0.20",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "0.20"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/layer_height"
+      ],
+      "subject_id": "process-profile",
+      "subject_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "process_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "wall-loops",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/wall_loops",
+      "expected": {
+        "operator": "equals",
+        "expected": "5",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "5"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/wall_loops"
+      ],
+      "subject_id": "process-profile",
+      "subject_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "process_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "infill-density",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/sparse_infill_density",
+      "expected": {
+        "operator": "equals",
+        "expected": "40%",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "40%"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/sparse_infill_density"
+      ],
+      "subject_id": "process-profile",
+      "subject_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "process_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "slice-package-inventory",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "package/required_members",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#package/required_members"
+      ],
+      "subject_id": "slice-package",
+      "subject_sha256": "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "slice_package"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-DELIVERABLES",
+      "requirement_text": "The output set contains source mesh, repaired mesh, support preview, final 3MF and a digest-bound clearly simulated local transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "requested package"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "slice-package-inventory",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "package/required_members",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#package/required_members"
+      ],
+      "subject_id": "slice-package",
+      "subject_sha256": "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "slice_package"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-MESH-LINEAGE",
+      "requirement_text": "Source and repaired meshes remain distinct and the final 3MF and support preview bind to the reviewed repaired-mesh revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "build and repair request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "slice-lineage",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "slice/hash_binding",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-evidence@2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f#slice/hash_binding",
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#slice-input",
+        "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#slice-output"
+      ],
+      "subject_id": "slice-evidence",
+      "subject_sha256": "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "slice_evidence"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-SLICE",
+      "requirement_text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "slice-lineage",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "slice/hash_binding",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-evidence@2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f#slice/hash_binding",
+        "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#slice-input",
+        "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#slice-output"
+      ],
+      "subject_id": "slice-evidence",
+      "subject_sha256": "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "slice_evidence"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-DELIVERABLES",
+      "requirement_text": "The output set contains source mesh, repaired mesh, support preview, final 3MF and a digest-bound clearly simulated local transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "requested package"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "simulated-transfer-binding",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "transfer/package_binding",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:transfer-receipt@5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96#transfer/package_binding",
+        "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#simulated-transfer"
+      ],
+      "subject_id": "transfer-receipt",
+      "subject_sha256": "5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "transfer_receipt"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-DELIVERABLES",
+      "requirement_text": "The output set contains source mesh, repaired mesh, support preview, final 3MF and a digest-bound clearly simulated local transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "requested package"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "support-preview-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1807741,
+          "present": true,
+          "sha256": "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:support-preview@3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a#"
+      ],
+      "subject_id": "support-preview",
+      "subject_sha256": "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "support_preview"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-DELIVERABLES",
+      "requirement_text": "The output set contains source mesh, repaired mesh, support preview, final 3MF and a digest-bound clearly simulated local transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "requested package"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "source-report-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1254,
+          "present": true,
+          "sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:source-report@5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec#"
+      ],
+      "subject_id": "source-report",
+      "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT02-ACTION-SCOPE",
+      "requirement_text": "The prototype is not represented as a tested lifting/load-restraint handle or certified/fit-validated part, and no real printer connection or print is performed.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "prototype limitation"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Work setting; Process and company policy"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-a6b654bbb98c42c19ac42d5d7b5b41ef"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT02-FINGER-CLEARANCE",
+      "requirement_text": "At least 25 mm clearance exists between the rear of the grip and drawer plane over the central 65 mm span.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-a6b654bbb98c42c19ac42d5d7b5b41ef"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT02-GRIP",
+      "requirement_text": "The bow uses a nominal 12 by 9 mm oval grip, internal blends at least 3 mm where space permits, touched-edge rounds at least 1 mm, and a shallow 1.5 mm thumb recess over the central 40 mm.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "arched bow and thumb recess"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-a6b654bbb98c42c19ac42d5d7b5b41ef"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT02-LABEL-KEEPOUT",
+      "requirement_text": "No mounting pad or handle material overlaps the drawer-label region below Y=-18 mm.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-a6b654bbb98c42c19ac42d5d7b5b41ef"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT02-MOUNTING",
+      "requirement_text": "The two 4.5 mm through-hole centers are exactly 96.0 mm apart on flat 18 by 24 by 5 mm mounting pads at Z=0, with no threaded plastic bosses.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+          "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+          "locator": "mounting request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Coordinate system and supplied measurements"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-a6b654bbb98c42c19ac42d5d7b5b41ef"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT02-ORIENTATION",
+      "requirement_text": "A recorded review compares pads-down and side orientations, retains the selected support preview and identifies support-contact locations.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+          "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+          "locator": "Process and company policy"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+      "producer": {
+        "run_id": "p001-detached-native-successor",
+        "step_id": "native-repair-and-reslice",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-a6b654bbb98c42c19ac42d5d7b5b41ef"
+      ],
+      "action": "request_review"
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-92c507629d114d409c95b5e71c5c2e3a",
+    "attempt_id": "c5a42654f3ea4527a20532a15f2c01fe",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "p001-native-successor",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "source-mesh",
+          "role": "source_mesh",
+          "result_id": "p001-detached-native:source_mesh",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "source_mesh"
+          },
+          "kind": "file",
+          "sha256": "bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0",
+          "value": null,
+          "locator": "source_mesh.stl",
+          "format": "stl",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "repaired-mesh",
+          "role": "repaired_mesh",
+          "result_id": "p001-detached-native:repaired_mesh",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "repaired_mesh"
+          },
+          "kind": "file",
+          "sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+          "value": null,
+          "locator": "repaired_mesh.stl",
+          "format": "stl",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "support-preview",
+          "role": "support_preview",
+          "result_id": "p001-detached-native:support_preview",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "support_preview"
+          },
+          "kind": "file",
+          "sha256": "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a",
+          "value": null,
+          "locator": "support-preview.svg",
+          "format": "svg",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "slice-package",
+          "role": "slice_package",
+          "result_id": "p001-detached-native:slice_package",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "slice_package"
+          },
+          "kind": "file",
+          "sha256": "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461",
+          "value": null,
+          "locator": "slice_package.gcode.3mf",
+          "format": "3mf",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "slice-evidence",
+          "role": "slice_evidence",
+          "result_id": "p001-detached-native:slice_evidence",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "slice_evidence"
+          },
+          "kind": "file",
+          "sha256": "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f",
+          "value": null,
+          "locator": "slice-evidence.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "machine-profile",
+          "role": "machine_profile",
+          "result_id": "p001-detached-native:machine_profile",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "machine_profile"
+          },
+          "kind": "file",
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+          "value": null,
+          "locator": "machine-profile.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "filament-profile",
+          "role": "filament_profile",
+          "result_id": "p001-detached-native:filament_profile",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "filament_profile"
+          },
+          "kind": "file",
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+          "value": null,
+          "locator": "filament-profile.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "process-profile",
+          "role": "process_profile",
+          "result_id": "p001-detached-native:process_profile",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "process_profile"
+          },
+          "kind": "file",
+          "sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+          "value": null,
+          "locator": "process-profile.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "transfer-receipt",
+          "role": "transfer_receipt",
+          "result_id": "p001-detached-native:transfer_receipt",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "transfer_receipt"
+          },
+          "kind": "file",
+          "sha256": "5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96",
+          "value": null,
+          "locator": "printer-transfer-receipt.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-report",
+          "role": "source_report",
+          "result_id": "p001-detached-native:source_report",
+          "producer": {
+            "run_id": "p001-detached-native-successor",
+            "step_id": "native-repair-and-reslice",
+            "attempt": 1,
+            "output_port": "source_report"
+          },
+          "kind": "file",
+          "sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+          "value": null,
+          "locator": "source-model-report.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "printed-replacement-part-02-full",
+        "version": "1",
+        "sha256": "aa6e94d24ecf62de164767d63f7bbd5db59bfc5de1a90d3f1084496dfee64d59"
+      },
+      "baseline_ref": {
+        "id": "printed-replacement-part-02-basis",
+        "version": "1",
+        "sha256": "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"
+      },
+      "idempotency_key": "p001-native-successor",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "printed-replacement-part-02-full",
+      "version": "1",
+      "baseline": {
+        "id": "printed-replacement-part-02-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "PRINT02-MOUNTING",
+            "text": "The two 4.5 mm through-hole centers are exactly 96.0 mm apart on flat 18 by 24 by 5 mm mounting pads at Z=0, with no threaded plastic bosses.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+                "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+                "locator": "mounting request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Coordinate system and supplied measurements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT02-LABEL-KEEPOUT",
+            "text": "No mounting pad or handle material overlaps the drawer-label region below Y=-18 mm.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Coordinate system and supplied measurements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT02-ENVELOPE",
+            "text": "The handle outer envelope is at most 118 mm wide, 28 mm high and 34 mm proud of the drawer.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Coordinate system and supplied measurements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT02-FINGER-CLEARANCE",
+            "text": "At least 25 mm clearance exists between the rear of the grip and drawer plane over the central 65 mm span.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Coordinate system and supplied measurements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT02-GRIP",
+            "text": "The bow uses a nominal 12 by 9 mm oval grip, internal blends at least 3 mm where space permits, touched-edge rounds at least 1 mm, and a shallow 1.5 mm thumb recess over the central 40 mm.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+                "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+                "locator": "arched bow and thumb recess"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Coordinate system and supplied measurements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT02-MESH-LINEAGE",
+            "text": "Source and repaired meshes remain distinct and the final 3MF and support preview bind to the reviewed repaired-mesh revision.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+                "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+                "locator": "build and repair request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Process and company policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT02-SLICE",
+            "text": "The final slice uses installed P1S 0.4 mm PETG profiles, 0.20 mm layers, five walls and 40% infill without silent material substitution.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Process and company policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT02-ORIENTATION",
+            "text": "A recorded review compares pads-down and side orientations, retains the selected support preview and identifies support-contact locations.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Process and company policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT02-DELIVERABLES",
+            "text": "The output set contains source mesh, repaired mesh, support preview, final 3MF and a digest-bound clearly simulated local transfer receipt.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+                "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+                "locator": "requested package"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Process and company policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT02-ACTION-SCOPE",
+            "text": "The prototype is not represented as a tested lifting/load-restraint handle or certified/fit-validated part, and no real printer connection or print is performed.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+                "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+                "locator": "prototype limitation"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+                "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+                "locator": "Work setting; Process and company policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "repaired-envelope-x",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-ENVELOPE"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/x_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 118.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "stl_dimension",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "repaired-envelope-y",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-ENVELOPE"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/y_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 28.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "stl_dimension",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "repaired-envelope-z",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-ENVELOPE"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/z_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 34.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "stl_dimension",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "repaired-mesh-integrity",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-MESH-LINEAGE",
+            "PRINT02-DELIVERABLES"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/integrity",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mesh_integrity",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "distinct-mesh-lineage",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-MESH-LINEAGE"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/lineage",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mesh_lineage",
+            "related_roles": [
+              "source_mesh"
+            ],
+            "span_tolerance_mm": 0.01
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "machine-name",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "machine_profile",
+          "reader": "structured",
+          "selector": "/name",
+          "constraint": {
+            "operator": "equals",
+            "expected": "Bambu Lab P1S 0.4 nozzle",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "machine-nozzle",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "machine_profile",
+          "reader": "structured",
+          "selector": "/nozzle_diameter",
+          "constraint": {
+            "operator": "equals",
+            "expected": [
+              "0.4"
+            ],
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "filament-name",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "filament_profile",
+          "reader": "structured",
+          "selector": "/name",
+          "constraint": {
+            "operator": "equals",
+            "expected": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "filament-type",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "filament_profile",
+          "reader": "structured",
+          "selector": "/filament_type",
+          "constraint": {
+            "operator": "equals",
+            "expected": [
+              "PETG"
+            ],
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "layer-height",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "process_profile",
+          "reader": "structured",
+          "selector": "/layer_height",
+          "constraint": {
+            "operator": "equals",
+            "expected": "0.20",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "wall-loops",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "process_profile",
+          "reader": "structured",
+          "selector": "/wall_loops",
+          "constraint": {
+            "operator": "equals",
+            "expected": "5",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "infill-density",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "process_profile",
+          "reader": "structured",
+          "selector": "/sparse_infill_density",
+          "constraint": {
+            "operator": "equals",
+            "expected": "40%",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "slice-package-inventory",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-SLICE",
+            "PRINT02-DELIVERABLES"
+          ],
+          "subject_role": "slice_package",
+          "reader": "printing",
+          "selector": "package/required_members",
+          "constraint": {
+            "operator": "equals",
+            "expected": 5,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "package_inventory",
+            "required_members": [
+              "3D/3dmodel.model",
+              "3D/Objects/object_1.model",
+              "Metadata/plate_1.gcode",
+              "Metadata/project_settings.config",
+              "Metadata/slice_info.config"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "slice-lineage",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-MESH-LINEAGE",
+            "PRINT02-SLICE"
+          ],
+          "subject_role": "slice_evidence",
+          "reader": "printing",
+          "selector": "slice/hash_binding",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_operation": "actual_local_bambu_slice",
+            "operation": "slice_binding",
+            "related_roles": [
+              "repaired_mesh",
+              "slice_package"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "simulated-transfer-binding",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-DELIVERABLES"
+          ],
+          "subject_role": "transfer_receipt",
+          "reader": "printing",
+          "selector": "transfer/package_binding",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "transfer_binding",
+            "related_roles": [
+              "slice_package"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "support-preview-present",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-DELIVERABLES"
+          ],
+          "subject_role": "support_preview",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "source-report-present",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-DELIVERABLES"
+          ],
+          "subject_role": "source_report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "engineering-review",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT02-ACTION-SCOPE",
+            "PRINT02-FINGER-CLEARANCE",
+            "PRINT02-GRIP",
+            "PRINT02-LABEL-KEEPOUT",
+            "PRINT02-MOUNTING",
+            "PRINT02-ORIENTATION"
+          ],
+          "subject_role": "source_report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and production release require authenticated engineering review."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-22T22:32:53.102172+00:00",
+    "measurements": [
+      {
+        "id": "m-b74c262b27fe265a0648d0804aebe62d175a78bf84420e2eb84ff971cfb3b04b",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+        "selector": "mesh/x_span_mm",
+        "value": 113.99899768829346,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/x_span_mm"
+        ]
+      },
+      {
+        "id": "m-528893c0f753a546206a4988c504c2505d91ce7ebb14ae04f5d313917be41460",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+        "selector": "mesh/y_span_mm",
+        "value": 23.999000549316406,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/y_span_mm"
+        ]
+      },
+      {
+        "id": "m-44a3ed23cbcf0fdc1ed06a1765c970a5a7934e014972e5ed865858d6521e6e97",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+        "selector": "mesh/z_span_mm",
+        "value": 33.999000549316406,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/z_span_mm"
+        ]
+      },
+      {
+        "id": "m-23ebd5526cda0c5e85a00ad6c08aa7236e527e75104e77da57c17309b861ef0b",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+        "selector": "mesh/integrity",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/integrity"
+        ]
+      },
+      {
+        "id": "m-1a622db0e24066b10bf45af715763f3911d5cdff2e792ab7089006a9d717e811",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+        "selector": "mesh/lineage",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/lineage",
+          "subject:source-mesh@bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0#mesh-lineage"
+        ]
+      },
+      {
+        "id": "m-d3aea2f6f1334bc181a9ccf5fd80c54f3f70462130f5b76547f03cbad919ac3b",
+        "subject_id": "machine-profile",
+        "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "selector": "/name",
+        "value": "Bambu Lab P1S 0.4 nozzle",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+        ]
+      },
+      {
+        "id": "m-8e2ad76869a86042c94a92b3eff76509cf1f36b7ecc0652b11fdf2963ab7675f",
+        "subject_id": "machine-profile",
+        "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "selector": "/nozzle_diameter",
+        "value": [
+          "0.4"
+        ],
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+        ]
+      },
+      {
+        "id": "m-40c620a1e3687990e3a11dd93d61984c5617ac4acb5b2c51bdf91e146c40eb59",
+        "subject_id": "filament-profile",
+        "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+        "selector": "/name",
+        "value": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+        ]
+      },
+      {
+        "id": "m-7fb18637e5c3cab4566f647c0e3248649f65f5dfa418476a6e983032d05728b5",
+        "subject_id": "filament-profile",
+        "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+        "selector": "/filament_type",
+        "value": [
+          "PETG"
+        ],
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+        ]
+      },
+      {
+        "id": "m-bf1f9bae4854293f943338331df31888a808c1d9bc2c662805885e2cdc3db0f1",
+        "subject_id": "process-profile",
+        "subject_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+        "selector": "/layer_height",
+        "value": "0.20",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/layer_height"
+        ]
+      },
+      {
+        "id": "m-7c29bc5432305f1c6f4c0a6f0a4e03445ac6a70f8f6548232422598096d6c252",
+        "subject_id": "process-profile",
+        "subject_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+        "selector": "/wall_loops",
+        "value": "5",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/wall_loops"
+        ]
+      },
+      {
+        "id": "m-00fe8e4ff4007929bb2b7a4357f3476c36e401b5bc9f7c04f91622a44dad1e9d",
+        "subject_id": "process-profile",
+        "subject_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+        "selector": "/sparse_infill_density",
+        "value": "40%",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/sparse_infill_density"
+        ]
+      },
+      {
+        "id": "m-cf3810b43dc3432b8cafcd4c601ea3717b1e970a97fbb02b439e224bb5f1d39e",
+        "subject_id": "slice-package",
+        "subject_sha256": "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461",
+        "selector": "package/required_members",
+        "value": 5,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#package/required_members"
+        ]
+      },
+      {
+        "id": "m-034499172e5b628491cc3990be7a8395e0a1bcd9d35c4eb26ac4526a5e218123",
+        "subject_id": "slice-evidence",
+        "subject_sha256": "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f",
+        "selector": "slice/hash_binding",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:slice-evidence@2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f#slice/hash_binding",
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#slice-input",
+          "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#slice-output"
+        ]
+      },
+      {
+        "id": "m-cdb89b28f9dbfbf4cb3b5b4efc11b256727c3825d3ccf531e8f9c39d89864dbe",
+        "subject_id": "transfer-receipt",
+        "subject_sha256": "5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96",
+        "selector": "transfer/package_binding",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "2",
+          "config_digest": "8efebec04bb1a562668e6a13785a4be031ab98875f30a82087e4a9cb99298c1a",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v2",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:transfer-receipt@5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96#transfer/package_binding",
+          "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#simulated-transfer"
+        ]
+      },
+      {
+        "id": "m-e85e4f60adcf6a82a24fca76f04559b0e1d246d77eff12cc325c40552ae3651e",
+        "subject_id": "support-preview",
+        "subject_sha256": "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a",
+        "selector": "",
+        "value": {
+          "bytes": 1807741,
+          "present": true,
+          "sha256": "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:support-preview@3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a#"
+        ]
+      },
+      {
+        "id": "m-703ddcce63839d194f55be84b2db65a15dc78027280ee5f887441ab1f0b91e6c",
+        "subject_id": "source-report",
+        "subject_sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+        "selector": "",
+        "value": {
+          "bytes": 1254,
+          "present": true,
+          "sha256": "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:source-report@5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "repaired-envelope-x",
+        "requirement_ids": [
+          "PRINT02-ENVELOPE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-b74c262b27fe265a0648d0804aebe62d175a78bf84420e2eb84ff971cfb3b04b"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/x_span_mm"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "repaired-envelope-y",
+        "requirement_ids": [
+          "PRINT02-ENVELOPE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-528893c0f753a546206a4988c504c2505d91ce7ebb14ae04f5d313917be41460"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/y_span_mm"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "repaired-envelope-z",
+        "requirement_ids": [
+          "PRINT02-ENVELOPE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-44a3ed23cbcf0fdc1ed06a1765c970a5a7934e014972e5ed865858d6521e6e97"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/z_span_mm"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "repaired-mesh-integrity",
+        "requirement_ids": [
+          "PRINT02-MESH-LINEAGE",
+          "PRINT02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-23ebd5526cda0c5e85a00ad6c08aa7236e527e75104e77da57c17309b861ef0b"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/integrity"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "distinct-mesh-lineage",
+        "requirement_ids": [
+          "PRINT02-MESH-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-1a622db0e24066b10bf45af715763f3911d5cdff2e792ab7089006a9d717e811"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#mesh/lineage",
+          "subject:source-mesh@bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0#mesh-lineage"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "machine-name",
+        "requirement_ids": [
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d3aea2f6f1334bc181a9ccf5fd80c54f3f70462130f5b76547f03cbad919ac3b"
+        ],
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "machine-nozzle",
+        "requirement_ids": [
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-8e2ad76869a86042c94a92b3eff76509cf1f36b7ecc0652b11fdf2963ab7675f"
+        ],
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "filament-name",
+        "requirement_ids": [
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-40c620a1e3687990e3a11dd93d61984c5617ac4acb5b2c51bdf91e146c40eb59"
+        ],
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "filament-type",
+        "requirement_ids": [
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7fb18637e5c3cab4566f647c0e3248649f65f5dfa418476a6e983032d05728b5"
+        ],
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "layer-height",
+        "requirement_ids": [
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-bf1f9bae4854293f943338331df31888a808c1d9bc2c662805885e2cdc3db0f1"
+        ],
+        "evidence_refs": [
+          "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/layer_height"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "wall-loops",
+        "requirement_ids": [
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7c29bc5432305f1c6f4c0a6f0a4e03445ac6a70f8f6548232422598096d6c252"
+        ],
+        "evidence_refs": [
+          "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/wall_loops"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "infill-density",
+        "requirement_ids": [
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-00fe8e4ff4007929bb2b7a4357f3476c36e401b5bc9f7c04f91622a44dad1e9d"
+        ],
+        "evidence_refs": [
+          "subject:process-profile@a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993#/sparse_infill_density"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "slice-package-inventory",
+        "requirement_ids": [
+          "PRINT02-SLICE",
+          "PRINT02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cf3810b43dc3432b8cafcd4c601ea3717b1e970a97fbb02b439e224bb5f1d39e"
+        ],
+        "evidence_refs": [
+          "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#package/required_members"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "slice-lineage",
+        "requirement_ids": [
+          "PRINT02-MESH-LINEAGE",
+          "PRINT02-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-034499172e5b628491cc3990be7a8395e0a1bcd9d35c4eb26ac4526a5e218123"
+        ],
+        "evidence_refs": [
+          "subject:slice-evidence@2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f#slice/hash_binding",
+          "subject:repaired-mesh@040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb#slice-input",
+          "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#slice-output"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "simulated-transfer-binding",
+        "requirement_ids": [
+          "PRINT02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cdb89b28f9dbfbf4cb3b5b4efc11b256727c3825d3ccf531e8f9c39d89864dbe"
+        ],
+        "evidence_refs": [
+          "subject:transfer-receipt@5620e8ccb3ae1e5a83b2a06f98dfdf9d4d022b171ec29bf6b342bc4ca9487e96#transfer/package_binding",
+          "subject:slice-package@581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461#simulated-transfer"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "support-preview-present",
+        "requirement_ids": [
+          "PRINT02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-e85e4f60adcf6a82a24fca76f04559b0e1d246d77eff12cc325c40552ae3651e"
+        ],
+        "evidence_refs": [
+          "subject:support-preview@3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "source-report-present",
+        "requirement_ids": [
+          "PRINT02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-703ddcce63839d194f55be84b2db65a15dc78027280ee5f887441ab1f0b91e6c"
+        ],
+        "evidence_refs": [
+          "subject:source-report@5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PRINT02-ACTION-SCOPE",
+          "PRINT02-FINGER-CLEARANCE",
+          "PRINT02-GRIP",
+          "PRINT02-LABEL-KEEPOUT",
+          "PRINT02-MOUNTING",
+          "PRINT02-ORIENTATION"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-a6b654bbb98c42c19ac42d5d7b5b41ef"
+        ],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-a6b654bbb98c42c19ac42d5d7b5b41ef",
+        "code": "review.required",
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PRINT02-ACTION-SCOPE",
+          "PRINT02-FINGER-CLEARANCE",
+          "PRINT02-GRIP",
+          "PRINT02-LABEL-KEEPOUT",
+          "PRINT02-MOUNTING",
+          "PRINT02-ORIENTATION"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "source-report",
+        "owner": {
+          "run_id": "p001-detached-native-successor",
+          "step_id": "native-repair-and-reslice",
+          "attempt": 1,
+          "output_port": "source_report"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+            "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+            "locator": "mounting request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+            "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+            "locator": "Coordinate system and supplied measurements"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+            "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+            "locator": "arched bow and thumb recess"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+            "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+            "locator": "Process and company policy"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/prompt.txt",
+            "sha256": "95eb1233ff0498c5bc96d5659b7f9538a89f98c4bdc916a61442cf5f3da41834",
+            "locator": "prototype limitation"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+            "sha256": "2b4ad39c8d07368fa4d0b5bfb257625cbafe5098a0cc106ca80103929cc378ee",
+            "locator": "Work setting; Process and company policy"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "repaired-envelope-x",
+            "repaired-envelope-y",
+            "repaired-envelope-z",
+            "repaired-mesh-integrity",
+            "distinct-mesh-lineage",
+            "machine-name",
+            "machine-nozzle",
+            "filament-name",
+            "filament-type",
+            "layer-height",
+            "wall-loops",
+            "infill-density",
+            "slice-package-inventory",
+            "slice-lineage",
+            "simulated-transfer-binding",
+            "support-preview-present",
+            "source-report-present",
+            "engineering-review"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 17
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

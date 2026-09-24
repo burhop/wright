@@ -1,0 +1,38 @@
+# Process validation report
+
+**Verdict:** HOLD
+**Assessment:** `assessment-613ced054d7b4d1697d35ac0442ee3f6`
+**Assessment digest:** `8f77c81921cf40c2f5f40f27ba24009d79c38df721cf540782415d101b9f84e7`
+**Profile:** `parametric-drill-jig-01-full@1`
+**Current as of:** `2026-09-18T00:14:23.088323+00:00` — yes
+
+## Summary
+
+| Content verified | Requirements compliant | Complete | Release eligible |
+|---|---|---|---|
+|  |  | false | false |
+
+## Requirements traceability
+
+| Requirement | Check | Expected | Observed | Status | Evidence | Action |
+|---|---|---|---|---|---|---|
+| JIG01-H1-X — H1 bushing-seat center X is 30.00 ±0.20 mm in the lower-left workpiece top-face datum. | h1-x | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:30.0,&quot;tolerance&quot;:0.2\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:30.0\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H1&quot;\] |  |
+| JIG01-H1-Y — H1 bushing-seat center Y is 30.00 ±0.20 mm in the lower-left workpiece top-face datum. | h1-y | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:30.0,&quot;tolerance&quot;:0.2\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:30.0\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H1&quot;\] |  |
+| JIG01-BODY-SEATS — Both guide-body seats are 10.20 ±0.10 mm diameter from the 10.0 mm body OD plus 0.20 mm diametral slip clearance. | h1-body | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:10.2,&quot;tolerance&quot;:0.1\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:10.2\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H1&quot;\] |  |
+| JIG01-FLANGE-SEATS — Both flange pockets are 14.30 mm nominal diameter and 2.0 mm deep, support the flange from above, and leave the guide body unobstructed. | h1-flange | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:14.3,&quot;tolerance&quot;:0.1\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:14.3\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H1-flange&quot;\] |  |
+| JIG01-H2-X — H2 bushing-seat center X is 170.00 ±0.20 mm in the lower-left workpiece top-face datum. | h2-x | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:170.0,&quot;tolerance&quot;:0.2\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:170.0\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H2&quot;\] |  |
+| JIG01-H2-Y — H2 bushing-seat center Y is 30.00 ±0.20 mm in the lower-left workpiece top-face datum. | h2-y | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:30.0,&quot;tolerance&quot;:0.2\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:30.0\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H2&quot;\] |  |
+| JIG01-BODY-SEATS — Both guide-body seats are 10.20 ±0.10 mm diameter from the 10.0 mm body OD plus 0.20 mm diametral slip clearance. | h2-body | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:10.2,&quot;tolerance&quot;:0.1\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:10.2\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H2&quot;\] |  |
+| JIG01-FLANGE-SEATS — Both flange pockets are 14.30 mm nominal diameter and 2.0 mm deep, support the flange from above, and leave the guide body unobstructed. | h2-flange | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;within&quot;,&quot;target&quot;:14.3,&quot;tolerance&quot;:0.1\} | \[\{&quot;frame&quot;:&quot;workpiece\_datum&quot;,&quot;unit&quot;:&quot;mm&quot;,&quot;value&quot;:14.3\}\] | pass | \[&quot;subject:jig-step@2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84\#step-circle/H2-flange&quot;\] |  |
+| JIG01-STACKUP — The 12 mm plate and 12 mm bushing body stackup is reported without silently shortening the bushing or claiming a press fit. | design-review | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;review&quot;\} | \[\] | blocked | \[\] | request\_review |
+| JIG01-DATUMS — The jig registers on the workpiece left end and lower long edge with datum fences extending no more than 8 mm down the sides and 0.30 mm nominal clearance at the opposite non-datum edge. | design-review | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;review&quot;\} | \[\] | blocked | \[\] | request\_review |
+| JIG01-KEEPOUTS — Jig material does not intersect either complete CLAMP\_LEFT or CLAMP\_RIGHT occupied volume. | design-review | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;review&quot;\} | \[\] | blocked | \[\] | request\_review |
+| JIG01-MARKING — A clear +X arrow and DATUM LEFT text appear in a noncritical exterior region without intersecting bushing seats. | design-review | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;review&quot;\} | \[\] | blocked | \[\] | request\_review |
+| JIG01-DRILL-INTENT — The report preserves 5.0 mm pilot diameter and 12 mm operator-set depth while avoiding a claim that jig geometry enforces depth. | design-review | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;review&quot;\} | \[\] | blocked | \[\] | request\_review |
+| JIG01-CLAIM-SCOPE — The digital result does not claim physical fit, guidance accuracy, clamp safety, standards compliance, machine commands, or production dispatch. | design-review | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;review&quot;\} | \[\] | blocked | \[\] | request\_review |
+| JIG01-DELIVERABLES — The output set contains a STEP or STL jig, a DXF hole layout in the workpiece frame, and a dimension/clearance report including any jig-frame transform. | deliverable-dxf | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;exists&quot;\} | \[\{&quot;frame&quot;:null,&quot;unit&quot;:null,&quot;value&quot;:\{&quot;bytes&quot;:2828,&quot;present&quot;:true,&quot;sha256&quot;:&quot;b30048339f51ecae188aaf067e8c4b9e2eb76b1294356e0eca1374dac921de5c&quot;\}\}\] | pass | \[&quot;subject:dxf@b30048339f51ecae188aaf067e8c4b9e2eb76b1294356e0eca1374dac921de5c\#&quot;\] |  |
+| JIG01-DELIVERABLES — The output set contains a STEP or STL jig, a DXF hole layout in the workpiece frame, and a dimension/clearance report including any jig-frame transform. | deliverable-report | \{&quot;inclusive&quot;:true,&quot;operator&quot;:&quot;exists&quot;\} | \[\{&quot;frame&quot;:null,&quot;unit&quot;:null,&quot;value&quot;:\{&quot;bytes&quot;:12621,&quot;present&quot;:true,&quot;sha256&quot;:&quot;f36657a2b0ef096bbe6ec8bd82885b96d4d0aa27e1752da3422e47da23d62fb2&quot;\}\}\] | pass | \[&quot;subject:report@f36657a2b0ef096bbe6ec8bd82885b96d4d0aa27e1752da3422e47da23d62fb2\#&quot;\] |  |
+
+## Scope and limitations
+
+- Physical fit, machining, drilling, guarding and supplier qualification remain outside this digital validation gate.

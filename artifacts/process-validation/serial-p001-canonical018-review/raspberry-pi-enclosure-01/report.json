@@ -1,0 +1,3814 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "3b240facadf0d6c3aa4230acd90543c459200ac435d33d7f06827fe0c7ecc2fe",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:34.225809+00:00",
+    "selected_assessment_id": "assessment-c481f840f51d4a6c9497a19de350327a",
+    "selected_attempt_id": "2f716eede49c4541a29a57a928eb9cee",
+    "selected_subject_ids": [
+      "design-basis",
+      "manufacturer-research",
+      "cad-source",
+      "comparison",
+      "field-archive",
+      "enclosure-a",
+      "fluid-domain-a",
+      "board-a",
+      "contract-a",
+      "source-primary-a",
+      "enclosure-b",
+      "fluid-domain-b",
+      "board-b",
+      "contract-b",
+      "source-primary-b"
+    ],
+    "latest_attempt_id": "2f716eede49c4541a29a57a928eb9cee",
+    "latest_assessment_id": "assessment-c481f840f51d4a6c9497a19de350327a",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "PI01-SOURCE",
+      "PI01-ENCLOSURE",
+      "PI01-THERMAL",
+      "PI01-VENT-A",
+      "PI01-VENT-B",
+      "PI01-CFD",
+      "PI01-DELIVERABLES",
+      "PI01-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Manufacturer-source authority, detailed CAD features and physical thermal, ingress, electrical, EMC, material and release claims require authenticated engineering review. Mesh-refinement evidence is not present in the retained output."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "step-bounding-box",
+      "version": "1",
+      "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+      "method": "native_inspection",
+      "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+      "formats": [
+        "step",
+        "stp"
+      ]
+    },
+    {
+      "id": "cfd-evidence",
+      "version": "1",
+      "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded CFD evidence reader v1",
+      "formats": [
+        "json",
+        "zip"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "PI01-ENCLOSURE",
+      "requirement_text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Envelope and construction"
+        }
+      ],
+      "check_id": "enclosure-a-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/x_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 112.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        110.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-a",
+      "subject_sha256": "fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-ENCLOSURE",
+      "requirement_text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Envelope and construction"
+        }
+      ],
+      "check_id": "enclosure-a-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/y_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 86.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        84.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-a",
+      "subject_sha256": "fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-ENCLOSURE",
+      "requirement_text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Envelope and construction"
+        }
+      ],
+      "check_id": "enclosure-a-z",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/z_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 39.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        33.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-a",
+      "subject_sha256": "fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-THERMAL",
+      "requirement_text": "Matched domains use 25 °C ambient, 6 W on the declared 18×18 mm patch, shell k=0.20 W/(m·K), identical board/feet/material/domain, and explicit air, gravity, radiation and boundary assumptions.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "contract-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-a@b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159#cfd/contract",
+        "subject:fluid-domain-a@8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e#cfd-region:air",
+        "subject:source-primary-a@cdfd8e3ab0ab2557249c6366cabb266a05b664b15a230c88626870316d4ce34b#cfd-region:board_hot_patch",
+        "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#cfd-region:petg_shell"
+      ],
+      "subject_id": "contract-a",
+      "subject_sha256": "b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "contract-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-a@b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159#cfd/contract",
+        "subject:fluid-domain-a@8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e#cfd-region:air",
+        "subject:source-primary-a@cdfd8e3ab0ab2557249c6366cabb266a05b664b15a230c88626870316d4ce34b#cfd-region:board_hot_patch",
+        "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#cfd-region:petg_shell"
+      ],
+      "subject_id": "contract-a",
+      "subject_sha256": "b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "patch-temperature-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/a/maximum_temperature_c",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 65.0,
+        "inclusive": true
+      },
+      "expected_unit": "degC",
+      "expected_frame": null,
+      "observed": [
+        25.433190917968773
+      ],
+      "observed_units": [
+        "degC"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#cfd/a/maximum_temperature_c"
+      ],
+      "subject_id": "field-archive",
+      "subject_sha256": "6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "field_archive"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "mass-balance-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/a/mass_balance_relative",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.001,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0.0004478299902833025
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/a/mass_balance_relative"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced design basis, both editable/STEP enclosures, matching fluid-domain STEP files and machine-readable CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+          "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Business rules and review"
+        }
+      ],
+      "check_id": "fluid-domain-a",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/x_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 1.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        310.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:fluid-domain-a@8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e#solid-vertex-envelope"
+      ],
+      "subject_id": "fluid-domain-a",
+      "subject_sha256": "8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fluid_domain_a"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-ENCLOSURE",
+      "requirement_text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Envelope and construction"
+        }
+      ],
+      "check_id": "enclosure-b-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/x_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 112.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        110.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-b",
+      "subject_sha256": "ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-ENCLOSURE",
+      "requirement_text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Envelope and construction"
+        }
+      ],
+      "check_id": "enclosure-b-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/y_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 86.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        84.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-b",
+      "subject_sha256": "ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-ENCLOSURE",
+      "requirement_text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Envelope and construction"
+        }
+      ],
+      "check_id": "enclosure-b-z",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/z_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 39.0,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "enclosure_axes",
+      "observed": [
+        33.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "enclosure_axes"
+      ],
+      "evidence_refs": [
+        "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+      ],
+      "subject_id": "enclosure-b",
+      "subject_sha256": "ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "enclosure_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-THERMAL",
+      "requirement_text": "Matched domains use 25 °C ambient, 6 W on the declared 18×18 mm patch, shell k=0.20 W/(m·K), identical board/feet/material/domain, and explicit air, gravity, radiation and boundary assumptions.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "contract-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-b@03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83#cfd/contract",
+        "subject:fluid-domain-b@84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7#cfd-region:air",
+        "subject:source-primary-b@c39fbe0fac1af33f175a94cf3eb31a7f93d171a7f6f429c3289326fde9ac5fff#cfd-region:board_hot_patch",
+        "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#cfd-region:petg_shell"
+      ],
+      "subject_id": "contract-b",
+      "subject_sha256": "03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "contract-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/contract",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:contract-b@03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83#cfd/contract",
+        "subject:fluid-domain-b@84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7#cfd-region:air",
+        "subject:source-primary-b@c39fbe0fac1af33f175a94cf3eb31a7f93d171a7f6f429c3289326fde9ac5fff#cfd-region:board_hot_patch",
+        "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#cfd-region:petg_shell"
+      ],
+      "subject_id": "contract-b",
+      "subject_sha256": "03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "contract_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "patch-temperature-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/b/maximum_temperature_c",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 65.0,
+        "inclusive": true
+      },
+      "expected_unit": "degC",
+      "expected_frame": null,
+      "observed": [
+        25.433129882812523
+      ],
+      "observed_units": [
+        "degC"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#cfd/b/maximum_temperature_c"
+      ],
+      "subject_id": "field-archive",
+      "subject_sha256": "6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "field_archive"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "mass-balance-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/b/mass_balance_relative",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.001,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0.00043142248091724477
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/b/mass_balance_relative"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced design basis, both editable/STEP enclosures, matching fluid-domain STEP files and machine-readable CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+          "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Business rules and review"
+        }
+      ],
+      "check_id": "fluid-domain-b",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-bounding-box",
+      "evidence_method": "native_inspection",
+      "selector": "box/x_span_mm",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 1.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        310.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:fluid-domain-b@84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7#solid-vertex-envelope"
+      ],
+      "subject_id": "fluid-domain-b",
+      "subject_sha256": "84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fluid_domain_b"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "field-archive-binding",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/archive_records",
+      "expected": {
+        "operator": "equals",
+        "expected": 22,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        22
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/archive_records",
+        "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#fields"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced design basis, both editable/STEP enclosures, matching fluid-domain STEP files and machine-readable CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+          "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Business rules and review"
+        }
+      ],
+      "check_id": "field-archive-binding",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/archive_records",
+      "expected": {
+        "operator": "equals",
+        "expected": 22,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        22
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/archive_records",
+        "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#fields"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "convergence-evidence",
+      "check_version": "1",
+      "check_state": "fail",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/convergence",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [
+        "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/convergence"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [
+        "f-a7597ca12b054bc28561369440050223"
+      ],
+      "action": "revise_output"
+    },
+    {
+      "requirement_id": "PI01-CFD",
+      "requirement_text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "heat-balance-evidence",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "cfd-evidence",
+      "evidence_method": "independent_measurement",
+      "selector": "cfd/heat_balance_relative",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.01,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [
+        "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/heat_balance_relative"
+      ],
+      "subject_id": "comparison",
+      "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "comparison"
+      },
+      "finding_ids": [
+        "f-7b808656d0084a1da4f817bedbad2eaf"
+      ],
+      "action": "supply_input"
+    },
+    {
+      "requirement_id": "PI01-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced design basis, both editable/STEP enclosures, matching fluid-domain STEP files and machine-readable CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+          "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Business rules and review"
+        }
+      ],
+      "check_id": "design-basis-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 14012,
+          "present": true,
+          "sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:design-basis@d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb#"
+      ],
+      "subject_id": "design-basis",
+      "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced design basis, both editable/STEP enclosures, matching fluid-domain STEP files and machine-readable CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+          "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Business rules and review"
+        }
+      ],
+      "check_id": "manufacturer-research-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 5237,
+          "present": true,
+          "sha256": "cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:manufacturer-research@cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8#"
+      ],
+      "subject_id": "manufacturer-research",
+      "subject_sha256": "cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "manufacturer_research"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-DELIVERABLES",
+      "requirement_text": "The output set contains reviewed sourced design basis, both editable/STEP enclosures, matching fluid-domain STEP files and machine-readable CFD comparison.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+          "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Business rules and review"
+        }
+      ],
+      "check_id": "editable-source-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 16561,
+          "present": true,
+          "sha256": "b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:cad-source@b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7#"
+      ],
+      "subject_id": "cad-source",
+      "subject_sha256": "b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "cad_source"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PI01-SOURCE",
+      "requirement_text": "Board outline, holes, connectors, plug access and cooling envelope come from a pinned official Raspberry Pi 5 source with URL/revision/retrieval evidence; absent dimensions remain unresolved and the sketch is not authority.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+          "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+          "locator": "research request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Product research and intended user"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-46773612f03c4f72b69f6f0ea5761a75"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI01-ENCLOSURE",
+      "requirement_text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Envelope and construction"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-46773612f03c4f72b69f6f0ea5761a75"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI01-THERMAL",
+      "requirement_text": "Matched domains use 25 °C ambient, 6 W on the declared 18×18 mm patch, shell k=0.20 W/(m·K), identical board/feet/material/domain, and explicit air, gravity, radiation and boundary assumptions.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-46773612f03c4f72b69f6f0ea5761a75"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI01-VENT-A",
+      "requirement_text": "Variant A has lower side inlet/rear exhaust with at least 450 mm² nominal opening.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-46773612f03c4f72b69f6f0ea5761a75"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI01-VENT-B",
+      "requirement_text": "Variant B retains the same inlet and has twelve rounded nominal 2×20 mm top slots.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Thermal case"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-46773612f03c4f72b69f6f0ea5761a75"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PI01-SCOPE",
+      "requirement_text": "The result does not claim physical thermal accuracy, plastic performance, EMC, electrical safety, sealing or certification and performs no publication, purchase or manufacture.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+          "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+          "locator": "Business rules and review"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "design-basis",
+      "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+      "producer": {
+        "run_id": "retained-successor-raspberry-pi-enclosure-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "design_basis"
+      },
+      "finding_ids": [
+        "f-46773612f03c4f72b69f6f0ea5761a75"
+      ],
+      "action": "request_review"
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-c481f840f51d4a6c9497a19de350327a",
+    "attempt_id": "2f716eede49c4541a29a57a928eb9cee",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "raspberry-pi-enclosure-01",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "design-basis",
+          "role": "design_basis",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:design_basis",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "design_basis"
+          },
+          "kind": "file",
+          "sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+          "value": null,
+          "locator": "design-basis.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "manufacturer-research",
+          "role": "manufacturer_research",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:manufacturer_research",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "manufacturer_research"
+          },
+          "kind": "file",
+          "sha256": "cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8",
+          "value": null,
+          "locator": "manufacturer-research.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "cad-source",
+          "role": "cad_source",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:cad_source",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "cad_source"
+          },
+          "kind": "file",
+          "sha256": "b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7",
+          "value": null,
+          "locator": "enclosure-source.py",
+          "format": "text",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "comparison",
+          "role": "comparison",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:comparison",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "comparison"
+          },
+          "kind": "file",
+          "sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+          "value": null,
+          "locator": "cfd-comparison.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "field-archive",
+          "role": "field_archive",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:field_archive",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "field_archive"
+          },
+          "kind": "file",
+          "sha256": "6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d",
+          "value": null,
+          "locator": "cfd-fields.zip",
+          "format": "zip",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "enclosure-a",
+          "role": "enclosure_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:enclosure_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "enclosure_a"
+          },
+          "kind": "file",
+          "sha256": "fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c",
+          "value": null,
+          "locator": "enclosure-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "fluid-domain-a",
+          "role": "fluid_domain_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:fluid_domain_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "fluid_domain_a"
+          },
+          "kind": "file",
+          "sha256": "8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e",
+          "value": null,
+          "locator": "fluid-domain-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "board-a",
+          "role": "board_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:board_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "board_a"
+          },
+          "kind": "file",
+          "sha256": "e8c64466db4c787c0e18eb30495971aace09bc5bc3ef1548b395bf0c8c4aa04b",
+          "value": null,
+          "locator": "board-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "contract-a",
+          "role": "contract_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:contract_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "contract_a"
+          },
+          "kind": "file",
+          "sha256": "b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159",
+          "value": null,
+          "locator": "cfd-contract-a.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-primary-a",
+          "role": "source_primary_a",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:source_primary_a",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_primary_a"
+          },
+          "kind": "file",
+          "sha256": "cdfd8e3ab0ab2557249c6366cabb266a05b664b15a230c88626870316d4ce34b",
+          "value": null,
+          "locator": "board_hot_patch-a.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "enclosure-b",
+          "role": "enclosure_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:enclosure_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "enclosure_b"
+          },
+          "kind": "file",
+          "sha256": "ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1",
+          "value": null,
+          "locator": "enclosure-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "fluid-domain-b",
+          "role": "fluid_domain_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:fluid_domain_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "fluid_domain_b"
+          },
+          "kind": "file",
+          "sha256": "84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7",
+          "value": null,
+          "locator": "fluid-domain-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "board-b",
+          "role": "board_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:board_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "board_b"
+          },
+          "kind": "file",
+          "sha256": "4aba293ba6bc2b4f99af35d43856890f642e707806967c2d04bf507e2f38a22b",
+          "value": null,
+          "locator": "board-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "contract-b",
+          "role": "contract_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:contract_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "contract_b"
+          },
+          "kind": "file",
+          "sha256": "03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83",
+          "value": null,
+          "locator": "cfd-contract-b.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-primary-b",
+          "role": "source_primary_b",
+          "result_id": "retained-successor:raspberry-pi-enclosure-01:source_primary_b",
+          "producer": {
+            "run_id": "retained-successor-raspberry-pi-enclosure-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_primary_b"
+          },
+          "kind": "file",
+          "sha256": "c39fbe0fac1af33f175a94cf3eb31a7f93d171a7f6f429c3289326fde9ac5fff",
+          "value": null,
+          "locator": "board_hot_patch-b.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "raspberry-pi-enclosure-01-full",
+        "version": "1",
+        "sha256": "1840e74a6f5f1235bf8a1cf35eed08fe77d84e7dc149db1945cc5d019ed17924"
+      },
+      "baseline_ref": {
+        "id": "raspberry-pi-enclosure-01-basis",
+        "version": "1",
+        "sha256": "5c43d1f40a00764f55c12b4e31b58fdf2f12c5d21e21ec4775be69031f67a07c"
+      },
+      "idempotency_key": "raspberry-pi-enclosure-01",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "raspberry-pi-enclosure-01-full",
+      "version": "1",
+      "baseline": {
+        "id": "raspberry-pi-enclosure-01-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "PI01-SOURCE",
+            "text": "Board outline, holes, connectors, plug access and cooling envelope come from a pinned official Raspberry Pi 5 source with URL/revision/retrieval evidence; absent dimensions remain unresolved and the sketch is not authority.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+                "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+                "locator": "research request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Product research and intended user"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI01-ENCLOSURE",
+            "text": "Both variants fit 112×86×39 mm, use a two-part 2.4 mm-wall shell with 2 mm inside radii, four underside fasteners, 5 mm feet lift, no visible top screws and 8 mm connector insertion clearance.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Envelope and construction"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI01-THERMAL",
+            "text": "Matched domains use 25 °C ambient, 6 W on the declared 18×18 mm patch, shell k=0.20 W/(m·K), identical board/feet/material/domain, and explicit air, gravity, radiation and boundary assumptions.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Thermal case"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI01-VENT-A",
+            "text": "Variant A has lower side inlet/rear exhaust with at least 450 mm² nominal opening.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Thermal case"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI01-VENT-B",
+            "text": "Variant B retains the same inlet and has twelve rounded nominal 2×20 mm top slots.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Thermal case"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PI01-CFD",
+            "text": "Actual fields, convergence, heat balance and airflow summaries support a comparable alternative assessment against the below-65 °C source-patch goal.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Thermal case"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PI01-DELIVERABLES",
+            "text": "The output set contains reviewed sourced design basis, both editable/STEP enclosures, matching fluid-domain STEP files and machine-readable CFD comparison.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+                "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Business rules and review"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PI01-SCOPE",
+            "text": "The result does not claim physical thermal accuracy, plastic performance, EMC, electrical safety, sealing or certification and performs no publication, purchase or manufacture.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+                "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+                "locator": "Business rules and review"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "enclosure-a-x",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_a",
+          "reader": "step-bounding-box",
+          "selector": "box/x_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 112.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "enclosure-a-y",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_a",
+          "reader": "step-bounding-box",
+          "selector": "box/y_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 86.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "enclosure-a-z",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_a",
+          "reader": "step-bounding-box",
+          "selector": "box/z_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 39.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "contract-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-THERMAL",
+            "PI01-CFD"
+          ],
+          "subject_role": "contract_a",
+          "reader": "cfd-evidence",
+          "selector": "cfd/contract",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected": {
+              "ambient_k": 298.15,
+              "gravity_m_s2": [
+                0,
+                0,
+                -9.81
+              ],
+              "regions": {
+                "air": {
+                  "heat_w": 0,
+                  "kappa": 0.026
+                },
+                "board_hot_patch": {
+                  "heat_w": 6,
+                  "kappa": 120
+                },
+                "petg_shell": {
+                  "heat_w": 0,
+                  "kappa": 0.2
+                }
+              }
+            },
+            "operation": "contract",
+            "region_roles": {
+              "air": "fluid_domain_a",
+              "board_hot_patch": "source_primary_a",
+              "petg_shell": "enclosure_a"
+            },
+            "related_roles": [
+              "enclosure_a",
+              "fluid_domain_a",
+              "source_primary_a"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "patch-temperature-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "subject_role": "field_archive",
+          "reader": "cfd-evidence",
+          "selector": "cfd/a/maximum_temperature_c",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 65.0,
+            "inclusive": true
+          },
+          "unit": "degC",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "member": "variant-a/board_hot_patch.vtk",
+            "operation": "maximum_temperature"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "mass-balance-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/a/mass_balance_relative",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.001,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mass_balance_relative",
+            "variant": "variant-a"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "fluid-domain-a",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-DELIVERABLES"
+          ],
+          "subject_role": "fluid_domain_a",
+          "reader": "step-bounding-box",
+          "selector": "box/x_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": 1.0,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "enclosure-b-x",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_b",
+          "reader": "step-bounding-box",
+          "selector": "box/x_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 112.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "enclosure-b-y",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_b",
+          "reader": "step-bounding-box",
+          "selector": "box/y_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 86.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "enclosure-b-z",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-ENCLOSURE"
+          ],
+          "subject_role": "enclosure_b",
+          "reader": "step-bounding-box",
+          "selector": "box/z_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 39.0,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "enclosure_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "contract-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-THERMAL",
+            "PI01-CFD"
+          ],
+          "subject_role": "contract_b",
+          "reader": "cfd-evidence",
+          "selector": "cfd/contract",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected": {
+              "ambient_k": 298.15,
+              "gravity_m_s2": [
+                0,
+                0,
+                -9.81
+              ],
+              "regions": {
+                "air": {
+                  "heat_w": 0,
+                  "kappa": 0.026
+                },
+                "board_hot_patch": {
+                  "heat_w": 6,
+                  "kappa": 120
+                },
+                "petg_shell": {
+                  "heat_w": 0,
+                  "kappa": 0.2
+                }
+              }
+            },
+            "operation": "contract",
+            "region_roles": {
+              "air": "fluid_domain_b",
+              "board_hot_patch": "source_primary_b",
+              "petg_shell": "enclosure_b"
+            },
+            "related_roles": [
+              "enclosure_b",
+              "fluid_domain_b",
+              "source_primary_b"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "patch-temperature-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "subject_role": "field_archive",
+          "reader": "cfd-evidence",
+          "selector": "cfd/b/maximum_temperature_c",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 65.0,
+            "inclusive": true
+          },
+          "unit": "degC",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "member": "variant-b/board_hot_patch.vtk",
+            "operation": "maximum_temperature"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "mass-balance-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/b/mass_balance_relative",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.001,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mass_balance_relative",
+            "variant": "variant-b"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "fluid-domain-b",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-DELIVERABLES"
+          ],
+          "subject_role": "fluid_domain_b",
+          "reader": "step-bounding-box",
+          "selector": "box/x_span_mm",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": 1.0,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "native_inspection",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "field-archive-binding",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-CFD",
+            "PI01-DELIVERABLES"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/archive_records",
+          "constraint": {
+            "operator": "equals",
+            "expected": 22,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "archive_binding",
+            "related_roles": [
+              "field_archive"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "convergence-evidence",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/convergence",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "convergence",
+            "related_roles": [
+              "field_archive"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "heat-balance-evidence",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "subject_role": "comparison",
+          "reader": "cfd-evidence",
+          "selector": "cfd/heat_balance_relative",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.01,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "heat_balance",
+            "related_roles": [
+              "field_archive"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "design-basis-present",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-DELIVERABLES"
+          ],
+          "subject_role": "design_basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "manufacturer-research-present",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-DELIVERABLES"
+          ],
+          "subject_role": "manufacturer_research",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "editable-source-present",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-DELIVERABLES"
+          ],
+          "subject_role": "cad_source",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "engineering-review",
+          "version": "1",
+          "requirement_ids": [
+            "PI01-SOURCE",
+            "PI01-ENCLOSURE",
+            "PI01-THERMAL",
+            "PI01-VENT-A",
+            "PI01-VENT-B",
+            "PI01-SCOPE"
+          ],
+          "subject_role": "design_basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Manufacturer-source authority, detailed CAD features and physical thermal, ingress, electrical, EMC, material and release claims require authenticated engineering review. Mesh-refinement evidence is not present in the retained output."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:34.152984+00:00",
+    "measurements": [
+      {
+        "id": "m-1406279cc3d8c4314368188c71fe8fefbc6094ff7803059d7bfd98276fdb7071",
+        "subject_id": "enclosure-a",
+        "subject_sha256": "fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c",
+        "selector": "box/x_span_mm",
+        "value": 110.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-5ab6c6c84eefe0a7e0f447a3d46dab9c49abc4d70c889cf232caf80d14da92a7",
+        "subject_id": "enclosure-a",
+        "subject_sha256": "fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c",
+        "selector": "box/y_span_mm",
+        "value": 84.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-4ce9d46d725426babf6dc38f67fc103b16c5a67226c493ca734dbbe9b6f8b0f6",
+        "subject_id": "enclosure-a",
+        "subject_sha256": "fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c",
+        "selector": "box/z_span_mm",
+        "value": 33.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-d84534b9fd0ac3c12e91449c1771efcdf5d0d33a6e08c592d2bccb2427f5afb2",
+        "subject_id": "contract-a",
+        "subject_sha256": "b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159",
+        "selector": "cfd/contract",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:contract-a@b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159#cfd/contract",
+          "subject:fluid-domain-a@8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e#cfd-region:air",
+          "subject:source-primary-a@cdfd8e3ab0ab2557249c6366cabb266a05b664b15a230c88626870316d4ce34b#cfd-region:board_hot_patch",
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#cfd-region:petg_shell"
+        ]
+      },
+      {
+        "id": "m-cbcbf53296c9a354bfcd99f98306ecbf89c9ea8277e9fdf71194d12893c79e1a",
+        "subject_id": "field-archive",
+        "subject_sha256": "6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d",
+        "selector": "cfd/a/maximum_temperature_c",
+        "value": 25.433190917968773,
+        "unit": "degC",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#cfd/a/maximum_temperature_c"
+        ]
+      },
+      {
+        "id": "m-97af8f83e0feda3fe51e3b4927201ed89cbbb773dedfbfc903c8fcf4c398fbe7",
+        "subject_id": "comparison",
+        "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+        "selector": "cfd/a/mass_balance_relative",
+        "value": 0.0004478299902833025,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/a/mass_balance_relative"
+        ]
+      },
+      {
+        "id": "m-a5eceb6566ed9a2bdae7df3b8596e115dea9965b954b7b7ca2fe298bab82ecc1",
+        "subject_id": "fluid-domain-a",
+        "subject_sha256": "8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e",
+        "selector": "box/x_span_mm",
+        "value": 310.0,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:fluid-domain-a@8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-ff839a4402800e10a74c6a25b65c425783a0db4a8855bdd3903f6f5ca5c63938",
+        "subject_id": "enclosure-b",
+        "subject_sha256": "ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1",
+        "selector": "box/x_span_mm",
+        "value": 110.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-9f95665d724859f366c28aa96c510755781c5a7b71d7b1d12dc9b3eca36c7a35",
+        "subject_id": "enclosure-b",
+        "subject_sha256": "ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1",
+        "selector": "box/y_span_mm",
+        "value": 84.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-a01424fd5e5666570b05a6111a07e2a2f1b287182e0028900ce39922ee1ed925",
+        "subject_id": "enclosure-b",
+        "subject_sha256": "ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1",
+        "selector": "box/z_span_mm",
+        "value": 33.0,
+        "unit": "mm",
+        "frame": "enclosure_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-e5b53204fdf6679293317cab51d7671086410c34fa5d9e54ab6887d50e64ce0e",
+        "subject_id": "contract-b",
+        "subject_sha256": "03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83",
+        "selector": "cfd/contract",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:contract-b@03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83#cfd/contract",
+          "subject:fluid-domain-b@84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7#cfd-region:air",
+          "subject:source-primary-b@c39fbe0fac1af33f175a94cf3eb31a7f93d171a7f6f429c3289326fde9ac5fff#cfd-region:board_hot_patch",
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#cfd-region:petg_shell"
+        ]
+      },
+      {
+        "id": "m-66aaae6c0a7c007faf295344cb4f18a2d2a9962d6f70a424452e44de67ded26d",
+        "subject_id": "field-archive",
+        "subject_sha256": "6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d",
+        "selector": "cfd/b/maximum_temperature_c",
+        "value": 25.433129882812523,
+        "unit": "degC",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#cfd/b/maximum_temperature_c"
+        ]
+      },
+      {
+        "id": "m-7b971851c2ca2cb6e4e00e7e1dff8509c38f6cf59bce14304a72f140f4f316f8",
+        "subject_id": "comparison",
+        "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+        "selector": "cfd/b/mass_balance_relative",
+        "value": 0.00043142248091724477,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/b/mass_balance_relative"
+        ]
+      },
+      {
+        "id": "m-9f1451846c21caf2fd5b109556dc5567ef1d4d73057e49af447f88ebeae84c29",
+        "subject_id": "fluid-domain-b",
+        "subject_sha256": "84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7",
+        "selector": "box/x_span_mm",
+        "value": 310.0,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-bounding-box",
+          "version": "1",
+          "config_digest": "1a5358af39a20bd2e4cbac16058c1397e3b2b5d6bd47ea0d3ebeb28977e81f92",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP vertex-envelope reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:fluid-domain-b@84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7#solid-vertex-envelope"
+        ]
+      },
+      {
+        "id": "m-4880e72855bcb663651a0eba226c90a4fe705d8bf78f0d3ea6e576a65b856324",
+        "subject_id": "comparison",
+        "subject_sha256": "31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8",
+        "selector": "cfd/archive_records",
+        "value": 22,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "cfd-evidence",
+          "version": "1",
+          "config_digest": "736a9daf60320b959940a7d6c18f8093a4132871259a94c3bec3d90ffb62abe3",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded CFD evidence reader v1",
+          "formats": [
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/archive_records",
+          "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#fields"
+        ]
+      },
+      {
+        "id": "m-8a7d4765e53d3dfe3fef83092cf278bde476d494a7664f2d9d74a830c45ac33b",
+        "subject_id": "design-basis",
+        "subject_sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb",
+        "selector": "",
+        "value": {
+          "bytes": 14012,
+          "present": true,
+          "sha256": "d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:design-basis@d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb#"
+        ]
+      },
+      {
+        "id": "m-cbcb6de25ddf6d9989370127ce76f08fe3725cff55438618022645b18509d7d5",
+        "subject_id": "manufacturer-research",
+        "subject_sha256": "cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8",
+        "selector": "",
+        "value": {
+          "bytes": 5237,
+          "present": true,
+          "sha256": "cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:manufacturer-research@cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8#"
+        ]
+      },
+      {
+        "id": "m-9d24eb2bc3ad2d6c229e000c547b842c25304a9f8f21dcbb6b753aae6ac88901",
+        "subject_id": "cad-source",
+        "subject_sha256": "b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7",
+        "selector": "",
+        "value": {
+          "bytes": 16561,
+          "present": true,
+          "sha256": "b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:cad-source@b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "enclosure-a-x",
+        "requirement_ids": [
+          "PI01-ENCLOSURE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-1406279cc3d8c4314368188c71fe8fefbc6094ff7803059d7bfd98276fdb7071"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "enclosure-a-y",
+        "requirement_ids": [
+          "PI01-ENCLOSURE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-5ab6c6c84eefe0a7e0f447a3d46dab9c49abc4d70c889cf232caf80d14da92a7"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "enclosure-a-z",
+        "requirement_ids": [
+          "PI01-ENCLOSURE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4ce9d46d725426babf6dc38f67fc103b16c5a67226c493ca734dbbe9b6f8b0f6"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "contract-a",
+        "requirement_ids": [
+          "PI01-THERMAL",
+          "PI01-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d84534b9fd0ac3c12e91449c1771efcdf5d0d33a6e08c592d2bccb2427f5afb2"
+        ],
+        "evidence_refs": [
+          "subject:contract-a@b27cc23dbd0d896439481b7e640d0884f836b6521af7428be194961299d4d159#cfd/contract",
+          "subject:fluid-domain-a@8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e#cfd-region:air",
+          "subject:source-primary-a@cdfd8e3ab0ab2557249c6366cabb266a05b664b15a230c88626870316d4ce34b#cfd-region:board_hot_patch",
+          "subject:enclosure-a@fbd1db521515c795e9d087b054813f6bc33d06343ceccb1706b8d21c39251a3c#cfd-region:petg_shell"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "patch-temperature-a",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cbcbf53296c9a354bfcd99f98306ecbf89c9ea8277e9fdf71194d12893c79e1a"
+        ],
+        "evidence_refs": [
+          "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#cfd/a/maximum_temperature_c"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "mass-balance-a",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-97af8f83e0feda3fe51e3b4927201ed89cbbb773dedfbfc903c8fcf4c398fbe7"
+        ],
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/a/mass_balance_relative"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "fluid-domain-a",
+        "requirement_ids": [
+          "PI01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-a5eceb6566ed9a2bdae7df3b8596e115dea9965b954b7b7ca2fe298bab82ecc1"
+        ],
+        "evidence_refs": [
+          "subject:fluid-domain-a@8a9b5c06055b7a311ba3569277a257532aae10d476f283ed7f393f63bf86940e#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "enclosure-b-x",
+        "requirement_ids": [
+          "PI01-ENCLOSURE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-ff839a4402800e10a74c6a25b65c425783a0db4a8855bdd3903f6f5ca5c63938"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "enclosure-b-y",
+        "requirement_ids": [
+          "PI01-ENCLOSURE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-9f95665d724859f366c28aa96c510755781c5a7b71d7b1d12dc9b3eca36c7a35"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "enclosure-b-z",
+        "requirement_ids": [
+          "PI01-ENCLOSURE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-a01424fd5e5666570b05a6111a07e2a2f1b287182e0028900ce39922ee1ed925"
+        ],
+        "evidence_refs": [
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "contract-b",
+        "requirement_ids": [
+          "PI01-THERMAL",
+          "PI01-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-e5b53204fdf6679293317cab51d7671086410c34fa5d9e54ab6887d50e64ce0e"
+        ],
+        "evidence_refs": [
+          "subject:contract-b@03cb46478764bd78983920c75fb9640f67eebd6dbcb9aeb99e2336a9d94c5d83#cfd/contract",
+          "subject:fluid-domain-b@84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7#cfd-region:air",
+          "subject:source-primary-b@c39fbe0fac1af33f175a94cf3eb31a7f93d171a7f6f429c3289326fde9ac5fff#cfd-region:board_hot_patch",
+          "subject:enclosure-b@ce10cf16f53e4cbb993b46690740824ddae1a463fd8bfeb71f9e6df4b959bbb1#cfd-region:petg_shell"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "patch-temperature-b",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-66aaae6c0a7c007faf295344cb4f18a2d2a9962d6f70a424452e44de67ded26d"
+        ],
+        "evidence_refs": [
+          "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#cfd/b/maximum_temperature_c"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "mass-balance-b",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7b971851c2ca2cb6e4e00e7e1dff8509c38f6cf59bce14304a72f140f4f316f8"
+        ],
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/b/mass_balance_relative"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "fluid-domain-b",
+        "requirement_ids": [
+          "PI01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-9f1451846c21caf2fd5b109556dc5567ef1d4d73057e49af447f88ebeae84c29"
+        ],
+        "evidence_refs": [
+          "subject:fluid-domain-b@84402b19cca9fd479c76bd899635d52188b6fb904bbbd6e18323a4a3c1679eb7#solid-vertex-envelope"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "field-archive-binding",
+        "requirement_ids": [
+          "PI01-CFD",
+          "PI01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4880e72855bcb663651a0eba226c90a4fe705d8bf78f0d3ea6e576a65b856324"
+        ],
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/archive_records",
+          "subject:field-archive@6500135c6cc3d8ca8e91332a76738017d5b0792514ca2a75e78fa1f311a5532d#fields"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "convergence-evidence",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "fail",
+        "measurement_ids": [],
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/convergence"
+        ],
+        "finding_ids": [
+          "f-a7597ca12b054bc28561369440050223"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "heat-balance-evidence",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/heat_balance_relative"
+        ],
+        "finding_ids": [
+          "f-7b808656d0084a1da4f817bedbad2eaf"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "design-basis-present",
+        "requirement_ids": [
+          "PI01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-8a7d4765e53d3dfe3fef83092cf278bde476d494a7664f2d9d74a830c45ac33b"
+        ],
+        "evidence_refs": [
+          "subject:design-basis@d9945773fa28c44813d749289611f97e957c6c6bce129bbb744423b228523aeb#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "manufacturer-research-present",
+        "requirement_ids": [
+          "PI01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cbcb6de25ddf6d9989370127ce76f08fe3725cff55438618022645b18509d7d5"
+        ],
+        "evidence_refs": [
+          "subject:manufacturer-research@cc7cb7e28c3b85b8220fc37dc4a04bc2a5c6672270191c9c7d5ce3c6b22694a8#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "editable-source-present",
+        "requirement_ids": [
+          "PI01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-9d24eb2bc3ad2d6c229e000c547b842c25304a9f8f21dcbb6b753aae6ac88901"
+        ],
+        "evidence_refs": [
+          "subject:cad-source@b083f5fa62f7e276f48ed46b6f75ee649428c4200d6331a8ee9170dbb3ed2ae7#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PI01-SOURCE",
+          "PI01-ENCLOSURE",
+          "PI01-THERMAL",
+          "PI01-VENT-A",
+          "PI01-VENT-B",
+          "PI01-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-46773612f03c4f72b69f6f0ea5761a75"
+        ],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-a7597ca12b054bc28561369440050223",
+        "code": "cfd.convergence_failed",
+        "check_id": "convergence-evidence",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "fail",
+        "severity": "error",
+        "category": "output_defect",
+        "subject_id": "comparison",
+        "owner": {
+          "run_id": "retained-successor-raspberry-pi-enclosure-01",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "comparison"
+        },
+        "selector": "cfd/convergence",
+        "expected": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/convergence"
+        ],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+            "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+            "locator": "Thermal case"
+          }
+        ],
+        "summary": "Continue the steady solve until the fixed convergence criteria pass. variant-a: initial residual 0.0142, final residual 2.02e-05, relative temperature change 1.8e-05; variant-b: initial residual 0.014, final residual 2.23e-05, relative temperature change 0.000429.",
+        "explanation": "Continue the steady solve until the fixed convergence criteria pass. variant-a: initial residual 0.0142, final residual 2.02e-05, relative temperature change 1.8e-05; variant-b: initial residual 0.014, final residual 2.23e-05, relative temperature change 0.000429.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "revise_output",
+          "target_step_id": "deterministic-correction",
+          "target": "Satisfy PI01-CFD at cfd/convergence: {'operator': 'equals', 'expected': True, 'inclusive': True}.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "enclosure-a-x",
+            "enclosure-a-y",
+            "enclosure-a-z",
+            "contract-a",
+            "patch-temperature-a",
+            "mass-balance-a",
+            "fluid-domain-a",
+            "enclosure-b-x",
+            "enclosure-b-y",
+            "enclosure-b-z",
+            "contract-b",
+            "patch-temperature-b",
+            "mass-balance-b",
+            "fluid-domain-b",
+            "field-archive-binding",
+            "convergence-evidence",
+            "heat-balance-evidence",
+            "design-basis-present",
+            "manufacturer-research-present",
+            "editable-source-present",
+            "engineering-review"
+          ]
+        }
+      },
+      {
+        "id": "f-7b808656d0084a1da4f817bedbad2eaf",
+        "code": "cfd.heat_balance_missing",
+        "check_id": "heat-balance-evidence",
+        "requirement_ids": [
+          "PI01-CFD"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "missing_evidence",
+        "subject_id": "comparison",
+        "owner": {
+          "run_id": "retained-successor-raspberry-pi-enclosure-01",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "comparison"
+        },
+        "selector": "cfd/heat_balance_relative",
+        "expected": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.01,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": "1",
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [
+          "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/heat_balance_relative"
+        ],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+            "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+            "locator": "Thermal case"
+          }
+        ],
+        "summary": "Both alternatives need field-derived heat-balance evidence.",
+        "explanation": "Both alternatives need field-derived heat-balance evidence.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "supply_input",
+          "target_step_id": null,
+          "target": "Both alternatives need field-derived heat-balance evidence.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "enclosure-a-x",
+            "enclosure-a-y",
+            "enclosure-a-z",
+            "contract-a",
+            "patch-temperature-a",
+            "mass-balance-a",
+            "fluid-domain-a",
+            "enclosure-b-x",
+            "enclosure-b-y",
+            "enclosure-b-z",
+            "contract-b",
+            "patch-temperature-b",
+            "mass-balance-b",
+            "fluid-domain-b",
+            "field-archive-binding",
+            "convergence-evidence",
+            "heat-balance-evidence",
+            "design-basis-present",
+            "manufacturer-research-present",
+            "editable-source-present",
+            "engineering-review"
+          ]
+        }
+      },
+      {
+        "id": "f-46773612f03c4f72b69f6f0ea5761a75",
+        "code": "review.required",
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PI01-SOURCE",
+          "PI01-ENCLOSURE",
+          "PI01-THERMAL",
+          "PI01-VENT-A",
+          "PI01-VENT-B",
+          "PI01-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "design-basis",
+        "owner": {
+          "run_id": "retained-successor-raspberry-pi-enclosure-01",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "design_basis"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/prompt.txt",
+            "sha256": "a0990078b18f5430118ded029e435326a48ad841f598552cd36ddaf0be3b52f5",
+            "locator": "research request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+            "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+            "locator": "Product research and intended user"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+            "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+            "locator": "Envelope and construction"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+            "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+            "locator": "Thermal case"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md",
+            "sha256": "1386aa7f548e89ca86f5ec85d3b6476d10e8e3e841e2e691879c49dcc8bb3ee5",
+            "locator": "Business rules and review"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "enclosure-a-x",
+            "enclosure-a-y",
+            "enclosure-a-z",
+            "contract-a",
+            "patch-temperature-a",
+            "mass-balance-a",
+            "fluid-domain-a",
+            "enclosure-b-x",
+            "enclosure-b-y",
+            "enclosure-b-z",
+            "contract-b",
+            "patch-temperature-b",
+            "mass-balance-b",
+            "fluid-domain-b",
+            "field-archive-binding",
+            "convergence-evidence",
+            "heat-balance-evidence",
+            "design-basis-present",
+            "manufacturer-research-present",
+            "editable-source-present",
+            "engineering-review"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": false,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 2,
+        "error": 0,
+        "fail": 1,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 18
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

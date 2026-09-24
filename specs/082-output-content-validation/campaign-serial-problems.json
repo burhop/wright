@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T23:59:18.648457+00:00",
+  "updated_at": "2026-09-23T00:02:30.237200+00:00",
   "goal_authority": "campaign-serial-resolution-goal.md",
   "active_problem": "P001",
   "initial_metrics": {
@@ -400,13 +400,24 @@
           "result": "P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.",
           "campaign_credit": false,
           "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-user-approved-extra-correction-dashboard.json"
+        },
+        {
+          "at": "2026-09-23T00:02:30.237200+00:00",
+          "kind": "canonical_correction_3_started",
+          "attempt_id": "attempt-020",
+          "run_id": "81f485cf945747ada524dc575c2178b6",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical020-start.json"
+          ],
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical020-start-dashboard.json"
         }
       ],
-      "latest_result": "P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.",
+      "latest_result": "P001 Printed 02/020: correction 3 started after exact preflight; real Blender authoring uses qualified 1.01 mm pad rounds. Observe this one run through repair, slicing and human review; no canonical credit yet.",
       "dashboard_verification": {
         "status": "verified",
-        "at": "2026-09-22T23:59:48.842Z",
-        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-user-approved-extra-correction-dashboard.json",
+        "at": "2026-09-23T00:02:32.150Z",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical020-start-dashboard.json",
         "displayed_counts": {
           "datasets_created": 30,
           "combinations_run": 30,
@@ -436,12 +447,12 @@
         "next": "Observe this exact owned run; do not dispatch duplicate. Preserve mandatory review. P001 remains active."
       },
       "canonical_successor": {
-        "at": "2026-09-22T23:41:13.605086+00:00",
+        "at": "2026-09-23T00:02:30.237200+00:00",
         "scenario_id": "printed-replacement-part-02",
-        "attempt_id": "attempt-019",
-        "run_id": "4a16015946e94f898727b0a49b256dc1",
-        "run_log_path": "runs/campaign-printed-replacement-part-02-attempt-019/20260922T234050Z-8e799f01a395.json",
-        "source_sha256": "03c95f921bfc4569d14af5e626f7806df2a7a510eee55d29298dfd6b38eae1a0",
+        "attempt_id": "attempt-020",
+        "run_id": "81f485cf945747ada524dc575c2178b6",
+        "run_log_path": "runs/campaign-printed-replacement-part-02-attempt-020/20260923T000203Z-97037aa8ed97.json",
+        "source_sha256": "71cd02610e007a9bda310aa33e5e981bf59e06fa8c611a4532f3783ddf1d4301",
         "retry_episode": {
           "episode_id": "printed02-final-feature-review",
           "failure_key": "review_changes_requested:clearance-native-orientation",
@@ -451,21 +462,21 @@
             "attempt-017"
           ],
           "correction": {
-            "id": "analytic-grip-rounds-and-full-span-recess-r2",
+            "id": "unclamped-pad-and-bore-rounds-r3",
             "evidence": [
               {
                 "id": "user-decision-and-native-qualified-repair",
-                "path": "retry-evidence/printed02-review-correction-019.json",
-                "sha256": "a1a5c7e8880721ea7b70ca0e81998c02c978009b628252979fbcbdc17f876874"
+                "path": "retry-evidence/printed02-review-correction-020.json",
+                "sha256": "049d9dcef9ea45799f7aaa66cdd5a5aec81ce7052e183eb6103e00fb270e405b"
               }
             ]
           }
         },
-        "status": "changes_requested",
-        "campaign_credit": false,
-        "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
-        "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916",
-        "native_cleanup": "verified cleaned"
+        "runner_session": 19375,
+        "native_receipt": ".local-run\\feature-081-live\\printing02-runtime-attempt-020\\lifecycle.json",
+        "local_commit": "8f9b22fb",
+        "status": "running_source_authoring",
+        "campaign_credit": false
       },
       "pending_decision": {
         "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
