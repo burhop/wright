@@ -1290,6 +1290,67 @@ export class WorkspaceService {
     return response.json();
   }
 
+  async uploadPrintDemoImage(sessionId: string, file: File): Promise<string> {
+    const form = new FormData();
+    form.append("file", file);
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/images?session_id=${encodeURIComponent(sessionId)}`,
+      { method: "POST", body: form },
+    );
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(typeof payload.detail === "string" ? payload.detail : "Image upload failed.");
+    }
+    const payload = await response.json();
+    if (typeof payload.path !== "string") throw new Error("Image upload returned no path.");
+    return payload.path;
+  }
+
+  async preparePrintPartDemo(
+    sessionId: string,
+    prompt: string,
+    imagePath: string | null,
+    targetMm: number,
+  ): Promise<{ workspace_id: string; workflow_path: string; storage_digest: string; artifact_root: string }> {
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/prepare`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId, prompt, image_path: imagePath, target_mm: targetMm }),
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(typeof payload.detail === "string" ? payload.detail : "The print workflow could not be prepared.");
+    }
+    return response.json();
+  }
+
+  async getPrintDemoPrinterStatus(sessionId: string): Promise<{
+    status: string; progress: number | null; time_remaining_minutes: number | null;
+    current_layer: number | null; total_layers: number | null;
+  }> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/print-demo/printer-status?session_id=${encodeURIComponent(sessionId)}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("P1S status is unavailable. Check the printer MCP connection.");
+    return response.json();
+  }
+
+  async printDemoPackage(
+    sessionId: string, workflowPath: string, runId: string, packageSha256: string,
+  ): Promise<{ state: string; receipt_path: string }> {
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/print`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256 }),
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(typeof payload.detail === "string" ? payload.detail : "The printer did not accept this package.");
+    }
+    return response.json();
+  }
+
   async getWorkspaceWorkflowSourceReadiness(
     sessionId: string,
     path: string,

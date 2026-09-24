@@ -197,6 +197,20 @@ class WorkflowSourceResponse(BaseModel):
     layout_status: Literal["missing", "current", "stale"] = "missing"
 
 
+class PrintPartPrepareRequest(BaseModel):
+    session_id: str = Field(min_length=1, max_length=256)
+    prompt: str = Field(default="", max_length=12000)
+    image_path: str | None = Field(default=None, max_length=1024)
+    target_mm: float = Field(default=50, ge=5, le=250)
+
+
+class PrintPartDispatchRequest(BaseModel):
+    session_id: str = Field(min_length=1, max_length=256)
+    workflow_path: str = Field(min_length=1, max_length=256)
+    run_id: str = Field(min_length=1, max_length=256)
+    package_sha256: str = Field(min_length=64, max_length=64)
+
+
 class WorkflowSourceReadinessResponse(BaseModel):
     """Authoritative readiness for a stored workflow's template provenance."""
 

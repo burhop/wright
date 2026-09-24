@@ -4,6 +4,7 @@ import WorkflowRecoveryConcept, {
   type WorkflowRunOptions,
   type WorkflowRecoveryStoredSource,
 } from "../../prototypes/workflow-recovery/WorkflowRecoveryConcept";
+import { PrintPartDemoPage } from "./PrintPartDemoPage";
 import { EngineeringTemplateDialog } from "../../prototypes/workflow-recovery/EngineeringTemplateDialog";
 import {
   initialWorkflow,
@@ -54,6 +55,7 @@ export function WorkflowRecoveryPage({
   const [fileActionError, setFileActionError] = useState("");
   const [fileActionPending, setFileActionPending] = useState(false);
   const [newWorkflowName, setNewWorkflowName] = useState("");
+  const [printDemoOpen, setPrintDemoOpen] = useState(false);
   const [workflowChoices, setWorkflowChoices] = useState<
     Array<{ path: string; name: string }>
   >([]);
@@ -511,6 +513,17 @@ export function WorkflowRecoveryPage({
         overflow: "hidden",
       }}
     >
+      <div style={{ display: "flex", justifyContent: "flex-end", padding: "5px 12px", borderBottom: "1px solid var(--color-border)" }}>
+        <button
+          type="button"
+          className="recovery-button recovery-button--secondary"
+          data-testid="workflow-print-demo-open"
+          onClick={() => setPrintDemoOpen(true)}
+          style={{ padding: "5px 12px" }}
+        >
+          Print a part demo
+        </button>
+      </div>
       {currentDocument?.layout_status === "stale" && (
         <p role="status">
           Diagram placement is from an older file version. Review the current
@@ -626,7 +639,17 @@ export function WorkflowRecoveryPage({
           Cancel
         </button>
       </dialog>
-      <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
+      <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        {printDemoOpen && <PrintPartDemoPage
+          sessionId={sessionId}
+          workspaceId={workspaceId}
+          onOpenWorkflow={(path) => {
+            setPrintDemoOpen(false);
+            onOpenWorkflow?.(path);
+          }}
+          onClose={() => setPrintDemoOpen(false)}
+        />}
+        {!printDemoOpen && <>
         {(state === "loading" || (state === "ready" && !currentDocument)) && (
           <WorkflowRecoveryConcept surfaceState="loading" />
         )}
@@ -723,6 +746,7 @@ export function WorkflowRecoveryPage({
             onOpenFile={onOpenFile}
           />
         )}
+        </>}
       </div>
     </section>
   );

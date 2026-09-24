@@ -119,6 +119,8 @@ from api.schemas.workspace import (
     ProcessValidationReviewRequest,
     WorkflowSourceUpdateRequest,
     WorkflowSourceResponse,
+    PrintPartPrepareRequest,
+    PrintPartDispatchRequest,
     EngineeringWorkflowTemplateListResponse,
     EngineeringWorkflowTemplateDetailResponse,
     EngineeringWorkflowTemplateReadinessRequest,
@@ -1209,6 +1211,206 @@ async def upload_workflow_image(
         raise HTTPException(status_code=422, detail=str(error)) from error
     finally:
         await file.close()
+
+
+@router.post("/print-demo/prepare", status_code=201)
+@traced("workspace.print_demo.prepare")
+async def prepare_print_demo(
+    body: PrintPartPrepareRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Stage one isolated saved Wright workflow and its fixed MCP operations."""
+    from workspace_service.print_part_demo import prepare_print_part_demo
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+    from workspace_service.workflow_references import image_media_type
+    from workspace_service.workspace_path import WorkspacePath
+
+    scope = _workflow_source_scope(body.session_id, service)
+    if body.image_path:
+        try:
+            image = await service.files.read_reference(scope.workspace_dir, body.image_path)
+            image_media_type(body.image_path, image)
+        except (OSError, ValueError) as error:
+            raise HTTPException(status_code=422, detail="Choose an uploaded workspace image.") from error
+    runtime = WorkflowMcpRuntime(
+        request.app.state.gateway_service,
+        workspace_id=scope.workspace_id,
+        session_id=body.session_id,
+    )
+    try:
+        try:
+            path, source, staged, output_root = prepare_print_part_demo(
+                workspace_dir=scope.workspace_dir,
+                prompt=body.prompt,
+                image_path=body.image_path,
+                target_mm=body.target_mm,
+                tools=runtime.available(),
+            )
+            paths = WorkspacePath(scope.workspace_dir)
+            paths.resolve(output_root).mkdir(parents=True, exist_ok=False)
+            for relative, content in staged.items():
+                written = await service.files.write_generated_bytes(
+                    scope.workspace_dir, relative, content, "indexed"
+                )
+                if written != relative:
+                    raise ValueError("An isolated print-demo input path was occupied.")
+            document = await service.workflow_sources.create(
+                scope.workspace_dir, path, source
+            )
+        except (ValueError, OSError, WorkflowSourceStorageError, WorkflowSourceExecutionError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return {
+            "workspace_id": scope.workspace_id,
+            "workflow_path": path,
+            "storage_digest": document.storage_digest,
+            "artifact_root": output_root,
+        }
+    finally:
+        await runtime.close()
+
+
+@router.get("/print-demo/printer-status")
+@traced("workspace.print_demo.printer_status")
+async def print_demo_printer_status(
+    session_id: str,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    from workspace_service.print_part_demo_printer import (
+        PrintDemoError, call_printer, printer_status_summary,
+    )
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+
+    scope = _workflow_source_scope(session_id, service)
+    runtime = WorkflowMcpRuntime(
+        request.app.state.gateway_service,
+        workspace_id=scope.workspace_id,
+        session_id=session_id,
+    )
+    try:
+        try:
+            value = await call_printer(runtime, "get_printer_status")
+        except PrintDemoError as error:
+            raise HTTPException(status_code=503, detail=str(error)) from error
+        return printer_status_summary(value)
+    finally:
+        await runtime.close()
+
+
+@router.post("/print-demo/print")
+@traced("workspace.print_demo.print")
+async def print_demo_dispatch(
+    body: PrintPartDispatchRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    from workspace_service.print_part_demo_printer import (
+        PrintDemoError, _printer_tool, call_printer, current_package,
+        finish_print_dispatch, printer_status_summary, reserve_print_dispatch,
+    )
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+
+    scope = _workflow_source_scope(body.session_id, service)
+    try:
+        package, relative, facts = current_package(
+            scope.workspace_dir, body.workflow_path, body.run_id,
+            body.package_sha256,
+        )
+    except (PrintDemoError, OSError, ValueError) as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    runtime = WorkflowMcpRuntime(
+        request.app.state.gateway_service,
+        workspace_id=scope.workspace_id,
+        session_id=body.session_id,
+    )
+    try:
+        try:
+            _printer_tool(runtime, "print_3mf")
+            status_value = await call_printer(runtime, "get_printer_status", {"fresh": True})
+            status_summary = printer_status_summary(status_value)
+            if status_summary["status"] in {"RUNNING", "PREPARE", "SLICING"}:
+                raise PrintDemoError("The P1S is already busy. Wait for the current job to finish.")
+            receipt = reserve_print_dispatch(
+                package, run_id=body.run_id, digest=body.package_sha256
+            )
+            response = await call_printer(runtime, "print_3mf", {
+                "three_mf_path": str(package),
+                "bambu_model": "p1s",
+                "bed_leveling": True,
+                "use_ams": True,
+                "auto_match_ams": True,
+            })
+            finish_print_dispatch(receipt, response)
+            return {
+                "state": "printer_tool_accepted",
+                "package_path": relative,
+                "package_sha256": body.package_sha256,
+                "supports_enabled": facts["supports_enabled"],
+                "receipt_path": str(receipt.relative_to(scope.workspace_dir)).replace("\\", "/"),
+            }
+        except PrintDemoError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+    finally:
+        await runtime.close()
+
+
+@router.get("/print-demo/camera.mjpeg")
+@traced("workspace.print_demo.camera")
+async def print_demo_camera(
+    session_id: str,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    from workspace_service.print_part_demo_printer import (
+        PrintDemoError, _printer_tool, call_printer, jpeg_frame,
+        p1s_camera_config, p1s_camera_frames,
+    )
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+
+    scope = _workflow_source_scope(session_id, service)
+    try:
+        camera = p1s_camera_config()
+    except PrintDemoError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    if camera:
+        return StreamingResponse(
+            p1s_camera_frames(*camera),
+            media_type="multipart/x-mixed-replace; boundary=wright-frame",
+            headers={"Cache-Control": "no-store"},
+        )
+    runtime = WorkflowMcpRuntime(
+        request.app.state.gateway_service,
+        workspace_id=scope.workspace_id,
+        session_id=session_id,
+    )
+    try:
+        _printer_tool(runtime, "camera_snapshot")
+        first = jpeg_frame(await call_printer(runtime, "camera_snapshot", {"bambu_model": "p1s"}))
+    except PrintDemoError as error:
+        await runtime.close()
+        raise HTTPException(status_code=503, detail=str(error)) from error
+
+    async def frames():
+        frame = first
+        try:
+            while True:
+                yield (
+                    b"--wright-frame\r\nContent-Type: image/jpeg\r\nContent-Length: "
+                    + str(len(frame)).encode() + b"\r\n\r\n" + frame + b"\r\n"
+                )
+                await asyncio.sleep(2)
+                try:
+                    frame = jpeg_frame(await call_printer(runtime, "camera_snapshot", {"bambu_model": "p1s"}))
+                except PrintDemoError:
+                    break
+        finally:
+            await runtime.close()
+
+    return StreamingResponse(
+        frames(), media_type="multipart/x-mixed-replace; boundary=wright-frame",
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @router.get("/workflow-sources/cad")

@@ -1,0 +1,23 @@
+# Prompt to printed part demo
+
+The **Print a part demo** button in a workspace's **Workflows** view opens a short form. A prompt, an uploaded PNG/JPEG/GIF/WebP, or both become inputs to a new, isolated `.workflow.wflow` file. Wright runs three engineering stages:
+
+1. The existing Blender MCP server creates the requested mesh and exports `source_mesh.stl`.
+2. Wright's fixed mesh-repair MCP operation measures and repairs the mesh, checks the P1S build envelope, and exports `repaired_mesh.stl` plus `mesh-preview.png`.
+3. Wright's fixed slicer MCP operation drives the reviewed Bambu Studio CLI with a P1S 0.4 mm / PETG HF process, slices the oriented mesh with supports enabled, and emits `slice_package.gcode.3mf`, `support-preview.svg`, and slice evidence. The preview shows actual toolpaths and any supports generated for the selected geometry.
+
+The UI displays the repaired STL in a rotatable 3D view beside the actual 2D support/toolpath preview. The support structures are not currently rendered as a 3D mesh. It enables **Print on P1S** only after a completed Wright run publishes one hashed sliced 3MF. On click, Wright rechecks the package, slice evidence, support preview, and embedded G-code, creates a one-use dispatch record, then calls the configured P1S printer MCP tool. If the call fails or its outcome is uncertain, the same package cannot be dispatched again automatically. A successful tool response means the printer command was accepted, not that the physical print succeeded.
+
+The print panel polls the printer MCP status for state, progress, remaining time, and layers. Its camera endpoint streams local P1S JPEG frames as MJPEG. When the API host has `WRIGHT_P1S_IP` and `WRIGHT_P1S_ACCESS_CODE`, it connects to the printer's TLS port 6000 directly; otherwise it can relay repeated `camera_snapshot` MCP frames if a printer server provides that tool. Enable LAN liveview on the printer for the direct feed. The access code stays on the API host.
+
+## Setup for this source-checkout demo
+
+- Run Wright's API and web UI in the source checkout. The demo preparer uses the reviewed local Bambu Studio 2.8.2.61 binary and P1S profile files under `.local-run/feature-081-live/tools/`.
+- Enable `blender-mcp-ahujasid`, `wright-printed-part-mesh-repair`, and `wright-printed-part-slicer` in the workspace. The latter two are the existing fixed MCP wrappers in `scripts/engineering_dataset_mesh_repair_mcp.py` and `scripts/engineering_dataset_slice_mcp.py`; run them with `WRIGHT_PRINT_WORKSPACE` set to the active workspace directory. The mesh-repair wrapper also needs `BLENDER_PORT` for its owned Blender connection.
+- Enable the catalogued `bambu-p1s-mcp-marctheshark3` server in the same workspace for `printer_status` and `printer_print`. Configure its `BAMBU_IP`, `BAMBU_ACCESS_CODE`, `BAMBU_SERIAL`, and `BAMBU_MODEL=P1S` in Tool Registry, on a host that can reach the printer's LAN ports 8883 and 990. No credential is accepted in the browser form.
+- For the continuous camera, set `WRIGHT_P1S_IP` and `WRIGHT_P1S_ACCESS_CODE` in the **API process environment** before starting Wright. The P1S must allow LAN liveview on port 6000. The browser only requests Wright's `/api/workspace/print-demo/camera.mjpeg` endpoint.
+- Confirm that the physical AMS contains the selected PETG HF material and that the build plate is ready. The current demo uses a fixed reviewed profile; it does not choose or remap AMS slots from live inventory.
+
+If any required MCP stage is unavailable, **Create printable part** reports which server/tool needs enabling and does not create a fictitious part or package. The physical printer, AMS, and camera have not been validated by this source-checkout implementation without the printer LAN settings.
+
+Protocol references: [Bambu Studio CLI](https://github.com/bambulab/BambuStudio/wiki/Command-Line-Usage), [catalogued P1S MCP](https://github.com/marctheshark3/bambu-p1s-mcp), [P1S local camera framing](https://github.com/Doridian/OpenBambuAPI/blob/main/video.md).
