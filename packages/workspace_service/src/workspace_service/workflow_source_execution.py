@@ -139,6 +139,7 @@ class PromptStep:
     validation_sources: tuple[tuple[str, str], ...] = ()
     revision_policy: str = ""
     file_dependencies: dict[str, str] = field(default_factory=dict)
+    task_tool_allowlist: tuple[str, ...] = ()
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -681,6 +682,15 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             raise _invalid(
                 f"{title}: use 1–32 tool calls and a 30–600 second task limit."
             )
+        raw_task_tools = settings.get("mcp_task_tools", [])
+        if (
+            not isinstance(raw_task_tools, list)
+            or len(raw_task_tools) > 32
+            or any(not isinstance(name, str) or not name for name in raw_task_tools)
+            or len(raw_task_tools) != len(set(raw_task_tools))
+            or (raw_task_tools and not agent_task)
+        ):
+            raise _invalid(f"{title}: select distinct tool names for an MCP task.")
         revision_policy = settings.get("revision_policy", "")
         if revision_policy not in {"", "create_new_files"} or (
             revision_policy and not agent_task
@@ -919,6 +929,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 reference_inline_max_bytes=reference_inline_max_bytes,
                 revision_policy=revision_policy,
                 file_dependencies=file_dependencies,
+                task_tool_allowlist=tuple(raw_task_tools),
             )
         )
     from .workflow_design_check import validate_rework

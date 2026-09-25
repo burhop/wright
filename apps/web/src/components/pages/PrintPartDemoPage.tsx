@@ -18,15 +18,20 @@ interface Props {
   onClose: () => void;
 }
 
-interface Package {
+interface Artifact {
   path: string;
   sha256: string;
 }
 
-function findPackage(results: WorkspaceEngineeringResult[] | undefined): Package | null {
+function findArtifact(
+  results: WorkspaceEngineeringResult[] | undefined,
+  artifactRoot: string,
+  filename: string,
+): Artifact | null {
+  if (!artifactRoot) return null;
   const representations = results?.flatMap((result) => result.representations ?? []) ?? [];
   const matches = representations.filter((rep) =>
-    rep.kind === "workspace_file" && rep.location.endsWith("slice_package.gcode.3mf") &&
+    rep.kind === "workspace_file" && rep.location === `${artifactRoot}/${filename}` &&
     typeof rep.sha256 === "string" && /^[0-9a-f]{64}$/.test(rep.sha256),
   );
   return matches.length === 1 ? { path: matches[0].location, sha256: matches[0].sha256! } : null;
@@ -164,8 +169,12 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
   const [printerError, setPrinterError] = useState("");
   const [cameraError, setCameraError] = useState(false);
   const [printerEnabled, setPrinterEnabled] = useState(false);
-  const packageFile = useMemo(() => findPackage(run?.results), [run]);
-  const hasPreview = Boolean(run?.status === "completed" && packageFile && artifactRoot);
+  const sourceFile = useMemo(() => findArtifact(run?.results, artifactRoot, "source_mesh.stl"), [run, artifactRoot]);
+  const repairedFile = useMemo(() => findArtifact(run?.results, artifactRoot, "repaired_mesh.stl"), [run, artifactRoot]);
+  const supportFile = useMemo(() => findArtifact(run?.results, artifactRoot, "support-preview.svg"), [run, artifactRoot]);
+  const evidenceFile = useMemo(() => findArtifact(run?.results, artifactRoot, "slice-evidence.json"), [run, artifactRoot]);
+  const packageFile = useMemo(() => findArtifact(run?.results, artifactRoot, "slice_package.gcode.3mf"), [run, artifactRoot]);
+  const hasPreview = Boolean(run?.status === "completed" && sourceFile && repairedFile && supportFile && evidenceFile && packageFile);
 
   useEffect(() => {
     let active = true;
@@ -269,9 +278,10 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
       <section className="print-demo__card print-demo__result" aria-label="Part and slice review">
         <div className="print-demo__section-head"><span className="print-demo__step">02 / REVIEW</span><span className="print-demo__pill">{step}</span></div>
         {hasPreview ? <div className="print-demo__previews">
-          <div><strong>3D part</strong><PartPreview sessionId={sessionId} path={`${artifactRoot}/repaired_mesh.stl`} /><small>Drag to rotate · scroll to zoom</small></div>
-          <div><strong>Support and toolpath preview</strong><SupportPreview sessionId={sessionId} path={`${artifactRoot}/support-preview.svg`} /><small>Actual slicer toolpaths, zoomed to the support region. <a href={workspaceContentUrl(`${artifactRoot}/support-preview.svg`, sessionId)} download>Download full plate preview</a></small></div>
+          <div><strong>3D part</strong><PartPreview sessionId={sessionId} path={repairedFile!.path} /><small>Drag to rotate · scroll to zoom</small></div>
+          <div><strong>Support and toolpath preview</strong><SupportPreview sessionId={sessionId} path={supportFile!.path} /><small>Actual slicer toolpaths, zoomed to the support region. <a href={workspaceContentUrl(supportFile!.path, sessionId)} download>Download full plate preview</a></small></div>
         </div> : <div className="print-demo__empty">{busy ? "Engineering tools are working on your request…" : "The part and its slice will appear here."}</div>}
+        {hasPreview && <p className="print-demo__file">Mesh · <a href={workspaceContentUrl(sourceFile!.path, sessionId)} download>Source STL</a> · <a href={workspaceContentUrl(repairedFile!.path, sessionId)} download>Repaired STL</a> · <a href={workspaceContentUrl(evidenceFile!.path, sessionId)} download>Slice evidence</a></p>}
         {packageFile && <p className="print-demo__file">Sliced 3MF · <a href={workspaceContentUrl(packageFile.path, sessionId)} download>Download package</a><br /><code>SHA-256 {packageFile.sha256.slice(0, 16)}…</code></p>}
         {workflowPath && <button type="button" className="print-demo__text-button" onClick={() => onOpenWorkflow?.(workflowPath)}>Open saved Wright workflow</button>}
         {error && <p className="print-demo__error" role="alert">{error}</p>}

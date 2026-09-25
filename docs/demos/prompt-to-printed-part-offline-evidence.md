@@ -30,7 +30,8 @@ zoomed the actual support SVG, exposed the package download, and showed
 `.local-run/print-demo-offline/review.png`. The browser check substituted the
 completed diagnostic run response at the prepare/run HTTP boundary because
 the model-backed user flow is unavailable; file downloads and previews came
-from Wright's real workspace API.
+from Wright's real workspace API. The review panel also exposed the named
+source STL, repaired STL, 3MF, slice evidence, and full plate preview downloads.
 
 ## Remaining offline blocker
 

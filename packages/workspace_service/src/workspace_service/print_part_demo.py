@@ -98,10 +98,15 @@ def prepare_print_part_demo(
     if not 5 <= target_mm <= 250:
         raise ValueError("The target dimension must be between 5 and 250 mm.")
     root = _repo_root()
+    binding = json.loads((root / "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json").read_text(encoding="utf-8"))
+    blender_tools = tuple(binding["allowed_tools"])
+    if blender_tools != ("execute_blender_code", "get_scene_info", "get_viewport_screenshot"):
+        raise ValueError("The reviewed printed-part Blender tool binding changed.")
+    for tool_name in blender_tools:
+        _tool(tools, "blender-mcp-ahujasid", tool_name)
     blender = _tool(tools, "blender-mcp-ahujasid", "execute_blender_code")
     repair_tool = _tool(tools, "wright-printed-part-mesh-repair", "repair_model_file")
     slicer_tool = _tool(tools, "wright-printed-part-slicer", "slice_model_file")
-    binding = json.loads((root / "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json").read_text(encoding="utf-8"))
     slicer_executable = (root / binding["slicer"]["executable"]).resolve()
     profiles_root = (root / binding["slicer"]["profiles_root"]).resolve()
     if not slicer_executable.is_file() or not profiles_root.is_dir():
@@ -163,6 +168,7 @@ def prepare_print_part_demo(
     )
     create["fields"]["settings"] = {
         "authoring_template": "mcp-task", "mcp_server": blender["server_id"],
+        "mcp_task_tools": list(blender_tools),
         "output_format": "json", "save_output": True,
         "output_filename": f"{output_root}/source-model-report.json",
         "file_policy": "overwrite",

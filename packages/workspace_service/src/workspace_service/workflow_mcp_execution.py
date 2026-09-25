@@ -622,11 +622,21 @@ class WorkflowMcpRuntime:
         return value, text
 
     def task_tools(self, step):
-        tools = tuple(t for t in self.tools() if t.server_id == step.server_id)
+        allowed = set(step.task_tool_allowlist)
+        tools = tuple(
+            t for t in self.tools()
+            if t.server_id == step.server_id
+            and (not allowed or t.tool_name in allowed)
+        )
         if not tools:
             raise _invalid(
                 f"{step.title}: the selected server has no available tools.",
                 "Enable and connect this server in the workspace Tool Registry.",
+            )
+        if allowed != {tool.tool_name for tool in tools} and allowed:
+            raise _invalid(
+                f"{step.title}: a required MCP task tool is unavailable.",
+                "Enable the configured Blender tools in this workspace, then run again.",
             )
         if len(tools) > 64:
             raise _invalid(
