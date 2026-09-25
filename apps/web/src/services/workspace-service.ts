@@ -1336,6 +1336,12 @@ export class WorkspaceService {
     return response.json();
   }
 
+  async getPrintDemoCapabilities(): Promise<{ printer_enabled: boolean }> {
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/capabilities`, { cache: "no-store" });
+    if (!response.ok) return { printer_enabled: false };
+    return response.json();
+  }
+
   async printDemoPackage(
     sessionId: string, workflowPath: string, runId: string, packageSha256: string,
   ): Promise<{ state: string; receipt_path: string }> {

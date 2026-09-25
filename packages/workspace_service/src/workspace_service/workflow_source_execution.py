@@ -138,6 +138,7 @@ class PromptStep:
     validation: dict | None = None
     validation_sources: tuple[tuple[str, str], ...] = ()
     revision_policy: str = ""
+    file_dependencies: dict[str, str] = field(default_factory=dict)
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -810,6 +811,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     f"{title}: the filename must end in {FORMATS[fmt]} for {fmt} output."
                 )
         arguments, argument_sources, arguments_from = {}, {}, None
+        file_dependencies = {}
         if is_mcp:
             try:
                 arguments = json.loads(settings.get("mcp_arguments", "{}"))
@@ -849,7 +851,25 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                         raise _invalid(f"{title}: connect one response to {name}.")
                     if connected:
                         argument_sources[name] = connected[0]
-            handled = set(argument_sources.values()) | (
+            raw_dependencies = settings.get("mcp_file_dependencies", {})
+            if not isinstance(raw_dependencies, dict) or any(
+                not isinstance(port, str) or not isinstance(path, str)
+                for port, path in raw_dependencies.items()
+            ):
+                raise _invalid(f"{title}: file dependencies must map input ports to workspace files.")
+            for port, path in raw_dependencies.items():
+                endpoint = f"{block_id}.{port}"
+                connected = incoming.get(endpoint, [])
+                if (
+                    endpoint not in ports
+                    or ports[endpoint][1] != "inputs"
+                    or ports[endpoint][2].get("kind") != "workspace_file"
+                    or len(connected) != 1
+                    or ports[connected[0]][2].get("kind") != "workspace_file"
+                ):
+                    raise _invalid(f"{title}: connect one named workspace file to {port}.")
+                file_dependencies[connected[0]] = _safe_path(path)
+            handled = set(argument_sources.values()) | set(file_dependencies) | (
                 {arguments_from} if arguments_from else set()
             )
             if any(source not in handled for _, source in references):
@@ -898,6 +918,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 source_contract=source_contract,
                 reference_inline_max_bytes=reference_inline_max_bytes,
                 revision_policy=revision_policy,
+                file_dependencies=file_dependencies,
             )
         )
     from .workflow_design_check import validate_rework
@@ -1702,13 +1723,39 @@ async def execute_prompt_workflow(
         elif step.tool_name:
             if tool_runtime is None:
                 raise _invalid(f"{step.title}: MCP execution is unavailable.")
+            file_dependency_records = []
+            for source_id, expected_path in step.file_dependencies.items():
+                value = responses.get(source_id)
+                if not isinstance(value, EngineeringResult):
+                    raise _invalid(f"{step.title}: its connected file was not produced.")
+                representations = [
+                    rep for rep in value.representations
+                    if rep.kind == "workspace_file"
+                ]
+                if len(representations) != 1 or representations[0].location != expected_path:
+                    raise _invalid(f"{step.title}: its connected file differs from the declared input.")
+                rep = representations[0]
+                from .workspace_path import WorkspacePath
+                try:
+                    target = WorkspacePath(workspace_dir).resolve(expected_path, must_exist=True)
+                    with target.open("rb") as stream:
+                        actual_hash = hashlib.file_digest(stream, "sha256").hexdigest()
+                    actual_size = target.stat().st_size
+                except (OSError, ValueError) as error:
+                    raise _invalid(f"{step.title}: its connected file is unavailable.") from error
+                if actual_hash != rep.sha256 or actual_size != rep.size_bytes:
+                    raise _invalid(f"{step.title}: its connected file changed after the previous stage.")
+                file_dependency_records.append({
+                    "path": expected_path, "sha256": actual_hash,
+                    "kind": "workspace_file", "source_port": source_id,
+                })
             tool_values = {
                 key: value.text
                 if isinstance(value, WorkflowReference) and not value.image_url
                 else value
                 for key, value in responses.items()
             }
-            reference_records = []
+            reference_records = file_dependency_records
             for source_id in set(step.argument_sources.values()) | (
                 {step.arguments_from} if step.arguments_from else set()
             ):

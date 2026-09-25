@@ -200,7 +200,9 @@ def prepare_print_part_demo(
         "file_policy": "overwrite", "timeout_seconds": 600,
         "expected_files": "\n".join(f"{output_root}/{name}" for name in ("repaired_mesh.stl", "mesh-preview.png")),
         "expected_file_ports": {"repaired_mesh": f"{output_root}/repaired_mesh.stl"},
+        "mcp_file_dependencies": {"source_mesh_in": f"{output_root}/source_mesh.stl"},
     }
+    _reference(sections, f"{create['id']}.source_mesh", repair, "source_mesh_in", "workspace_file")
     slicer = _section(sections, "supports_and_slice")
     slice_config = {
         "slicer": str(slicer_executable),
@@ -238,7 +240,15 @@ def prepare_print_part_demo(
             "filament_profile": f"{output_root}/filament-profile.json",
             "process_profile": f"{output_root}/process-profile.json",
         },
+        "mcp_file_dependencies": {"repaired_mesh_in": f"{output_root}/repaired_mesh.stl"},
     }
+    _reference(sections, f"{repair['id']}.repaired_mesh", slicer, "repaired_mesh_in", "workspace_file")
+    sections[:] = [
+        section for section in sections
+        if section["id"] not in {
+            "mesh_to_repair_" + suffix, "repair_to_slice_" + suffix,
+        }
+    ]
     # The built-in transfer checkpoint is a setup-required reference. The demo
     # has its own exact-package Print action and does not claim a test receipt.
     approval = _section(sections, "authorize_transfer")
