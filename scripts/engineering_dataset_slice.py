@@ -138,8 +138,14 @@ def run(configuration_path):
     machine, filament = profile(config["machine"]), profile(config["filament"])
     process_base = profile(config["process"]["base"])
     material = json.loads(filament.read_text(encoding="utf-8"))
-    if "PETG" not in material["name"] or "Bambu Lab P1S 0.4 nozzle" not in material["compatible_printers"]:
+    demo_filament = config.get("demo_filament_type")
+    if demo_filament is not None:
+        if demo_filament not in {"PLA", "PETG", "ABS", "ASA"} or config["filament"] != f"filament/Generic {demo_filament}.json" or material.get("name") != f"Generic {demo_filament}":
+            raise ValueError("Require the selected generic P1S filament profile")
+    elif "PETG" not in material["name"]:
         raise ValueError("Require explicit compatible P1S PETG profile")
+    if "Bambu Lab P1S 0.4 nozzle" not in material.get("compatible_printers", []):
+        raise ValueError("Filament profile is not compatible with the P1S 0.4 mm nozzle")
     profile_index = {}
     for candidate in profiles.rglob("*.json"):
         try:

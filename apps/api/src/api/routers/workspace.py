@@ -121,6 +121,7 @@ from api.schemas.workspace import (
     WorkflowSourceResponse,
     PrintPartPrepareRequest,
     PrintPartDispatchRequest,
+    PrintPartCancelRequest,
     EngineeringWorkflowTemplateListResponse,
     EngineeringWorkflowTemplateDetailResponse,
     EngineeringWorkflowTemplateReadinessRequest,
@@ -1245,6 +1246,7 @@ async def prepare_print_demo(
                 prompt=body.prompt,
                 image_path=body.image_path,
                 target_mm=body.target_mm,
+                filament_type=body.filament_type,
                 tools=runtime.available(),
             )
             paths = WorkspacePath(scope.workspace_dir)
@@ -1297,12 +1299,13 @@ async def print_demo_capabilities():
 async def print_demo_printer_status(
     session_id: str,
     request: Request,
+    fresh: bool = False,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     if not _print_demo_monitor_enabled():
         raise HTTPException(status_code=503, detail="Printer monitoring is disabled for this demo.")
     from workspace_service.print_part_demo_printer import (
-        PrintDemoError, call_printer, printer_status_summary,
+        PrintDemoError, call_printer, printer_ams_summary, printer_status_summary,
     )
     from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
 
@@ -1314,10 +1317,11 @@ async def print_demo_printer_status(
     )
     try:
         try:
-            value = await call_printer(runtime, "get_printer_status")
+            value = await call_printer(runtime, "get_printer_status", {"fresh": fresh})
+            ams_value = await call_printer(runtime, "get_printer_ams")
         except PrintDemoError as error:
             raise HTTPException(status_code=503, detail=str(error)) from error
-        return printer_status_summary(value)
+        return {**printer_status_summary(value), **printer_ams_summary(ams_value)}
     finally:
         await runtime.close()
 
@@ -1333,7 +1337,8 @@ async def print_demo_dispatch(
         raise HTTPException(status_code=503, detail="Printer access is disabled for this offline demo.")
     from workspace_service.print_part_demo_printer import (
         PrintDemoError, _printer_tool, call_printer, current_package,
-        finish_print_dispatch, printer_status_summary, reserve_print_dispatch,
+        finish_print_dispatch, printer_ams_summary, printer_status_summary,
+        require_ams_slot, reserve_print_dispatch, sliced_filament_type,
     )
     from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
 
@@ -1355,17 +1360,21 @@ async def print_demo_dispatch(
             _printer_tool(runtime, "print_3mf")
             status_value = await call_printer(runtime, "get_printer_status", {"fresh": True})
             status_summary = printer_status_summary(status_value)
-            if status_summary["status"] in {"RUNNING", "PREPARE", "SLICING"}:
-                raise PrintDemoError("The P1S is already busy. Wait for the current job to finish.")
+            if not status_summary["ready"]:
+                raise PrintDemoError(status_summary["readiness_reason"])
+            ams = printer_ams_summary(await call_printer(runtime, "get_printer_ams"))
+            filament_type = sliced_filament_type(facts)
+            require_ams_slot(ams, body.ams_slot, filament_type)
+            remote_name = f"wright_{body.package_sha256[:12]}.gcode.3mf"
             receipt = reserve_print_dispatch(
-                package, run_id=body.run_id, digest=body.package_sha256
+                package, run_id=body.run_id, digest=body.package_sha256,
+                ams_slot=body.ams_slot, remote_name=remote_name,
             )
             response = await call_printer(runtime, "print_3mf", {
                 "three_mf_path": str(package),
-                "bambu_model": "p1s",
-                "bed_leveling": True,
-                "use_ams": True,
-                "auto_match_ams": True,
+                "ams_slot": body.ams_slot,
+                "filament_type": filament_type,
+                "remote_name": remote_name,
             })
             finish_print_dispatch(receipt, response)
             return {
@@ -1373,8 +1382,81 @@ async def print_demo_dispatch(
                 "package_path": relative,
                 "package_sha256": body.package_sha256,
                 "supports_enabled": facts["supports_enabled"],
+                "ams_slot": body.ams_slot,
                 "receipt_path": str(receipt.relative_to(scope.workspace_dir)).replace("\\", "/"),
             }
+        except PrintDemoError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+    finally:
+        await runtime.close()
+
+
+@router.get("/print-demo/dispatch")
+async def print_demo_dispatch_state(
+    session_id: str, workflow_path: str, run_id: str, package_sha256: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    from workspace_service.print_part_demo_printer import (
+        PrintDemoError, current_dispatch, current_package,
+    )
+
+    scope = _workflow_source_scope(session_id, service)
+    try:
+        package, _, _ = current_package(scope.workspace_dir, workflow_path, run_id, package_sha256)
+        dispatch = current_dispatch(package, run_id=run_id, digest=package_sha256)
+    except (PrintDemoError, OSError, ValueError) as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    if dispatch is None:
+        return {"state": "not_sent"}
+    return {
+        "state": dispatch["state"],
+        "ams_slot": dispatch.get("ams_slot"),
+        "remote_name": dispatch.get("remote_name"),
+    }
+
+
+@router.post("/print-demo/cancel")
+@traced("workspace.print_demo.cancel")
+async def print_demo_cancel(
+    body: PrintPartCancelRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    if not _print_demo_printer_enabled():
+        raise HTTPException(status_code=503, detail="Printer control is disabled for this demo.")
+    from workspace_service.print_part_demo_printer import (
+        PrintDemoError, call_printer, current_dispatch, current_package,
+        job_matches_dispatch, printer_status_summary,
+    )
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+
+    scope = _workflow_source_scope(body.session_id, service)
+    try:
+        package, _, _ = current_package(
+            scope.workspace_dir, body.workflow_path, body.run_id, body.package_sha256,
+        )
+        dispatch = current_dispatch(package, run_id=body.run_id, digest=body.package_sha256)
+        if dispatch is None:
+            raise PrintDemoError("This Wright package has not been sent to the printer.")
+    except (PrintDemoError, OSError, ValueError) as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    runtime = WorkflowMcpRuntime(
+        request.app.state.gateway_service,
+        workspace_id=scope.workspace_id,
+        session_id=body.session_id,
+    )
+    try:
+        try:
+            status = printer_status_summary(await call_printer(runtime, "get_printer_status", {"fresh": True}))
+            if status["status"] not in {"RUNNING", "PREPARE", "SLICING", "PAUSE", "FAILED"}:
+                raise PrintDemoError("The P1S has no active print to cancel.")
+            if not job_matches_dispatch(status, dispatch):
+                raise PrintDemoError("The active P1S job does not match this Wright print. Stop it from the printer instead.")
+            await call_printer(runtime, "stop_print", {"expected_job_name": dispatch["remote_name"]})
+            receipt = package.parent / "print-dispatch.json"
+            dispatch["state"] = "stop_requested"
+            receipt.write_text(json.dumps(dispatch, indent=2) + "\n", encoding="utf-8")
+            return {"state": "stop_requested", "message": "Stop command sent; watch printer status for confirmation."}
         except PrintDemoError as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
     finally:

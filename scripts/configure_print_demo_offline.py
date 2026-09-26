@@ -90,7 +90,7 @@ def configure(
         if get_server(str(database), printer_id) is None:
             raise ValueError("Reconcile the catalogued P1S MCP server before configuring it.")
         update_server(str(database), printer_id, {
-            "command": [str(python), "-m", "bambu_p1s_mcp"],
+            "command": [str(python), str(ROOT / "scripts/print_demo_p1s_mcp.py")],
             "launch_env": {
                 "PYTHONPATH": ";".join((
                     str(ROOT / ".venv/Lib/site-packages"),

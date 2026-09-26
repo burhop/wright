@@ -82,9 +82,15 @@ A fresh, unmocked served-UI run used the same prompt, uploaded reference image, 
 
 The failed form also combined “Width should be about 10 cm” with the separate 50 mm largest-dimension field. The latter controls scale. The form now states that 10 cm requires 100 mm, so the mismatch is visible before another request.
 
+## AMS and readiness update (2026-09-26)
+
+The source-checkout demo now reads `printer_status` and `printer_ams` before dispatch, lists loaded trays, and gates Print on a ready P1S plus a selected slot matching the sliced package's filament. A material choice at generation selects a Generic PLA, PETG, ABS or ASA P1S profile. The package's saved slice evidence hash and embedded single-filament type are checked again at dispatch. A small P1S MCP adapter supplies the explicit absolute AMS slot mapping missing from the pinned server's `printer_print` tool. Cancel is restricted to a Wright dispatch record whose unique remote job name matches the printer's active job.
+
+The local API was run with `WRIGHT_PRINT_DEMO_MONITOR_ENABLED=1` and `WRIGHT_PRINT_DEMO_PRINTER_ENABLED=0`. A read-only live P1S query returned `RUNNING`, `connected=true`, `ready=false`, with AMS slots 0/1/3 reporting PLA and slot 2 reporting PETG. No upload, print, pause or stop command was sent. Live material inventory and busy gating are observed; selected-slot print dispatch, material-specific slices, cancellation and physical completion remain unverified while the printer is in use.
+
 ## Checks for printer day
 
-Before a physical print, confirm the P1S identity and idle status, Generic PETG
+Before a physical print, confirm the P1S identity and idle status, selected
 AMS slot/material mapping, plate and selected orientation review, exact 3MF
 transfer and one-shot dispatch, printer progress and remaining time, and LAN
 camera streaming. Only then enable

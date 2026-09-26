@@ -88,7 +88,7 @@ def _reference(sections: list[dict], producer: str, task: dict, key: str, kind="
 
 def prepare_print_part_demo(
     *, workspace_dir: str, prompt: str, image_path: str | None,
-    target_mm: float, tools: list[dict],
+    target_mm: float, tools: list[dict], filament_type: str = "PETG",
 ) -> tuple[str, str, dict[str, bytes], str]:
     """Return (workflow path, source, staged files, artifact root)."""
     if not isinstance(prompt, str) or len(prompt) > 12000:
@@ -97,6 +97,8 @@ def prepare_print_part_demo(
         raise ValueError("Provide a design prompt, a reference image, or both.")
     if not 5 <= target_mm <= 250:
         raise ValueError("The target dimension must be between 5 and 250 mm.")
+    if filament_type not in {"PLA", "PETG", "ABS", "ASA"}:
+        raise ValueError("Choose a supported P1S filament: PLA, PETG, ABS, or ASA.")
     root = _repo_root()
     binding = json.loads((root / "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json").read_text(encoding="utf-8"))
     blender_tools = tuple(binding["allowed_tools"])
@@ -224,7 +226,8 @@ def prepare_print_part_demo(
         "slicer": str(slicer_executable),
         "profiles_root": str(profiles_root),
         "machine": binding["slicer"]["machine"],
-        "filament": "filament/Generic PETG.json",
+        "filament": f"filament/Generic {filament_type}.json",
+        "demo_filament_type": filament_type,
         "process": binding["scenarios"]["printed-replacement-part-01"]["process"],
         "workspace_root": str(Path(workspace_dir).resolve()),
         "output_root": output_root,

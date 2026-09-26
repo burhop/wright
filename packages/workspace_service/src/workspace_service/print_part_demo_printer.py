@@ -15,6 +15,7 @@ import re
 import socket
 import ssl
 import struct
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from uuid import uuid4
 from zipfile import ZipFile, BadZipFile
@@ -31,15 +32,17 @@ def _printer_tool(runtime, name: str):
     aliases = {
         "get_printer_status": ("printer_status", "get_printer_status"),
         "print_3mf": ("printer_print", "print_3mf"),
+        "get_printer_ams": ("printer_ams",),
+        "stop_print": ("printer_stop",),
     }
     names = aliases.get(name, (name,))
-    matches = [tool for tool in runtime.tools() if tool.tool_name in names]
     preferred_server = os.environ.get(
         "WRIGHT_PRINT_DEMO_PRINTER_SERVER", "bambu-p1s-mcp-marctheshark3"
     )
-    preferred = [tool for tool in matches if tool.server_id == preferred_server]
-    if preferred:
-        matches = preferred
+    matches = [
+        tool for tool in runtime.tools()
+        if tool.server_id == preferred_server and tool.tool_name in names
+    ]
     if len(matches) != 1:
         raise PrintDemoError(
             f"Enable one P1S printer MCP server with the {name} tool in this workspace."
@@ -57,8 +60,13 @@ async def call_printer(runtime, name: str, arguments: dict | None = None) -> dic
         arguments = {
             "path": arguments["three_mf_path"], "plate": 1,
             "use_ams": True, "bed_levelling": True,
+            "ams_slot": arguments["ams_slot"],
+            "filament_type": arguments["filament_type"],
+            "remote_name": arguments["remote_name"],
             "confirm": True,
         }
+    if tool.tool_name == "printer_stop":
+        arguments = {"expected_job_name": arguments["expected_job_name"], "confirm": True}
     try:
         result = await runtime.gateway.call_tool(
             runtime.session_id, uuid4().hex, tool.name,
@@ -87,6 +95,9 @@ async def call_printer(runtime, name: str, arguments: dict | None = None) -> dic
     if not isinstance(value, dict):
         raise PrintDemoError(f"The {name} printer MCP tool returned an invalid result.")
     if value.get("ok") is False:
+        detail = value.get("error")
+        if isinstance(detail, str) and 0 < len(detail) <= 300 and tool.server_id == "bambu-p1s-mcp-marctheshark3":
+            raise PrintDemoError(f"The P1S printer MCP reported: {detail}")
         raise PrintDemoError(f"The {name} printer MCP tool reported failure. Check its LAN connection and server log.")
     if name == "get_printer_status" and value.get("connected") is False:
         raise PrintDemoError("The printer MCP server is not connected to the P1S.")
@@ -99,6 +110,63 @@ async def call_printer(runtime, name: str, arguments: dict | None = None) -> dic
                 "The printer MCP tool did not positively confirm print dispatch. Check the printer before another attempt."
             )
     return value
+
+
+SUPPORTED_FILAMENTS = {"PLA", "PETG", "ABS", "ASA"}
+
+
+def sliced_filament_type(facts: dict) -> str:
+    filament = facts.get("filament")
+    name = filament.get("name") if isinstance(filament, dict) else None
+    if not isinstance(name, str) or not name.startswith("Generic "):
+        raise PrintDemoError("The slice does not identify a supported generic filament.")
+    material = name.removeprefix("Generic ").upper()
+    if material not in SUPPORTED_FILAMENTS:
+        raise PrintDemoError("The sliced filament is not supported by this P1S demo.")
+    return material
+
+
+def printer_ams_summary(value: dict) -> dict:
+    """Expose only loaded AMS slots with stable absolute slot IDs."""
+    if isinstance(value.get("result"), dict) and "trays" not in value:
+        value = value["result"]
+    trays = value.get("trays")
+    if not isinstance(trays, list):
+        raise PrintDemoError("The P1S did not report its AMS slots.")
+    result = []
+    for tray in trays:
+        if not isinstance(tray, dict) or str(tray.get("ams_id")) == "external":
+            continue
+        try:
+            unit = int(tray.get("ams_id"))
+            position = int(tray.get("slot"))
+        except (TypeError, ValueError):
+            continue
+        if not 0 <= unit <= 25 or not 0 <= position <= 3:
+            continue
+        raw_type = tray.get("type")
+        material = raw_type.strip().upper() if isinstance(raw_type, str) else ""
+        color = tray.get("color")
+        result.append({
+            "slot": unit * 4 + position,
+            "label": f"AMS {unit + 1} · slot {position + 1}",
+            "type": material or None,
+            "color": color if isinstance(color, str) and re.fullmatch(r"[0-9A-Fa-f]{6,8}", color) else None,
+            "empty": bool(tray.get("empty", not material)),
+            "supported": material in SUPPORTED_FILAMENTS,
+        })
+    return {"trays": sorted(result, key=lambda tray: tray["slot"])}
+
+
+def require_ams_slot(ams: dict, slot: int, material: str) -> dict:
+    if material not in SUPPORTED_FILAMENTS or not isinstance(slot, int) or isinstance(slot, bool):
+        raise PrintDemoError("Select a supported filament and AMS slot.")
+    matches = [tray for tray in ams.get("trays", []) if tray.get("slot") == slot]
+    if len(matches) != 1 or matches[0]["empty"]:
+        raise PrintDemoError("The selected AMS slot is empty or no longer reported. Refresh printer status.")
+    if matches[0]["type"] != material:
+        raise PrintDemoError(f"The selected AMS slot no longer contains {material}. Create a matching slice or choose another slot.")
+    return matches[0]
 
 
 def current_package(
@@ -148,7 +216,24 @@ def current_package(
         preview_hash = hashlib.file_digest(stream, "sha256").hexdigest()
     if preview_hash != previews[0]["sha256"]:
         raise PrintDemoError("The support preview changed after the workflow run.")
-    evidence = paths.resolve(str(Path(relative).parent / "slice-evidence.json"), must_exist=True)
+    evidence_representations = [
+        rep for item in run.get("results", [])
+        if isinstance(item, dict)
+        for rep in item.get("representations", [])
+        if isinstance(rep, dict)
+        and rep.get("kind") == "workspace_file"
+        and str(rep.get("location", "")).endswith("slice-evidence.json")
+    ]
+    if len(evidence_representations) != 1 or not isinstance(evidence_representations[0].get("sha256"), str):
+        raise PrintDemoError("The run did not publish one slice evidence file.")
+    evidence_relative = str(Path(relative).parent / "slice-evidence.json").replace("\\", "/")
+    if evidence_representations[0].get("location") != evidence_relative:
+        raise PrintDemoError("The slice evidence does not belong to this package.")
+    evidence = paths.resolve(evidence_relative, must_exist=True)
+    with evidence.open("rb") as stream:
+        evidence_hash = hashlib.file_digest(stream, "sha256").hexdigest()
+    if evidence_hash != evidence_representations[0]["sha256"]:
+        raise PrintDemoError("The slice evidence changed after the workflow run.")
     facts = json.loads(evidence.read_text(encoding="utf-8"))
     if (
         facts.get("operation") != "actual_local_bambu_slice"
@@ -160,11 +245,16 @@ def current_package(
         or facts["extrusion_moves"] <= 0
     ):
         raise PrintDemoError("The current Bambu slice evidence is incomplete.")
+    material = sliced_filament_type(facts)
     try:
         with ZipFile(package) as archive:
-            if not any(re.fullmatch(r"Metadata/plate_\d+\.gcode", name) for name in archive.namelist()):
-                raise PrintDemoError("The 3MF has no sliced plate G-code.")
-    except BadZipFile as error:
+            if "Metadata/plate_1.gcode" not in archive.namelist():
+                raise PrintDemoError("The 3MF has no sliced plate 1 G-code.")
+            slice_info = ET.fromstring(archive.read("Metadata/slice_info.config"))
+            filaments = slice_info.findall(".//filament")
+            if len(filaments) != 1 or filaments[0].get("type", "").upper() != material:
+                raise PrintDemoError("The package filament does not match its slice evidence.")
+    except (BadZipFile, KeyError, ET.ParseError) as error:
         raise PrintDemoError("The 3MF package is invalid.") from error
     return package, relative, facts
 
@@ -181,9 +271,26 @@ def printer_status_summary(value: dict) -> dict:
     def number(*items):
         item = first(*items)
         return item if isinstance(item, (int, float)) and not isinstance(item, bool) else None
-    state = first(value.get("status"), value.get("state"), value.get("gcode_state"), current.get("status"))
+    state = first(value.get("gcode_state"), value.get("status"), value.get("state"), current.get("status"))
+    state = state.strip().upper() if isinstance(state, str) else "UNKNOWN"
+    connected = value.get("connected") is True
+    fault = number(value.get("print_error"), current.get("print_error"))
+    ready = connected and state in {"IDLE", "FINISH"} and fault in (None, 0)
+    reason = (
+        "Printer is ready." if ready else
+        "Printer connection is unavailable." if not connected else
+        "Printer reported an error." if fault not in (None, 0) else
+        "Printer needs attention before another job." if state == "FAILED" else
+        "Printer is busy with another job." if state in {"RUNNING", "PREPARE", "SLICING", "PAUSE"} else
+        "Printer state is unknown; refresh before printing."
+    )
     return {
-        "status": state if isinstance(state, str) else "unknown",
+        "status": state,
+        "connected": connected,
+        "ready": ready,
+        "readiness_reason": reason,
+        "job_name": first(value.get("job_name"), current.get("job_name")),
+        "gcode_file": first(value.get("gcode_file"), current.get("gcode_file")),
         "progress": number(current.get("progress"), value.get("progress"), value.get("progress_percent"), value.get("mc_percent")),
         "time_remaining_minutes": number(current.get("timeRemaining"), value.get("remaining_minutes"), value.get("mc_remaining_time")),
         "current_layer": number(current.get("currentLayer"), value.get("current_layer"), value.get("layer"), value.get("layer_num")),
@@ -191,12 +298,14 @@ def printer_status_summary(value: dict) -> dict:
     }
 
 
-def reserve_print_dispatch(package: Path, *, run_id: str, digest: str) -> Path:
+def reserve_print_dispatch(package: Path, *, run_id: str, digest: str, ams_slot: int, remote_name: str) -> Path:
     receipt = package.parent / "print-dispatch.json"
     payload = {
         "schema_version": 1,
         "run_id": run_id,
         "package_sha256": digest,
+        "ams_slot": ams_slot,
+        "remote_name": remote_name,
         "state": "dispatch_started_outcome_unknown",
         "replay_permitted": False,
     }
@@ -216,9 +325,32 @@ def finish_print_dispatch(receipt: Path, response: dict) -> None:
     payload["state"] = "printer_tool_accepted"
     payload["printer_response"] = {
         key: value for key, value in response.items()
-        if key in {"status", "message", "filename", "job_id", "print_id"}
+        if key in {"status", "message", "filename", "job_id", "print_id", "remote"}
     }
     receipt.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def current_dispatch(package: Path, *, run_id: str, digest: str) -> dict | None:
+    receipt = package.parent / "print-dispatch.json"
+    if not receipt.is_file():
+        return None
+    try:
+        value = json.loads(receipt.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise PrintDemoError("The print dispatch record is invalid.") from error
+    if value.get("run_id") != run_id or value.get("package_sha256") != digest:
+        raise PrintDemoError("The print dispatch record does not match this package.")
+    return value
+
+
+def job_matches_dispatch(status: dict, dispatch: dict) -> bool:
+    expected = dispatch.get("remote_name")
+    if not isinstance(expected, str) or not re.fullmatch(r"wright_[0-9a-f]{12}\.gcode\.3mf", expected):
+        return False
+    return any(
+        isinstance(name, str) and Path(name).name == expected
+        for name in (status.get("job_name"), status.get("gcode_file"))
+    )
 
 
 def jpeg_frame(value: dict) -> bytes:

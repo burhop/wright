@@ -4,6 +4,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import {
   workspaceService,
+  type PrintDemoPrinterStatus,
   type WorkspaceEngineeringResult,
   type WorkspaceWorkflowRunEvent,
   type WorkspaceWorkflowSourceRun,
@@ -242,9 +243,16 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [targetMm, setTargetMm] = useState(50);
+  const [designFilament, setDesignFilament] = useState("PETG");
+  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [printing, setPrinting] = useState(false);
+  const [stopping, setStopping] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const [stopMessage, setStopMessage] = useState("");
+  const [stopError, setStopError] = useState("");
   const [sent, setSent] = useState(false);
+  const [dispatchState, setDispatchState] = useState("not_sent");
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState("");
   const [step, setStep] = useState("Describe the part");
@@ -255,14 +263,12 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   const [runLogPath, setRunLogPath] = useState("");
   const [run, setRun] = useState<WorkspaceWorkflowSourceRun | null>(null);
   const [artifactRoot, setArtifactRoot] = useState("");
-  const [printer, setPrinter] = useState<{
-    status: string; progress: number | null; time_remaining_minutes: number | null;
-    current_layer: number | null; total_layers: number | null;
-  } | null>(null);
+  const [printer, setPrinter] = useState<PrintDemoPrinterStatus | null>(null);
   const [printerError, setPrinterError] = useState("");
   const [cameraError, setCameraError] = useState(false);
   const [printerEnabled, setPrinterEnabled] = useState(false);
-  const [sliceMetrics, setSliceMetrics] = useState<{ orientation_selected: string; estimated_seconds: number; filament_g: number; support_moves: number; preview_layer: number } | null>(null);
+  const [monitorEnabled, setMonitorEnabled] = useState(false);
+  const [sliceMetrics, setSliceMetrics] = useState<{ orientation_selected: string; estimated_seconds: number; filament_g: number; support_moves: number; preview_layer: number; filament?: { name?: string } } | null>(null);
   const sourceFile = useMemo(() => findArtifact(run?.results, artifactRoot, "source_mesh.stl"), [run, artifactRoot]);
   const repairedFile = useMemo(() => findArtifact(run?.results, artifactRoot, "repaired_mesh.stl"), [run, artifactRoot]);
   const orientedFile = useMemo(() => findArtifact(run?.results, artifactRoot, "oriented_mesh.stl"), [run, artifactRoot]);
@@ -277,6 +283,16 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
     : "";
   const [baseTrimMm, setBaseTrimMm] = useState(0);
   const [polygonReduction, setPolygonReduction] = useState<{ before: number; after: number } | null>(null);
+  const slicedFilament = sliceMetrics?.filament?.name?.replace(/^Generic /, "").toUpperCase() ?? null;
+  const selectedTray = printer?.trays.find((tray) => tray.slot === selectedSlot) ?? null;
+  const materialMatches = Boolean(selectedTray && !selectedTray.empty && selectedTray.type === slicedFilament);
+  const designMaterialLoaded = !printer || printer.trays.some((tray) => !tray.empty && tray.type === designFilament);
+  const printReady = Boolean(printerEnabled && printer?.ready && materialMatches && hasPreview && run?.run_id && !printing && !sent);
+  const activeJob = Boolean(printer && ["RUNNING", "PREPARE", "SLICING", "PAUSE", "FAILED"].includes(printer.status));
+
+  useEffect(() => {
+    if (slicedFilament && ["PLA", "PETG", "ABS", "ASA"].includes(slicedFilament)) setDesignFilament(slicedFilament);
+  }, [run?.run_id, slicedFilament]);
 
   useEffect(() => {
     if (!initialRunLogPath) return;
@@ -363,32 +379,50 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   useEffect(() => {
     let active = true;
     void workspaceService.getPrintDemoCapabilities().then((value) => {
-      if (active) setPrinterEnabled(value.printer_enabled);
-    }).catch(() => { if (active) setPrinterEnabled(false); });
+      if (active) { setPrinterEnabled(value.printer_enabled); setMonitorEnabled(value.monitor_enabled); }
+    }).catch(() => { if (active) { setPrinterEnabled(false); setMonitorEnabled(false); } });
     return () => { active = false; };
   }, []);
 
   useEffect(() => {
-    if (!sent) return;
+    if (!monitorEnabled) return;
     let active = true;
-    const refresh = () => {
-      void workspaceService.getPrintDemoPrinterStatus(sessionId).then((value) => {
+    const refresh = (fresh = false) => {
+      void workspaceService.getPrintDemoPrinterStatus(sessionId, fresh).then((value) => {
         if (active) { setPrinter(value); setPrinterError(""); }
       }).catch((reason: unknown) => {
-        if (active) setPrinterError(reason instanceof Error ? reason.message : "Printer status unavailable.");
+        if (active) { setPrinter(null); setPrinterError(reason instanceof Error ? reason.message : "Printer status unavailable."); }
       });
     };
-    refresh();
-    const timer = window.setInterval(refresh, 5000);
+    refresh(true);
+    const timer = window.setInterval(() => refresh(), 5000);
     return () => { active = false; window.clearInterval(timer); };
-  }, [sent, sessionId]);
+  }, [monitorEnabled, sessionId]);
+
+  useEffect(() => {
+    if (!run?.run_id || !packageFile || !workflowPath) return;
+    let active = true;
+    void workspaceService.getPrintDemoDispatch(sessionId, workflowPath, run.run_id, packageFile.sha256).then((value) => {
+      if (!active) return;
+      setDispatchState(value.state);
+      if (value.state !== "not_sent") {
+        setSent(true);
+        if (typeof value.ams_slot === "number") setSelectedSlot(value.ams_slot);
+      }
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [run?.run_id, packageFile?.sha256, workflowPath, sessionId]);
 
   const generate = async () => {
-    if ((!prompt.trim() && !image) || busy) return;
+    if ((!prompt.trim() && !image) || busy || !designMaterialLoaded) return;
     setBusy(true);
     setRun(null);
     setRunLogPath("");
     setSent(false);
+    setDispatchState("not_sent");
+    setStopMessage("");
+    setStopError("");
+    setConfirmCancel(false);
     setPrinter(null);
     setPrinterError("");
     setCameraError(false);
@@ -406,7 +440,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
         imagePath = await workspaceService.uploadPrintDemoImage(sessionId, image);
         setActivity((current) => [...current, "Reference image uploaded"]);
       }
-      const prepared = await workspaceService.preparePrintPartDemo(sessionId, prompt, imagePath, targetMm);
+      const prepared = await workspaceService.preparePrintPartDemo(sessionId, prompt, imagePath, targetMm, designFilament);
       if (prepared.workspace_id !== workspaceId) throw new Error("The prepared workflow belongs to another workspace.");
       setWorkflowPath(prepared.workflow_path);
       setArtifactRoot(prepared.artifact_root);
@@ -455,18 +489,40 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   };
 
   const print = async () => {
-    if (!run?.run_id || !packageFile || !workflowPath || printing || sent) return;
+    if (!run?.run_id || !packageFile || !workflowPath || !printReady || selectedSlot == null) return;
     setPrinting(true);
     setError("");
     try {
-      await workspaceService.printDemoPackage(sessionId, workflowPath, run.run_id, packageFile.sha256);
+      await workspaceService.printDemoPackage(sessionId, workflowPath, run.run_id, packageFile.sha256, selectedSlot);
       setSent(true);
+      setDispatchState("printer_tool_accepted");
       setStep("Print sent to P1S");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "The printer did not accept the job.");
       setStep("Check printer dispatch");
+      void workspaceService.getPrintDemoDispatch(sessionId, workflowPath, run.run_id, packageFile.sha256).then((value) => {
+        setDispatchState(value.state);
+        if (value.state !== "not_sent") setSent(true);
+      }).catch(() => {});
     } finally {
       setPrinting(false);
+    }
+  };
+
+  const cancelPrint = async () => {
+    if (!run?.run_id || !packageFile || !workflowPath || !sent || !activeJob || stopping) return;
+    setStopping(true);
+    setStopMessage("");
+    setStopError("");
+    try {
+      const result = await workspaceService.cancelPrintDemo(sessionId, workflowPath, run.run_id, packageFile.sha256);
+      setDispatchState(result.state);
+      setStopMessage(result.message);
+    } catch (reason) {
+      setStopError(reason instanceof Error ? reason.message : "The P1S did not accept the stop request.");
+    } finally {
+      setStopping(false);
+      setConfirmCancel(false);
     }
   };
 
@@ -487,7 +543,12 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
         <label htmlFor="print-demo-size">Largest dimension · mm</label>
         <input id="print-demo-size" type="number" min={5} max={250} value={targetMm} onChange={(event) => setTargetMm(Number(event.target.value))} disabled={busy} />
         <small className="print-demo__muted">This value controls the part's scale. For a 10 cm part, enter 100 mm.</small>
-        <button type="button" className="print-demo__primary" onClick={() => void generate()} disabled={busy || (!prompt.trim() && !image) || !Number.isFinite(targetMm) || targetMm < 5 || targetMm > 250}>{busy ? "Creating part…" : "Create printable part"}</button>
+        <label htmlFor="print-demo-filament">Filament type for this slice</label>
+        <select id="print-demo-filament" value={designFilament} onChange={(event) => setDesignFilament(event.target.value)} disabled={busy}>
+          {["PLA", "PETG", "ABS", "ASA"].map((material) => <option key={material} value={material} disabled={Boolean(printer && !printer.trays.some((tray) => !tray.empty && tray.type === material))}>{material}{printer && !printer.trays.some((tray) => !tray.empty && tray.type === material) ? " · not loaded" : ""}</option>)}
+        </select>
+        <small className="print-demo__muted">Choose a material loaded in the AMS. The sliced 3MF uses this material's temperatures and settings. {printer?.trays.length ? `Loaded now: ${printer.trays.filter((tray) => !tray.empty).map((tray) => `${tray.label} ${tray.type}`).join("; ")}.` : ""}</small>
+        <button type="button" className="print-demo__primary" onClick={() => void generate()} disabled={busy || !designMaterialLoaded || (sent && activeJob) || (!prompt.trim() && !image) || !Number.isFinite(targetMm) || targetMm < 5 || targetMm > 250}>{busy ? "Creating part…" : "Create printable part"}</button>
         <p className="print-demo__muted">Wright saves each request as its own workflow and runs Blender MCP, mesh repair MCP, and Bambu Studio CLI with the P1S profile.</p>
       </section>
       <section className="print-demo__card print-demo__result" aria-label="Part and slice review">
@@ -511,15 +572,38 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
       <section className="print-demo__card print-demo__printer" aria-label="Print and monitor">
         <span className="print-demo__step">03 / PRINT & MONITOR</span>
         <h2>Bambu P1S</h2>
-        <p className="print-demo__muted">Check the build plate, Generic PETG spool, selected orientation, and sliced layer before starting.</p>
-        <button type="button" className="print-demo__primary" disabled={!printerEnabled || !hasPreview || !run?.run_id || printing || sent} onClick={() => void print()}>{printing ? "Sending to printer…" : sent ? "Print sent" : "Print on P1S"}</button>
+        <div className={`print-demo__readiness ${printer?.ready ? "print-demo__readiness--ready" : ""}`} role="status" aria-live="polite">
+          <strong>{printer?.ready ? "Printer available" : printer ? `Printer ${printer.status.toLowerCase()}` : monitorEnabled && !printerError ? "Checking printer…" : "Printer status unavailable"}</strong>
+          <small>{printer?.readiness_reason ?? (monitorEnabled ? "Checking the P1S connection…" : "Enable printer monitoring to see live status and AMS inventory.")}</small>
+        </div>
+        {printer && activeJob && <p className="print-demo__muted">Current job: {printer.job_name || "name unavailable"}{printer.progress != null ? ` · ${printer.progress}% complete` : ""}{printer.time_remaining_minutes != null ? ` · ${printer.time_remaining_minutes} min remaining` : ""}</p>}
+        {monitorEnabled && <button type="button" className="print-demo__text-button" onClick={() => void workspaceService.getPrintDemoPrinterStatus(sessionId, true).then((value) => { setPrinter(value); setPrinterError(""); }).catch((reason: unknown) => { setPrinter(null); setPrinterError(reason instanceof Error ? reason.message : "Printer status unavailable."); })}>Refresh printer and AMS</button>}
+        <label htmlFor="print-demo-ams-slot">AMS filament for this print</label>
+        {printer?.trays.length ? <div className="print-demo__ams-inventory" aria-label="Live AMS inventory">{printer.trays.map((tray) => <span key={tray.slot}><i aria-hidden="true" style={{ backgroundColor: tray.color ? `#${tray.color.slice(0, 6)}` : undefined }} />{tray.label}: {tray.empty ? "empty" : tray.type}</span>)}</div> : null}
+        <select id="print-demo-ams-slot" value={selectedSlot ?? ""} disabled={!printer || sent} onChange={(event) => {
+          const slot = event.target.value === "" ? null : Number(event.target.value);
+          setSelectedSlot(slot);
+          const tray = printer?.trays.find((item) => item.slot === slot);
+          if (tray?.supported && tray.type) setDesignFilament(tray.type);
+        }}>
+          <option value="">Choose a loaded AMS slot</option>
+          {printer?.trays.map((tray) => <option key={tray.slot} value={tray.slot} disabled={tray.empty || !tray.supported}>{tray.label} · {tray.empty ? "empty" : tray.type}{tray.color ? ` · #${tray.color.slice(0, 6)}` : ""}{!tray.empty && !tray.supported ? " · no demo profile" : ""}</option>)}
+        </select>
+        {printer?.trays.length === 0 && <p className="print-demo__muted">No AMS trays were reported. Check the AMS connection and refresh.</p>}
+        {hasPreview && slicedFilament && <p className="print-demo__muted">This 3MF is sliced for {slicedFilament}. {selectedTray && !materialMatches ? `To use ${selectedTray.type}, create a new printable part with that material selected.` : "Choose a matching loaded slot."}</p>}
+        <p className="print-demo__muted">Review the build plate, selected orientation, sliced layer and loaded filament before starting.</p>
+        <button type="button" className="print-demo__primary" disabled={!printReady} onClick={() => void print()}>{printing ? "Sending to printer…" : sent ? "Print sent" : "Print on P1S"}</button>
         {!printerEnabled && <p className="print-demo__muted">Print dispatch is disabled during preparation. Download and review the sliced 3MF here; enable printing after the P1S and AMS material checks.</p>}
+        {printerError && <p className="print-demo__error" role="status">{printerError}</p>}
         {sent && <div className="print-demo__monitor">
+          <p className="print-demo__muted">Dispatch: {dispatchState.replaceAll("_", " ")}. A sent command does not confirm that printing has started.</p>
           <div className="print-demo__stats"><span><b>{printer?.status ?? "Connecting"}</b><small>Status</small></span><span><b>{printer?.progress == null ? "—" : `${printer.progress}%`}</b><small>Complete</small></span><span><b>{printer?.time_remaining_minutes == null ? "—" : `${printer.time_remaining_minutes} min`}</b><small>Estimated remaining</small></span></div>
           {printer?.progress != null && <progress max={100} value={printer.progress} aria-label="Print progress" />}
           {printer?.current_layer != null && <p className="print-demo__muted">Layer {printer.current_layer}{printer.total_layers != null ? ` of ${printer.total_layers}` : ""}</p>}
+          {!confirmCancel ? <button type="button" className="print-demo__cancel" disabled={!printerEnabled || !activeJob || stopping} onClick={() => setConfirmCancel(true)}>Cancel this print</button> : <div className="print-demo__cancel-confirm" role="group" aria-label="Confirm print cancellation"><p>Stop this Wright print on the P1S?</p><button type="button" className="print-demo__cancel" disabled={stopping || !activeJob} onClick={() => void cancelPrint()}>{stopping ? "Sending stop request…" : "Confirm stop"}</button><button type="button" className="print-demo__text-button" disabled={stopping} onClick={() => setConfirmCancel(false)}>Keep printing</button></div>}
+          {stopMessage && <p className="print-demo__notice" role="status">{stopMessage}</p>}
+          {stopError && <p className="print-demo__error" role="alert">{stopError}</p>}
           <div className="print-demo__camera"><img src={`/api/workspace/print-demo/camera.mjpeg?session_id=${encodeURIComponent(sessionId)}`} alt="Live P1S chamber camera" onError={() => setCameraError(true)} />{cameraError && <span>Camera unavailable. Enable P1S LAN liveview and check the printer MCP connection.</span>}</div>
-          {printerError && <p className="print-demo__error" role="status">{printerError}</p>}
         </div>}
       </section>
     </div>

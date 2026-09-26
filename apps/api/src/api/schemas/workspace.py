@@ -202,9 +202,18 @@ class PrintPartPrepareRequest(BaseModel):
     prompt: str = Field(default="", max_length=12000)
     image_path: str | None = Field(default=None, max_length=1024)
     target_mm: float = Field(default=50, ge=5, le=250)
+    filament_type: Literal["PLA", "PETG", "ABS", "ASA"] = "PETG"
 
 
 class PrintPartDispatchRequest(BaseModel):
+    session_id: str = Field(min_length=1, max_length=256)
+    workflow_path: str = Field(min_length=1, max_length=256)
+    run_id: str = Field(min_length=1, max_length=256)
+    package_sha256: str = Field(min_length=64, max_length=64)
+    ams_slot: int = Field(ge=0, le=103)
+
+
+class PrintPartCancelRequest(BaseModel):
     session_id: str = Field(min_length=1, max_length=256)
     workflow_path: str = Field(min_length=1, max_length=256)
     run_id: str = Field(min_length=1, max_length=256)
