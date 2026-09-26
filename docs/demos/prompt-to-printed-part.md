@@ -1,5 +1,13 @@
 # Prompt to printed part demo
 
+## Pumpkin input for a quick UI run
+
+Upload [pumpkin-reference.png](assets/pumpkin-reference.png) in the **Reference image** field, set **Largest dimension** to **50 mm**, and enter:
+
+> Make one single-piece pumpkin-shaped decorative token using the attached front-view image as the outline reference. Make it 50 mm wide and about 45 mm tall including the short, broad stem, with a flat back and 5 mm overall thickness. Keep five broad rounded lobes and add four shallow curved grooves on the front, no deeper than 0.6 mm. The orange and green colors are visual guidance only; make one solid part from one material. No face, holes, leaves, vines, separate pieces, or floating details. Make a watertight STL and orient its flat back on the build plate to avoid supports. Use the 50 mm width as the controlling dimension and record any proportions inferred from the image.
+
+This is a design-input example, not a validated physical print or strength/fit claim. Review the resulting mesh, slice, and orientation before printing.
+
 The **Print a part demo** button in a workspace's **Workflows** view opens a short form. A prompt, an uploaded PNG/JPEG/GIF/WebP, or both become inputs to a new, isolated `.workflow.wflow` file. Wright runs three engineering stages:
 
 1. The existing Blender MCP server creates the requested mesh and exports `source_mesh.stl`. The geometry task exposes only the reviewed `execute_blender_code`, `get_scene_info`, and `get_viewport_screenshot` tools from that server.
