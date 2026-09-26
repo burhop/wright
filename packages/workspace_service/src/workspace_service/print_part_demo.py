@@ -122,7 +122,7 @@ def prepare_print_part_demo(
     sections = _parse(template.replace("__instance__", suffix))
     workflow = next(section for section in sections if section["kind"] == "workflow")
     workflow["fields"]["name"] = "Prompt to 3D printed part"
-    workflow["fields"]["purpose"] = "Create a dimensioned mesh from the supplied request, repair it, then orient and slice it for a Bambu P1S with supports."
+    workflow["fields"]["purpose"] = "Create a dimensioned mesh from the supplied request, repair it, compare stable orientations using actual Bambu P1S slices, and select a lower-support print package."
     image = _section(sections, "image_and_scale")
     if image_path:
         image["fields"]["settings"] = {
@@ -156,8 +156,14 @@ def prepare_print_part_demo(
         "Use the supplied reference image when present and the user's exact prompt",
     )
     geometry_prompt += (
-        " Choose and record a build-plate orientation for this particular geometry, "
-        "considering stable bed contact, functional surfaces and support contact. "
+        " Construct the geometry and export the source STL in the first "
+        "execute_blender_code call. Do not leave a constructed-only model "
+        "for a later tool decision to export. "
+        " Call bpy.ops.wm.stl_export(filepath=..., export_selected_objects=True, "
+        "ascii_format=False, global_scale=1.0) directly. The guarded Blender "
+        "server rejects introspection such as hasattr(bpy.ops.wm, 'stl_export'); "
+        "do not test operator availability. "
+        " Choose and record a sensible initial build-plate orientation for this geometry. "
         "Place the lowest point on the Z=0 build plane. The next MCP stage "
         "preserves these axes while checking mesh and P1S envelope."
     )
@@ -175,7 +181,7 @@ def prepare_print_part_demo(
         "expected_files": f"{output_root}/source_mesh.stl",
         "expected_file_ports": {"source_mesh": f"{output_root}/source_mesh.stl"},
         "max_tool_calls": 12, "timeout_seconds": 600,
-        "task_guidance": "Use the guarded Blender MCP tools to construct the requested part. Preserve the user prompt and image as source references. Work in millimetres; export a closed manifold STL. Do not invent measurements, silently substitute a canned shape, or claim an absent file exists.",
+        "task_guidance": "Use the guarded Blender MCP tools to construct the requested part and export its closed manifold STL in the first execute_blender_code call. Call bpy.ops.wm.stl_export directly without hasattr or operator introspection. Preserve the user prompt and image as source references. Work in millimetres. Do not defer export, invent measurements, silently substitute a canned shape, or claim an absent file exists.",
     }
     _reference(sections, f"{prompt_input['id']}.request", create, "natural_prompt")
     repair = _section(sections, "repair_measure_orient")
@@ -214,15 +220,17 @@ def prepare_print_part_demo(
         "slicer": str(slicer_executable),
         "profiles_root": str(profiles_root),
         "machine": binding["slicer"]["machine"],
-        "filament": binding["slicer"]["filament"],
+        "filament": "filament/Generic PETG.json",
         "process": binding["scenarios"]["printed-replacement-part-01"]["process"],
         "workspace_root": str(Path(workspace_dir).resolve()),
         "output_root": output_root,
         "source": f"{output_root}/repaired_mesh.stl",
+        "optimize_orientation": True,
     }
-    slicer_files = binding["stages"]["supports_and_slice"]["expected_files"]
+    slicer_files = [*binding["stages"]["supports_and_slice"]["expected_files"], "oriented_mesh.stl"]
     slicer["fields"].update(inputs=[], outputs=[
         _port("slice_report"), _port("support_preview", "workspace_file"),
+        _port("oriented_mesh", "workspace_file"),
         _port("slice_package", "workspace_file"),
         _port("slice_evidence", "workspace_file"),
         _port("machine_profile", "workspace_file"),
@@ -240,6 +248,7 @@ def prepare_print_part_demo(
         "expected_files": "\n".join(f"{output_root}/{name}" for name in slicer_files),
         "expected_file_ports": {
             "support_preview": f"{output_root}/support-preview.svg",
+            "oriented_mesh": f"{output_root}/oriented_mesh.stl",
             "slice_package": f"{output_root}/slice_package.gcode.3mf",
             "slice_evidence": f"{output_root}/slice-evidence.json",
             "machine_profile": f"{output_root}/machine-profile.json",

@@ -1276,9 +1276,20 @@ def _print_demo_printer_enabled() -> bool:
     return os.environ.get("WRIGHT_PRINT_DEMO_PRINTER_ENABLED", "").lower() in {"1", "true", "yes"}
 
 
+def _print_demo_monitor_enabled() -> bool:
+    import os
+
+    return _print_demo_printer_enabled() or os.environ.get(
+        "WRIGHT_PRINT_DEMO_MONITOR_ENABLED", ""
+    ).lower() in {"1", "true", "yes"}
+
+
 @router.get("/print-demo/capabilities")
 async def print_demo_capabilities():
-    return {"printer_enabled": _print_demo_printer_enabled()}
+    return {
+        "printer_enabled": _print_demo_printer_enabled(),
+        "monitor_enabled": _print_demo_monitor_enabled(),
+    }
 
 
 @router.get("/print-demo/printer-status")
@@ -1288,8 +1299,8 @@ async def print_demo_printer_status(
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    if not _print_demo_printer_enabled():
-        raise HTTPException(status_code=503, detail="Printer access is disabled for this offline demo.")
+    if not _print_demo_monitor_enabled():
+        raise HTTPException(status_code=503, detail="Printer monitoring is disabled for this demo.")
     from workspace_service.print_part_demo_printer import (
         PrintDemoError, call_printer, printer_status_summary,
     )
@@ -1377,8 +1388,8 @@ async def print_demo_camera(
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    if not _print_demo_printer_enabled():
-        raise HTTPException(status_code=503, detail="Printer access is disabled for this offline demo.")
+    if not _print_demo_monitor_enabled():
+        raise HTTPException(status_code=503, detail="Printer monitoring is disabled for this demo.")
     from workspace_service.print_part_demo_printer import (
         PrintDemoError, _printer_tool, call_printer, jpeg_frame,
         p1s_camera_config, p1s_camera_frames,

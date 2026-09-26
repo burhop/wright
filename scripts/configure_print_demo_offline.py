@@ -23,9 +23,13 @@ ROOT = Path(__file__).resolve().parents[1]
 BLENDER_SOURCE = ROOT / ".local-run/feature-081-live/sources/blender-mcp/src"
 SLICER = ROOT / ".local-run/feature-081-live/tools/bambu-studio-2.8.2.61/bambu-studio.exe"
 PROFILES = ROOT / ".local-run/feature-081-live/tools/bambu-studio-2.8.2.61/resources/profiles/BBL"
+PRINTER_SOURCE = ROOT / ".local-run/feature-081-live/sources/bambu-p1s-mcp"
 
 
-def configure(database: Path, workspace_id: str, workspace: Path, port: int) -> None:
+def configure(
+    database: Path, workspace_id: str, workspace: Path, port: int,
+    include_printer: bool = False,
+) -> None:
     python = ROOT / ".venv/Scripts/python.exe"
     for path in (python, BLENDER_SOURCE / "blender_mcp/server.py", SLICER, PROFILES):
         if not path.exists():
@@ -74,10 +78,31 @@ def configure(database: Path, workspace_id: str, workspace: Path, port: int) -> 
         update_server(str(database), server_id, {
             "command": command, "launch_env": launch_env, "is_installed": True,
         })
-    update_workspace_enabled_tools_by_workspace(
-        str(database), workspace_id, [blender_id, *(item[0] for item in fixed)]
-    )
-    print("Configured three local MCP servers for the isolated print-demo workspace.")
+    enabled = [blender_id, *(item[0] for item in fixed)]
+    if include_printer:
+        printer_id = "bambu-p1s-mcp-marctheshark3"
+        source_dir = PRINTER_SOURCE / "src"
+        packages_dir = PRINTER_SOURCE / ".venv/Lib/site-packages"
+        if not (source_dir / "bambu_p1s_mcp/__main__.py").is_file() or not (
+            packages_dir / "paho/mqtt/client.py"
+        ).is_file():
+            raise FileNotFoundError("The pinned local P1S MCP source and dependencies are missing.")
+        if get_server(str(database), printer_id) is None:
+            raise ValueError("Reconcile the catalogued P1S MCP server before configuring it.")
+        update_server(str(database), printer_id, {
+            "command": [str(python), "-m", "bambu_p1s_mcp"],
+            "launch_env": {
+                "PYTHONPATH": ";".join((
+                    str(ROOT / ".venv/Lib/site-packages"),
+                    str(source_dir), str(packages_dir),
+                )),
+                "BAMBU_MCP_SKIP_DOTENV": "1",
+            },
+            "is_installed": True,
+        })
+        enabled.append(printer_id)
+    update_workspace_enabled_tools_by_workspace(str(database), workspace_id, enabled)
+    print(f"Configured {len(enabled)} local MCP servers for the isolated print-demo workspace.")
 
 
 if __name__ == "__main__":
@@ -86,5 +111,9 @@ if __name__ == "__main__":
     parser.add_argument("--workspace-id", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--blender-port", type=int, default=9876)
+    parser.add_argument("--include-printer", action="store_true", help="Bind the pinned local P1S MCP server; does not contact the printer")
     args = parser.parse_args()
-    configure(args.database.resolve(), args.workspace_id, args.workspace.resolve(), args.blender_port)
+    configure(
+        args.database.resolve(), args.workspace_id, args.workspace.resolve(),
+        args.blender_port, args.include_printer,
+    )

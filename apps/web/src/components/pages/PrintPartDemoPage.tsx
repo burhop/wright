@@ -124,30 +124,13 @@ function SupportPreview({ sessionId, path }: { sessionId: string; path: string }
       const document = new DOMParser().parseFromString(source, "image/svg+xml");
       const svg = document.documentElement;
       if (svg.localName !== "svg") throw new Error("Invalid support preview");
-      const paths = Array.from(svg.querySelectorAll("path"));
-      const support = paths.find((item) => item.getAttribute("stroke") === "#d65012");
-      const coordinates = support?.getAttribute("d")?.match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
-      if (coordinates.length >= 4) {
-        let minX = 256, minY = 256, maxX = 0, maxY = 0;
-        for (let index = 0; index + 1 < coordinates.length; index += 2) {
-          minX = Math.min(minX, coordinates[index]);
-          maxX = Math.max(maxX, coordinates[index]);
-          minY = Math.min(minY, coordinates[index + 1]);
-          maxY = Math.max(maxY, coordinates[index + 1]);
-        }
-        const left = Math.max(0, minX - 12);
-        const top = Math.max(0, minY - 12);
-        const right = Math.min(256, maxX + 12);
-        const bottom = Math.min(256, maxY + 12);
-        svg.setAttribute("viewBox", `${left} ${top} ${right - left} ${bottom - top}`);
-      }
       objectUrl = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml" }));
       setUrl(objectUrl);
     }).catch(() => { if (active) setError("The support preview could not be opened."); });
     return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [sessionId, path]);
   if (error) return <p role="alert">{error}</p>;
-  return url ? <img className="print-demo__support" src={url} alt="Actual support and toolpath preview from the P1S slice, zoomed to the support region" /> : <div className="print-demo__support" aria-label="Loading support preview" />;
+  return url ? <img className="print-demo__support" src={url} alt="Actual P1S sliced toolpaths for one labeled layer, with supports in orange" /> : <div className="print-demo__support" aria-label="Loading support preview" />;
 }
 
 export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onClose }: Props) {
@@ -169,12 +152,26 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
   const [printerError, setPrinterError] = useState("");
   const [cameraError, setCameraError] = useState(false);
   const [printerEnabled, setPrinterEnabled] = useState(false);
+  const [sliceMetrics, setSliceMetrics] = useState<{ orientation_selected: string; estimated_seconds: number; filament_g: number; support_moves: number; preview_layer: number } | null>(null);
   const sourceFile = useMemo(() => findArtifact(run?.results, artifactRoot, "source_mesh.stl"), [run, artifactRoot]);
   const repairedFile = useMemo(() => findArtifact(run?.results, artifactRoot, "repaired_mesh.stl"), [run, artifactRoot]);
+  const orientedFile = useMemo(() => findArtifact(run?.results, artifactRoot, "oriented_mesh.stl"), [run, artifactRoot]);
   const supportFile = useMemo(() => findArtifact(run?.results, artifactRoot, "support-preview.svg"), [run, artifactRoot]);
   const evidenceFile = useMemo(() => findArtifact(run?.results, artifactRoot, "slice-evidence.json"), [run, artifactRoot]);
   const packageFile = useMemo(() => findArtifact(run?.results, artifactRoot, "slice_package.gcode.3mf"), [run, artifactRoot]);
-  const hasPreview = Boolean(run?.status === "completed" && sourceFile && repairedFile && supportFile && evidenceFile && packageFile);
+  const hasPreview = Boolean(run?.status === "completed" && sourceFile && repairedFile && orientedFile && supportFile && evidenceFile && packageFile);
+
+  useEffect(() => {
+    if (!evidenceFile) { setSliceMetrics(null); return; }
+    let active = true;
+    void fetch(workspaceContentUrl(evidenceFile.path, sessionId)).then((response) => {
+      if (!response.ok) throw new Error("Slice evidence unavailable");
+      return response.json();
+    }).then((value) => {
+      if (active) setSliceMetrics(typeof value.content === "string" ? JSON.parse(value.content) : null);
+    }).catch(() => { if (active) setSliceMetrics(null); });
+    return () => { active = false; };
+  }, [evidenceFile?.path, sessionId]);
 
   useEffect(() => {
     let active = true;
@@ -278,10 +275,12 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
       <section className="print-demo__card print-demo__result" aria-label="Part and slice review">
         <div className="print-demo__section-head"><span className="print-demo__step">02 / REVIEW</span><span className="print-demo__pill">{step}</span></div>
         {hasPreview ? <div className="print-demo__previews">
-          <div><strong>3D part</strong><PartPreview sessionId={sessionId} path={repairedFile!.path} /><small>Drag to rotate · scroll to zoom</small></div>
-          <div><strong>Support and toolpath preview</strong><SupportPreview sessionId={sessionId} path={supportFile!.path} /><small>Actual slicer toolpaths, zoomed to the support region. <a href={workspaceContentUrl(supportFile!.path, sessionId)} download>Download full plate preview</a></small></div>
+          <div><strong>Selected print orientation</strong><PartPreview sessionId={sessionId} path={orientedFile!.path} /><small>Drag to rotate · scroll to zoom</small></div>
+          <div><strong>Sliced layer preview</strong><SupportPreview sessionId={sessionId} path={supportFile!.path} /><small>One actual G-code layer; orange lines are supports. <a href={workspaceContentUrl(supportFile!.path, sessionId)} download>Download layer preview</a></small></div>
         </div> : <div className="print-demo__empty">{busy ? "Engineering tools are working on your request…" : "The part and its slice will appear here."}</div>}
-        {hasPreview && <p className="print-demo__file">Mesh · <a href={workspaceContentUrl(sourceFile!.path, sessionId)} download>Source STL</a> · <a href={workspaceContentUrl(repairedFile!.path, sessionId)} download>Repaired STL</a> · <a href={workspaceContentUrl(evidenceFile!.path, sessionId)} download>Slice evidence</a></p>}
+        {hasPreview && sliceMetrics && <p className="print-demo__file">Orientation: {sliceMetrics.orientation_selected.replaceAll("_", " ")} · Estimated time: {Math.ceil(sliceMetrics.estimated_seconds / 60)} min · Filament: {sliceMetrics.filament_g.toFixed(1)} g · Support moves: {sliceMetrics.support_moves}</p>}
+        {hasPreview && <p className="print-demo__muted">Review functional surfaces and layer strength; the orientation comparison measures bed contact, supports, time, and filament.</p>}
+        {hasPreview && <p className="print-demo__file">Mesh · <a href={workspaceContentUrl(sourceFile!.path, sessionId)} download>Source STL</a> · <a href={workspaceContentUrl(repairedFile!.path, sessionId)} download>Repaired STL</a> · <a href={workspaceContentUrl(orientedFile!.path, sessionId)} download>Selected STL</a> · <a href={workspaceContentUrl(evidenceFile!.path, sessionId)} download>Orientation comparison</a></p>}
         {packageFile && <p className="print-demo__file">Sliced 3MF · <a href={workspaceContentUrl(packageFile.path, sessionId)} download>Download package</a><br /><code>SHA-256 {packageFile.sha256.slice(0, 16)}…</code></p>}
         {workflowPath && <button type="button" className="print-demo__text-button" onClick={() => onOpenWorkflow?.(workflowPath)}>Open saved Wright workflow</button>}
         {error && <p className="print-demo__error" role="alert">{error}</p>}
@@ -289,9 +288,9 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
       <section className="print-demo__card print-demo__printer" aria-label="Print and monitor">
         <span className="print-demo__step">03 / PRINT & MONITOR</span>
         <h2>Bambu P1S</h2>
-        <p className="print-demo__muted">Check the build plate, selected PETG HF spool, and support preview before starting.</p>
+        <p className="print-demo__muted">Check the build plate, Generic PETG spool, selected orientation, and sliced layer before starting.</p>
         <button type="button" className="print-demo__primary" disabled={!printerEnabled || !hasPreview || !run?.run_id || printing || sent} onClick={() => void print()}>{printing ? "Sending to printer…" : sent ? "Print sent" : "Print on P1S"}</button>
-        {!printerEnabled && <p className="print-demo__muted">Printer access is disabled during offline preparation. Download and review the sliced 3MF here; enable printer access after tomorrow's P1S checks.</p>}
+        {!printerEnabled && <p className="print-demo__muted">Print dispatch is disabled during preparation. Download and review the sliced 3MF here; enable printing after the P1S and AMS material checks.</p>}
         {sent && <div className="print-demo__monitor">
           <div className="print-demo__stats"><span><b>{printer?.status ?? "Connecting"}</b><small>Status</small></span><span><b>{printer?.progress == null ? "—" : `${printer.progress}%`}</b><small>Complete</small></span><span><b>{printer?.time_remaining_minutes == null ? "—" : `${printer.time_remaining_minutes} min`}</b><small>Estimated remaining</small></span></div>
           {printer?.progress != null && <progress max={100} value={printer.progress} aria-label="Print progress" />}

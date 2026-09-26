@@ -235,11 +235,26 @@ def jpeg_frame(value: dict) -> bytes:
 
 
 def p1s_camera_config() -> tuple[str, str] | None:
-    """Use explicit API-host LAN credentials; never send them to the browser."""
+    """Use API-host or local MCP credentials; never send them to the browser."""
     host = os.environ.get("WRIGHT_P1S_IP", "").strip()
     code = os.environ.get("WRIGHT_P1S_ACCESS_CODE", "").strip()
-    if not host or not code:
-        return None
+    if bool(host) != bool(code):
+        raise PrintDemoError("Set both P1S camera LAN settings, or use the saved printer MCP credentials.")
+    if not host:
+        from tool_registry.secrets import read_secrets
+
+        try:
+            saved = read_secrets(os.environ.get(
+                "WRIGHT_PRINT_DEMO_PRINTER_SERVER", "bambu-p1s-mcp-marctheshark3"
+            ))
+        except RuntimeError:
+            return None
+        if saved.get("BAMBU_MODEL", "").upper() != "P1S" or not saved.get("BAMBU_SERIAL"):
+            return None
+        host = saved.get("BAMBU_IP", "").strip()
+        code = saved.get("BAMBU_ACCESS_CODE", "").strip()
+        if not host or not code:
+            return None
     try:
         address = ipaddress.ip_address(host)
         if address.version != 4 or not address.is_private:

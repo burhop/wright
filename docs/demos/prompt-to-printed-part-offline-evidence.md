@@ -2,7 +2,7 @@
 
 Recorded 2026-09-24/25 on `codex/prompt-to-3d-printed-part-demo`. This is a
 source-checkout diagnostic, separate from the 30-example generation campaign.
-The Bambu P1S was not queried, connected to, or used.
+The initial diagnostic did not contact the P1S. Read the later follow-up below for the local monitoring checks; no print was dispatched.
 
 ## What ran
 
@@ -33,7 +33,7 @@ the model-backed user flow is unavailable; file downloads and previews came
 from Wright's real workspace API. The review panel also exposed the named
 source STL, repaired STL, 3MF, slice evidence, and full plate preview downloads.
 
-## Remaining offline blocker
+## Initial offline blocker, since resolved
 
 Prompt-only, image-only, and combined requests each prepared valid saved
 workflows with the appropriate prompt/image references. A prompt-only run
@@ -42,13 +42,30 @@ local Hermes endpoint returned HTTP 401 without its gateway key. Automatic
 approval review rejected a credential-bearing probe to the separately
 configured model endpoint because the destination and use of `OPENAI_API_KEY`
 were not confirmed. No credential was transmitted in that probe. Model-backed
-geometry generation and a real UI request through all stages therefore remain
-unverified.
+geometry generation was unverified at the time of this first diagnostic.
+
+## Orientation and prompt-run follow-up
+
+After reviewing the user's feedback, we identified that the original `support-preview.svg` projected every G-code layer onto a single XY plane, while Bambu's embedded `plate_1.png` was a model thumbnail rather than a support rendering. Both could give an incorrect impression of support geometry. The revised SVG is one labeled G-code layer, chosen from the layer with the most support moves, or the middle layer when no supports were generated. It is a 2D cross-section, not a 3D support model. The UI now shows the exact oriented STL selected for the final 3MF.
+
+An isolated six-orientation audit of the same repaired 50 mm bracket used Bambu Studio 2.8.2.61 and the P1S 0.4 mm / Generic PETG profile. This is the profile matching the observed PETG AMS slot (`GFG99`); the first diagnostic used PETG HF (`GFG02`). For a comparable same-profile baseline, Bambu estimated 62m 50s, 18.86 g, and 6,551 support moves in the original orientation. The selected `x_plus_90` orientation had a 700 mm² bed-contact face, zero support moves, 41m 23s, and 16.32 g. It saved 21m 27s and 2.54 g in the slicer's estimate. The `x_180` orientation used 15.11 g but took 50m 19s; the demo currently chooses the fastest zero-support orientation. The audit artifacts are under `campaign/printed-replacement-part-01/demo-orientation-audit-2/artifacts/` in the isolated workspace, including all candidate STLs, packages, and a selected G-code package. A headless Chromium screenshot of the selected layer is `.local-run/print-demo-offline/orientation-layer.png`.
+
+After the final selection-policy and evidence-command review, a fresh `demo-orientation-audit-4` run selected the same `x_plus_90` orientation and recorded the actual selected Bambu invocation. A separate `demo-default-slice-audit` run used the operation's default single-orientation mode, confirming the other engineering workflows still slice the authored STL once: 62m 50s, 18.86 g, 6,551 support moves for this geometry.
+
+A new prompt-only Wright run then completed through model-driven Blender construction, native mesh repair, and the six-way Bambu slicer MCP stage. Its run ID is `c904390c49194b55b7d54aeb3d7604d2`, saved workflow `workflows/prompt-to-print-8f8b2e4a8e04.workflow.wflow`, and artifacts under `campaign/printed-replacement-part-01/demo-8f8b2e4a8e04/artifacts/`. The prompt specified a 50 × 30 × 30 mm one-piece L bracket. The model's initial guarded Blender call used a disallowed `hasattr(bpy.ops.wm, ...)` check; it recovered, exported a watertight 1,084-byte STL, and the full workflow completed in 97 seconds. The selected as-authored orientation had a 1,500 mm² contact face, zero support moves, estimated 41m 34s and 13.17 g. The candidate comparison also recorded two poor orientations with over 6,300 support moves.
+
+The same prompt-only result was loaded through the served workspace **Workflows** control in headless Chromium. The browser showed the selected STL in its interactive canvas, loaded the labeled layer SVG, displayed 42 rounded minutes / 13.2 g / zero support moves, and kept Print disabled. There were no page errors. Screenshot: `.local-run/print-demo-offline/oriented-review.png`. The browser check substituted this completed run at the prepare/run HTTP boundary; the previews and downloads came from Wright's real workspace API. This check also caught and fixed the JSON evidence response wrapper used by `/files/content`.
+
+An image-only request uploaded that Blender render as `bracket-reference.png`. Wright attached the image bytes as a visual reference and completed workflow `workflows/prompt-to-print-aa10eae37494.workflow.wflow`, run `81fb046cb96440d8b284d7a9999f109d`, with artifacts under `campaign/printed-replacement-part-01/demo-aa10eae37494/artifacts/`. The model inferred unspecified 20 mm depth, 34 mm height, and 4 mm wall thickness from the image, recorded those as assumptions, and exported a watertight STL. Bambu selected a zero-support orientation with a 31m 53s / 9.32 g estimate. These inferred dimensions are not verified engineering measurements.
+
+A combined request used the same uploaded image and explicit 50 × 30 × 30 mm, 6 mm thick dimensions. Wright completed workflow `workflows/prompt-to-print-83ff42a827d1.workflow.wflow`, run `59d6dde20e8247da9fa26414aefc1d64`, with artifacts under `campaign/printed-replacement-part-01/demo-83ff42a827d1/artifacts/`. It exported a watertight STL and zero-support 3MF estimated at 41m 34s / 13.17 g. The workflow instruction was amended to call `bpy.ops.wm.stl_export` directly; this run had no guarded Blender operator-check rejection. All three request forms therefore produced real STL and G-code 3MF artifacts in isolated Wright runs. No physical print or strength/fit assessment has been performed.
+
+Read-only P1S LAN status was available, and one camera JPEG was received. The camera feed later stalled during sustained access, so continuous streaming remains unverified. Print dispatch stayed disabled and no upload or print command was sent.
 
 ## Checks for printer day
 
-After model access and an actual prompt/image run are verified, confirm the
-P1S identity and idle status, PETG HF AMS slot/material mapping, plate and
-support review, exact 3MF transfer and one-shot dispatch, printer progress and
-remaining time, and LAN camera streaming. Only then enable
+Before a physical print, confirm the P1S identity and idle status, Generic PETG
+AMS slot/material mapping, plate and selected orientation review, exact 3MF
+transfer and one-shot dispatch, printer progress and remaining time, and LAN
+camera streaming. Only then enable
 `WRIGHT_PRINT_DEMO_PRINTER_ENABLED=1` in the API process.
