@@ -198,6 +198,7 @@ def prepare_print_part_demo(
         "force_voxel_remesh": False, "envelope_margin_mm": 0.0,
         "planar_cleanup": False, "measure_handle_features": False,
         "ensure_printable_base": True,
+        "allow_polygon_reduction": True,
     }
     repair["fields"].update(inputs=[], outputs=[_port("repair_report"), _port("repaired_mesh", "workspace_file")], prompt="")
     repair["fields"]["instructions"] = (

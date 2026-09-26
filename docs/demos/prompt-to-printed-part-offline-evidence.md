@@ -72,6 +72,16 @@ A fresh, unmocked browser run used the same prompt text and pumpkin reference th
 
 This run confirms the prior hard failure is resolved and exposes the remaining support use for human review. It does not show that the pumpkin has the lowest feasible support amount or that the part will print successfully. No printer command was sent.
 
+## Dense-pumpkin repair failure (2026-09-26)
+
+A later image-and-prompt attempt, `demo-f2973e6c1083`, failed in mesh repair after Blender produced a 138,936-triangle STL. The source was already one closed, nondegenerate solid with positive volume, but the fixed repair operation had no path to bring an otherwise valid mesh below its 80,000-triangle limit. The user saw `mcp_call_failed` at “Repair, measure, and orient mesh.” The saved failed attempt remains unchanged.
+
+The demo now allows bounded polygon reduction for this case. Replaying the exact source with pinned Blender 4.5.10 reduced it to 79,000 triangles while retaining one closed, nondegenerate solid. The largest measured dimension changed by less than 0.006 mm and the volume by about 0.000034%. It retained 310.329 mm² of flat plate contact without trimming. Pinned Bambu Studio 2.8.2.61 sliced the repaired model into a P1S 3MF, estimated at 56 minutes and 23.86 g, with 2,721 support moves. Replay files are under `.local-run/pumpkin-repair-failure-20260926/`. These are local engineering-stage checks.
+
+A fresh, unmocked served-UI run used the same prompt, uploaded reference image, and 50 mm size field. It saved `workflows/prompt-to-print-fb6b5af2a978.workflow.wflow` and completed run `55f5dbe635a1444e8229314b959f665c`. Blender authored a new 180,960-triangle pumpkin; mesh repair reduced it to 79,000 triangles, preserving one closed solid with a maximum dimension change of 0.000439 mm and 0.003249% volume change. The existing flat underside provided 191.31 mm² bed contact, so repair did not trim it. Bambu selected the authored orientation and exported a G-code 3MF with SHA-256 `137067b3359e1e3e3674e41b7a1911828b2bb9ab3f2b2483c54f0eab7b955335`, estimated at 55m 52s, 23.77 g, and 7,789 support moves. The served review showed the uploaded image, model, 3D layer toolpaths, and polygon-reduction notice; headless Chromium reported no page errors. Screenshots are `.local-run/pumpkin-repair-failure-20260926/progress-ui.png` and `result-ui.png`. No printer command was sent. The support count is a review concern; successful slicing does not establish that this is an optimal support strategy.
+
+The failed form also combined “Width should be about 10 cm” with the separate 50 mm largest-dimension field. The latter controls scale. The form now states that 10 cm requires 100 mm, so the mismatch is visible before another request.
+
 ## Checks for printer day
 
 Before a physical print, confirm the P1S identity and idle status, Generic PETG

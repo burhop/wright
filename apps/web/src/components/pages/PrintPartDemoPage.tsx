@@ -276,6 +276,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
     ? `/workspace/${encodeURIComponent(workspaceId)}?${new URLSearchParams({ workflow: "canonical", workflowPath, printDemoRun: runLogPath })}`
     : "";
   const [baseTrimMm, setBaseTrimMm] = useState(0);
+  const [polygonReduction, setPolygonReduction] = useState<{ before: number; after: number } | null>(null);
 
   useEffect(() => {
     if (!initialRunLogPath) return;
@@ -343,14 +344,19 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   }, [evidenceFile?.path, sessionId]);
 
   useEffect(() => {
-    if (!repairReportFile) { setBaseTrimMm(0); return; }
+    if (!repairReportFile) { setBaseTrimMm(0); setPolygonReduction(null); return; }
     let active = true;
     void fetch(workspaceContentUrl(repairReportFile.path, sessionId)).then((response) => response.json()).then((wrapper) => {
       const file = typeof wrapper.content === "string" ? JSON.parse(wrapper.content) : wrapper;
       const value = typeof file?.content?.[0]?.text === "string" ? JSON.parse(file.content[0].text) : file;
       const trim = value?.repair?.printable_base?.trimmed_mm;
-      if (active) setBaseTrimMm(typeof trim === "number" && Number.isFinite(trim) ? trim : 0);
-    }).catch(() => { if (active) setBaseTrimMm(0); });
+      const reduction = value?.repair?.polygon_reduction;
+      if (active) {
+        setBaseTrimMm(typeof trim === "number" && Number.isFinite(trim) ? trim : 0);
+        setPolygonReduction(reduction?.used === true && Number.isInteger(reduction.triangles_before) && Number.isInteger(reduction.triangles_after)
+          ? { before: reduction.triangles_before, after: reduction.triangles_after } : null);
+      }
+    }).catch(() => { if (active) { setBaseTrimMm(0); setPolygonReduction(null); } });
     return () => { active = false; };
   }, [repairReportFile?.path, sessionId]);
 
@@ -436,9 +442,12 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
     } catch (reason) {
       const detail = reason instanceof Error ? reason.message : "The print workflow could not complete.";
       setErrorDetails(detail);
-      setError(currentStage.current.toLowerCase().includes("slice") || currentStage.current.toLowerCase().includes("support")
+      const stage = currentStage.current.toLowerCase();
+      setError(stage.includes("slice") || stage.includes("support")
         ? "Wright created the part, but Bambu Studio could not finish its slice. Open the saved workflow for the run details, then retry. Rounded parts need a small flat base to sit on the plate."
-        : `Wright could not finish ${currentStage.current.toLowerCase()}. Open the saved workflow for the run details, then retry.`);
+        : stage.includes("repair")
+          ? "Wright created the mesh, but could not finish preparing it for printing. Open the saved workflow for details, then use Create printable part for a fresh attempt."
+          : `Wright could not finish ${stage}. Open the saved workflow for the run details, then use Create printable part for a fresh attempt.`);
       setStep("Needs attention");
     } finally {
       setBusy(false);
@@ -477,6 +486,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
         {image && <div className="print-demo__image-preview">{imagePreview && <img src={imagePreview} alt="Uploaded part reference" />}<span className="print-demo__muted">{image.name}</span></div>}
         <label htmlFor="print-demo-size">Largest dimension · mm</label>
         <input id="print-demo-size" type="number" min={5} max={250} value={targetMm} onChange={(event) => setTargetMm(Number(event.target.value))} disabled={busy} />
+        <small className="print-demo__muted">This value controls the part's scale. For a 10 cm part, enter 100 mm.</small>
         <button type="button" className="print-demo__primary" onClick={() => void generate()} disabled={busy || (!prompt.trim() && !image) || !Number.isFinite(targetMm) || targetMm < 5 || targetMm > 250}>{busy ? "Creating part…" : "Create printable part"}</button>
         <p className="print-demo__muted">Wright saves each request as its own workflow and runs Blender MCP, mesh repair MCP, and Bambu Studio CLI with the P1S profile.</p>
       </section>
@@ -490,6 +500,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
         </div> : <div className="print-demo__empty">{busy ? "The 3D part and toolpaths will appear when the engineering stages finish." : error ? "The print package is not ready yet. See the message below and open the saved workflow for details." : "The part and its slice will appear here."}</div>}
         {hasPreview && sliceMetrics && <p className="print-demo__file">Orientation: {sliceMetrics.orientation_selected.replaceAll("_", " ")} · Estimated time: {Math.ceil(sliceMetrics.estimated_seconds / 60)} min · Filament: {sliceMetrics.filament_g.toFixed(1)} g · Support moves: {sliceMetrics.support_moves}</p>}
         {hasPreview && baseTrimMm > 0 && <p className="print-demo__notice">Wright trimmed {baseTrimMm.toFixed(1)} mm from the underside to give this rounded part a flat print base. Review that change before printing.</p>}
+        {hasPreview && polygonReduction && <p className="print-demo__notice">Wright reduced the mesh from {polygonReduction.before.toLocaleString()} to {polygonReduction.after.toLocaleString()} triangles for the P1S process. Review the detail before printing.</p>}
         {hasPreview && <p className="print-demo__muted">Review functional surfaces and layer strength; the orientation comparison measures bed contact, supports, time, and filament.</p>}
         {hasPreview && <p className="print-demo__file">Mesh · <a href={workspaceContentUrl(sourceFile!.path, sessionId)} download>Source STL</a> · <a href={workspaceContentUrl(repairedFile!.path, sessionId)} download>Repaired STL</a> · <a href={workspaceContentUrl(orientedFile!.path, sessionId)} download>Selected STL</a> · <a href={workspaceContentUrl(evidenceFile!.path, sessionId)} download>Orientation comparison</a></p>}
         {packageFile && <p className="print-demo__file">Sliced 3MF · <a href={workspaceContentUrl(packageFile.path, sessionId)} download>Download package</a><br /><code>SHA-256 {packageFile.sha256.slice(0, 16)}…</code></p>}

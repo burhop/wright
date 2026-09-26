@@ -148,6 +148,7 @@ def blender_code(configuration: dict) -> str:
     force_voxel_remesh = configuration.get("force_voxel_remesh", False) is True
     planar_cleanup = configuration.get("planar_cleanup", False) is True
     ensure_printable_base = configuration.get("ensure_printable_base", False) is True
+    allow_polygon_reduction = configuration.get("allow_polygon_reduction", False) is True
     envelope_margin = float(configuration.get("envelope_margin_mm", 0.0))
     if not 0.0 <= envelope_margin <= 0.005:
         raise ValueError("Envelope margin must be between 0 and 0.005 mm")
@@ -163,6 +164,7 @@ degenerate_tolerance = {degenerate_tolerance!r}
 force_voxel_remesh = {force_voxel_remesh!r}
 planar_cleanup = {planar_cleanup!r}
 ensure_printable_base = {ensure_printable_base!r}
+allow_polygon_reduction = {allow_polygon_reduction!r}
 envelope_margin = {envelope_margin!r}
 object_name = {object_name!r}
 
@@ -305,6 +307,36 @@ if force_voxel_remesh or clean_metrics['boundary_edges'] != 0 or clean_metrics['
     clean_metrics = metrics(obj)
     voxel_remesh_used = True
 decimation_used = False
+triangles_before_decimation = clean_metrics['triangles']
+polygon_reduction_ratio = None
+dimension_change_mm = None
+volume_change_percent = None
+if allow_polygon_reduction and clean_metrics['triangles'] > triangle_limit:
+    initial_dimensions = dimensions(obj)
+    initial_volume = clean_metrics['signed_volume_mm3']
+    for attempt in range(3):
+        current = metrics(obj)
+        if current['triangles'] <= triangle_limit:
+            break
+        target = max(1000, triangle_limit - 1000)
+        modifier = obj.modifiers.new('wright_bounded_polygon_reduction', 'DECIMATE')
+        modifier.decimate_type = 'COLLAPSE'
+        modifier.ratio = min(0.98, target / current['triangles'] * (0.9 ** attempt))
+        modifier.use_collapse_triangulate = True
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(True)
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+        obj.data.update()
+        decimation_used = True
+    reduced = metrics(obj)
+    reduced_dimensions = dimensions(obj)
+    polygon_reduction_ratio = round(reduced['triangles'] / triangles_before_decimation, 6)
+    dimension_change_mm = [round(abs(a-b), 6) for a,b in zip(initial_dimensions, reduced_dimensions)]
+    volume_change_percent = round(100 * abs(reduced['signed_volume_mm3'] - initial_volume) / initial_volume, 6)
+    if reduced['triangles'] > triangle_limit or reduced['boundary_edges'] or reduced['nonmanifold_edges'] or reduced['degenerate_faces'] or reduced['connected_components'] != 1 or reduced['signed_volume_mm3'] <= 0:
+        raise RuntimeError('Bounded polygon reduction did not retain one closed solid: ' + json.dumps(reduced))
+    if any(delta > max(0.15, size * 0.005) for delta,size in zip(dimension_change_mm, initial_dimensions)) or volume_change_percent > 1.0:
+        raise RuntimeError('Polygon reduction changed the model beyond the demo geometry budget: ' + json.dumps({{'dimension_change_mm':dimension_change_mm,'volume_change_percent':volume_change_percent}}))
 
 # Inspect the triangles that will actually be exported. Planar n-gons can
 # tessellate into collinear triangles even when the polygon itself has area.
@@ -431,6 +463,7 @@ if render_result != {{'FINISHED'}}:
 report = {{'operation':'fixed_native_blender_mesh_repair','source_preserved':source,'artifacts':[repaired,preview],'before':{{'dimensions_mm':before_dimensions,'mesh':before_metrics}},'after':{{'dimensions_mm':final_dimensions,'mesh':final_metrics}},'repair':{{'merge_tolerance_mm':merge_tolerance,'degenerate_tolerance_mm':degenerate_tolerance,'force_voxel_remesh':force_voxel_remesh,'envelope_margin_mm':envelope_margin,'voxel_remesh_used':voxel_remesh_used,'voxel_size_mm':voxel_size_mm,'voxel_iterations':voxel_iterations,'discarded_components':discarded_components,'decimation_used':decimation_used,'triangle_limit':triangle_limit}},'orientation':{{'action':'preserved_model_axes_and_translated_minimum_z_to_build_plate','supports':'assigned by the pinned slicer operation'}},'checks':{{'closed_manifold':True,'outward_normals':final_metrics['signed_volume_mm3']>0,'single_component':True,'within_triangle_limit':True,'fits_p1s_256mm_cube':True}},'content_validated':False}}
 report['repair']['planar_cleanup'] = {{'enabled':planar_cleanup,'faces_before':planar_faces_before,'faces_after':planar_faces_after,'angle_limit_radians':0.000001}}
 report['repair']['printable_base'] = {{'enabled':ensure_printable_base,'trimmed_mm':round(base_trim_mm,3),'contact_area_mm2':round(base_contact_mm2,3)}}
+report['repair']['polygon_reduction'] = {{'enabled':allow_polygon_reduction,'used':decimation_used,'triangles_before':triangles_before_decimation,'triangles_after':post_metrics['triangles'],'ratio':polygon_reduction_ratio,'dimension_change_mm':dimension_change_mm,'volume_change_percent':volume_change_percent}}
 print(json.dumps(report,separators=(',',':')))
 '''
 
