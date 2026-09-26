@@ -62,6 +62,16 @@ A combined request used the same uploaded image and explicit 50 × 30 × 30 mm, 
 
 Read-only P1S LAN status was available, and one camera JPEG was received. The camera feed later stalled during sustained access, so continuous streaming remains unverified. Print dispatch stayed disabled and no upload or print command was sent.
 
+## Round-pumpkin failure and review update (2026-09-26)
+
+The user's first round-pumpkin request completed Blender modeling and mesh repair but failed at the slicer MCP step (`MCP_CALL_FAILED`). The saved `demo-ce662210b77a` repaired STL was closed, but all six axis-aligned orientation candidates failed the slicer's flat-bed-contact check before Bambu Studio ran. The previous UI surfaced the backend code and internal owner text without a useful explanation.
+
+The demo-only repair operation now creates a bounded flat underside when the authored model has too little bed contact, and records the trim and contact area for review. An isolated replay of the failed source STL in Blender 4.5.10 produced a closed, nondegenerate 50 × 50 × 48 mm mesh after a 2 mm trim, with 321.423 mm² plate contact. Bambu Studio 2.8.2.61 then sliced it into a P1S G-code 3MF: 240 layers, 62m 31s estimated, 26.02 g, and 3,614 support moves. Replay files are under `.local-run/pumpkin-flat-base-audit-20260926/`; the user's failed attempt was not altered.
+
+A fresh, unmocked browser run used the same prompt text and pumpkin reference through the served workspace **Workflows** control. Its workflow is `workflows/prompt-to-print-581584611acb.workflow.wflow`, run `1e3e84c64c04478f820b8a7259dfc0b2`, with artifacts under `campaign/printed-replacement-part-01/demo-581584611acb/artifacts/`. It completed Blender MCP, native mesh-repair MCP, and Bambu Studio CLI slicing. This time Blender authored a 220.684 mm² flat underside, so repair did not trim it. Bambu selected the authored orientation and exported a 233-layer 3MF estimated at 67 minutes with 15,073 support moves. The 7 MB `toolpaths.json` carries the selected package hash; the UI rendered its full 3D extrusion stack and support paths, with a layer slider, model/support switches, live stage log, and uploaded-image thumbnail. Headless Chromium reported no page errors. Screenshots: `.local-run/pumpkin-flat-base-audit-20260926/progress-ui.png` and `result-ui.png`.
+
+This run confirms the prior hard failure is resolved and exposes the remaining support use for human review. It does not show that the pumpkin has the lowest feasible support amount or that the part will print successfully. No printer command was sent.
+
 ## Checks for printer day
 
 Before a physical print, confirm the P1S identity and idle status, Generic PETG

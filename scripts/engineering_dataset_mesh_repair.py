@@ -147,6 +147,7 @@ def blender_code(configuration: dict) -> str:
     )
     force_voxel_remesh = configuration.get("force_voxel_remesh", False) is True
     planar_cleanup = configuration.get("planar_cleanup", False) is True
+    ensure_printable_base = configuration.get("ensure_printable_base", False) is True
     envelope_margin = float(configuration.get("envelope_margin_mm", 0.0))
     if not 0.0 <= envelope_margin <= 0.005:
         raise ValueError("Envelope margin must be between 0 and 0.005 mm")
@@ -161,6 +162,7 @@ merge_tolerance = {merge_tolerance!r}
 degenerate_tolerance = {degenerate_tolerance!r}
 force_voxel_remesh = {force_voxel_remesh!r}
 planar_cleanup = {planar_cleanup!r}
+ensure_printable_base = {ensure_printable_base!r}
 envelope_margin = {envelope_margin!r}
 object_name = {object_name!r}
 
@@ -325,6 +327,46 @@ if post_metrics['degenerate_faces'] != 0 or post_metrics['connected_components']
 if post_metrics['signed_volume_mm3'] <= 0 or post_metrics['triangles'] > triangle_limit:
     raise RuntimeError('Repair did not satisfy normals or triangle limit: ' + json.dumps(post_metrics))
 
+# A rounded decorative shape can be manifold yet touch the plate at one point.
+# This optional, demo-only manufacturing step creates a measured planar foot.
+base_trim_mm = 0.0
+base_contact_mm2 = 0.0
+if ensure_printable_base:
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    low = min(vertex.co.z for vertex in bm.verts)
+    high = max(vertex.co.z for vertex in bm.verts)
+    xy_span = (max(vertex.co.x for vertex in bm.verts) - min(vertex.co.x for vertex in bm.verts)) * (max(vertex.co.y for vertex in bm.verts) - min(vertex.co.y for vertex in bm.verts))
+    required_contact = max(25.0, xy_span * 0.05)
+    def bed_contact(mesh, level):
+        return sum(face.calc_area() for face in mesh.faces if all(abs(vertex.co.z - level) <= 0.02 for vertex in face.verts))
+    base_contact_mm2 = bed_contact(bm, low)
+    if base_contact_mm2 < required_contact:
+        height = high - low
+        for fraction in (0.04, 0.08, 0.12):
+            plane = low + height * fraction
+            bmesh.ops.bisect_plane(bm, geom=list(bm.verts) + list(bm.edges) + list(bm.faces), dist=0.000001, plane_co=(0, 0, plane), plane_no=(0, 0, 1), clear_inner=True, clear_outer=False)
+            boundary = [edge for edge in bm.edges if edge.is_boundary and all(abs(vertex.co.z - plane) <= 0.02 for vertex in edge.verts)]
+            if not boundary:
+                raise RuntimeError('Could not create a flat print base from the rounded underside')
+            bmesh.ops.holes_fill(bm, edges=boundary, sides=0)
+            bmesh.ops.dissolve_limit(bm, angle_limit=0.000001, verts=list(bm.verts), edges=list(bm.edges), use_dissolve_boundaries=False)
+            bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method='BEAUTY', ngon_method='EAR_CLIP')
+            bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=degenerate_tolerance)
+            bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+            base_trim_mm = plane - low
+            base_contact_mm2 = bed_contact(bm, plane)
+            if base_contact_mm2 >= required_contact:
+                break
+        if base_contact_mm2 < required_contact:
+            raise RuntimeError('The part has too little flat bed contact after bounded base correction')
+        bm.to_mesh(obj.data)
+        obj.data.update()
+    bm.free()
+    corrected_metrics = metrics(obj)
+    if corrected_metrics['boundary_edges'] or corrected_metrics['nonmanifold_edges'] or corrected_metrics['degenerate_faces'] or corrected_metrics['connected_components'] != 1 or corrected_metrics['signed_volume_mm3'] <= 0 or corrected_metrics['triangles'] > triangle_limit:
+        raise RuntimeError('Flat-base correction did not retain a single closed printable solid: ' + json.dumps(corrected_metrics))
+
 # Preserve the model-authored axes and translate its lowest point onto the bed.
 world_coordinates = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
 minimum_z = min(point.z for point in world_coordinates)
@@ -388,6 +430,7 @@ if render_result != {{'FINISHED'}}:
 
 report = {{'operation':'fixed_native_blender_mesh_repair','source_preserved':source,'artifacts':[repaired,preview],'before':{{'dimensions_mm':before_dimensions,'mesh':before_metrics}},'after':{{'dimensions_mm':final_dimensions,'mesh':final_metrics}},'repair':{{'merge_tolerance_mm':merge_tolerance,'degenerate_tolerance_mm':degenerate_tolerance,'force_voxel_remesh':force_voxel_remesh,'envelope_margin_mm':envelope_margin,'voxel_remesh_used':voxel_remesh_used,'voxel_size_mm':voxel_size_mm,'voxel_iterations':voxel_iterations,'discarded_components':discarded_components,'decimation_used':decimation_used,'triangle_limit':triangle_limit}},'orientation':{{'action':'preserved_model_axes_and_translated_minimum_z_to_build_plate','supports':'assigned by the pinned slicer operation'}},'checks':{{'closed_manifold':True,'outward_normals':final_metrics['signed_volume_mm3']>0,'single_component':True,'within_triangle_limit':True,'fits_p1s_256mm_cube':True}},'content_validated':False}}
 report['repair']['planar_cleanup'] = {{'enabled':planar_cleanup,'faces_before':planar_faces_before,'faces_after':planar_faces_after,'angle_limit_radians':0.000001}}
+report['repair']['printable_base'] = {{'enabled':ensure_printable_base,'trimmed_mm':round(base_trim_mm,3),'contact_area_mm2':round(base_contact_mm2,3)}}
 print(json.dumps(report,separators=(',',':')))
 '''
 

@@ -2,6 +2,7 @@
 from __future__ import annotations
 import hashlib
 import json
+import math
 from pathlib import Path
 import re
 import shutil
@@ -75,9 +76,10 @@ def _toolpath_layers(gcode):
     relative = False
     current_layer = None
     for line in gcode.splitlines():
-        match = re.match(r";\s*Z_HEIGHT:\s*[-\d.]+", line)
+        match = re.match(r";\s*Z_HEIGHT:\s*([-\d.]+)", line)
         if match:
             current_layer = 1 if current_layer is None else current_layer + 1
+            layers.setdefault(current_layer, {"z": float(match.group(1)), "model": [], "support": []})
         if "FEATURE:" in line or "TYPE:" in line:
             feature = line.lower()
         if line.startswith("M83"):
@@ -86,13 +88,30 @@ def _toolpath_layers(gcode):
             relative = False
         elif line.startswith("G92 E"):
             extrusion = float(line.split("E", 1)[1].split()[0])
-        elif re.match(r"G[01]\s", line):
-            fields = {k: float(v) for k, v in re.findall(r"([XYE])(-?(?:\d+(?:\.\d*)?|\.\d+))", line.split(";", 1)[0])}
+        elif re.match(r"G[0123]\s", line):
+            command = line.split(" ", 1)[0]
+            fields = {k: float(v) for k, v in re.findall(r"([XYEIJ])(-?(?:\d+(?:\.\d*)?|\.\d+))", line.split(";", 1)[0])}
             nx, ny = fields.get("X", x), fields.get("Y", y)
             e = fields.get("E", 0 if relative else extrusion)
-            if current_layer is not None and "E" in fields and (e > 0 if relative else e > extrusion) and (nx != x or ny != y):
-                bucket = layers.setdefault(current_layer, {"model": [], "support": []})
-                bucket["support" if "support" in feature else "model"].append((x, y, nx, ny))
+            if current_layer is not None and "E" in fields and (e > 0 if relative else e > extrusion) and ((nx != x or ny != y) or (command in ("G2", "G3") and "I" in fields and "J" in fields)):
+                bucket = layers[current_layer]["support" if "support" in feature else "model"]
+                if command in ("G2", "G3") and "I" in fields and "J" in fields:
+                    cx, cy = x + fields["I"], y + fields["J"]
+                    radius = math.hypot(x - cx, y - cy)
+                    start = math.atan2(y - cy, x - cx)
+                    end = math.atan2(ny - cy, nx - cx)
+                    sweep = (end - start) % (2 * math.pi) if command == "G3" else -((start - end) % (2 * math.pi))
+                    if abs(sweep) < 1e-8:
+                        sweep = 2 * math.pi if command == "G3" else -2 * math.pi
+                    steps = max(1, min(256, math.ceil(abs(sweep * radius) / 0.5)))
+                    px, py = x, y
+                    for index in range(1, steps + 1):
+                        angle = start + sweep * index / steps
+                        qx, qy = (nx, ny) if index == steps else (cx + radius * math.cos(angle), cy + radius * math.sin(angle))
+                        bucket.append((px, py, qx, qy))
+                        px, py = qx, qy
+                else:
+                    bucket.append((x, y, nx, ny))
             x, y, extrusion = nx, ny, e
     return layers
 
@@ -237,6 +256,12 @@ def run(configuration_path):
     layers = _toolpath_layers(gcode)
     if not layers:
         raise ValueError("Actual slicer package contains no positive-extrusion toolpaths")
+    toolpaths = {"format": "wright.gcode.toolpaths.v1", "package_sha256": sha(package),
+                 "layers": [{"index": number, "z": layer["z"],
+                             "model": [[round(value, 3) for value in segment] for segment in layer["model"]],
+                             "support": [[round(value, 3) for value in segment] for segment in layer["support"]]}
+                            for number, layer in sorted(layers.items())]}
+    (output / "toolpaths.json").write_text(json.dumps(toolpaths, separators=(",", ":")), encoding="utf-8")
     layer_number = max(layers, key=lambda number: len(layers[number]["support"])) if selected["support_moves"] else sorted(layers)[len(layers)//2]
     model = layers[layer_number]["model"]
     support = layers[layer_number]["support"]

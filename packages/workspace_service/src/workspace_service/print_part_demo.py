@@ -164,6 +164,8 @@ def prepare_print_part_demo(
         "server rejects introspection such as hasattr(bpy.ops.wm, 'stl_export'); "
         "do not test operator availability. "
         " Choose and record a sensible initial build-plate orientation for this geometry. "
+        " Give rounded or sculptural parts a modest flat underside so they can "
+        "stand on the build plate without unnecessary supports. "
         "Place the lowest point on the Z=0 build plane. The next MCP stage "
         "preserves these axes while checking mesh and P1S envelope."
     )
@@ -195,6 +197,7 @@ def prepare_print_part_demo(
         "degenerate_tolerance_mm": 0.000001,
         "force_voxel_remesh": False, "envelope_margin_mm": 0.0,
         "planar_cleanup": False, "measure_handle_features": False,
+        "ensure_printable_base": True,
     }
     repair["fields"].update(inputs=[], outputs=[_port("repair_report"), _port("repaired_mesh", "workspace_file")], prompt="")
     repair["fields"]["instructions"] = (
@@ -227,12 +230,13 @@ def prepare_print_part_demo(
         "source": f"{output_root}/repaired_mesh.stl",
         "optimize_orientation": True,
     }
-    slicer_files = [*binding["stages"]["supports_and_slice"]["expected_files"], "oriented_mesh.stl"]
+    slicer_files = [*binding["stages"]["supports_and_slice"]["expected_files"], "oriented_mesh.stl", "toolpaths.json"]
     slicer["fields"].update(inputs=[], outputs=[
         _port("slice_report"), _port("support_preview", "workspace_file"),
         _port("oriented_mesh", "workspace_file"),
         _port("slice_package", "workspace_file"),
         _port("slice_evidence", "workspace_file"),
+        _port("toolpaths", "workspace_file"),
         _port("machine_profile", "workspace_file"),
         _port("filament_profile", "workspace_file"),
         _port("process_profile", "workspace_file"),
@@ -251,6 +255,7 @@ def prepare_print_part_demo(
             "oriented_mesh": f"{output_root}/oriented_mesh.stl",
             "slice_package": f"{output_root}/slice_package.gcode.3mf",
             "slice_evidence": f"{output_root}/slice-evidence.json",
+            "toolpaths": f"{output_root}/toolpaths.json",
             "machine_profile": f"{output_root}/machine-profile.json",
             "filament_profile": f"{output_root}/filament-profile.json",
             "process_profile": f"{output_root}/process-profile.json",

@@ -16,7 +16,7 @@
 .print-demo__primary:disabled { opacity: .5; cursor: not-allowed; }
 .print-demo__text-button { background: transparent; border: 0; padding: 0; color: #8ee4d2; text-decoration: underline; cursor: pointer; font: inherit; font-size: 13px; align-self: flex-start; }
 .print-demo__section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.print-demo__pill { border: 1px solid #375669; color: #c4d8e4; border-radius: 999px; padding: 6px 10px; font-size: 12px; }
+.print-demo__pill { border: 1px solid #375669; color: #c4d8e4; border-radius: 999px; padding: 6px 10px; font-size: 12px; max-width: 55%; overflow-wrap: anywhere; }
 .print-demo__empty { min-height: 340px; display: grid; place-items: center; text-align: center; border: 1px dashed #3b5a6a; border-radius: 12px; color: #9ab0be; padding: 20px; }
 .print-demo__previews { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .print-demo__previews > div { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -27,6 +27,24 @@
 .print-demo__file { font-size: 12px; line-height: 1.6; color: #b4c9d5; word-break: break-all; }
 .print-demo__file a { color: #89e4d0; }
 .print-demo__error { border: 1px solid #a85c61; background: #3b2228; padding: 10px 12px; border-radius: 8px; color: #ffd2d2; font-size: 13px; }
+.print-demo__error details { margin-top: 8px; color: #f5bdc1; }
+.print-demo__error pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; }
+.print-demo__notice { margin: 0; border: 1px solid #8c713e; background: #302819; color: #f5dab0; padding: 10px 12px; border-radius: 8px; font-size: 13px; }
+.print-demo__image-preview { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.print-demo__image-preview img { width: 76px; height: 76px; object-fit: contain; border: 1px solid #355265; border-radius: 8px; background: #08131e; }
+.print-demo__image-preview span { min-width: 0; overflow-wrap: anywhere; }
+.print-demo__progress { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid #327c80; border-radius: 10px; background: #102a33; }
+.print-demo__progress p { margin: 3px 0 0; color: #aacbd1; font-size: 13px; }
+.print-demo__spinner { flex: 0 0 19px; width: 19px; height: 19px; border: 3px solid #385e66; border-top-color: #77dec8; border-radius: 50%; animation: print-demo-spin .8s linear infinite; }
+@keyframes print-demo-spin { to { transform: rotate(360deg); } }
+.print-demo__activity { margin: 0; padding: 0 0 0 24px; max-height: 130px; overflow: auto; color: #a9bfcb; font-size: 12px; line-height: 1.6; }
+.print-demo__activity li:last-child { color: #83e6d2; }
+.print-demo__toolpath-wrap { display: flex; flex-direction: column; gap: 8px; }
+.print-demo__layer-controls { display: flex; flex-direction: column; gap: 4px; color: #c3d8e3; font-size: 12px; }
+.print-demo__layer-controls input { width: 100%; accent-color: #77dec8; }
+.print-demo__legend { display: flex; flex-wrap: wrap; gap: 14px; color: #d9e7ee; font-size: 12px; }
+.print-demo__legend label { display: flex; gap: 5px; align-items: center; font-size: 12px; }
+.print-demo__legend input { accent-color: #77dec8; }
 .print-demo__monitor { display: flex; flex-direction: column; gap: 12px; }
 .print-demo__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
 .print-demo__stats span { display: flex; flex-direction: column; gap: 5px; padding: 10px; background: #0b1721; border-radius: 8px; min-width: 0; }
