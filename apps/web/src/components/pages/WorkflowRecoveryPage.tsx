@@ -55,7 +55,11 @@ export function WorkflowRecoveryPage({
   const [fileActionError, setFileActionError] = useState("");
   const [fileActionPending, setFileActionPending] = useState(false);
   const [newWorkflowName, setNewWorkflowName] = useState("");
-  const [printDemoOpen, setPrintDemoOpen] = useState(false);
+  const initialPrintDemoRun = new URLSearchParams(window.location.search).get("printDemoRun");
+  const [printDemoOpen, setPrintDemoOpen] = useState(Boolean(initialPrintDemoRun));
+  useEffect(() => {
+    if (initialPrintDemoRun) setPrintDemoOpen(true);
+  }, [initialPrintDemoRun]);
   const [workflowChoices, setWorkflowChoices] = useState<
     Array<{ path: string; name: string }>
   >([]);
@@ -643,6 +647,8 @@ export function WorkflowRecoveryPage({
         {printDemoOpen && <PrintPartDemoPage
           sessionId={sessionId}
           workspaceId={workspaceId}
+          initialWorkflowPath={visiblePath}
+          initialRunLogPath={initialPrintDemoRun}
           onOpenWorkflow={(path) => {
             setPrintDemoOpen(false);
             onOpenWorkflow?.(path);

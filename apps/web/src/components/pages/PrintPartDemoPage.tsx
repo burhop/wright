@@ -14,6 +14,8 @@ import "./PrintPartDemoPage.css";
 interface Props {
   sessionId: string;
   workspaceId: string;
+  initialWorkflowPath?: string;
+  initialRunLogPath?: string | null;
   onOpenWorkflow?: (path: string) => void;
   onClose: () => void;
 }
@@ -234,7 +236,7 @@ function ToolpathPreview({ sessionId, path, packageHash }: { sessionId: string; 
   </div>;
 }
 
-export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onClose }: Props) {
+export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath, initialRunLogPath, onOpenWorkflow, onClose }: Props) {
   const startedAt = useRef(0);
   const currentStage = useRef("Preparing the request");
   const [prompt, setPrompt] = useState("");
@@ -250,6 +252,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [imagePreview, setImagePreview] = useState("");
   const [workflowPath, setWorkflowPath] = useState("");
+  const [runLogPath, setRunLogPath] = useState("");
   const [run, setRun] = useState<WorkspaceWorkflowSourceRun | null>(null);
   const [artifactRoot, setArtifactRoot] = useState("");
   const [printer, setPrinter] = useState<{
@@ -269,7 +272,50 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
   const repairReportFile = useMemo(() => findArtifact(run?.results, artifactRoot, "repair-model-report.json"), [run, artifactRoot]);
   const packageFile = useMemo(() => findArtifact(run?.results, artifactRoot, "slice_package.gcode.3mf"), [run, artifactRoot]);
   const hasPreview = Boolean(run?.status === "completed" && sourceFile && repairedFile && orientedFile && supportFile && toolpathFile && evidenceFile && packageFile);
+  const resultUrl = workflowPath && runLogPath
+    ? `/workspace/${encodeURIComponent(workspaceId)}?${new URLSearchParams({ workflow: "canonical", workflowPath, printDemoRun: runLogPath })}`
+    : "";
   const [baseTrimMm, setBaseTrimMm] = useState(0);
+
+  useEffect(() => {
+    if (!initialRunLogPath) return;
+    let active = true;
+    const slug = initialWorkflowPath?.match(/^workflows\/(prompt-to-print-[0-9a-f]{12})\.workflow\.wflow$/)?.[1];
+    if (!slug || !new RegExp(`^runs/${slug}/[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}\\.json$`).test(initialRunLogPath)) {
+      setError("This saved-result link is invalid. Open the workflow from the workspace files.");
+      return;
+    }
+    startedAt.current = Date.now();
+    setBusy(true);
+    setStep("Opening saved result");
+    void fetch(workspaceContentUrl(initialRunLogPath, sessionId)).then((response) => {
+      if (!response.ok) throw new Error("The saved run is unavailable.");
+      return response.json();
+    }).then((wrapper) => {
+      const record = JSON.parse(wrapper.content) as {
+        workflow_path?: string; status?: string; run_id?: string;
+        result?: WorkspaceWorkflowSourceRun;
+      };
+      const saved = record.result;
+      if (record.workflow_path !== initialWorkflowPath || record.status !== "completed" || saved?.status !== "completed" || saved.run_id !== record.run_id || !Array.isArray(saved.results)) {
+        throw new Error("The saved run does not contain a completed result for this workflow.");
+      }
+      const packages = saved.results.flatMap((item) => item.representations ?? []).filter((rep) =>
+        rep.kind === "workspace_file" && /^campaign\/printed-replacement-part-01\/demo-[0-9a-f]{12}\/artifacts\/slice_package\.gcode\.3mf$/.test(rep.location),
+      );
+      if (packages.length !== 1) throw new Error("The saved run does not identify one sliced 3MF package.");
+      if (!active) return;
+      setWorkflowPath(record.workflow_path);
+      setArtifactRoot(packages[0].location.slice(0, -"/slice_package.gcode.3mf".length));
+      setRun(saved);
+      setRunLogPath(initialRunLogPath);
+      setStep("Review the saved part and slice");
+      setActivity(["Saved Wright run loaded"]);
+    }).catch(() => {
+      if (active) { setError("This saved result could not be opened. Open the workflow from the workspace files to inspect its run."); setStep("Needs attention"); }
+    }).finally(() => { if (active) setBusy(false); });
+    return () => { active = false; };
+  }, [initialWorkflowPath, initialRunLogPath, sessionId]);
 
   useEffect(() => {
     if (!image) { setImagePreview(""); return; }
@@ -335,6 +381,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
     if ((!prompt.trim() && !image) || busy) return;
     setBusy(true);
     setRun(null);
+    setRunLogPath("");
     setSent(false);
     setPrinter(null);
     setPrinterError("");
@@ -378,6 +425,12 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
         throw new Error("Wright returned a run for another workflow.");
       }
       setRun(result);
+      if (result.run_log_path) setRunLogPath(result.run_log_path);
+      else if (result.run_id) {
+        void workspaceService.getWorkspaceWorkflowRuns(sessionId, prepared.workflow_path, { latestOnly: true, workspaceId }).then((history) => {
+          if (history[0]?.run_id === result.run_id) setRunLogPath(history[0].path);
+        }).catch(() => {});
+      }
       setStep(result.status === "completed" ? "Review the part and slice" : "Workflow needs review");
       if (result.status === "completed") setActivity((current) => [...current, "3D model and sliced package ready"].slice(-8));
     } catch (reason) {
@@ -415,7 +468,8 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
     </header>
     <div className="print-demo__grid">
       <section className="print-demo__card" aria-label="Part request">
-        <span className="print-demo__step">01 / DESIGN REQUEST</span>
+        <span className="print-demo__step">01 / {initialRunLogPath ? "NEW DESIGN REQUEST" : "DESIGN REQUEST"}</span>
+        {initialRunLogPath && run && <p className="print-demo__muted">Viewing saved run {run.run_id?.slice(0, 12)}. The fields below start a new part.</p>}
         <label htmlFor="print-demo-prompt">What part should Wright make?</label>
         <textarea id="print-demo-prompt" value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="A replacement knob, 50 mm wide, with a 6 mm D-shaped shaft socket…" rows={6} disabled={busy} />
         <label htmlFor="print-demo-image">Reference image <small>(optional)</small></label>
@@ -440,6 +494,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, onOpenWorkflow, onCl
         {hasPreview && <p className="print-demo__file">Mesh · <a href={workspaceContentUrl(sourceFile!.path, sessionId)} download>Source STL</a> · <a href={workspaceContentUrl(repairedFile!.path, sessionId)} download>Repaired STL</a> · <a href={workspaceContentUrl(orientedFile!.path, sessionId)} download>Selected STL</a> · <a href={workspaceContentUrl(evidenceFile!.path, sessionId)} download>Orientation comparison</a></p>}
         {packageFile && <p className="print-demo__file">Sliced 3MF · <a href={workspaceContentUrl(packageFile.path, sessionId)} download>Download package</a><br /><code>SHA-256 {packageFile.sha256.slice(0, 16)}…</code></p>}
         {workflowPath && <button type="button" className="print-demo__text-button" onClick={() => onOpenWorkflow?.(workflowPath)}>Open saved Wright workflow</button>}
+        {hasPreview && resultUrl && <a className="print-demo__text-button" href={resultUrl}>Link to this result</a>}
         {error && <div className="print-demo__error" role="alert">{error}{errorDetails && <details><summary>Technical details</summary><pre>{errorDetails}</pre></details>}</div>}
       </section>
       <section className="print-demo__card print-demo__printer" aria-label="Print and monitor">
