@@ -311,6 +311,7 @@ triangles_before_decimation = clean_metrics['triangles']
 polygon_reduction_ratio = None
 dimension_change_mm = None
 volume_change_percent = None
+decimation_cleanup_tolerance_mm = None
 if allow_polygon_reduction and clean_metrics['triangles'] > triangle_limit:
     initial_dimensions = dimensions(obj)
     initial_volume = clean_metrics['signed_volume_mm3']
@@ -329,6 +330,23 @@ if allow_polygon_reduction and clean_metrics['triangles'] > triangle_limit:
         obj.data.update()
         decimation_used = True
     reduced = metrics(obj)
+    if reduced['degenerate_faces']:
+        # Collapse can leave collinear zero-area triangles even when its output
+        # remains watertight. Clean only within a sub-micron geometry budget,
+        # then apply the same topology, dimension, and volume checks below.
+        for tolerance in (degenerate_tolerance, 0.00001, 0.0001):
+            bm = bmesh.new()
+            bm.from_mesh(obj.data)
+            bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=tolerance)
+            bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=tolerance)
+            bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+            bm.to_mesh(obj.data)
+            bm.free()
+            obj.data.update()
+            decimation_cleanup_tolerance_mm = tolerance
+            reduced = metrics(obj)
+            if not reduced['degenerate_faces']:
+                break
     reduced_dimensions = dimensions(obj)
     polygon_reduction_ratio = round(reduced['triangles'] / triangles_before_decimation, 6)
     dimension_change_mm = [round(abs(a-b), 6) for a,b in zip(initial_dimensions, reduced_dimensions)]
@@ -463,7 +481,7 @@ if render_result != {{'FINISHED'}}:
 report = {{'operation':'fixed_native_blender_mesh_repair','source_preserved':source,'artifacts':[repaired,preview],'before':{{'dimensions_mm':before_dimensions,'mesh':before_metrics}},'after':{{'dimensions_mm':final_dimensions,'mesh':final_metrics}},'repair':{{'merge_tolerance_mm':merge_tolerance,'degenerate_tolerance_mm':degenerate_tolerance,'force_voxel_remesh':force_voxel_remesh,'envelope_margin_mm':envelope_margin,'voxel_remesh_used':voxel_remesh_used,'voxel_size_mm':voxel_size_mm,'voxel_iterations':voxel_iterations,'discarded_components':discarded_components,'decimation_used':decimation_used,'triangle_limit':triangle_limit}},'orientation':{{'action':'preserved_model_axes_and_translated_minimum_z_to_build_plate','supports':'assigned by the pinned slicer operation'}},'checks':{{'closed_manifold':True,'outward_normals':final_metrics['signed_volume_mm3']>0,'single_component':True,'within_triangle_limit':True,'fits_p1s_256mm_cube':True}},'content_validated':False}}
 report['repair']['planar_cleanup'] = {{'enabled':planar_cleanup,'faces_before':planar_faces_before,'faces_after':planar_faces_after,'angle_limit_radians':0.000001}}
 report['repair']['printable_base'] = {{'enabled':ensure_printable_base,'trimmed_mm':round(base_trim_mm,3),'contact_area_mm2':round(base_contact_mm2,3)}}
-report['repair']['polygon_reduction'] = {{'enabled':allow_polygon_reduction,'used':decimation_used,'triangles_before':triangles_before_decimation,'triangles_after':post_metrics['triangles'],'ratio':polygon_reduction_ratio,'dimension_change_mm':dimension_change_mm,'volume_change_percent':volume_change_percent}}
+report['repair']['polygon_reduction'] = {{'enabled':allow_polygon_reduction,'used':decimation_used,'triangles_before':triangles_before_decimation,'triangles_after':post_metrics['triangles'],'ratio':polygon_reduction_ratio,'dimension_change_mm':dimension_change_mm,'volume_change_percent':volume_change_percent,'degenerate_cleanup_tolerance_mm':decimation_cleanup_tolerance_mm}}
 print(json.dumps(report,separators=(',',':')))
 '''
 

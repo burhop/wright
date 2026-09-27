@@ -289,6 +289,13 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   const designMaterialLoaded = !printer || printer.trays.some((tray) => !tray.empty && tray.type === designFilament);
   const printReady = Boolean(printerEnabled && printer?.ready && materialMatches && hasPreview && run?.run_id && !printing && !sent);
   const activeJob = Boolean(printer && ["RUNNING", "PREPARE", "SLICING", "PAUSE", "FAILED"].includes(printer.status));
+  const printBlockReason = sent || printing ? "" :
+    !printerEnabled ? "Wright is waiting for print access. This page checks again automatically." :
+    !printer ? "Checking the printer and AMS before printing." :
+    !printer.ready ? printer.readiness_reason :
+    !hasPreview || !run?.run_id ? "Create and review a sliced 3MF before printing." :
+    !selectedTray ? `Choose a loaded ${slicedFilament ?? "matching"} AMS slot before printing.` :
+    !materialMatches ? `This 3MF requires ${slicedFilament ?? "a different material"}. ${selectedTray.label} contains ${selectedTray.type}; choose a matching loaded slot.` : "";
 
   useEffect(() => {
     if (slicedFilament && ["PLA", "PETG", "ABS", "ASA"].includes(slicedFilament)) setDesignFilament(slicedFilament);
@@ -378,10 +385,15 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
 
   useEffect(() => {
     let active = true;
-    void workspaceService.getPrintDemoCapabilities().then((value) => {
-      if (active) { setPrinterEnabled(value.printer_enabled); setMonitorEnabled(value.monitor_enabled); }
-    }).catch(() => { if (active) { setPrinterEnabled(false); setMonitorEnabled(false); } });
-    return () => { active = false; };
+    const refresh = () => {
+      void workspaceService.getPrintDemoCapabilities().then((value) => {
+        if (active) { setPrinterEnabled(value.printer_enabled); setMonitorEnabled(value.monitor_enabled); }
+      }).catch(() => { if (active) { setPrinterEnabled(false); setMonitorEnabled(false); } });
+    };
+    refresh();
+    window.addEventListener("focus", refresh);
+    const timer = window.setInterval(refresh, 5000);
+    return () => { active = false; window.removeEventListener("focus", refresh); window.clearInterval(timer); };
   }, []);
 
   useEffect(() => {
@@ -593,7 +605,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
         {hasPreview && slicedFilament && <p className="print-demo__muted">This 3MF is sliced for {slicedFilament}. {selectedTray && !materialMatches ? `To use ${selectedTray.type}, create a new printable part with that material selected.` : "Choose a matching loaded slot."}</p>}
         <p className="print-demo__muted">Review the build plate, selected orientation, sliced layer and loaded filament before starting.</p>
         <button type="button" className="print-demo__primary" disabled={!printReady} onClick={() => void print()}>{printing ? "Sending to printer…" : sent ? "Print sent" : "Print on P1S"}</button>
-        {!printerEnabled && <p className="print-demo__muted">Print dispatch is disabled during preparation. Download and review the sliced 3MF here; enable printing after the P1S and AMS material checks.</p>}
+        {printBlockReason && <p className="print-demo__notice" role="status">{printBlockReason}</p>}
         {printerError && <p className="print-demo__error" role="status">{printerError}</p>}
         {sent && <div className="print-demo__monitor">
           <p className="print-demo__muted">Dispatch: {dispatchState.replaceAll("_", " ")}. A sent command does not confirm that printing has started.</p>
