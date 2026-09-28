@@ -8,6 +8,7 @@ this adapter supplies one for Wright's single-filament sliced packages.
 from __future__ import annotations
 
 import re
+import threading
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -16,17 +17,39 @@ from bambu_p1s_mcp.config import load_settings
 from print_demo_p1s_transfer import upload_file
 from bambu_p1s_mcp.guard import require_confirm
 from bambu_p1s_mcp.payloads import project_file
-from bambu_p1s_mcp.printer import get_session
+from print_demo_p1s_session import MonitoredPrinterSession
 from bambu_p1s_mcp.redact import public_error
 from workspace_service.print_part_demo_printer import printer_status_summary
 
 
 SERVER = FastMCP("wright-print-demo-p1s")
 SUPPORTED = {"PLA", "PETG", "ABS", "ASA"}
+_SESSION = None
+_SESSION_LOCK = threading.Lock()
+
+
+def get_session():
+    global _SESSION
+    with _SESSION_LOCK:
+        if _SESSION is None:
+            _SESSION = MonitoredPrinterSession(load_settings())
+        return _SESSION
 
 
 def _error(error: Exception) -> dict:
     return {"ok": False, "error": public_error(error, load_settings().access_code)}
+
+
+def p1s_project_file(sequence: int, remote: str, ams_slot: int) -> dict:
+    command = project_file(sequence, remote, plate=1, use_ams=True, bed_levelling=True)
+    # P1/A1 use their SD-card filesystem URL. The upstream generic payload
+    # uses an FTP URL and misspells the firmware's bed_leveling key.
+    # See synman/bambu-printer-manager src/bpm/bambuprinter.py print_3mf_file.
+    command["print"].update(file=f"/{remote}", url=f"file:///sdcard/{remote}", bed_leveling=True)
+    command["print"].pop("bed_levelling", None)
+    command["print"]["ams_mapping"] = [ams_slot]
+    command["print"]["ams_mapping2"] = [{"ams_id": ams_slot // 4, "slot_id": ams_slot % 4}]
+    return command
 
 
 @SERVER.tool()
@@ -124,13 +147,20 @@ def printer_print(
             for tray in latest_trays
         ):
             raise ValueError("The selected AMS slot changed during upload; print was not started")
-        command = project_file(session.next_seq(), remote, plate=1, use_ams=True, bed_levelling=True)
-        command["print"]["ams_mapping"] = [ams_slot]
-        command["print"]["ams_mapping2"] = [{"ams_id": ams_slot // 4, "slot_id": ams_slot % 4}]
+        command = p1s_project_file(session.next_seq(), remote, ams_slot)
         phase = "start_command"
         start_command_sent = True  # From here, a transport failure has an uncertain outcome.
         session.publish(command, qos=1)
-        return {"ok": True, "status": "submitted", "remote": remote}
+        reply = session.wait_for_project_response(str(command["print"]["sequence_id"]))
+        result = str((reply or {}).get("result", "")).lower()
+        status = "accepted" if result == "success" else "rejected" if result in {"fail", "failed", "error"} else "submitted"
+        return {
+            "ok": True, "status": status, "remote": remote,
+            "command_response": reply,
+            "message": "The printer rejected the start command. Check its diagnostic message." if status == "rejected" else
+                "The printer acknowledged the command; waiting for this job to start." if status == "accepted" else
+                "Command sent, but the printer has not acknowledged this job. Check the printer before retrying.",
+        }
     except Exception as error:
         return {**_error(error), "phase": phase, "start_command_sent": start_command_sent}
 

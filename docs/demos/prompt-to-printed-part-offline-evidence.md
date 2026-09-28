@@ -95,3 +95,35 @@ AMS slot/material mapping, plate and selected orientation review, exact 3MF
 transfer and one-shot dispatch, printer progress and remaining time, and LAN
 camera streaming. Only then enable
 `WRIGHT_PRINT_DEMO_PRINTER_ENABLED=1` in the API process.
+
+## Sent-command monitoring correction (2026-09-28)
+
+The user submitted PLA package `8b2836ac3b996a7496abcf23f1f526c1b5018cd31f84484c757d4d0ef3285411`.
+The old adapter reported `submitted` after MQTT publication without recording a
+printer acknowledgment. Live readback afterward showed the unrelated cancelled
+"A Bendy Slime Desk Fidget", `FAILED`, 0%, 163 minutes, and 68 layers, with zero
+heater targets, print error 0, and no HMS alerts. The pumpkin package has 247
+layers and a roughly 54-minute estimate. The old progress panel was presenting
+the previous job's values as the new job.
+
+The adapter now separates command replies from job telemetry, correlates replies
+by sequence, and distinguishes sent, acknowledged, and rejected states. It uses
+the P1 SD-card URL and corrected bed-leveling key. These command corrections
+follow the referenced implementation; their effect on physical start still
+requires the next operator-initiated print. No new start or stop was sent while
+diagnosing this report.
+
+Checks: 24 Python regression cases passed, TypeScript compilation passed, and
+the actual pinned library's corrected command builder passed checks for five
+AMS slot mappings without transmitting commands. The updated session read live
+P1S timestamps, temperatures, fault state and AMS data. The served saved-result
+page showed **Printer available**, **Start not confirmed**, empty progress and
+time values, and disabled cancellation for the unrelated job. Its report time
+advanced automatically, with no browser page errors. Screenshot and browser
+check script: `.local-run/print-demo-offline/monitor-fixed-20260928.png` and
+`verify_monitor_ui.mjs`.
+
+The original dispatch record remains intact. A separate operator confirmation
+and fresh idle check now allow a recorded retry without claiming that the
+original attempt definitively failed before transmission. Physical start,
+selected-slot consumption and completion remain pending.

@@ -1,6 +1,8 @@
 import asyncio
 import importlib.util
 import json
+import os
+import time
 import sys
 import types
 from concurrent.futures import ThreadPoolExecutor
@@ -11,6 +13,7 @@ import pytest
 from workspace_service.print_part_demo_printer import (
     PrintDemoError, PrintDispatchRejected, PrinterStatusMonitor,
     call_printer, fail_print_dispatch_before_start, printer_status_summary, reserve_print_dispatch,
+    authorize_print_retry, finish_print_dispatch,
 )
 
 
@@ -24,6 +27,7 @@ from workspace_service.print_part_demo_printer import (
     ({"gcode_state": "RUNNING"}, False),
     ({"gcode_state": "PAUSE"}, False),
     ({"gcode_state": "UNKNOWN"}, False),
+    ({"telemetry_stale": True}, False),
 ])
 def test_cancelled_job_requires_explicit_clear_telemetry(changes, ready):
     telemetry = dict(connected=True, gcode_state="FAILED", print_error=0, hms=[])
@@ -51,6 +55,76 @@ def test_only_confirmed_failure_before_start_can_retry(tmp_path):
     assert len(archives) == 1
     assert json.loads(archives[0].read_text())["error"] == "Upload timed out before start"
     assert json.loads(receipt.read_text())["replay_permitted"] is False
+
+
+def test_checked_retry_retains_uncertain_history_and_requires_idle_unrelated_job(tmp_path):
+    package = tmp_path / "part.gcode.3mf"
+    args = dict(run_id="run", digest="a" * 64, ams_slot=0, remote_name="wright_aaaaaaaaaaaa.gcode.3mf")
+    receipt = reserve_print_dispatch(package, **args)
+    finish_print_dispatch(receipt, {"status": "submitted"})
+    retry_args = dict(run_id="run", digest="a" * 64)
+    status = dict(ready=True, job_name="old cancelled job")
+    with pytest.raises(PrintDemoError, match="one minute"):
+        authorize_print_retry(package, **retry_args, status=status)
+    os.utime(receipt, (time.time() - 120, time.time() - 120))
+    for changes in ({"ready": False}, {"telemetry_stale": True}, {"job_name": args["remote_name"]}):
+        with pytest.raises(PrintDemoError, match="freshly idle"):
+            authorize_print_retry(package, **retry_args, status={**status, **changes})
+    authorize_print_retry(package, **retry_args, status=status)
+    checked = json.loads(receipt.read_text())
+    assert checked["previous_attempt"]["state"] == "command_sent_awaiting_confirmation"
+    reserve_print_dispatch(package, **args)
+    assert len(list(tmp_path.glob("print-dispatch-attempt-*.json"))) == 1
+
+
+@pytest.mark.parametrize("response,state", [
+    ({"status": "submitted"}, "command_sent_awaiting_confirmation"),
+    ({"status": "accepted"}, "printer_acknowledged"),
+    ({"status": "rejected", "command_response": {"result": "fail", "reason": "file not found"}}, "printer_rejected"),
+])
+def test_dispatch_outcome_is_not_inferred_from_mqtt_delivery(tmp_path, response, state):
+    receipt = reserve_print_dispatch(tmp_path / "part.gcode.3mf", run_id="run", digest="digest", ams_slot=0, remote_name="name")
+    assert finish_print_dispatch(receipt, response) == state
+    saved = json.loads(receipt.read_text())
+    assert saved["printer_response"] == response
+    assert saved["replay_permitted"] is False
+
+
+def test_command_responses_are_correlated_and_do_not_refresh_or_corrupt_telemetry(monkeypatch):
+    class BaseSession:
+        def __init__(self, settings):
+            self.state = {}
+        def _on_message(self, client, userdata, msg):
+            self.state.setdefault("print", {}).update(json.loads(msg.payload).get("print", {}))
+        def raw_state(self):
+            return self.state
+        def snapshot(self, *, fresh=False):
+            return {"gcode_state": self.state.get("print", {}).get("gcode_state")}
+
+    upstream = types.ModuleType("bambu_p1s_mcp.printer")
+    upstream.PrinterSession = BaseSession
+    monkeypatch.setitem(sys.modules, "bambu_p1s_mcp", types.ModuleType("bambu_p1s_mcp"))
+    monkeypatch.setitem(sys.modules, "bambu_p1s_mcp.printer", upstream)
+    script = Path(__file__).parents[1] / "scripts/print_demo_p1s_session.py"
+    spec = importlib.util.spec_from_file_location("p1s_session_under_test", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    session = module.MonitoredPrinterSession(None)
+
+    def deliver(report):
+        session._on_message(None, None, types.SimpleNamespace(payload=json.dumps({"print": report}).encode()))
+
+    deliver({"command": "push_status", "gcode_state": "FAILED", "print_error": 0, "hms": []})
+    received = session.snapshot()["telemetry_at"]
+    deliver({"command": "project_file", "sequence_id": "41", "result": "fail", "print_error": 9})
+    assert session.wait_for_project_response("42", timeout=0) is None
+    snapshot = session.snapshot()
+    assert snapshot["telemetry_at"] == received
+    assert snapshot["print_error"] == 0
+    assert session.wait_for_project_response("41", timeout=0)["result"] == "fail"
+    assert session.wait_for_project_response("41", timeout=0) is None
+    session._received_monotonic = time.monotonic() - 31
+    assert session.snapshot()["telemetry_stale"] is True
 
 
 @pytest.mark.parametrize("phase,sent,retryable", [

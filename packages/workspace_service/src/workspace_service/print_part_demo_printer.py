@@ -19,6 +19,7 @@ import struct
 import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from datetime import datetime, timezone
 from uuid import uuid4
 from zipfile import ZipFile, BadZipFile
 from data_vault.lifecycle_lock import lifecycle_lock
@@ -325,14 +326,17 @@ def printer_status_summary(value: dict) -> dict:
     # before accepting that terminal state; unknown/error states stay blocked.
     hms = first(value.get("hms"), current.get("hms"))
     cancelled_or_finished = state == "FAILED" and fault == 0 and hms == []
-    ready = connected and fault in (None, 0) and (
+    stale = value.get("telemetry_stale") is True
+    ready = connected and not stale and fault in (None, 0) and not hms and (
         state in {"IDLE", "FINISH"} or cancelled_or_finished
     )
     reason = (
         "Printer is ready. The previous job has ended." if ready and state == "FAILED" else
         "Printer is ready." if ready else
         "Printer connection is unavailable." if not connected else
+        "Printer telemetry is out of date. Waiting for a fresh report." if stale else
         "Printer reported an error." if fault not in (None, 0) else
+        "Printer reports a diagnostic alert; check the details below." if hms else
         "Printer needs attention before another job." if state == "FAILED" else
         "Printer is busy with another job." if state in {"RUNNING", "PREPARE", "SLICING", "PAUSE"} else
         "Printer state is unknown; refresh before printing."
@@ -342,6 +346,16 @@ def printer_status_summary(value: dict) -> dict:
         "connected": connected,
         "ready": ready,
         "readiness_reason": reason,
+        "telemetry_at": value.get("telemetry_at"),
+        "telemetry_age_seconds": number(value.get("telemetry_age_seconds")),
+        "telemetry_stale": stale,
+        "print_error": fault,
+        "hms": hms if isinstance(hms, list) else [],
+        "stage": number(value.get("stage")),
+        "nozzle_c": number(value.get("nozzle_c")),
+        "nozzle_target_c": number(value.get("nozzle_target_c")),
+        "bed_c": number(value.get("bed_c")),
+        "bed_target_c": number(value.get("bed_target_c")),
         "job_name": first(value.get("job_name"), current.get("job_name")),
         "gcode_file": first(value.get("gcode_file"), current.get("gcode_file")),
         "progress": number(current.get("progress"), value.get("progress"), value.get("progress_percent"), value.get("mc_percent")),
@@ -361,11 +375,12 @@ def reserve_print_dispatch(package: Path, *, run_id: str, digest: str, ams_slot:
         "remote_name": remote_name,
         "state": "dispatch_started_outcome_unknown",
         "replay_permitted": False,
+        "submitted_at": datetime.now(timezone.utc).isoformat(),
     }
     with lifecycle_lock(receipt):
         if receipt.exists():
             previous = current_dispatch(package, run_id=run_id, digest=digest)
-            if previous.get("state") != "dispatch_failed_before_start" or previous.get("replay_permitted") is not True:
+            if previous.get("state") not in {"dispatch_failed_before_start", "retry_authorized_by_user"} or previous.get("replay_permitted") is not True:
                 raise PrintDemoError(
                     "This package already has a print dispatch attempt. Check the printer before creating another job."
                 )
@@ -384,15 +399,20 @@ def fail_print_dispatch_before_start(receipt: Path, error: PrintDispatchRejected
         temporary.replace(receipt)
 
 
-def finish_print_dispatch(receipt: Path, response: dict) -> None:
-    # A successful tool response establishes accepted dispatch, not a physical print.
+def finish_print_dispatch(receipt: Path, response: dict) -> str:
+    # MQTT delivery, printer acknowledgment and observed printing are distinct.
     payload = json.loads(receipt.read_text(encoding="utf-8"))
-    payload["state"] = "printer_tool_accepted"
+    payload["state"] = (
+        "printer_rejected" if response.get("status") == "rejected" else
+        "printer_acknowledged" if response.get("status") == "accepted" else
+        "command_sent_awaiting_confirmation"
+    )
     payload["printer_response"] = {
         key: value for key, value in response.items()
-        if key in {"status", "message", "filename", "job_id", "print_id", "remote"}
+        if key in {"status", "message", "filename", "job_id", "print_id", "remote", "command_response"}
     }
     receipt.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return payload["state"]
 
 
 def current_dispatch(package: Path, *, run_id: str, digest: str) -> dict | None:
@@ -406,6 +426,30 @@ def current_dispatch(package: Path, *, run_id: str, digest: str) -> dict | None:
     if value.get("run_id") != run_id or value.get("package_sha256") != digest:
         raise PrintDemoError("The print dispatch record does not match this package.")
     return value
+
+
+def authorize_print_retry(package: Path, *, run_id: str, digest: str, status: dict) -> None:
+    """Record an explicit operator check; retain uncertainty in the prior receipt."""
+    receipt = package.parent / "print-dispatch.json"
+    with lifecycle_lock(receipt):
+        dispatch = current_dispatch(package, run_id=run_id, digest=digest)
+        if not dispatch or dispatch.get("state") not in {
+            "dispatch_started_outcome_unknown", "printer_tool_accepted",
+            "command_sent_awaiting_confirmation", "printer_acknowledged", "printer_rejected",
+        }:
+            raise PrintDemoError("This attempt is not awaiting a checked retry.")
+        if time.time() - receipt.stat().st_mtime < 60:
+            raise PrintDemoError("Allow at least one minute for the printer to respond before checking a retry.")
+        if not status.get("ready") or status.get("telemetry_stale") or job_matches_dispatch(status, dispatch):
+            raise PrintDemoError("The printer must be freshly idle with no matching Wright job before retrying.")
+        # Preserve the original outcome; an operator check is not evidence that
+        # the earlier command failed before transmission.
+        dispatch["previous_attempt"] = {key: dispatch.get(key) for key in ("state", "printer_response", "submitted_at")}
+        dispatch.update(state="retry_authorized_by_user", replay_permitted=True,
+                        operator_checked_at=datetime.now(timezone.utc).isoformat())
+        temporary = receipt.with_name(f".print-dispatch-{uuid4().hex}.json")
+        temporary.write_text(json.dumps(dispatch, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(receipt)
 
 
 def job_matches_dispatch(status: dict, dispatch: dict) -> bool:

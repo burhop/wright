@@ -57,6 +57,11 @@
 .print-demo__legend label { display: flex; gap: 5px; align-items: center; font-size: 12px; }
 .print-demo__legend input { accent-color: #77dec8; }
 .print-demo__monitor { display: flex; flex-direction: column; gap: 12px; }
+.print-demo__retry { display: flex; flex-direction: column; gap: 10px; }
+.print-demo__retry label { display: flex; align-items: flex-start; gap: 7px; font-weight: 400; }
+.print-demo__retry input { flex-shrink: 0; margin-top: 3px; accent-color: #77dec8; }
+.print-demo__retry button { align-self: flex-start; }
+.print-demo__retry button:disabled { opacity: .5; cursor: not-allowed; }
 .print-demo__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
 .print-demo__stats span { display: flex; flex-direction: column; gap: 5px; padding: 10px; background: #0b1721; border-radius: 8px; min-width: 0; }
 .print-demo__stats b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; }

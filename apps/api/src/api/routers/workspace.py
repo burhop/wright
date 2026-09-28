@@ -1386,9 +1386,10 @@ async def print_demo_dispatch(
             except PrintDispatchRejected as error:
                 fail_print_dispatch_before_start(receipt, error)
                 raise
-            finish_print_dispatch(receipt, response)
+            dispatch_state = finish_print_dispatch(receipt, response)
             return {
-                "state": "printer_tool_accepted",
+                "state": dispatch_state,
+                "printer_response": response,
                 "package_path": relative,
                 "package_sha256": body.package_sha256,
                 "supports_enabled": facts["supports_enabled"],
@@ -1423,7 +1424,35 @@ async def print_demo_dispatch_state(
         "ams_slot": dispatch.get("ams_slot"),
         "remote_name": dispatch.get("remote_name"),
         "error": dispatch.get("error"),
+        "submitted_at": dispatch.get("submitted_at"),
+        "printer_response": dispatch.get("printer_response"),
     }
+
+
+@router.post("/print-demo/allow-retry")
+async def print_demo_allow_retry(
+    body: PrintPartCancelRequest,
+    request: Request,
+    operator_confirmed_not_started: bool = False,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    if not _print_demo_printer_enabled() or not operator_confirmed_not_started:
+        raise HTTPException(status_code=409, detail="Confirm at the printer that this job never started before allowing a retry.")
+    from workspace_service.print_part_demo_printer import (
+        PrintDemoError, authorize_print_retry, call_printer, current_package, printer_status_summary,
+    )
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+    scope = _workflow_source_scope(body.session_id, service)
+    runtime = WorkflowMcpRuntime(request.app.state.gateway_service, workspace_id=scope.workspace_id, session_id=body.session_id)
+    try:
+        package, _, _ = current_package(scope.workspace_dir, body.workflow_path, body.run_id, body.package_sha256)
+        status = printer_status_summary(await call_printer(runtime, "get_printer_status", {"fresh": True}))
+        authorize_print_retry(package, run_id=body.run_id, digest=body.package_sha256, status=status)
+        return {"state": "retry_authorized_by_user"}
+    except (PrintDemoError, OSError, ValueError) as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    finally:
+        await runtime.close()
 
 
 @router.post("/print-demo/cancel")

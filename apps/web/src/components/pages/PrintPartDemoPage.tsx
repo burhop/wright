@@ -253,6 +253,11 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   const [stopError, setStopError] = useState("");
   const [sent, setSent] = useState(false);
   const [dispatchState, setDispatchState] = useState("not_sent");
+  const [dispatchMessage, setDispatchMessage] = useState("");
+  const [dispatchReply, setDispatchReply] = useState<Record<string, unknown> | null>(null);
+  const [retryChecked, setRetryChecked] = useState(false);
+  const [allowingRetry, setAllowingRetry] = useState(false);
+  const [monitorNow, setMonitorNow] = useState(Date.now());
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState("");
   const [step, setStep] = useState("Describe the part");
@@ -287,11 +292,27 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   const selectedTray = printer?.trays.find((tray) => tray.slot === selectedSlot) ?? null;
   const materialMatches = Boolean(selectedTray && !selectedTray.empty && selectedTray.type === slicedFilament);
   const designMaterialLoaded = !printer || printer.trays.some((tray) => !tray.empty && tray.type === designFilament);
-  const printReady = Boolean(printerEnabled && printer?.ready && materialMatches && hasPreview && run?.run_id && !printing && !sent);
+  const telemetryStale = Boolean(printer?.telemetry_stale || (printer?.telemetry_at && monitorNow - Date.parse(printer.telemetry_at) > 30000));
+  const printReady = Boolean(printerEnabled && printer?.ready && !telemetryStale && materialMatches && hasPreview && run?.run_id && !printing && !sent);
   const activeJob = Boolean(printer && ["RUNNING", "PREPARE", "SLICING", "PAUSE"].includes(printer.status));
+  const expectedJob = packageFile ? `wright_${packageFile.sha256.slice(0, 12)}.gcode.3mf` : null;
+  const matchingJob = Boolean(sent && expectedJob && printer && !telemetryStale &&
+    [printer.job_name, printer.gcode_file].some((name) => name?.replaceAll("\\", "/").split("/").pop() === expectedJob));
+  const thisJobActive = activeJob && matchingJob;
+  const observedJob = matchingJob ? printer : null;
+  const jobPhase = printer?.status === "FINISH" ? "Completed" : printer?.status === "PAUSE" ? "Paused" :
+    printer?.status === "FAILED" ? "Stopped / failed" :
+    (printer?.bed_target_c ?? 0) > (printer?.bed_c ?? 0) + 5 && !printer?.current_layer ? "Heating bed" :
+    (printer?.nozzle_target_c ?? 0) > (printer?.nozzle_c ?? 0) + 5 && !printer?.current_layer ? "Heating nozzle" :
+    printer?.status === "PREPARE" || printer?.status === "SLICING" || (activeJob && !printer?.current_layer) ? "Preparing" :
+    printer?.status === "RUNNING" ? "Printing" : printer?.status ?? "Unknown";
+  const monitorState = !printer ? "Connection unavailable" : telemetryStale ? "Updates delayed" :
+    matchingJob ? jobPhase :
+    dispatchState === "printer_rejected" ? "Start rejected" : "Start not confirmed";
   const printBlockReason = sent || printing ? "" :
     !printerEnabled ? "Wright is waiting for print access. This page checks again automatically." :
     !printer ? "Checking the printer and AMS before printing." :
+    telemetryStale ? "Printer updates are delayed. Waiting for fresh telemetry before printing." :
     !printer.ready ? printer.readiness_reason :
     !hasPreview || !run?.run_id ? "Create and review a sliced 3MF before printing." :
     !selectedTray ? `Choose a loaded ${slicedFilament ?? "matching"} AMS slot before printing.` :
@@ -399,6 +420,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   useEffect(() => {
     if (!monitorEnabled) return;
     let active = true;
+    const clock = window.setInterval(() => setMonitorNow(Date.now()), 1000);
     let timer: number | undefined;
     const refresh = async (fresh = false) => {
       await workspaceService.getPrintDemoPrinterStatus(sessionId, fresh).then((value) => {
@@ -409,7 +431,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
       if (active) timer = window.setTimeout(() => void refresh(), 5000);
     };
     void refresh(true);
-    return () => { active = false; window.clearTimeout(timer); };
+    return () => { active = false; window.clearTimeout(timer); window.clearInterval(clock); };
   }, [monitorEnabled, sessionId]);
 
   useEffect(() => {
@@ -418,7 +440,9 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
     void workspaceService.getPrintDemoDispatch(sessionId, workflowPath, run.run_id, packageFile.sha256).then((value) => {
       if (!active) return;
       setDispatchState(value.state);
-      setSent(!["not_sent", "dispatch_failed_before_start"].includes(value.state));
+      setDispatchMessage(value.printer_response?.message ?? "");
+      setDispatchReply(value.printer_response?.command_response ?? null);
+      setSent(!["not_sent", "dispatch_failed_before_start", "retry_authorized_by_user"].includes(value.state));
       if (value.state !== "not_sent") {
         if (typeof value.ams_slot === "number") setSelectedSlot(value.ams_slot);
         if (value.error) setError(value.error);
@@ -434,6 +458,8 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
     setRunLogPath("");
     setSent(false);
     setDispatchState("not_sent");
+    setDispatchMessage("");
+    setDispatchReply(null);
     setStopMessage("");
     setStopError("");
     setConfirmCancel(false);
@@ -507,16 +533,18 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
     setPrinting(true);
     setError("");
     try {
-      await workspaceService.printDemoPackage(sessionId, workflowPath, run.run_id, packageFile.sha256, selectedSlot);
+      const response = await workspaceService.printDemoPackage(sessionId, workflowPath, run.run_id, packageFile.sha256, selectedSlot);
       setSent(true);
-      setDispatchState("printer_tool_accepted");
-      setStep("Print sent to P1S");
+      setDispatchState(response.state);
+      setDispatchMessage(response.printer_response?.message ?? "");
+      setDispatchReply(response.printer_response?.command_response ?? null);
+      setStep(response.state === "printer_rejected" ? "Printer rejected start" : "Print command sent");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "The printer did not accept the job.");
       setStep("Check printer dispatch");
       void workspaceService.getPrintDemoDispatch(sessionId, workflowPath, run.run_id, packageFile.sha256).then((value) => {
         setDispatchState(value.state);
-        setSent(!["not_sent", "dispatch_failed_before_start"].includes(value.state));
+        setSent(!["not_sent", "dispatch_failed_before_start", "retry_authorized_by_user"].includes(value.state));
       }).catch(() => {});
     } finally {
       setPrinting(false);
@@ -524,7 +552,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   };
 
   const cancelPrint = async () => {
-    if (!run?.run_id || !packageFile || !workflowPath || !sent || !activeJob || stopping) return;
+    if (!run?.run_id || !packageFile || !workflowPath || !sent || !thisJobActive || stopping) return;
     setStopping(true);
     setStopMessage("");
     setStopError("");
@@ -538,6 +566,21 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
       setStopping(false);
       setConfirmCancel(false);
     }
+  };
+
+  const allowRetry = async () => {
+    if (!retryChecked || !printer?.ready || telemetryStale || matchingJob || !run?.run_id || !packageFile || !workflowPath) return;
+    setAllowingRetry(true);
+    try {
+      const value = await workspaceService.allowPrintDemoRetry(sessionId, workflowPath, run.run_id, packageFile.sha256);
+      setDispatchState(value.state);
+      setSent(false);
+      setRetryChecked(false);
+      setError("");
+      setStep("Ready for another print attempt");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to allow another attempt.");
+    } finally { setAllowingRetry(false); }
   };
 
   return <div className="print-demo" data-testid="print-part-demo">
@@ -586,11 +629,13 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
       <section className="print-demo__card print-demo__printer" aria-label="Print and monitor">
         <span className="print-demo__step">03 / PRINT & MONITOR</span>
         <h2>Bambu P1S</h2>
-        <div className={`print-demo__readiness ${printer?.ready ? "print-demo__readiness--ready" : ""}`} role="status" aria-live="polite">
-          <strong>{printer?.ready ? "Printer available" : printer ? `Printer ${printer.status.toLowerCase()}` : monitorEnabled && !printerError ? "Checking printer…" : "Printer status unavailable"}</strong>
-          <small>{printer?.readiness_reason ?? (monitorEnabled ? "Checking the P1S connection…" : "Enable printer monitoring to see live status and AMS inventory.")}</small>
+        <div className={`print-demo__readiness ${printer?.ready && !telemetryStale ? "print-demo__readiness--ready" : ""}`} role="status" aria-live="polite">
+          <strong>{telemetryStale ? "Printer updates delayed" : printer?.ready ? "Printer available" : printer ? `Printer ${printer.status.toLowerCase()}` : monitorEnabled && !printerError ? "Checking printer…" : "Printer status unavailable"}</strong>
+          <small>{telemetryStale ? "Waiting for fresh telemetry before printing." : printer?.readiness_reason ?? (monitorEnabled ? "Checking the P1S connection…" : "Enable printer monitoring to see live status and AMS inventory.")}</small>
         </div>
         {printer && activeJob && <p className="print-demo__muted">Current job: {printer.job_name || "name unavailable"}{printer.progress != null ? ` · ${printer.progress}% complete` : ""}{printer.time_remaining_minutes != null ? ` · ${printer.time_remaining_minutes} min remaining` : ""}</p>}
+        {printer?.telemetry_at && <p className="print-demo__muted">Last printer report: {new Date(printer.telemetry_at).toLocaleTimeString()}{telemetryStale ? " · Updates are delayed" : " · Monitoring automatically"}</p>}
+        {printer && ((printer.print_error ?? 0) !== 0 || Boolean(printer.hms?.length)) && <div className="print-demo__error" role="alert">Printer diagnostic: {printer.print_error ? `print error ${printer.print_error}. ` : ""}{printer.hms?.map((item) => [item.attr, item.code].map((value) => typeof value === "number" ? value.toString(16).padStart(8, "0").match(/.{4}/g)?.join("-") : "unknown").join("-")).join(", ")}. Check the printer screen for the corresponding message.</div>}
         {monitorEnabled && <button type="button" className="print-demo__text-button" onClick={() => void workspaceService.getPrintDemoPrinterStatus(sessionId, true).then((value) => { setPrinter(value); setPrinterError(""); }).catch((reason: unknown) => { setPrinter(null); setPrinterError(reason instanceof Error ? reason.message : "Printer status unavailable."); })}>Refresh printer and AMS</button>}
         <label htmlFor="print-demo-ams-slot">AMS filament for this print</label>
         {printer?.trays.length ? <div className="print-demo__ams-inventory" aria-label="Live AMS inventory">{printer.trays.map((tray) => <span key={tray.slot}><i aria-hidden="true" style={{ backgroundColor: tray.color ? `#${tray.color.slice(0, 6)}` : undefined }} />{tray.label}: {tray.empty ? "empty" : tray.type}</span>)}</div> : null}
@@ -606,15 +651,19 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
         {printer?.trays.length === 0 && <p className="print-demo__muted">No AMS trays were reported. Check the AMS connection and refresh.</p>}
         {hasPreview && slicedFilament && <p className="print-demo__muted">This 3MF is sliced for {slicedFilament}. {selectedTray && !materialMatches ? `To use ${selectedTray.type}, create a new printable part with that material selected.` : "Choose a matching loaded slot."}</p>}
         <p className="print-demo__muted">Review the build plate, selected orientation, sliced layer and loaded filament before starting.</p>
-        <button type="button" className="print-demo__primary" disabled={!printReady} onClick={() => void print()}>{printing ? "Sending to printer…" : sent ? dispatchState === "dispatch_started_outcome_unknown" ? "Check print attempt" : "Print sent" : dispatchState === "dispatch_failed_before_start" ? "Retry print on P1S" : "Print on P1S"}</button>
+        <button type="button" className="print-demo__primary" disabled={!printReady} onClick={() => void print()}>{printing ? "Uploading and requesting print…" : sent ? matchingJob ? "Print sent" : "Start not confirmed" : dispatchState === "dispatch_failed_before_start" ? "Retry print on P1S" : "Print on P1S"}</button>
         {printBlockReason && <p className="print-demo__notice" role="status">{printBlockReason}</p>}
         {printerError && <p className="print-demo__error" role="status">{printerError}</p>}
         {sent && <div className="print-demo__monitor">
-          <p className="print-demo__muted">{dispatchState === "dispatch_started_outcome_unknown" ? "This attempt did not confirm a print start. Check the printer before trying again." : "The print command was accepted. Printer status confirms when printing starts."}</p>
-          <div className="print-demo__stats"><span><b>{printer?.status ?? "Connecting"}</b><small>Status</small></span><span><b>{printer?.progress == null ? "—" : `${printer.progress}%`}</b><small>Complete</small></span><span><b>{printer?.time_remaining_minutes == null ? "—" : `${printer.time_remaining_minutes} min`}</b><small>Estimated remaining</small></span></div>
-          {printer?.progress != null && <progress max={100} value={printer.progress} aria-label="Print progress" />}
-          {printer?.current_layer != null && <p className="print-demo__muted">Layer {printer.current_layer}{printer.total_layers != null ? ` of ${printer.total_layers}` : ""}</p>}
-          {!confirmCancel ? <button type="button" className="print-demo__cancel" disabled={!printerEnabled || !activeJob || stopping} onClick={() => setConfirmCancel(true)}>Cancel this print</button> : <div className="print-demo__cancel-confirm" role="group" aria-label="Confirm print cancellation"><p>Stop this Wright print on the P1S?</p><button type="button" className="print-demo__cancel" disabled={stopping || !activeJob} onClick={() => void cancelPrint()}>{stopping ? "Sending stop request…" : "Confirm stop"}</button><button type="button" className="print-demo__text-button" disabled={stopping} onClick={() => setConfirmCancel(false)}>Keep printing</button></div>}
+          <p className="print-demo__notice" role="status">{matchingJob ? "The printer is reporting this Wright job." : dispatchMessage || "The command was sent, but the printer has not confirmed this Wright job. Sending a command alone does not confirm a print start."}</p>
+          {sent && !matchingJob && printer?.ready && <p className="print-demo__muted">The printer is idle; this part has not been observed starting. {printer.job_name ? `Its last reported job is “${printer.job_name}”.` : ""} Progress from that job is excluded below.</p>}
+          {dispatchReply && <details><summary>Printer command response</summary><pre>{JSON.stringify(dispatchReply, null, 2)}</pre></details>}
+          {!matchingJob && printer?.ready && !telemetryStale && <div className="print-demo__notice print-demo__retry"><label><input type="checkbox" checked={retryChecked} onChange={(event) => setRetryChecked(event.target.checked)} /> I checked the P1S: this Wright job never started and the build plate is clear.</label><button type="button" className="print-demo__text-button" disabled={!retryChecked || allowingRetry} onClick={() => void allowRetry()}>{allowingRetry ? "Checking printer…" : "Allow another attempt"}</button><small>This checks live readiness and preserves the previous attempt. Then use Print on P1S to send again.</small></div>}
+          <div className="print-demo__stats"><span><b>{monitorState}</b><small>This print</small></span><span><b>{observedJob?.progress == null ? "—" : `${observedJob.progress}%`}</b><small>Complete</small></span><span><b>{observedJob?.time_remaining_minutes == null ? "—" : `${observedJob.time_remaining_minutes} min`}</b><small>Estimated remaining</small></span></div>
+          {observedJob?.progress != null && <progress max={100} value={observedJob.progress} aria-label="Print progress" />}
+          {observedJob?.current_layer != null && <p className="print-demo__muted">Layer {observedJob.current_layer}{observedJob.total_layers != null ? ` of ${observedJob.total_layers}` : ""}</p>}
+          {printer?.nozzle_c != null && <p className="print-demo__muted">Nozzle: {Math.round(printer.nozzle_c)} °C (target {printer.nozzle_target_c || "off"}) · Bed: {printer.bed_c == null ? "—" : Math.round(printer.bed_c)} °C (target {printer.bed_target_c || "off"})</p>}
+          {!confirmCancel ? <button type="button" className="print-demo__cancel" disabled={!printerEnabled || !thisJobActive || stopping} onClick={() => setConfirmCancel(true)}>Cancel this print</button> : <div className="print-demo__cancel-confirm" role="group" aria-label="Confirm print cancellation"><p>Stop this Wright print on the P1S?</p><button type="button" className="print-demo__cancel" disabled={stopping || !thisJobActive} onClick={() => void cancelPrint()}>{stopping ? "Sending stop request…" : "Confirm stop"}</button><button type="button" className="print-demo__text-button" disabled={stopping} onClick={() => setConfirmCancel(false)}>Keep printing</button></div>}
           {stopMessage && <p className="print-demo__notice" role="status">{stopMessage}</p>}
           {stopError && <p className="print-demo__error" role="alert">{stopError}</p>}
           <div className="print-demo__camera"><img src={`/api/workspace/print-demo/camera.mjpeg?session_id=${encodeURIComponent(sessionId)}`} alt="Live P1S chamber camera" onError={() => setCameraError(true)} />{cameraError && <span>Camera unavailable. Enable P1S LAN liveview and check the printer MCP connection.</span>}</div>

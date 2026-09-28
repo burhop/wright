@@ -16,6 +16,16 @@ export interface PrintDemoPrinterStatus {
   time_remaining_minutes: number | null;
   current_layer: number | null;
   total_layers: number | null;
+  telemetry_at?: string | null;
+  telemetry_age_seconds?: number | null;
+  telemetry_stale?: boolean;
+  print_error?: number | null;
+  hms?: Array<{ attr?: number; code?: number }>;
+  stage?: number | null;
+  nozzle_c?: number | null;
+  nozzle_target_c?: number | null;
+  bed_c?: number | null;
+  bed_target_c?: number | null;
   trays: Array<{ slot: number; label: string; type: string | null; color: string | null; empty: boolean; supported: boolean }>;
 }
 
@@ -1359,7 +1369,7 @@ export class WorkspaceService {
 
   async printDemoPackage(
     sessionId: string, workflowPath: string, runId: string, packageSha256: string, amsSlot: number,
-  ): Promise<{ state: string; receipt_path: string }> {
+  ): Promise<{ state: string; receipt_path: string; printer_response?: { message?: string; command_response?: Record<string, unknown> } }> {
     const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/print`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1372,7 +1382,7 @@ export class WorkspaceService {
     return response.json();
   }
 
-  async getPrintDemoDispatch(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string; ams_slot?: number; remote_name?: string; error?: string }> {
+  async getPrintDemoDispatch(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string; ams_slot?: number; remote_name?: string; error?: string; submitted_at?: string; printer_response?: { message?: string; command_response?: Record<string, unknown> } }> {
     const query = new URLSearchParams({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256 });
     const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/dispatch?${query}`, { cache: "no-store" });
     if (!response.ok) throw new Error("The print dispatch record is unavailable.");
@@ -1388,6 +1398,18 @@ export class WorkspaceService {
     if (!response.ok) {
       const payload = await response.json().catch(() => ({}));
       throw new Error(typeof payload.message === "string" ? payload.message : typeof payload.detail === "string" ? payload.detail : "The P1S did not accept the stop request.");
+    }
+    return response.json();
+  }
+
+  async allowPrintDemoRetry(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string }> {
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/allow-retry?operator_confirmed_not_started=true`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256 }),
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload.message ?? payload.detail ?? "The printer is not ready for a checked retry.");
     }
     return response.json();
   }
