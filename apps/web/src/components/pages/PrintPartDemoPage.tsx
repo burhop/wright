@@ -288,7 +288,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   const materialMatches = Boolean(selectedTray && !selectedTray.empty && selectedTray.type === slicedFilament);
   const designMaterialLoaded = !printer || printer.trays.some((tray) => !tray.empty && tray.type === designFilament);
   const printReady = Boolean(printerEnabled && printer?.ready && materialMatches && hasPreview && run?.run_id && !printing && !sent);
-  const activeJob = Boolean(printer && ["RUNNING", "PREPARE", "SLICING", "PAUSE", "FAILED"].includes(printer.status));
+  const activeJob = Boolean(printer && ["RUNNING", "PREPARE", "SLICING", "PAUSE"].includes(printer.status));
   const printBlockReason = sent || printing ? "" :
     !printerEnabled ? "Wright is waiting for print access. This page checks again automatically." :
     !printer ? "Checking the printer and AMS before printing." :
@@ -399,16 +399,17 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
   useEffect(() => {
     if (!monitorEnabled) return;
     let active = true;
-    const refresh = (fresh = false) => {
-      void workspaceService.getPrintDemoPrinterStatus(sessionId, fresh).then((value) => {
+    let timer: number | undefined;
+    const refresh = async (fresh = false) => {
+      await workspaceService.getPrintDemoPrinterStatus(sessionId, fresh).then((value) => {
         if (active) { setPrinter(value); setPrinterError(""); }
       }).catch((reason: unknown) => {
         if (active) { setPrinter(null); setPrinterError(reason instanceof Error ? reason.message : "Printer status unavailable."); }
       });
+      if (active) timer = window.setTimeout(() => void refresh(), 5000);
     };
-    refresh(true);
-    const timer = window.setInterval(() => refresh(), 5000);
-    return () => { active = false; window.clearInterval(timer); };
+    void refresh(true);
+    return () => { active = false; window.clearTimeout(timer); };
   }, [monitorEnabled, sessionId]);
 
   useEffect(() => {
@@ -417,9 +418,10 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
     void workspaceService.getPrintDemoDispatch(sessionId, workflowPath, run.run_id, packageFile.sha256).then((value) => {
       if (!active) return;
       setDispatchState(value.state);
+      setSent(!["not_sent", "dispatch_failed_before_start"].includes(value.state));
       if (value.state !== "not_sent") {
-        setSent(true);
         if (typeof value.ams_slot === "number") setSelectedSlot(value.ams_slot);
+        if (value.error) setError(value.error);
       }
     }).catch(() => {});
     return () => { active = false; };
@@ -514,7 +516,7 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
       setStep("Check printer dispatch");
       void workspaceService.getPrintDemoDispatch(sessionId, workflowPath, run.run_id, packageFile.sha256).then((value) => {
         setDispatchState(value.state);
-        if (value.state !== "not_sent") setSent(true);
+        setSent(!["not_sent", "dispatch_failed_before_start"].includes(value.state));
       }).catch(() => {});
     } finally {
       setPrinting(false);
@@ -604,11 +606,11 @@ export function PrintPartDemoPage({ sessionId, workspaceId, initialWorkflowPath,
         {printer?.trays.length === 0 && <p className="print-demo__muted">No AMS trays were reported. Check the AMS connection and refresh.</p>}
         {hasPreview && slicedFilament && <p className="print-demo__muted">This 3MF is sliced for {slicedFilament}. {selectedTray && !materialMatches ? `To use ${selectedTray.type}, create a new printable part with that material selected.` : "Choose a matching loaded slot."}</p>}
         <p className="print-demo__muted">Review the build plate, selected orientation, sliced layer and loaded filament before starting.</p>
-        <button type="button" className="print-demo__primary" disabled={!printReady} onClick={() => void print()}>{printing ? "Sending to printer…" : sent ? "Print sent" : "Print on P1S"}</button>
+        <button type="button" className="print-demo__primary" disabled={!printReady} onClick={() => void print()}>{printing ? "Sending to printer…" : sent ? dispatchState === "dispatch_started_outcome_unknown" ? "Check print attempt" : "Print sent" : dispatchState === "dispatch_failed_before_start" ? "Retry print on P1S" : "Print on P1S"}</button>
         {printBlockReason && <p className="print-demo__notice" role="status">{printBlockReason}</p>}
         {printerError && <p className="print-demo__error" role="status">{printerError}</p>}
         {sent && <div className="print-demo__monitor">
-          <p className="print-demo__muted">Dispatch: {dispatchState.replaceAll("_", " ")}. A sent command does not confirm that printing has started.</p>
+          <p className="print-demo__muted">{dispatchState === "dispatch_started_outcome_unknown" ? "This attempt did not confirm a print start. Check the printer before trying again." : "The print command was accepted. Printer status confirms when printing starts."}</p>
           <div className="print-demo__stats"><span><b>{printer?.status ?? "Connecting"}</b><small>Status</small></span><span><b>{printer?.progress == null ? "—" : `${printer.progress}%`}</b><small>Complete</small></span><span><b>{printer?.time_remaining_minutes == null ? "—" : `${printer.time_remaining_minutes} min`}</b><small>Estimated remaining</small></span></div>
           {printer?.progress != null && <progress max={100} value={printer.progress} aria-label="Print progress" />}
           {printer?.current_layer != null && <p className="print-demo__muted">Layer {printer.current_layer}{printer.total_layers != null ? ` of ${printer.total_layers}` : ""}</p>}

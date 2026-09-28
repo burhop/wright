@@ -7,6 +7,7 @@ read/print surface and verifies the exact workflow-created sliced package.
 from __future__ import annotations
 
 import base64
+import asyncio
 import hashlib
 import json
 import ipaddress
@@ -15,10 +16,12 @@ import re
 import socket
 import ssl
 import struct
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from uuid import uuid4
 from zipfile import ZipFile, BadZipFile
+from data_vault.lifecycle_lock import lifecycle_lock
 
 from .workflow_run_record import recent_workflow_runs
 from .workspace_path import WorkspacePath
@@ -26,6 +29,45 @@ from .workspace_path import WorkspacePath
 
 class PrintDemoError(ValueError):
     pass
+
+
+class PrintDispatchRejected(PrintDemoError):
+    """The trusted adapter confirms failure before any start command was sent."""
+
+
+class PrinterStatusMonitor:
+    """Share bounded read polling between tabs; dispatch still checks fresh state."""
+
+    def __init__(self):
+        self._cache = {}
+        self._pending = {}
+
+    async def get(self, key, load, *, fresh=False):
+        pending = self._pending.get(key)
+        if pending is not None:
+            task, requested_fresh = pending
+            value = await asyncio.shield(task)
+            if fresh and not requested_fresh:
+                return await self.get(key, load, fresh=True)
+            return value
+        cached = self._cache.get(key)
+        if not fresh and cached is not None and time.monotonic() - cached[0] < 5:
+            return cached[1]
+
+        async def read():
+            try:
+                value = await load()
+                self._cache[key] = (time.monotonic(), value)
+                return value
+            except Exception:
+                self._cache.pop(key, None)
+                raise
+            finally:
+                self._pending.pop(key, None)
+
+        task = asyncio.create_task(read())
+        self._pending[key] = (task, fresh)
+        return await asyncio.shield(task)
 
 
 def _printer_tool(runtime, name: str):
@@ -97,6 +139,9 @@ async def call_printer(runtime, name: str, arguments: dict | None = None) -> dic
     if value.get("ok") is False:
         detail = value.get("error")
         if isinstance(detail, str) and 0 < len(detail) <= 300 and tool.server_id == "bambu-p1s-mcp-marctheshark3":
+            if name == "print_3mf" and value.get("start_command_sent") is False and value.get("phase") in {"validation", "upload", "final_printer_check"}:
+                phase = str(value["phase"]).replace("_", " ")
+                raise PrintDispatchRejected(f"P1S {phase} failed: {detail}. No print was started; you can retry.")
             raise PrintDemoError(f"The P1S printer MCP reported: {detail}")
         raise PrintDemoError(f"The {name} printer MCP tool reported failure. Check its LAN connection and server log.")
     if name == "get_printer_status" and value.get("connected") is False:
@@ -275,8 +320,16 @@ def printer_status_summary(value: dict) -> dict:
     state = state.strip().upper() if isinstance(state, str) else "UNKNOWN"
     connected = value.get("connected") is True
     fault = number(value.get("print_error"), current.get("print_error"))
-    ready = connected and state in {"IDLE", "FINISH"} and fault in (None, 0)
+    # P1S keeps FAILED after cancellation. Bambu Studio treats that as a
+    # finished job, not an active print. Require explicit clear error telemetry
+    # before accepting that terminal state; unknown/error states stay blocked.
+    hms = first(value.get("hms"), current.get("hms"))
+    cancelled_or_finished = state == "FAILED" and fault == 0 and hms == []
+    ready = connected and fault in (None, 0) and (
+        state in {"IDLE", "FINISH"} or cancelled_or_finished
+    )
     reason = (
+        "Printer is ready. The previous job has ended." if ready and state == "FAILED" else
         "Printer is ready." if ready else
         "Printer connection is unavailable." if not connected else
         "Printer reported an error." if fault not in (None, 0) else
@@ -309,14 +362,26 @@ def reserve_print_dispatch(package: Path, *, run_id: str, digest: str, ams_slot:
         "state": "dispatch_started_outcome_unknown",
         "replay_permitted": False,
     }
-    try:
+    with lifecycle_lock(receipt):
+        if receipt.exists():
+            previous = current_dispatch(package, run_id=run_id, digest=digest)
+            if previous.get("state") != "dispatch_failed_before_start" or previous.get("replay_permitted") is not True:
+                raise PrintDemoError(
+                    "This package already has a print dispatch attempt. Check the printer before creating another job."
+                )
+            receipt.rename(receipt.with_name(f"print-dispatch-attempt-{uuid4().hex}.json"))
         with receipt.open("x", encoding="utf-8") as stream:
             json.dump(payload, stream, indent=2)
-    except FileExistsError as error:
-        raise PrintDemoError(
-            "This package already has a print dispatch attempt. Check the printer before creating another job."
-        ) from error
     return receipt
+
+
+def fail_print_dispatch_before_start(receipt: Path, error: PrintDispatchRejected) -> None:
+    with lifecycle_lock(receipt):
+        payload = json.loads(receipt.read_text(encoding="utf-8"))
+        payload.update(state="dispatch_failed_before_start", replay_permitted=True, error=str(error))
+        temporary = receipt.with_name(f".print-dispatch-{uuid4().hex}.json")
+        temporary.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(receipt)
 
 
 def finish_print_dispatch(receipt: Path, response: dict) -> None:

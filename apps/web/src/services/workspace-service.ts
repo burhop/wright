@@ -1367,12 +1367,12 @@ export class WorkspaceService {
     });
     if (!response.ok) {
       const payload = await response.json().catch(() => ({}));
-      throw new Error(typeof payload.detail === "string" ? payload.detail : "The printer did not accept this package.");
+      throw new Error(typeof payload.message === "string" ? payload.message : typeof payload.detail === "string" ? payload.detail : "The printer did not accept this package.");
     }
     return response.json();
   }
 
-  async getPrintDemoDispatch(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string; ams_slot?: number; remote_name?: string }> {
+  async getPrintDemoDispatch(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string; ams_slot?: number; remote_name?: string; error?: string }> {
     const query = new URLSearchParams({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256 });
     const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/dispatch?${query}`, { cache: "no-store" });
     if (!response.ok) throw new Error("The print dispatch record is unavailable.");
@@ -1387,7 +1387,7 @@ export class WorkspaceService {
     });
     if (!response.ok) {
       const payload = await response.json().catch(() => ({}));
-      throw new Error(typeof payload.detail === "string" ? payload.detail : "The P1S did not accept the stop request.");
+      throw new Error(typeof payload.message === "string" ? payload.message : typeof payload.detail === "string" ? payload.detail : "The P1S did not accept the stop request.");
     }
     return response.json();
   }

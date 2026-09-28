@@ -13,11 +13,12 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 from bambu_p1s_mcp.config import load_settings
-from bambu_p1s_mcp.ftp import upload_file
+from print_demo_p1s_transfer import upload_file
 from bambu_p1s_mcp.guard import require_confirm
 from bambu_p1s_mcp.payloads import project_file
 from bambu_p1s_mcp.printer import get_session
 from bambu_p1s_mcp.redact import public_error
+from workspace_service.print_part_demo_printer import printer_status_summary
 
 
 SERVER = FastMCP("wright-print-demo-p1s")
@@ -58,7 +59,7 @@ def printer_stop(expected_job_name: str, confirm: bool = False) -> dict:
         session = get_session()
         state = session.snapshot(fresh=True)
         reported = {Path(str(state.get(key) or "")).name for key in ("job_name", "gcode_file")}
-        if state.get("gcode_state") not in {"RUNNING", "PREPARE", "SLICING", "PAUSE", "FAILED"} or expected_job_name not in reported:
+        if state.get("gcode_state") not in {"RUNNING", "PREPARE", "SLICING", "PAUSE"} or expected_job_name not in reported:
             raise ValueError("The current P1S job does not match this Wright print")
         return {"ok": True, "sent": session.stop_print()}
     except Exception as error:
@@ -74,7 +75,9 @@ def printer_print(
     """Upload one sliced 3MF and start it with an explicit AMS slot mapping."""
     refused = require_confirm(confirm, "print")
     if refused:
-        return {"ok": False, "error": refused}
+        return {"ok": False, "error": refused, "phase": "validation", "start_command_sent": False}
+    phase = "validation"
+    start_command_sent = False
     try:
         if plate != 1 or use_ams is not True or bed_levelling is not True:
             raise ValueError("The demo requires plate 1, AMS and bed leveling")
@@ -89,7 +92,7 @@ def printer_print(
             raise ValueError("A sliced G-code 3MF is required")
         session = get_session()
         state = session.snapshot(fresh=True)
-        if not state.get("connected") or state.get("gcode_state") not in {"IDLE", "FINISH"} or state.get("print_error") not in (None, 0):
+        if not printer_status_summary(state)["ready"]:
             raise ValueError("The P1S is not ready to accept a print")
         trays = session.ams().get("trays", [])
         selected = [
@@ -104,9 +107,11 @@ def printer_print(
         settings = load_settings()
         if settings.model.upper() != "P1S":
             raise ValueError("This demo is configured for a P1S printer only")
+        phase = "upload"
         remote = upload_file(settings, str(source), remote_name=remote_name)
+        phase = "final_printer_check"
         latest = session.snapshot(fresh=True)
-        if not latest.get("connected") or latest.get("gcode_state") not in {"IDLE", "FINISH"} or latest.get("print_error") not in (None, 0):
+        if not printer_status_summary(latest)["ready"]:
             raise ValueError("The P1S became busy during upload; print was not started")
         latest_trays = session.ams().get("trays", [])
         if not any(
@@ -122,10 +127,12 @@ def printer_print(
         command = project_file(session.next_seq(), remote, plate=1, use_ams=True, bed_levelling=True)
         command["print"]["ams_mapping"] = [ams_slot]
         command["print"]["ams_mapping2"] = [{"ams_id": ams_slot // 4, "slot_id": ams_slot % 4}]
+        phase = "start_command"
+        start_command_sent = True  # From here, a transport failure has an uncertain outcome.
         session.publish(command, qos=1)
         return {"ok": True, "status": "submitted", "remote": remote}
     except Exception as error:
-        return _error(error)
+        return {**_error(error), "phase": phase, "start_command_sent": start_command_sent}
 
 
 if __name__ == "__main__":
