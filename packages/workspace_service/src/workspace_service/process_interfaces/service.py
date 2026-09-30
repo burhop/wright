@@ -216,8 +216,20 @@ class ProcessInterfaceService:
         )
 
     @cached_property
+    def runs(self):
+        from .runs import ProcessRunSupervisor
+
+        return ProcessRunSupervisor(self)
+
+    @cached_property
     def inputs(self) -> ProcessInputRepository:
         return ProcessInputRepository(self.db_path)
+
+    async def close(self):
+        # Do not create a supervisor solely to shut an unused service down.
+        supervisor = self.__dict__.get("runs")
+        if supervisor is not None:
+            await supervisor.close()
 
     @cached_property
     def interfaces(self) -> ProcessInterfaceRepository:

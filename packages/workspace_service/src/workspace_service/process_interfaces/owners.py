@@ -244,12 +244,23 @@ def _reports(app, resolved, run_id):
 async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=""):
     """Read one authorized run; mutations still belong to canonical use cases."""
     generated_at = datetime.now(timezone.utc).isoformat()
+    receipt = await asyncio.to_thread(
+        app.inputs.receipt_for_run,
+        resolved.process.workspace_id,
+        resolved.process.source_path,
+        run_id,
+    )
     try:
         view = await asyncio.to_thread(
             read_workflow_run,
             resolved.workspace_dir,
             resolved.process.source_path,
             run_id,
+            **(
+                {"run_log_path": receipt.run_log_path}
+                if receipt and receipt.run_log_path
+                else {}
+            ),
         )
         process = ProcessRef(
             workspace_id=resolved.process.workspace_id,
@@ -270,9 +281,6 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             "Open its canonical run log and check the exact process and run identity.",
             details={"record_error": getattr(error, "code", "invalid")},
         ) from error
-    receipt = await asyncio.to_thread(
-        app.inputs.receipt_for_run, process.workspace_id, process.source_path, run_id
-    )
     inputs = None
     if receipt:
         inputs = await asyncio.to_thread(

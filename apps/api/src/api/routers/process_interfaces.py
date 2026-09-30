@@ -1,6 +1,14 @@
 """Authenticated native transport over the owning process interface service."""
 
+import asyncio
+import json
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi.responses import StreamingResponse
+from agent_adapters.report_generation import (
+    generate_workflow_response,
+    decide_workflow_tool_action,
+)
 
 from api.routers.workspace import (
     _require_process_validation_role,
@@ -10,6 +18,8 @@ from api.routers.workspace import (
 from api.schemas.process_interfaces import (
     SetProcessInputsRequest,
     ProcessReadinessRequest,
+    ProcessRunRequest,
+    ProcessCancelRequest,
 )
 from core.process_interactions import (
     InputSnapshot,
@@ -17,6 +27,8 @@ from core.process_interactions import (
     ProcessRef,
     Readiness,
     Locator,
+    StartReceipt,
+    ProcessCancellationReceipt,
 )
 from core.process_validation import Digest, Identifier
 from core.tracing import traced
@@ -41,6 +53,8 @@ def _native_context(request, service, session_id, path, digest):
                 "process.inputs",
                 "process.results",
                 "process.navigate",
+                "process.start",
+                "process.cancel",
             }
         ),
     )
@@ -156,5 +170,142 @@ async def process_readiness(
             gateway=getattr(request.app.state, "gateway_service", None),
             session_id=body.session_id,
         )
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+
+@router.post("/runs", response_model=StartReceipt, status_code=202)
+@traced("api.process.interface.start")
+async def start_process_run(
+    body: ProcessRunRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    response.headers["Cache-Control"] = "no-store"
+    application, scope, process = _native_context(
+        request, service, body.session_id, body.path, body.expected_storage_digest
+    )
+    try:
+        return await application.runs.start(
+            scope,
+            process,
+            body.input_snapshot_id,
+            body.request_id,
+            expected_input_digest=body.expected_input_digest,
+            response_generator=generate_workflow_response,
+            action_generator=decide_workflow_tool_action,
+            gateway=getattr(request.app.state, "gateway_service", None),
+            session_id=body.session_id,
+            integration_policy_digest=body.integration_policy_digest,
+        )
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+
+@router.get("/runs/{run_id}", response_model=InteractionSnapshot)
+@traced("api.process.interface.attach")
+async def attach_process_run(
+    run_id: Identifier,
+    request: Request,
+    response: Response,
+    session_id: Identifier,
+    path: Locator,
+    expected_storage_digest: Digest,
+    page: str | None = Query(default=None, max_length=256),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    response.headers["Cache-Control"] = "no-store"
+    application, scope, process = _native_context(
+        request, service, session_id, path, expected_storage_digest
+    )
+    try:
+        application.runs._receipt(scope, process, run_id)
+        return await application.get_snapshot(
+            scope,
+            process,
+            run_id=run_id,
+            page=page,
+            gateway=getattr(request.app.state, "gateway_service", None),
+            session_id=session_id,
+        )
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+
+@router.get("/runs/{run_id}/events")
+@traced("api.process.interface.follow")
+async def follow_process_run(
+    run_id: Identifier,
+    request: Request,
+    session_id: Identifier,
+    path: Locator,
+    expected_storage_digest: Digest,
+    cursor: str | None = Query(default=None, max_length=256),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    application, scope, process = _native_context(
+        request, service, session_id, path, expected_storage_digest
+    )
+    cursor = cursor or request.headers.get("last-event-id")
+    if cursor is not None and len(cursor) > 256:
+        raise _transport_error(
+            ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The progress cursor exceeds its supported size.",
+                "Attach to the current run without that cursor.",
+            )
+        )
+    try:
+        first = await application.runs.events(scope, process, run_id, cursor=cursor)
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+    async def observed_events():
+        page = first
+        while True:
+            yield f"id: {page['cursor']}\nevent: progress\ndata: {json.dumps(page)}\n\n"
+            if not page["following"] and not page["has_more"]:
+                return
+            await asyncio.sleep(0 if page["has_more"] else 0.25)
+            try:
+                page = await application.runs.events(
+                    scope, process, run_id, cursor=page["cursor"]
+                )
+            except ProcessInterfaceError as error:
+                yield (
+                    "event: reconciliation\ndata: "
+                    + json.dumps(error.reason.model_dump(mode="json"))
+                    + "\n\n"
+                )
+                return
+
+    # The streaming request owns this observer only. The supervisor retains the
+    # executor task and durable start identity after ASGI disconnect cancellation.
+    return StreamingResponse(
+        observed_events(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-store",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@router.post("/runs/{run_id}/cancel", response_model=ProcessCancellationReceipt)
+@traced("api.process.interface.cancel")
+async def cancel_process_run(
+    run_id: Identifier,
+    body: ProcessCancelRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    response.headers["Cache-Control"] = "no-store"
+    application, scope, process = _native_context(
+        request, service, body.session_id, body.path, body.expected_storage_digest
+    )
+    try:
+        return await application.runs.cancel(scope, process, run_id, body.request_id)
     except ProcessInterfaceError as error:
         raise _transport_error(error) from error

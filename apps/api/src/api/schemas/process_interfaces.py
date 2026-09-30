@@ -18,3 +18,13 @@ class SetProcessInputsRequest(ProcessSourceRequest):
 
 class ProcessReadinessRequest(ProcessSourceRequest):
     input_snapshot_id: Identifier
+
+
+class ProcessRunRequest(ProcessReadinessRequest):
+    request_id: Identifier
+    expected_input_digest: Digest
+    integration_policy_digest: Digest | None = None
+
+
+class ProcessCancelRequest(ProcessSourceRequest):
+    request_id: Identifier

@@ -3458,6 +3458,190 @@
     "title": "InterfaceRevision",
     "type": "object"
   },
+  "ProcessCancellationReceipt": {
+    "additionalProperties": false,
+    "properties": {
+      "request_id": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Request Id",
+        "type": "string"
+      },
+      "run_id": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Run Id",
+        "type": "string"
+      },
+      "state": {
+        "const": "cancellation_requested",
+        "default": "cancellation_requested",
+        "title": "State",
+        "type": "string"
+      }
+    },
+    "required": [
+      "request_id",
+      "run_id"
+    ],
+    "title": "ProcessCancellationReceipt",
+    "type": "object"
+  },
+  "ProcessRunEventPage": {
+    "$defs": {
+      "ProcessRunEvent": {
+        "additionalProperties": false,
+        "description": "Recorder progress metadata; engineering payloads have their own readers.",
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "At"
+          },
+          "execution_kind": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Execution Kind"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Kind"
+          },
+          "sequence": {
+            "minimum": 1,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "step_id": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Step Id"
+          },
+          "task_id": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Task Id"
+          },
+          "task_title": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Task Title"
+          }
+        },
+        "required": [
+          "sequence"
+        ],
+        "title": "ProcessRunEvent",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "cursor": {
+        "maxLength": 256,
+        "minLength": 1,
+        "title": "Cursor",
+        "type": "string"
+      },
+      "events": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/ProcessRunEvent"
+        },
+        "maxItems": 256,
+        "title": "Events",
+        "type": "array"
+      },
+      "following": {
+        "title": "Following",
+        "type": "boolean"
+      },
+      "has_more": {
+        "title": "Has More",
+        "type": "boolean"
+      },
+      "run_id": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Run Id",
+        "type": "string"
+      },
+      "state": {
+        "enum": [
+          "preparing",
+          "ready",
+          "running",
+          "waiting_human",
+          "waiting_external",
+          "reconciliation_required",
+          "completed",
+          "failed",
+          "cancelled",
+          "cancellation_requested"
+        ],
+        "title": "State",
+        "type": "string"
+      }
+    },
+    "required": [
+      "run_id",
+      "state",
+      "cursor",
+      "has_more",
+      "following"
+    ],
+    "title": "ProcessRunEventPage",
+    "type": "object"
+  },
   "ProcessUI": {
     "$defs": {
       "ProcessRef": {
@@ -3722,6 +3906,20 @@
         "minLength": 1,
         "title": "Run Id",
         "type": "string"
+      },
+      "run_log_path": {
+        "anyOf": [
+          {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Run Log Path"
       }
     },
     "required": [

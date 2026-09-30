@@ -491,8 +491,13 @@ class WorkspaceService:
         return candidate
 
     async def close(self) -> None:
-        await self.workflow_runner.shutdown()
-        await self.executor.close()
+        try:
+            await self.process_interfaces.close()
+        finally:
+            try:
+                await self.workflow_runner.shutdown()
+            finally:
+                await self.executor.close()
 
     async def reconcile_runtime(
         self, session_id: str, *, mcp_engine: Any | None, sync_manager: Any | None

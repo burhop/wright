@@ -295,10 +295,16 @@ async def record_workflow_run(
     execution_context=None,
     run_id=None,
     required_step_ids=None,
+    run_log_path=None,
+    cancellation_status=None,
 ):
     from .workflow_resource_lease import ApplicationLease
 
-    identity = "workflow-run:" + uuid4().hex
+    identity = (
+        f"workflow-run:{workspace_id}:{run_id}"
+        if run_log_path is not None
+        else "workflow-run:" + uuid4().hex
+    )
     async with ApplicationLease(identity):
         return await _record_run(
             service=service,
@@ -312,6 +318,8 @@ async def record_workflow_run(
             execution_context=execution_context,
             run_id=run_id,
             required_step_ids=required_step_ids,
+            run_log_path=run_log_path,
+            cancellation_status=cancellation_status,
         )
 
 
@@ -400,12 +408,27 @@ async def _record_run(
     resume_checkpoint_id=None,
     run_id=None,
     required_step_ids=None,
+    run_log_path=None,
+    cancellation_status=None,
 ):
     started = datetime.now(timezone.utc)
     slug = PurePosixPath(source_path).name.removesuffix(".workflow.wflow")
     filename = (
         f"runs/{slug}/{started.strftime('%Y%m%dT%H%M%SZ')}-{uuid4().hex[:12]}.json"
     )
+    if run_log_path is not None:
+        from .workspace_path import WorkspacePath
+
+        if (
+            resume_record is not None
+            or not run_id
+            or run_log_path != f"runs/{slug}/{run_id}.json"
+        ):
+            raise ValueError("A retained run-log locator must match its exact new run")
+        target = WorkspacePath(workspace_dir).resolve(run_log_path)
+        if target.exists():
+            raise ValueError("A retained run-log identity cannot be executed again")
+        filename = run_log_path
     record = {
         "workflow_path": source_path,
         "source_digest": source_digest,
@@ -437,14 +460,19 @@ async def _record_run(
         json.dumps(record, ensure_ascii=False, indent=2),
         "overwrite" if resume_record is not None else "indexed",
     )
+    if run_log_path is not None and filename != run_log_path:
+        raise ValueError("A new run-log locator collided with existing evidence")
+
+    checkpoint_lock = asyncio.Lock()
 
     async def checkpoint():
-        await service.files.write_generated(
-            workspace_dir,
-            filename,
-            json.dumps(record, ensure_ascii=False, indent=2),
-            "overwrite",
-        )
+        async with checkpoint_lock:
+            await service.files.write_generated(
+                workspace_dir,
+                filename,
+                json.dumps(record, ensure_ascii=False, indent=2),
+                "overwrite",
+            )
 
     async def emit(event):
         record["events"].append(dict(event))
@@ -575,8 +603,16 @@ async def _record_run(
                 finished_at=datetime.now(timezone.utc).isoformat(),
             )
     except asyncio.CancelledError:
+        state = (
+            cancellation_status() if cancellation_status is not None else "cancelled"
+        )
+        if state not in {"cancelled", "interrupted"}:
+            state = "interrupted"
         record.update(
-            status="cancelled", error="Cancelled; completed tool operations remain."
+            status=state,
+            error="Cancelled; completed tool operations remain."
+            if state == "cancelled"
+            else "Runtime interrupted; completed tool operations remain.",
         )
         raise
     except Exception as error:
@@ -726,9 +762,16 @@ def _observed_run_state(record):
         )
     except OSError:
         active = None
-    return (
-        "running" if active is True else "interrupted" if active is False else "unknown"
-    )
+    if active is True:
+        return (
+            "cancellation_requested"
+            if any(
+                event.get("kind") == "cancellation_requested"
+                for event in record.get("events", [])
+            )
+            else "running"
+        )
+    return "interrupted" if active is False else "unknown"
 
 
 def _run_candidates(folder):

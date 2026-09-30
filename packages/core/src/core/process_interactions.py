@@ -295,6 +295,7 @@ class StartReceipt(Contract):
     input_snapshot_id: Identifier
     input_digest: Digest
     run_id: Identifier
+    run_log_path: Locator | None = None
     initial_outcome: Literal["accepted"] = "accepted"
     created_at: Timestamp
 
@@ -590,3 +591,35 @@ class InteractionSnapshot(Contract):
         ):
             raise ValueError("Readiness belongs to another input snapshot")
         return self
+
+
+class ProcessRunEvent(Contract):
+    """Recorder progress metadata; engineering payloads have their own readers."""
+
+    sequence: Annotated[int, Field(strict=True, ge=1)]
+    kind: Annotated[str, Field(max_length=256)] | None = None
+    at: Annotated[str, Field(max_length=256)] | None = None
+    task_id: Annotated[str, Field(max_length=256)] | None = None
+    task_title: Annotated[str, Field(max_length=256)] | None = None
+    step_id: Annotated[str, Field(max_length=256)] | None = None
+    execution_kind: Annotated[str, Field(max_length=256)] | None = None
+
+
+class ProcessRunEventPage(Contract):
+    run_id: Identifier
+    state: RunState
+    events: tuple[ProcessRunEvent, ...] = Field(default=(), max_length=PAGE_ITEMS)
+    cursor: Annotated[str, Field(min_length=1, max_length=256)]
+    has_more: StrictBool
+    following: StrictBool
+
+    @model_validator(mode="after")
+    def bounded_page(self):
+        checked_json(self.model_dump(mode="json"))
+        return self
+
+
+class ProcessCancellationReceipt(Contract):
+    request_id: Identifier
+    run_id: Identifier
+    state: Literal["cancellation_requested"] = "cancellation_requested"

@@ -185,6 +185,45 @@ passed**; combined source/run/review/continuation/082/security API regressions:
 No UI, live model/MCP or distribution completion is claimed. The full goal remains
 active, with T013/T014 backend-owned task/receipt/attachment/cancellation work next.
 
+Focused local API commit: `5a8f2ea0` (eight owned files/hunks). UTF-8 comparison
+confirms the original nine-line main.py prototype addition remains exactly
+unstaged. Main patch staging required LF normalization; a preservation check
+initially used the Windows default text encoding and was corrected to explicit
+UTF-8. Source/prototype contents were not rewritten by those checks.
+
+### 2026-09-30 — Backend-owned run identity, observation and local cancellation
+
+The prior status turn produced evidence: 35 run/record recovery tests passed,
+confirming the interrupted chat connection did not lose the existing changes.
+This implementation turn completes T013/T014 and the native transport portion of
+T015. T015 stays unchecked until the old source-start stream is migrated; its
+request-owned disconnect behavior is still present and is not claimed fixed.
+
+The new bounded supervisor composes the existing preparation/executor/recorder,
+retains exact receipts/log locators, survives observer loss and reconstructs
+recorded terminal/waiting/interrupted facts without replay. Recorded cancellation
+commands also retain backend ownership; storage/runtime cleanup and initial
+start publication races have focused tests. Workspace shutdown closes run owners
+before file workers, including its error path. Exact source/actor/run-bound event
+pages expose progress metadata rather than engineering/tool payloads.
+
+Native start/attach/SSE/cancel routes preserve current scope/auth/origin/RBAC and
+no-store errors/responses. Final focused checks: **26 passed**. Broader affected
+checks before two final added cases: **256 passed**. Tests were observed red for
+missing APIs/events, a cancellation observer race and immediate attachment, then
+green after implementation. Exact commands/limits are in
+[run evidence](evidence/run-supervision.md). Ruff passes; no live model, MCP,
+browser, engineering acceptance or distribution completion is claimed.
+
+Next: migrate the legacy source-start stream onto the same durable supervision,
+then provider observation/cancellation and the public client/common UI. The full
+M0–M5 goal stays active. No push/merge/release or physical dispatch is authorized.
+
+Final affected/security rerun: **272 passed, one existing skip**, 33.19 seconds.
+All checked handles reached completion. Twelve preserved runtime/prototype files,
+three protected review/binding files and the original main.py prototype patch
+match the baseline. T013/T014 are checked; no later task is checked prematurely.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

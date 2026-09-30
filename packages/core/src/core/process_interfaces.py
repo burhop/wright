@@ -293,6 +293,8 @@ def contract_schemas() -> dict[str, dict]:
         InteractionResponse,
         InteractionSnapshot,
         StartReceipt,
+        ProcessRunEventPage,
+        ProcessCancellationReceipt,
     )
 
     schemas = {
@@ -301,6 +303,8 @@ def contract_schemas() -> dict[str, dict]:
             InteractionSnapshot,
             InputSnapshot,
             StartReceipt,
+            ProcessRunEventPage,
+            ProcessCancellationReceipt,
             InteractionResponse,
             InterfaceManifest,
             InterfaceRevision,

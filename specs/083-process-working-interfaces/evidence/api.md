@@ -73,7 +73,9 @@ line endings. No reset, overwrite or wholesale staging was used.
 
 ## Next
 
-Backend-owned task/start/event/cancel work (T013–T016) remains pending. The old
+**Superseded in part by [run supervision](run-supervision.md):** T013/T014 and
+native start/status/event/cancel routes now exist with controlled ASGI evidence.
+Provider-aware work (T016) and legacy adaptation (T015) remain pending. The old
 source streaming endpoint still owns execution within its request until T015;
 these read/preparation routes do not pretend to fix disconnect behavior. Client,
 common/tailored UI, model generation, live engineering chains, migration and
