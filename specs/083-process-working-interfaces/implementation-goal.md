@@ -1,7 +1,7 @@
 # Ready-to-paste goal: complete process working interfaces
 
-**Workspace:** `D:/repos/wright`.  
-**Feature:** `083-process-working-interfaces`.  
+**Workspace:** `D:/repos/wright`.
+**Feature:** `083-process-working-interfaces`.
 **Implementation branch:** `codex/083-process-working-interfaces`.
 
 Saving this file does not start implementation. Submitting the block below is

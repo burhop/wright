@@ -1,0 +1,364 @@
+"""Pure presentation of owner facts; never executes or approves a process."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from core.process_interactions import (
+    Action,
+    ArtifactRef,
+    AssessmentRef,
+    InputDefinition,
+    InputSnapshot,
+    InteractionContext,
+    InteractionSnapshot,
+    NavigationTarget,
+    Observation,
+    OutputRef,
+    PendingInteraction,
+    ProcessRef,
+    Readiness,
+    Reason,
+    Timestamp,
+)
+from core.process_validation import ValidationReport, canonical_digest
+from core.redaction import redact_text
+
+from ..workflow_results import EngineeringResult
+from .errors import ProcessInterfaceError
+from .service import ProcessScope
+
+_STATES = {
+    "running": "running",
+    "completed": "completed",
+    "failed": "failed",
+    "pending_review": "waiting_human",
+    "awaiting_approval": "waiting_human",
+    "waiting_human": "waiting_human",
+    "continuation_ready": "waiting_human",
+    "changes_requested": "waiting_human",
+    "awaiting_external_outcome": "waiting_external",
+    "waiting_external": "waiting_external",
+    "external_action_not_dispatched": "failed",
+    "external_action_outcome_unknown": "reconciliation_required",
+    "interrupted": "reconciliation_required",
+    "unknown": "reconciliation_required",
+    "reconciliation_required": "reconciliation_required",
+    "cancellation_requested": "cancellation_requested",
+    "cancelled": "cancelled",
+}
+_OPERATIONS = {
+    "start": "process.start",
+    "respond": "process.respond",
+    "review": "process.review",
+    "action": "process.action",
+    "cancel": "process.cancel",
+    "read": "process.read",
+    "attach": "process.read",
+    "navigate": "process.navigate",
+}
+# Preview support is deliberately limited to implemented generic viewers. A
+# format name alone cannot establish a toolpath/parser/native-app capability.
+_VIEWERS = {
+    "stl": "stl",
+    "png": "image",
+    "jpg": "image",
+    "jpeg": "image",
+    "webp": "image",
+}
+
+
+@dataclass(frozen=True, slots=True)
+class RecordedRun:
+    """Read facts after the existing run owner has reconciled its lease/outcome."""
+
+    process: ProcessRef
+    run_id: str
+    status: str
+    cursor: int
+    observed_at: Timestamp
+    results: tuple[EngineeringResult, ...] = ()
+    input_snapshot: InputSnapshot | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class ProjectionFacts:
+    """Internal service composition, not a browser request or retained run table."""
+
+    process: ProcessRef
+    generated_at: Timestamp
+    input_snapshot: InputSnapshot | None = None
+    inputs: tuple[InputDefinition, ...] = ()
+    readiness: Readiness | None = None
+    run: RecordedRun | None = None
+    reports: tuple[ValidationReport, ...] = ()
+    interactions: tuple[PendingInteraction, ...] = ()
+    actions: tuple[Action, ...] = ()
+    observations: tuple[Observation, ...] = ()
+
+
+def _assessments(
+    result: EngineeringResult, reports: tuple[ValidationReport, ...]
+) -> tuple[AssessmentRef, ...]:
+    references = []
+    for report in reports:
+        assessment = report.assessment
+        for subject in assessment.request.subjects:
+            owner = subject.producer
+            if (
+                subject.result_id != result.id
+                or owner.run_id != result.provenance.run_id
+                or owner.step_id != result.provenance.task_id
+                or owner.output_port != result.provenance.output_port
+                or subject.sha256 not in {rep.sha256 for rep in result.representations}
+            ):
+                continue
+            counts = assessment.summary.counts
+            outcome = next(
+                (
+                    state
+                    for state in ("fail", "error", "blocked", "inconclusive")
+                    if counts.get(state, 0)
+                ),
+                None,
+            )
+            if outcome is None:
+                outcome = (
+                    "inconclusive"
+                    if not assessment.summary.evaluation_complete
+                    else "pass"
+                    if counts.get("pass", 0)
+                    else "not_applicable"
+                )
+            currentness = "current" if report.currentness.is_current else "stale"
+            if subject.id not in report.currentness.selected_subject_ids:
+                currentness = "unresolved"
+            references.append(
+                AssessmentRef(
+                    assessment_id=assessment.id,
+                    subject_digest=canonical_digest(subject),
+                    outcome=outcome,
+                    currentness=currentness,
+                )
+            )
+    return tuple(references)
+
+
+def project_output(
+    result: EngineeringResult, reports: tuple[ValidationReport, ...] = ()
+) -> OutputRef:
+    references = []
+    viewers = []
+    for rep in result.representations:
+        if rep.kind != "workspace_file" or not rep.sha256:
+            continue
+        # Exact paths and hashes from the result owner, never filenames guessed
+        # from logs or model prose. Native/value forms retain canonical result
+        # navigation until their own supported representation reader is used.
+        references.append(
+            ArtifactRef(
+                artifact_ref=rep.location, sha256=rep.sha256, result_id=result.id
+            )
+        )
+        viewer = _VIEWERS.get(rep.format.lower())
+        if viewer and viewer not in viewers:
+            viewers.append(viewer)
+    return OutputRef(
+        result_id=result.id,
+        step_id=result.provenance.task_id,
+        port_id=result.provenance.output_port,
+        role=result.artifact_role,
+        title=redact_text(result.name),
+        representations=tuple(references),
+        assessments=_assessments(result, reports),
+        supported_viewers=tuple(viewers),
+    )
+
+
+def _disabled(action: Action, reason: Reason) -> Action:
+    return Action.model_validate(
+        {**action.model_dump(), "enabled": False, "reasons": [reason, *action.reasons]}
+    )
+
+
+def project_interactions(
+    facts: ProjectionFacts, scope: ProcessScope
+) -> InteractionSnapshot:
+    scope.require(facts.process, "process.read")
+    if facts.input_snapshot and facts.input_snapshot.process != facts.process:
+        raise ProcessInterfaceError(
+            "SUBJECT_STALE",
+            "The prepared inputs belong to another process revision.",
+            "Prepare inputs for the current accepted process.",
+        )
+    run = facts.run
+    snapshot = run.input_snapshot if run else facts.input_snapshot
+    pinned_process = run.process if run else facts.process
+    if snapshot and snapshot.process != pinned_process:
+        raise ProcessInterfaceError(
+            "SUBJECT_STALE",
+            "The recorded inputs belong to another process revision.",
+            "Inspect the run's exact input snapshot.",
+        )
+    if run and (
+        run.process.workspace_id != facts.process.workspace_id
+        or run.process.source_path != facts.process.source_path
+    ):
+        raise ProcessInterfaceError(
+            "SCOPE_DENIED",
+            "The run belongs to another process.",
+            "Attach a run from this process's workspace.",
+        )
+    if run and any(result.provenance.run_id != run.run_id for result in run.results):
+        raise ProcessInterfaceError(
+            "SCOPE_DENIED",
+            "A result belongs to another run.",
+            "Reload the exact run's recorded results.",
+        )
+    if any(
+        report.assessment.request.workspace_id != facts.process.workspace_id
+        for report in facts.reports
+    ):
+        raise ProcessInterfaceError(
+            "SCOPE_DENIED",
+            "An assessment belongs to another workspace.",
+            "Reload this workspace's exact result assessments.",
+        )
+    if run and run.status not in _STATES:
+        raise ProcessInterfaceError(
+            "READINESS_UNSUPPORTED",
+            "This run's recorded state is unsupported.",
+            "Inspect its canonical run details before taking another action.",
+        )
+    state = (
+        _STATES[run.status]
+        if run
+        else "ready"
+        if facts.readiness and facts.readiness.state == "ready"
+        else "preparing"
+    )
+    outputs = tuple(
+        project_output(result, facts.reports) for result in (run.results if run else ())
+    )
+    actions = []
+    for action in facts.actions:
+        if not action.enabled:
+            actions.append(action)
+            continue
+        reason = None
+        if _OPERATIONS[action.operation] not in scope.capabilities:
+            reason = Reason(
+                code="SCOPE_DENIED",
+                message="This interface cannot perform that operation.",
+                correction="Use an authorized Wright process view.",
+            )
+        elif (
+            run
+            and run.process != facts.process
+            and action.operation not in {"read", "navigate", "attach"}
+        ):
+            reason = Reason(
+                code="SOURCE_CHANGED",
+                message="The accepted process has changed since this run started.",
+                correction="Inspect the original run and prepare the current process before another action.",
+            )
+        elif state == "reconciliation_required" and action.operation in {
+            "start",
+            "respond",
+            "review",
+            "action",
+        }:
+            reason = Reason(
+                code="OUTCOME_UNKNOWN",
+                message="The previous operation's outcome has not been confirmed.",
+                correction="Reconcile the recorded operation before submitting another action.",
+            )
+        actions.append(_disabled(action, reason) if reason else action)
+    navigation = [NavigationTarget(kind="process")]
+    if run:
+        navigation.append(NavigationTarget(kind="run", run_id=run.run_id))
+    for output in outputs:
+        navigation.append(
+            NavigationTarget(
+                kind="result", run_id=run.run_id, result_id=output.result_id
+            )
+        )
+        for assessment in output.assessments:
+            navigation.append(
+                NavigationTarget(
+                    kind="assessment",
+                    assessment_id=assessment.assessment_id,
+                    result_id=output.result_id,
+                    run_id=run.run_id,
+                )
+            )
+        for representation in output.representations:
+            navigation.append(
+                NavigationTarget(
+                    kind="evidence",
+                    artifact_ref=representation.artifact_ref,
+                    result_id=output.result_id,
+                    run_id=run.run_id,
+                )
+            )
+    for interaction in facts.interactions:
+        navigation.append(
+            NavigationTarget(
+                kind="block",
+                block_id=interaction.step_id,
+                run_id=run.run_id if run else None,
+            )
+        )
+    if any(
+        len(items) > 256
+        for items in (
+            facts.inputs,
+            outputs,
+            facts.interactions,
+            actions,
+            facts.observations,
+            navigation,
+        )
+    ):
+        raise ProcessInterfaceError(
+            "READINESS_UNSUPPORTED",
+            "This process view exceeds the supported page size.",
+            "Inspect the exact results in the canonical run view.",
+        )
+    readiness = facts.readiness
+    if readiness and (
+        readiness.process != pinned_process
+        or readiness.input_digest != (snapshot.digest if snapshot else None)
+    ):
+        readiness = None
+    # An attached run's values are its retained snapshot, never another current
+    # preparation. Legacy records without snapshots remain explicitly unknown.
+    bindings = {item.input_id: item for item in snapshot.bindings} if snapshot else {}
+    inputs = (
+        tuple(
+            InputDefinition.model_validate(
+                {**item.model_dump(), "current_value": bindings.get(item.input_id)}
+            )
+            for item in facts.inputs
+        )
+        if pinned_process == facts.process
+        else ()
+    )
+    return InteractionSnapshot(
+        context=InteractionContext(
+            process=pinned_process,
+            run_id=run.run_id if run else None,
+            input_snapshot_id=snapshot.snapshot_id if snapshot else None,
+            input_digest=snapshot.digest if snapshot else None,
+            cursor=run.cursor if run else 0,
+            generated_at=facts.generated_at,
+        ),
+        state=state,
+        inputs=inputs,
+        readiness=readiness,
+        outputs=outputs,
+        interactions=facts.interactions,
+        actions=tuple(actions),
+        observations=facts.observations,
+        navigation=tuple(navigation),
+    )

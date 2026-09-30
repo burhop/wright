@@ -1,7 +1,7 @@
 # Implementation and operator quickstart
 
-**Workspace:** `D:/repos/wright`.  
-**Planned branch:** `codex/083-process-working-interfaces`.  
+**Workspace:** `D:/repos/wright`.
+**Planned branch:** `codex/083-process-working-interfaces`.
 **Current state:** Planning only. Commands/routes/components in contracts are
 proposed until implementation evidence records them.
 

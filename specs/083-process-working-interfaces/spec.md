@@ -1,9 +1,9 @@
 # Feature Specification: Process working interfaces
 
-**Feature:** `083-process-working-interfaces`  
-**Prepared on:** `codex/prompt-to-3d-printed-part-demo`  
-**Implementation branch:** `codex/083-process-working-interfaces`  
-**Created:** 2026-09-30  
+**Feature:** `083-process-working-interfaces`
+**Prepared on:** `codex/prompt-to-3d-printed-part-demo`
+**Implementation branch:** `codex/083-process-working-interfaces`
+**Created:** 2026-09-30
 **Status:** Approved by goal submission on 2026-09-30; implementation active.
 
 ## Purpose and agreed scope

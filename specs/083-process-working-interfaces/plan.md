@@ -1,8 +1,8 @@
 # Implementation Plan: Process working interfaces
 
-**Feature:** `083-process-working-interfaces` | **Date:** 2026-09-30  
-**Prepared branch:** `codex/prompt-to-3d-printed-part-demo`  
-**Implementation branch:** `codex/083-process-working-interfaces`  
+**Feature:** `083-process-working-interfaces` | **Date:** 2026-09-30
+**Prepared branch:** `codex/prompt-to-3d-printed-part-demo`
+**Implementation branch:** `codex/083-process-working-interfaces`
 **Spec:** [spec.md](spec.md) | **Status:** Approved by goal submission on 2026-09-30; implementation active.
 
 ## Summary

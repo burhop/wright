@@ -1,7 +1,7 @@
 # Process UIs inside Wright
 
-**Date:** 30 September 2026.  
-**Direction:** [Workflow platform vision](workflow-platform-vision.md), V1-V7.  
+**Date:** 30 September 2026.
+**Direction:** [Workflow platform vision](workflow-platform-vision.md), V1-V7.
 **Status:** Agreed user experience and architectural direction. The reusable
 interaction contract, UI kit, and client remain proposed implementation work.
 

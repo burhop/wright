@@ -1,8 +1,8 @@
 # Wright workflow platform vision
 
-**Decision date:** 30 September 2026; includes the agreed process UI clarification.  
+**Decision date:** 30 September 2026; includes the agreed process UI clarification.
 **Authority:** The user's explicit architectural direction and request to retain
-it for future coding agents.  
+it for future coding agents.
 **Status:** Agreed product direction. Implementation support remains subject to
 the evidence and limits of each delivered feature.
 

@@ -1,6 +1,6 @@
 # Feature 083 progress
 
-**Date:** 2026-09-30.  
+**Date:** 2026-09-30.
 **State:** Goal submitted; implementation active on
 `codex/083-process-working-interfaces`. Planning history remains below. No physical
 action or protected campaign execution is authorized.
@@ -85,6 +85,33 @@ Remaining: projection/API, input readiness/overlays, run supervision, declared
 responses, client/kit/tabs, actual AI authoring, both engineering proofs and
 distribution/browser acceptance. No UI or live engineering proof is claimed.
 Next: T008 projection/currentness negative tests and T009 authority composition.
+
+Local milestone commit: `c417eca0` (contracts, persistent metadata, service boundary,
+approved plan and vision guidance). Runtime/prototype files remain outside this
+commit. A subsequent document-format cleanup fixes intentional Markdown trailing
+spaces that the first staged whitespace check reported; no runtime scope changed.
+
+### 2026-09-30 — Projection tests and pure fold (T008; T009 partial)
+
+Added 24 pure interaction/result/currentness tests and the presentation fold.
+Cases retain exact run/port/hashed representation, distinct recorded waiting/
+cancellation/unknown states, backend blocking reasons and restricted scopes.
+Two tests obtain real 082 structured-output assessments/currentness from the
+existing validator; changed bytes do not acquire their old assessment reference.
+A passing assessment does not grant a blocked action. Attached runs use their
+own frozen snapshot; legacy unknown inputs are not filled from a newer preparation.
+History keeps its original accepted source identity and blocks changed-source
+mutations. Evidence: [projection](evidence/projection.md).
+
+T009 remains pending for composition with source/input readiness, exact recorded
+run loading, checkpoint/review/current-action owners and paged runtime facts.
+This pure fold is not a served API or a replacement execution/status authority.
+
+Combined contracts/storage/service/projection and affected workspace/082/v2
+continuation/event-fold regressions: **187 passed, 1 host symlink skip**.
+Exact command is recorded in projection evidence. No live service handle is left
+running by these tests. All required runtime/UI/model/MCP/distribution work remains
+in the unchecked tasks; no goal completion or engineering acceptance is claimed.
 
 ## Implementation progress format
 

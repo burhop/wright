@@ -51,13 +51,13 @@ validating or using.
 graph TD
     User([Engineers / Designers]) <--> |Browser UI / Web3D| FE[React 19 Frontend SPA]
     FE <--> |Local Network HTTP / SSE / WS| BE[FastAPI API Gateway]
-    
+
     subgraph Local-First Engineering Appliance (e.g. GB10 / DGX Spark)
         BE <--> |Adapter Pattern| AA[Agent Adapters: Local/Remote LLM Engines]
         BE <--> |JSON-RPC over Pipes/WebSockets| TR[TR: McpEngine / Extensible Tool Registry]
         BE <--> |Workspace services| WS[Local workspace files and logs]
         BE <--> |SQL / WAL Mode| DB[(SQLite State Database)]
-        
+
         TR <--> |stdio / subprocess| SC[Selected MCP Toolchains: open-source, vendor, or local installs]
         TR <--> |webmcp / websocket| BR[Browser DOM Tools]
     end

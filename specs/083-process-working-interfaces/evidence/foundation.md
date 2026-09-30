@@ -65,7 +65,9 @@ Ruff check/format covers new core/storage/service modules and their new tests.
 Final foundation result: **104 passed in 5.22 seconds**. All fourteen retained
 runtime/prototype and protected campaign/binding hashes match the pre-implementation
 baseline. Feature context activation is the intentional recorded exception.
-`git diff --check` passes (host CRLF advisory warnings only).
+The initial unstaged `git diff --check` passed. The first staged check also
+included new planning Markdown and reported its intentional hard-break spaces;
+these were corrected in the subsequent document cleanup. No code check failed.
 
 ## Limits of evidence
 

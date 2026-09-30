@@ -1,6 +1,6 @@
 # Specification and plan readiness checklist
 
-**Feature:** [Process working interfaces](../spec.md).  
+**Feature:** [Process working interfaces](../spec.md).
 **Date:** 2026-09-30. Planning checks only; implementation evidence is pending.
 
 - [x] User journey and complete finish line recorded, including actual AI UI creation through Wright.
