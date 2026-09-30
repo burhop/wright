@@ -401,15 +401,44 @@ class WorkflowMcpRuntime:
                     "Correct the Python content and submit it again within the existing task budget.",
                 ) from error
 
-    def arguments(self, step, responses):
+    def preflight_values(self, step, responses):
+        """Check available root values without demanding future upstream outputs."""
+        if step.agent_task:
+            self.task_tools(step)
+            return
+        self.preflight(step)
         tool = self.resolve(step)
+        if step.arguments_from:
+            if step.arguments_from in responses:
+                self.arguments(step, responses)
+            return
+        unknown = {
+            name
+            for name, source in step.argument_sources.items()
+            if source not in responses
+        }
+        arguments = self._connected_arguments(step, responses, tool, partial=True)
+        schema = dict(tool.input_schema)
+        schema["required"] = [
+            name for name in schema.get("required", []) if name not in unknown
+        ]
+        self.validate(step, arguments, schema)
+
+    def _connected_arguments(self, step, responses, tool, *, partial=False):
         try:
             if step.arguments_from:
-                arguments = json.loads(responses[step.arguments_from])
+                value = responses[step.arguments_from]
+                arguments = json.loads(value) if isinstance(value, str) else value
             else:
-                arguments = dict(step.arguments)
+                arguments = {
+                    name: value
+                    for name, value in step.arguments.items()
+                    if name not in step.argument_sources
+                }
                 properties = tool.input_schema.get("properties", {})
                 for name, source in step.argument_sources.items():
+                    if partial and source not in responses:
+                        continue
                     value = responses[source]
                     schema = properties.get(name, {})
                     variants = [
@@ -423,7 +452,11 @@ class WorkflowMcpRuntime:
                         in (v.get("type") if isinstance(v.get("type"), list) else [])
                         for v in variants
                     )
-                    arguments[name] = value if accepts_text else json.loads(value)
+                    arguments[name] = (
+                        json.loads(value)
+                        if isinstance(value, str) and not accepts_text
+                        else value
+                    )
         except (ValueError, TypeError, KeyError):
             raise _invalid(
                 f"{step.title}: the connected response is not valid JSON for this input.",
@@ -431,6 +464,11 @@ class WorkflowMcpRuntime:
             ) from None
         if not isinstance(arguments, dict):
             raise _invalid(f"{step.title}: tool arguments must be a JSON object.")
+        return arguments
+
+    def arguments(self, step, responses):
+        tool = self.resolve(step)
+        arguments = self._connected_arguments(step, responses, tool)
         self.validate(step, arguments, tool.input_schema)
         return arguments
 
@@ -624,9 +662,9 @@ class WorkflowMcpRuntime:
     def task_tools(self, step):
         allowed = set(step.task_tool_allowlist)
         tools = tuple(
-            t for t in self.tools()
-            if t.server_id == step.server_id
-            and (not allowed or t.tool_name in allowed)
+            t
+            for t in self.tools()
+            if t.server_id == step.server_id and (not allowed or t.tool_name in allowed)
         )
         if not tools:
             raise _invalid(

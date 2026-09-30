@@ -244,6 +244,40 @@ class WorkflowIntegrationPolicyService:
             _fail(
                 "Integration authority does not match this workspace and exact definition."
             )
+        snapshot = getattr(plan, "input_snapshot", None)
+        if snapshot is not None:
+            from core.process_interactions import InputSnapshot
+
+            snapshot = InputSnapshot.model_validate_json(snapshot.model_dump_json())
+            if (
+                snapshot.process.workspace_id != workspace_id
+                or snapshot.process.source_path != source_path
+                or snapshot.process.source_digest != source_digest
+            ):
+                _fail("The input overlay does not match the enrolled process.")
+            # Version-1 grants bind source defaults and staged file hashes. They
+            # cannot implicitly authorize a newly supplied value/provider choice.
+            for binding in snapshot.bindings:
+                fields = plan.inputs.get(binding.input_id)
+                if fields is None:
+                    _fail("The input overlay is outside the enrolled inputs.")
+                settings = fields.get("settings", {})
+                if binding.kind == "file":
+                    same = (
+                        binding.reference.artifact_ref == settings.get("workspace_file")
+                        and grant["input_files"].get(binding.reference.artifact_ref)
+                        == binding.reference.sha256
+                    )
+                elif binding.kind == "value":
+                    same = canonical_json_bytes(binding.value) == canonical_json_bytes(
+                        settings.get("input_text")
+                    )
+                else:
+                    same = False
+                if not same:
+                    _fail(
+                        "The input overlay is not bound by this legacy integration grant."
+                    )
         paths = WorkspacePath(workspace_dir)
         try:
             for path, expected in {

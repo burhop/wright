@@ -134,6 +134,30 @@ process remains running. T009 stays unchecked for source-input/readiness
 composition; next work connects that implementation and thin authenticated API
 routes. All runtime/UI/live-model/live-MCP/distribution finish requirements remain.
 
+Local owner-composition milestone commit: `d1020aa5`. Only its 14 owned files
+were staged. Pre-existing runtime/prototype and protected campaign/binding hashes
+remain unchanged. No services or test handles remain running from this increment.
+
+### 2026-09-30 — Inputs and preparation composition (T009, T011, T012)
+
+The preceding user status turn checked the active goal and saved work. It made
+no implementation changes. This turn completed the shared source-default/run-input
+conversion, immutable overlay execution, generic read-only provider choices,
+schema/file/freshness/provenance checks, known MCP argument preflight and service
+preparation/readiness composition. Accepted source and recorded-run input ownership
+remain unchanged. T009, T011 and T012 are now checked; T010 remains next.
+
+Affected recorder/review/storage/continuation/082/input regressions: **354 passed,
+one host symlink skip**. Source/CAD/application checks: **75 passed**. Current
+contracts and public-option-freshness checks: **78 passed**. Exact commands,
+metadata format, corrections and limits are in [input evidence](evidence/inputs.md).
+The input checks and service behavior use controlled fixtures, not live engineering
+providers or generated interfaces. No test handle remains running after completion.
+
+No API/browser/common UI/model-generation/live-MCP/distribution proof is claimed.
+The full goal remains active. Next work wires authenticated source/input/readiness
+routes and the existing executor's backend-owned lifetime with durable identities.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

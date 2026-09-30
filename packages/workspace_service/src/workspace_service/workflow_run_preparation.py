@@ -31,6 +31,7 @@ async def prepare_authorized_workflow_run(
     source_digest: str,
     gateway,
     integration_policy_digest: str | None = None,
+    input_snapshot=None,
 ) -> PreparedWorkflowRun:
     """Public qualification and scoped integration readiness are separate gates.
 
@@ -90,6 +91,8 @@ async def prepare_authorized_workflow_run(
             path=source_path,
             expected_digest=source_digest,
             tool_runtime=open_tools,
+            workspace_id=workspace_id,
+            input_snapshot=input_snapshot,
         )
         context = None
         if grant is not None:

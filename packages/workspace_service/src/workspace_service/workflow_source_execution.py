@@ -198,6 +198,7 @@ class PromptWorkflow:
     revisions: dict[str, str] = field(default_factory=dict)
     review_context: dict = field(default_factory=dict)
     definition_digest: str = ""
+    input_snapshot: object | None = None
 
 
 def _invalid(
@@ -866,7 +867,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 not isinstance(port, str) or not isinstance(path, str)
                 for port, path in raw_dependencies.items()
             ):
-                raise _invalid(f"{title}: file dependencies must map input ports to workspace files.")
+                raise _invalid(
+                    f"{title}: file dependencies must map input ports to workspace files."
+                )
             for port, path in raw_dependencies.items():
                 endpoint = f"{block_id}.{port}"
                 connected = incoming.get(endpoint, [])
@@ -877,10 +880,14 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     or len(connected) != 1
                     or ports[connected[0]][2].get("kind") != "workspace_file"
                 ):
-                    raise _invalid(f"{title}: connect one named workspace file to {port}.")
+                    raise _invalid(
+                        f"{title}: connect one named workspace file to {port}."
+                    )
                 file_dependencies[connected[0]] = _safe_path(path)
-            handled = set(argument_sources.values()) | set(file_dependencies) | (
-                {arguments_from} if arguments_from else set()
+            handled = (
+                set(argument_sources.values())
+                | set(file_dependencies)
+                | ({arguments_from} if arguments_from else set())
             )
             if any(source not in handled for _, source in references):
                 raise _invalid(
@@ -1130,8 +1137,47 @@ def validate_workspace_authoring_shape(source: str):
 
 
 async def prepare_prompt_workflow(
-    *, service, workspace_dir: str, path: str, expected_digest: str, tool_runtime=None
-) -> tuple[PromptWorkflow, dict[str, str]]:
+    *,
+    service,
+    workspace_dir: str,
+    path: str,
+    expected_digest: str,
+    tool_runtime=None,
+    workspace_id: str | None = None,
+    input_snapshot=None,
+) -> tuple[PromptWorkflow, dict[str, object]]:
+    from dataclasses import replace
+
+    if input_snapshot is not None:
+        from core.process_interactions import InputSnapshot
+        from pydantic import ValidationError
+        from .process_interfaces.errors import ProcessInterfaceError
+
+        try:
+            input_snapshot = InputSnapshot.model_validate_json(
+                input_snapshot.model_dump_json()
+            )
+        except (ValidationError, AttributeError, TypeError, ValueError) as error:
+            raise ProcessInterfaceError(
+                "RESPONSE_INVALID",
+                "The input preparation failed its immutable identity check.",
+                "Prepare the process's inputs again before starting.",
+            ) from error
+        if (
+            workspace_id != input_snapshot.process.workspace_id
+            or path != input_snapshot.process.source_path
+        ):
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "The prepared inputs belong to another process workspace.",
+                "Select this workspace's exact prepared input snapshot.",
+            )
+        if expected_digest != input_snapshot.process.source_digest:
+            raise ProcessInterfaceError(
+                "SOURCE_CHANGED",
+                "The prepared inputs belong to another source revision.",
+                "Prepare values for the current accepted workflow.",
+            )
     try:
         document = await service.workflow_sources.read(workspace_dir, path)
     except WorkflowSourceStorageError as error:
@@ -1158,7 +1204,18 @@ async def prepare_prompt_workflow(
                 "The saved source bytes do not match their recorded identity.",
                 "Reload the workflow before running.",
             )
-    if any(step.tool_name or step.agent_task for step in plan.steps):
+    metadata_inputs = any(
+        "interaction_input" in fields.get("settings", {})
+        for fields in plan.inputs.values()
+    )
+    option_sources = any(
+        isinstance(
+            metadata := fields.get("settings", {}).get("interaction_input"), dict
+        )
+        and metadata.get("option_source")
+        for fields in plan.inputs.values()
+    )
+    if any(step.tool_name or step.agent_task for step in plan.steps) or option_sources:
         if callable(tool_runtime):
             tool_runtime = tool_runtime()
         if tool_runtime is None:
@@ -1235,7 +1292,66 @@ async def prepare_prompt_workflow(
                     )
         for expected_file in step.expected_files:
             paths.resolve(expected_file)
-    for key, fields in plan.inputs.items():
+    converted = None
+    if input_snapshot is not None or metadata_inputs:
+        from core.process_interactions import ProcessRef
+        from .process_interfaces.inputs import prepare_inputs, input_readiness
+        from .process_interfaces.errors import ProcessInterfaceError
+
+        if not workspace_id:
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "Typed process inputs require a registered workspace identity.",
+                "Run this process through its scoped Wright workspace service.",
+            )
+        converted = await prepare_inputs(
+            service=service,
+            workspace_dir=workspace_dir,
+            process=input_snapshot.process
+            if input_snapshot is not None
+            else ProcessRef(
+                workspace_id=workspace_id,
+                source_path=path,
+                source_digest=expected_digest,
+            ),
+            source=document.source,
+            bindings=input_snapshot.bindings if input_snapshot else (),
+            snapshot_id=input_snapshot.snapshot_id if input_snapshot else None,
+            created_at=input_snapshot.created_at if input_snapshot else None,
+            review_snapshots=review_snapshots if review_snapshots else None,
+            tool_runtime=tool_runtime,
+        )
+        readiness = input_readiness(converted)
+        if readiness.state != "ready":
+            reason = readiness.reasons[0]
+            raise ProcessInterfaceError(reason.code, reason.message, reason.correction)
+        if input_snapshot is not None and converted.snapshot != input_snapshot:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The prepared input content no longer matches its frozen snapshot.",
+                "Prepare the current exact values before starting this process.",
+            )
+        plan, values = converted.plan, converted.values
+        plan = replace(plan, input_snapshot=converted.snapshot)
+        if tool_runtime is not None:
+            connected_values = {
+                f"{key}.{port['key']}": (
+                    values[key].text
+                    if isinstance(values[key], WorkflowReference)
+                    and not values[key].image_url
+                    and not values[key].file_only
+                    else values[key]
+                )
+                for key, fields in plan.inputs.items()
+                for port in fields.get("outputs", [])
+                if key in values
+            }
+            for step in plan.steps:
+                if step.tool_name or step.agent_task:
+                    tool_runtime.preflight(step)
+                    if step.tool_name and hasattr(tool_runtime, "preflight_values"):
+                        tool_runtime.preflight_values(step, connected_values)
+    for key, fields in () if converted is not None else plan.inputs.items():
         settings = fields.get("settings", {})
         if not isinstance(settings, dict):
             raise _invalid(f"{fields['name']}: invalid input settings.")
@@ -1288,8 +1404,6 @@ async def prepare_prompt_workflow(
         ):
             raise _invalid(f"{fields['name']}: supply text before running.")
         values[key] = value
-    from dataclasses import replace
-
     plan = replace(plan, definition_digest=expected_digest)
     if review_snapshots:
         from dataclasses import replace
@@ -1738,28 +1852,45 @@ async def execute_prompt_workflow(
             for source_id, expected_path in step.file_dependencies.items():
                 value = responses.get(source_id)
                 if not isinstance(value, EngineeringResult):
-                    raise _invalid(f"{step.title}: its connected file was not produced.")
+                    raise _invalid(
+                        f"{step.title}: its connected file was not produced."
+                    )
                 representations = [
-                    rep for rep in value.representations
-                    if rep.kind == "workspace_file"
+                    rep for rep in value.representations if rep.kind == "workspace_file"
                 ]
-                if len(representations) != 1 or representations[0].location != expected_path:
-                    raise _invalid(f"{step.title}: its connected file differs from the declared input.")
+                if (
+                    len(representations) != 1
+                    or representations[0].location != expected_path
+                ):
+                    raise _invalid(
+                        f"{step.title}: its connected file differs from the declared input."
+                    )
                 rep = representations[0]
                 from .workspace_path import WorkspacePath
+
                 try:
-                    target = WorkspacePath(workspace_dir).resolve(expected_path, must_exist=True)
+                    target = WorkspacePath(workspace_dir).resolve(
+                        expected_path, must_exist=True
+                    )
                     with target.open("rb") as stream:
                         actual_hash = hashlib.file_digest(stream, "sha256").hexdigest()
                     actual_size = target.stat().st_size
                 except (OSError, ValueError) as error:
-                    raise _invalid(f"{step.title}: its connected file is unavailable.") from error
+                    raise _invalid(
+                        f"{step.title}: its connected file is unavailable."
+                    ) from error
                 if actual_hash != rep.sha256 or actual_size != rep.size_bytes:
-                    raise _invalid(f"{step.title}: its connected file changed after the previous stage.")
-                file_dependency_records.append({
-                    "path": expected_path, "sha256": actual_hash,
-                    "kind": "workspace_file", "source_port": source_id,
-                })
+                    raise _invalid(
+                        f"{step.title}: its connected file changed after the previous stage."
+                    )
+                file_dependency_records.append(
+                    {
+                        "path": expected_path,
+                        "sha256": actual_hash,
+                        "kind": "workspace_file",
+                        "source_port": source_id,
+                    }
+                )
             tool_values = {
                 key: value.text
                 if isinstance(value, WorkflowReference) and not value.image_url
@@ -1882,6 +2013,10 @@ async def execute_prompt_workflow(
                     {"path": prompt.path, "sha256": prompt.sha256, "kind": "text"}
                 )
                 prompt = prompt.text
+            if not isinstance(prompt, str):
+                from core.process_validation import canonical_json
+
+                prompt = canonical_json(prompt)
             for name, source_id in step.references:
                 reference = await document_value(source_id, step.title)
                 if isinstance(reference, WorkflowReference):
@@ -1909,6 +2044,10 @@ async def execute_prompt_workflow(
                         reference_records.append(reference_record)
                         prompt += context
                 else:
+                    if not isinstance(reference, str):
+                        from core.process_validation import canonical_json
+
+                        reference = canonical_json(reference)
                     prompt += f"\n\nReference material — {name}:\n{reference}"
             for source_id in ([step.prompt_from] if step.prompt_from else []) + [
                 source for _, source in step.references

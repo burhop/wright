@@ -20,7 +20,7 @@ paths are intended ownership.
 - [x] T006 Add additive snapshots/start/response receipts and UI/job repositories in `packages/data_vault/src/data_vault/process_input_repository.py`, `process_interface_repository.py` and `migrations.py`; cover old database/record migration in `packages/data_vault/tests/test_process_interface_migrations.py`.
 - [x] T007 Establish service boundaries/trace/error/redaction/limits in `packages/workspace_service/src/workspace_service/process_interfaces/` and wire owning services through `packages/workspace_service/src/workspace_service/service.py` without transport imports.
 - [x] T008 Add pure projection/currentness tests for source/results/082 reviews/permitted actions and missing evidence in `packages/workspace_service/tests/test_process_interaction_projection.py`.
-- [ ] T009 Implement interaction projection over existing authorities in `packages/workspace_service/src/workspace_service/process_interfaces/projection.py`, preserving exact subjects, observed freshness and unsupported capabilities.
+- [x] T009 Implement interaction projection over existing authorities in `packages/workspace_service/src/workspace_service/process_interfaces/projection.py`, preserving exact subjects, observed freshness and unsupported capabilities.
 - [ ] T010 Register thin authenticated route/schema composition in `apps/api/src/api/routers/process_interfaces.py`, `apps/api/src/api/schemas/process_interfaces.py` and `apps/api/src/api/main.py`; preserve existing workspace mount/auth/origin/RBAC.
 
 **Checkpoint:** Versioned projections/storage/API authority exist without a new executor.
@@ -30,8 +30,8 @@ paths are intended ownership.
 **Independent verification:** Common view runs a prepared supported process, shows
 real outputs and reattaches after close/disconnect without dispatch replay.
 
-- [ ] T011 [US1] Add missing-later-input/upstream-producer/file/schema/option-staleness tests in `packages/workspace_service/tests/test_process_input_readiness.py`.
-- [ ] T012 [US1] Implement immutable run input overlays and supported-path readiness in `packages/workspace_service/src/workspace_service/process_interfaces/inputs.py`, `readiness.py`, `workflow_run_preparation.py` and `workflow_source_execution.py` without rewriting accepted source.
+- [x] T011 [US1] Add missing-later-input/upstream-producer/file/schema/option-staleness tests in `packages/workspace_service/tests/test_process_input_readiness.py`.
+- [x] T012 [US1] Implement immutable run input overlays and supported-path readiness in `packages/workspace_service/src/workspace_service/process_interfaces/inputs.py`, `readiness.py`, `workflow_run_preparation.py` and `workflow_source_execution.py` without rewriting accepted source.
 - [ ] T013 [US1] Add durable start/lost-ack/disconnect/explicit-cancel/restart fixtures in `apps/api/tests/test_process_interface_run_lifecycle.py` and `packages/workspace_service/tests/test_process_run_supervisor.py`.
 - [ ] T014 [US1] Implement bounded backend-owned source-run task/lease supervision, durable start receipts and event attachment in `packages/workspace_service/src/workspace_service/process_interfaces/runs.py`; call the existing executor/recorder and reconstruct interrupted/waiting state safely.
 - [ ] T015 [US1] Adapt legacy source-start stream and new start/status/event/cancel routes in `apps/api/src/api/routers/workspace.py` and `process_interfaces.py` to detach observers without cancelling execution; reuse existing reviews/validation/result reads.

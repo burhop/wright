@@ -1213,6 +1213,25 @@
       "InputDefinition": {
         "additionalProperties": false,
         "properties": {
+          "available_options": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/InputOption"
+            },
+            "maxItems": 256,
+            "title": "Available Options",
+            "type": "array"
+          },
+          "binding_kind": {
+            "default": "value",
+            "enum": [
+              "value",
+              "file",
+              "option"
+            ],
+            "title": "Binding Kind",
+            "type": "string"
+          },
           "block_id": {
             "maxLength": 160,
             "minLength": 1,
@@ -1318,6 +1337,30 @@
               }
             ],
             "default": null
+          },
+          "options_observed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Options Observed At"
+          },
+          "options_stale_after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Options Stale After"
           },
           "port_id": {
             "maxLength": 160,
@@ -1444,6 +1487,33 @@
           "classification"
         ],
         "title": "InputDependency",
+        "type": "object"
+      },
+      "InputOption": {
+        "additionalProperties": false,
+        "properties": {
+          "option_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Option Id",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        },
+        "required": [
+          "option_id",
+          "title",
+          "value"
+        ],
+        "title": "InputOption",
         "type": "object"
       },
       "InteractionContext": {

@@ -386,24 +386,37 @@ class InputDependency(Contract):
         return self
 
 
+class InputOption(Contract):
+    option_id: Identifier
+    title: Text
+    value: InlineJSON
+
+
 class InputDefinition(Contract):
     input_id: Identifier
     block_id: Identifier
     port_id: Identifier
     title: Text
     value_schema: dict[str, JsonValue]
+    binding_kind: Literal["value", "file", "option"] = "value"
     required: StrictBool = True
     unit: Identifier | None = None
     frame: Identifier | None = None
     default: InputBinding | None = None
     current_value: InputBinding | None = None
     option_source: CapabilityRef | None = None
+    available_options: tuple[InputOption, ...] = Field(
+        default=(), max_length=PAGE_ITEMS
+    )
+    options_observed_at: Timestamp | None = None
+    options_stale_after: Timestamp | None = None
     dependencies: tuple[InputDependency, ...] = Field(default=(), max_length=PAGE_ITEMS)
 
     _schema = field_validator("value_schema")(checked_value_schema)
 
     @model_validator(mode="after")
     def exact_input(self):
+        unique_ids(self.available_options, "option_id")
         if any(
             value and value.input_id != self.input_id
             for value in (self.default, self.current_value)

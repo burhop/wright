@@ -8,7 +8,13 @@ from typing import TYPE_CHECKING, get_args
 
 from pydantic import TypeAdapter
 
-from core.process_interactions import NavigationTarget, ProcessCapability, ProcessRef
+from core.process_interactions import (
+    Action,
+    NavigationTarget,
+    ProcessCapability,
+    ProcessRef,
+    Reason,
+)
 from core.process_validation import Identifier
 from core.tracing import traced
 from data_vault.process_input_repository import ProcessInputRepository
@@ -85,7 +91,8 @@ class ProcessInterfaceService:
         scope: ProcessScope,
         process: ProcessRef,
         *,
-        run_id: str,
+        run_id: str | None = None,
+        input_snapshot_id: str | None = None,
         page: str | None = None,
         gateway=None,
         session_id: str = "",
@@ -94,10 +101,119 @@ class ProcessInterfaceService:
         from .projection import project_interactions
 
         resolved = await self.resolve_process(scope, process)
-        facts = await recorded_run_facts(
-            self, resolved, run_id, gateway=gateway, session_id=session_id
-        )
+        if run_id is not None:
+            if input_snapshot_id is not None:
+                raise ProcessInterfaceError(
+                    "RESPONSE_INVALID",
+                    "A recorded run owns its original inputs.",
+                    "Attach the run without overriding its frozen input identity.",
+                )
+            facts = await recorded_run_facts(
+                self, resolved, run_id, gateway=gateway, session_id=session_id
+            )
+        else:
+            from datetime import datetime, timezone
+            from .readiness import prepare_values, qualify_inputs
+            from .projection import ProjectionFacts
+
+            frozen = (
+                self._input_snapshot(process, input_snapshot_id)
+                if input_snapshot_id
+                else None
+            )
+            prepared = await prepare_values(
+                self, resolved, snapshot=frozen, gateway=gateway, session_id=session_id
+            )
+            readiness = await qualify_inputs(
+                self, resolved, prepared, gateway=gateway, session_id=session_id
+            )
+            # Reading defaults does not create persistent preparation. The client
+            # calls setInputs, including for unchanged defaults, before start.
+            if frozen is None:
+                readiness = type(readiness).model_validate(
+                    {**readiness.model_dump(), "input_digest": None}
+                )
+            facts = ProjectionFacts(
+                process=process,
+                generated_at=datetime.now(timezone.utc).isoformat(),
+                input_snapshot=frozen,
+                inputs=prepared.definitions,
+                readiness=readiness,
+                actions=(
+                    Action(
+                        action_id="start",
+                        operation="start",
+                        title="Start process",
+                        enabled=frozen is not None and readiness.state == "ready",
+                        subject_digest=frozen.digest if frozen is not None else None,
+                        reasons=readiness.reasons
+                        if readiness.state != "ready"
+                        else ()
+                        if frozen is not None
+                        else (
+                            Reason(
+                                code="INPUT_REQUIRED",
+                                message="Prepare the inputs before starting.",
+                                correction="Save these values as this run's input preparation.",
+                            ),
+                        ),
+                    ),
+                ),
+            )
         return project_interactions(facts, scope, page=page)
+
+    def _input_snapshot(self, process, snapshot_id):
+        try:
+            snapshot = self.inputs.get_snapshot(process.workspace_id, snapshot_id)
+        except KeyError as error:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The input preparation is unavailable in this workspace.",
+                "Prepare this process's inputs again.",
+            ) from error
+        if snapshot.process != process:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "These inputs belong to a different accepted process.",
+                "Prepare inputs for this exact source revision.",
+            )
+        return snapshot
+
+    @traced("process.interface.inputs.set")
+    async def set_inputs(
+        self, scope, process, *, bindings=(), gateway=None, session_id=""
+    ):
+        from .readiness import prepare_values
+
+        resolved = await self.resolve_process(
+            scope, process, operation="process.inputs"
+        )
+        prepared = await prepare_values(
+            self, resolved, bindings=bindings, gateway=gateway, session_id=session_id
+        )
+        self.inputs.put_snapshot(prepared.snapshot)
+        return prepared
+
+    @traced("process.interface.readiness.check")
+    async def check_readiness(
+        self, scope, process, input_snapshot_id, *, gateway=None, session_id=""
+    ):
+        from .readiness import prepare_values, qualify_inputs
+
+        resolved = await self.resolve_process(scope, process)
+        frozen = self._input_snapshot(process, input_snapshot_id)
+        prepared = await prepare_values(
+            self, resolved, snapshot=frozen, gateway=gateway, session_id=session_id
+        )
+        if prepared.snapshot != frozen:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The prepared inputs no longer match the frozen values.",
+                "Prepare the current values before starting.",
+            )
+        return await qualify_inputs(
+            self, resolved, prepared, gateway=gateway, session_id=session_id
+        )
 
     @cached_property
     def inputs(self) -> ProcessInputRepository:
