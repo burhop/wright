@@ -5,10 +5,12 @@ here. Other external transports need their own authorized dispatcher; no tool or
 network destination is inferred from a user-authored checkpoint.
 """
 
-from dataclasses import asdict
+from dataclasses import asdict, dataclass
 import asyncio
 import hashlib
 import json
+
+from data_vault.workflow_continuation_repository import WorkflowContinuationCheckpoint
 
 from .workflow_execution_continuation import input_identities
 from .workflow_external_actions import (
@@ -27,6 +29,7 @@ from .workflow_run_record import (
     record_workflow_resume,
 )
 from .workflow_source_execution import (
+    WorkflowSourceExecutionError,
     prepare_prompt_workflow,
     execute_prompt_workflow,
     _approval_settings,
@@ -189,6 +192,57 @@ async def _prepare(
         if runtime is not None:
             await runtime.close()
         raise
+
+
+@dataclass(frozen=True)
+class WorkflowApprovalInspection:
+    checkpoint: WorkflowContinuationCheckpoint
+    can_decide: bool
+    can_resume: bool
+    resume_error_code: str | None = None
+    resume_correction: str | None = None
+
+
+async def inspect_workflow_approval(
+    *,
+    service,
+    workspace_id,
+    workspace_dir,
+    checkpoint,
+    subject_digest,
+    gateway=None,
+    session_id="",
+):
+    """Read permission using the same currentness/preparation as real mutations.
+
+    This never acquires dispatch authority, records a decision, consumes a
+    checkpoint or dispatches its external operation. Mutations rerun these checks
+    under their canonical lease; an inspection result is not a reusable grant.
+    """
+    current = _current(service, checkpoint, workspace_id, subject_digest)
+    if current.state not in {"pending", "approved"}:
+        return WorkflowApprovalInspection(current, False, False)
+    _, _, runtime, context = await _prepare(
+        service=service,
+        workspace_id=workspace_id,
+        workspace_dir=workspace_dir,
+        checkpoint=current,
+        gateway=gateway,
+        session_id=session_id,
+    )
+    try:
+        if current.state == "pending":
+            return WorkflowApprovalInspection(current, True, False)
+        try:
+            _dispatch_kind(current, context)
+        except WorkflowSourceExecutionError as error:
+            return WorkflowApprovalInspection(
+                current, False, False, error.code, error.correction
+            )
+        return WorkflowApprovalInspection(current, False, True)
+    finally:
+        if runtime is not None:
+            await runtime.close()
 
 
 async def decide_workflow_approval(

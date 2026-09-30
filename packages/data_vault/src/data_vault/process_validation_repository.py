@@ -360,6 +360,39 @@ class ProcessValidationRepository:
                 raise KeyError("Validation assessment not found in this workspace")
             return Assessment.model_validate_json(row["payload_json"])
 
+    @traced("db.process_validation.run_assessments")
+    def assessment_ids_for_run(
+        self, workspace_id: str, run_id: str, *, cursor: int = 0, limit: int = 256
+    ) -> tuple[tuple[int, str], ...]:
+        """Page immutable identities; currentness remains the validator's check.
+
+        Canonical requests carry run_id. Earlier explicit validation requests can
+        still be located by exact subject producer identity, never by filename.
+        The query exposes no assessment or request from another workspace.
+        """
+        if (
+            type(cursor) is not int
+            or cursor < 0
+            or type(limit) is not int
+            or not 1 <= limit <= 256
+        ):
+            raise ValueError("Choose a bounded assessment page and cursor")
+        with connect_state_db(self.db_path, read_only=True) as db:
+            rows = db.execute(
+                """SELECT a.sequence,a.id FROM process_validation_assessments a
+                JOIN process_validation_attempts t ON t.id=a.attempt_id AND t.workspace_id=a.workspace_id
+                WHERE a.workspace_id=? AND a.sequence>? AND (
+                    json_extract(t.request_json,'$.run_id')=? OR (
+                        json_extract(t.request_json,'$.run_id') IS NULL AND EXISTS (
+                            SELECT 1 FROM json_each(t.request_json,'$.subjects') s
+                            WHERE json_extract(s.value,'$.producer.run_id')=?
+                        )
+                    )
+                ) ORDER BY a.sequence LIMIT ?""",
+                (workspace_id, cursor, run_id, run_id, limit),
+            ).fetchall()
+        return tuple((row["sequence"], row["id"]) for row in rows)
+
     def assessment_successors(
         self, workspace_id: str, assessment_id: str
     ) -> tuple[str, ...]:

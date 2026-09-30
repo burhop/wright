@@ -178,6 +178,18 @@ class ProcessInputRepository:
             raise KeyError("Start request not found in principal/process scope")
         return StartReceipt.model_validate_json(row["payload_json"])
 
+    @traced("process.start.run_receipt")
+    def receipt_for_run(
+        self, workspace_id: str, source_path: str, run_id: str
+    ) -> StartReceipt | None:
+        """Resolve frozen input identity; this receipt never determines run state."""
+        with connect_state_db(self.db_path, read_only=True) as db:
+            row = db.execute(
+                "SELECT payload_json FROM process_start_receipts WHERE workspace_id=? AND source_path=? AND run_id=?",
+                (workspace_id, source_path, run_id),
+            ).fetchone()
+        return StartReceipt.model_validate_json(row["payload_json"]) if row else None
+
     @traced("process.response.persist")
     def put_response(
         self, response: InteractionResponse

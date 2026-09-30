@@ -113,6 +113,27 @@ Exact command is recorded in projection evidence. No live service handle is left
 running by these tests. All required runtime/UI/model/MCP/distribution work remains
 in the unchecked tasks; no goal completion or engineering acceptance is claimed.
 
+Projection/document cleanup commit: `1c67af61`. The staged whitespace check and
+new-module Ruff check pass. Next task is full T009 owner composition, followed by
+T010 thin API routes and T011/T012 readiness and input overlays.
+
+### 2026-09-30 — Exact recorder attachment and owner composition (T009 partial)
+
+The preceding user status turn verified the active goal and saved commits but
+made no implementation change. This turn resumes concrete work: exact read-only
+recorder attachment, shared ownership reconciliation, run input receipt lookup,
+scoped paged assessment identities, canonical approval permission inspection,
+terminal review evidence checks and attached-run interaction composition.
+Pure projection now pages large views with references bound to actual scoped
+facts. No new execution/review/status authority was introduced.
+
+The new tests were run red before implementation. Combined affected regressions
+pass: **272 passed, 1 host symlink skip**. Details, exact command, fixture repairs
+and limits are in [owner composition evidence](evidence/owners.md). No test
+process remains running. T009 stays unchecked for source-input/readiness
+composition; next work connects that implementation and thin authenticated API
+routes. All runtime/UI/live-model/live-MCP/distribution finish requirements remain.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,
@@ -120,8 +141,9 @@ run/subject/artifact identities, observations/evidence links, failed/pending sco
 resources required and next task. Keep task checkboxes aligned. Do not replace
 this log with optimistic stage labels or claim user acceptance without user feedback.
 
-Planning validation passed: 13 feature documents, 39 resolved local links,
+At the planning checkpoint, validation passed: 13 feature documents, 39 resolved local links,
 57 sequential task IDs/paths and complete FR/SC coverage. All 12 preserved-file
 hashes match; managed 082 context equals HEAD, and `git diff --check` passes.
-See [checklists/requirements.md](checklists/requirements.md). Runtime tests,
-browser checks, engineering qualification and all implementation tasks remain pending.
+See [checklists/requirements.md](checklists/requirements.md). Current implementation
+and test status is recorded in the dated entries and task checkboxes above.
+Served browser checks, live engineering qualification and distribution proof remain pending.

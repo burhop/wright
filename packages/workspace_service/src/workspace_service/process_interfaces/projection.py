@@ -182,7 +182,7 @@ def _disabled(action: Action, reason: Reason) -> Action:
 
 
 def project_interactions(
-    facts: ProjectionFacts, scope: ProcessScope
+    facts: ProjectionFacts, scope: ProcessScope, *, page: str | None = None
 ) -> InteractionSnapshot:
     scope.require(facts.process, "process.read")
     if facts.input_snapshot and facts.input_snapshot.process != facts.process:
@@ -309,22 +309,6 @@ def project_interactions(
                 run_id=run.run_id if run else None,
             )
         )
-    if any(
-        len(items) > 256
-        for items in (
-            facts.inputs,
-            outputs,
-            facts.interactions,
-            actions,
-            facts.observations,
-            navigation,
-        )
-    ):
-        raise ProcessInterfaceError(
-            "READINESS_UNSUPPORTED",
-            "This process view exceeds the supported page size.",
-            "Inspect the exact results in the canonical run view.",
-        )
     readiness = facts.readiness
     if readiness and (
         readiness.process != pinned_process
@@ -344,21 +328,69 @@ def project_interactions(
         if pinned_process == facts.process
         else ()
     )
+    context = InteractionContext(
+        process=pinned_process,
+        run_id=run.run_id if run else None,
+        input_snapshot_id=snapshot.snapshot_id if snapshot else None,
+        input_digest=snapshot.digest if snapshot else None,
+        cursor=run.cursor if run else 0,
+        generated_at=facts.generated_at,
+    )
+    collections = {
+        "inputs": inputs,
+        "outputs": outputs,
+        "interactions": facts.interactions,
+        "actions": tuple(actions),
+        "observations": facts.observations,
+        "navigation": tuple(navigation),
+    }
+    # A page cursor is a read reference, never a grant. Bind it to actual facts
+    # and the authorized principal. Reading at a later time alone cannot expire
+    # it, but changed results/permissions/recorded events require a fresh page.
+    digest = canonical_digest(
+        {
+            "principal": scope.principal_id,
+            "accepted_process": facts.process,
+            "context": context.model_dump(exclude={"generated_at"}),
+            "state": state,
+            "readiness": readiness,
+            "collections": {
+                **collections,
+                "observations": tuple(
+                    item.model_dump(exclude={"observed_at", "stale_after"})
+                    for item in facts.observations
+                ),
+            },
+        }
+    )
+    largest = max((len(items) for items in collections.values()), default=0)
+    offset = 0
+    if page is not None:
+        try:
+            if not isinstance(page, str) or len(page) > 100:
+                raise ValueError("Invalid page")
+            version, expected, start = page.split(":")
+            if (
+                version != "p1"
+                or expected != digest
+                or not start.isascii()
+                or not start.isdecimal()
+            ):
+                raise ValueError("Changed page")
+            offset = int(start)
+            if offset <= 0 or offset % 256 or offset >= largest:
+                raise ValueError("Outside page")
+        except ValueError as error:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "This process page no longer matches its recorded context.",
+                "Reload the first interaction page and follow its current page references.",
+            ) from error
+    next_page = f"p1:{digest}:{offset + 256}" if offset + 256 < largest else None
     return InteractionSnapshot(
-        context=InteractionContext(
-            process=pinned_process,
-            run_id=run.run_id if run else None,
-            input_snapshot_id=snapshot.snapshot_id if snapshot else None,
-            input_digest=snapshot.digest if snapshot else None,
-            cursor=run.cursor if run else 0,
-            generated_at=facts.generated_at,
-        ),
+        context=context,
         state=state,
-        inputs=inputs,
         readiness=readiness,
-        outputs=outputs,
-        interactions=facts.interactions,
-        actions=tuple(actions),
-        observations=facts.observations,
-        navigation=tuple(navigation),
+        next_page=next_page,
+        **{name: items[offset : offset + 256] for name, items in collections.items()},
     )

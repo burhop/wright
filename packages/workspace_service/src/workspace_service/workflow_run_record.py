@@ -13,6 +13,9 @@ from dataclasses import asdict
 import anyio
 
 _FINAL_CHECKPOINT_SECONDS = 5
+_MAX_RUN_DIRECTORY_ENTRIES = 10_000
+_MAX_RUN_READ_FILES = 100
+_MAX_RUN_RECORD_BYTES = 16 * 1024 * 1024
 _logger = logging.getLogger(__name__)
 
 
@@ -242,7 +245,7 @@ def _execution_snapshot(record, state):
     compact_results = [
         a for r in current_results.values() if isinstance(r, dict) if (a := artifact(r))
     ]
-    run_id = result.get("run_id")
+    run_id = record.get("run_id") or result.get("run_id")
     if not isinstance(run_id, str):
         ids = {r.get("provenance", {}).get("run_id") for r in compact_results}
         ids.discard(None)
@@ -696,10 +699,245 @@ async def record_workflow_approval_transition(
     )
 
 
+class WorkflowRunReadError(ValueError):
+    """An attachment cannot establish its exact recorded identity or state."""
+
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
+
+
+def _observed_run_state(record):
+    """The recorder's ownership probe is shared by history and exact attachment."""
+    from .workflow_resource_lease import lease_is_active
+
+    state = record.get("status", "unknown")
+    if state != "running":
+        return state
+    owner = record.get("owner")
+    if not isinstance(owner, dict):
+        return "unknown"
+    try:
+        active = (
+            lease_is_active(owner["lease"])
+            if owner.get("host") == socket.gethostname()
+            and isinstance(owner.get("lease"), str)
+            else None
+        )
+    except OSError:
+        active = None
+    return (
+        "running" if active is True else "interrupted" if active is False else "unknown"
+    )
+
+
+def _run_candidates(folder):
+    candidates = []
+    exhausted = False
+    if not folder.is_dir():
+        return candidates, exhausted
+    for index, entry in enumerate(folder.iterdir()):
+        if index >= _MAX_RUN_DIRECTORY_ENTRIES:
+            exhausted = True
+            break
+        if entry.suffix == ".json":
+            candidates.append(entry.name)
+    candidates.sort(reverse=True)
+    exhausted |= len(candidates) > _MAX_RUN_READ_FILES
+    return candidates[:_MAX_RUN_READ_FILES], exhausted
+
+
+def _reject_nonfinite(value):
+    raise ValueError("A run record contains a non-finite number")
+
+
+def _read_run_record(paths, relative, source_path):
+    path = paths.resolve(relative, must_exist=True)
+    with path.open("rb") as stream:
+        data = stream.read(_MAX_RUN_RECORD_BYTES + 1)
+    if len(data) > _MAX_RUN_RECORD_BYTES:
+        raise ValueError("A run record exceeds the read bound")
+    record = json.loads(data, parse_constant=_reject_nonfinite)
+    if not isinstance(record, dict) or record.get("workflow_path") != source_path:
+        raise ValueError("A run record belongs to another source")
+    events = record.get("events", [])
+    if not isinstance(events, list) or any(not isinstance(e, dict) for e in events):
+        raise ValueError("Run events must be recorded objects")
+    if record.get("status", "unknown") not in {
+        "running",
+        "completed",
+        "pending_review",
+        "awaiting_approval",
+        "awaiting_external_outcome",
+        "continuation_ready",
+        "changes_requested",
+        "external_action_not_dispatched",
+        "external_action_outcome_unknown",
+        "failed",
+        "cancelled",
+        "interrupted",
+        "unknown",
+        "waiting_human",
+        "waiting_external",
+        "cancellation_requested",
+        "reconciliation_required",
+    }:
+        raise ValueError("A run has an unsupported recorded state")
+    for key in ("started_at", "completed_at", "execution_ended_at", "source_digest"):
+        value = record.get(key)
+        if value is not None and (not isinstance(value, str) or len(value) > 128):
+            raise ValueError("A run has invalid identity or timestamp metadata")
+    if record.get("error") is not None and not isinstance(record["error"], str):
+        raise ValueError("A run error must be text")
+    result = record.get("result")
+    if result is not None and not isinstance(result, dict):
+        raise ValueError("A run result must be a recorded object")
+    result = result or {}
+    if not isinstance(record.get("partial_results", {}), dict):
+        raise ValueError("Partial run results must be recorded objects")
+    if result.get("results") is not None and not isinstance(result["results"], list):
+        raise ValueError("Run results must be a recorded list")
+    identities = [record.get("run_id"), result.get("run_id")]
+    identities = [identity for identity in identities if identity is not None]
+    if any(
+        not isinstance(identity, str) or not identity or len(identity) > 4096
+        for identity in identities
+    ):
+        raise ValueError("A run identity is invalid")
+    if len(set(identities)) > 1:
+        raise ValueError("Recorded run identities disagree")
+    return record
+
+
+def _run_summary(record, relative, *, current_digest=None, compact=False):
+    state = _observed_run_state(record)
+    events = record.get("events", [])
+    result = record.get("result") or {}
+    summary = {
+        "path": relative,
+        "status": state,
+        "started_at": record.get("started_at"),
+        "completed_at": record.get("completed_at"),
+        "source_digest": record.get("source_digest"),
+        "error": record.get("error"),
+        "results": result.get("results")
+        or list(record.get("partial_results", {}).values()),
+        "last_event": events[-1] if events else None,
+        "approval": result.get("approval") or record.get("approval"),
+        "verification": result.get("verification"),
+        "capture_rights": result.get("capture_rights"),
+    }
+    if compact:
+        snapshot, artifacts, run_id = _execution_snapshot(record, state)
+        summary.update(
+            execution=snapshot,
+            results=artifacts,
+            run_id=run_id,
+            execution_ended_at=record.get("execution_ended_at"),
+            source_matches_current=record.get("source_digest") == current_digest,
+            last_event=snapshot["last_progress"],
+        )
+        if isinstance(summary.get("error"), str):
+            summary["error"] = summary["error"][:4096]
+    return summary
+
+
+def read_workflow_run(workspace_dir, source_path, run_id, *, run_log_path=None):
+    """Attach to exact recorder facts without acquiring a lease or replaying work.
+
+    A server-retained locator can avoid bounded legacy history scanning. A locator
+    never overrides the record's source/run identity. Approval/review payloads are
+    references only; their owning services recheck current evidence and permission.
+    """
+    from .workspace_path import WorkspacePath
+
+    if not isinstance(run_id, str) or not run_id or len(run_id) > 4096:
+        raise WorkflowRunReadError("invalid", "Choose an exact recorded run")
+    try:
+        paths = WorkspacePath(workspace_dir)
+        source_file = paths.resolve(source_path, must_exist=True)
+        with source_file.open("rb") as stream:
+            current_digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        slug = PurePosixPath(source_path).name.removesuffix(".workflow.wflow")
+        folder_relative = f"runs/{slug}"
+        folder = paths.resolve(folder_relative)
+        if run_log_path is not None:
+            parts = paths._validate_relative(run_log_path)
+            normalized = "/".join(parts)
+            if PurePosixPath(
+                normalized
+            ).parent.as_posix() != folder_relative or not normalized.endswith(".json"):
+                raise ValueError(
+                    "A run locator must belong to the exact source's recorder folder"
+                )
+            candidates, exhausted = [PurePosixPath(normalized).name], False
+        else:
+            candidates, exhausted = _run_candidates(folder)
+    except (OSError, ValueError, TypeError) as error:
+        raise WorkflowRunReadError(
+            "unavailable", "The recorded run location is unavailable"
+        ) from error
+
+    matches = []
+    for name in candidates:
+        relative = f"{folder_relative}/{name}"
+        try:
+            record = _read_run_record(paths, relative, source_path)
+            summary = _run_summary(
+                record, relative, current_digest=current_digest, compact=True
+            )
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+            if run_log_path is not None:
+                raise WorkflowRunReadError(
+                    "invalid", "The exact recorded run could not be verified"
+                ) from error
+            continue
+        if summary["run_id"] != run_id:
+            continue
+        # Do not let a mixed legacy result set authorize navigation into another
+        # run just because the top-level identity happened to match.
+        if any(
+            item.get("provenance", {}).get("run_id") != run_id
+            for item in summary["results"]
+        ):
+            raise WorkflowRunReadError(
+                "invalid", "Recorded result and run identities disagree"
+            )
+        summary.pop("verification", None)
+        summary.pop("capture_rights", None)
+        for key, identity, digest in (
+            ("approval", "checkpoint_id", "subject_digest"),
+            ("review", "review_id", "package_digest"),
+        ):
+            reference = (record.get("result") or {}).get(key) or record.get(key)
+            summary[key] = (
+                {
+                    field: reference[field]
+                    for field in (identity, digest)
+                    if isinstance(reference.get(field), str)
+                }
+                if isinstance(reference, dict)
+                else None
+            )
+        matches.append(summary)
+    if len(matches) > 1:
+        raise WorkflowRunReadError(
+            "ambiguous", "More than one record claims this run identity"
+        )
+    if matches:
+        return matches[0]
+    if exhausted:
+        raise WorkflowRunReadError(
+            "read_limit", "The bounded history scan needs a retained run locator"
+        )
+    raise WorkflowRunReadError(
+        "not_found", "This run is not recorded for the selected process"
+    )
+
+
 def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=False):
     """Bounded, read-only history. Never resubmit or mutate a recovered operation."""
     from .workspace_path import WorkspacePath
-    from .workflow_resource_lease import lease_is_active
 
     paths = WorkspacePath(workspace_dir)
     source_file = paths.resolve(source_path, must_exist=True)
@@ -712,122 +950,21 @@ def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=Fa
     if not folder.is_dir():
         return []
     # Bound directory work as well as JSON reads. Report only this exact source.
-    candidates = []
-    for index, entry in enumerate(folder.iterdir()):
-        if index >= 10000:
-            break
-        if entry.suffix == ".json":
-            candidates.append(entry.name)
+    candidates, _ = _run_candidates(folder)
     results = []
     latest_group = None
-    for name in sorted(candidates, reverse=True)[:100]:
+    for name in candidates:
         # Same-second run names have random suffixes. Read that small timestamp
         # group before selecting by actual start time, rather than UUID ordering.
         if latest_only and results and name.split("-", 1)[0] != latest_group:
             break
         relative = f"runs/{slug}/{name}"
         try:
-            path = paths.resolve(relative, must_exist=True)
-            with path.open("rb") as stream:
-                data = stream.read(16 * 1024 * 1024 + 1)
-            if len(data) > 16 * 1024 * 1024:
-                continue
-            record = json.loads(data)
-            if not isinstance(record, dict):
-                continue
-            if record.get("workflow_path") != source_path:
-                continue
-            events = record.get("events", [])
-            if not isinstance(events, list) or any(
-                not isinstance(e, dict) for e in events
-            ):
-                continue
-            state = record.get("status", "unknown")
-            if not isinstance(state, str) or state not in {
-                "running",
-                "completed",
-                "pending_review",
-                "awaiting_approval",
-                "awaiting_external_outcome",
-                "continuation_ready",
-                "changes_requested",
-                "external_action_not_dispatched",
-                "external_action_outcome_unknown",
-                "failed",
-                "cancelled",
-                "interrupted",
-                "unknown",
-            }:
-                continue
-            if any(
-                record.get(key) is not None
-                and (not isinstance(record[key], str) or len(record[key]) > 128)
-                for key in (
-                    "started_at",
-                    "completed_at",
-                    "execution_ended_at",
-                    "source_digest",
-                )
-            ):
-                continue
-            if record.get("error") is not None and not isinstance(record["error"], str):
-                continue
-            if state == "running":
-                owner = record.get("owner", {})
-                try:
-                    active = (
-                        lease_is_active(owner["lease"])
-                        if owner.get("host") == socket.gethostname()
-                        and isinstance(owner.get("lease"), str)
-                        else None
-                    )
-                except OSError:
-                    active = (
-                        None  # An unreadable ownership probe cannot prove interruption.
-                    )
-                state = (
-                    "running"
-                    if active is True
-                    else "interrupted"
-                    if active is False
-                    else "unknown"
-                )
-            result = record.get("result") or {}
-            if not isinstance(result, dict) or not isinstance(
-                record.get("partial_results", {}), dict
-            ):
-                continue
-            if result.get("results") is not None and not isinstance(
-                result["results"], list
-            ):
-                continue
-            summary = {
-                "path": relative,
-                "status": state,
-                "started_at": record.get("started_at"),
-                "completed_at": record.get("completed_at"),
-                "source_digest": record.get("source_digest"),
-                "error": record.get("error"),
-                "results": result.get("results")
-                or list(record.get("partial_results", {}).values()),
-                "last_event": events[-1] if events else None,
-                "approval": result.get("approval") or record.get("approval"),
-                "verification": result.get("verification"),
-                "capture_rights": result.get("capture_rights"),
-            }
+            record = _read_run_record(paths, relative, source_path)
+            summary = _run_summary(
+                record, relative, current_digest=current_digest, compact=latest_only
+            )
             if latest_only:
-                snapshot, artifacts, run_id = _execution_snapshot(record, state)
-                summary.update(
-                    execution=snapshot,
-                    results=artifacts,
-                    run_id=run_id,
-                    execution_ended_at=record.get("execution_ended_at"),
-                    source_matches_current=record.get("source_digest")
-                    == current_digest,
-                    last_event=snapshot["last_progress"],
-                )
-                if isinstance(summary.get("error"), str):
-                    summary["error"] = summary["error"][:4096]
                 latest_group = name.split("-", 1)[0]
             results.append(summary)
         except (OSError, ValueError, TypeError, KeyError, AttributeError):

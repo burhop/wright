@@ -79,6 +79,26 @@ class ProcessInterfaceService:
         self.db_path = workspace.db_path
         self.limits = limits or ProcessInterfaceLimits()
 
+    @traced("process.interface.run.snapshot")
+    async def get_snapshot(
+        self,
+        scope: ProcessScope,
+        process: ProcessRef,
+        *,
+        run_id: str,
+        page: str | None = None,
+        gateway=None,
+        session_id: str = "",
+    ):
+        from .owners import recorded_run_facts
+        from .projection import project_interactions
+
+        resolved = await self.resolve_process(scope, process)
+        facts = await recorded_run_facts(
+            self, resolved, run_id, gateway=gateway, session_id=session_id
+        )
+        return project_interactions(facts, scope, page=page)
+
     @cached_property
     def inputs(self) -> ProcessInputRepository:
         return ProcessInputRepository(self.db_path)
