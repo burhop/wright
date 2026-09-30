@@ -7,6 +7,14 @@ to retain that clarification for future work.
 
 ## The purpose we must demonstrate
 
+The [workflow platform vision](workflow-platform-vision.md) records the broader
+product direction. The examples below demonstrate meaningful connected work;
+they do not prescribe a required workflow structure. Manufacturing is an early
+reference, and other workflows can use different arrangements and outcomes.
+Vendor implementation belongs in independent integrations. Preserve the
+distinction between demonstrating those tools and making their implementation
+part of Wright.
+
 **Wright enables an engineer to apply multiple existing engineering tools through
 an extended, connected process to accomplish an overall engineering job. The
 demonstration of those tools through MCP servers is fundamental, not incidental.**
@@ -89,6 +97,12 @@ Keep raw JSON, GUIDs, digests, connection plumbing, campaign-runner details, and
 similar diagnostics out of the default engineering explanation. Retain technical
 details on demand. Tool capabilities and meaningful handoffs belong in the main
 story; implementation noise does not.
+
+A tailored [process UI](process-apps.md) can make this work easier to carry out
+and inspect. Its working view and the flowchart must refer to the same accepted
+process, exact outputs, decisions, and evidence. Demonstrate the useful user
+journey as well as substantive tool contributions. A polished generated interface
+does not replace engineering evidence or establish unrestricted process support.
 
 ## What we learned from the Robot example
 

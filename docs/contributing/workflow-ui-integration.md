@@ -2,6 +2,26 @@
 
 Updated 2026-09-05 following recovery of the later graphical editor.
 
+## Agreed process UI direction, 2026-09-30
+
+Read the [workflow platform vision](../design/workflow-platform-vision.md) and
+[process UI design](../design/process-apps.md) before planning working interfaces.
+Preserve complementary authoring and working views on one accepted process and
+durable run. Process UIs use the explicit interaction contract, shared Wright
+style/components, and a scoped client over existing services. Host them in
+workspace tabs by default, with navigation to exact blocks, results, and evidence.
+
+AI can compose a tailored interface and save it with checked workflow bindings;
+the common view remains usable. Generated presentation code does not execute the
+graph or own job state. Closing, reopening, and switching views must reconcile
+with backend state without replaying work. Verify both the existing authoring
+experience and this working journey through the served workspace entry. A new
+route, detached form, or extra tab strip alone is not proof of integration.
+
+The historical editor recovery evidence below remains intact. The new shared
+process UI foundation is proposed work, not a replacement editor or claim that
+the recovered source/native runtime integration has been completed.
+
 ## Continue the existing design
 
 The latest located implementation of the user's refined graphical editor is

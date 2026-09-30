@@ -246,6 +246,9 @@ class WorkspaceService:
             WorkflowContinuationRepository(db_path)
         )
         self.workflow_integration_policies = WorkflowIntegrationPolicyService(db_path)
+        from .process_interfaces import ProcessInterfaceService
+
+        self.process_interfaces = ProcessInterfaceService(self)
         from .workflow_demo_capture import WorkflowDemoCaptureService
 
         self.workflow_demo_captures = WorkflowDemoCaptureService(self.files)

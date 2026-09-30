@@ -30,6 +30,17 @@ classDiagram
 
 ## LLM Agnosticism and Configuration
 
+The [workflow platform vision](../design/workflow-platform-vision.md#ai-authoring-through-wright)
+also defines a configurable coding-agent role for UI creation through Wright.
+The initial path uses the configured default model and versioned Wright API/UI
+instructions. Map the role/profile into existing configuration and adapters.
+The role describes its job, model, instructions, and allowed capabilities; the
+agent platform provides its execution environment. Hermes is the current path,
+with other platforms qualified separately rather than assumed equivalent.
+This is agreed direction; a complete generation/profile feature is not claimed
+as delivered. The manager-specific examples below do not make each platform
+an immutable engineering role.
+
 The agent adapter layer bridges the system to any target LLM provider:
 
 *   **Local Inference**: Can connect directly to locally hosted engines via standard local APIs (e.g., Llama.cpp, Ollama, local WebUI backends), keeping model traffic on infrastructure the operator controls.

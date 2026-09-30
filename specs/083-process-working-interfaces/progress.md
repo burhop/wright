@@ -1,0 +1,100 @@
+# Feature 083 progress
+
+**Date:** 2026-09-30.  
+**State:** Goal submitted; implementation active on
+`codex/083-process-working-interfaces`. Planning history remains below. No physical
+action or protected campaign execution is authorized.
+
+## Authority and context
+
+- User selected complete experience, AI UI creation through Wright/default coding
+  role and preflighted long-running processes with declared interaction points.
+- Latest instruction authorized preparing this technical plan and saved goal.
+- Prepared on `codex/prompt-to-3d-printed-part-demo`; proposed implementation branch
+  is `codex/083-process-working-interfaces`.
+- Existing `.specify/feature.json` and managed 082 AGENTS block are preserved until
+  T001 activation after goal submission. Prior runtime/prototype edits are retained.
+- Goal submission approves this package and the explicit local/test authority in
+  [implementation-goal.md](implementation-goal.md); saving it does not activate it.
+
+## Planning work
+
+Prepared spec, technical plan, research, data model, three contracts, acceptance
+cases, quickstart, 57 ordered tasks and saved goal. Read current architecture/
+constitution/vision/editor/demonstration/MCP guidance. Three read-only research
+subtasks inspected runtime, hosting and coding role/provider proof seams.
+
+Resolved material gaps: per-run input overlay, observer-independent execution,
+structured response barriers, neutral approved MCP operation, public kit/client
+packaging, effective scoped coding instructions, fixed app build, presentation-bound
+process authority and existing document-tab integration. These are proposed work,
+not already supported capabilities.
+
+Spec Kit plan/tasks templates applied directly. Bash setup returned access denied;
+no PowerShell equivalents exist. Optional pre/post `speckit-git-commit` hooks
+(commit plan/tasks) and `speckit-agent-context-update` hook (refresh pointer) were
+left unused; no mandatory plan/tasks hook was registered. Context activation
+remains an explicit implementation step rather than an incidental planning write.
+
+## Implementation milestones
+
+| Milestone | Task coverage | State |
+|---|---|---|
+| M0 Baseline/preflight | T001–T004 | Complete; live qualification remains later work |
+| M1 Inputs/runtime/interaction | T005–T016, T022–T028 | In progress; contracts/persistence/service boundary complete |
+| M2 Client/kit/common tabs | T017–T021 | Pending |
+| M3 Wright AI authoring/hosting/reuse | T029–T042 | Pending |
+| M4 Different processes/migration | T043–T049 | Pending |
+| M5 Distribution/verification/handoff | T050–T057 | Pending |
+
+## Implementation entries
+
+### 2026-09-30 — M0 setup complete (T001–T004)
+
+Created feature branch and activated 083 context after preserving dirty-file hashes
+and prior pointer/guidance. Inspected current editor/runtime/agent/hosting boundaries;
+normal UI ports are down, so no browser verification is claimed. Git Bash prerequisite
+check and completed planning checklist pass. Python/frontend tooling and Docker are
+available. Existing Hermes health/authenticated models checks pass without exposing
+credentials; actual generation and scoped role remain pending. Blender host is not
+listening; provider qualification is later work. Frozen proof inputs/profile digests
+and test-policy constraints are saved, without enrolling or executing campaign work.
+
+Evidence: [baseline](evidence/baseline.md), [resources](evidence/prerequisites.md),
+[proof scope](evidence/proof-scope.md). Next: T005 strict versioned domain contracts
+and shared schema fixtures, followed by additive persistence.
+
+### 2026-09-30 — Foundation contracts/storage/boundaries (T005–T007)
+
+Added strict versioned process/input/response/UI/role/build shapes and packaged
+generated schema fixtures. Added migration 22 with immutable snapshots, exact
+start/response receipts, saved revisions, active-revision CAS and bounded durable
+authoring jobs. No competing run table/lifecycle authority was introduced.
+Application service composition reuses the accepted source owner, checks scoped
+workspace/capabilities/digests, and supplies readable redacted bounded errors.
+
+The first contract run was intentionally red before implementation. A huge
+parameterized test ID caused an initial test-fixture error; explicit IDs fixed
+the test setup. Storage and service tests were likewise written and run red
+before their modules existed. Foundation/regression checks now pass. Workspace
+regressions require temporary roots outside the application checkout; the first
+inside-checkout run was rejected by the existing protected-path guard and the
+corrected outside-checkout run passed. Evidence: [foundation](evidence/foundation.md).
+
+Remaining: projection/API, input readiness/overlays, run supervision, declared
+responses, client/kit/tabs, actual AI authoring, both engineering proofs and
+distribution/browser acceptance. No UI or live engineering proof is claimed.
+Next: T008 projection/currentness negative tests and T009 authority composition.
+
+## Implementation progress format
+
+Append dated entries: task IDs, branch/commit/build, owned files, exact commands,
+run/subject/artifact identities, observations/evidence links, failed/pending scope,
+resources required and next task. Keep task checkboxes aligned. Do not replace
+this log with optimistic stage labels or claim user acceptance without user feedback.
+
+Planning validation passed: 13 feature documents, 39 resolved local links,
+57 sequential task IDs/paths and complete FR/SC coverage. All 12 preserved-file
+hashes match; managed 082 context equals HEAD, and `git diff --check` passes.
+See [checklists/requirements.md](checklists/requirements.md). Runtime tests,
+browser checks, engineering qualification and all implementation tasks remain pending.

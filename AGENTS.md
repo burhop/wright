@@ -1,16 +1,75 @@
+Before planning or changing workflow execution, process UI, validation, external
+actions, or tool integration, read `docs/design/workflow-platform-vision.md`
+and `docs/architecture/workflow-platform-refactoring-plan.md`. Apply V1-V7.
+Start from the general engineering user journey and shared platform mechanisms;
+a reference prototype's vendor difficulties do not determine the product roadmap.
+
+Preserve two complementary experiences on one accepted process and durable run:
+the flowchart/blocks/source/inspectors for building and inspecting, and an optional
+working UI for inputs, results, questions, decisions, and progress. Process UIs
+open in Wright workspace tabs by default and link to exact blocks and evidence.
+A dashboard, comparison view, interactive model, questionnaire, or guided sequence
+may suit the job; no mandatory layout or manufacturing lifecycle applies.
+
+For process UI work, read `docs/design/process-apps.md`. Design around an explicit
+interaction contract describing available inputs, outputs/evidence, pending
+interactions, observed state, and permitted actions with exact subjects. Reuse
+the existing runtime, gateway, validator, results, surfaces, and storage. The
+backend owns execution, state, reviews, permitted actions, and recovery. Generated
+UI code must not contain another executor or independent job-status authority.
+
+AI authors and refines interfaces using shared Wright style/components and a
+scoped process client. Users request UI generation and updates through Wright,
+initially using its default LLM with prepared API/UI instructions. Map a coding
+role/profile into existing agent configuration/adapters; keep role, model,
+versioned instructions, and platform replaceable and record resolved provenance.
+Save and version interfaces with their workflow bindings
+and supported contract/client/kit versions; reuse them across runs and check
+compatibility after changes. Keep a usable common view. Closing/reopening a tab
+reconciles with durable state without replaying uncertain actions. Current MCP
+App/WebMCP hosting does not itself provide the proposed general process client.
+
+Resolve user-supplied requirements and readiness before starting a process.
+Required inputs must be supplied, explicitly defaulted, automatically produced
+by declared upstream work, or assigned to a declared user-interaction step.
+Long-running unattended sections do not ask opportunistic AI questions. At a
+declared human review/action step, persist waiting state and resume the same run
+after the response. Predictable missing
+configuration is a readiness defect; changed external conditions follow the
+configured wait/recovery/failure policy without guessing or uncertain replay.
+
+Prefer existing independent MCP providers. Keep vendor protocols and compatibility
+workarounds external; no new Wright-owned Bambu MCP is planned. Catalog metadata,
+example bindings, and historical evidence may name vendors. Embedded vendor
+prototype code is migration debt, not a pattern for new platform features.
+
+Applicable specs, plans, tasks, and PRs must explain the user journey, shared and
+external ownership, reused mechanisms, interaction/evidence identities,
+invalidation, missing-capability behaviour, and UI compatibility/fallback where
+relevant. Prove new shared mechanisms with a substantially different existing
+workflow. Keep engineering requirements and exact-output verification intact.
+Distinguish agreed direction, proposed work, implementation, verified behaviour,
+and user acceptance. Preserve existing evidence and the refined workflow editor.
+Keep this guidance outside the managed Spec Kit section during context refresh.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/082-output-content-validation/plan.md
+at specs/083-process-working-interfaces/plan.md
 
-Feature 082 is a runtime process-output validator with actionable AI correction
-feedback and report-consumable results. Read its scope-amendment.md, quickstart.md
-and implementation-goal.md. Earlier 081 content-validation analysis is reference
-material. Submitting the revised goal approves replacing its all-30-output G0 gate
-with per-subject checks. Implementation starts after human plan approval. Preserve
-the separate generation campaign; use isolated runs for validator/rework
-demonstrations. The reporting UI
-belongs to another branch; publish a shared result contract here.
+Feature 083 implements the complete common and AI-created working-interface
+experience on the existing accepted process and durable source runtime. Read its
+implementation-goal.md, tasks.md, contracts and acceptance-cases.md. The user
+submitted the saved goal and approved local implementation/testing through M0-M5
+without routine intermediate lifecycle approvals. Real process reviews and
+external effects retain their separate authority. No push, merge or release is
+authorized. Keep progress/evidence current and preserve existing dirty work.
+
+Reuse Feature 082's validator/rework/result contracts; its per-subject checks
+remain authority and its implementation evidence is retained. The earlier 081
+campaign is reference material and remains separate. Use fresh isolated digital
+proof runs; do not resume or approve protected campaign subjects. Reporting UI
+belongs to another branch. Existing independent MCPs own vendor implementation.
 <!-- SPECKIT END -->
 
 Before selecting, describing, changing, or evaluating engineering workflow

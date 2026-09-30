@@ -2,6 +2,21 @@
 
 Wright enforces a **Spec-Driven Development** methodology using the **Spec Kit** agentic protocol. This ensures that features are fully specified, planned, and reviewed before any code files are modified.
 
+Applicable features must also follow the agreed
+[workflow platform vision](../design/workflow-platform-vision.md). The spec,
+plan, and task templates start from the user journey and capture ownership,
+reused mechanisms, revision/evidence behaviour, and checks for unintended domain
+coupling. Process UI features follow the [process UI design](../design/process-apps.md):
+an interaction contract, shared Wright kit/client, workspace-tab hosting, saved
+UI bindings, and a common-view fallback on the existing runtime. Prefer existing
+MCP providers; provider-specific workarounds do not define the platform roadmap.
+Keep that guidance outside
+the managed Spec Kit block in `AGENTS.md` so a context refresh preserves it.
+Record a feature's actual supported scope; a reference workflow does not define
+the platform's required process or prove every integration. The current print
+prototype's [refactoring plan](../architecture/workflow-platform-refactoring-plan.md)
+is a follow-on proposal, not an amendment to historical feature evidence.
+
 ---
 
 ## 1. What is Spec Kit?

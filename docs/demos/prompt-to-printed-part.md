@@ -1,5 +1,22 @@
 # Prompt to printed part demo
 
+## Architecture direction and refactoring status
+
+This page describes the existing source-checkout prototype and retained evidence.
+The agreed [workflow platform vision](../design/workflow-platform-vision.md)
+governs future work: Wright provides general workflow mechanisms; independent
+integrations own vendor implementation. Printing is one manufacturing reference
+and does not define every workflow's stages, interactions, or validation needs.
+
+The [refactoring plan](../architecture/workflow-platform-refactoring-plan.md)
+maps the embedded Bambu code, shared review/evidence behaviour, saved workflow,
+and UI to their intended owners. It replaces further expansion of this embedded
+demo as the product plan. It prioritises the shared process interaction contract,
+UI kit/client, and workspace experience. Existing MCP providers are preferred;
+creating a new Bambu MCP is outside this plan. Migration remains proposed;
+the implementation details below remain a record of the current prototype, not
+a pattern for adding production vendor code to Wright.
+
 ## Pumpkin input for a quick UI run
 
 Upload [pumpkin-reference.png](assets/pumpkin-reference.png) in the **Reference image** field, set **Largest dimension** to **50 mm**, and enter:
@@ -57,3 +74,18 @@ firmware's `bed_leveling` field. This follows the P1/A1 handling in
 [bambu-printer-manager](https://github.com/synman/bambu-printer-manager/blob/devel/src/bpm/bambuprinter.py).
 Responses are correlated by command sequence and kept separate from telemetry.
 A missing acknowledgment never authorizes an automatic retry.
+
+## Official Studio desktop dispatch experiment
+
+On 2026-09-28, the cloud-connected P1S accepted a real pumpkin print submitted
+through automated controls in official Bambu Studio. After a transient AMS
+filament-feed error (`0700-8006`) cleared, it reached layer 2/247 using yellow
+PLA in A1, with no active errors. The desktop route passed the authorization
+barrier seen with direct MQTT and started printing. That initial GUI experiment
+regenerated the slice. The follow-on Windows adapter now connects the Print
+button to Studio with a print-only wrapper that preserves the reviewed G-code,
+explicit AMS selection/readback, submission progress, and a confirmation timeout.
+It is enabled in this isolated demo. A real print through the newly connected
+button is pending; cancellation uses Studio or Handy for this transport.
+See [the experiment record](prompt-to-printed-part-studio-automation.md) for the
+actual package, telemetry, limits, and remaining integration work.

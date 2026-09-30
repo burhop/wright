@@ -6,6 +6,18 @@ software and bring-your-own-AI: it does not bundle an LLM, model weights,
 hosted provider account, API key, paid engineering backend, or MCP-specific host
 software.
 
+The [workflow platform vision](../design/workflow-platform-vision.md) records the
+agreed direction for future work: reusable workflow, interaction, verification,
+and external-action mechanisms, with vendor implementation in independent
+integrations. Workflow definitions arrange those mechanisms. Manufacturing is an
+important early reference workflow; it does not prescribe every process.
+The [process UI design](../design/process-apps.md) connects complementary authoring
+and working views to the same accepted process and durable run. Its proposed
+interaction contract, shared components/client, and workspace-tab hosting support
+AI-authored interfaces. The [refactoring plan](workflow-platform-refactoring-plan.md)
+puts that shared foundation first, then migration and proof across different
+processes, distinguishing proposed work from delivered support.
+
 When coupled with local high-performance hardware, such as a GB10 or NVIDIA DGX
 Spark-style workstation, Wright can be configured as a local-first engineering
 appliance. Operators still provide the model endpoint through `LLM_API_URL` and

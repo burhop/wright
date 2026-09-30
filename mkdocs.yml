@@ -79,6 +79,9 @@ nav:
       - Maintenance & Updates: user-guide/maintenance.md
       - Recovery Runbook: user-guide/recovery.md
   - Architecture:
+      - Workflow Platform Vision: design/workflow-platform-vision.md
+      - Process UI Design: design/process-apps.md
+      - Workflow Platform Refactoring: architecture/workflow-platform-refactoring-plan.md
       - System Overview: architecture/system-overview.md
       - Project Structure: architecture/project-structure.md
       - Python Package Boundaries: architecture/package-boundaries.md

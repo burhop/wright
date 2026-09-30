@@ -1,0 +1,239 @@
+{
+  "date": "2026-09-30",
+  "branch": "codex/prompt-to-3d-printed-part-demo",
+  "head": "679447bb3ad62b670b49b27a278ff14406647809",
+  "dirty_files": [
+    {
+      "status": " M",
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "sha256": "16ba0f0d85c186c3b73fb6c1e88b9b6cb94531f12854a163380bb77cf3ed6798"
+    },
+    {
+      "status": " M",
+      "path": ".specify/templates/plan-template.md",
+      "sha256": "ac1e1b9aa490dc6ed15ec383eeb5df7d8c7c4676e72a8e847f6b371edb69e01e"
+    },
+    {
+      "status": " M",
+      "path": ".specify/templates/spec-template.md",
+      "sha256": "6d7cc76df5be0af247629905d2065d5baffcd5a9086ff6515aa362b712a05daa"
+    },
+    {
+      "status": " M",
+      "path": ".specify/templates/tasks-template.md",
+      "sha256": "0b3014cdf293e2624f3d598441bb860b9070061dfd781cd4fc82798bf6707e4e"
+    },
+    {
+      "status": " M",
+      "path": "AGENTS.md",
+      "sha256": "4238266e445d024ae3c687442c990e9c505733c281f64ef77d5a20547fd504b7"
+    },
+    {
+      "status": " M",
+      "path": "README.md",
+      "sha256": "124d0db0a2b018825dff57cbd3ad28a03e229fcd7785aae0f6f34dd9b324d1e3"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/api/main.py",
+      "sha256": "a263568c340633c029377609f85b575b0e028eb64d33ab0bbb0d4bdd7260f580"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/api/routers/workspace.py",
+      "sha256": "b0bd2f824d649bf8799c8ac3c6465a16dba7f52704b02dbc7e698fdb59b372af"
+    },
+    {
+      "status": " M",
+      "path": "apps/web/src/components/pages/PrintPartDemoPage.tsx",
+      "sha256": "59e293c931181501b8a0a38d7427c50c7355e5d72f5f4211a56849122bd2a061"
+    },
+    {
+      "status": " M",
+      "path": "apps/web/src/services/workspace-service.ts",
+      "sha256": "f7680b5673df7e78903caa4ecd3f7de44c8312e70ecdcebb508399a5d84632ea"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/agent-adapters.md",
+      "sha256": "21de0f4ce666b4141ce96cfb78491fcc938cf34b5ca85168ff377a9f812839ce"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/package-boundaries.md",
+      "sha256": "546621920bbd64d90d8efb17a071af56c8cc334a95019795ff28b90c031cb859"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/system-overview.md",
+      "sha256": "7d195115e6c691c188aa8a3f2d9675cac5fb4b9e296a71e7dca61df8219ddeed"
+    },
+    {
+      "status": " M",
+      "path": "docs/contributing/spec-kit.md",
+      "sha256": "b002758074470fc27e04ffcc264f57ed05d9cba73ea5cfa700ab5c5281dcd9f2"
+    },
+    {
+      "status": " M",
+      "path": "docs/contributing/workflow-ui-integration.md",
+      "sha256": "def869877dc76f061b348b68f9e61a47a1d5f0e3349dc17c0232b4de366d7108"
+    },
+    {
+      "status": " M",
+      "path": "docs/demos/prompt-to-printed-part.md",
+      "sha256": "78ac85393b446abbd88d18ac978fb480bc094d80b5475d1f8eeb1f8d87037acc"
+    },
+    {
+      "status": " M",
+      "path": "docs/design/engineering-demonstration-principles.md",
+      "sha256": "d11b9a07a993b658880e984d2ce96c1ad43c1e05bed9c115c323e6feb34c56e4"
+    },
+    {
+      "status": " M",
+      "path": "mkdocs.yml",
+      "sha256": "51c7f28c64955262b6ddf1801e6f7b83e3d190e7e0f221c3a786e97a59914411"
+    },
+    {
+      "status": " M",
+      "path": "packages/workspace_service/src/workspace_service/print_part_demo_printer.py",
+      "sha256": "e785e87b67677fbed4554d866cfbff0ca21e4d4c02ff56a1a5ba1848d7fd5518"
+    },
+    {
+      "status": " M",
+      "path": "scripts/configure_print_demo_offline.py",
+      "sha256": "211998c08fea7ee48ffbd4cc77701cb60caa563178595c379cfcc466098ab8ec"
+    },
+    {
+      "status": " M",
+      "path": "scripts/print_demo_p1s_mcp.py",
+      "sha256": "a431668558168257e249f4477190ac3c0b646d4f2351956db79c1c4a271ffcb8"
+    },
+    {
+      "status": "??",
+      "path": "docs/architecture/workflow-platform-refactoring-plan.md",
+      "sha256": "fd6b8746f9356a4bedba3c9029f34ac14c9154e6b4b5e6d239e4e92e2e34f88a"
+    },
+    {
+      "status": "??",
+      "path": "docs/demos/prompt-to-printed-part-studio-automation.md",
+      "sha256": "1bd2662dd169484fdf3cf84f12b6c46fd4fdef6c9e72b45fd55a314930b7cfc9"
+    },
+    {
+      "status": "??",
+      "path": "docs/design/process-apps.md",
+      "sha256": "283bb9dacd1d59abf638dab47b69a4ec825ade20a67f356bed79339c9ab2efb0"
+    },
+    {
+      "status": "??",
+      "path": "docs/design/workflow-platform-vision.md",
+      "sha256": "4231e6a48b990377a339a72249ffaaf8476aac3f5a4c948291047fda1c0011aa"
+    },
+    {
+      "status": "??",
+      "path": "scripts/configure_print_demo_studio.py",
+      "sha256": "3c4cc0ed5f6f13df193618288b43913f9ecf6e0f921d7322c25509a7f7b3e2e3"
+    },
+    {
+      "status": "??",
+      "path": "scripts/print_demo_studio.py",
+      "sha256": "d76d53ac4f854a32e032f079e16798395253cf27776fed1b9978c1933fc159ac"
+    },
+    {
+      "status": "??",
+      "path": "scripts/windows/inspect-bambu-studio.ps1",
+      "sha256": "aa41f7a58eccaf2a5a55a7d7746ff12330889ca27f1541dcb08c1e7a7579e000"
+    },
+    {
+      "status": "??",
+      "path": "scripts/windows/studio-desktop.ps1",
+      "sha256": "23250d4cdc76967aacdb8f885bc2062cc25b8daae67a1cf41b902f5af0bc6bda"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/acceptance-cases.md",
+      "sha256": "726cf038622439d6a8b3c9fe0e628abc2be6a669f97a60d10211f7f8c8d6de62"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/checklists/requirements.md",
+      "sha256": "602a66beb61602b21341a13293459bb87809a93ccdb9347b4d342f998c22d749"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "sha256": "6d8de9be591fce00657e25d74addf81cfb09ebd3d7bee8fd791378569facd056"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/contracts/runtime-and-source.md",
+      "sha256": "056d697c403db8d336f0382ad9d25264e84792f386009f9bf8548089102bb1ea"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "sha256": "c2f3c92c77c8fdfdff13071d603ac1236111ebe1a0511593fff49a03c55c70a4"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/data-model.md",
+      "sha256": "699819ca7e7990960b96d8f170a9f357ffa2c5040efde8f847bd32180b3a1c31"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/implementation-goal.md",
+      "sha256": "6ebba796f92377968ef7ba833c59adf7ed7d63e9eb9395a4c03d9f95591d5b68"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/plan.md",
+      "sha256": "38af25b5329477bff274b7acb6236158e9442a6a3ad2c0fd690d8a0c8e2ca013"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/progress.md",
+      "sha256": "0db45e56ca295b32fdc57a86c0279c486fa5011c5a6af41325ab16074413ccac"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/quickstart.md",
+      "sha256": "5a3bcb1341c64758a058c00d91f2808c8a2a7a8f2f6949524c14fa227f37c0cd"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/research.md",
+      "sha256": "bf431812ac0a39e7f44820c44ed21e7f467d9de38eaa8497c9f5130a6979182e"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/spec.md",
+      "sha256": "5453c316a6bdb262d1560b05540909760b5e5c12084f613863e116eeecb812d8"
+    },
+    {
+      "status": "??",
+      "path": "specs/083-process-working-interfaces/tasks.md",
+      "sha256": "50ed7e1ebaf8762424f4f91a3b89d6ba2f2101a30e67ec370fcc7950ecffe7ed"
+    }
+  ],
+  "protected_files": [
+    {
+      "path": ".specify/feature.json",
+      "sha256": "fca6ccce94387f2aa76e7811feb8e7a7a52651e42d0874c3df3a1f6461c1fc22"
+    },
+    {
+      "path": "specs/082-output-content-validation/heat01-attempt902-engineering-review.md",
+      "sha256": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json",
+      "sha256": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791"
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json",
+      "sha256": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e"
+    }
+  ],
+  "prior_feature": {
+    "feature_directory": "specs/082-output-content-validation"
+  },
+  "prior_managed_context": "\nFor additional context about technologies to be used, project structure,\nshell commands, and other important information, read the current plan\nat specs/082-output-content-validation/plan.md\n\nFeature 082 is a runtime process-output validator with actionable AI correction\nfeedback and report-consumable results. Read its scope-amendment.md, quickstart.md\nand implementation-goal.md. Earlier 081 content-validation analysis is reference\nmaterial. Submitting the revised goal approves replacing its all-30-output G0 gate\nwith per-subject checks. Implementation starts after human plan approval. Preserve\nthe separate generation campaign; use isolated runs for validator/rework\ndemonstrations. The reporting UI\nbelongs to another branch; publish a shared result contract here.\n"
+}

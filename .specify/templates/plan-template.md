@@ -42,6 +42,46 @@
 
 [Gates determined based on constitution file]
 
+## Workflow Platform Alignment
+
+Read `docs/design/workflow-platform-vision.md` and record the applicable V1-V7
+decisions before designing workflow, review, validation, external-action, or
+tool-integration changes. For an unrelated feature, state why this section is
+not applicable. Do not leave these prompts as an unreviewed checklist.
+
+- **User journey and process:** Describe how someone creates/opens, configures,
+  runs, inspects, decides, and returns to the supported process. Identify reusable
+  mechanisms and reference-workflow choices. Keep vendor prototype problems from
+  becoming platform requirements.
+- **Ownership and reuse:** Identify existing runner, gateway, result, validator,
+  storage, and surface seams. Identify the independent integration owning each
+  vendor-specific behaviour, preferring existing providers. Explain any new
+  shared contract or service; justify any proposed new integration project.
+- **Process UI, when applicable:** Apply `docs/design/process-apps.md`. Define
+  the interaction contract for available inputs, outputs/evidence, pending
+  questions/decisions, observed state, and permitted actions with exact subjects.
+  State common versus tailored views, shared style/components and scoped client,
+  workspace-tab hosting, navigation to blocks/evidence, saved UI compatibility,
+  and close/reopen/fallback behaviour. Both views use the existing executor and
+  durable state; generated UI code does not orchestrate the graph.
+- **AI authoring and interaction policy:** UI generation/updates happen through
+  Wright's configured coding-agent role, initially the default LLM with prepared
+  versioned API/UI instructions. Map profile/model/platform choices to existing
+  adapters. Resolve required user choices before a run; distinguish supplied
+  values, defaults, automatic producers, and declared human review/action steps.
+  Define durable pause/resume and wait/recovery/failure without ad hoc questions
+  during unattended sections. Record resolved agent and generation provenance.
+- **Evidence and interaction:** Bind inputs, outputs, options, assessments,
+  reviews, and external actions to exact revisions. Describe invalidation,
+  required/optional capabilities, and actionable missing-evidence behaviour.
+- **Generality:** When adding or generalising a shared mechanism, name a
+  different workflow or integration and the evidence that will expose accidental
+  coupling. Manufacturing stages, printing controls, and monitoring are optional
+  workflow choices; do not make them platform prerequisites.
+- **Limits and deviations:** State actual runtime support, contract/version
+  limits, unresolved design decisions, and any departure from V1-V7. Direction
+  and planning are not implementation, engineering verification, or acceptance.
+
 ## Project Structure
 
 ### Documentation (this feature)

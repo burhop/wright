@@ -53,6 +53,15 @@ single hosted black box. Wright coordinates agents and deterministic tools while
 leaving LLM/provider choice, credentials, licenses, and host software under the
 operator's control.
 
+The [workflow platform vision](docs/design/workflow-platform-vision.md) guides
+future work: general workflow mechanisms, evidence-based engineering review,
+and independent tool integrations. Manufacturing is an early reference workflow.
+The [process UI design](docs/design/process-apps.md) describes authoring and working
+views of one process, with AI-authored interfaces using shared Wright foundations.
+The [refactoring plan](docs/architecture/workflow-platform-refactoring-plan.md)
+puts the interaction contract, shared UI kit/client, and workspace experience
+first, then migration and proof across different engineering processes.
+
 The first public alpha is aimed at developers, MCP porters, demo users, and
 selected beta feedback. Local and hybrid deployments are supported, but real
 engineering toolchains still require explicit configuration.

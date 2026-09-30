@@ -13,6 +13,18 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
+**Architecture alignment**: Derive applicable ownership and verification tasks
+from the plan's Workflow Platform Alignment section and
+`docs/design/workflow-platform-vision.md`. Start with the user journey and shared
+mechanisms. Prefer existing external providers; vendor compatibility work is not
+a prerequisite for the platform. For process UI tasks, apply
+`docs/design/process-apps.md`: interaction contract, shared client/kit, common view,
+saved tailored UI bindings, workspace navigation, and close/reopen/fallback
+behaviour. Shared mechanism changes need evidence from a substantially different
+existing workflow. Keep
+direction, implementation, protocol checks, engineering evidence, and acceptance
+distinct; do not mark a task complete from a planning document alone.
+
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
