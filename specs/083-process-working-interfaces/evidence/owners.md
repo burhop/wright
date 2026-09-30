@@ -61,6 +61,10 @@ Ruff passes for every changed/new implementation and test module.
 
 ## Remaining
 
+This paragraph records the earlier owner-composition increment. Preparation
+composition was subsequently completed in [input/readiness evidence](inputs.md)
+and T009 is now checked in tasks.md. API and supervisor work remain pending.
+
 T009 remains unchecked until preparation/source-input/readiness composition is
 connected to the shared input implementation. The current application method
 requires an explicit attached run. Thin authenticated routes (T010), input

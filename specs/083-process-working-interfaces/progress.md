@@ -158,6 +158,33 @@ No API/browser/common UI/model-generation/live-MCP/distribution proof is claimed
 The full goal remains active. Next work wires authenticated source/input/readiness
 routes and the existing executor's backend-owned lifetime with durable identities.
 
+Focused local input/readiness commit: `db06be6a` (18 owned files). Ruff/format
+and staged whitespace checks pass. The 11 preserved runtime/prototype files and
+three protected review/binding files still match the recorded baseline hashes.
+
+API reconnaissance confirms the existing persisted `_workflow_source_scope`,
+engineer/admin validation-role gate and shared error handler in the workspace
+mount. T010 should compose these; the process-interfaces prefix needs bounded,
+non-echoing validation errors and no-store responses. No API source was changed
+by this reconnaissance. Existing native gateway sessions are scoped to the
+persisted workspace session; no client-supplied principal/capability is accepted.
+
+### 2026-09-30 — Authenticated process transport (T010)
+
+Previous goal turn made concrete progress and saved input/readiness commit
+`db06be6a`. This turn added the thin native snapshot/input/readiness routes and
+request envelopes, retained persisted workspace binding/engineer-admin role
+authorization and existing control-plane authentication/origin checks, bounded
+request bodies and removed value/tag/context echoes from new-prefix errors.
+Recorded-run attachment retains its exact checkpoint and never replays work.
+
+The new tests were observed red before implementation. Focused checks: **11
+passed**; combined source/run/review/continuation/082/security API regressions:
+**73 passed, one existing skip**. Exact command and scope are in
+[API evidence](evidence/api.md). T010 is checked; foundation T005–T010 now exists.
+No UI, live model/MCP or distribution completion is claimed. The full goal remains
+active, with T013/T014 backend-owned task/receipt/attachment/cancellation work next.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

@@ -21,7 +21,7 @@ paths are intended ownership.
 - [x] T007 Establish service boundaries/trace/error/redaction/limits in `packages/workspace_service/src/workspace_service/process_interfaces/` and wire owning services through `packages/workspace_service/src/workspace_service/service.py` without transport imports.
 - [x] T008 Add pure projection/currentness tests for source/results/082 reviews/permitted actions and missing evidence in `packages/workspace_service/tests/test_process_interaction_projection.py`.
 - [x] T009 Implement interaction projection over existing authorities in `packages/workspace_service/src/workspace_service/process_interfaces/projection.py`, preserving exact subjects, observed freshness and unsupported capabilities.
-- [ ] T010 Register thin authenticated route/schema composition in `apps/api/src/api/routers/process_interfaces.py`, `apps/api/src/api/schemas/process_interfaces.py` and `apps/api/src/api/main.py`; preserve existing workspace mount/auth/origin/RBAC.
+- [x] T010 Register thin authenticated route/schema composition in `apps/api/src/api/routers/process_interfaces.py`, `apps/api/src/api/schemas/process_interfaces.py` and `apps/api/src/api/main.py`; preserve existing workspace mount/auth/origin/RBAC.
 
 **Checkpoint:** Versioned projections/storage/API authority exist without a new executor.
 
