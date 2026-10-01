@@ -2,8 +2,19 @@
 
 import asyncio
 import json
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    UploadFile,
+)
 from fastapi.responses import StreamingResponse
 from agent_adapters.report_generation import (
     generate_workflow_response,
@@ -20,6 +31,7 @@ from api.schemas.process_interfaces import (
     ProcessReadinessRequest,
     ProcessRunRequest,
     ProcessCancelRequest,
+    ProcessRepresentationRequest,
 )
 from core.process_interactions import (
     InputSnapshot,
@@ -29,6 +41,7 @@ from core.process_interactions import (
     Locator,
     StartReceipt,
     ProcessCancellationReceipt,
+    ArtifactRef,
 )
 from core.process_validation import Digest, Identifier
 from core.tracing import traced
@@ -148,6 +161,82 @@ async def set_process_inputs(
         return prepared.snapshot
     except ProcessInterfaceError as error:
         raise _transport_error(error) from error
+
+
+@router.post("/inputs/upload", response_model=ArtifactRef)
+@traced("api.process.interface.input.upload")
+async def upload_process_input(
+    request: Request,
+    response: Response,
+    session_id: Annotated[Identifier, Form()],
+    path: Annotated[Locator, Form()],
+    expected_storage_digest: Annotated[Digest, Form()],
+    input_id: Annotated[Identifier, Form()],
+    file: Annotated[UploadFile, File()],
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        form = await request.form()
+        keys = [key for key, _ in form.multi_items()]
+        if sorted(keys) != sorted(
+            ("session_id", "path", "expected_storage_digest", "input_id", "file")
+        ):
+            raise ProcessInterfaceError(
+                "RESPONSE_INVALID",
+                "This upload contains unsupported or repeated fields.",
+                "Upload the file using the declared input in its working view.",
+            )
+        application, scope, process = _native_context(
+            request, service, session_id, path, expected_storage_digest
+        )
+        content = await file.read(application.limits.maximum_upload_bytes + 1)
+        return await application.artifacts.upload(
+            scope, process, input_id, file.filename or "", content
+        )
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+    finally:
+        await file.close()
+
+
+@router.post("/representations/read")
+@traced("api.process.interface.representation.read")
+async def read_process_representation(
+    body: ProcessRepresentationRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    application, scope, process = _native_context(
+        request, service, body.session_id, body.path, body.expected_storage_digest
+    )
+    try:
+        artifact = await application.artifacts.read(
+            scope,
+            process,
+            body.reference,
+            run_id=body.run_id,
+            input_snapshot_id=body.input_snapshot_id,
+        )
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+    async def chunks():
+        view = memoryview(artifact.content)
+        for offset in range(0, len(view), 65_536):
+            yield view[offset : offset + 65_536]
+
+    return StreamingResponse(
+        chunks(),
+        media_type=artifact.media_type,
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": 'attachment; filename="representation.bin"',
+            "Content-Length": str(len(artifact.content)),
+            "X-Content-Type-Options": "nosniff",
+            "X-Wright-Artifact-SHA256": artifact.reference.sha256,
+        },
+    )
 
 
 @router.post("/readiness", response_model=Readiness)

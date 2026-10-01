@@ -157,3 +157,75 @@ service integration. This host currently reports those common-view capabilities
 as unavailable; it does not supply a broad generic file-read or vendor shortcut.
 T021 still requires actual served-workspace/editor/reconnect verification. The
 full remaining M0–M5 scope is unchanged.
+
+## 2026-10-01 — Native input uploads and exact representation reads
+
+The native working tab now supplies the common view's upload and representation
+ports through the public scoped client. `uploadInput` checks the host source and
+declared file input before publication through the existing workspace file owner.
+Publication returns a unique immutable workspace reference; it neither prepares
+inputs nor edits accepted source nor starts execution. Preparation and file access
+share the existing consumer/reference validation. The owning file service gained a
+bounded byte reader; the legacy reference reader retains its 4 MiB limit while
+process inputs support the approved 32 MiB upload bound.
+
+`getRepresentation` requires exactly one recorded run or frozen input snapshot.
+The service verifies exact membership in its canonical result/preparation, then
+checks the on-disk SHA-256 before returning any bytes. Paths alone grant no read
+authority. Result reads are bounded to 100 MiB, input reads to the upload limit;
+smaller administrative limits remain effective. Omitted results in a truncated
+canonical view produce an unavailable-reader reason instead of a false unrelated
+subject claim. The route returns an inert attachment with no-store, nosniff, exact
+length and owning hash headers. HTML/SVG never become executable previews.
+The client bounds actual streamed bytes and checks those headers/length; the
+canonical server owns the hash check. Closing or replacing a preview aborts only
+its read, never the process.
+
+The API checks exposed a real streaming defect in the existing request-body
+middleware: after replaying the bounded request it invented `http.disconnect`.
+It now delegates to the actual receive channel after body completion. The real
+multipart/read routes and a direct connection-lifetime check prove this correction.
+Another initial failure identified an import from the wrong module; result
+restoration now uses the existing continuation owner, as the projection does.
+
+Verification on Windows / Python 3.13.5 / Node 25.2.0:
+
+```text
+.venv/Scripts/python.exe -m pytest apps/api/tests/test_process_interface_artifacts.py apps/api/tests/test_process_interfaces_api.py apps/api/tests/test_workflow_sources_api.py packages/workspace_service/tests/test_process_artifact_access.py packages/workspace_service/tests/test_process_input_readiness.py packages/workspace_service/tests/test_process_preparation_service.py -q -p no:cacheprovider --basetemp C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t020-artifact-batch
+.venv/Scripts/python.exe -m pytest packages/workspace_service/tests/test_files.py packages/workspace_service/tests/test_process_run_supervisor.py apps/api/tests/test_process_interface_run_lifecycle.py -q -p no:cacheprovider --basetemp C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t020-artifact-regressions
+```
+
+**86 + 38 = 124 backend checks pass.** These cover real bounded local file
+publication/read, preparation, canonical records with a controlled generator,
+stale/foreign/forged references, bounds, unknown/duplicate form fields,
+authentication/origin/RBAC, inert download headers and affected source/run/file
+regressions. They do not constitute live model or engineering MCP evidence.
+The two existing TestClient/httpx/anyio dependency deprecation warnings remain.
+Raw logs: `.local-run/process-interfaces-083/t020-artifact-batch.log` and
+`t020-artifact-regressions.log`.
+
+From `apps/web`:
+
+```text
+node ../../node_modules/vitest/vitest.mjs run src/services/process-workspace-tabs.spec.ts src/store/viewer-process-tabs.spec.tsx src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx tests/WorkspacePanelSessions.spec.tsx tests/EditorTabs.spec.tsx src/components/pages/WorkflowRecoveryPage.spec.tsx src/services/process-client.spec.ts src/components/process-interfaces/CommonProcessView.spec.tsx --reporter=json --outputFile=D:/repos/wright/.local-run/process-interfaces-083/t020-artifact-ports-qualified-vitest.json
+```
+
+**192 checks pass in eight actual files:** 32 locator, 11 store, seven host,
+34 mocked workspace, two document-strip, 16 source-page, 59 client and 31
+common-view checks. A prior filter run matched only five files; its 145 passing
+checks were not used to claim workspace/store regression coverage. The final
+eight-file report proves that scope. Tests include exact form fields, wrong-source
+receipts, download bounds/headers/length, inert MIME, abort and preserved run
+identity. Full app/client types, schema freshness, focused Ruff/ESLint and
+whitespace checks pass. A fresh production build passes (926 modules, 1.90 s) at
+`.local-run/process-interfaces-083/t020-artifact-ports-build`. Existing large-chunk
+and external-output-directory notices remain. No browser/API/model/provider
+service was launched; no served-build, engineering or user acceptance claim is made.
+
+Ten prototype hashes, three campaign hashes and the approved context remain
+unchanged. The original startup/workspace-router deltas were independently
+compared to their saved baselines; only the request-streaming hunk of `main.py`
+belongs to this milestone. **T020 stays unchecked for exact navigation; T021
+still requires the served workspace/editor journey.** Declared interactions,
+actual Wright default-model UI authoring/hosting, both digital engineering
+chains, migration and distribution proof remain required.

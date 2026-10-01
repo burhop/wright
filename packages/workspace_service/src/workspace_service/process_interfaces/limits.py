@@ -8,6 +8,7 @@ class ProcessInterfaceLimits:
     inline_bytes: int = 65_536
     maximum_upload_bytes: int = 33_554_432
     maximum_input_request_bytes: int = 67_108_864
+    maximum_representation_bytes: int = 104_857_600
     maximum_source_bytes: int = 1_048_576
     maximum_asset_bytes: int = 10_485_760
     maximum_bundle_bytes: int = 31_457_280
@@ -28,6 +29,10 @@ class ProcessInterfaceLimits:
                 )
         if self.maximum_repairs > 2:
             raise ValueError("Authoring may attempt at most two corrections")
+        if self.maximum_representation_bytes > 104_857_600:
+            raise ValueError(
+                "Representation reads must fit the owning 100 MiB file bound"
+            )
         if (
             self.maximum_source_files > 32
             or self.maximum_page_items > 256

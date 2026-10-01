@@ -117,6 +117,10 @@ function fixture() {
       options?.inputSnapshotId ? prepared : initial,
     ),
     setInputs: vi.fn(async (bindings) => ({ ...input, bindings })),
+    uploadInput: vi.fn(async () => ({
+      artifact_ref: "input.txt",
+      sha256: hash,
+    })),
     checkReadiness: vi.fn(async () => readiness),
     start: vi.fn(async (_input, requestId) => ({
       ...receipt,
@@ -880,8 +884,67 @@ describe("common process request recovery and observer lifetime", () => {
     expect(
       screen.getByRole("link", { name: "Download exact file" }),
     ).toHaveAttribute("download", "geometry.csv");
-    expect(client.getRepresentation).toHaveBeenCalledWith(artifact);
+    expect(client.getRepresentation).toHaveBeenCalledWith(artifact, {
+      runId: "run-one",
+      signal: expect.any(AbortSignal),
+    });
     expect(screen.getByText("Failed")).toBeVisible();
+  });
+  it("aborts a representation read on close without cancelling the process", async () => {
+    const { client, store } = fixture();
+    const artifact = {
+      artifact_ref: "outputs/part.stl",
+      sha256: hash,
+      result_id: "result-one",
+    };
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield {
+        type: "snapshot",
+        snapshot: {
+          ...running,
+          state: "completed",
+          outputs: [
+            {
+              result_id: "result-one",
+              step_id: "geometry",
+              port_id: "out",
+              role: "geometry",
+              title: "Exact part",
+              representations: [artifact],
+            },
+          ],
+        },
+      };
+    });
+    let signal: AbortSignal | undefined;
+    vi.mocked(client.getRepresentation).mockImplementation(
+      async (_reference, options) => {
+        signal = options?.signal;
+        return new Promise<Blob>((_resolve, reject) =>
+          signal?.addEventListener("abort", () => reject(signal?.reason), {
+            once: true,
+          }),
+        );
+      },
+    );
+    const view = render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        canReadRepresentations
+      />,
+    );
+    await screen.findByText("Exact part");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open representation" }),
+    );
+    expect(signal?.aborted).toBe(false);
+    view.unmount();
+    expect(signal?.aborted).toBe(true);
+    expect(client.cancel).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
   });
   it("shows only declared interactions and never submits an invented response", async () => {
     const { client, store } = fixture();

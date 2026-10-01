@@ -207,6 +207,7 @@ function CommonProcessController({
     blob?: Blob;
   }>();
   const representationGeneration = useRef(0);
+  const representationRead = useRef<AbortController | undefined>(undefined);
   const alive = useRef(false);
   const revision = useRef(0);
   const readGeneration = useRef(0);
@@ -216,6 +217,8 @@ function CommonProcessController({
   }, [onRunAttached]);
   const invalidatePendingReads = useCallback(() => {
     representationGeneration.current++;
+    representationRead.current?.abort();
+    representationRead.current = undefined;
     readGeneration.current++;
   }, []);
 
@@ -636,9 +639,20 @@ function CommonProcessController({
   const openRepresentation = canReadRepresentations
     ? (reference: ArtifactRef) => {
         const generation = ++representationGeneration.current;
+        representationRead.current?.abort();
+        const control = new AbortController();
+        representationRead.current = control;
         setRepresentation({ reference });
         void client
-          .getRepresentation(reference)
+          .getRepresentation(
+            reference,
+            activeRunRef.current
+              ? { runId: activeRunRef.current, signal: control.signal }
+              : {
+                  inputSnapshotId: preparedRef.current?.snapshot_id,
+                  signal: control.signal,
+                },
+          )
           .then((blob) => {
             if (
               alive.current &&
@@ -1001,6 +1015,8 @@ function CommonProcessController({
                   className="wp-link"
                   onClick={() => {
                     representationGeneration.current++;
+                    representationRead.current?.abort();
+                    representationRead.current = undefined;
                     setRepresentation(undefined);
                   }}
                 >

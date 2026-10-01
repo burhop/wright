@@ -430,8 +430,36 @@ served workspace/editor proof. Declared interactions, Wright default-model UI
 authoring/hosting, both digital engineering chains, migration and installed
 distribution proofs remain required. The complete goal remains active.
 
-## Implementation progress format
+### 2026-10-01 — Scoped uploads and result representations
 
+The previous goal turn made progress: fixed the new reader's import to the
+existing continuation owner and obtained 41 passing focused checks after the chat
+reconnected. This continuation completes the native upload/representation ports
+over actual workspace file, preparation and canonical result owners.
+
+Uploads validate a declared file input against the accepted source and publish
+immutable references without starting work. Representation reads require exact
+prepared-input/result membership and unchanged file hashes. The public client
+enforces streamed-size/header checks; native tabs advertise these capabilities,
+and closing/replacing a preview aborts its read without cancelling the process.
+An authenticated download test exposed invented disconnects after request-body
+replay; corrected the existing middleware's connection lifetime rather than
+adding a transport/executor. Foreign authority/form fields and duplicate fields
+are rejected before publication. HTML/SVG remain inert downloads.
+
+124 backend checks and 192 checks in all eight selected frontend files pass.
+App/client types, owning-schema freshness, focused lint, whitespace and a fresh
+926-module production build pass. Evidence, exact commands, initial failures and
+coverage limitations are in [common-view.md](evidence/common-view.md). Prototype,
+campaign and approved context preservation checks pass; original startup/router
+deltas remain intact. No live services, model/provider demonstrations, physical
+operations or remote publication were performed.
+
+T001–T019 remain checked. T020 is still partial for exact block/result/assessment/
+evidence navigation; T021 served-workspace verification and all later feature
+requirements remain necessary. The full goal remains active.
+
+## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,
 run/subject/artifact identities, observations/evidence links, failed/pending scope,

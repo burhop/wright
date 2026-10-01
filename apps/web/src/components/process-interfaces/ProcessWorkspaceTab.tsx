@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import type { ProcessRef } from "@wright/process-client";
+import type { InputDefinition, ProcessRef } from "@wright/process-client";
 import { createWorkspaceProcessClient } from "../../services/process-client";
 import type { ProcessWorkspaceTab as WorkingTab } from "../../services/process-workspace-tabs";
 import { CommonProcessView } from "./CommonProcessView";
@@ -55,6 +55,11 @@ export function ProcessWorkspaceTab({
     (runId: string) => onRunAttached(tab.path, process, runId),
     [onRunAttached, process, tab.path],
   );
+  const upload = useCallback(
+    (file: File, definition: InputDefinition) =>
+      client.uploadInput(definition.input_id, file),
+    [client],
+  );
   const prepareAnother = useCallback(
     () => onPrepareAnother(process),
     [onPrepareAnother, process],
@@ -86,6 +91,8 @@ export function ProcessWorkspaceTab({
         runId={tab.processView.run_id}
         onRunAttached={attached}
         onPrepareAnother={prepareAnother}
+        onUpload={upload}
+        canReadRepresentations
       />
     </section>
   );

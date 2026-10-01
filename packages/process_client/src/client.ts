@@ -38,6 +38,10 @@ export interface SnapshotOptions extends ReadOptions {
   readonly inputSnapshotId?: string;
   readonly page?: string;
 }
+export interface RepresentationOptions extends ReadOptions {
+  readonly runId?: string;
+  readonly inputSnapshotId?: string;
+}
 export interface FollowOptions extends ReadOptions {
   readonly runId: string;
   readonly cursor?: string;
@@ -79,6 +83,11 @@ export interface ProcessClient {
     bindings: ReadonlyArray<InputBinding>,
     options?: ReadOptions,
   ): Promise<InputSnapshot>;
+  uploadInput(
+    inputId: string,
+    file: File,
+    options?: ReadOptions,
+  ): Promise<ArtifactRef>;
   checkReadiness(
     input: InputSnapshot,
     options?: ReadOptions,
@@ -109,7 +118,7 @@ export interface ProcessClient {
   ): Promise<ProcessCancellationReceipt>;
   getRepresentation(
     reference: ArtifactRef,
-    options?: ReadOptions,
+    options?: RepresentationOptions,
   ): Promise<Blob>;
   navigate(target: NavigationTarget): Promise<void>;
 }
@@ -125,7 +134,7 @@ export interface NativeProcessClientOptions {
   readonly readRepresentation?: (
     process: ProcessRef,
     reference: ArtifactRef,
-    options: ReadOptions,
+    options: RepresentationOptions,
   ) => Promise<Blob>;
   readonly navigate?: (
     process: ProcessRef,
@@ -275,6 +284,92 @@ async function httpFailure(
     },
     { httpStatus: response.status, requestId },
   );
+}
+
+/** The owning reader verifies the recorded hash before streaming these bounded bytes. */
+async function representationBody(
+  response: Response,
+  reference: ArtifactRef,
+  signal?: AbortSignal,
+): Promise<Blob> {
+  const maximum = 104_857_600;
+  const size = response.headers.get("content-length");
+  if (
+    !size ||
+    !/^(0|[1-9][0-9]*)$/.test(size) ||
+    Number(size) > maximum ||
+    response.headers.get("x-wright-artifact-sha256") !== reference.sha256 ||
+    response.headers.get("x-content-type-options") !== "nosniff" ||
+    !response.body
+  ) {
+    await response.body?.cancel().catch(() => undefined);
+    throw clientError(
+      "UI_INCOMPATIBLE",
+      "Wright did not return a verified bounded representation.",
+      "Open the exact recorded file from its process result.",
+    );
+  }
+  const reader = response.body.getReader();
+  const parts: Uint8Array<ArrayBuffer>[] = [];
+  let bytes = 0;
+  const abort = () => {
+    void reader.cancel().catch(() => undefined);
+  };
+  signal?.addEventListener("abort", abort, { once: true });
+  try {
+    signal?.throwIfAborted();
+    while (true) {
+      const chunk = await reader.read();
+      signal?.throwIfAborted();
+      if (chunk.done) break;
+      bytes += chunk.value.byteLength;
+      if (bytes > maximum || bytes > Number(size))
+        throw clientError(
+          "UI_INCOMPATIBLE",
+          "The representation exceeds its recorded size.",
+          "Refresh the result and use its owning file reader.",
+        );
+      parts.push(new Uint8Array(chunk.value));
+    }
+    if (bytes !== Number(size))
+      throw clientError(
+        "UI_INCOMPATIBLE",
+        "The representation download is incomplete.",
+        "Open the same recorded representation again.",
+      );
+    const type =
+      response.headers.get("content-type")?.split(";", 1)[0].trim() ??
+      "application/octet-stream";
+    const passive = new Set([
+      "text/plain",
+      "text/markdown",
+      "text/csv",
+      "application/json",
+      "image/png",
+      "image/jpeg",
+      "image/gif",
+      "image/webp",
+      "model/stl",
+      "model/3mf",
+      "model/obj",
+      "model/step",
+    ]);
+    return new Blob(parts, {
+      type: passive.has(type) ? type : "application/octet-stream",
+    });
+  } catch (error) {
+    signal?.throwIfAborted();
+    if (error instanceof ProcessClientError) throw error;
+    throw clientError(
+      "CAPABILITY_UNAVAILABLE",
+      "The representation download was interrupted.",
+      "Open the same recorded representation again.",
+    );
+  } finally {
+    signal?.removeEventListener("abort", abort);
+    await reader.cancel().catch(() => undefined);
+    reader.releaseLock();
+  }
 }
 
 async function delay(
@@ -602,6 +697,66 @@ export function createNativeProcessClient(
       scopedProcess(process, reply.process);
       return reply;
     },
+    async uploadInput(inputId: string, file: File, read: ReadOptions = {}) {
+      identifier(inputId, "input ID");
+      read.signal?.throwIfAborted();
+      if (
+        !file ||
+        !Number.isInteger(file.size) ||
+        file.size < 1 ||
+        file.size > 33_554_432 ||
+        typeof file.name !== "string" ||
+        !file.name ||
+        file.name.length > 160 ||
+        /[/\\:%\x00-\x1f]/.test(file.name) ||
+        file.name.startsWith(".")
+      )
+        throw clientError(
+          "RESPONSE_INVALID",
+          "Choose a supported input file of at most 32 MB.",
+          "Use a simple filename and the declared process input.",
+        );
+      const body = new FormData();
+      for (const [key, value] of Object.entries(source())) body.set(key, value);
+      body.set("input_id", inputId);
+      body.set("file", file, file.name);
+      let response: Response;
+      try {
+        response = await fetch(`${base}/inputs/upload`, {
+          method: "POST",
+          cache: "no-store",
+          signal: read.signal,
+          headers: { accept: "application/json" },
+          body,
+        });
+      } catch {
+        read.signal?.throwIfAborted();
+        throw clientError(
+          "CAPABILITY_UNAVAILABLE",
+          "The input upload was interrupted.",
+          "Upload the file again before preparing inputs. No process was started.",
+        );
+      }
+      if (!response.ok) return httpFailure(response);
+      const reference = assertContract(
+        "ArtifactRef",
+        await jsonBody(response, read.signal),
+      );
+      relativeLocator(reference.artifact_ref);
+      if (
+        !reference.artifact_ref.startsWith(
+          `.wright/process-inputs/${process.source_digest}/`,
+        ) ||
+        reference.result_id != null ||
+        reference.representation_id != null
+      )
+        throw clientError(
+          "SCOPE_DENIED",
+          "The uploaded file belongs to a different process scope.",
+          "Upload the input again in its original working view.",
+        );
+      return reference;
+    },
     async checkReadiness(value: InputSnapshot, read: ReadOptions = {}) {
       const input = checkedInput(value);
       const reply = await request("/readiness", "Readiness", read, {
@@ -688,11 +843,55 @@ export function createNativeProcessClient(
         throw unknownOutcome(requestId);
       return reply;
     },
-    async getRepresentation(reference: ArtifactRef, read: ReadOptions = {}) {
+    async getRepresentation(
+      reference: ArtifactRef,
+      read: RepresentationOptions = {},
+    ) {
       const checked = assertContract("ArtifactRef", reference);
       relativeLocator(checked.artifact_ref);
-      if (!readRepresentation) return unavailable("representation reads");
-      return readRepresentation(process, checked, read);
+      if (readRepresentation) return readRepresentation(process, checked, read);
+      if ((read.runId === undefined) === (read.inputSnapshotId === undefined))
+        throw clientError(
+          "RESPONSE_INVALID",
+          "Choose the exact recorded run or prepared inputs for this file.",
+          "Open the representation from its working view.",
+        );
+      const ownership =
+        read.runId !== undefined
+          ? { run_id: identifier(read.runId, "run ID") }
+          : {
+              input_snapshot_id: identifier(
+                read.inputSnapshotId!,
+                "input snapshot ID",
+              ),
+            };
+      read.signal?.throwIfAborted();
+      let response: Response;
+      try {
+        response = await fetch(`${base}/representations/read`, {
+          method: "POST",
+          cache: "no-store",
+          signal: read.signal,
+          headers: {
+            accept: "application/octet-stream",
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            ...source(),
+            reference: checked,
+            ...ownership,
+          }),
+        });
+      } catch {
+        read.signal?.throwIfAborted();
+        throw clientError(
+          "CAPABILITY_UNAVAILABLE",
+          "The representation connection was interrupted.",
+          "Reopen the same recorded representation.",
+        );
+      }
+      if (!response.ok) return httpFailure(response);
+      return representationBody(response, checked, read.signal);
     },
     async navigate(target: NavigationTarget) {
       const checked = assertContract("NavigationTarget", target);

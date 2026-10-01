@@ -371,8 +371,155 @@ describe("native process client", () => {
     ).rejects.toMatchObject({ reason: { code: "CAPABILITY_UNAVAILABLE" } });
     await expect(
       scoped.getRepresentation({ artifact_ref: "part.stl", sha256: digest }),
-    ).rejects.toMatchObject({ reason: { code: "CAPABILITY_UNAVAILABLE" } });
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
     expect(fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe("scoped input upload and representation reads", () => {
+  const reference = {
+    artifact_ref: `.wright/process-inputs/${digest}/one.txt`,
+    sha256: digest,
+    media_type: "text/plain",
+  };
+  const binary = (content = "data", headers: Record<string, string> = {}) =>
+    new Response(content, {
+      headers: {
+        "content-type": "text/plain",
+        "content-length": "4",
+        "x-content-type-options": "nosniff",
+        "x-wright-artifact-sha256": digest,
+        ...headers,
+      },
+    });
+  it("uploads only the declared input and host source fields without execution", async () => {
+    const fetch = fake(async () => json(reference));
+    await expect(
+      client(fetch).uploadInput("brief", new File(["data"], "one.txt")),
+    ).resolves.toEqual(reference);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const [url, init] = fetch.mock.calls[0];
+    expect(url).toBe("/api/workspace/process-interfaces/inputs/upload");
+    expect(init?.method).toBe("POST");
+    expect(init?.headers).toEqual({ accept: "application/json" });
+    const body = init?.body as FormData;
+    expect([...body.keys()].sort()).toEqual([
+      "expected_storage_digest",
+      "file",
+      "input_id",
+      "path",
+      "session_id",
+    ]);
+    expect(body.get("input_id")).toBe("brief");
+    expect(body.get("expected_storage_digest")).toBe(digest);
+    expect((body.get("file") as File).name).toBe("one.txt");
+  });
+  it.each(["../one.txt", ".hidden", "bad\nname.txt", "bad%name.txt"])(
+    "rejects unsupported input names before a request: %s",
+    async (name) => {
+      const fetch = fake(async () => json(reference));
+      await expect(
+        client(fetch).uploadInput("brief", new File(["data"], name)),
+      ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+      expect(fetch).not.toHaveBeenCalled();
+    },
+  );
+  it("rejects empty or oversized inputs and another source's upload receipt", async () => {
+    const fetch = fake(async () =>
+      json({
+        ...reference,
+        artifact_ref: `.wright/process-inputs/${"b".repeat(64)}/one.txt`,
+      }),
+    );
+    const scoped = client(fetch);
+    await expect(
+      scoped.uploadInput("brief", new File([], "empty.txt")),
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    const oversized = new File(["x"], "large.txt");
+    Object.defineProperty(oversized, "size", { value: 33_554_433 });
+    await expect(scoped.uploadInput("brief", oversized)).rejects.toMatchObject({
+      reason: { code: "RESPONSE_INVALID" },
+    });
+    expect(fetch).not.toHaveBeenCalled();
+    await expect(
+      scoped.uploadInput("brief", new File(["data"], "one.txt")),
+    ).rejects.toMatchObject({ reason: { code: "SCOPE_DENIED" } });
+  });
+  it("reads through the exact run and preparation owner without a generic file route", async () => {
+    const fetch = fake(async () => binary());
+    const scoped = client(fetch);
+    const blob = await scoped.getRepresentation(reference, {
+      runId: "run-one",
+    });
+    expect(blob.type).toBe("text/plain");
+    expect(blob.size).toBe(4);
+    expect(fetch.mock.calls[0][0]).toBe(
+      "/api/workspace/process-interfaces/representations/read",
+    );
+    expect(JSON.parse(fetch.mock.calls[0][1]!.body as string)).toEqual({
+      session_id: "session",
+      path: process.source_path,
+      expected_storage_digest: digest,
+      reference,
+      run_id: "run-one",
+    });
+    await scoped.getRepresentation(reference, {
+      inputSnapshotId: "inputs-one",
+    });
+    expect(
+      JSON.parse(fetch.mock.calls[1][1]!.body as string).input_snapshot_id,
+    ).toBe("inputs-one");
+    await expect(scoped.getRepresentation(reference)).rejects.toMatchObject({
+      reason: { code: "RESPONSE_INVALID" },
+    });
+    await expect(
+      scoped.getRepresentation(reference, {
+        runId: "run-one",
+        inputSnapshotId: "inputs-one",
+      }),
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+  it.each<Record<string, string>>([
+    { "x-wright-artifact-sha256": "b".repeat(64) },
+    { "x-content-type-options": "" },
+    { "content-length": "104857601" },
+    { "content-length": "3" },
+    { "content-length": "5" },
+    { "content-length": "invalid" },
+  ])(
+    "rejects unverified, excessive or incomplete representations: %s",
+    async (headers) => {
+      const fetch = fake(async () => binary("data", headers));
+      await expect(
+        client(fetch).getRepresentation(reference, { runId: "run-one" }),
+      ).rejects.toMatchObject({ reason: { code: "UI_INCOMPATIBLE" } });
+      expect(fetch).toHaveBeenCalledTimes(1);
+    },
+  );
+  it("keeps HTML inert and preserves abort and owning errors", async () => {
+    const html = fake(async () =>
+      binary("data", { "content-type": "text/html" }),
+    );
+    expect(
+      (await client(html).getRepresentation(reference, { runId: "run-one" }))
+        .type,
+    ).toBe("application/octet-stream");
+    const fetch = fake(async () => {
+      throw new TypeError("connection lost");
+    });
+    await expect(
+      client(fetch).getRepresentation(reference, { runId: "run-one" }),
+    ).rejects.toMatchObject({ reason: { code: "CAPABILITY_UNAVAILABLE" } });
+    const control = new AbortController();
+    control.abort();
+    await expect(
+      client(fetch).getRepresentation(reference, {
+        runId: "run-one",
+        signal: control.signal,
+      }),
+    ).rejects.toMatchObject({ name: "AbortError" });
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -513,9 +660,11 @@ describe("recorded event attachment and reconciliation", () => {
           })
         : json(snapshot("run-one")),
     );
-    const iterator = client(fetch)
-      .follow({ runId: "run-one", signal: abort.signal })
-      [Symbol.asyncIterator]();
+    const updates = client(fetch).follow({
+      runId: "run-one",
+      signal: abort.signal,
+    });
+    const iterator = updates[Symbol.asyncIterator]();
     await iterator.next();
     await iterator.next();
     const pending = iterator.next();

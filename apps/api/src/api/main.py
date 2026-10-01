@@ -149,8 +149,12 @@ class WorkflowSourceBodyLimitMiddleware:
 
         async def replay_receive():
             nonlocal delivered
-            if disconnected or delivered:
+            if disconnected:
                 return {"type": "http.disconnect"}
+            if delivered:
+                # Body completion is not a disconnect. Streaming replies still
+                # need the transport's real connection lifetime after replay.
+                return await receive()
             delivered = True
             return {"type": "http.request", "body": bytes(body), "more_body": False}
 

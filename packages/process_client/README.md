@@ -61,15 +61,24 @@ is no automatic mutation retry or new request-ID generation in the client.
   It validates a locator, not permission to read or run that process; the normal
   scoped server operation must still authorize it.
 
-## Public operation coverage at T017
+## Public operation coverage
 
 Implemented native routes: snapshots, immutable inputs, readiness, explicit
-start, attach, recorded follow and cancellation requests. The public interface
-also names `respond`, `decide`, `requestAction`, representation reads and exact
+start, attach, recorded follow and cancellation requests. Native `uploadInput`
+saves a file against a declared input, then returns an immutable reference;
+it does not prepare or start a process. `getRepresentation(reference, {runId})`
+or `{inputSnapshotId}` delegates to the exact recorded result or prepared-input
+owner, which checks the stored bytes against the recorded SHA-256. Downloads
+are bounded to 100 MB, uploads to 32 MB; smaller configured server limits apply.
+Incomplete downloads and changed subjects fail explicitly. HTML/SVG are inert
+downloads, not executable previews. These operations use the same host
+authentication and scoped process as the rest of the client, not a general file API.
+
+The public interface also names `respond`, `decide`, `requestAction` and exact
 navigation. Declared checkpoint/action routes and the isolated presentation
 transport are later Feature 083 tasks: those operations currently report
 `CAPABILITY_UNAVAILABLE` without speculative requests. Trusted native hosts may
-provide representation/navigation ports through their owning authorized services;
+provide alternate representation/navigation ports through their owning authorized services;
 no generic file/tool/shell/admin operation is exposed. Full feature completion
 requires those later capabilities and their backend/browser proofs.
 

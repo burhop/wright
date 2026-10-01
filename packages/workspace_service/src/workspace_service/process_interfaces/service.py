@@ -232,6 +232,12 @@ class ProcessInterfaceService:
             await supervisor.close()
 
     @cached_property
+    def artifacts(self):
+        from .artifacts import ProcessArtifactAccess
+
+        return ProcessArtifactAccess(self)
+
+    @cached_property
     def interfaces(self) -> ProcessInterfaceRepository:
         return ProcessInterfaceRepository(self.db_path)
 

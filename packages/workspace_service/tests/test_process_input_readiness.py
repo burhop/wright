@@ -132,7 +132,15 @@ def application(root, text):
     async def read_reference(workspace_dir, path):
         return (root / path).read_bytes()
 
+    async def read_bytes(workspace_dir, path, *, maximum_bytes):
+        with (root / path).open("rb") as stream:
+            content = stream.read(maximum_bytes + 1)
+        if len(content) > maximum_bytes:
+            raise ValueError("The file exceeds this reader's supported size.")
+        return content
+
     app.files.read_reference = read_reference
+    app.files.read_bytes = read_bytes
     app.workflow_sources.read = read_source
     return app
 

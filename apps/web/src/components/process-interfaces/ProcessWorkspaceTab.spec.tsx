@@ -4,7 +4,11 @@ import type { CommonProcessViewProps } from "./CommonProcessView";
 import { createProcessWorkspaceTab } from "../../services/process-workspace-tabs";
 import { ProcessWorkspaceTab } from "./ProcessWorkspaceTab";
 
-const mocks = vi.hoisted(() => ({ createClient: vi.fn(), common: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  createClient: vi.fn(),
+  common: vi.fn(),
+  upload: vi.fn(),
+}));
 vi.mock("../../services/process-client", () => ({
   createWorkspaceProcessClient: mocks.createClient,
 }));
@@ -38,6 +42,7 @@ describe("trusted process tab host", () => {
     vi.clearAllMocks();
     mocks.createClient.mockImplementation((options) => ({
       process: options.process,
+      uploadInput: mocks.upload,
     }));
   });
 
@@ -150,7 +155,7 @@ describe("trusted process tab host", () => {
     expect(onOpenDefinition).toHaveBeenCalledExactlyOnceWith(process);
   });
 
-  it("does not advertise representation or navigation ports before qualification", () => {
+  it("provides scoped uploads and representations while undeclared navigation stays unavailable", () => {
     render(
       <ProcessWorkspaceTab
         tab={tab}
@@ -159,8 +164,30 @@ describe("trusted process tab host", () => {
         onPrepareAnother={vi.fn()}
       />,
     );
-    expect(lastCommon().canReadRepresentations).toBeUndefined();
+    expect(lastCommon().canReadRepresentations).toBe(true);
     expect(lastCommon().canNavigate).toBeUndefined();
-    expect(lastCommon().onUpload).toBeUndefined();
+    expect(lastCommon().onUpload).toBeTypeOf("function");
+  });
+  it("uses the declared input identifier for uploads through the stable scoped client", async () => {
+    render(
+      <ProcessWorkspaceTab
+        tab={tab}
+        sessionId="session"
+        onRunAttached={vi.fn()}
+        onPrepareAnother={vi.fn()}
+      />,
+    );
+    const file = new File(["data"], "requirements.txt");
+    await lastCommon().onUpload!(file, {
+      input_id: "requirements",
+      title: "Requirements",
+      required: true,
+      binding_kind: "file",
+      block_id: "requirements",
+      port_id: "out",
+      value_schema: {},
+    });
+    expect(mocks.upload).toHaveBeenCalledExactlyOnceWith("requirements", file);
+    expect(mocks.createClient).toHaveBeenCalledTimes(1);
   });
 });

@@ -198,13 +198,34 @@ def _descriptors(plan, blocks):
     return tuple(descriptions), task_fields, edges
 
 
+def input_file_reference(plan, fields, input_id, path, data):
+    """Use the accepted input's consumers to choose an existing reference reader."""
+    addresses = {f"{input_id}.{port['key']}" for port in fields.get("outputs", [])}
+    image = any(
+        port.get("kind") == "reference_images" for port in fields.get("outputs", [])
+    )
+    file_import = any(step.application_from in addresses for step in plan.steps)
+    text_consumer = any(
+        step.prompt_from in addresses
+        or step.arguments_from in addresses
+        or addresses.intersection(step.argument_sources.values())
+        or any(src in addresses for _, src in step.references)
+        for step in plan.steps
+    )
+    return WorkflowReference.from_bytes(
+        path, data, image=image, allow_binary=file_import and not text_consumer
+    )
+
+
 async def _file_value(
     *, service, workspace_dir, plan, fields, binding, limits, review_snapshots=None
 ):
     path = binding.reference.artifact_ref
     try:
         WorkspacePath(workspace_dir).resolve(path, must_exist=True)
-        data = await service.files.read_reference(workspace_dir, path)
+        data = await service.files.read_bytes(
+            workspace_dir, path, maximum_bytes=limits.maximum_upload_bytes
+        )
         if not data or len(data) > limits.maximum_upload_bytes:
             raise ValueError("File is empty or exceeds the input bound")
         if hashlib.sha256(data).hexdigest() != binding.reference.sha256:
@@ -213,23 +234,7 @@ async def _file_value(
                 "A prepared input file changed.",
                 "Select the current exact file and prepare its inputs again.",
             )
-        addresses = {
-            f"{binding.input_id}.{port['key']}" for port in fields.get("outputs", [])
-        }
-        image = any(
-            port.get("kind") == "reference_images" for port in fields.get("outputs", [])
-        )
-        file_import = any(step.application_from in addresses for step in plan.steps)
-        text_consumer = any(
-            step.prompt_from in addresses
-            or step.arguments_from in addresses
-            or addresses.intersection(step.argument_sources.values())
-            or any(src in addresses for _, src in step.references)
-            for step in plan.steps
-        )
-        value = WorkflowReference.from_bytes(
-            path, data, image=image, allow_binary=file_import and not text_consumer
-        )
+        value = input_file_reference(plan, fields, binding.input_id, path, data)
         if review_snapshots is not None:
             from ..workflow_artifact_review import snapshot
 
