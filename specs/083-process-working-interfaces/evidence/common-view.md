@@ -413,3 +413,32 @@ editor. **T021 stays partial** while affected served preservation checks remain
 open; T027/T052/T053 also retain the integration/regression obligations. The
 complete Feature 083 goal, live authoring/tool chains and installed checks remain
 active and unfinished. User/engineering/physical acceptance is not claimed.
+
+### 2026-10-01 — Three regressions resolved; four expectations remain open
+
+Fixed layout-only saves to retain the exact last accepted source bytes instead
+of invoking the semantic formatter. The served typed-handle/layout check now
+passes with definition revision 2 and unchanged source. Semantic edits still
+format and save through the existing owner; real changes are not disguised as
+layout edits. Native Run is disabled while a source draft is unapplied/invalid
+or conflicted; a new component check and the full existing served authoring
+journey verify containment and subsequent editing controls.
+
+The 082 review check expected obsolete heading/campaign-specific wording. Updated
+only those assertions to the actual engineering-judgment wording, preserving
+the exact requirements, IDs, source locators, subject digest and approval-label
+checks. The served check passes. Expanded the existing details drawer before its
+retained screenshot so the requirements are visible in the viewport.
+
+The later reviewed editor baseline already uses a clickable native Run/preflight
+affordance rather than the older disabled-button expectations. Four cases from
+the earlier seven failures remain open: partial input configuration (`:173`),
+unsupported production (`:695`), feedback latency (`:759`) and accessibility
+(`:798`). Do not report all editor acceptance complete or replace the backend
+readiness authority with another frontend executor. Integrate/recheck those
+expectations with T027's shared input/runtime work; T021/T052/T053 remain pending.
+
+Current targeted evidence is in [interactions.md](interactions.md): 185 backend
+checks pass (two Windows symlink skips), 126 component checks pass, four distinct
+served browser checks pass, plus a repeated expanded review check. These counts
+do not supersede the earlier broader failure report or prove live MCP/model use.

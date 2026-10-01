@@ -520,6 +520,43 @@ are stopped; unrelated services and the original dirty/campaign work remain
 preserved. The complete goal remains active. Next: investigate editor failures
 while implementing the remaining declared-input/readiness integration.
 
+### 2026-10-01 — Declared source inputs and three editor regression fixes
+
+Continued from `6c7de8d6`; the intervening connection-status response was not an
+implementation milestone. Revalidated active goal and authoritative worktree.
+Fixed layout-only saves retaining accepted bytes/revision and native invalid
+draft Run containment. Corrected obsolete 082 review copy assertions while
+preserving exact requirements/subject evidence. All three served regression
+checks pass. Four older Run availability expectations remain open for the shared
+runtime integration; T021/T027/T052/T053 stay pending.
+
+Completed T022. T023 now has an explicit bounded `human-input` compiler descriptor,
+source/schema/port/evidence validation, planned human-response dependency
+classification and editor preservation of nested input declarations. The existing
+opaque source store is reused. Compiled answers cannot be automatically replayed
+inside a correction segment. A shared synthetic source fixture cold-round-trips
+through storage/compiler, editor formatting, served source edit/save/reopen.
+
+T023 remains in progress: durable barrier creation/response storage and v3
+same-run continuation are not implemented. Normal preparation explicitly reports
+that capability unavailable before effects; direct execution cannot treat the
+barrier as an AI prompt. Replace these temporary guards with T024, then wire
+forms in T027 and complete two-checkpoint recovery in T028. Do not claim the final
+human-interaction experience or an undeclared-AI-question policy yet.
+
+185 backend checks pass, two existing symlink checks skip for Windows privileges;
+126 component checks and four distinct served normal-workspace checks pass.
+Repeated the exact requirements review after expanding its existing drawer and
+visually inspected the source/review screenshots. Types/focused lint and a fresh
+927-module production build pass. [interactions.md](evidence/interactions.md)
+records commands, reports, fixture digest, visual scope and preliminary failures.
+Browser checks use controlled HTTP contracts; no live API/model/MCP/engineering
+acceptance is implied. The owned 5237/5238 Vite processes were stopped. Original prototype
+hashes, mixed API deltas, protected campaigns and approved 083 context are intact.
+All remaining authoring/live-provider/migration/distribution work is still required.
+The complete goal remains active. Next: implement durable declared-input barriers
+and same-run v3 continuation through the existing runtime/storage authorities.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

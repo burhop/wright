@@ -482,12 +482,23 @@ async def prepare_inputs(
         producer, output_port = edge["from"].split(".", 1)
         consumer, input_port = edge["to"].split(".", 1)
         if producer not in plan.inputs:
+            human_step = next(
+                (
+                    step
+                    for step in plan.steps
+                    if step.id == producer and step.human_interaction
+                ),
+                None,
+            )
             dependencies.append(
                 InputDependency(
                     binding_id=edge["to"],
-                    classification="upstream_produced",
+                    classification="declared_human_response"
+                    if human_step is not None
+                    else "upstream_produced",
                     producer_step=producer,
                     producer_port=output_port,
+                    interaction_step=producer if human_step is not None else None,
                 )
             )
     if len(dependencies) > 256:

@@ -2161,6 +2161,7 @@ function WorkflowRecoveryReadyConcept({
   const [diagnostics, setDiagnostics] = useState<RecoveryDiagnostic[]>([]);
   const checkButtonRef = useRef<HTMLButtonElement>(null);
   const [sourceDraft, setSourceDraft] = useState(workflowSource);
+  const [savedSource, setSavedSource] = useState(workflowSource);
   const [sourceDirty, setSourceDirty] = useState(false);
   const [savedSemanticIdentity, setSavedSemanticIdentity] = useState(() =>
     contentIdentity(loadedWorkflow),
@@ -2784,6 +2785,7 @@ function WorkflowRecoveryReadyConcept({
     setLayout(incomingLayout);
     setSavedLayoutIdentity(canonicalLayoutPositionBytes(incomingLayout));
     setSourceDraft(workflowSource);
+    setSavedSource(workflowSource);
     setSourceDirty(false);
     setSavedSemanticIdentity(contentIdentity(incoming));
     setHostDefinitionRevision(definitionRevision);
@@ -3524,7 +3526,11 @@ function WorkflowRecoveryReadyConcept({
     setSaveMessage("");
     try {
       const saved = await onSave(
-        formatRecoveryAuthoringSource(workflowToSave).text,
+        // A layout move must not rewrite accepted source or invalidate its
+        // exact revision, run inputs, results, and review subjects.
+        contentIdentity(workflowToSave) === savedSemanticIdentity
+          ? savedSource
+          : formatRecoveryAuthoringSource(workflowToSave).text,
         cloneLayout(layout),
       );
       if (
@@ -3565,6 +3571,7 @@ function WorkflowRecoveryReadyConcept({
       );
       setSavedSemanticIdentity(contentIdentity(rebasedWorkflow));
       setSourceDraft(saved.source);
+      setSavedSource(saved.source);
       setSourceDirty(false);
       setSaveState("saved");
       setSaveMessage("Saved in workspace");
@@ -3916,6 +3923,7 @@ function WorkflowRecoveryReadyConcept({
                   (!observer.checked ||
                     Boolean(observer.error && !observer.record))) ||
                 saveState === "saving" ||
+                (Boolean(onRun) && (sourceDirty || !sourceValid || saveConflict)) ||
                 (simulationPreview && !canRun)
               }
               title={

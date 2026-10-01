@@ -1746,6 +1746,28 @@ end`;
     ).toHaveValue("Keep this edit.");
   });
 
+  it("blocks native execution of an unapplied or invalid source draft", async () => {
+    const onRun = vi.fn();
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        definitionRevision={2}
+        storageDigest={"b".repeat(64)}
+        onRun={onRun}
+      />,
+    );
+    await userEvent.click(screen.getByTestId("workflow-recovery-view-code"));
+    fireEvent.change(screen.getByTestId("workflow-recovery-source-editor"), {
+      target: { value: "workflow malformed\nend\n" },
+    });
+    const start = screen.getByTestId("workflow-recovery-run-start");
+    expect(start).toBeDisabled();
+    fireEvent.click(start);
+    await userEvent.click(screen.getByTestId("workflow-recovery-source-apply"));
+    expect(start).toBeDisabled();
+    expect(onRun).not.toHaveBeenCalled();
+  });
+
   it("connects another response as the prompt and derives terminal saving from that connection", async () => {
     render(
       <Editor

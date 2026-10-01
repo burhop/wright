@@ -1,0 +1,25 @@
+{
+  "browser": "154.0.8037.58",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "url": "http://127.0.0.1:5238/workspace/ws-recovery?workflow=canonical",
+  "original_source_sha256": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+  "saved_source_sha256": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d",
+  "saved_definition_revision": 3,
+  "process": {
+    "workspace_id": "ws-recovery",
+    "source_path": "workflows/mounting-bracket.workflow.wflow",
+    "source_digest": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d"
+  },
+  "controlled_run_start_count": 0,
+  "served_frontend": true,
+  "controlled_http_contracts": true,
+  "source_edit_save_reopen": true,
+  "runtime_checkpoint_consumption": false,
+  "live_api": false,
+  "live_model": false,
+  "live_mcp": false,
+  "engineering_acceptance": false
+}

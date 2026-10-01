@@ -47,7 +47,7 @@ real outputs and reattaches after close/disconnect without dispatch replay.
 **Independent verification:** Two declared barriers survive service reopen and
 consume responses once on the same run; undeclared questions never create forms.
 
-- [ ] T022 [US2] Add source round-trip/schema/dependency tests for declared structured input and unsupported arrangements in `packages/workspace_service/tests/test_process_human_input_source.py`.
+- [x] T022 [US2] Add source round-trip/schema/dependency tests for declared structured input and unsupported arrangements in `packages/workspace_service/tests/test_process_human_input_source.py`.
 - [ ] T023 [US2] Implement accepted-source input metadata and `human-input` declaration/compiler barriers in `packages/workspace_service/src/workspace_service/workflow_source_execution.py` and `workflow_sources.py`, preserving source grammar/port validation.
 - [ ] T024 [US2] Implement v3 checkpoint/response persistence and same-run consumption in `packages/workspace_service/src/workspace_service/workflow_execution_continuation.py`, `process_interfaces/interactions.py` and `packages/data_vault/src/data_vault/workflow_continuation_repository.py`; preserve v2 approval restoration.
 - [ ] T025 [US2] Enforce undeclared-question diagnostics and unattended step policy in `packages/workspace_service/src/workspace_service/workflow_mcp_execution.py` and `workflow_source_execution.py`, retaining bounded existing 082 repair scope.

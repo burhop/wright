@@ -20,7 +20,7 @@ const taskSettings = (taskId: string) => {
   const section = new RegExp(`task ${taskId}\\n([\\s\\S]*?)\\nend`).exec(
     runtimeSource,
   )?.[1];
-  const settings = /^  settings: (.+)$/m.exec(section ?? "")?.[1];
+  const settings = /^ {2}settings: (.+)$/m.exec(section ?? "")?.[1];
   if (!settings) throw new Error(`Missing settings for ${taskId}`);
   return settings;
 };
@@ -368,7 +368,9 @@ test("shows the exact human requirements review from the workspace Workflows con
   await expect.poll(() => mock.runCount()).toBe(1);
   const review = page.getByTestId("workflow-external-approval");
   await expect(review).toBeVisible();
-  await expect(review).toContainText("Requirements review");
+  await expect(review.getByRole("heading", { level: 3 })).toHaveText(
+    "Review results against the requirements",
+  );
   await expect(review).toContainText("structured-demo");
   await expect(review).toContainText("STRUCT-001");
   await expect(review).toContainText("STRUCT-002");
@@ -379,11 +381,14 @@ test("shows the exact human requirements review from the workspace Workflows con
   await expect(review).toContainText("Length constraint");
   await expect(review).toContainText(subjectDigest);
   await expect(review).toContainText(
-    "record only the decision here; the campaign runner resumes the attempt",
+    "Approval records your engineering judgment for these files; it does not mean the whole workflow has passed.",
   );
   await expect(
     review.getByTestId("workflow-external-approval-approve"),
   ).toHaveText("Approve reviewed requirements");
+
+  await page.getByRole("button", { name: "Expand details" }).click();
+  await review.getByRole("heading", { level: 3 }).scrollIntoViewIfNeeded();
 
   await testInfo.attach("validation-requirements-review", {
     body: await page.screenshot({ fullPage: true }),

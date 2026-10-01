@@ -140,6 +140,7 @@ class PromptStep:
     revision_policy: str = ""
     file_dependencies: dict[str, str] = field(default_factory=dict)
     task_tool_allowlist: tuple[str, ...] = ()
+    human_interaction: dict | None = None
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -301,6 +302,18 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
     ports: dict[str, tuple[str, str, dict]] = {}
     for block_id, block in blocks.items():
         fields = block["fields"]
+        if (
+            block["kind"] == "input"
+            and isinstance(settings := fields.get("settings"), dict)
+            and (
+                "human_interaction" in settings
+                or settings.get("authoring_template") == "human-input"
+            )
+        ):
+            raise _invalid(
+                f"{block_id}: a declared human interaction must be a task barrier.",
+                "Use interaction_input for preparation metadata or a human-input task for a declared runtime response.",
+            )
         if not isinstance(fields.get("name"), str) or not fields["name"].strip():
             raise _invalid(f"{block_id} needs a name.")
         for direction in ("inputs", "outputs"):
@@ -435,6 +448,16 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         settings = fields.get("settings", {})
         if not isinstance(settings, dict):
             raise _invalid(f"{title}: invalid settings.")
+        if settings.get("authoring_template") == "human-input":
+            from .workflow_human_input import compile_human_input
+
+            steps.append(compile_human_input(block_id, fields, incoming, blocks))
+            continue
+        if "human_interaction" in settings:
+            raise _invalid(
+                f"{title}: a human interaction must use the human-input template.",
+                "Declare the input barrier explicitly; do not add questions to an unattended step.",
+            )
         if settings.get("authoring_template") == "process-validator":
             from .process_validation.configuration import compile_validator
 
@@ -997,6 +1020,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 else step
                 for step in steps
             ]
+    from .workflow_human_input import validate_human_input_rework
+
+    validate_human_input_rework(steps, revisions)
     validate_rework(steps, revisions)
     # Reject output collisions within one run before calling any model.
     names: dict[str, str] = {}
@@ -1193,6 +1219,12 @@ async def prepare_prompt_workflow(
         )
     validate_workspace_authoring_shape(document.source)
     plan = compile_prompt_workflow(document.source)
+    if any(step.human_interaction for step in plan.steps):
+        raise _error(
+            "WORKFLOW_HUMAN_INPUT_UNAVAILABLE",
+            "This workflow declares human input, but durable input continuation is not available yet.",
+            "Use the common view after the declared-input continuation capability is installed.",
+        )
     review_snapshots = []
     if any(step.human_review for step in plan.steps):
         from .workflow_artifact_review import snapshot
@@ -1816,6 +1848,12 @@ async def execute_prompt_workflow(
         ):
             tool_runtime._verified_copy_sources = tuple(engineering_results)
         step = plan.steps[cursor]
+        if step.human_interaction:
+            raise _error(
+                "WORKFLOW_HUMAN_INPUT_UNAVAILABLE",
+                f"{step.title}: a declared human-input barrier cannot execute as an AI prompt.",
+                "Enable durable declared-input continuation before running this workflow.",
+            )
         if step.human_review:
             break  # Terminal review is persisted by the run recorder after all outputs are sealed.
         if step.external_action:
