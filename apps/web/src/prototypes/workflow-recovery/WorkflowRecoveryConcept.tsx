@@ -34,6 +34,7 @@ import {
   parseRecoveryAuthoringSource,
   recoveryAuthoringSemanticIdAtOffset,
   recoveryAuthoringSourceSelection,
+  recoveryAuthoringBlockId,
   validateRecoveryAuthoringRoundTrip,
 } from "./recovery-authoring";
 import {
@@ -179,6 +180,7 @@ export interface WorkflowRecoveryConceptProps {
   readonly storageDigest?: string;
   readonly workflowFilePath?: string;
   readonly reopenRequest?: number;
+  readonly navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
   readonly workflowLayout?: RecoveryLayout;
   readonly workspaceSessionId?: string;
   readonly workspaceId?: string;
@@ -1475,6 +1477,7 @@ export function WorkflowRecoveryConcept({
   storageDigest,
   workflowFilePath = "workflows/mounting-bracket.workflow.wflow",
   reopenRequest = 0,
+  navigation,
   workflowLayout,
   workspaceSessionId,
   workspaceId,
@@ -1561,6 +1564,7 @@ export function WorkflowRecoveryConcept({
       storageDigest={storageDigest}
       workflowFilePath={workflowFilePath}
       reopenRequest={reopenRequest}
+      navigation={navigation}
       workflowLayout={workflowLayout}
       workspaceSessionId={workspaceSessionId}
       workspaceId={workspaceId}
@@ -2054,6 +2058,7 @@ interface WorkflowRecoveryReadyConceptProps {
   readonly storageDigest?: string;
   readonly workflowFilePath: string;
   readonly reopenRequest: number;
+  readonly navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
   readonly workflowLayout?: RecoveryLayout;
   readonly workspaceSessionId?: string;
   readonly workspaceId?: string;
@@ -2083,6 +2088,7 @@ function WorkflowRecoveryReadyConcept({
   storageDigest,
   workflowFilePath,
   reopenRequest,
+  navigation,
   workflowLayout,
   workspaceSessionId,
   workspaceId,
@@ -2116,6 +2122,38 @@ function WorkflowRecoveryReadyConcept({
   const [view, setView] = useState<ViewMode>("diagram");
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>("overview");
   const [inspectorOpen, setInspectorOpen] = useState(false);
+  const focusedNavigation = useRef<string | undefined>(undefined);
+  const [navigationMessage, setNavigationMessage] = useState("");
+  useEffect(() => {
+    if (!navigation || focusedNavigation.current === navigation.requestId)
+      return;
+    const { process, target } = navigation.resolution;
+    if (
+      process.workspace_id !== workspaceId ||
+      process.source_path !== workflowFilePath.replace(/^\/+/, "") ||
+      process.source_digest !== storageDigest
+    ) {
+      focusedNavigation.current = navigation.requestId;
+      setInspectorOpen(true);
+      setNavigationMessage(
+        "This link refers to a different saved workflow revision. Your open edits are preserved. Open the matching recorded process to inspect it.",
+      );
+      return;
+    }
+    if (target.kind !== "process" && target.kind !== "block") return;
+    focusedNavigation.current = navigation.requestId;
+    setNavigationMessage("");
+    if (target.block_id) {
+      setInspectorOpen(true);
+      const semanticId = recoveryAuthoringBlockId(workflow, target.block_id);
+      if (workflow.blocks.some((block) => block.id === semanticId))
+        setSelectedId(semanticId);
+      else
+        setNavigationMessage(
+          "This step is absent from the open workflow draft. Your edits are preserved; inspect the saved definition before following this link.",
+        );
+    }
+  }, [navigation, workspaceId, workflowFilePath, storageDigest, workflow]);
   const [runDetailsOpen, setRunDetailsOpen] = useState(false);
   const [runDetailsExpanded, setRunDetailsExpanded] = useState(false);
   const [focusPath, setFocusPath] = useState(false);
@@ -2692,7 +2730,8 @@ function WorkflowRecoveryReadyConcept({
     (selectedBlock !== null ||
       selectedResult !== null ||
       selectedPort !== null ||
-      selectedRelationship !== null);
+      selectedRelationship !== null ||
+      !!navigationMessage);
   const selectObject = (id: string | null, tab: InspectorTab = "overview") => {
     const block = findBlock(inspectionWorkflow, id);
     const preferredTab =
@@ -4221,6 +4260,11 @@ function WorkflowRecoveryReadyConcept({
                 ⌄
               </button>
             </div>
+            {navigationMessage && (
+              <p role="alert" data-testid="workflow-navigation-error">
+                {navigationMessage}
+              </p>
+            )}
             <div className="recovery-panel-heading">
               <span>
                 {candidateSelection

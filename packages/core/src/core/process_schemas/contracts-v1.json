@@ -3458,6 +3458,242 @@
     "title": "InterfaceRevision",
     "type": "object"
   },
+  "NavigationResolution": {
+    "$defs": {
+      "ArtifactRef": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_ref": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Artifact Ref",
+            "type": "string"
+          },
+          "media_type": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Media Type"
+          },
+          "representation_id": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Representation Id"
+          },
+          "result_id": {
+            "anyOf": [
+              {
+                "maxLength": 482,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Result Id"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "sha256"
+        ],
+        "title": "ArtifactRef",
+        "type": "object"
+      },
+      "NavigationTarget": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_ref": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Artifact Ref"
+          },
+          "assessment_id": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Assessment Id"
+          },
+          "block_id": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Block Id"
+          },
+          "kind": {
+            "enum": [
+              "process",
+              "block",
+              "run",
+              "result",
+              "assessment",
+              "evidence"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "result_id": {
+            "anyOf": [
+              {
+                "maxLength": 482,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Result Id"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Run Id"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "NavigationTarget",
+        "type": "object"
+      },
+      "ProcessRef": {
+        "additionalProperties": false,
+        "properties": {
+          "semantic_digest": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Semantic Digest"
+          },
+          "source_contract": {
+            "default": "canonical-source",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Source Contract",
+            "type": "string"
+          },
+          "source_digest": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Source Digest",
+            "type": "string"
+          },
+          "source_path": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Source Path",
+            "type": "string"
+          },
+          "workspace_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "source_path",
+          "source_digest"
+        ],
+        "title": "ProcessRef",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "Exact host intent resolved against accepted source and recorded subjects.",
+    "properties": {
+      "process": {
+        "$ref": "#/$defs/ProcessRef"
+      },
+      "representation": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ArtifactRef"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "target": {
+        "$ref": "#/$defs/NavigationTarget"
+      }
+    },
+    "required": [
+      "process",
+      "target"
+    ],
+    "title": "NavigationResolution",
+    "type": "object"
+  },
   "ProcessCancellationReceipt": {
     "additionalProperties": false,
     "properties": {

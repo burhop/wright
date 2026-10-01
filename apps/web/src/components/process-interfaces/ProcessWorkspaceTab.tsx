@@ -1,5 +1,13 @@
-import { useCallback, useMemo } from "react";
-import type { InputDefinition, ProcessRef } from "@wright/process-client";
+import { useCallback, useEffect, useMemo } from "react";
+import {
+  type InputDefinition,
+  type NavigationResolution,
+  type ProcessRef,
+} from "@wright/process-client";
+import {
+  createProcessNavigationDispatcher,
+  type ProcessNavigationRequest,
+} from "../../services/process-navigation";
 import { createWorkspaceProcessClient } from "../../services/process-client";
 import type { ProcessWorkspaceTab as WorkingTab } from "../../services/process-workspace-tabs";
 import { CommonProcessView } from "./CommonProcessView";
@@ -14,6 +22,11 @@ export interface ProcessWorkspaceTabProps {
   ) => void;
   readonly onOpenDefinition?: (process: ProcessRef) => void;
   readonly onPrepareAnother: (process: ProcessRef) => void;
+  readonly onNavigate?: (
+    process: ProcessRef,
+    resolution: NavigationResolution,
+  ) => Promise<void>;
+  readonly navigation?: ProcessNavigationRequest;
 }
 
 /** Trusted workspace host. This does not resolve file providers or execute a graph. */
@@ -23,6 +36,8 @@ export function ProcessWorkspaceTab({
   onRunAttached,
   onOpenDefinition,
   onPrepareAnother,
+  onNavigate,
+  navigation,
 }: ProcessWorkspaceTabProps) {
   const {
     workspace_id,
@@ -47,9 +62,19 @@ export function ProcessWorkspaceTab({
       source_contract,
     ],
   );
+  const navigationHost = useMemo(() => createProcessNavigationDispatcher(), []);
+  useEffect(() => {
+    navigationHost.setHost(onNavigate);
+    return () => navigationHost.setHost(undefined);
+  }, [onNavigate, navigationHost]);
   const client = useMemo(
-    () => createWorkspaceProcessClient({ process, sessionId }),
-    [process, sessionId],
+    () =>
+      createWorkspaceProcessClient({
+        process,
+        sessionId,
+        navigate: navigationHost.navigate,
+      }),
+    [process, sessionId, navigationHost],
   );
   const attached = useCallback(
     (runId: string) => onRunAttached(tab.path, process, runId),
@@ -93,6 +118,8 @@ export function ProcessWorkspaceTab({
         onPrepareAnother={prepareAnother}
         onUpload={upload}
         canReadRepresentations
+        canNavigate={!!onNavigate}
+        navigation={navigation}
       />
     </section>
   );

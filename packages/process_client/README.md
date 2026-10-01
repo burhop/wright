@@ -74,8 +74,17 @@ Incomplete downloads and changed subjects fail explicitly. HTML/SVG are inert
 downloads, not executable previews. These operations use the same host
 authentication and scoped process as the rest of the client, not a general file API.
 
-The public interface also names `respond`, `decide`, `requestAction` and exact
-navigation. Declared checkpoint/action routes and the isolated presentation
+Native `navigate(target)` first resolves the exact source/block/run/result/
+assessment/evidence through the scoped server operation, then passes a validated
+`NavigationResolution` to the trusted workspace host. The host selects an existing
+matching document/run tab or opens one in that workspace. Step navigation retains
+open source drafts. Assessment navigation separates the checked result identity
+from its recorded assessment-file identity. If no host is available, the client
+reports capability unavailable before making a request; source changes and absent/ambiguous evidence remain
+explicit. Navigation never starts or replays work.
+
+The public interface also names `respond`, `decide` and `requestAction`.
+Declared checkpoint/action routes and the isolated presentation
 transport are later Feature 083 tasks: those operations currently report
 `CAPABILITY_UNAVAILABLE` without speculative requests. Trusted native hosts may
 provide alternate representation/navigation ports through their owning authorized services;

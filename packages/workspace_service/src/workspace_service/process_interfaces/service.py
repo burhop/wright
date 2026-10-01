@@ -238,6 +238,12 @@ class ProcessInterfaceService:
         return ProcessArtifactAccess(self)
 
     @cached_property
+    def navigation(self):
+        from .navigation import ProcessNavigation
+
+        return ProcessNavigation(self)
+
+    @cached_property
     def interfaces(self) -> ProcessInterfaceRepository:
         return ProcessInterfaceRepository(self.db_path)
 

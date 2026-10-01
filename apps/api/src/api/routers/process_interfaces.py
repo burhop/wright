@@ -32,6 +32,7 @@ from api.schemas.process_interfaces import (
     ProcessRunRequest,
     ProcessCancelRequest,
     ProcessRepresentationRequest,
+    ProcessNavigationRequest,
 )
 from core.process_interactions import (
     InputSnapshot,
@@ -42,6 +43,7 @@ from core.process_interactions import (
     StartReceipt,
     ProcessCancellationReceipt,
     ArtifactRef,
+    NavigationResolution,
 )
 from core.process_validation import Digest, Identifier
 from core.tracing import traced
@@ -159,6 +161,30 @@ async def set_process_inputs(
             session_id=body.session_id,
         )
         return prepared.snapshot
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+
+@router.post("/navigation", response_model=NavigationResolution)
+@traced("api.process.interface.navigation")
+async def resolve_process_navigation(
+    body: ProcessNavigationRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    response.headers["Cache-Control"] = "no-store"
+    application, scope, process = _native_context(
+        request, service, body.session_id, body.path, body.expected_storage_digest
+    )
+    try:
+        return await application.navigation.resolve(
+            scope,
+            process,
+            body.target,
+            gateway=getattr(request.app.state, "gateway_service", None),
+            session_id=body.session_id,
+        )
     except ProcessInterfaceError as error:
         raise _transport_error(error) from error
 

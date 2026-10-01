@@ -39,7 +39,7 @@ real outputs and reattaches after close/disconnect without dispatch replay.
 - [x] T017 [US1] Build typed public client with native transport, cursor reconciliation and schema fixtures in `packages/process_client/`; add npm local dependency/lock wiring in `apps/web/package.json` without a new package manager.
 - [x] T018 [US1] Extract themed accessible inputs/image thumbnails/progress/findings/review/actions/results/navigation patterns into `packages/ui_kit/`, adapting existing tokens and format viewers without private `apps/web` imports.
 - [x] T019 [US1] Implement native common working view in `apps/web/src/components/process-interfaces/CommonProcessView.tsx` using the public client/kit, including required reasons, exact evidence and optional-capability fallback.
-- [ ] T020 [US1] Integrate typed process tabs/restore/deep links in `apps/web/src/components/chat/WorkspacePanel.tsx`, `EditorTabs.tsx` and `apps/web/src/store/viewer.tsx`; preserve existing workflow/file/editor state and close-without-cancel.
+- [x] T020 [US1] Integrate typed process tabs/restore/deep links in `apps/web/src/components/chat/WorkspacePanel.tsx`, `EditorTabs.tsx` and `apps/web/src/store/viewer.tsx`; preserve existing workflow/file/editor state and close-without-cancel.
 - [ ] T021 [US1] Verify common-view component states, mocked journey and reconnect/navigation in `apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx` and `tests/ui-integration/process-common-view.spec.ts`, recording actual served-workspace checks in `specs/083-process-working-interfaces/evidence/common-view.md`.
 
 ## Phase 4 — US2: Deliberate interaction / M1 completion

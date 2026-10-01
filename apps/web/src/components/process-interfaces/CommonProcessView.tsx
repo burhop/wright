@@ -27,6 +27,10 @@ import {
   Section,
 } from "@wright/ui-kit";
 import {
+  sameProcessReference,
+  type ProcessNavigationRequest,
+} from "../../services/process-navigation";
+import {
   compactInput,
   createProcessViewRecoveryStore,
   processViewReason,
@@ -51,6 +55,7 @@ export interface CommonProcessViewProps {
   readonly canNavigate?: boolean;
   readonly onRunAttached?: (runId: string, receipt?: StartReceipt) => void;
   readonly onPrepareAnother?: () => void;
+  readonly navigation?: ProcessNavigationRequest;
 }
 
 const terminal = (state: InteractionSnapshot["state"]) =>
@@ -171,6 +176,7 @@ function CommonProcessController({
   canNavigate = false,
   onRunAttached,
   onPrepareAnother,
+  navigation,
 }: CommonProcessViewProps) {
   const store = useMemo(
     () =>
@@ -192,6 +198,7 @@ function CommonProcessController({
   const activeRunRef = useRef(runId);
   const [busy, setBusy] = useState("");
   const [uploadCount, setUploadCount] = useState(0);
+  const [navigationReason, setNavigationReason] = useState<Reason>();
   const uploads = useRef(0);
   const operation = useRef(false);
   const [reason, setReason] = useState<Reason>();
@@ -207,6 +214,8 @@ function CommonProcessController({
     blob?: Blob;
   }>();
   const representationGeneration = useRef(0);
+  const workingRoot = useRef<HTMLDivElement | null>(null);
+  const focusedNavigation = useRef<string | undefined>(undefined);
   const representationRead = useRef<AbortController | undefined>(undefined);
   const alive = useRef(false);
   const revision = useRef(0);
@@ -619,8 +628,12 @@ function CommonProcessController({
   };
   const navigate = canNavigate
     ? (target: NavigationTarget) => {
-        void client.navigate(target).catch((error) => {
-          if (alive.current) setReason(message(error));
+        const pinned =
+          target.run_id || !activeRunRef.current
+            ? target
+            : { ...target, run_id: activeRunRef.current };
+        void client.navigate(pinned).catch((error) => {
+          if (alive.current) setNavigationReason(message(error));
         });
       }
     : undefined;
@@ -636,41 +649,126 @@ function CommonProcessController({
         }
       }
     : undefined;
+  const requestRepresentation = useCallback(
+    (reference: ArtifactRef) => {
+      const generation = ++representationGeneration.current;
+      representationRead.current?.abort();
+      const control = new AbortController();
+      representationRead.current = control;
+      setRepresentation({ reference });
+      void client
+        .getRepresentation(
+          reference,
+          activeRunRef.current
+            ? { runId: activeRunRef.current, signal: control.signal }
+            : {
+                inputSnapshotId: preparedRef.current?.snapshot_id,
+                signal: control.signal,
+              },
+        )
+        .then((blob) => {
+          if (alive.current && generation === representationGeneration.current)
+            setRepresentation({ reference, blob });
+        })
+        .catch((error) => {
+          if (
+            alive.current &&
+            generation === representationGeneration.current
+          ) {
+            setRepresentation(undefined);
+            setReason(message(error));
+          }
+        });
+    },
+    [client],
+  );
   const openRepresentation = canReadRepresentations
-    ? (reference: ArtifactRef) => {
-        const generation = ++representationGeneration.current;
-        representationRead.current?.abort();
-        const control = new AbortController();
-        representationRead.current = control;
-        setRepresentation({ reference });
-        void client
-          .getRepresentation(
-            reference,
-            activeRunRef.current
-              ? { runId: activeRunRef.current, signal: control.signal }
-              : {
-                  inputSnapshotId: preparedRef.current?.snapshot_id,
-                  signal: control.signal,
-                },
-          )
-          .then((blob) => {
-            if (
-              alive.current &&
-              generation === representationGeneration.current
-            )
-              setRepresentation({ reference, blob });
-          })
-          .catch((error) => {
-            if (
-              alive.current &&
-              generation === representationGeneration.current
-            ) {
-              setRepresentation(undefined);
-              setReason(message(error));
-            }
-          });
-      }
+    ? requestRepresentation
     : undefined;
+  useEffect(() => {
+    if (
+      !navigation ||
+      focusedNavigation.current === navigation.requestId ||
+      !snapshot
+    )
+      return;
+    const {
+      process,
+      target,
+      representation: reference,
+    } = navigation.resolution;
+    if (
+      !sameProcessReference(process, client.process) ||
+      target.run_id !== snapshot.context.run_id
+    ) {
+      focusedNavigation.current = navigation.requestId;
+      setNavigationReason({
+        code: "SCOPE_DENIED",
+        message: "This item belongs to another process or run.",
+        correction: "Open it from its exact recorded working view.",
+      });
+      return;
+    }
+    if (target.kind === "process" || target.kind === "block") return;
+    const output = snapshot.outputs?.find(
+      (item) => item.result_id === target.result_id,
+    );
+    if (target.kind !== "run" && !output) {
+      setNavigationReason({
+        code: "CAPABILITY_UNAVAILABLE",
+        message: "The requested result is not in the loaded page.",
+        correction: snapshot.next_page
+          ? "Load the next results page to inspect this exact item."
+          : "Refresh the exact run or use its canonical result reader.",
+      });
+      return;
+    }
+    if (
+      target.kind === "assessment" &&
+      !output?.assessments?.some(
+        (item) => item.assessment_id === target.assessment_id,
+      )
+    ) {
+      focusedNavigation.current = navigation.requestId;
+      setNavigationReason({
+        code: "SUBJECT_STALE",
+        message: "The requested assessment is not linked to this result.",
+        correction: "Refresh the exact result and assessment.",
+      });
+      return;
+    }
+    focusedNavigation.current = navigation.requestId;
+    setNavigationReason(undefined);
+    const selector =
+      target.kind === "run"
+        ? "[data-process-section=progress]"
+        : target.kind === "assessment"
+          ? "[data-assessment-id]"
+          : "[data-result-id]";
+    const destination = [
+      ...(workingRoot.current?.querySelectorAll<HTMLElement>(selector) ?? []),
+    ].find(
+      (element) =>
+        target.kind === "run" ||
+        (target.kind === "assessment"
+          ? element.dataset.assessmentId === target.assessment_id
+          : element.dataset.resultId === target.result_id),
+    );
+    destination?.focus();
+    destination?.scrollIntoView?.({ block: "nearest" });
+    if (
+      reference &&
+      (target.kind === "assessment" || target.kind === "evidence")
+    ) {
+      if (openRepresentation) openRepresentation(reference);
+      else
+        setNavigationReason({
+          code: "CAPABILITY_UNAVAILABLE",
+          message: "This view cannot read the recorded representation.",
+          correction: "Open the exact file with its supported reader.",
+        });
+    }
+  }, [navigation, snapshot, client, openRepresentation]);
   const loadMore = async () => {
     const previous = snapshotRef.current;
     if (!previous?.next_page || operation.current) return;
@@ -732,7 +830,7 @@ function CommonProcessController({
 
   return (
     <ProcessUI theme={theme} className="common-process-view">
-      <div data-testid="common-process-view">
+      <div data-testid="common-process-view" ref={workingRoot}>
         <header className="wp-row">
           <h1>
             {title ??
@@ -763,6 +861,9 @@ function CommonProcessController({
         {loading && <p role="status">Loading the saved process state…</p>}
         {storageReason && (
           <ReasonNotice reason={storageReason} onNavigate={navigate} />
+        )}
+        {navigationReason && (
+          <ReasonNotice reason={navigationReason} onNavigate={navigate} />
         )}
         {reason && (
           <ReasonNotice
@@ -876,7 +977,7 @@ function CommonProcessController({
                   </>
                 )}
               </Section>
-              <Section title="Progress">
+              <Section title="Progress" focusId="progress">
                 <ProgressPanel
                   state={snapshot.state}
                   observations={snapshot.observations ?? []}

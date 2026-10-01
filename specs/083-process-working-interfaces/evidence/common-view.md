@@ -229,3 +229,83 @@ belongs to this milestone. **T020 stays unchecked for exact navigation; T021
 still requires the served workspace/editor journey.** Declared interactions,
 actual Wright default-model UI authoring/hosting, both digital engineering
 chains, migration and distribution proof remain required.
+
+## 2026-10-01 — Exact navigation through the native workspace
+
+Native `navigate` resolves a shared `NavigationResolution` through a scoped thin
+API and the existing accepted source, canonical recorded run, result projection
+and 082 report owners. Caller paths/IDs alone never grant file access. The reply
+preserves supplied identities and can add an exact producer/result reference.
+Source-only navigation does not prepare inputs, create a database or start work.
+Run-backed result/assessment/evidence navigation requires an explicit run.
+Foreign source/run/result/producer/file identities are rejected; changed sources
+retain the existing conflict semantics. An omitted output in a truncated read is
+explicitly unavailable. Assessment-file resolution requires one exact recorded
+SHA-256 match; an absent or ambiguous recorded file remains unavailable.
+
+The native host selects an existing matching run tab or opens another run
+separately, without retargeting its original observer. Source links select the
+retained workflow tab without issuing its explicit reload action. The editor
+maps source keys through its existing authoring identity rules and preserves an
+unsaved source draft. A revision mismatch or deleted draft step explains why it
+cannot focus the requested step. Result and assessment focus use their exact
+IDs; assessment evidence retains its own validator-produced result ID, separate
+from the checked engineering result. Representation reads reuse the scoped
+owner and abort handling. Focus notices do not erase execution/reconciliation
+notices. These are presentation intents, not process mutations or permissions.
+
+The latest callback is supplied through a stable native dispatcher so changing
+workspace callbacks does not replace the process client or reattach its run.
+Initially the React ref capture failed the hook lint rule; using that dispatcher
+resolved it. Test failures identified incorrect assumptions about the editor's
+compact control, source-view value, textarea ID and inspector title. The final
+test uses the actual Source control and verifies the selected step's exact
+purpose alongside unchanged draft text. A missing-revision message initially
+remained hidden when no block was selected; the inspector now displays it.
+
+Verification on Windows / Python 3.13.5 / Node 25.2.0:
+
+```text
+.venv/Scripts/python.exe -m pytest packages/workspace_service/tests/test_process_navigation.py packages/workspace_service/tests/test_process_interaction_projection.py packages/core/tests/test_process_interface_contracts.py apps/api/tests/test_process_interface_artifacts.py packages/workspace_service/tests/test_process_artifact_access.py packages/workspace_service/tests/test_process_input_readiness.py packages/workspace_service/tests/test_process_preparation_service.py packages/workspace_service/tests/test_process_run_supervisor.py apps/api/tests/test_process_interface_run_lifecycle.py apps/api/tests/test_process_interfaces_api.py -q -p no:cacheprovider --basetemp C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t020-navigation-qualified
+```
+
+**172 backend checks pass**, including actual local file/source/canonical-run
+owners with a controlled generator, exact producer/evidence references, scoped
+API rejection and affected contract/readiness/supervisor regressions. The
+assessment navigation test composes an actual local 082 report with injected
+canonical-read facts; it is not a live MCP or complete validator-run proof.
+Raw log: `.local-run/process-interfaces-083/t020-navigation-qualified.log`.
+
+From `apps/web`:
+
+```text
+node ../../node_modules/vitest/vitest.mjs run src/services/process-workspace-tabs.spec.ts src/store/viewer-process-tabs.spec.tsx src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx tests/WorkspacePanelSessions.spec.tsx tests/EditorTabs.spec.tsx src/components/pages/WorkflowRecoveryPage.spec.tsx src/services/process-client.spec.ts src/components/process-interfaces/CommonProcessView.spec.tsx src/prototypes/workflow-recovery/WorkflowRecoveryConcept.spec.tsx --reporter=json --outputFile=D:/repos/wright/.local-run/process-interfaces-083/t020-navigation-qualified-vitest.json
+```
+
+**247 checks pass in nine actual files:** 32 locator, 11 store, eight native
+host, 37 mocked workspace, two document-strip, 16 source-page, 60 client, 33
+common-view and 48 refined editor checks. They cover native tab reuse, a separate
+run observer, retained drafts, exact focus/read identity and wrong-scope reply
+rejection. The full report is at the command's stated path; earlier failed focus
+reports remain in that private evidence directory.
+
+App/client type checks and owning-schema freshness pass. Focused Ruff passes;
+ESLint with the explicit existing web config passes with its two pre-existing
+hook dependency warnings. An initial combined lint invocation did not find a
+config for the shared kit; reran it with `--config apps/web/eslint.config.js`.
+The two TestClient/httpx/anyio deprecation warnings also remain. A fresh production
+build passes at `.local-run/process-interfaces-083/t020-navigation-build`
+(927 modules, 2.04 s), retaining the existing chunk-size/out-of-tree notices.
+
+Preservation report: `.local-run/process-interfaces-083/t020-navigation-preservation.json`.
+Ten prototype and three campaign hashes match; approved AGENTS/083 feature context
+equals HEAD, and both original mixed startup/router deltas match saved baselines.
+The earlier 082 feature pointer intentionally differs after the already-approved
+083 activation; it is checked against approved HEAD separately.
+
+**T020 implementation is complete; T021 served-workspace acceptance is pending.**
+No browser/API/model/provider service was launched, no real tool chain or physical
+operation ran, and no user acceptance is claimed. Historical changed-source
+compatibility, declared interactions, actual model-authored interfaces, the two
+digital engineering proofs, migration and installed-distribution checks retain
+their later task scope. The full goal remains active.

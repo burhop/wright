@@ -135,6 +135,17 @@ function canonicalId(prefix: "block" | "port" | "rel", key: string): string {
   return `${prefix}.${key.replace(/_/g, "-")}`;
 }
 
+/** Match the existing parser's block identity when following a source step key. */
+export function recoveryAuthoringBlockId(
+  workflow: RecoveryWorkflow,
+  key: string,
+): string {
+  return (
+    workflow.blocks.find((block) => stableKey(block.id) === key)?.id ??
+    canonicalId("block", key)
+  );
+}
+
 function stableJson(value: unknown): string {
   const normalize = (child: unknown): unknown => {
     if (Array.isArray(child)) return child.map(normalize);

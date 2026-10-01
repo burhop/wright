@@ -868,6 +868,7 @@ describe("common process request recovery and observer lifetime", () => {
       kind: "assessment",
       assessment_id: "check-one",
       result_id: "result-one",
+      run_id: "run-one",
     });
     fireEvent.click(
       screen.getByRole("button", { name: "Open producing step" }),
@@ -876,6 +877,7 @@ describe("common process request recovery and observer lifetime", () => {
       kind: "block",
       block_id: "geometry",
       result_id: "result-one",
+      run_id: "run-one",
     });
     fireEvent.click(
       screen.getByRole("button", { name: "Open representation" }),
@@ -945,6 +947,110 @@ describe("common process request recovery and observer lifetime", () => {
     expect(signal?.aborted).toBe(true);
     expect(client.cancel).not.toHaveBeenCalled();
     expect(client.start).not.toHaveBeenCalled();
+  });
+  it("focuses an exact assessment and reads its separate recorded evidence only once", async () => {
+    const { client, store } = fixture();
+    const output = {
+      result_id: "subject-result",
+      step_id: "geometry",
+      port_id: "part",
+      role: "geometry",
+      title: "Checked part",
+      assessments: [
+        {
+          assessment_id: "assessment-one",
+          subject_digest: hash,
+          outcome: "fail" as const,
+          currentness: "current" as const,
+        },
+      ],
+    };
+    const completed: InteractionSnapshot = {
+      ...running,
+      state: "completed",
+      outputs: [output],
+    };
+    vi.mocked(client.getSnapshot).mockResolvedValue(completed);
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield { type: "snapshot", snapshot: completed };
+    });
+    const reference = {
+      artifact_ref: "outputs/assessment.json",
+      sha256: hash,
+      result_id: "validator-evidence",
+    };
+    const navigation = {
+      requestId: "focus-assessment",
+      resolution: {
+        process,
+        target: {
+          kind: "assessment" as const,
+          assessment_id: "assessment-one",
+          result_id: "subject-result",
+          run_id: "run-one",
+        },
+        representation: reference,
+      },
+    };
+    const props = {
+      client,
+      sessionId: "session",
+      runId: "run-one",
+      recoveryStore: store,
+      canReadRepresentations: true,
+      navigation,
+    };
+    const view = render(<CommonProcessView {...props} />);
+    await screen.findByText("exact output");
+    expect(document.activeElement).toHaveAttribute(
+      "data-assessment-id",
+      "assessment-one",
+    );
+    expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(
+      reference,
+      { runId: "run-one", signal: expect.any(AbortSignal) },
+    );
+    view.rerender(
+      <CommonProcessView {...props} navigation={{ ...navigation }} />,
+    );
+    expect(client.getRepresentation).toHaveBeenCalledTimes(1);
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.cancel).not.toHaveBeenCalled();
+  });
+  it("rejects foreign navigation without reading files or changing the run", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.getSnapshot).mockResolvedValue(running);
+    const navigation = {
+      requestId: "foreign",
+      resolution: {
+        process: { ...process, workspace_id: "foreign" },
+        target: {
+          kind: "evidence" as const,
+          run_id: "run-one",
+          artifact_ref: "private.txt",
+          result_id: "other",
+        },
+        representation: {
+          artifact_ref: "private.txt",
+          sha256: hash,
+          result_id: "other",
+        },
+      },
+    };
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        canReadRepresentations
+        navigation={navigation}
+      />,
+    );
+    await screen.findByText("This item belongs to another process or run.");
+    expect(client.getRepresentation).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.cancel).not.toHaveBeenCalled();
   });
   it("shows only declared interactions and never submits an invented response", async () => {
     const { client, store } = fixture();

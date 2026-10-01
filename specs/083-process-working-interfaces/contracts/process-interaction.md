@@ -74,11 +74,24 @@ existing deployment prefix rather than introducing a competing API root.
 | POST /process-interfaces/interactions/{checkpoint_id}/response | Input response; decision routes delegate to current review service |
 | POST /process-interfaces/actions/{action_id} | Exact permitted action; current services are composed, not reimplemented |
 | POST /process-interfaces/runs/{run_id}/cancel | Explicit cancel request/outcome |
+| POST /process-interfaces/inputs/upload | Bounded declared-file input publication; no preparation or execution |
+| POST /process-interfaces/representations/read | Exact prepared-input or recorded-result membership and hash-checked bytes |
+| POST /process-interfaces/navigation | Resolve exact presentation target through source/run/result/082 owners |
 
 Existing result/validation/review read/export routes remain canonical. The client
 maps to them through owning services. Legacy source-start stream can adapt to
 start+follow for compatibility, but disconnect must no longer cancel execution.
 Do not duplicate existing reviewer authorization or result repositories.
+
+Native navigation returns shared `NavigationResolution(process, target,
+representation?)`. The resolved target preserves every supplied identity and can
+add its recorded producer/result identity. Run-backed result/assessment/evidence
+navigation requires an explicit run; caller paths grant no read authority. A
+checked result and its validator's recorded assessment file can have different
+result IDs. Missing or ambiguous assessment files and omitted bounded-read
+results remain unavailable rather than guessed. The workspace host retains open
+editor drafts and observers while selecting the exact existing tab. This is a
+presentation read, never a process mutation or action authority.
 
 Generated apps access the same bounded operation envelopes under the reserved
 preview route `/__wright/process`; this server resolves process/UI/run scope

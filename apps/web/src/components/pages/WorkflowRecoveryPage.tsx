@@ -32,6 +32,7 @@ export interface WorkflowRecoveryPageProps {
   onOpenFile?: (path: string) => void;
   onOpenProcess?: (process: ProcessRef) => void;
   createIfMissing?: boolean;
+  navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
 }
 
 export function WorkflowRecoveryPage({
@@ -44,6 +45,7 @@ export function WorkflowRecoveryPage({
   onOpenFile,
   onOpenProcess,
   createIfMissing = true,
+  navigation,
 }: WorkflowRecoveryPageProps) {
   const visiblePath = workflowFilePath.replace(/^\/+/, "");
   const dialogId = useId();
@@ -768,6 +770,7 @@ export function WorkflowRecoveryPage({
             storageDigest={currentDocument.storage_digest}
             workflowFilePath={visiblePath}
             reopenRequest={reopenRequest}
+            navigation={navigation}
             workflowLayout={currentDocument.layout ?? undefined}
             workspaceSessionId={sessionId}
             workspaceId={workspaceId}

@@ -364,6 +364,7 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             observed_at=generated_at,
             results=results,
             input_snapshot=inputs,
+            results_truncated=bool(execution["truncated"]),
         ),
         reports=reports,
         interactions=approval + review,

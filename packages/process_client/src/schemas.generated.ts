@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: b3036f7d59ac7c534aa23e8f2f236c3f73780a24464520c696b64223f66738df
+// Schema SHA-256: 10d6c47263fc1f9d4c54637581f29bb0139d1999141dbb3c64f130c9aea367d2
 export const contractSchemas: Readonly<Record<string, unknown>> = {
   "Action": {
     "additionalProperties": false,
@@ -1418,6 +1418,35 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
     "type": "object"
   },
   "JsonValue": {},
+  "NavigationResolution": {
+    "additionalProperties": false,
+    "description": "Exact host intent resolved against accepted source and recorded subjects.",
+    "properties": {
+      "process": {
+        "$ref": "#/$defs/ProcessRef"
+      },
+      "representation": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ArtifactRef"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "target": {
+        "$ref": "#/$defs/NavigationTarget"
+      }
+    },
+    "required": [
+      "process",
+      "target"
+    ],
+    "title": "NavigationResolution",
+    "type": "object"
+  },
   "NavigationTarget": {
     "additionalProperties": false,
     "properties": {

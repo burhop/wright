@@ -60,6 +60,7 @@ describe("trusted process tab host", () => {
     expect(mocks.createClient).toHaveBeenCalledExactlyOnceWith({
       process,
       sessionId: "host-session",
+      navigate: expect.any(Function),
     });
     expect(lastCommon().runId).toBeUndefined();
     expect(lastCommon().sessionId).toBe("host-session");
@@ -165,7 +166,7 @@ describe("trusted process tab host", () => {
       />,
     );
     expect(lastCommon().canReadRepresentations).toBe(true);
-    expect(lastCommon().canNavigate).toBeUndefined();
+    expect(lastCommon().canNavigate).toBe(false);
     expect(lastCommon().onUpload).toBeTypeOf("function");
   });
   it("uses the declared input identifier for uploads through the stable scoped client", async () => {
@@ -188,6 +189,41 @@ describe("trusted process tab host", () => {
       value_schema: {},
     });
     expect(mocks.upload).toHaveBeenCalledExactlyOnceWith("requirements", file);
+    expect(mocks.createClient).toHaveBeenCalledTimes(1);
+  });
+  it("routes authorized navigation through the current host without replacing the client", async () => {
+    const first = vi.fn(async () => undefined),
+      next = vi.fn(async () => undefined);
+    const callbacks = { onRunAttached: vi.fn(), onPrepareAnother: vi.fn() };
+    const view = render(
+      <ProcessWorkspaceTab
+        tab={tab}
+        sessionId="session"
+        {...callbacks}
+        onNavigate={first}
+      />,
+    );
+    const client = lastCommon().client;
+    const resolution = {
+      process,
+      target: { kind: "block" as const, block_id: "geometry" },
+    };
+    const options = mocks.createClient.mock.calls[0][0];
+    await options.navigate(process, resolution.target, resolution);
+    expect(first).toHaveBeenCalledExactlyOnceWith(process, resolution);
+    view.rerender(
+      <ProcessWorkspaceTab
+        tab={tab}
+        sessionId="session"
+        {...callbacks}
+        onNavigate={next}
+      />,
+    );
+    expect(lastCommon().client).toBe(client);
+    await options.navigate(process, resolution.target, resolution);
+    expect(next).toHaveBeenCalledExactlyOnceWith(process, resolution);
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(lastCommon().canNavigate).toBe(true);
     expect(mocks.createClient).toHaveBeenCalledTimes(1);
   });
 });

@@ -353,6 +353,14 @@ class NavigationTarget(Contract):
         return self
 
 
+class NavigationResolution(Contract):
+    """Exact host intent resolved against accepted source and recorded subjects."""
+
+    process: ProcessRef
+    target: NavigationTarget
+    representation: ArtifactRef | None = None
+
+
 class Reason(Contract):
     code: Identifier
     message: Text

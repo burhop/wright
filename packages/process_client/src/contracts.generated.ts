@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: b3036f7d59ac7c534aa23e8f2f236c3f73780a24464520c696b64223f66738df
+// Schema SHA-256: 10d6c47263fc1f9d4c54637581f29bb0139d1999141dbb3c64f130c9aea367d2
 export type JsonValue = null | boolean | number | string | ReadonlyArray<JsonValue> | { readonly [key: string]: JsonValue };
 
 export type Action = {
@@ -198,6 +198,12 @@ export type InterfaceRevision = {
   readonly "source_digest": string;
 };
 
+export type NavigationResolution = {
+  readonly "process": ProcessRef;
+  readonly "representation"?: (ArtifactRef | null);
+  readonly "target": NavigationTarget;
+};
+
 export type NavigationTarget = {
   readonly "artifact_ref"?: (string | null);
   readonly "assessment_id"?: (string | null);
@@ -382,6 +388,7 @@ export interface ContractTypes {
   readonly InterfaceManifest: InterfaceManifest;
   readonly InterfaceRevision: InterfaceRevision;
   readonly JsonValue: JsonValue;
+  readonly NavigationResolution: NavigationResolution;
   readonly NavigationTarget: NavigationTarget;
   readonly Observation: Observation;
   readonly OptionBinding: OptionBinding;

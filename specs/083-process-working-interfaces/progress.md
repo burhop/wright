@@ -459,6 +459,32 @@ T001–T019 remain checked. T020 is still partial for exact block/result/assessm
 evidence navigation; T021 served-workspace verification and all later feature
 requirements remain necessary. The full goal remains active.
 
+### 2026-10-01 — Exact workspace navigation and retained drafts
+
+The goal remained active after the chat-stream interruption. Rechecked the
+working tree and continued the saved navigation changes; no work was restarted.
+Native navigation now resolves accepted source and exact recorded run/result/
+assessment/evidence identities through the existing owners before selecting a
+workspace tab. Source step links use the editor's existing ID mapping and retain
+open unsaved drafts. Results retain the matching run observer; another run opens
+separately. Assessment focus distinguishes the checked result from its validator's
+recorded evidence file. A truncated read reports unavailable rather than claiming
+an omitted result is foreign. Navigation never runs or replays a process.
+
+172 backend checks and 247 checks in nine actual frontend files pass. App/client
+types, owning-schema freshness, focused Ruff/ESLint and a fresh 927-module build
+pass. Two existing frontend hook warnings and two dependency deprecations remain.
+Exact commands, failed test-control assumptions and checked scope are recorded in
+[common-view.md](evidence/common-view.md). Ten prototype hashes, three protected
+campaign hashes, approved 083 context and the original mixed API deltas are
+preserved. No live services or physical/external effects were started.
+
+T001–T020 are checked for implementation. T021 remains pending for actual served
+workspace/editor/reconnect proof; component and mocked journeys do not establish
+that acceptance. All later declared-interaction, actual default-model authoring,
+digital MCP, migration and installed-distribution requirements remain necessary.
+The complete goal is active. Next: the normal served workspace journey.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

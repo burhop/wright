@@ -342,17 +342,29 @@ describe("native process client", () => {
   });
   it("passes only a validated exact navigation intent to the native host", async () => {
     const navigate = vi.fn(async () => undefined);
+    const resolution = {
+      process,
+      target: { kind: "block" as const, block_id: "design" },
+    };
+    const fetch = fake(async () => json(resolution));
     const scoped = createNativeProcessClient({
       process,
       sessionId: "session",
-      fetch: fake(async () => json(snapshot())),
+      fetch,
       navigate,
     });
     await scoped.navigate({ kind: "block", block_id: "design" });
-    expect(navigate).toHaveBeenCalledWith(process, {
-      kind: "block",
-      block_id: "design",
-    });
+    expect(navigate).toHaveBeenCalledWith(
+      process,
+      {
+        kind: "block",
+        block_id: "design",
+      },
+      resolution,
+    );
+    expect(fetch.mock.calls[0][0]).toBe(
+      "/api/workspace/process-interfaces/navigation",
+    );
     await expect(
       scoped.navigate({ kind: "block", url: "javascript:alert(1)" } as never),
     ).rejects.toBeInstanceOf(ProcessClientError);
@@ -373,6 +385,30 @@ describe("native process client", () => {
       scoped.getRepresentation({ artifact_ref: "part.stl", sha256: digest }),
     ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
     expect(fetch).not.toHaveBeenCalled();
+  });
+  it("rejects navigation replies that change the requested source or subject", async () => {
+    for (const resolution of [
+      {
+        process: { ...process, workspace_id: "foreign" },
+        target: { kind: "block", block_id: "design" },
+      },
+      { process, target: { kind: "block", block_id: "other" } },
+      { process, target: { kind: "process" } },
+    ]) {
+      const navigate = vi.fn(async () => undefined);
+      const fetch = fake(async () => json(resolution));
+      const scoped = createNativeProcessClient({
+        process,
+        sessionId: "session",
+        fetch,
+        navigate,
+      });
+      await expect(
+        scoped.navigate({ kind: "block", block_id: "design" }),
+      ).rejects.toMatchObject({ reason: { code: "SCOPE_DENIED" } });
+      expect(navigate).not.toHaveBeenCalled();
+      expect(fetch).toHaveBeenCalledTimes(1);
+    }
   });
 });
 

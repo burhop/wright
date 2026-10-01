@@ -52,7 +52,15 @@ import {
 } from "../../services/surfaces/focus-manager";
 import { isBrepToolActivity } from "../../services/brep-panel-activity";
 import { workspaceRivetWorkflowSlug } from "../../services/rivet-editor";
-import type { ProcessRef } from "@wright/process-client";
+import {
+  ProcessClientError,
+  type NavigationResolution,
+  type ProcessRef,
+} from "@wright/process-client";
+import {
+  sameProcessReference,
+  type ProcessNavigationRequest,
+} from "../../services/process-navigation";
 import {
   checkedProcessWorkspaceTab,
   createProcessWorkspaceTab,
@@ -478,6 +486,9 @@ export function WorkspacePanel({
   } = useViewerPanel();
 
   const [processTabError, setProcessTabError] = useState<string | null>(null);
+  const [processNavigation, setProcessNavigation] = useState<
+    ProcessNavigationRequest | undefined
+  >();
   const processLink = useMemo(() => {
     if (!_workspaceId) return { tab: null, error: null };
     try {
@@ -1806,6 +1817,72 @@ export function WorkspacePanel({
       navigate,
       setActiveTabPath,
       openTransientTab,
+    ],
+  );
+
+  const navigateProcess = useCallback(
+    async (process: ProcessRef, resolution: NavigationResolution) => {
+      if (
+        !workspaceFileSessionId ||
+        process.workspace_id !== _workspaceId ||
+        !sameProcessReference(process, resolution.process)
+      )
+        throw new ProcessClientError({
+          code: "SCOPE_DENIED",
+          message: "This item belongs to another workspace or process.",
+          correction: "Open it in its original workspace.",
+        });
+      const target = resolution.target;
+      if (target.kind === "process" || target.kind === "block") {
+        if (
+          !recoveryWorkflowEnabled ||
+          !isWorkspaceWorkflowTab(process.source_path)
+        )
+          throw new ProcessClientError({
+            code: "CAPABILITY_UNAVAILABLE",
+            message: "The workflow editor cannot open this source format.",
+            correction: "Use its supported authoring view.",
+          });
+        setProcessNavigation({ requestId: crypto.randomUUID(), resolution });
+        openProcessDefinition(process);
+        return;
+      }
+      const existing = openTabsRef.current.find(
+        (candidate) =>
+          candidate.type === "process" &&
+          candidate.processView &&
+          sameProcessReference(candidate.processView.process, process) &&
+          candidate.processView.run_id === target.run_id,
+      );
+      const tab = existing
+        ? checkedProcessWorkspaceTab(existing, _workspaceId)
+        : checkedProcessWorkspaceTab(
+            createProcessWorkspaceTab(process, {
+              runId: target.run_id ?? undefined,
+            }),
+            _workspaceId,
+          );
+      setProcessNavigation({ requestId: crypto.randomUUID(), resolution });
+      if (existing) setActiveTabPath(tab.path);
+      else openTransientTab(tab);
+      navigate(
+        {
+          pathname: location.pathname,
+          search: processWorkspaceQuery(location.search, tab),
+        },
+        { replace: true },
+      );
+    },
+    [
+      _workspaceId,
+      workspaceFileSessionId,
+      recoveryWorkflowEnabled,
+      openProcessDefinition,
+      openTransientTab,
+      setActiveTabPath,
+      navigate,
+      location.pathname,
+      location.search,
     ],
   );
 
@@ -3433,6 +3510,15 @@ export function WorkspacePanel({
                   onOpenWorkflow={selectWorkspaceWorkflow}
                   onOpenProcess={openProcessView}
                   createIfMissing={tab.createIfMissing}
+                  navigation={
+                    processNavigation?.resolution.process.workspace_id ===
+                      _workspaceId &&
+                    normalizeEditorTabPath(
+                      processNavigation.resolution.process.source_path,
+                    ) === tab.path
+                      ? processNavigation
+                      : undefined
+                  }
                 />
               </div>
             );
@@ -3461,6 +3547,18 @@ export function WorkspacePanel({
                   sessionId={workspaceFileSessionId}
                   onRunAttached={attachProcessTabRun}
                   onPrepareAnother={openProcessView}
+                  onNavigate={navigateProcess}
+                  navigation={
+                    processNavigation &&
+                    sameProcessReference(
+                      processNavigation.resolution.process,
+                      tab.processView.process,
+                    ) &&
+                    processNavigation.resolution.target.run_id ===
+                      tab.processView.run_id
+                      ? processNavigation
+                      : undefined
+                  }
                   onOpenDefinition={
                     recoveryWorkflowEnabled &&
                     isWorkspaceWorkflowTab(tab.processView.process.source_path)

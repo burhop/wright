@@ -64,6 +64,82 @@ beforeAll(() => {
   vi.stubGlobal("ResizeObserver", MockResizeObserver);
 });
 
+it("follows an exact source step without reloading or replacing an open source draft", async () => {
+  const process = {
+    workspace_id: "workspace",
+    source_path: "workflows/report.workflow.wflow",
+    source_digest: "a".repeat(64),
+  };
+  const props = {
+    workflowSource: reportWorkflowSource,
+    workspaceId: "workspace",
+    workflowFilePath: process.source_path,
+    storageDigest: process.source_digest,
+    definitionRevision: 2,
+  };
+  const view = render(<Editor {...props} />);
+  fireEvent.change(screen.getByTestId("workflow-recovery-view-select"), {
+    target: { value: "code" },
+  });
+  const editor = screen.getByTestId(
+    "workflow-recovery-source-editor",
+  ) as HTMLTextAreaElement;
+  const draft = `${reportWorkflowSource}\nunsaved draft`;
+  fireEvent.change(editor, { target: { value: draft } });
+  view.rerender(
+    <Editor
+      {...props}
+      navigation={{
+        requestId: "step-one",
+        resolution: {
+          process,
+          target: { kind: "block", block_id: "document_1" },
+        },
+      }}
+    />,
+  );
+  expect(screen.getByTestId("workflow-recovery-source-editor")).toHaveValue(
+    draft,
+  );
+  expect(screen.getByTestId("workflow-recovery-inspector")).toBeVisible();
+  expect(
+    screen.queryByTestId("workflow-navigation-error"),
+  ).not.toBeInTheDocument();
+  const selected = screen.getByTestId("workflow-recovery-inspector");
+  expect(selected).toHaveTextContent("Create report.html in this workspace.");
+});
+
+it("explains a mismatched saved revision while preserving the open editor", async () => {
+  const props = {
+    workflowSource: reportWorkflowSource,
+    workspaceId: "workspace",
+    workflowFilePath: "workflows/report.workflow.wflow",
+    storageDigest: "a".repeat(64),
+    definitionRevision: 2,
+  };
+  render(
+    <Editor
+      {...props}
+      navigation={{
+        requestId: "other-revision",
+        resolution: {
+          process: {
+            workspace_id: "workspace",
+            source_path: props.workflowFilePath,
+            source_digest: "b".repeat(64),
+          },
+          target: { kind: "block", block_id: "document_1" },
+        },
+      }}
+    />,
+  );
+  await screen.findByTestId("workflow-navigation-error");
+  expect(screen.getByTestId("workflow-navigation-error")).toHaveTextContent(
+    "different saved workflow revision",
+  );
+  expect(screen.getByTestId("workflow-recovery-concept")).toBeInTheDocument();
+});
+
 it("rehydrates a pending review into the normal run drawer without running or pulsing", async () => {
   const review: WorkspaceWorkflowReview = {
     review_id: "review-1",

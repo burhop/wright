@@ -205,6 +205,7 @@ class RecordedRun:
     observed_at: Timestamp
     results: tuple[EngineeringResult, ...] = ()
     input_snapshot: InputSnapshot | None = None
+    results_truncated: bool = False
 
 
 @dataclass(frozen=True, slots=True)

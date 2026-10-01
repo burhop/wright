@@ -119,6 +119,7 @@ vi.mock("../src/components/pages/WorkflowRecoveryPage", () => ({
       source_digest: string;
     }) => void;
     createIfMissing?: boolean;
+    navigation?: import("../src/services/process-navigation").ProcessNavigationRequest;
   }) => (
     <div
       data-testid="workspace-workflow-fixture"
@@ -128,7 +129,12 @@ vi.mock("../src/components/pages/WorkflowRecoveryPage", () => ({
       data-workflow-file={props.workflowFilePath}
       data-reopen-request={props.reopenRequest}
       data-create-if-missing={String(props.createIfMissing)}
+      data-navigation-block={props.navigation?.resolution.target.block_id}
     >
+      <input
+        aria-label="Fixture source draft"
+        defaultValue="Saved fixture source"
+      />
       <button onClick={() => props.onOpenWorkflow?.(props.workflowFilePath)}>
         Reopen fixture file
       </button>
@@ -156,6 +162,10 @@ vi.mock("../src/components/process-interfaces/ProcessWorkspaceTab", () => ({
       data-view-path={props.tab.path}
       data-session-id={props.sessionId}
       data-run-id={props.tab.processView.run_id ?? ""}
+      data-navigation-result={props.navigation?.resolution.target.result_id}
+      data-navigation-assessment={
+        props.navigation?.resolution.target.assessment_id
+      }
     >
       <button
         onClick={() =>
@@ -172,6 +182,49 @@ vi.mock("../src/components/process-interfaces/ProcessWorkspaceTab", () => ({
         onClick={() => props.onOpenDefinition?.(props.tab.processView.process)}
       >
         Open fixture definition
+      </button>
+      <button
+        onClick={() =>
+          void props.onNavigate?.(props.tab.processView.process, {
+            process: props.tab.processView.process,
+            target: {
+              kind: "block",
+              block_id: "exact-step",
+              run_id: props.tab.processView.run_id,
+            },
+          })
+        }
+      >
+        Navigate fixture step
+      </button>
+      <button
+        onClick={() =>
+          void props.onNavigate?.(props.tab.processView.process, {
+            process: props.tab.processView.process,
+            target: {
+              kind: "assessment",
+              result_id: "exact-result",
+              assessment_id: "exact-assessment",
+              run_id: props.tab.processView.run_id,
+            },
+          })
+        }
+      >
+        Navigate fixture assessment
+      </button>
+      <button
+        onClick={() =>
+          void props.onNavigate?.(props.tab.processView.process, {
+            process: props.tab.processView.process,
+            target: {
+              kind: "result",
+              result_id: "other-run-result",
+              run_id: "other-run",
+            },
+          })
+        }
+      >
+        Navigate fixture other run
       </button>
     </div>
   ),
@@ -322,6 +375,123 @@ describe("WorkspacePanel session selection", () => {
     );
     expect(screen.getByTestId("location-probe").textContent).not.toContain(
       "processView=",
+    );
+  });
+
+  it("focuses an exact source step in the retained editor without discarding its draft", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={["/workspace/workspace-1?workflow=canonical"]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const draft = await screen.findByRole("textbox", {
+      name: "Fixture source draft",
+    });
+    fireEvent.change(draft, {
+      target: { value: "Unsaved exact source edits" },
+    });
+    const editor = screen.getByTestId("workspace-workflow-fixture");
+    fireEvent.click(screen.getByText("Use saved fixture process"));
+    fireEvent.click(await screen.findByText("Accept fixture run"));
+    fireEvent.click(screen.getByText("Navigate fixture step"));
+    await waitFor(() => expect(editor).toBeVisible());
+    expect(editor).toHaveAttribute("data-navigation-block", "exact-step");
+    expect(editor).toHaveAttribute("data-reopen-request", "0");
+    expect(draft).toHaveValue("Unsaved exact source edits");
+    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(screen.getByTestId("working-view-host-fixture")).toHaveAttribute(
+      "data-run-id",
+      "accepted-run",
+    );
+  });
+
+  it("focuses an exact assessment in its existing run tab without creating another tab", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "workspace-1",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "recorded-view", runId: "recorded-run" },
+    );
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/workspace/workspace-1${processWorkspaceQuery("?workflow=canonical", tab)}`,
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const working = await screen.findByTestId("working-view-host-fixture");
+    fireEvent.click(screen.getByText("Navigate fixture assessment"));
+    await waitFor(() =>
+      expect(working).toHaveAttribute(
+        "data-navigation-assessment",
+        "exact-assessment",
+      ),
+    );
+    expect(working).toHaveAttribute("data-navigation-result", "exact-result");
+    expect(working).toHaveAttribute("data-run-id", "recorded-run");
+    expect(screen.getAllByRole("tab")).toHaveLength(1);
+    expect(screen.getByTestId("location-probe").textContent).toContain(
+      "processRun=recorded-run",
+    );
+    expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+  });
+
+  it("opens another recorded run in a separate tab without retargeting the original observer", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "workspace-1",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "recorded-view", runId: "recorded-run" },
+    );
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/workspace/workspace-1${processWorkspaceQuery("?workflow=canonical", tab)}`,
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const original = await screen.findByTestId("working-view-host-fixture");
+    fireEvent.click(screen.getByText("Navigate fixture other run"));
+    await waitFor(() =>
+      expect(screen.getAllByTestId("working-view-host-fixture")).toHaveLength(
+        2,
+      ),
+    );
+    expect(original).toHaveAttribute("data-run-id", "recorded-run");
+    expect(original).not.toBeVisible();
+    const selected = screen
+      .getAllByTestId("working-view-host-fixture")
+      .find((element) => element.getAttribute("data-run-id") === "other-run");
+    expect(selected).toBeVisible();
+    expect(selected).toHaveAttribute(
+      "data-navigation-result",
+      "other-run-result",
+    );
+    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(screen.getByTestId("location-probe").textContent).toContain(
+      "processRun=other-run",
     );
   });
 

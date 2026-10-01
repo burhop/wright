@@ -2,7 +2,12 @@
 
 from pydantic import Field
 
-from core.process_interactions import ArtifactRef, InputBinding, Locator
+from core.process_interactions import (
+    ArtifactRef,
+    InputBinding,
+    Locator,
+    NavigationTarget,
+)
 from core.process_validation import Contract, Digest, Identifier
 
 
@@ -34,3 +39,7 @@ class ProcessRepresentationRequest(ProcessSourceRequest):
     reference: ArtifactRef
     run_id: Identifier | None = None
     input_snapshot_id: Identifier | None = None
+
+
+class ProcessNavigationRequest(ProcessSourceRequest):
+    target: NavigationTarget

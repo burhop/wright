@@ -88,14 +88,21 @@ export function Section({
   title,
   description,
   children,
+  focusId,
 }: {
   title: string;
   description?: string;
   children: ReactNode;
+  focusId?: string;
 }) {
   const id = useId();
   return (
-    <section className="wp-section" aria-labelledby={id}>
+    <section
+      className="wp-section"
+      aria-labelledby={id}
+      data-process-section={focusId}
+      tabIndex={focusId ? -1 : undefined}
+    >
       <h2 id={id}>{title}</h2>
       {description && <p className="wp-muted">{description}</p>}
       {children}
@@ -442,7 +449,11 @@ export function ResultCard({
   children?: ReactNode;
 }) {
   return (
-    <article className="wp-result">
+    <article
+      className="wp-result"
+      data-result-id={output.result_id}
+      tabIndex={-1}
+    >
       <h3>{output.title}</h3>
       <p className="wp-muted">{output.role}</p>
       {children}
@@ -460,7 +471,11 @@ export function ResultCard({
       )}
       <div className="wp-findings">
         {(output.assessments ?? []).map((assessment) => (
-          <div key={assessment.assessment_id}>
+          <div
+            key={assessment.assessment_id}
+            data-assessment-id={assessment.assessment_id}
+            tabIndex={-1}
+          >
             <strong className={`wp-check wp-check--${assessment.outcome}`}>
               {assessmentLabels[assessment.outcome]}
             </strong>

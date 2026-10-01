@@ -6,6 +6,7 @@ import type {
   InteractionSnapshot,
   JsonValue,
   NavigationTarget,
+  NavigationResolution,
   ProcessCancellationReceipt,
   ProcessRef,
   ProcessRunEventPage,
@@ -139,6 +140,7 @@ export interface NativeProcessClientOptions {
   readonly navigate?: (
     process: ProcessRef,
     target: NavigationTarget,
+    resolution: NavigationResolution,
   ) => Promise<void>;
 }
 
@@ -896,7 +898,29 @@ export function createNativeProcessClient(
     async navigate(target: NavigationTarget) {
       const checked = assertContract("NavigationTarget", target);
       if (!navigate) return unavailable("workspace navigation");
-      await navigate(process, checked);
+      const resolution = await request(
+        "/navigation",
+        "NavigationResolution",
+        {},
+        { target: checked },
+      );
+      scopedProcess(process, resolution.process);
+      if (
+        resolution.target.kind !== checked.kind ||
+        Object.entries(checked).some(
+          ([key, value]) =>
+            value != null &&
+            resolution.target[key as keyof NavigationTarget] !== value,
+        )
+      )
+        throw clientError(
+          "SCOPE_DENIED",
+          "The navigation reply changed its requested subject.",
+          "Reopen the exact process item from its working view.",
+        );
+      if (resolution.representation)
+        relativeLocator(resolution.representation.artifact_ref);
+      await navigate(process, resolution.target, resolution);
     },
   });
 }

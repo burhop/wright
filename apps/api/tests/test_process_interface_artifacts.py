@@ -289,3 +289,57 @@ async def test_bounded_request_replay_retains_the_actual_connection_lifetime():
         receive,
         send,
     )
+
+
+def test_native_navigation_resolves_source_and_rejects_foreign_intents(
+    sync_client, artifact_case
+):
+    c = artifact_case
+    for target in ({"kind": "process"}, {"kind": "block", "block_id": "brief"}):
+        response = sync_client.post(
+            f"{PREFIX}/navigation", json={**c.query, "target": target}
+        )
+        assert response.status_code == 200, response.text
+        assert response.headers["cache-control"] == "no-store"
+        assert response.json()["target"]["kind"] == target["kind"]
+        assert response.json()["process"]["workspace_id"] == "workspace"
+    for target in (
+        {"kind": "block", "block_id": "foreign"},
+        {"kind": "result", "result_id": "foreign"},
+        {"kind": "process", "artifact_ref": "private.txt"},
+    ):
+        response = sync_client.post(
+            f"{PREFIX}/navigation", json={**c.query, "target": target}
+        )
+        assert response.status_code == 403
+    for extra in (
+        {"principal_id": "private-must-not-echo"},
+        {"target": {"kind": "block"}},
+        {"target": {"kind": "process", "url": "private-must-not-echo"}},
+    ):
+        response = sync_client.post(
+            f"{PREFIX}/navigation",
+            json={**c.query, "target": {"kind": "process"}, **extra},
+        )
+        assert response.status_code == 422
+        assert "private-must-not-echo" not in response.text
+    assert (
+        sync_client.post(
+            f"{PREFIX}/navigation",
+            json={**c.query, "session_id": "foreign", "target": {"kind": "process"}},
+        ).status_code
+        == 404
+    )
+    assert (
+        sync_client.post(
+            f"{PREFIX}/navigation",
+            json={
+                **c.query,
+                "expected_storage_digest": "0" * 64,
+                "target": {"kind": "process"},
+            },
+        ).status_code
+        == 409
+    )
+    assert not (c.root / "state.db").exists()
+    assert not (c.root / "runs").exists()
