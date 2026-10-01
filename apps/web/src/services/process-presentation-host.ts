@@ -18,16 +18,17 @@ export interface ProcessPresentationHostPorts {
 export function connectProcessPresentation(frame: HTMLIFrameElement, view: ProcessInterfacePresentation,
   ports: ProcessPresentationHostPorts): () => void {
   const origin = new URL(view.launch.absoluteBootstrapUrl).origin;
-  const nonce = crypto.randomUUID();
-  const envelope = {schema_version: version, nonce, presentation_id: view.launch.presentationId, generation: view.launch.generation};
+  let nonce = crypto.randomUUID();
   let disposed = false, ready = false, attempts = 0;
+  let timer: ReturnType<typeof setInterval> | undefined;
   const requests = new Set<string>();
   const send = (type: "hello" | "theme") => {
     if (disposed) return;
     const style = getComputedStyle(document.documentElement);
     const tokens = Object.fromEntries(themeKeys.map(key => [key, style.getPropertyValue(key).trim()])
       .filter(([, value]) => value.length > 0 && value.length <= 128 && !/[;{}@]|url\s*\(/i.test(value)));
-    frame.contentWindow?.postMessage({...envelope, type, tokens}, origin);
+    frame.contentWindow?.postMessage({schema_version: version, nonce, presentation_id: view.launch.presentationId,
+      generation: view.launch.generation, type, tokens}, origin);
   };
   const invoke = (fn: () => void | Promise<void>) => {
     try {void Promise.resolve(fn()).catch(error => {if (!disposed) ports.failed(error);});}
@@ -55,13 +56,22 @@ export function connectProcessPresentation(frame: HTMLIFrameElement, view: Proce
       } catch { /* Malformed frame messages have no native effect. */ }
     }
   };
-  const loaded = () => send("hello");
+  const connect = () => {
+    clearInterval(timer); attempts = 0;
+    // Every frame document can mount asynchronously after load. Re-arm a
+    // bounded handshake; receipt reads never submit or resume process work.
+    timer = setInterval(() => {if (++attempts >= 120) clearInterval(timer); send("hello");}, 250);
+    send("hello");
+  };
+  const loaded = () => {
+    if (disposed) return;
+    nonce = crypto.randomUUID(); ready = false; connect();
+  };
   frame.addEventListener("load", loaded);
   // Bounded hello handles the authenticated bootstrap redirect and async mount.
-  const timer = setInterval(() => {if (++attempts >= 20) clearInterval(timer); send("hello");}, 250);
   window.addEventListener("message", receive);
   const theme = new MutationObserver(() => {if (ready) send("theme");});
   theme.observe(document.documentElement, {attributes: true, attributeFilter: ["class", "style", "data-theme"]});
-  send("hello");
+  connect();
   return () => {disposed = true; clearInterval(timer); theme.disconnect(); frame.removeEventListener("load", loaded); window.removeEventListener("message", receive);};
 }

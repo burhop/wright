@@ -62,7 +62,11 @@ def process_ui_manifest(
         "readiness": {
             "path": "/__wright/health",
             "expectedStatus": 200,
-            "timeoutMs": 1000,
+            # This is the complete startup window, not a per-request timeout.
+            # The installed Python imports and immutable inventory verification
+            # must finish before readiness; retain the platform's bounded budget.
+            "timeoutMs": 30000,
+            "intervalMs": 250,
         },
         "health": {
             "path": "/__wright/health",

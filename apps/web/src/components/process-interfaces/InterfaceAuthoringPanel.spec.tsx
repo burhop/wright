@@ -28,6 +28,22 @@ function describeInterface() {
 const intent: InterfaceAuthoringIntent = {version: "1", process, request: {request_id: "retained-request", instruction: "Compare exact results", title: "Comparison"}};
 
 describe("native interface authoring controls", () => {
+  it("preserves a chosen earlier revision when a background refresh reports a new active revision", async () => {
+    const f = fixture();
+    const newer = {...revision, manifest: {...revision.manifest, revision_id: "revision-newer"}};
+    f.client.revisions.mockResolvedValue([newer, revision]);
+    const view = render(f.element); await ready();
+    fireEvent.change(screen.getByLabelText("Saved interface"), {target: {value: ui.ui_id}});
+    await waitFor(() => expect(screen.getByLabelText("Saved revision")).toHaveValue(revision.manifest.revision_id));
+    f.client.interfaces.mockResolvedValue([{...ui, active_revision: newer.manifest.revision_id}]);
+    fireEvent.click(screen.getByRole("button", {name: "Refresh interfaces"}));
+    await waitFor(() => expect(screen.getByRole("button", {name: "Use this revision"})).toBeEnabled());
+    expect(screen.getByLabelText("Saved revision")).toHaveValue(revision.manifest.revision_id);
+    fireEvent.click(screen.getByRole("button", {name: "Use this revision"}));
+    await waitFor(() => expect(f.client.activate).toHaveBeenCalledWith(ui.ui_id, revision.manifest.revision_id, newer.manifest.revision_id));
+    view.unmount();
+  });
+
   it("creates through Wright, shows progress and enables save only after owner preview observation", async () => {
     const f = fixture(), view = render(f.element);
     await ready(); describeInterface();

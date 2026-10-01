@@ -58,3 +58,36 @@ def test_native_override_is_not_assumed_qualified_by_directory_presence(
     assert isinstance(configured, BuildToolchain) and configured.node == Path(node)
     with pytest.raises(ProcessInterfaceError):
         configured.describe()
+
+
+def test_installed_without_native_configuration_never_guesses_an_ancestor_checkout(
+    tmp_path, monkeypatch
+):
+    monkeypatch.delenv("WRIGHT_PROCESS_UI_TOOLCHAIN_ROOT", raising=False)
+    monkeypatch.setattr(
+        module,
+        "__file__",
+        str(tmp_path / "installed/workspace_service/process_interfaces/toolchain.py"),
+    )
+    configured = module.discover_build_toolchain()
+    assert isinstance(configured, module.UnavailableBuildToolchain)
+
+
+def test_installed_missing_public_resources_cannot_borrow_source_from_native_dependency_root(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setenv("WRIGHT_PROCESS_UI_TOOLCHAIN_ROOT", str(tmp_path))
+    monkeypatch.setattr(
+        module,
+        "__file__",
+        str(tmp_path / "installed/workspace_service/process_interfaces/toolchain.py"),
+    )
+    monkeypatch.setattr(
+        module, "files", lambda _: tmp_path / "missing-packaged-resources"
+    )
+    monkeypatch.setattr(module.shutil, "which", lambda _: str(tmp_path / "node.exe"))
+    for path in ("node_modules", "packages/process_client", "packages/ui_kit"):
+        (tmp_path / path).mkdir(parents=True)
+    assert isinstance(
+        module.discover_build_toolchain(), module.UnavailableBuildToolchain
+    )

@@ -57,6 +57,13 @@ describe("existing presenter with native-owned process presentation", () => {
     expect(disconnect).toHaveBeenCalledTimes(2);
   });
 
+  it("leaves maximization to the workspace when no focus callback exists", () => {
+    const view = render(<LiveAppSurface descriptor={descriptor} sessionId="native-session"
+      managedPresentation={{launch, close: vi.fn(async () => {})}}/>);
+    expect(screen.queryByTestId("surface-enter-focus")).not.toBeInTheDocument();
+    view.unmount();
+  });
+
   it("explicit close uses the process owner and contains its failure without generic fallback", async () => {
     const close = vi.fn(async () => {throw new Error("View cleanup needs reconciliation");});
     const view = render(<LiveAppSurface descriptor={descriptor} sessionId="native-session" onFocusMode={() => {}}

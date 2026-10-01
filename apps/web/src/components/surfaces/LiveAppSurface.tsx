@@ -21,7 +21,7 @@ import { LiveAppControls } from "./LiveAppControls";
 export interface LiveAppSurfaceProps {
   readonly descriptor: SurfaceDescriptor;
   readonly sessionId: string;
-  readonly onFocusMode: () => void;
+  readonly onFocusMode?: () => void;
   /** Issued by a native owner that uses its own exact process presentation scope. */
   readonly managedPresentation?: {
     readonly launch: PresentationLaunch;
@@ -350,13 +350,13 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode, managedPres
           lifecycle {descriptor.lifecycle}.
         </aside>
       )}
-      <button
+      {onFocusMode && <button
         type="button"
         onClick={onFocusMode}
         data-testid="surface-enter-focus"
       >
         Maximize surface while keeping chat
-      </button>
+      </button>}
       {launches.panel && (
         <button
           type="button"

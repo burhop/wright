@@ -113,6 +113,20 @@ describe("surface development proxy rewriting", () => {
     );
   });
 
+  it("translates only the exact isolated development Origin to its issued backend Origin", () => {
+    const authority = "s-editor.localhost:8000";
+    expect(surfaceProxyHeaders({host: "s-editor.localhost:5242", origin: "http://s-editor.localhost:5242"}, authority).origin)
+      .toBe("http://s-editor.localhost:8000");
+    for (const origin of ["null", "https://foreign.invalid", "http://127.0.0.1:5242", "http://s-other.localhost:5242", "http://s-editor.localhost:5242/"]) {
+      expect(surfaceProxyHeaders({host: "s-editor.localhost:5242", origin}, authority).origin).toBe(origin);
+    }
+    expect(surfaceProxyHeaders({host: "s-other.localhost:5242", origin: "http://s-other.localhost:5242"}, authority).origin)
+      .toBe("http://s-other.localhost:5242");
+    expect(surfaceProxyHeaders({host: "127.0.0.1:5242", origin: "http://127.0.0.1:5242"}, authority).origin)
+      .toBe("http://127.0.0.1:5242");
+    expect(surfaceProxyHeaders({host: "s-editor.localhost:5242"}, authority).origin).toBeUndefined();
+  });
+
   it("extracts the internal preview credential without forwarding it", () => {
     const upstream = [
       "wright_surface=secret; HttpOnly; Path=/; SameSite=strict",

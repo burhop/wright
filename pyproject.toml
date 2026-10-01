@@ -150,6 +150,12 @@ packages = [
 ]
 
 [tool.hatch.build.targets.wheel.force-include]
+"packages/process_client/src" = "workspace_service/process_interfaces/resources/public/process_client/src"
+"packages/process_client/package.json" = "workspace_service/process_interfaces/resources/public/process_client/package.json"
+"packages/process_client/README.md" = "workspace_service/process_interfaces/resources/public/process_client/README.md"
+"packages/ui_kit/src" = "workspace_service/process_interfaces/resources/public/ui_kit/src"
+"packages/ui_kit/package.json" = "workspace_service/process_interfaces/resources/public/ui_kit/package.json"
+"packages/ui_kit/README.md" = "workspace_service/process_interfaces/resources/public/ui_kit/README.md"
 "integrations/rivet/editor/host.py" = "workspace_service/_rivet/editor/host.py"
 "integrations/rivet/editor/manifest.json" = "workspace_service/_rivet/editor/manifest.json"
 "integrations/rivet/editor/dist" = "workspace_service/_rivet/editor/dist"
@@ -177,6 +183,12 @@ include = [
     "/packages/data_vault/src/data_vault",
     "/packages/model_registry/src/model_registry",
     "/packages/workspace_service/src/workspace_service",
+    "/packages/process_client/src",
+    "/packages/process_client/package.json",
+    "/packages/process_client/README.md",
+    "/packages/ui_kit/src",
+    "/packages/ui_kit/package.json",
+    "/packages/ui_kit/README.md",
     "/integrations/rivet/editor/host.py",
     "/integrations/rivet/editor/manifest.json",
     "/integrations/rivet/editor/dist",

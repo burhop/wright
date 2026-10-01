@@ -1,0 +1,249 @@
+{
+  "parent": "818f76af5a94f0fdbf2e9162112a79e214c1a42e",
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "actual_model_records": [
+    {
+      "job": {
+        "base_revision": null,
+        "created_at": "2026-10-01T23:08:16.428028+00:00",
+        "diagnostics": [],
+        "job_id": "job-13729e8a9926418bb12e266d7e76c815",
+        "process": {
+          "semantic_digest": null,
+          "source_contract": "canonical-source",
+          "source_digest": "5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "workspace_id": "ws-recovery"
+        },
+        "repair_attempt": 0,
+        "request_digest": "867419325f86131380995e7bd437cc87891b4e63b2fa9a34d56c68edb401c6f0",
+        "request_id": "interface-4e97bac9-a426-4a82-ae4a-37a89007e800",
+        "revision_id": "revision-afd5bee54a8f4cc5af795df94e5959b7",
+        "role_resolution": {
+          "adapter": "hermes",
+          "capability_scope": [],
+          "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+          "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+          "model_reference": "gpt-5.6-sol",
+          "profile": {
+            "allowed_tools": [],
+            "instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+            "instructions_version": "process-ui-author-1",
+            "max_repairs": 2,
+            "model_policy": "inherit_default",
+            "role": "process-ui-author",
+            "version": "1"
+          }
+        },
+        "state": "saved",
+        "updated_at": "2026-10-01T23:10:05.551142+00:00"
+      },
+      "prompt_sha256": "719cf33bb40893d852a4fb3c08c049feef2130c153bdc17c4462fb63e76e33b8",
+      "response_sha256": "ca479e96d394d4a544bb29d13cff9953d7a1bfa7c51c8704dab0e910989bdaf4",
+      "attestation": {
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+        "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+        "model_reference": "gpt-5.6-sol",
+        "response_model": "gpt-5.6-sol"
+      },
+      "private_record_locator": {
+        "job_id": "job-13729e8a9926418bb12e266d7e76c815",
+        "record_key": "attempt-0"
+      },
+      "raw_prompt_response_published": false
+    },
+    {
+      "job": {
+        "base_revision": null,
+        "created_at": "2026-10-01T23:17:39.122166+00:00",
+        "diagnostics": [],
+        "job_id": "job-5f7dca9233024b5c8b5080f0ef7fdff3",
+        "process": {
+          "semantic_digest": null,
+          "source_contract": "canonical-source",
+          "source_digest": "5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "workspace_id": "ws-recovery"
+        },
+        "repair_attempt": 0,
+        "request_digest": "867419325f86131380995e7bd437cc87891b4e63b2fa9a34d56c68edb401c6f0",
+        "request_id": "interface-4f071370-708c-4439-b75e-f31627fa7573",
+        "revision_id": "revision-c27524b10e1b435f86cff705f8224a15",
+        "role_resolution": {
+          "adapter": "hermes",
+          "capability_scope": [],
+          "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+          "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+          "model_reference": "gpt-5.6-sol",
+          "profile": {
+            "allowed_tools": [],
+            "instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+            "instructions_version": "process-ui-author-1",
+            "max_repairs": 2,
+            "model_policy": "inherit_default",
+            "role": "process-ui-author",
+            "version": "1"
+          }
+        },
+        "state": "saved",
+        "updated_at": "2026-10-01T23:19:14.557584+00:00"
+      },
+      "prompt_sha256": "d773b0d519af675361ffadcaed44d124ffd1bf854047ba7154d074931df5077e",
+      "response_sha256": "25ed0b2fa3ab398ded60f482e5ea1f97bc1eca8b3b88025a8bab4b7c45f2ba7e",
+      "attestation": {
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+        "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+        "model_reference": "gpt-5.6-sol",
+        "response_model": "gpt-5.6-sol"
+      },
+      "private_record_locator": {
+        "job_id": "job-5f7dca9233024b5c8b5080f0ef7fdff3",
+        "record_key": "attempt-0"
+      },
+      "raw_prompt_response_published": false
+    },
+    {
+      "job": {
+        "base_revision": "revision-c27524b10e1b435f86cff705f8224a15",
+        "created_at": "2026-10-01T23:38:26.319975+00:00",
+        "diagnostics": [],
+        "job_id": "job-b4eba82ef64845578235f73b4e6c160e",
+        "process": {
+          "semantic_digest": null,
+          "source_contract": "canonical-source",
+          "source_digest": "5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "workspace_id": "ws-recovery"
+        },
+        "repair_attempt": 0,
+        "request_digest": "4f5aa17ddd4f3e5e6a80420fac48348db0c14f6d724612d61362b4a83de3e969",
+        "request_id": "interface-61b495c2-9cc0-471a-8f4e-14494f06e36a",
+        "revision_id": "revision-be39192b3db048fd981cc10f39f0db2c",
+        "role_resolution": {
+          "adapter": "hermes",
+          "capability_scope": [],
+          "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+          "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+          "model_reference": "gpt-5.6-sol",
+          "profile": {
+            "allowed_tools": [],
+            "instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+            "instructions_version": "process-ui-author-1",
+            "max_repairs": 2,
+            "model_policy": "inherit_default",
+            "role": "process-ui-author",
+            "version": "1"
+          }
+        },
+        "state": "saved",
+        "updated_at": "2026-10-01T23:39:35.469172+00:00"
+      },
+      "prompt_sha256": "0ff3214a92be27dfcc4c296466ecc57a7cc88206d7419ad0622396e694fe3a35",
+      "response_sha256": "e8f9365690ff8447f2d48ebc2dc15fb782b23c2a65b48fdc62bd43463111b8f8",
+      "attestation": {
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+        "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+        "model_reference": "gpt-5.6-sol",
+        "response_model": "gpt-5.6-sol"
+      },
+      "private_record_locator": {
+        "job_id": "job-b4eba82ef64845578235f73b4e6c160e",
+        "record_key": "attempt-0"
+      },
+      "raw_prompt_response_published": false
+    }
+  ],
+  "checks": {
+    "browser_fresh": "1 passed (2.4m)",
+    "browser_update": "1 passed (2.1m)",
+    "backend_initial": "109 passed (79.72s)",
+    "final_compiler_static_package": "49 passed (65.41s)",
+    "frontend_final": "52 passed (9.61s)",
+    "revision_fix_regression": "9 passed (4.43s)"
+  },
+  "claims": {
+    "native_model_compiler_managed_browser": true,
+    "fresh_generation": true,
+    "focus_update": true,
+    "loaded_preview_save": true,
+    "saved_reopen": true,
+    "theme_reload_rollback": true,
+    "installed_public_source_compilation": true,
+    "installed_static_HTTP": true,
+    "no_compiler_for_saved_HTTP": true,
+    "controlled_workspace_chrome": true,
+    "process_execution": false,
+    "live_MCP": false,
+    "engineering_acceptance": false,
+    "Docker_distribution": false,
+    "user_acceptance": false,
+    "complete_feature": false
+  },
+  "owned_source_hashes": {
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx": "e74d1844f80ec19dde920618b91d96b9c241eafcf41e3640cd5009b1036c0662",
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx": "2e0db31140191a2265de22c51b989ae84629c474e72bde3359bfcc9004bf483c",
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.tsx": "37a7e48051a4b3b96132c5b793a69526f3cf1fd11ba1f72a5e763967aa2d0716",
+    "apps/web/src/components/surfaces/LiveAppSurface.tsx": "813924177a82385e06a9fbaaad3a2b774f4952860027448f7f9b6ae144a9c7ca",
+    "apps/web/src/components/surfaces/LiveAppSurface.spec.tsx": "2bfb9c867348c2ca5d81570e80aaf9efca4b855a3b159c533d71e4b9ceeb751e",
+    "apps/web/src/services/process-presentation-host.ts": "9e604f575ed044d27b0e352a4a3885f1a8c9656ae754f366e4e5cba3ff614e11",
+    "apps/web/src/services/process-presentation-host.spec.ts": "2709cc372ef8b317643acdfdfadf3269cb9ca87d749d29132156f1aace08f796",
+    "apps/web/vite.config.ts": "caf8c2dcd0de7bfea917b787d868e8c933d76e30b51c623621c50b2894d347d4",
+    "apps/web/vite.config.spec.ts": "bbfa8ede889a52773264cad063cf034464de66c15b2225c82a6e3ddec9469481",
+    "packages/workspace_service/pyproject.toml": "9f4ac287a42a55674c98ad5cdc9bee6f96030bf3aeedc092b52ca95a8e15a4ae",
+    "packages/workspace_service/hatch_build.py": "a606ed1e8aeb04a00406d2659e7592f4132d181c6f707aadaaf3d7244cc1472e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/build.py": "f26447349ebcd6b37a9186673c8a2524a2af5038ada83c63927d6d9cc5ccc29e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs": "1053a662166d837c020d27c165e9857f9af051e6cafe57b129fee942de4f783b",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/toolchain.json": "5fbc509bea25c56a462bed8f77af855510a29db625d6e46183a3863f4a9122df",
+    "packages/workspace_service/src/workspace_service/process_interfaces/toolchain.py": "67e1e8926f0030be644c8b8241f549b27988035216b909233e7efe2da461fa60",
+    "packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py": "469096a2a194ca17dd715502eed579e175de4b9e5b5b6a2b24a77d71eceb11b9",
+    "packages/workspace_service/src/workspace_service/surfaces/process_ui_manifest.py": "43b6046db0632e777835a5dbb7faf62c3e5fda83b82947be2282e0b24b42156f",
+    "packages/workspace_service/tests/surfaces/test_process_ui_static.py": "c48aec162d49823ebe4668807b7fa8dd926989cc2f7b0fec554fd8eb214a3088",
+    "packages/workspace_service/tests/test_process_ui_build.py": "6d9403ed03cac00fb72192114e09826ae046456294529648ce192c1b3ce1fb03",
+    "packages/workspace_service/tests/test_process_ui_toolchain.py": "915e46b6ce2e5e61f59410c69ed48c11aefb5dc6511e8531751e9a3926240087",
+    "pyproject.toml": "03f5d16fc2cfc728a337cd3224323ff6f59474556e81cc8b41538767f84525f4",
+    "tests/packaging/test_process_interfaces_distribution.py": "023bbfc313c740d93a2c2abcb16abe3a2514ca5a0834e8497f764449dddce96c",
+    "tests/ui-integration/process-ui-authoring-live.spec.ts": "6680dc47e214c322298db24ac5006114b06430921d778310688792266e186898",
+    "specs/083-process-working-interfaces/tasks.md": "fe778292b775f231e83fd45ab445aa0f83b0759e2af8aeded4a48af3dda5389b",
+    "specs/083-process-working-interfaces/progress.md": "a5db8d4679bc2710d393aa78a9a488a299042105eab53d57b60361e37664b5fb",
+    "specs/083-process-working-interfaces/evidence/live-ui-authoring.md": "8ac2fc178194f0203ab30446e82ad8dcb3e470f377016d386b1a4eb0d265bbda",
+    "artifacts/process-interfaces/083/20261001-t042-managed-active-tab/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/checked-scope.json": "405d7ed39418975c154f9e72475cdc562607b61f365981f2852074b2043b2aed",
+    "artifacts/process-interfaces/083/20261001-t042-managed-active-tab/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/owned-view-cleanup.json": "055bc0eefede995619c0a5c6f03626403b6f095a745eb2d639317265b7af448a",
+    "artifacts/process-interfaces/083/20261001-t042-managed-active-tab/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/creating-interface.png": "73f661d7c3ade0d889d58284a8ed2456c95c7b85f21758485452e8938fe9d602",
+    "artifacts/process-interfaces/083/20261001-t042-managed-active-tab/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/managed-preview.png": "7d2ea53f8b23252543c34a7469e8d8fb6d278937fbb54ce5d9dd05be6dccc751",
+    "artifacts/process-interfaces/083/20261001-t042-managed-active-tab/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/saved-working-interface.png": "1d75a9c745847da9aeea15abfb5f19594ca9685bac9800fece415e8b3f395b6f",
+    "artifacts/process-interfaces/083/20261001-t042-managed-active-tab/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/final-browser-state.png": "4705a392ce4626d3a4fbbe7b7371cbb6ee8672798ee8db88da7730fd2cf045db",
+    "artifacts/process-interfaces/083/20261001-t042-managed-qualified/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/checked-scope.json": "5a3e99db9468b15fe0fec17db0fb25fd364d9e618d001c2908f1368f4787935f",
+    "artifacts/process-interfaces/083/20261001-t042-managed-qualified/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/owned-view-cleanup.json": "bea97076fafe5e59eb8fa28adfbf6235ef242571e230401708c0879d6979b91c",
+    "artifacts/process-interfaces/083/20261001-t042-managed-qualified/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/managed-preview.png": "8cc31aa46c119655e4f0cca53308af0cf653b6ae05d2458783d827cef653c57a",
+    "artifacts/process-interfaces/083/20261001-t042-managed-qualified/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/saved-working-interface.png": "b7538906d94aad37caa09a5bfb122d6f9c5362cd2d9e8a866ff9aa7155c68290",
+    "artifacts/process-interfaces/083/20261001-t042-managed-qualified/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/updated-preview.png": "a8cbc552de41ea375b907837584ca32b1a8cb53ddf19e8829ed31b8a2c07d507",
+    "artifacts/process-interfaces/083/20261001-t042-managed-qualified/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/revision-rollback.png": "4e9a401fe4d4f98dc689c4299c8061f79e0fa34d6bce3936a155bbabd7976ba1",
+    "artifacts/process-interfaces/083/20261001-t042-managed-qualified/process-ui-authoring-live--96b7f--through-the-workspace-live-chromium/final-browser-state.png": "0fa3b99de133e503575df0cebecd0471c92f324c618bf8f0e093cd77d613ff20"
+  }
+}

@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import asyncio
 import json
+import subprocess
 
 import pytest
 
@@ -191,6 +192,29 @@ async def test_reference_compiles_with_public_packages_and_no_generated_scripts(
     assert "createPresentationClient" in (output.dist / "app.js").read_text(
         encoding="utf-8"
     )
+    # Typechecking and bundling do not establish browser importability. Evaluate
+    # the inert reference module in a realm without a Node `process` global.
+    imported = subprocess.run(
+        [
+            str(toolchain().node),
+            "--experimental-vm-modules",
+            "--input-type=module",
+            "-e",
+            "import fs from 'node:fs'; import vm from 'node:vm'; "
+            "const realm=vm.createContext({TextEncoder,TextDecoder,URL,URLSearchParams}); "
+            "const module=new vm.SourceTextModule(fs.readFileSync(process.argv[1],'utf8'),{context:realm}); "
+            "await module.link(()=>{throw new Error('Unexpected external module')}); "
+            "await module.evaluate({timeout:5000}); "
+            "if(typeof module.namespace.mount!=='function'||typeof module.namespace.createPresentationClient!=='function') "
+            "throw new Error('Missing fixed browser entry'); console.log('browser-entry-imported');",
+            str(output.dist / "app.js"),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+    assert imported.returncode == 0, imported.stderr
+    assert "browser-entry-imported" in imported.stdout
     assert not (output.root / "package.json").exists()
     assert not (output.root / "vite.config.js").exists()
     assert (output.root / "build-report.json").is_file()

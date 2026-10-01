@@ -142,6 +142,18 @@ export function surfaceProxyHeaders(
 ): IncomingHttpHeaders {
   const headers = { ...source };
   headers.host = authority;
+  // The browser sees this exact isolated preview at Vite's port; the backend
+  // authorizes its original issued origin. Translate only that same-origin
+  // request. Foreign/control/null origins stay unchanged and are denied there.
+  if (typeof source.origin === "string" && typeof source.host === "string" &&
+      normalizedPreviewAuthority(source.host) === authority.toLowerCase()) {
+    for (const scheme of ["http:", "https:"]) {
+      if (source.origin === `${scheme}//${source.host}`) {
+        headers.origin = `${new URL(apiProxyTarget).protocol}//${authority}`;
+        break;
+      }
+    }
+  }
   headers["accept-encoding"] = "identity";
   delete headers.connection;
   const cookies = String(headers.cookie ?? "")

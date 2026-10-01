@@ -59,10 +59,25 @@ describe("native exact process frame connection", () => {
     document.documentElement.style.setProperty("--private-token", "secret");
     const f = fixture();
     expect(f.hello.tokens).toEqual({"--color-primary": "#ffffff"});
-    vi.advanceTimersByTime(10_000); expect(f.post).toHaveBeenCalledTimes(21);
+    vi.advanceTimersByTime(40_000); expect(f.post).toHaveBeenCalledTimes(121);
     f.dispose(); const calls = f.post.mock.calls.length;
     f.frame.dispatchEvent(new Event("load")); vi.advanceTimersByTime(10_000);
     expect(f.post).toHaveBeenCalledTimes(calls);
     document.documentElement.removeAttribute("style");
+  });
+
+  it("reconnects each loaded document and rejects the previous document nonce without replaying start signals", () => {
+    const f = fixture(); f.message("ready"); f.message("started", {request_id: "start-one"});
+    f.frame.dispatchEvent(new Event("load"));
+    const hello = f.post.mock.calls.at(-1)![0] as Record<string, unknown>;
+    expect(hello.nonce).not.toBe(f.hello.nonce);
+    f.message("ready"); expect(f.ports.ready).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(1000);
+    expect(f.post.mock.calls.at(-1)![0]).toMatchObject({type: "hello", nonce: hello.nonce});
+    f.message("ready", {nonce: hello.nonce});
+    expect(f.ports.ready).toHaveBeenCalledTimes(2);
+    f.message("started", {nonce: hello.nonce, request_id: "start-one"});
+    expect(f.ports.started.mock.calls).toEqual([[], ["start-one"], []]);
+    f.dispose();
   });
 });

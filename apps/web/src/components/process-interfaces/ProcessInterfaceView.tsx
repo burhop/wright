@@ -82,7 +82,7 @@ export function ProcessInterfaceView({client, locator, sessionId, viewId, runId,
     {error && <ReasonNotice reason={error}/>}
     {!presentation && !error && <p role="status">Opening the saved interface…</p>}
     </ProcessUI>
-    {presentation && <LiveAppSurface descriptor={presentation.descriptor} sessionId={sessionId} onFocusMode={() => {}}
+    {presentation && <LiveAppSurface descriptor={presentation.descriptor} sessionId={sessionId}
       managedPresentation={{launch: presentation.launch, close: () => client.close(presentation), closeOnUnmount: false,
         connect: (frame, ready) => connectProcessPresentation(frame, presentation, {ready, navigate: onNavigate,
           started: async requestId => {

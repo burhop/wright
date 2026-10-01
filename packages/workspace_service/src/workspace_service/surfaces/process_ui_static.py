@@ -65,7 +65,9 @@ const receiveHost = event => {
     const origin = new URL(event.origin);
     if (!['http:','https:'].includes(origin.protocol) || origin.origin !== event.origin) return;
   } catch { return; }
-  if (host && (host.origin !== event.origin || host.nonce !== value.nonce)) return;
+  // A load event can follow this module's async mount. Only the same native
+  // parent may renew the hello challenge; theme updates still need its nonce.
+  if (host && (host.origin !== event.origin || (host.nonce !== value.nonce && value.type !== 'hello'))) return;
   if (!host && value.type !== 'hello') return;
   host = {origin:event.origin, nonce:value.nonce};
   if (value.tokens && typeof value.tokens === 'object' && !Array.isArray(value.tokens)) {

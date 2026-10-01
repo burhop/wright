@@ -101,6 +101,10 @@ export function mount(node: Element, props: HostProps) {
     const { build } = await import(pathToFileURL(viteModule).href);
     await build({
       root, configFile: false, envFile: false, plugins: [], logLevel: 'silent',
+      // Library mode leaves process.env untouched by default. This bundle runs
+      // in a browser with no Node process/global environment, so select React's
+      // browser production implementation in the fixed envelope explicitly.
+      define: { 'process.env.NODE_ENV': JSON.stringify('production') },
       publicDir: false, resolve: { alias: [
         ...Object.entries(aliases).map(([find, replacement]) => ({ find, replacement })),
         {find: /^react$/, replacement: requireInstalled.resolve('react')},

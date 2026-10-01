@@ -1,6 +1,7 @@
 """Trusted local compiler discovery; generated source cannot select these paths."""
 
 import os
+from importlib.resources import files
 from pathlib import Path
 import shutil
 
@@ -18,20 +19,39 @@ class UnavailableBuildToolchain:
 
 
 def discover_build_toolchain():
-    """Development checkout or an administrator's prequalified local root.
+    """Packaged public resources and a prequalified local compiler, or checkout.
 
-    Installed packed public resources are added separately by the distribution
-    work. No registry install or source-checkout assumption is made silently in
-    an installed product; missing directories produce unavailable capability.
+    Installed authoring needs an administrator-configured dependency root; it
+    never borrows a checkout, downloads dependencies or executes package scripts.
+    Saved interface opening has no compiler/model dependency.
     """
     configured = os.environ.get("WRIGHT_PROCESS_UI_TOOLCHAIN_ROOT")
+    module = Path(__file__).resolve()
+    checkout = module.parts[-6:] == (
+        "packages",
+        "workspace_service",
+        "src",
+        "workspace_service",
+        "process_interfaces",
+        "toolchain.py",
+    )
     root = (
         Path(configured).absolute()
         if configured
-        else Path(__file__).resolve().parents[5]
+        else module.parents[5]
+        if checkout
+        else None
     )
+    if root is None:
+        return UnavailableBuildToolchain()
     node = shutil.which("node")
-    client, kit = root / "packages/process_client", root / "packages/ui_kit"
+    public = files("workspace_service.process_interfaces.resources").joinpath("public")
+    if isinstance(public, Path) and public.is_dir():
+        client, kit = public / "process_client", public / "ui_kit"
+    elif checkout:
+        client, kit = root / "packages/process_client", root / "packages/ui_kit"
+    else:
+        return UnavailableBuildToolchain()
     if not node or not all(
         path.is_dir() for path in (root / "node_modules", client, kit)
     ):

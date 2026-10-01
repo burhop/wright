@@ -81,7 +81,12 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
     if (!selectedUi) {setRevisions([]); setSelectedRevision(""); return;}
     const abort = new AbortController();
     void client.revisions(selectedUi, abort.signal).then(value => {
-      if (!abort.signal.aborted) {setRevisions(value); setSelectedRevision(ui?.active_revision ?? "");}
+      if (!abort.signal.aborted) {
+        setRevisions(value);
+        // A background refresh must not overwrite a user's revision choice.
+        setSelectedRevision(current => value.some(item => item.manifest.revision_id === current)
+          ? current : ui?.active_revision ?? "");
+      }
     }).catch(error => {if (!abort.signal.aborted) setError(interfaceAuthoringReason(error));});
     return () => abort.abort();
   }, [client, selectedUi, ui?.active_revision, refresh]);
@@ -167,7 +172,8 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
         {job.preview && <button className="wp-button" type="button" disabled={busy} onClick={() => void command(() => onOpenPreview(job))}>Open preview</button>}
         {job.preview && job.job.state === "preview_ready" && <button className="wp-button" type="button" disabled={busy || !job.preview.previewed_at}
           onClick={() => void command(async () => {const saved = await client.save(job, job.preview!.active_revision);
-            setSelectedUi(saved.manifest.ui_id); setRefresh(value => value + 1);})}>Save interface</button>}
+            setSelectedUi(saved.manifest.ui_id); setSelectedRevision(saved.manifest.revision_id);
+            setRefresh(value => value + 1);})}>Save interface</button>}
         {!terminal(job) && <button className="wp-button" type="button" disabled={busy} onClick={() => void command(async () => {
           await client.cancel(job.job.job_id); setRefresh(value => value + 1);
         })}>Cancel interface creation</button>}

@@ -43,6 +43,13 @@ class BuildToolchain:
             "vite": self.dependency_root / "node_modules/vite/package.json",
             "react": self.dependency_root / "node_modules/react/package.json",
             "react-dom": self.dependency_root / "node_modules/react-dom/package.json",
+            "three": self.dependency_root / "node_modules/three/package.json",
+            "@types/react": self.dependency_root
+            / "node_modules/@types/react/package.json",
+            "@types/react-dom": self.dependency_root
+            / "node_modules/@types/react-dom/package.json",
+            "@types/three": self.dependency_root
+            / "node_modules/@types/three/package.json",
             "@wright/process-client": self.client_root / "package.json",
             "@wright/ui-kit": self.kit_root / "package.json",
         }

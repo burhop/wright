@@ -74,6 +74,8 @@ def test_fixed_manifest_is_deterministic_and_contains_only_installed_runtime_lau
     assert parsed.presentation.panel and not parsed.presentation.browser
     assert parsed.presentation.sharing == "isolated"
     assert parsed.lifetime.policy == "presentation"
+    assert parsed.readiness.timeout_ms == 30_000
+    assert parsed.readiness.interval_ms == 250
     assert parsed.capabilities == frozenset(manifest().capabilities)
     assert "wright.tool.call" not in parsed.capabilities
 

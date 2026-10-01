@@ -872,3 +872,32 @@ hashes match; managed 082 context equals HEAD, and `git diff --check` passes.
 See [checklists/requirements.md](checklists/requirements.md). Current implementation
 and test status is recorded in the dated entries and task checkboxes above.
 Served browser checks, live engineering qualification and distribution proof remain pending.
+
+### 2026-10-01 — Actual authoring and packaged-resource checkpoint
+
+Completed T032 public distributions/fixed installed compiler and T042 actual
+configured-model authoring smoke. The normal workspace Workflows entry led to
+the common document and native generation/preview/save controls. An actual
+model-created saved interface was reopened, themed, reloaded, focus-updated,
+previewed/saved and rolled back in existing workspace tabs. Real native owners,
+Windows managed worker, bootstrap and bridge were used; chrome/source discovery
+were controlled. No process or engineering MCP was executed.
+
+Fixed complete-startup readiness, the browser's accidental Node global,
+development preview Origin translation, frame re-handshake, revision-selection
+refresh and inert maximization. Root/service public sources survive wheel/source
+archive packaging. Installed saved static HTTP works without compiler/model;
+installed source compilation uses a declared native dependency root.
+
+Browser passes: fresh journey 2.4 minutes; update/reload/rollback 2.1 minutes.
+Backend group: 109 passes/zero skips; final compiler/static/package group: 49
+passes/zero skips. Frontend group: 52 passes; focused revision regression: 9
+passes. TypeScript/Ruff passed; an existing Vite-test cleanup lint error remains
+separately recorded. See [live-ui-authoring.md](evidence/live-ui-authoring.md) for
+identities, model/role attestations, screenshots, failures, source provenance and
+scope. Protected prototype/campaign/context baselines are checked before commit.
+
+T021, remaining M3 acceptance, engineering M4 and final production/Docker/native
+M5 remain pending. Next: fresh existing-provider qualification and the two
+isolated engineering runs. The goal remains active; no physical action, user
+acceptance, push or release is implied.
