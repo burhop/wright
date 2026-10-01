@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
+import math
+
+from pydantic import ValidationError
 
 from core.process_interactions import (
     Action,
@@ -66,6 +70,128 @@ _VIEWERS = {
     "jpeg": "image",
     "webp": "image",
 }
+
+_OPERATION_STATES = {
+    "submitted": "waiting_external",
+    "working": "running",
+    "completed": "completed",
+    "results_collected": "completed",
+    "failed": "failed",
+    "cancelled": "cancelled",
+    "cancellation_requested": "cancellation_requested",
+    "input_required": "reconciliation_required",
+    "cancellation_unconfirmed": "reconciliation_required",
+    "cancellation_unavailable": "reconciliation_required",
+    "monitor_interrupted": "reconciliation_required",
+    "status_unavailable": "reconciliation_required",
+    "reconciliation_required": "reconciliation_required",
+}
+
+
+def project_operation_observations(execution, generated_at):
+    """Read compact recorder facts; never poll, mutate or infer engineering metrics."""
+    observations = []
+    unavailable = bool(execution.get("operations_truncated"))
+    for item in execution.get("operations", ()):
+        try:
+            if not isinstance(item, dict) or not all(
+                isinstance(item.get(key), str)
+                and item[key].strip()
+                and len(item[key]) <= 160
+                for key in ("provider_binding", "operation_id", "task_id")
+            ):
+                raise ValueError()
+            limits = tuple(item.get("limitations", ()))
+            source = item.get("observation_source")
+            qualified = (
+                source
+                in {"provider_status", "submission_receipt", "local_request", "unknown"}
+                and isinstance(item.get("provider_schema_digest"), str)
+                and len(item["provider_schema_digest"]) == 64
+                and all(c in "0123456789abcdef" for c in item["provider_schema_digest"])
+            )
+            if not qualified or not item.get("observed_at"):
+                raise ValueError()
+            for metric in ("progress_percent", "estimated_remaining_seconds"):
+                value = item.get(metric)
+                if value is not None and (
+                    type(value) not in (int, float) or not math.isfinite(value)
+                ):
+                    raise ValueError()
+            observation = Observation(
+                observation_id="operation-"
+                + canonical_digest(
+                    [item["provider_binding"], item["task_id"], item["operation_id"]]
+                ),
+                provider_binding=item["provider_binding"],
+                operation_id=item["operation_id"],
+                state=_OPERATION_STATES.get(
+                    item.get("state"), "reconciliation_required"
+                ),
+                observed_at=item["observed_at"],
+                stale_after=item.get("stale_after"),
+                activity=redact_text(item["message"])[:8192]
+                if item.get("message")
+                else None,
+                progress_percent=item.get("progress_percent"),
+                estimated_remaining_seconds=item.get("estimated_remaining_seconds"),
+                metrics={
+                    **item.get("metrics", {}),
+                    "step_id": item["task_id"],
+                    "provider_schema_digest": item["provider_schema_digest"],
+                    "observation_source": source,
+                },
+                limitations=limits,
+            )
+            # A read now is not a new provider observation. Preserve the saved
+            # timestamp; require reconciliation when active facts have expired.
+            stamp = datetime.fromisoformat(
+                observation.observed_at.replace("Z", "+00:00")
+            )
+            now = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+            deadline = (
+                datetime.fromisoformat(observation.stale_after.replace("Z", "+00:00"))
+                if observation.stale_after
+                else None
+            )
+            if (
+                stamp.tzinfo is None
+                or now.tzinfo is None
+                or stamp > now
+                or deadline
+                and (deadline.tzinfo is None or deadline <= stamp)
+            ):
+                raise ValueError()
+            if observation.state not in {"completed", "failed", "cancelled"} and (
+                deadline is None or now >= deadline
+            ):
+                observation = observation.model_copy(
+                    update={
+                        "state": "reconciliation_required",
+                        "progress_percent": None,
+                        "estimated_remaining_seconds": None,
+                        "limitations": (
+                            *observation.limitations,
+                            "The provider observation is stale; reconcile the identified operation before another action.",
+                        ),
+                    }
+                )
+            observations.append(observation)
+        except (ValidationError, ValueError, TypeError, KeyError, OverflowError):
+            unavailable = True
+    if unavailable:
+        observations.append(
+            Observation(
+                observation_id="unverified-provider-history",
+                provider_binding="unqualified-provider",
+                state="reconciliation_required",
+                observed_at=generated_at,
+                limitations=(
+                    "Some operation identities or observations could not be verified within the read bound. Inspect the canonical run log before another action.",
+                ),
+            )
+        )
+    return tuple(observations)
 
 
 @dataclass(frozen=True, slots=True)
@@ -237,6 +363,30 @@ def project_interactions(
         if facts.readiness and facts.readiness.state == "ready"
         else "preparing"
     )
+    provider_observations = [
+        o
+        for o in facts.observations
+        if o.observation_id.startswith(("operation-", "unverified-provider-"))
+    ]
+    if run and any(
+        o.state == "reconciliation_required"
+        or run.status in {"failed", "cancelled", "completed"}
+        and o.state not in {"completed", "failed", "cancelled"}
+        for o in provider_observations
+    ):
+        state = "reconciliation_required"
+    elif (
+        run
+        and state == "running"
+        and any(o.state == "cancellation_requested" for o in provider_observations)
+    ):
+        state = "cancellation_requested"
+    elif (
+        run
+        and state == "running"
+        and any(o.state == "waiting_external" for o in provider_observations)
+    ):
+        state = "waiting_external"
     outputs = tuple(
         project_output(result, facts.reports) for result in (run.results if run else ())
     )

@@ -261,6 +261,48 @@ working view. Actual model authoring, live digital engineering proofs, browser
 journeys and installed distribution checks remain pending. The full M0–M5 goal
 is active; this checkpoint does not claim UI or engineering completion.
 
+Focused local migration commit: `7a4722fa` (20 owned files). The staged router was
+compared against the original prototype delta before committing; exactly that
+two-line guard remains unstaged. No push or merge occurred.
+
+### 2026-09-30 — Provider observations, finite reconciliation and cancellation
+
+The previous goal turn made progress: T015 was verified with 209 passing tests
+and saved in `7a4722fa`. This turn implements T016 on the existing operation
+monitor, canonical run preparation/gateway/recorder and process projection.
+
+Provider observations carry exact operation/step/binding/schema, saved times,
+freshness, explicitly selected nullable metrics and limitations. Reads/reopen do
+not refresh provider times or call tools. Wrong operation identity, missing receipt
+identity, changed companion binding, stale active facts and truncated history
+require reconciliation. Provider requests for input never invent a human form.
+
+Cancellation reserves a qualified live monitor, persists the actor/request/run/
+operation before mutation, wakes a long poll and observes actual status within a
+finite budget. The request observer can disconnect without abandoning the owned
+command. Completed/failed/cancelled provider outcomes remain separate from local
+run cancellation. Unconfirmed outcome or uncertain publication does not permit
+blind replay or following work. Local monitor interruption has no remote
+cancellation authority. The projection supplies exact-subject cancel capability
+and unavailable reasons; command execution rechecks the current binding/authority.
+
+Controlled nonphysical provider cases exercise the actual accepted-source
+preparation, immutable inputs, recorder, files and receipts. All cases check one
+submission, at most one cancellation and no following output. Saved-log reopen
+checks verify no polling/mutation. These are fixture/runtime proofs, not live
+engineering, physical cancellation or default-model/browser acceptance.
+
+Final regression result: **255 passed, one existing skip**, 59.67 seconds; all
+handles reached terminal completion. Ruff and whitespace checks pass. Observed
+red tests, corrected fixture/exception-order errors, exact command and limits
+are recorded in [provider evidence](evidence/provider-observations.md). Three
+protected campaign hashes and original prototype deltas remain preserved.
+
+T001–T016 are checked. Next: T017 public typed client, then the shared UI kit and
+common working view in workspace tabs. The full M0–M5 goal remains active; actual
+model authoring, both live digital toolchains, served editor journeys, migration
+and installed distribution proof remain required. No push/merge/physical action.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

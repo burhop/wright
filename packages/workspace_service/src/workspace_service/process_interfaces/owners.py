@@ -16,6 +16,7 @@ from core.process_interactions import (
     Reason,
 )
 from core.redaction import redact_text
+from core.process_validation import canonical_digest
 
 from ..process_validation.application import ValidationApplication
 from ..workflow_approval_execution import inspect_workflow_approval
@@ -24,7 +25,12 @@ from ..workflow_external_actions import WorkflowExternalActionError
 from ..workflow_run_record import WorkflowRunReadError, read_workflow_run
 from ..workflow_source_execution import WorkflowSourceExecutionError
 from .errors import ProcessInterfaceError
-from .projection import ProjectionFacts, RecordedRun, _STATES
+from .projection import (
+    ProjectionFacts,
+    RecordedRun,
+    _STATES,
+    project_operation_observations,
+)
 
 
 def _blocked(code, message, correction):
@@ -324,6 +330,29 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             else (),
         ),
     )
+    cancel_enabled, cancel_message = app.runs.cancellation_capability(run_id)
+    cancel_action = Action(
+        action_id="cancel-run",
+        title="Cancel this run",
+        operation="cancel",
+        subject_digest=canonical_digest(
+            {
+                "process": process,
+                "run_id": run_id,
+                "input_digest": inputs.digest if inputs else None,
+            }
+        ),
+        enabled=cancel_enabled,
+        reasons=()
+        if cancel_enabled
+        else (
+            _blocked(
+                "CAPABILITY_UNAVAILABLE",
+                cancel_message,
+                "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            ),
+        ),
+    )
     return ProjectionFacts(
         process=resolved.process,
         generated_at=generated_at,
@@ -338,6 +367,7 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
         ),
         reports=reports,
         interactions=approval + review,
-        actions=action_permissions + review_permissions,
-        observations=observations,
+        actions=action_permissions + review_permissions + (cancel_action,),
+        observations=observations
+        + project_operation_observations(execution, generated_at),
     )

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import asyncio
+from copy import deepcopy
 from html import escape
 import json
 import re
@@ -236,6 +237,7 @@ class WorkflowMcpRuntime:
         self._integration_file_read_authority = None
         self._integration_file_copy_authority = None
         self._verified_copy_sources = ()
+        self._active_operations = {}
         self.session_id = "native-workflow-" + uuid.uuid4().hex
         gateway.open_session(
             session_id=self.session_id,
@@ -542,11 +544,14 @@ class WorkflowMcpRuntime:
             )
             await on_event("integration_document_write_authorized", **audit)
             approvals = set(approvals) | {WORKSPACE_WRITE_APPROVAL}
+        operation_profile = None
+        operation_bindings = None
         if monitor and tool.upstream_meta.get("wright/operation"):
             from .workflow_async_operations import validate_operation_profile
 
-            validate_operation_profile(
-                self, step, tool.upstream_meta["wright/operation"]
+            operation_profile = deepcopy(tool.upstream_meta["wright/operation"])
+            operation_bindings = validate_operation_profile(
+                self, step, operation_profile
             )
         try:
             result = await self.gateway.call_tool(
@@ -651,11 +656,16 @@ class WorkflowMcpRuntime:
                 "Request at most four PNG/JPEG images per result, each at most 4 MiB base64 and 4096 pixels per edge.",
                 value,
             )
-        if monitor and tool.upstream_meta.get("wright/operation"):
+        if operation_profile is not None:
             from .workflow_async_operations import monitor_operation
 
             return await monitor_operation(
-                self, step, value, tool.upstream_meta["wright/operation"], on_event
+                self,
+                step,
+                value,
+                operation_profile,
+                on_event,
+                pinned_tools=operation_bindings,
             )
         return value, text
 

@@ -38,6 +38,19 @@ class _OwnedRun:
     emit: object = None
     cancel_request: dict | None = None
     local_cancel_supported: bool = False
+    tool_runtime: object = None
+    cancel_target: object = None
+
+    def cancellation_outcome(self):
+        if self.cancel_request is None:
+            return "interrupted"
+        if self.cancel_target is not None and self.cancel_target.outcome not in {
+            "completed",
+            "failed",
+            "cancelled",
+        }:
+            return "reconciliation_required"
+        return "cancelled"
 
 
 class ProcessRunSupervisor:
@@ -240,6 +253,7 @@ class ProcessRunSupervisor:
                 if not won:
                     return receipt
                 owned = _OwnedRun(
+                    tool_runtime=prepared.runtime,
                     local_cancel_supported=not any(
                         step.tool_name
                         or step.agent_task
@@ -247,7 +261,7 @@ class ProcessRunSupervisor:
                         or step.cad
                         or step.application
                         for step in prepared.plan.steps
-                    )
+                    ),
                 )
                 published = asyncio.Event()
 
@@ -279,9 +293,7 @@ class ProcessRunSupervisor:
                             execution_context=prepared.execution_context,
                             run_id=receipt.run_id,
                             run_log_path=receipt.run_log_path,
-                            cancellation_status=lambda: (
-                                "cancelled" if owned.cancel_request else "interrupted"
-                            ),
+                            cancellation_status=owned.cancellation_outcome,
                             required_step_ids=[step.id for step in prepared.plan.steps],
                         )
                     finally:
@@ -520,6 +532,30 @@ class ProcessRunSupervisor:
         task.add_done_callback(finished)
         return await asyncio.shield(task)
 
+    def cancellation_capability(self, run_id):
+        """Presentation hint only; cancel rechecks the exact active provider binding."""
+        owned = self._owned.get(run_id)
+        if not owned or owned.task.done() or owned.emit is None:
+            return (
+                False,
+                "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            )
+        if owned.cancel_request:
+            return (
+                False,
+                "Cancellation was requested. Follow the identified operation's actual outcome.",
+            )
+        if owned.local_cancel_supported:
+            return True, ""
+        from ..workflow_async_operations import operation_cancellation
+
+        if operation_cancellation(owned.tool_runtime) is not None:
+            return True, ""
+        return (
+            False,
+            "The active provider operation has no currently qualified cancellation capability.",
+        )
+
     async def _cancel(self, scope, process, run_id, request_id):
         self._receipt(scope, process, run_id, "process.cancel")
         request_id = TypeAdapter(Identifier).validate_python(request_id)
@@ -548,28 +584,57 @@ class ProcessRunSupervisor:
                     "This runtime has no active execution to cancel.",
                     "Inspect the actual run outcome; an unknown owner needs reconciliation.",
                 )
+            target = None
             if not owned.local_cancel_supported:
-                raise ProcessInterfaceError(
-                    "CAPABILITY_UNAVAILABLE",
-                    "This operation needs provider-aware cancellation.",
-                    "Use its qualified cancellation/reconciliation operation; local task cancellation cannot establish an external outcome.",
-                )
+                from ..workflow_async_operations import operation_cancellation
+
+                target = operation_cancellation(owned.tool_runtime, reserve=True)
+                if target is None:
+                    raise ProcessInterfaceError(
+                        "CAPABILITY_UNAVAILABLE",
+                        "This operation has no currently qualified cancellation capability.",
+                        "Inspect its provider operation and reconcile its actual outcome; local task cancellation cannot establish an external outcome.",
+                    )
             result = {
                 "request_id": request_id,
                 "run_id": run_id,
                 "state": "cancellation_requested",
             }
-            await owned.emit(
-                {
-                    "kind": "cancellation_requested",
-                    "at": datetime.now(timezone.utc).isoformat(),
-                    "request_id": request_id,
-                    "principal_id": scope.principal_id,
-                    "run_id": run_id,
-                }
-            )
+            try:
+                await owned.emit(
+                    {
+                        "kind": "cancellation_requested",
+                        "at": datetime.now(timezone.utc).isoformat(),
+                        "request_id": request_id,
+                        "principal_id": scope.principal_id,
+                        "run_id": run_id,
+                        **(
+                            {
+                                "operation_id": target.operation_id,
+                                "task_id": target.step_id,
+                                "provider_binding": target.provider_binding,
+                            }
+                            if target
+                            else {}
+                        ),
+                    }
+                )
+            except BaseException as error:
+                if target:
+                    target.publication_unknown()
+                if not isinstance(error, Exception):
+                    raise
+                raise ProcessInterfaceError(
+                    "OUTCOME_UNKNOWN",
+                    "Wright could not confirm publication of this cancellation request.",
+                    "Attach the exact run and reconcile its recorded request and provider outcome before another action.",
+                ) from error
             owned.cancel_request = result
-            owned.task.cancel()
+            owned.cancel_target = target
+            if target:
+                target.activate()
+            else:
+                owned.task.cancel()
             return result
 
     async def close(self):

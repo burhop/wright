@@ -102,7 +102,8 @@ patch match the saved baselines. No prototype file is included in this increment
 
 The T015 statement at this checkpoint is superseded by the
 [legacy adapter evidence](legacy-run-adapter.md): both source-start formats now
-delegate to the same backend supervisor. T016 provider-aware observations and
-cancellation remain pending. The client/kit/common UI, declared interactions,
+delegate to the same backend supervisor. T016 provider observations/cancellation
+are now verified in [provider evidence](provider-observations.md).
+The client/kit/common UI, declared interactions,
 actual Wright model authoring, live digital engineering proofs, vendor migration,
 served editor journey and installed distribution checks are still required.

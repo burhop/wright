@@ -77,7 +77,8 @@ line endings. No reset, overwrite or wholesale staging was used.
 native start/status/event/cancel routes now exist with controlled ASGI evidence.
 Legacy adaptation (T015) is now verified in the
 [legacy adapter evidence](legacy-run-adapter.md). Provider-aware work (T016)
-remains pending. Both source-start formats delegate to the same backend owner;
+is now verified in [provider observation evidence](provider-observations.md).
+Both source-start formats delegate to the same backend owner;
 disconnect only detaches observation. Client,
 common/tailored UI, model generation, live engineering chains, migration and
 installed distribution verification remain required by the full active goal.

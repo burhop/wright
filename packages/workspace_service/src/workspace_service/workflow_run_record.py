@@ -119,6 +119,8 @@ def _execution_snapshot(record, state):
     outputs = {}
     tools = tool_ends = model_calls = revisions = 0
     progress = None
+    operations = {}
+    operations_truncated = False
     events = record.get("events", [])
     output_fields = (
         "task_id",
@@ -163,6 +165,48 @@ def _execution_snapshot(record, state):
     for event in events:
         kind = event.get("kind")
         task_id = event.get("task_id")
+        if kind == "operation_progress":
+            item = fields(
+                event,
+                (
+                    "task_id",
+                    "operation_id",
+                    "provider_binding",
+                    "provider_schema_digest",
+                    "state",
+                    "message",
+                    "observed_at",
+                    "stale_after",
+                    "at",
+                    "observation_source",
+                    "progress_percent",
+                    "estimated_remaining_seconds",
+                ),
+            )
+            # Provider results and tool arguments stay in the existing exact
+            # run log. Only explicit compact observation metadata is projected.
+            item["metrics"] = (
+                fields(event.get("metrics"), tuple(event.get("metrics", {}))[:16])
+                if isinstance(event.get("metrics"), dict)
+                else {}
+            )
+            limits = event.get("limitations", ())
+            item["limitations"] = (
+                [s for s in limits[:16] if isinstance(s, str) and 0 < len(s) <= 4096]
+                if isinstance(limits, (list, tuple))
+                else []
+            )
+            key = (
+                item.get("provider_binding"),
+                item.get("task_id"),
+                item.get("operation_id"),
+            )
+            operations.pop(key, None)
+            operations[key] = item
+            if len(operations) > 256:
+                operations.pop(next(iter(operations)))
+                truncated = True
+                operations_truncated = True
         if not isinstance(task_id, str) or not task_id or len(task_id) > 4096:
             task_id = None
         if kind == "step_started" and task_id:
@@ -263,6 +307,8 @@ def _execution_snapshot(record, state):
         "revision_count": revisions,
         "outputs": list(outputs.values()),
         "last_progress": progress,
+        "operations": list(operations.values()),
+        "operations_truncated": operations_truncated,
         "truncated": truncated,
     }
     # Bound the complete artifact/event projection, even for unusually wide graphs.
@@ -277,6 +323,9 @@ def _execution_snapshot(record, state):
             snapshot["outputs"].pop()
         elif snapshot["completed_task_ids"]:
             snapshot["completed_task_ids"].pop()
+        elif snapshot["operations"]:
+            snapshot["operations"].pop(0)
+            snapshot["operations_truncated"] = True
         else:
             snapshot["last_progress"] = None
             break
@@ -606,12 +655,14 @@ async def _record_run(
         state = (
             cancellation_status() if cancellation_status is not None else "cancelled"
         )
-        if state not in {"cancelled", "interrupted"}:
+        if state not in {"cancelled", "interrupted", "reconciliation_required"}:
             state = "interrupted"
         record.update(
             status=state,
             error="Cancelled; completed tool operations remain."
             if state == "cancelled"
+            else "Cancellation outcome unconfirmed; reconcile the identified provider operation."
+            if state == "reconciliation_required"
             else "Runtime interrupted; completed tool operations remain.",
         )
         raise
