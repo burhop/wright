@@ -97,6 +97,25 @@ information becomes an `INTERACTION_NOT_DECLARED` diagnostic with owning step an
 correction, following configured failure/recovery policy. Never ask it as an
 opportunistic runtime form or invent an engineering assumption to continue.
 
+The configured tool-free model adapter uses the closed
+`wright.unattended-step/1` outcome from `core.workflow_step_outcomes`:
+version, status (completed/blocked/error), response (document string), and reason
+(null for completed; input_required/capability_unavailable/execution_failed for
+blocked/error). This disposition is separate from the requested document format.
+The adapter preserves usage and disposition metadata on its existing string
+response; execution checks it before saving, publishing or releasing downstream
+work. A bare prose response or invalid envelope produces MODEL_OUTCOME_INVALID.
+Legacy trusted injected string callbacks remain usable; they are not evidence
+that a new external model adapter has qualified this contract.
+
+Existing MCP task evidence envelopes retain their successful tool-call numbers.
+Missing user dependencies use blocked + reason=input_required. A mixed
+blocked/question-and-tool decision cannot dispatch its tool call; a formatting
+repair cannot add an input request or replay an engineering operation. Questions
+inside legitimate engineering documents are not classified by prose heuristics.
+Recorded failures are optional bounded diagnostics[] in the shared interaction
+projection, with correction, exact owning step and canonical log reference.
+
 ## Neutral permitted MCP action
 
 Add a bounded `mcp-operation` kind to the existing approved action dispatcher.

@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 10d6c47263fc1f9d4c54637581f29bb0139d1999141dbb3c64f130c9aea367d2
+// Schema SHA-256: 3ee28faa2fc6642be0b9f513ebc23bf03057146af684cfb22df3ddde9f8e3f3a
 export type JsonValue = null | boolean | number | string | ReadonlyArray<JsonValue> | { readonly [key: string]: JsonValue };
 
 export type Action = {
@@ -150,6 +150,7 @@ export type InteractionResponse = {
 export type InteractionSnapshot = {
   readonly "actions"?: ReadonlyArray<Action>;
   readonly "context": InteractionContext;
+  readonly "diagnostics"?: ReadonlyArray<Reason>;
   readonly "inputs"?: ReadonlyArray<InputDefinition>;
   readonly "interactions"?: ReadonlyArray<PendingInteraction>;
   readonly "navigation"?: ReadonlyArray<NavigationTarget>;

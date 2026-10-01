@@ -118,6 +118,65 @@ def test_route_projects_form_accepts_server_actor_and_resumes_exact_run(
     )
 
 
+@pytest.mark.parametrize("invalid_envelope", [False, True])
+def test_undeclared_question_after_response_is_a_diagnostic_not_another_form(
+    checkpoint_case, monkeypatch, invalid_envelope
+):
+    import json
+
+    from agent_adapters.report_generation import generate_workflow_response
+    from packages.agent_adapters.tests.test_workflow_unattended_outcomes import (
+        model_transport,
+        outcome,
+    )
+
+    case = checkpoint_case
+    content = (
+        "Which load should I use?"
+        if invalid_envelope
+        else json.dumps(
+            outcome(
+                "The allowable load is missing",
+                status="blocked",
+                reason="input_required",
+            )
+        )
+    )
+    requests = model_transport(monkeypatch, [{"content": content}])
+    monkeypatch.setattr(
+        routes, "generate_workflow_response", generate_workflow_response
+    )
+    accepted = submit(case)
+    assert accepted.status_code == 202, accepted.text
+    failed = case.client.portal.call(
+        case.owner.runs.wait, control(), case.reference, case.receipt.run_id
+    )
+    expected = (
+        "MODEL_OUTCOME_INVALID" if invalid_envelope else "INTERACTION_NOT_DECLARED"
+    )
+    assert failed["status"] == "failed" and failed["code"] == expected
+    projected = case.client.get(
+        f"{PREFIX}/runs/{case.receipt.run_id}", params=case.query
+    )
+    assert projected.status_code == 200, projected.text
+    snapshot = projected.json()
+    assert snapshot["diagnostics"][0]["code"] == expected
+    assert snapshot["diagnostics"][0]["navigation"]["block_id"] == "second"
+    assert not any(item["state"] == "waiting" for item in snapshot["interactions"])
+    assert not any(
+        item["enabled"] and item["operation"] == "respond"
+        for item in snapshot["actions"]
+    )
+    assert snapshot["outputs"]
+    assert len(requests) == 1
+    # A failed claimed segment may have effects. Its saved answer remains, but
+    # the existing consume authority requires reconciliation rather than replay.
+    retry = submit(case)
+    assert retry.status_code == 503
+    assert retry.json()["error_code"] == "OUTCOME_UNKNOWN"
+    assert len(requests) == 1
+
+
 @pytest.mark.parametrize(
     "changes",
     [

@@ -36,6 +36,70 @@ test.afterEach(async ({ page, browser }, testInfo) => {
   }
 });
 
+test("shows an unattended-input diagnostic without inventing a form and reopens the same failed run", async ({
+  page,
+}, testInfo) => {
+  const fixture = await mockCommonProcessWorkspace(page);
+  await openRecoveryEditor(page);
+  await page.getByTestId("workflow-working-view-open").click();
+  await page
+    .getByLabel("Design request (required)")
+    .fill("Controlled diagnostic fixture request.");
+  await page
+    .getByRole("button", { name: "Prepare and check inputs", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Start process", exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole("button", { name: "Start process", exact: true })
+    .click();
+  await expect(page.getByTestId("workspace-process-view")).toHaveAttribute(
+    "data-run-id",
+    fixtureRunId,
+  );
+  fixture.failWithUndeclaredInput();
+  await page.getByRole("button", { name: "Refresh view", exact: true }).click();
+  const common = page.getByTestId("common-process-view");
+  const explanation = common.getByText(
+    "Create test report: additional user input was requested in an unattended step.",
+    { exact: true },
+  );
+  await expect(explanation).toBeVisible();
+  await expect(
+    common.getByText(
+      "Supply the missing requirement before starting, connect an upstream producer, or declare a human-input step before this task.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    common.getByRole("button", { name: "Submit response", exact: true }),
+  ).toHaveCount(0);
+  await expect(common.getByRole("combobox")).toHaveCount(0);
+  const savedUrl = page.url();
+  await explanation.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: testInfo.outputPath("undeclared-input-diagnostic.png"),
+    fullPage: true,
+  });
+  await common
+    .getByRole("button", { name: "Open related item", exact: true })
+    .click();
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText(
+    "Use the supplied test request to prepare a report.",
+  );
+  expect(fixture.navigations().at(-1)).toEqual({
+    kind: "block",
+    block_id: "first",
+    run_id: fixtureRunId,
+  });
+  await page.goto(savedUrl);
+  await expect(explanation).toBeVisible();
+  expect(fixture.starts()).toBe(1);
+  expect(fixture.editor.runCount()).toBe(0);
+  expect(fixture.cancellations()).toBe(0);
+});
+
 test("uses the normal workspace to prepare, follow and inspect an exact run while retaining source edits", async ({
   page,
 }, testInfo) => {

@@ -2318,6 +2318,15 @@
       "context": {
         "$ref": "#/$defs/InteractionContext"
       },
+      "diagnostics": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/Reason"
+        },
+        "maxItems": 256,
+        "title": "Diagnostics",
+        "type": "array"
+      },
       "inputs": {
         "default": [],
         "items": {

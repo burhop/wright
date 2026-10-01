@@ -250,6 +250,69 @@ afterEach(() => {
 });
 
 describe("common process preparation and authority", () => {
+  it("shows an undeclared-input diagnostic and exact correction without inventing a response form", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield {
+        type: "snapshot",
+        snapshot: {
+          ...running,
+          state: "failed",
+          actions: [],
+          interactions: [],
+          navigation: [{ kind: "block", block_id: "measure", run_id: "run-one" }],
+          diagnostics: [
+            {
+              code: "INTERACTION_NOT_DECLARED",
+              message:
+                "Measure: additional user input was requested in an unattended step.",
+              correction:
+                "Supply the missing load before starting or declare a human-input step.",
+              step_id: "measure",
+              navigation: {
+                kind: "block",
+                block_id: "measure",
+                run_id: "run-one",
+              },
+            },
+          ],
+        },
+      };
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        canNavigate
+      />,
+    );
+    await screen.findByText(
+      "Measure: additional user input was requested in an unattended step.",
+    );
+    expect(
+      screen.getByText(
+        "Supply the missing load before starting or declare a human-input step.",
+      ),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("button", { name: "Submit response" }),
+    ).toBeNull();
+    expect(screen.queryByRole("combobox")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Open related item" }));
+    await waitFor(() =>
+      expect(client.navigate).toHaveBeenCalledWith({
+        kind: "block",
+        block_id: "measure",
+        run_id: "run-one",
+      }),
+    );
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.respond).not.toHaveBeenCalled();
+    expect(client.decide).not.toHaveBeenCalled();
+  });
+
   it("renders only the declared form, submits its exact subject and follows the same run", async () => {
     const { client, store } = fixture();
     let submitted = false;

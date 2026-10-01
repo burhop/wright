@@ -577,6 +577,7 @@ class InteractionSnapshot(Contract):
     )
     actions: tuple[Action, ...] = Field(default=(), max_length=PAGE_ITEMS)
     observations: tuple[Observation, ...] = Field(default=(), max_length=PAGE_ITEMS)
+    diagnostics: tuple[Reason, ...] = Field(default=(), max_length=PAGE_ITEMS)
     navigation: tuple[NavigationTarget, ...] = Field(default=(), max_length=PAGE_ITEMS)
     next_page: Identifier | None = None
 

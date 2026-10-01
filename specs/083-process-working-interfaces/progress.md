@@ -2,6 +2,27 @@
 
 ## Latest implementation state — 2026-10-01
 
+T025 is complete. The configured tool-free model adapter now separates a closed
+execution disposition from the requested engineering document. MCP decisions and
+tool-free response repair carry the unattended policy. Undeclared input requests
+produce INTERACTION_NOT_DECLARED without a checkpoint, form, engineering default,
+downstream release or tool replay. Invalid bare model prose has its own
+MODEL_OUTCOME_INVALID diagnostic. Declared 082 revision budgets do not authorize
+runtime clarification, including clarification during an eligible repair attempt.
+
+The shared projection now includes optional bounded recorded-run diagnostics.
+The common view displays their correction and exact step navigation while
+preserving earlier outputs. Controlled production-adapter/API tests cover failure
+after a valid declared response and retain the existing uncertain-claim guard.
+
+Checked T025 scope: 444 backend/API regressions; a separate 73-test policy/082
+validator run (overlapping policy cases); 136 client/kit/component checks; six
+served normal-workspace browser journeys; fresh 927-module production build and
+TypeScript/schema/lint checks. These are synthetic transport/runtime/browser
+checks, not live model/MCP or engineering acceptance. See
+[unattended-policy evidence](evidence/unattended-policy.md). Original prototype,
+campaign, mixed API deltas and approved context remain preserved.
+
 T024 is complete: scoped native response acceptance, fresh source/input/schema/
 upstream/file inspection and backend-owned same-run continuation now use the
 existing checkpoint store, preparation, source executor, recorder and leases.
@@ -12,7 +33,7 @@ T027's declared-input controls are implemented in the public client/kit/common
 workspace view. Review/action controls and source/inspector authoring remain
 pending. T028 has stronger service/API/browser evidence, but its full two-barrier
 UI/recovery/undeclared-question coverage remains pending. T021 remains pending
-for the four older editor Run expectations. T025 and T026 are the next runtime
+for the four older editor Run expectations. T026 is the next runtime
 work. All actual model authoring, live engineering, migration and distribution
 requirements through M5 remain in the active goal.
 

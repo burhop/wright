@@ -222,6 +222,7 @@ class ProjectionFacts:
     interactions: tuple[PendingInteraction, ...] = ()
     actions: tuple[Action, ...] = ()
     observations: tuple[Observation, ...] = ()
+    diagnostics: tuple[Reason, ...] = ()
 
 
 def _assessments(
@@ -460,6 +461,9 @@ def project_interactions(
                 run_id=run.run_id if run else None,
             )
         )
+    for diagnostic in facts.diagnostics:
+        if diagnostic.navigation and diagnostic.navigation not in navigation:
+            navigation.append(diagnostic.navigation)
     readiness = facts.readiness
     if readiness and (
         readiness.process != pinned_process
@@ -493,6 +497,7 @@ def project_interactions(
         "interactions": facts.interactions,
         "actions": tuple(actions),
         "observations": facts.observations,
+        "diagnostics": facts.diagnostics,
         "navigation": tuple(navigation),
     }
     # A page cursor is a read reference, never a grant. Bind it to actual facts

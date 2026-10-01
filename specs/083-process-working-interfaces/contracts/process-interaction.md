@@ -16,6 +16,7 @@ Schemas are generated from owning contracts during implementation, not hand-drif
 | interactions[] | Declared pending checkpoint ID/type/step, subject digest, frozen response schema or decisions, evidence references, state, instructions |
 | actions[] | Stable action ID, operation, exact subject, enabled, reasons[], prerequisite references, idempotency requirements; backend authority |
 | observations[] | Provider/operation identity, lifecycle/activity, nullable %/time/layer or generic metrics, observed_at, stale_after, provenance, limitations |
+| diagnostics[] | Optional bounded recorded-run Reasons with owning step, correction and exact log/navigation references; no checkpoint or action authority |
 | navigation[] | Validated process/block/run/result/assessment/evidence targets, no arbitrary executable URL |
 
 Reason shape: code, readable_message, correction, affected_binding/step,

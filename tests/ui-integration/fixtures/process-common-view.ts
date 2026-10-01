@@ -96,6 +96,7 @@ export async function mockCommonProcessWorkspace(
   let input: InputSnapshot | undefined;
   let accepted: StartReceipt | undefined;
   let completed = false;
+  let failed = false;
   let starts = 0,
     eventReads = 0,
     cancelled = 0;
@@ -141,9 +142,11 @@ export async function mockCommonProcessWorkspace(
         ...(run ? { run_id: fixtureRunId } : {}),
       },
       state: run
-        ? completed
-          ? "completed"
-          : "running"
+        ? failed
+          ? "failed"
+          : completed
+            ? "completed"
+            : "running"
         : checked?.state === "ready"
           ? "ready"
           : "preparing",
@@ -159,23 +162,43 @@ export async function mockCommonProcessWorkspace(
         },
       ],
       readiness: checked,
+      diagnostics:
+        run && failed
+          ? [
+              {
+                code: "INTERACTION_NOT_DECLARED",
+                message:
+                  "Create test report: additional user input was requested in an unattended step.",
+                correction:
+                  "Supply the missing requirement before starting, connect an upstream producer, or declare a human-input step before this task.",
+                step_id: "first",
+                navigation: {
+                  kind: "block",
+                  block_id: "first",
+                  run_id: fixtureRunId,
+                },
+                technical_details_ref: "runs/browser/diagnostic.json",
+              },
+            ]
+          : [],
       actions: run
         ? [
             {
               action_id: "cancel-run",
               operation: "cancel",
               title: "Cancel this run",
-              enabled: !completed,
+              enabled: !completed && !failed,
               subject_digest: input?.digest,
-              reasons: completed
-                ? [
-                    {
-                      code: "ACTION_NOT_PERMITTED",
-                      message: "This fixture run has ended.",
-                      correction: "Inspect the saved result.",
-                    },
-                  ]
-                : [],
+              reasons:
+                completed || failed
+                  ? [
+                      {
+                        code: "ACTION_NOT_PERMITTED",
+                        message: "This fixture run has ended.",
+                        correction: "Inspect the saved result.",
+                      },
+                    ]
+                  : [],
             },
           ]
         : [
@@ -198,7 +221,7 @@ export async function mockCommonProcessWorkspace(
             },
           ],
       outputs:
-        run && completed
+        run && (completed || failed)
           ? [
               {
                 result_id: resultId,
@@ -225,13 +248,15 @@ export async function mockCommonProcessWorkspace(
               observation_id: "browser-operation",
               provider_binding: "controlled-browser-fixture",
               operation_id: fixtureRunId,
-              state: completed ? "completed" : "running",
+              state: failed ? "failed" : completed ? "completed" : "running",
               observed_at: new Date().toISOString(),
               stale_after: new Date(Date.now() + 60_000).toISOString(),
-              activity: completed
+              activity: failed
+                ? "The unattended step needs a declared dependency."
+                : completed
                 ? "Controlled fixture completed"
                 : "Preparing the controlled fixture report",
-              progress_percent: completed ? 100 : 20,
+              progress_percent: failed ? null : completed ? 100 : 20,
               limitations: [
                 "Controlled HTTP fixture; no model or engineering tool was invoked.",
               ],
@@ -296,7 +321,7 @@ export async function mockCommonProcessWorkspace(
       const cursor = completed ? "browser-cursor-2" : "browser-cursor-1";
       const event = {
         run_id: fixtureRunId,
-        state: completed ? "completed" : "running",
+        state: failed ? "failed" : completed ? "completed" : "running",
         events: [
           {
             sequence: completed ? 2 : 1,
@@ -307,7 +332,7 @@ export async function mockCommonProcessWorkspace(
         ],
         cursor,
         has_more: false,
-        following: !completed,
+        following: !completed && !failed,
       };
       return route.fulfill({
         contentType: "text/event-stream",
@@ -378,6 +403,9 @@ export async function mockCommonProcessWorkspace(
     representations: () => reads,
     complete: () => {
       completed = true;
+    },
+    failWithUndeclaredInput: () => {
+      failed = true;
     },
   };
 }

@@ -1072,6 +1072,13 @@ function CommonProcessController({
                 )}
               </Section>
               <Section title="Progress" focusId="progress">
+                {(snapshot.diagnostics ?? []).map((diagnostic, index) => (
+                  <ReasonNotice
+                    key={`${diagnostic.code}:${diagnostic.step_id ?? "run"}:${index}`}
+                    reason={diagnostic}
+                    onNavigate={navigate}
+                  />
+                ))}
                 <ProgressPanel
                   state={snapshot.state}
                   observations={snapshot.observations ?? []}

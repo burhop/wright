@@ -7,6 +7,11 @@ import os
 import time
 import uuid
 import httpx
+from core.workflow_step_outcomes import (
+    UNATTENDED_STEP_POLICY,
+    InvalidStepOutcomeError,
+    UnattendedStepOutcome,
+)
 from .hermes_config import resolve_hermes_api_settings
 
 # Wright's conservative workflow text policy, not a provider context guarantee.
@@ -53,9 +58,10 @@ def _model_usage(result: dict, duration_ms: int) -> dict:
 
 
 class WorkflowGeneratedResponse(str):
-    def __new__(cls, value: str, usage: dict):
+    def __new__(cls, value: str, usage: dict, *, outcome: dict | None = None):
         result = super().__new__(cls, value)
         result.wright_usage = usage
+        result.wright_outcome = outcome
         return result
 
 
@@ -226,8 +232,16 @@ FORMAT_INSTRUCTIONS = {
 
 def response_instructions(output_format: str) -> str:
     return (
-        FORMAT_INSTRUCTIONS[output_format]
-        + " Do not write files or call tools; Wright handles saving the response. Clearly label assumptions and do not claim unperformed tool execution."
+        UNATTENDED_STEP_POLICY
+        + " Return only a JSON object with exactly version, status, response and reason. "
+        'version must be "wright.unattended-step/1". status is completed, blocked or error. '
+        "For completed, reason is null and response is the requested document as a string. "
+        "For blocked or error, reason is input_required, capability_unavailable or "
+        "execution_failed and response explains the missing dependency or failure. "
+        "Inside the response string for completed: "
+        + FORMAT_INSTRUCTIONS[output_format]
+        + " Do not write files or call tools; Wright handles saving the response. "
+        "Clearly label assumptions and do not claim unperformed tool execution."
     )
 
 
@@ -276,7 +290,8 @@ async def generate_workflow_response(
             )
             response.raise_for_status()
             result = response.json()
-            value = result["choices"][0]["message"]["content"]
+            message = result["choices"][0]["message"]
+            value = message["content"]
     except httpx.ReadTimeout as error:
         raise TimeoutError(
             f"The model did not finish responding within {timeout_seconds} seconds."
@@ -289,8 +304,22 @@ async def generate_workflow_response(
         raise ValueError(
             "The model returned no text response. Run again with a clearer prompt."
         )
+    # A prose question is not an engineering output. Require a separate closed
+    # disposition before the executor validates/saves the requested document.
+    # Invalid responses are not repaired here: no extra model call or effect replay.
+    try:
+        if message.get("tool_calls"):
+            raise ValueError()
+        outcome = UnattendedStepOutcome.model_validate_json(value)
+    except (ValueError, TypeError):
+        raise InvalidStepOutcomeError(
+            "The model returned an invalid unattended-step outcome. "
+            "Inspect the step instructions; no output or user interaction was accepted."
+        ) from None
     return WorkflowGeneratedResponse(
-        value, _model_usage(result, round((time.perf_counter() - started) * 1000))
+        outcome.response,
+        _model_usage(result, round((time.perf_counter() - started) * 1000)),
+        outcome=outcome.model_dump(mode="json"),
     )
 
 

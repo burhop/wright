@@ -14,6 +14,7 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from pathlib import PurePosixPath
 from datetime import datetime, timezone
+from core.workflow_step_outcomes import InvalidStepOutcomeError
 
 from .workflow_sources import WorkflowSourceStorageError
 from .workflow_references import WorkflowReference
@@ -35,6 +36,47 @@ _STABLE_NAME = re.compile(r"[a-z][a-z0-9_]*$")
 
 def _error(code: str, message: str, correction: str) -> WorkflowSourceExecutionError:
     return WorkflowSourceExecutionError(code, message, correction)
+
+
+async def require_unattended_completion(step, outcome, emit):
+    """A model disposition can fail a step, never create a checkpoint or default.
+
+    MCP tasks retain their existing evidence envelope; plain model adapters carry
+    a validated disposition outside the document string. Do not classify document
+    prose or question marks as interaction requests.
+    """
+    if (
+        outcome.get("reason") == "input_required"
+        or outcome.get("status") == "input_required"
+    ):
+        code = "INTERACTION_NOT_DECLARED"
+        message = (
+            f"{step.title}: additional user input was requested in an unattended step."
+        )
+        correction = (
+            "Supply the missing requirement before starting, connect an upstream "
+            "producer, or declare a human-input step before this task. Inspect "
+            "completed operations before another run; they have not been replayed."
+        )
+    elif outcome.get("status") in {"blocked", "error"}:
+        code = "TASK_BLOCKED" if outcome["status"] == "blocked" else "TASK_FAILED"
+        # Model prose stays in bounded recorded diagnostics, never action authority.
+        message = f"{step.title}: {str(outcome.get('response', 'the task could not finish'))[:4000]}"
+        correction = "Correct the task requirements or server setup before retrying."
+    else:
+        return
+    await emit(
+        "step_diagnostic",
+        task_id=step.id,
+        task_title=step.title,
+        code=code,
+        message=message,
+        correction=correction,
+        # Preserve the reported missing dependency without publishing a form,
+        # a human response or a generated engineering result.
+        diagnostic=str(outcome.get("response", ""))[:4000],
+    )
+    raise _error(code, message, correction)
 
 
 def _parse(source: str) -> list[dict[str, object]]:
@@ -2357,12 +2399,34 @@ async def execute_prompt_workflow(
                             task_title=step.title,
                             usage=usage,
                         )
+                    outcome = getattr(generated, "wright_outcome", None)
+                    if outcome is not None:
+                        from core.workflow_step_outcomes import UnattendedStepOutcome
+
+                        try:
+                            disposition = UnattendedStepOutcome.model_validate(outcome)
+                            if disposition.response != generated:
+                                raise ValueError()
+                        except (TypeError, ValueError):
+                            raise _invalid(
+                                f"{step.title}: the unattended model disposition is invalid.",
+                                "Inspect the model adapter and prepared step instructions before retrying.",
+                            ) from None
+                        await require_unattended_completion(
+                            step, disposition.model_dump(mode="json"), emit
+                        )
                     response = validate_response(generated, step.output_format)
             except TimeoutError as error:
                 raise _error(
                     "MODEL_TIMEOUT",
                     str(error),
                     "Retry when the model is less busy or request a shorter response. Completed steps and files have been preserved.",
+                ) from error
+            except InvalidStepOutcomeError as error:
+                raise _error(
+                    "MODEL_OUTCOME_INVALID",
+                    f"{step.title}: the model returned no valid unattended-step disposition.",
+                    "Inspect the prepared instructions and model response. No user interaction or output was accepted; completed operations have not been replayed.",
                 ) from error
             except ValueError as error:
                 raise _error(

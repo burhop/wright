@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 10d6c47263fc1f9d4c54637581f29bb0139d1999141dbb3c64f130c9aea367d2
+// Schema SHA-256: 3ee28faa2fc6642be0b9f513ebc23bf03057146af684cfb22df3ddde9f8e3f3a
 export const contractSchemas: Readonly<Record<string, unknown>> = {
   "Action": {
     "additionalProperties": false,
@@ -1052,6 +1052,15 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
       },
       "context": {
         "$ref": "#/$defs/InteractionContext"
+      },
+      "diagnostics": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/Reason"
+        },
+        "maxItems": 256,
+        "title": "Diagnostics",
+        "type": "array"
       },
       "inputs": {
         "default": [],

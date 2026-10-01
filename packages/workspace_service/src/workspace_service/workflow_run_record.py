@@ -150,6 +150,8 @@ def _execution_snapshot(record, state):
         "feedback_digest",
         "remaining_revisions",
         "complete_result_ref",
+        "code",
+        "correction",
     )
 
     def invalidate(ids):
@@ -266,6 +268,7 @@ def _execution_snapshot(record, state):
             "review_requested",
             "approval_requested",
             "input_requested",
+            "step_diagnostic",
             "approval_decided",
             "external_action_authorized",
             "external_action_reconciled",
@@ -992,6 +995,8 @@ def _run_summary(record, relative, *, current_digest=None, compact=False):
         "completed_at": record.get("completed_at"),
         "source_digest": record.get("source_digest"),
         "error": record.get("error"),
+        "code": record.get("code"),
+        "correction": record.get("correction"),
         "results": result.get("results")
         or list(record.get("partial_results", {}).values()),
         "last_event": events[-1] if events else None,
@@ -1011,6 +1016,9 @@ def _run_summary(record, relative, *, current_digest=None, compact=False):
         )
         if isinstance(summary.get("error"), str):
             summary["error"] = summary["error"][:4096]
+        for key in ("code", "correction"):
+            if isinstance(summary.get(key), str):
+                summary[key] = summary[key][: 160 if key == "code" else 4096]
     return summary
 
 

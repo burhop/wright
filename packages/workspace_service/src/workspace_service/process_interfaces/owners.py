@@ -11,6 +11,7 @@ from core.process_interactions import (
     PAGE_ITEMS,
     Action,
     ArtifactRef,
+    NavigationTarget,
     Observation,
     PendingInteraction,
     ProcessRef,
@@ -24,7 +25,7 @@ from ..workflow_approval_execution import inspect_workflow_approval
 from ..workflow_execution_continuation import restore_result
 from ..workflow_external_actions import WorkflowExternalActionError
 from ..workflow_run_record import WorkflowRunReadError, read_workflow_run
-from ..workflow_source_execution import WorkflowSourceExecutionError
+from ..workflow_source_execution import WorkflowSourceExecutionError, _parse
 from .errors import ProcessInterfaceError
 from .projection import (
     ProjectionFacts,
@@ -426,6 +427,34 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
     reports = await asyncio.to_thread(_reports, app, resolved, run_id)
     execution = view["execution"]
     progress = execution.get("last_progress") or {}
+    diagnostics = ()
+    if view.get("error"):
+        step_id = progress.get("task_id")
+        # A reason is a read projection, never a new checkpoint or permission.
+        # Only navigate to a step belonging to this exact accepted definition.
+        if not isinstance(step_id, str) or step_id not in {
+            block["id"]
+            for block in _parse(resolved.document.source)
+            if block["kind"] == "task"
+        }:
+            step_id = None
+        diagnostics = (
+            Reason(
+                code=view.get("code") or "EXECUTION_FAILED",
+                message=redact_text(view["error"])[:8192],
+                correction=redact_text(
+                    view.get("correction")
+                    or "Inspect the recorded run and completed operations before starting another attempt."
+                )[:8192],
+                step_id=step_id,
+                navigation=NavigationTarget(
+                    kind="block", block_id=step_id, run_id=run_id
+                )
+                if step_id
+                else NavigationTarget(kind="run", run_id=run_id),
+                technical_details_ref=view["path"],
+            ),
+        )
     observations = (
         Observation(
             observation_id="source-run",
@@ -491,4 +520,5 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
         + (cancel_action,),
         observations=observations
         + project_operation_observations(execution, generated_at),
+        diagnostics=diagnostics,
     )
