@@ -34,6 +34,7 @@ from api.schemas.process_interfaces import (
     ProcessRepresentationRequest,
     ProcessNavigationRequest,
     ProcessInputResponseRequest,
+    ProcessReviewDecisionRequest,
 )
 from core.process_interactions import (
     InputSnapshot,
@@ -72,6 +73,7 @@ def _native_context(request, service, session_id, path, digest):
                 "process.navigate",
                 "process.start",
                 "process.respond",
+                "process.review",
                 "process.cancel",
             }
         ),
@@ -348,6 +350,38 @@ async def respond_to_process_input(
             value=body.value,
             response_generator=generate_workflow_response,
             action_generator=decide_workflow_tool_action,
+            gateway=getattr(request.app.state, "gateway_service", None),
+            session_id=body.session_id,
+        )
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+
+@router.post(
+    "/interactions/{checkpoint_id}/decision",
+    response_model=InteractionSnapshot,
+)
+@traced("api.process.interface.review.decide")
+async def decide_process_review(
+    checkpoint_id: Identifier,
+    body: ProcessReviewDecisionRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    response.headers["Cache-Control"] = "no-store"
+    application, scope, process = _native_context(
+        request, service, body.session_id, body.path, body.expected_storage_digest
+    )
+    try:
+        return await application.reviews.decide(
+            scope,
+            process,
+            checkpoint_id,
+            body.request_id,
+            expected_subject_digest=body.subject_digest,
+            decision=body.decision,
+            reason=body.reason,
             gateway=getattr(request.app.state, "gateway_service", None),
             session_id=body.session_id,
         )

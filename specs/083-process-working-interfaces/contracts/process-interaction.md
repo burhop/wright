@@ -73,6 +73,7 @@ existing deployment prefix rather than introducing a competing API root.
 | GET /process-interfaces/runs/{run_id} | Snapshot/outcome reconciliation |
 | GET /process-interfaces/runs/{run_id}/events | SSE following existing recorded events, with durable cursor |
 | POST /process-interfaces/interactions/{checkpoint_id}/response | Input response; decision routes delegate to current review service |
+| POST /process-interfaces/interactions/{checkpoint_id}/decision | Exact approval/artifact decision using current review owners; server-derived run and actor |
 | POST /process-interfaces/actions/{action_id} | Exact permitted action; current services are composed, not reimplemented |
 | POST /process-interfaces/runs/{run_id}/cancel | Explicit cancel request/outcome |
 | POST /process-interfaces/inputs/upload | Bounded declared-file input publication; no preparation or execution |
@@ -83,6 +84,15 @@ Existing result/validation/review read/export routes remain canonical. The clien
 maps to them through owning services. Legacy source-start stream can adapt to
 start+follow for compatibility, but disconnect must no longer cancel execution.
 Do not duplicate existing reviewer authorization or result repositories.
+
+`PendingInteraction.decision` optionally exposes the retained decision, actor,
+bounded redacted reason, request identity and integration-test attribution. It
+cannot appear on input interactions. Native review bodies contain only the
+source/session reference, subject digest, declared decision, reason and request
+ID; actor, run, destination, automatic-review and integration flags are rejected.
+The client verifies the exact returned subject/request/decision. Identical retries
+read the existing decision and can repair an interrupted recorder projection;
+they do not dispatch or rerun work. Approval consumption remains a separate action.
 
 Native navigation returns shared `NavigationResolution(process, target,
 representation?)`. The resolved target preserves every supplied identity and can

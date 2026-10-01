@@ -63,6 +63,16 @@ Existing review/validation/external-action checkpoints retain their own decision
 subjects and evidence. Do not turn input responses into approval receipts or
 combine independent approvals under a single checkbox.
 
+Scoped review requests retain `decision_receipt` in the existing approval
+continuation JSON, atomically with its pending-to-decision transition. Terminal
+artifact reviews retain their request ID in the existing immutable decision JSON.
+No additional decision database or lifecycle engine is introduced. Actor and run
+are derived from the authorized process scope and recorded checkpoint. Changed
+requests conflict; the same request can reconcile a lost run projection write.
+The recorder projects terminal artifact approval/changes-requested outcomes and
+retains their exact review event. Review acceptance does not dispatch an external
+operation. Older decisions without request metadata preserve their history shape.
+
 ## Continuation and source compatibility
 
 Continuation v3 adds checkpoint_kind (approval/input), input_snapshot_id/digest,

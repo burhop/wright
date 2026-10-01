@@ -92,8 +92,18 @@ retained answer rather than replaying completed work. Follow that answer's
 `run_id` to observe execution. Answer acceptance is distinct from run completion.
 No public response body can set review authority or an integration-test flag.
 
-The public interface also names `decide` and `requestAction`.
-Review/action routes and the isolated presentation
+Native `decide({checkpointId, subjectDigest, decision, reason, requestId})` submits
+an exact action approval or terminal artifact review to
+`/interactions/{checkpoint_id}/decision`. The server derives the actor and run,
+checks the current source and actual reviewed artifacts, and retains the request
+identity in the existing review owner. A returned `PendingInteraction.decision`
+is recorded evidence, not dispatch permission. Keep the same request on an
+uncertain acknowledgement; changed identities or decisions conflict. Review
+acceptance alone does not submit an external action. Terminal output reviews
+update the existing run recorder without executing completed steps again.
+
+The public interface also names `requestAction`.
+Action routes and the isolated presentation
 transport are later Feature 083 tasks: those operations currently report
 `CAPABILITY_UNAVAILABLE` without speculative requests. Trusted native hosts may
 provide alternate representation/navigation ports through their owning authorized services;

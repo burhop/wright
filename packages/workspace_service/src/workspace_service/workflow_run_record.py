@@ -782,6 +782,70 @@ async def _record_run(
     return {**result, "run_log_path": filename}
 
 
+async def record_workflow_artifact_review_decision(
+    *, service, workspace_dir, workspace_id, review
+):
+    """Project a terminal artifact owner's actual decision, without executing work.
+
+    The existing review repository owns the immutable decision. A repeated request
+    can repair a lost projection write; it cannot revise the decision or rerun tools.
+    """
+    from .workflow_resource_lease import ApplicationLease
+
+    relative = review.get("run_log_path")
+    if not isinstance(relative, str) or not relative.startswith("runs/"):
+        raise ValueError("Review has no safe recorded run path")
+    if review.get("state") not in {"approved", "changes_requested"}:
+        raise ValueError("Review has no terminal decision")
+    async with ApplicationLease(
+        f"workflow-artifact-review:{workspace_id}:{review['run_id']}"
+    ):
+        raw = await service.files.read_reference(workspace_dir, relative)
+        if len(raw) > _MAX_RUN_RECORD_BYTES:
+            raise ValueError("Review run exceeds the recovery limit")
+        record = json.loads(raw)
+        result = record.get("result") if isinstance(record, dict) else None
+        reference = (result or {}).get("review") or {}
+        if (
+            not isinstance(result, dict)
+            or result.get("run_id") != review["run_id"]
+            or record.get("workflow_path") != review["workflow_path"]
+            or record.get("source_digest") != review["source_digest"]
+            or reference.get("review_id") != review["review_id"]
+            or reference.get("package_digest") != review["package_digest"]
+        ):
+            raise ValueError("The review decision does not match this recorded run")
+        if (
+            reference.get("request_id") == review.get("request_id")
+            and reference.get("state") == review["state"]
+        ):
+            return
+        if record.get("status") != "pending_review":
+            raise ValueError("The recorded run is not awaiting this terminal review")
+        now = datetime.now(timezone.utc).isoformat()
+        state = "completed" if review["state"] == "approved" else "changes_requested"
+        result.update(status=state, review=review)
+        record.update(status=state, review=review, completed_at=now)
+        record.setdefault("events", []).append(
+            {
+                "kind": "review_decided",
+                "at": now,
+                "task_id": review["task_id"],
+                "task_title": review["task_title"],
+                "checkpoint_id": review["review_id"],
+                "subject_digest": review["package_digest"],
+                "request_id": review.get("request_id"),
+                "message": f"Review is {review['state'].replace('_', ' ')}.",
+            }
+        )
+        await service.files.write_generated(
+            workspace_dir,
+            relative,
+            json.dumps(record, ensure_ascii=False, indent=2),
+            "overwrite",
+        )
+
+
 async def record_workflow_approval_transition(
     *, service, workspace_dir, checkpoint, kind: str, operation_event=None
 ):
@@ -814,6 +878,23 @@ async def record_workflow_approval_transition(
         or record.get("workflow_path") != checkpoint.workflow_id
     ):
         raise ValueError("Approval continuation does not match its run log")
+
+    decision_receipt = checkpoint.continuation.get("decision_receipt")
+    if kind == "approval_decided" and decision_receipt is not None:
+        prior = record.get("approval") or {}
+        if (
+            prior.get("checkpoint_id") == checkpoint.checkpoint_id
+            and prior.get("state") == checkpoint.state
+            and (prior.get("continuation") or {}).get("decision_receipt")
+            == decision_receipt
+            and any(
+                event.get("kind") == kind
+                and event.get("checkpoint_id") == checkpoint.checkpoint_id
+                and event.get("request_id") == decision_receipt["request_id"]
+                for event in record.get("events", [])
+            )
+        ):
+            return
 
     approval = asdict(checkpoint)
     result["approval"] = approval
@@ -860,6 +941,11 @@ async def record_workflow_approval_transition(
         ),
         "checkpoint_id": checkpoint.checkpoint_id,
         "subject_digest": checkpoint.subject_digest,
+        **(
+            {"request_id": decision_receipt["request_id"]}
+            if kind == "approval_decided" and decision_receipt is not None
+            else {}
+        ),
     }
     if kind == "operation_progress":
         if (

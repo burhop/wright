@@ -149,14 +149,45 @@ class WorkflowExternalActionService:
         actor: str,
         approved: bool,
         reason: str | None = None,
+        request_id: str | None = None,
     ) -> WorkflowContinuationCheckpoint:
         checkpoint = self._required(checkpoint_id, workspace_id)
         self._validate_current(checkpoint, expected_subject_digest)
         target = "approved" if approved else "changes_requested"
+        decision_receipt = (
+            {
+                "request_id": request_id,
+                "subject_digest": expected_subject_digest,
+                "actor": actor,
+                "decision": target,
+                "reason": reason,
+            }
+            if request_id is not None
+            else None
+        )
+        if decision_receipt is not None:
+            from core.process_validation import Identifier
+            from pydantic import TypeAdapter
+
+            TypeAdapter(Identifier).validate_python(request_id)
+            TypeAdapter(Identifier).validate_python(actor)
+            prior = checkpoint.continuation.get("decision_receipt")
+            if prior is not None:
+                if (
+                    prior == decision_receipt
+                    and checkpoint.actor == actor
+                    and checkpoint.reason == reason
+                ):
+                    return checkpoint
+                raise WorkflowExternalActionError(
+                    "approval_state_conflict",
+                    "A different exact review request was already recorded",
+                )
         if (
             checkpoint.state == target
             and checkpoint.actor == actor
             and checkpoint.reason == reason
+            and request_id is None
         ):
             return checkpoint
         try:
@@ -167,6 +198,12 @@ class WorkflowExternalActionService:
                 updated_at=int(time.time()),
                 actor=actor,
                 reason=reason,
+                continuation={
+                    **checkpoint.continuation,
+                    "decision_receipt": decision_receipt,
+                }
+                if decision_receipt is not None
+                else None,
             )
         except WorkflowContinuationStateConflict as error:
             raise WorkflowExternalActionError(

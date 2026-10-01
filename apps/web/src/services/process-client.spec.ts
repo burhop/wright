@@ -470,10 +470,8 @@ describe("native process client", () => {
     const fetch = fake(async () => json(snapshot()));
     const scoped = client(fetch);
     await expect(
-      scoped.decide({
-        checkpointId: "cp",
-        decision: "approved",
-        reason: "Review",
+      scoped.requestAction({
+        actionId: "continue-cp",
         subjectDigest: digest,
         requestId: "response",
       }),
@@ -482,6 +480,102 @@ describe("native process client", () => {
       scoped.getRepresentation({ artifact_ref: "part.stl", sha256: digest }),
     ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
     expect(fetch).not.toHaveBeenCalled();
+  });
+  it("records an exact review request and verifies its retained decision", async () => {
+    const reviewed: InteractionSnapshot = {
+      ...snapshot("run-one", "waiting_human"),
+      interactions: [
+        {
+          checkpoint_id: "cp",
+          step_id: "review",
+          kind: "action",
+          subject_digest: digest,
+          instructions: "Review the exact result",
+          decisions: ["approved", "changes_requested"],
+          state: "waiting",
+          decision: {
+            decision: "approved",
+            actor: "server-user",
+            reason: "Review",
+            request_id: "review-request",
+          },
+        },
+      ],
+    };
+    const fetch = fake(async () => json(reviewed));
+    expect(
+      await client(fetch).decide({
+        checkpointId: "cp",
+        subjectDigest: digest,
+        decision: "approved",
+        reason: " Review ",
+        requestId: "review-request",
+      }),
+    ).toEqual(reviewed);
+    expect(JSON.parse(fetch.mock.calls[0][1]!.body as string)).toEqual({
+      session_id: "session",
+      path: process.source_path,
+      expected_storage_digest: digest,
+      subject_digest: digest,
+      decision: "approved",
+      reason: "Review",
+      request_id: "review-request",
+    });
+    expect(fetch.mock.calls[0][0]).toBe(
+      "/api/workspace/process-interfaces/interactions/cp/decision",
+    );
+    for (const changes of [
+      { request_id: "other" },
+      { decision: "changes_requested" },
+    ]) {
+      const wrong = {
+        ...reviewed,
+        interactions: [
+          {
+            ...reviewed.interactions![0],
+            decision: { ...reviewed.interactions![0].decision!, ...changes },
+          },
+        ],
+      };
+      await expect(
+        client(fake(async () => json(wrong))).decide({
+          checkpointId: "cp",
+          subjectDigest: digest,
+          decision: "approved",
+          reason: "Review",
+          requestId: "review-request",
+        }),
+      ).rejects.toMatchObject({
+        uncertain: true,
+        reason: { code: "OUTCOME_UNKNOWN" },
+      });
+    }
+  });
+  it("does not retry a lost review acknowledgement or submit invalid changes", async () => {
+    const fetch = fake(async () => {
+      throw new Error("Synthetic lost acknowledgement");
+    });
+    const scoped = client(fetch);
+    await expect(
+      scoped.decide({
+        checkpointId: "cp",
+        subjectDigest: digest,
+        decision: "changes_requested",
+        reason: "   ",
+        requestId: "review-request",
+      }),
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    expect(fetch).not.toHaveBeenCalled();
+    await expect(
+      scoped.decide({
+        checkpointId: "cp",
+        subjectDigest: digest,
+        decision: "approved",
+        reason: "Review",
+        requestId: "review-request",
+      }),
+    ).rejects.toMatchObject({ uncertain: true, requestId: "review-request" });
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
   it("rejects navigation replies that change the requested source or subject", async () => {
     for (const resolution of [

@@ -279,6 +279,43 @@ describe("public kit presentation and authority", () => {
     ).not.toBeInTheDocument();
     expect(onAction).not.toHaveBeenCalled();
   });
+  it("shows a retained test review without inventing dispatch authority", () => {
+    const onAction = vi.fn();
+    render(
+      <CheckpointCard
+        interaction={{
+          checkpoint_id: "cp",
+          step_id: "review",
+          subject_digest: hash,
+          kind: "action",
+          instructions: "Inspect the exact package",
+          decisions: ["approved", "changes_requested"],
+          state: "waiting",
+          decision: {
+            decision: "approved",
+            actor: "integration_test:private",
+            request_id: "review-one",
+            reason: "Synthetic test review",
+            integration_test: true,
+          },
+        }}
+        actions={[]}
+        onAction={onAction}
+      />,
+    );
+    expect(
+      screen.getByText("Test review recorded: Approved"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Synthetic test review")).toBeInTheDocument();
+    expect(
+      screen.getByText("Decision actor: integration_test:private"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Review request: review-one")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /approve|continue|submit/i }),
+    ).not.toBeInTheDocument();
+    expect(onAction).not.toHaveBeenCalled();
+  });
 });
 
 describe("schema and provider-backed input controls", () => {

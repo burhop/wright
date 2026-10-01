@@ -65,7 +65,14 @@ class WorkflowArtifactReviewService:
             "decided_at": decision.get("decided_at"),
             "actor": decision.get("actor"),
             "reason": decision.get("reason"),
-            "attribution": "local_workspace_user_not_authenticated",
+            **(
+                {"request_id": decision["request_id"]}
+                if decision.get("request_id") is not None
+                else {}
+            ),
+            "attribution": "server_derived_principal"
+            if decision.get("request_id") is not None
+            else "local_workspace_user_not_authenticated",
         }
 
     @staticmethod
@@ -189,6 +196,8 @@ class WorkflowArtifactReviewService:
         expected_package_digest,
         decision,
         reason="",
+        actor="local-workspace-user",
+        request_id=None,
     ):
         if (
             decision not in {"approved", "changes_requested"}
@@ -197,6 +206,12 @@ class WorkflowArtifactReviewService:
         ):
             raise ValueError("Choose approve or request changes with a bounded reason")
         reason = reason.strip()
+        from core.process_validation import Identifier
+        from pydantic import TypeAdapter
+
+        TypeAdapter(Identifier).validate_python(actor)
+        if request_id is not None:
+            TypeAdapter(Identifier).validate_python(request_id)
         if decision == "changes_requested" and not reason:
             raise ValueError(
                 "Explain the changes needed before recording this decision"
@@ -222,8 +237,9 @@ class WorkflowArtifactReviewService:
                 {
                     "state": decision,
                     "reason": reason,
-                    "actor": "local-workspace-user",
+                    "actor": actor,
                     "decided_at": _now(),
+                    **({"request_id": request_id} if request_id is not None else {}),
                 },
             )
         except ArtifactReviewConflict as error:

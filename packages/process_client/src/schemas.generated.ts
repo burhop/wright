@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 3ee28faa2fc6642be0b9f513ebc23bf03057146af684cfb22df3ddde9f8e3f3a
+// Schema SHA-256: cfc9a1993f5bc3d8b9c0b86068a87aa56fbf9ae1d125c777710ca746c0f02f40
 export const contractSchemas: Readonly<Record<string, unknown>> = {
   "Action": {
     "additionalProperties": false,
@@ -1850,6 +1850,17 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
         "title": "Checkpoint Id",
         "type": "string"
       },
+      "decision": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ReviewDecision"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
       "decisions": {
         "default": [],
         "items": {
@@ -2378,6 +2389,57 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
       "correction"
     ],
     "title": "Reason",
+    "type": "object"
+  },
+  "ReviewDecision": {
+    "additionalProperties": false,
+    "description": "Recorded exact decision evidence; it is not dispatch authority.",
+    "properties": {
+      "actor": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Actor",
+        "type": "string"
+      },
+      "decision": {
+        "enum": [
+          "approved",
+          "changes_requested"
+        ],
+        "title": "Decision",
+        "type": "string"
+      },
+      "integration_test": {
+        "default": false,
+        "title": "Integration Test",
+        "type": "boolean"
+      },
+      "reason": {
+        "default": "",
+        "maxLength": 2000,
+        "title": "Reason",
+        "type": "string"
+      },
+      "request_id": {
+        "anyOf": [
+          {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Request Id"
+      }
+    },
+    "required": [
+      "decision",
+      "actor"
+    ],
+    "title": "ReviewDecision",
     "type": "object"
   },
   "RoleResolution": {

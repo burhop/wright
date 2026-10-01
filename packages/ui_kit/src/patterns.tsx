@@ -571,6 +571,19 @@ export function CheckpointCard({
             : "Review the next action"}
       </h3>
       <p>{interaction.instructions}</p>
+      {interaction.decision && (
+        <div className="wp-muted">
+          <p>
+            {interaction.decision.integration_test
+              ? "Test review recorded: "
+              : "Review recorded: "}
+            {interaction.decision.decision === "approved"
+              ? "Approved"
+              : "Changes requested"}
+          </p>
+          {interaction.decision.reason && <p>{interaction.decision.reason}</p>}
+        </div>
+      )}
       {(interaction.evidence ?? []).map((reference) => (
         <EvidenceReference
           key={`${reference.artifact_ref}:${reference.sha256}`}
@@ -642,6 +655,14 @@ export function CheckpointCard({
         <summary>Checkpoint identity</summary>
         <code>{interaction.checkpoint_id}</code>
         <p>Subject: {interaction.subject_digest}</p>
+        {interaction.decision && (
+          <>
+            <p>Decision actor: {interaction.decision.actor}</p>
+            {interaction.decision.request_id && (
+              <p>Review request: {interaction.decision.request_id}</p>
+            )}
+          </>
+        )}
       </details>
     </article>
   );

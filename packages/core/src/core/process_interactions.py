@@ -482,6 +482,16 @@ class OutputRef(Contract):
     supported_viewers: tuple[Identifier, ...] = ()
 
 
+class ReviewDecision(Contract):
+    """Recorded exact decision evidence; it is not dispatch authority."""
+
+    decision: Literal["approved", "changes_requested"]
+    actor: Identifier
+    reason: str = Field(default="", max_length=2000, strict=True)
+    request_id: Identifier | None = None
+    integration_test: StrictBool = False
+
+
 class PendingInteraction(Contract):
     checkpoint_id: Identifier
     step_id: Identifier
@@ -492,6 +502,7 @@ class PendingInteraction(Contract):
     decisions: tuple[Identifier, ...] = ()
     evidence: tuple[ArtifactRef, ...] = Field(default=(), max_length=PAGE_ITEMS)
     state: Literal["waiting", "responded", "consumed", "stale", "cancelled"] = "waiting"
+    decision: ReviewDecision | None = None
 
     @field_validator("response_schema")
     @classmethod
@@ -500,6 +511,8 @@ class PendingInteraction(Contract):
 
     @model_validator(mode="after")
     def declared_response(self):
+        if self.kind == "input" and self.decision is not None:
+            raise ValueError("Input answers are not review decisions")
         if self.kind == "input" and (self.response_schema is None or self.decisions):
             raise ValueError(
                 "Input checkpoint requires only its declared response schema"

@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 3ee28faa2fc6642be0b9f513ebc23bf03057146af684cfb22df3ddde9f8e3f3a
+// Schema SHA-256: cfc9a1993f5bc3d8b9c0b86068a87aa56fbf9ae1d125c777710ca746c0f02f40
 export type JsonValue = null | boolean | number | string | ReadonlyArray<JsonValue> | { readonly [key: string]: JsonValue };
 
 export type Action = {
@@ -254,6 +254,7 @@ export type OutputRef = {
 
 export type PendingInteraction = {
   readonly "checkpoint_id": string;
+  readonly "decision"?: (ReviewDecision | null);
   readonly "decisions"?: ReadonlyArray<string>;
   readonly "evidence"?: ReadonlyArray<ArtifactRef>;
   readonly "instructions": string;
@@ -326,6 +327,14 @@ export type Reason = {
   readonly "navigation"?: (NavigationTarget | null);
   readonly "step_id"?: (string | null);
   readonly "technical_details_ref"?: (string | null);
+};
+
+export type ReviewDecision = {
+  readonly "actor": string;
+  readonly "decision": "approved" | "changes_requested";
+  readonly "integration_test"?: boolean;
+  readonly "reason"?: string;
+  readonly "request_id"?: (string | null);
 };
 
 export type RoleResolution = {
@@ -402,6 +411,7 @@ export interface ContractTypes {
   readonly ProcessUI: ProcessUI;
   readonly Readiness: Readiness;
   readonly Reason: Reason;
+  readonly ReviewDecision: ReviewDecision;
   readonly RoleResolution: RoleResolution;
   readonly SourceAsset: SourceAsset;
   readonly SourceEnvelope: SourceEnvelope;

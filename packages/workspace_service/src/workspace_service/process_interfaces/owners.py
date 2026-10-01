@@ -14,6 +14,7 @@ from core.process_interactions import (
     NavigationTarget,
     Observation,
     PendingInteraction,
+    ReviewDecision,
     ProcessRef,
     Reason,
 )
@@ -237,6 +238,22 @@ async def _approval(app, resolved, view, *, gateway, session_id):
         instructions="Review the exact process action and its evidence before continuing.",
         decisions=("approved", "changes_requested"),
         state=state,
+        decision=ReviewDecision(
+            decision=(checkpoint.continuation.get("decision_receipt") or {}).get(
+                "decision",
+                "changes_requested"
+                if checkpoint.state == "changes_requested"
+                else "approved",
+            ),
+            actor=checkpoint.actor,
+            reason=redact_text(checkpoint.reason or "")[:2000],
+            request_id=(checkpoint.continuation.get("decision_receipt") or {}).get(
+                "request_id"
+            ),
+            integration_test=checkpoint.actor.startswith("integration_test:"),
+        )
+        if checkpoint.actor is not None
+        else None,
     )
     review_reason = reason or _blocked(
         "ACTION_NOT_PERMITTED",
@@ -319,6 +336,16 @@ async def _review(app, resolved, view):
         decisions=("approved", "changes_requested"),
         evidence=evidence,
         state="stale" if not current else "waiting" if enabled else "responded",
+        decision=ReviewDecision(
+            decision=review["state"],
+            actor=review["actor"],
+            reason=redact_text(review.get("reason") or "")[:2000],
+            request_id=review.get("request_id"),
+            integration_test=review["actor"].startswith("integration_test:"),
+        )
+        if review.get("actor") is not None
+        and review["state"] in {"approved", "changes_requested"}
+        else None,
     )
     reason = _blocked(
         "SUBJECT_STALE" if not current else "ACTION_NOT_PERMITTED",

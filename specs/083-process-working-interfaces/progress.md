@@ -2,6 +2,23 @@
 
 ## Latest implementation state — 2026-10-01
 
+T027 is progressing. Scoped action-approval and terminal artifact-review decisions
+now delegate to the existing review owners. Actor/run are server-derived; current
+source/actual evidence and exact recorded checkpoint are checked. Request identity
+is retained atomically with the existing decision, and changed retries conflict.
+Repeated requests can restore a lost recorder projection without another decision,
+model call or tool dispatch. Terminal output reviews update the existing run
+recorder; action approval remains separate from dispatch. Optional shared decision
+evidence and test attribution are shown by the public kit.
+
+Current checked scope: **710 backend/API regressions**, **139 client/kit/common-view
+checks**, app TypeScript, generated schemas, focused lint and a fresh production
+build. These use synthetic model/reviewer/unit transport fixtures and establish no
+live model/MCP, engineering, served-browser or user acceptance for this milestone.
+See [review-decision evidence](evidence/review-decisions.md). T027 remains pending
+for review/action forms, supervised action continuation and inspector/source edits;
+T028/T021 and M3–M5 remain required. The full goal is active.
+
 T026 is complete. Exact approved MCP-operation dispatch now reuses the existing
 source runtime, approval lease/consume store, gateway, recorder and finite async
 monitor. It pins provider qualification, connected arguments and actual artifact

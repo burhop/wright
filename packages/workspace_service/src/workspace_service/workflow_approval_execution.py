@@ -288,13 +288,27 @@ async def decide_workflow_approval(
     decision,
     reason="",
     auto=False,
+    actor="local_workspace_user",
+    request_id=None,
     gateway=None,
     session_id="",
 ):
-    if decision not in {"approved", "changes_requested"}:
+    if (
+        decision not in {"approved", "changes_requested"}
+        or not isinstance(reason, str)
+        or len(reason) > 2000
+        or (decision == "changes_requested" and not reason.strip())
+    ):
         raise WorkflowExternalActionError(
             "approval_decision_invalid", "Unknown approval decision"
         )
+    from core.process_validation import Identifier
+    from pydantic import TypeAdapter
+
+    TypeAdapter(Identifier).validate_python(actor)
+    if request_id is not None:
+        TypeAdapter(Identifier).validate_python(request_id)
+    reason = reason.strip()
     async with _lease(workspace_id, checkpoint):
         current = _current(service, checkpoint, workspace_id, subject_digest)
         _, _, runtime, context = await _prepare(
@@ -306,7 +320,6 @@ async def decide_workflow_approval(
             session_id=session_id,
         )
         try:
-            actor = "local_workspace_user"
             if auto:
                 if decision != "approved" or not context:
                     raise _error(
@@ -328,8 +341,12 @@ async def decide_workflow_approval(
                 actor=actor,
                 approved=decision == "approved",
                 reason=reason,
+                request_id=request_id,
             )
-            if current.state != decided.state:
+            if current.state != decided.state or (
+                request_id is not None
+                and decided.state in {"approved", "changes_requested"}
+            ):
                 await record_workflow_approval_transition(
                     service=service,
                     workspace_dir=workspace_dir,

@@ -236,6 +236,12 @@ class ProcessInterfaceService:
             WorkflowContinuationRepository(self.db_path), self.inputs
         )
 
+    @cached_property
+    def reviews(self):
+        from .decisions import ProcessReviewDecisions
+
+        return ProcessReviewDecisions(self)
+
     async def close(self):
         # Do not create a supervisor solely to shut an unused service down.
         supervisor = self.__dict__.get("runs")

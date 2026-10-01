@@ -312,13 +312,15 @@ class WorkflowContinuationRepository:
         actor: str | None = None,
         reason: str | None = None,
         external_action: dict[str, Any] | None = None,
+        continuation: dict[str, Any] | None = None,
     ) -> WorkflowContinuationCheckpoint:
         with connect_state_db(self.db_path, ensure_parent=True) as connection:
             self._ensure(connection)
             cursor = connection.execute(
                 """UPDATE workflow_continuation_checkpoints
                 SET state=?,updated_at=?,actor=COALESCE(?,actor),reason=COALESCE(?,reason),
-                    external_action_json=COALESCE(?,external_action_json)
+                    external_action_json=COALESCE(?,external_action_json),
+                    continuation_json=COALESCE(?,continuation_json)
                 WHERE checkpoint_id=? AND state=?""",
                 (
                     state,
@@ -327,6 +329,14 @@ class WorkflowContinuationRepository:
                     reason,
                     json.dumps(external_action, sort_keys=True, separators=(",", ":"))
                     if external_action is not None
+                    else None,
+                    json.dumps(
+                        continuation,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                        allow_nan=False,
+                    )
+                    if continuation is not None
                     else None,
                     checkpoint_id,
                     expected_state,

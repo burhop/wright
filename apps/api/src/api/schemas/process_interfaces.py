@@ -1,6 +1,7 @@
 """Transport envelopes; shared process contracts stay owned by core."""
 
 from pydantic import Field
+from typing import Literal
 
 from core.process_interactions import (
     ArtifactRef,
@@ -39,6 +40,13 @@ class ProcessCancelRequest(ProcessSourceRequest):
 class ProcessInputResponseRequest(ProcessSourceRequest):
     subject_digest: Digest
     value: InlineJSON
+    request_id: Identifier
+
+
+class ProcessReviewDecisionRequest(ProcessSourceRequest):
+    subject_digest: Digest
+    decision: Literal["approved", "changes_requested"]
+    reason: str = Field(default="", max_length=2000, strict=True)
     request_id: Identifier
 
 

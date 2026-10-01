@@ -868,12 +868,57 @@ export function createNativeProcessClient(
         throw unknownOutcome(requestId);
       return reply;
     },
-    // Review/action transports are supplied by subsequent feature tasks.
     async decide(
-      _request: DecisionRequest,
-      _read?: ReadOptions,
+      decision: DecisionRequest,
+      read: ReadOptions = {},
     ): Promise<InteractionSnapshot> {
-      return unavailable("process review decisions");
+      const checkpointId = identifier(decision.checkpointId, "checkpoint ID");
+      const requestId = identifier(decision.requestId, "request ID");
+      const subjectDigest = decision.subjectDigest;
+      const choice = decision.decision;
+      const reason = decision.reason;
+      if (
+        typeof subjectDigest !== "string" ||
+        !/^[a-f0-9]{64}$/.test(subjectDigest) ||
+        !["approved", "changes_requested"].includes(choice) ||
+        typeof reason !== "string" ||
+        reason.length > 2000 ||
+        (choice === "changes_requested" && !reason.trim())
+      )
+        throw clientError(
+          "RESPONSE_INVALID",
+          "Choose the current review subject and explain requested changes.",
+          "Review the evidence and provide a reason of at most 2,000 characters.",
+        );
+      const reply = await request(
+        `/interactions/${encodeURIComponent(checkpointId)}/decision`,
+        "InteractionSnapshot",
+        read,
+        {
+          subject_digest: subjectDigest,
+          decision: choice,
+          reason: reason.trim(),
+          request_id: requestId,
+        },
+        requestId,
+      );
+      const checkpoint = (reply.interactions || []).find(
+        (item) => item.checkpoint_id === checkpointId,
+      );
+      try {
+        scopedProcess(process, reply.context.process);
+      } catch {
+        throw unknownOutcome(requestId);
+      }
+      if (
+        !reply.context.run_id ||
+        !checkpoint ||
+        checkpoint.subject_digest !== subjectDigest ||
+        checkpoint.decision?.request_id !== requestId ||
+        checkpoint.decision?.decision !== choice
+      )
+        throw unknownOutcome(requestId);
+      return reply;
     },
     async requestAction(
       _request: ActionRequest,
