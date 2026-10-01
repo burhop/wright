@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import PurePosixPath
 
@@ -21,6 +21,7 @@ from ..workflow_run_preparation import (
 )
 from ..workflow_run_record import (
     record_workflow_run,
+    record_workflow_resume,
     read_workflow_run,
     _read_run_record,
 )
@@ -40,6 +41,7 @@ class _OwnedRun:
     local_cancel_supported: bool = False
     tool_runtime: object = None
     cancel_target: object = None
+    checkpoint_id: str | None = None
 
     def cancellation_outcome(self):
         if self.cancel_request is None:
@@ -307,7 +309,8 @@ class ProcessRunSupervisor:
                 self._owned[receipt.run_id] = owned
 
                 def finished(task):
-                    self._owned.pop(receipt.run_id, None)
+                    if self._owned.get(receipt.run_id) is owned:
+                        self._owned.pop(receipt.run_id, None)
                     if not task.cancelled():
                         task.exception()  # Consume diagnostics; the recorder retains failure.
 
@@ -322,6 +325,231 @@ class ProcessRunSupervisor:
                 except TimeoutError:
                     pass  # The durable accepted receipt still requires reconciliation.
                 return receipt
+            finally:
+                if not transferred and prepared.runtime is not None:
+                    await prepared.runtime.close()
+
+    @traced("process.interface.run.respond")
+    async def respond(
+        self,
+        scope,
+        process,
+        checkpoint_id,
+        request_id,
+        *,
+        expected_subject_digest,
+        value,
+        response_generator,
+        gateway=None,
+        session_id="",
+        action_generator=None,
+    ):
+        """Accept a declared answer and own its same-run continuation task.
+
+        Checkpoint/run/actor are derived from the authenticated process scope.
+        A retained answer is evidence, never permission to replay a claimed segment.
+        """
+        from .interactions import prepare_input_continuation
+
+        scope.require(process, "process.respond")
+        checkpoint_id = TypeAdapter(Identifier).validate_python(checkpoint_id)
+        request_id = TypeAdapter(Identifier).validate_python(request_id)
+        expected_subject_digest = TypeAdapter(Digest).validate_python(
+            expected_subject_digest
+        )
+        async with self._allocation:
+            checkpoint = self.application.human_inputs.repository.get(checkpoint_id)
+            if checkpoint is None or (
+                checkpoint.workspace_id != process.workspace_id
+                or checkpoint.workflow_id != process.source_path
+                or checkpoint.checkpoint_kind != "input"
+            ):
+                raise ProcessInterfaceError(
+                    "SCOPE_DENIED",
+                    "The declared input is not available in this process.",
+                    "Attach this process's exact run and checkpoint.",
+                )
+            root, receipt = self._receipt(
+                scope, process, checkpoint.run_id, "process.respond"
+            )
+            checkpoint = self.application.human_inputs.get(
+                checkpoint_id,
+                workspace_id=process.workspace_id,
+                run_id=receipt.run_id,
+            )
+            if checkpoint.subject_digest != expected_subject_digest:
+                raise ProcessInterfaceError(
+                    "SUBJECT_STALE",
+                    "This answer belongs to an earlier input subject.",
+                    "Refresh the run and answer its current declared input.",
+                )
+            record, view = await asyncio.to_thread(
+                self._record, scope, process, receipt.run_id
+            )
+            prior = None
+            if checkpoint.continuation.get("response_id") is not None:
+                checkpoint, prior, _ = self.application.human_inputs.respond(
+                    checkpoint_id,
+                    workspace_id=process.workspace_id,
+                    run_id=receipt.run_id,
+                    expected_subject_digest=expected_subject_digest,
+                    value=value,
+                    actor=scope.principal_id,
+                    reason="Response to declared process input",
+                    request_id=request_id,
+                )
+                claim = record.get("resume_segments", {}).get(checkpoint_id)
+                owned = self._owned.get(receipt.run_id)
+                if claim and claim.get("subject_digest") != checkpoint.subject_digest:
+                    raise ProcessInterfaceError(
+                        "SUBJECT_STALE",
+                        "The saved continuation claim belongs to another input subject.",
+                        "Inspect this run's exact response and continuation evidence.",
+                    )
+                if claim and claim.get("state") == "completed":
+                    return prior
+                if (
+                    self.is_live(receipt.run_id)
+                    and owned.checkpoint_id == checkpoint_id
+                ):
+                    return prior
+                if claim:
+                    raise ProcessInterfaceError(
+                        "OUTCOME_UNKNOWN",
+                        "This input continuation already began and cannot be replayed.",
+                        "Inspect the saved run and reconcile unfinished work.",
+                    )
+            reference = (record.get("result") or {}).get("input_checkpoint") or {}
+            if (
+                view["status"] != "waiting_human"
+                or reference.get("checkpoint_id") != checkpoint_id
+            ):
+                raise ProcessInterfaceError(
+                    "ACTION_NOT_PERMITTED",
+                    "This run is not waiting for that input.",
+                    "Inspect its current checkpoint and recorded outcome.",
+                )
+            if self.is_live(receipt.run_id):
+                raise ProcessInterfaceError(
+                    "ACTION_NOT_PERMITTED",
+                    "The run is already executing another segment.",
+                    "Follow the current run; do not submit another continuation.",
+                )
+            if (
+                self._closed
+                or sum(self.is_live(key) for key in self._owned) >= self.maximum_active
+            ):
+                raise ProcessInterfaceError(
+                    "CAPABILITY_UNAVAILABLE",
+                    "The local runtime cannot continue this run yet.",
+                    "Wait for runtime capacity and retry this exact response request.",
+                )
+            resolved = await self.application.resolve_process(
+                scope, process, operation="process.respond"
+            )
+
+            def available_gateway():
+                if gateway is None:
+                    raise ProcessInterfaceError(
+                        "CAPABILITY_UNAVAILABLE",
+                        "The configured process tools are unavailable.",
+                        "Reconnect the required providers before continuing.",
+                    )
+                return gateway() if callable(gateway) else gateway
+
+            prepared = await prepare_input_continuation(
+                self.application,
+                resolved,
+                checkpoint,
+                gateway=available_gateway,
+                session_id=session_id,
+            )
+            transferred = False
+            try:
+                if self._closed:
+                    raise ProcessInterfaceError(
+                        "CAPABILITY_UNAVAILABLE",
+                        "The runtime is shutting down.",
+                        "Reconnect and retry this exact response request.",
+                    )
+                checkpoint, answer, _ = self.application.human_inputs.respond(
+                    checkpoint_id,
+                    workspace_id=process.workspace_id,
+                    run_id=receipt.run_id,
+                    expected_subject_digest=expected_subject_digest,
+                    value=value,
+                    actor=scope.principal_id,
+                    reason="Response to declared process input",
+                    request_id=request_id,
+                )
+                if checkpoint.state == "pending":
+                    checkpoint = self.application.human_inputs.consume(
+                        checkpoint_id,
+                        workspace_id=process.workspace_id,
+                        run_id=receipt.run_id,
+                        response_id=answer.response_id,
+                    )
+                owned = _OwnedRun(
+                    checkpoint_id=checkpoint_id,
+                    tool_runtime=prepared.runtime,
+                    local_cancel_supported=not any(
+                        step.tool_name
+                        or step.agent_task
+                        or step.external_action
+                        or step.cad
+                        or step.application
+                        for step in prepared.plan.steps[
+                            checkpoint.continuation["next_step_index"] :
+                        ]
+                    ),
+                )
+
+                async def run():
+                    async def execute(emit):
+                        owned.emit = emit
+                        return await execute_prompt_workflow(
+                            service=self.application.workspace,
+                            workspace_dir=root,
+                            plan=prepared.plan,
+                            input_values=prepared.values,
+                            response_generator=response_generator,
+                            tool_runtime=prepared.runtime,
+                            action_generator=action_generator,
+                            execution_context=prepared.execution_context,
+                            on_event=emit,
+                            run_id=receipt.run_id,
+                            continuation=checkpoint.continuation,
+                            completed_checkpoint=asdict(checkpoint),
+                        )
+
+                    try:
+                        return await record_workflow_resume(
+                            service=self.application.workspace,
+                            workspace_dir=root,
+                            workspace_id=process.workspace_id,
+                            checkpoint=checkpoint,
+                            execute=execute,
+                            cancellation_status=owned.cancellation_outcome,
+                        )
+                    finally:
+                        if prepared.runtime is not None:
+                            await prepared.runtime.close()
+
+                # No await between durable response consumption and task ownership.
+                owned.task = asyncio.create_task(
+                    run(), name=f"wright-process:{receipt.run_id}:{checkpoint_id}"
+                )
+                self._owned[receipt.run_id] = owned
+                transferred = True
+
+                def finished(task):
+                    if self._owned.get(receipt.run_id) is owned:
+                        self._owned.pop(receipt.run_id, None)
+                    if not task.cancelled():
+                        task.exception()
+
+                owned.task.add_done_callback(finished)
+                return answer
             finally:
                 if not transferred and prepared.runtime is not None:
                     await prepared.runtime.close()

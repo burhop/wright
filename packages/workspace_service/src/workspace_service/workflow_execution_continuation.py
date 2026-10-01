@@ -97,6 +97,47 @@ def decode_value(value):
 async def restore_continuation(
     *, state, checkpoint, plan, input_values, service, workspace_dir
 ):
+    return await _validate_continuation(
+        state=state,
+        checkpoint=checkpoint,
+        plan=plan,
+        input_values=input_values,
+        service=service,
+        workspace_dir=workspace_dir,
+        input_inspection=False,
+    )
+
+
+async def inspect_input_continuation(
+    *, state, checkpoint, plan, input_values, service, workspace_dir
+):
+    """Read-only validation of an input barrier before any answer is accepted."""
+    if (
+        not isinstance(state, dict)
+        or state.get("schema_version") != 3
+        or state.get("checkpoint_kind") != "input"
+    ):
+        from .workflow_source_execution import _error
+
+        raise _error(
+            "WORKFLOW_CONTINUATION_STALE",
+            "This is not a declared input checkpoint.",
+            "Inspect the exact run's input reference.",
+        )
+    return await _validate_continuation(
+        state=state,
+        checkpoint=checkpoint,
+        plan=plan,
+        input_values=input_values,
+        service=service,
+        workspace_dir=workspace_dir,
+        input_inspection=True,
+    )
+
+
+async def _validate_continuation(
+    *, state, checkpoint, plan, input_values, service, workspace_dir, input_inspection
+):
     """Validate the immutable checkpoint before restoring prior engineering work.
 
     The repository-backed caller is responsible for claiming this continuation
@@ -123,7 +164,8 @@ async def restore_continuation(
     if kind not in {"approval", "input"}:
         raise stale("The continuation checkpoint kind is unsupported.")
     if not isinstance(checkpoint, dict) or (
-        checkpoint.get("state") != "consumed"
+        checkpoint.get("state")
+        not in ({"pending", "consumed"} if input_inspection else {"consumed"})
         or checkpoint.get("run_id") != state.get("run_id")
         or (
             kind == "approval"
@@ -218,7 +260,7 @@ async def restore_continuation(
                     "The continuation differs from its retained checkpoint"
                 )
             if (
-                current.state != "consumed"
+                (current.state != "consumed" and not input_inspection)
                 or subject.get("step_id") != step.id
                 or subject.get("declaration") != step.human_interaction
                 or subject.get("input_snapshot_id") != frozen.snapshot_id
@@ -234,7 +276,11 @@ async def restore_continuation(
                 }
             ):
                 raise ValueError("The declared input or its upstream evidence changed")
-            human_response = owner.response(current)
+            if (
+                current.continuation.get("response_id") is not None
+                or not input_inspection
+            ):
+                human_response = owner.response(current)
         except (
             AttributeError,
             ValueError,
@@ -250,6 +296,40 @@ async def restore_continuation(
         raise stale("The continuation omits or repeats completed canonical steps.")
     if [record.get("task_id") for record in state.get("records", [])] != expected_ids:
         raise stale("The continuation step evidence is incomplete.")
+    results = [restore_result(item) for item in state["results"]]
+    if kind == "input":
+        expected_inputs = sorted(
+            (
+                {"path": value.path, "sha256": value.sha256}
+                for value in input_values.values()
+                if isinstance(value, WorkflowReference)
+            ),
+            key=lambda item: item["path"],
+        )
+        expected_files = sorted(
+            (
+                {"path": rep.location, "sha256": rep.sha256}
+                for result in results
+                for rep in (
+                    *result.representations,
+                    *(
+                        r
+                        for exported in result.exports
+                        for r in exported.representations
+                    ),
+                )
+                if rep.kind == "workspace_file" and rep.sha256
+            ),
+            key=lambda item: item["path"],
+        )
+        if (
+            state.get("input_files") != expected_inputs
+            or state.get("artifact_files") != expected_files
+            or state.get("result_ids") != [item.id for item in results]
+        ):
+            raise stale(
+                "The input checkpoint omits or changes retained result/file identities."
+            )
     files = state.get("input_files", []) + state.get("artifact_files", [])
     for evidence in files:
         try:
@@ -262,7 +342,6 @@ async def restore_continuation(
             ) from error
         if identity != evidence["sha256"]:
             raise stale("A checkpoint input or generated artifact changed.")
-    results = [restore_result(item) for item in state["results"]]
     if any(item.provenance.run_id != state["run_id"] for item in results):
         raise stale("The continuation includes an artifact from another run.")
     artifact_digests = sorted(

@@ -374,7 +374,14 @@ async def record_workflow_run(
 
 
 async def record_workflow_resume(
-    *, service, workspace_dir, workspace_id, checkpoint, execute, on_event=None
+    *,
+    service,
+    workspace_dir,
+    workspace_id,
+    checkpoint,
+    execute,
+    on_event=None,
+    cancellation_status=None,
 ):
     """Continue one recorded run once; completed segment retries are read-only."""
     from .workflow_resource_lease import ApplicationLease
@@ -460,6 +467,7 @@ async def record_workflow_resume(
             resume_record=record,
             resume_filename=relative,
             resume_checkpoint_id=checkpoint.checkpoint_id,
+            cancellation_status=cancellation_status,
         )
 
 

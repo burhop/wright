@@ -59,6 +59,14 @@ fields. Defaults are shown only when present in backend bindings; schema constan
 require a deliberate choice. Clearing a number removes the value; false is
 preserved. The backend owns full schema validation and readiness.
 
+`CheckpointCard` accepts an optional `response` control for declared input steps:
+`{value, onChange, onSubmit, busy?, readOnly?, blockedReason?}`. It uses the exact
+interaction's `response_schema` and only its matching permitted action/subject.
+No fields or responses are invented from AI prose. A missing value explains what
+to provide; busy, read-only, stale and consumed controls stay disabled. The host
+calls the scoped client's `respond` explicitly and follows the same run. The
+component never submits on mount or decides engineering acceptance.
+
 File upload is a host callback returning an exact ArtifactRef. The browser
 does not embed files in input JSON. Selecting a replacement clears the old
 binding before upload. Upload failure does not reuse the previous file. The

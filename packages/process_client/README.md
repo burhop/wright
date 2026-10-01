@@ -83,8 +83,17 @@ from its recorded assessment-file identity. If no host is available, the client
 reports capability unavailable before making a request; source changes and absent/ambiguous evidence remain
 explicit. Navigation never starts or replays work.
 
-The public interface also names `respond`, `decide` and `requestAction`.
-Declared checkpoint/action routes and the isolated presentation
+Native `respond({checkpointId, subjectDigest, value, requestId})` submits a
+declared input to `/interactions/{checkpoint_id}/response`. The server derives
+the run and actor, freshly qualifies source/frozen inputs/upstream evidence, and
+retains the schema-valid answer before continuing the same run. Keep the exact
+request/value on an uncertain acknowledgement; an identical retry reads its
+retained answer rather than replaying completed work. Follow that answer's
+`run_id` to observe execution. Answer acceptance is distinct from run completion.
+No public response body can set review authority or an integration-test flag.
+
+The public interface also names `decide` and `requestAction`.
+Review/action routes and the isolated presentation
 transport are later Feature 083 tasks: those operations currently report
 `CAPABILITY_UNAVAILABLE` without speculative requests. Trusted native hosts may
 provide alternate representation/navigation ports through their owning authorized services;

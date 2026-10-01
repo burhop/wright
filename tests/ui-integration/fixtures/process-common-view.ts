@@ -80,17 +80,18 @@ const assessmentRef: ArtifactRef = {
 export async function mockCommonProcessWorkspace(
   page: Page,
   options: {
+    source?: string;
     loseStartAcknowledgement?: boolean;
     disconnectEvents?: boolean;
   } = {},
 ) {
   const editor = await mockRecoveryWorkspace(page, {
-    source: commonViewSource,
+    source: options.source ?? commonViewSource,
   });
   const process: ProcessRef = {
     workspace_id: "ws-recovery",
     source_path: "workflows/mounting-bracket.workflow.wflow",
-    source_digest: digest(commonViewSource),
+    source_digest: digest(options.source ?? commonViewSource),
   };
   let input: InputSnapshot | undefined;
   let accepted: StartReceipt | undefined;

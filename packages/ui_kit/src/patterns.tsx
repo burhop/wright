@@ -9,7 +9,9 @@ import type {
   Readiness,
   Reason,
   InteractionSnapshot,
+  JsonValue,
 } from "@wright/process-client";
+import { SchemaField } from "./inputs";
 
 export const UI_KIT_VERSION = "1.0.0";
 export type Navigate = (target: NavigationTarget) => void;
@@ -536,6 +538,7 @@ export function CheckpointCard({
   onOpen,
   onNavigate,
   children,
+  response,
 }: {
   interaction: PendingInteraction;
   actions: readonly Action[];
@@ -543,6 +546,14 @@ export function CheckpointCard({
   onOpen?: (reference: ArtifactRef) => void;
   onNavigate?: Navigate;
   children?: ReactNode;
+  response?: {
+    value?: JsonValue;
+    onChange: (value?: JsonValue) => void;
+    onSubmit: (action: Action, value: JsonValue) => void;
+    busy?: boolean;
+    readOnly?: boolean;
+    blockedReason?: Reason;
+  };
 }) {
   const matching = actions.filter(
     (action) =>
@@ -568,15 +579,57 @@ export function CheckpointCard({
         />
       ))}
       {children}
+      {interaction.kind === "input" &&
+        response &&
+        interaction.response_schema && (
+          <SchemaField
+            schema={interaction.response_schema}
+            title="Your response"
+            value={response.value}
+            onChange={response.onChange}
+            disabled={
+              response.readOnly ||
+              response.busy ||
+              (interaction.state !== undefined &&
+                interaction.state !== "waiting")
+            }
+            required
+          />
+        )}
       {matching.map((action) => (
         <ActionButton
           key={action.action_id}
-          action={action}
+          action={
+            action.operation === "respond" &&
+            response &&
+            action.enabled &&
+            (response.blockedReason || response.value === undefined)
+              ? {
+                  ...action,
+                  enabled: false,
+                  reasons: [
+                    response.blockedReason ?? {
+                      code: "INPUT_REQUIRED",
+                      message:
+                        "Provide the declared response before submitting.",
+                      correction:
+                        "Complete the response fields above. Wright will validate the answer before continuing.",
+                    },
+                  ],
+                }
+              : action
+          }
           onAction={
             interaction.state === undefined || interaction.state === "waiting"
-              ? onAction
+              ? action.operation === "respond" && response
+                ? response.value === undefined
+                  ? undefined
+                  : () => response.onSubmit(action, response.value!)
+                : onAction
               : undefined
           }
+          busy={response?.busy}
+          readOnly={response?.readOnly}
           onNavigate={onNavigate}
         />
       ))}

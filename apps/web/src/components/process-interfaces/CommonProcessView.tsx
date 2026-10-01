@@ -12,6 +12,8 @@ import {
   type Readiness,
   type Reason,
   type StartReceipt,
+  type JsonValue,
+  type ResponseRequest,
 } from "@wright/process-client";
 import {
   ActionButton,
@@ -190,6 +192,8 @@ function CommonProcessController({
   const preparedRef = useRef<InputSnapshot | undefined>(undefined);
   const [readiness, setReadiness] = useState<Readiness>();
   const [drafts, setDrafts] = useState<Record<string, InputBinding | null>>({});
+  const [answers, setAnswers] = useState<Record<string, JsonValue | undefined>>({});
+  const [pendingResponse, setPendingResponse] = useState<ResponseRequest>();
   const draftsRef = useRef<Record<string, InputBinding | null>>({});
   const [dirty, setDirty] = useState(false);
   const [recovery, setRecovery] = useState<ProcessViewRecovery | null>(null);
@@ -793,6 +797,71 @@ function CommonProcessController({
       if (alive.current) setBusy("");
     }
   };
+  const respond = async (
+    action: Action,
+    value: JsonValue,
+    reconcile = false,
+  ) => {
+    if (
+      operation.current ||
+      readOnly ||
+      !activeRunRef.current ||
+      !action.checkpoint_id ||
+      !action.subject_digest
+    )
+      return;
+    if (
+      !reconcile &&
+      (!action.enabled ||
+        pendingResponse ||
+        !snapshotRef.current?.actions?.some(
+          (item) =>
+            item.operation === "respond" &&
+            item.enabled &&
+            item.checkpoint_id === action.checkpoint_id &&
+            item.subject_digest === action.subject_digest,
+        ))
+    )
+      return;
+    const attempt = reconcile
+      ? pendingResponse
+      : {
+          checkpointId: action.checkpoint_id,
+          subjectDigest: action.subject_digest,
+          value: JSON.parse(JSON.stringify(value)) as JsonValue,
+          requestId: crypto.randomUUID(),
+        };
+    if (!attempt) return;
+    operation.current = true;
+    setPendingResponse(attempt);
+    setBusy("respond");
+    setReason(undefined);
+    try {
+      const response = await client.respond(attempt);
+      if (response.run_id !== activeRunRef.current)
+        throw new ProcessClientError(
+          {
+            code: "OUTCOME_UNKNOWN",
+            message: "The saved response does not identify this run.",
+            correction:
+              "Refresh this exact run and inspect its declared input before continuing.",
+          },
+          { uncertain: true, requestId: attempt.requestId },
+        );
+      if (!alive.current) return;
+      setPendingResponse(undefined);
+      setRefreshKey((key) => key + 1);
+    } catch (error) {
+      if (alive.current) {
+        setReason(message(error));
+        if (error instanceof ProcessClientError && !error.uncertain)
+          setPendingResponse(undefined);
+      }
+    } finally {
+      operation.current = false;
+      if (alive.current) setBusy("");
+    }
+  };
   const pendingStart = !!recovery?.start && !recovery.start.receipt;
   const startDisabledReason: Reason | undefined = pendingStart
     ? {
@@ -885,6 +954,29 @@ function CommonProcessController({
             onClick={() => void start(true)}
           >
             Reconcile start request
+          </button>
+        )}
+        {pendingResponse && !busy && (
+          <button
+            type="button"
+            className="wp-link"
+            disabled={readOnly}
+            onClick={() =>
+              void respond(
+                {
+                  action_id: "reconcile-response",
+                  operation: "respond",
+                  title: "Reconcile response request",
+                  enabled: false,
+                  checkpoint_id: pendingResponse.checkpointId,
+                  subject_digest: pendingResponse.subjectDigest,
+                },
+                pendingResponse.value,
+                true,
+              )
+            }
+          >
+            Reconcile response request
           </button>
         )}
         {snapshot && (
@@ -1057,6 +1149,31 @@ function CommonProcessController({
                     actions={snapshot.actions ?? []}
                     onOpen={openRepresentation}
                     onNavigate={navigate}
+                    response={
+                      interaction.kind === "input"
+                        ? {
+                            value: answers[interaction.subject_digest],
+                            onChange: (value) =>
+                              setAnswers((current) => ({
+                                ...current,
+                                [interaction.subject_digest]: value,
+                              })),
+                            onSubmit: (action, value) =>
+                              void respond(action, value),
+                            busy: !!busy,
+                            readOnly: readOnly || !!pendingResponse,
+                            blockedReason: pendingResponse
+                              ? {
+                                  code: "OUTCOME_UNKNOWN",
+                                  message:
+                                    "This response is awaiting confirmation.",
+                                  correction:
+                                    "Use Reconcile response request to check the same saved answer.",
+                                }
+                              : undefined,
+                          }
+                        : undefined
+                    }
                   >
                     <NavigationButton
                       title="Open interaction step"
@@ -1067,10 +1184,12 @@ function CommonProcessController({
                       }}
                       onNavigate={navigate}
                     />
-                    <p className="wp-muted">
-                      Open the interaction step to inspect this checkpoint.
-                      Response controls are unavailable in this view.
-                    </p>
+                    {interaction.kind !== "input" && (
+                      <p className="wp-muted">
+                        Open the interaction step to inspect this checkpoint.
+                        Response controls are unavailable in this view.
+                      </p>
+                    )}
                   </CheckpointCard>
                 ))}
               </Section>

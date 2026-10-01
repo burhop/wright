@@ -1,5 +1,36 @@
 # Feature 083 progress
 
+## Latest implementation state — 2026-10-01
+
+T024 is complete: scoped native response acceptance, fresh source/input/schema/
+upstream/file inspection and backend-owned same-run continuation now use the
+existing checkpoint store, preparation, source executor, recorder and leases.
+Two supervised input barriers survive service recreation; identical responses
+do not replay model steps. Unfinished claimed segments require reconciliation.
+
+T027's declared-input controls are implemented in the public client/kit/common
+workspace view. Review/action controls and source/inspector authoring remain
+pending. T028 has stronger service/API/browser evidence, but its full two-barrier
+UI/recovery/undeclared-question coverage remains pending. T021 remains pending
+for the four older editor Run expectations. T025 and T026 are the next runtime
+work. All actual model authoring, live engineering, migration and distribution
+requirements through M5 remain in the active goal.
+
+Checked milestone: **231 backend/API tests**, **135 client/kit/component tests**,
+and **five served normal-workspace journeys** pass. Fresh production build:
+927 modules; TypeScript, generated-contract check, focused lint and whitespace
+checks pass within the recorded scope. Shared client lint excludes its two
+pre-existing intentional control-character regular expressions from the generic
+`no-control-regex` rule; their source/security behavior is preserved.
+
+[Scoped response evidence](evidence/interactions.md) and
+`artifacts/process-interfaces/083/20261001-t024-response/checked-scope.json` retain
+commands, actual run/response identities, browser build/flags and limitations.
+Browser proofs use controlled HTTP contracts; API/service models are synthetic.
+They establish no live model/MCP, engineering or user acceptance. Original ten
+prototype hashes, three protected campaign hashes, two mixed API deltas and
+approved feature context remain intact. The full goal remains active.
+
 **Date:** 2026-09-30.
 **State:** Goal submitted; implementation active on
 `codex/083-process-working-interfaces`. Planning history remains below. No physical

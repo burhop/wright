@@ -16,6 +16,7 @@ import {
   type ProcessClient,
   type Readiness,
   type StartReceipt,
+  type InteractionResponse,
 } from "@wright/process-client";
 import { CommonProcessView } from "./CommonProcessView";
 import {
@@ -109,6 +110,51 @@ const running: InteractionSnapshot = {
       enabled: true,
     },
   ],
+};
+const waitingInput: InteractionSnapshot = {
+  ...running,
+  state: "waiting_human",
+  interactions: [
+    {
+      checkpoint_id: "input-checkpoint",
+      step_id: "choose",
+      kind: "input",
+      subject_digest: hash,
+      instructions: "Choose the comparison to carry forward.",
+      state: "waiting",
+      response_schema: {
+        type: "object",
+        properties: { selection: { type: "string", enum: ["a", "b"] } },
+        required: ["selection"],
+        additionalProperties: false,
+      },
+    },
+  ],
+  actions: [
+    {
+      action_id: "respond-input",
+      operation: "respond",
+      title: "Submit response",
+      enabled: true,
+      checkpoint_id: "input-checkpoint",
+      subject_digest: hash,
+    },
+  ],
+};
+const recordedAnswer: InteractionResponse = {
+  response_id: "answer-one",
+  workspace_id: "workspace",
+  run_id: "run-one",
+  checkpoint_id: "input-checkpoint",
+  subject_digest: hash,
+  schema_digest: hash,
+  input_digest: hash,
+  value: { selection: "b" },
+  actor: "server-actor",
+  reason: "Response to declared process input",
+  request_id: "filled-by-test",
+  created_at: input.created_at,
+  digest: hash,
 };
 function fixture() {
   const client: ProcessClient = {
@@ -204,6 +250,113 @@ afterEach(() => {
 });
 
 describe("common process preparation and authority", () => {
+  it("renders only the declared form, submits its exact subject and follows the same run", async () => {
+    const { client, store } = fixture();
+    let submitted = false;
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield {
+        type: "snapshot",
+        snapshot: submitted
+          ? { ...running, state: "completed", interactions: [], actions: [] }
+          : waitingInput,
+      };
+    });
+    vi.mocked(client.respond).mockImplementation(async (request) => {
+      submitted = true;
+      return { ...recordedAnswer, request_id: request.requestId };
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    const field = await screen.findByLabelText("selection (required)");
+    expect(
+      screen.getByRole("button", { name: "Submit response" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByText("Provide the declared response before submitting."),
+    ).toBeVisible();
+    expect(client.respond).not.toHaveBeenCalled();
+    fireEvent.change(field, { target: { value: "1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Submit response" }));
+    await screen.findByText("Process completed");
+    expect(client.respond).toHaveBeenCalledTimes(1);
+    expect(client.respond).toHaveBeenCalledWith(
+      expect.objectContaining({
+        checkpointId: "input-checkpoint",
+        subjectDigest: hash,
+        value: { selection: "b" },
+        requestId: expect.any(String),
+      }),
+    );
+    expect(client.follow).toHaveBeenLastCalledWith(
+      expect.objectContaining({ runId: "run-one" }),
+    );
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it("keeps a lost acknowledgement's exact response frozen for explicit reconciliation", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield { type: "snapshot", snapshot: waitingInput };
+    });
+    vi.mocked(client.respond).mockRejectedValueOnce(
+      new ProcessClientError({
+        code: "OUTCOME_UNKNOWN",
+        message: "Response acknowledgement was lost.",
+        correction: "Reconcile the exact saved response.",
+      }),
+    );
+    vi.mocked(client.respond).mockImplementationOnce(async (request) => ({
+      ...recordedAnswer,
+      request_id: request.requestId,
+    }));
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    const field = await screen.findByLabelText("selection (required)");
+    fireEvent.change(field, { target: { value: "1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Submit response" }));
+    await screen.findByText("Response acknowledgement was lost.");
+    expect(client.respond).toHaveBeenCalledTimes(1);
+    expect(field).toBeDisabled();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Reconcile response request" }),
+    );
+    await waitFor(() => expect(client.respond).toHaveBeenCalledTimes(2));
+    expect(vi.mocked(client.respond).mock.calls[1]).toEqual(
+      vi.mocked(client.respond).mock.calls[0],
+    );
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it("preserves declared form inspection without giving read-only views response authority", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield { type: "snapshot", snapshot: waitingInput };
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        readOnly
+      />,
+    );
+    expect(await screen.findByLabelText("selection (required)")).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Submit response" }),
+    ).toBeDisabled();
+    expect(client.respond).not.toHaveBeenCalled();
+  });
   it("evaluates fresh observations at snapshot receipt without waiting for a clock tick", async () => {
     const measuredAt = Date.now();
     const clock = vi.spyOn(Date, "now").mockReturnValue(measuredAt - 2000);

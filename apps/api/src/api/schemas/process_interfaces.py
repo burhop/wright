@@ -7,6 +7,7 @@ from core.process_interactions import (
     InputBinding,
     Locator,
     NavigationTarget,
+    InlineJSON,
 )
 from core.process_validation import Contract, Digest, Identifier
 
@@ -32,6 +33,12 @@ class ProcessRunRequest(ProcessReadinessRequest):
 
 
 class ProcessCancelRequest(ProcessSourceRequest):
+    request_id: Identifier
+
+
+class ProcessInputResponseRequest(ProcessSourceRequest):
+    subject_digest: Digest
+    value: InlineJSON
     request_id: Identifier
 
 

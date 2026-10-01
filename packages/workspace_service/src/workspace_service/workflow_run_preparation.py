@@ -77,6 +77,7 @@ async def prepare_authorized_workflow_run(
     gateway,
     integration_policy_digest: str | None = None,
     input_snapshot=None,
+    run_id: str | None = None,
 ) -> PreparedWorkflowRun:
     """Public qualification and scoped integration readiness are separate gates.
 
@@ -128,7 +129,13 @@ async def prepare_authorized_workflow_run(
                 tool_runtime=open_tools() if grant["allowed_tools"] else runtime,
                 files=service.files,
             )
-        run_id = uuid4().hex
+        if run_id is None:
+            run_id = uuid4().hex
+        else:
+            from pydantic import TypeAdapter
+            from core.process_validation import Identifier
+
+            run_id = TypeAdapter(Identifier).validate_python(run_id)
         if context is not None and runtime is not None:
             from .workflow_integration_document_write import (
                 bind_integration_document_writes,

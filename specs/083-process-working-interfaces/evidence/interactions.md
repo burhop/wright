@@ -196,3 +196,136 @@ Private report: `.local-run/process-interfaces-083/t024-preservation.json`.
 No owned server was launched. No push, merge, release or physical/supplier operation
 was performed. All later UI-authoring, live engineering, migration and distribution
 requirements remain in the active goal.
+
+## 2026-10-01 — Scoped responses and supervised continuation
+
+Base commit `9ac221a0`, branch `codex/083-process-working-interfaces`, Windows,
+Python 3.13.5, Node 25.2.0, system Chrome. **T024 is complete.** T027/T028 remain
+open for review/action controls, authoring and their full recovery/policy proofs.
+
+### Implemented authority and currentness
+
+- `POST /api/workspace/process-interfaces/interactions/{checkpoint_id}/response`
+  accepts the existing source/session scope, exact subject, bounded typed value
+  and request identity. Run and actor come from authorized context/checkpoint.
+  Caller-supplied actor, run, reason, destination or integration-test authority is
+  rejected. Existing role checks run before workspace resolution.
+- The supervisor freshly prepares the accepted source with its retained input
+  overlay and original run ID. Inspection verifies the exact declaration,
+  connected upstream values, result/file inventory, actual file hashes and
+  execution policy before an answer is accepted/consumed. Incomplete retained
+  inventories cannot skip evidence hashing. Reading a pending input performs
+  qualification only: it invokes no model and cannot accept/consume a response.
+- The atomic answer is consumed, then an owned task invokes the existing source
+  executor and `record_workflow_resume` on the same record. There is no suspension
+  between consumption and retaining that task. Recorder claims precede effects.
+  The observer lifetime remains separate; closing/disconnecting never cancels.
+- Concurrent identical requests, completed retries and service recreation retain
+  one immutable answer. An accepted/consumed response without an execution claim
+  can finish its handoff after reopen; an unfinished claimed segment is unknown
+  and cannot be replayed. Different values/actors/request identities conflict.
+  Existing v2/v3 approval and 082 preparation/review regressions remain passing.
+- Recorded projection exposes only the declared response schema, exact evidence,
+  checkpoint and subject. Changed/expired evidence disables the action with a
+  correction. Read-only capability scopes cannot respond.
+
+### Implemented input controls
+
+The public native client checks request bounds and acknowledgement identity/value,
+retains uncertainty on a lost acknowledgement, and never retries automatically.
+The shared `CheckpointCard.response` uses the existing schema editor and permitted
+actions. The common view sends explicit responses, follows the same run and keeps
+an uncertain answer frozen for explicit same-request reconciliation. Missing values
+explain what to provide. Read-only, stale, busy and consumed controls stay disabled.
+This milestone implements input controls; review/action controls remain pending.
+Broader reload/tailored-host response recovery is still part of T028.
+
+### Backend/API verification
+
+Root command, with a new writable temp directory for reproduction:
+
+```powershell
+.venv/Scripts/python.exe -m pytest -q -rs -p no:cacheprovider --basetemp C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t024-response-final packages/workspace_service/tests/test_process_input_supervision.py packages/workspace_service/tests/test_process_interface_continuation.py packages/workspace_service/tests/test_workflow_execution_continuation.py packages/workspace_service/tests/test_workflow_external_action_execution.py packages/workspace_service/tests/test_workflow_source_execution.py packages/workspace_service/tests/test_process_human_input_source.py packages/workspace_service/tests/test_process_run_supervisor.py packages/workspace_service/tests/test_workflow_approval_execution.py packages/workspace_service/tests/test_workflow_approval_resume.py packages/workspace_service/tests/test_workflow_approval_review_settings.py packages/workspace_service/tests/test_process_approval_inspection.py packages/workspace_service/tests/test_process_input_execution_overlay.py packages/workspace_service/tests/test_process_preparation_service.py packages/data_vault/tests/test_workflow_continuation_repository.py packages/data_vault/tests/test_process_interface_migrations.py apps/api/tests/test_process_interface_checkpoints.py apps/api/tests/test_process_interfaces_api.py apps/api/tests/test_process_interface_run_lifecycle.py
+```
+
+**231 passed, no skips, 96.76 s**, with two existing TestClient dependency
+deprecations. Private log: `.local-run/process-interfaces-083/t024-response-final.log`.
+Final focused inspection rerun follows the last defensive dictionary guard;
+its exact output is `.local-run/process-interfaces-083/t024-response-inspection-final.log`.
+
+Actual run `f93dc4dbe28449be85f521414306cb91` completes two supervised input barriers
+with service recreation and three total synthetic model calls. Checkpoints are
+`checkpoint-1c2b5ec1c8dcf8486fd879ed` and `checkpoint-cef2e51f8434995dbb1a6db4`.
+The checked-scope artifact retains both subject/answer hashes and claims, plus
+lost-ack, interrupted-claim and unclaimed-handoff examples. These tests exercise
+real source storage, SQLite, executor and recorder. Models and input actors are
+controlled fixtures. Ordinary API responses correctly retain server-derived actor
+and `integration_test=false`; those transport fixtures are not live proof-policy
+decisions or human engineering acceptance. The earlier expressly labelled internal
+integration fixtures remain separate.
+
+### Client/kit and served browser verification
+
+From `apps/web`:
+
+```powershell
+node ../../node_modules/vitest/vitest.mjs run src/services/process-client.spec.ts src/components/process-interfaces/CommonProcessView.spec.tsx src/components/common/ProcessUIKit.spec.tsx --reporter=json --outputFile=D:/repos/wright/.local-run/process-interfaces-083/t027-input-kit-final.json
+```
+
+**135 passed**, no failed or pending tests. Backend/API/client schema guards,
+read-only forms, explicit response, same-run follow and exact lost-ack retry pass.
+TypeScript passes for client, kit and application. Contract generator `--check`
+matches core. Focused Ruff/ESLint and `git diff --check` pass. For the shared
+client, ESLint uses `--rule 'no-control-regex:off'` for its two pre-existing
+intentional control-byte exclusion expressions; neither expression was changed.
+
+Owned Vite source server: `127.0.0.1:5239`, recovery/definition/composer flags all
+`1`; installed Chrome is selected by the private system-browser configuration.
+
+```powershell
+$env:PLAYWRIGHT_BASE_URL='http://127.0.0.1:5239'
+$env:WRIGHT_PLAYWRIGHT_OUTPUT_DIR='D:/repos/wright/artifacts/process-interfaces/083/20261001-t027-input-browser-final'
+$env:PLAYWRIGHT_JSON_OUTPUT_FILE='D:/repos/wright/.local-run/process-interfaces-083/t027-input-browser-final.json'
+node node_modules/@playwright/test/cli.js test tests/ui-integration/process-declared-interactions.spec.ts tests/ui-integration/process-common-view.spec.ts --config .local-run/process-interfaces-083/playwright-system-chrome.config.ts --project chromium --workers 1 --global-timeout 120000 --reporter json
+```
+
+**Five passed, no skips/flakes, 27.0 s**, through the normal workspace Workflow
+entry and document tabs. Existing common-view source-draft preservation,
+input/readiness/start/follow/exact evidence and lost-start reload journeys pass.
+Declared source edit/save/reopen still preserves its schema. New input journeys
+close/reopen a waiting tab without start/cancel effects, show only the declared
+form, and explicitly submit/reconcile the same exact subject/run. Final screenshots
+are at 1440×1000 for the input controls and include explicit no-alert assertions.
+The reporter's retained scope contains Chrome version, URL, process identity,
+fixture run/subject, counts and viewport. These are served frontend/controlled HTTP
+proofs; real API behavior is covered separately by TestClient, not this browser.
+
+Initial service fixtures lacked the actual file-hash port and a committed source
+head; they were corrected to use the source store and real file identity service.
+Initial API assertions assumed FastAPI's default error envelope rather than
+Wright's owning handler; final assertions use its actionable structured envelope.
+The first browser run passed assertions but visual inspection revealed a malformed
+fixture SSE frame (missing cursor ID) and cropped form. The fixture now has valid
+cursor frames, a realistic larger viewport and clean-view assertions. A misleading
+missing-value button reason was also corrected. Preliminary outputs are private
+diagnostics, not final evidence.
+
+Fresh production build command:
+`npm run build --workspace apps/web -- --outDir D:/repos/wright/.local-run/process-interfaces-083/t027-input-production-final`.
+**927 modules**, TypeScript and build pass with the existing large-chunk notice.
+Its hashes are retained; browsers served the Vite source build, not those assets.
+
+### Preservation and remaining scope
+
+`artifacts/process-interfaces/083/20261001-t024-response/checked-scope.json`
+retains exact run/response/claim, test/browser/build scope and preservation.
+Ten original prototype hashes, three protected campaign hashes, two original mixed
+API deltas and approved 083 HEAD context match. The initial 082 feature-pointer
+hash is historical; approved T001 activation is checked against current HEAD.
+No protected campaign was resumed or modified. No push/merge/release, physical or
+supplier operation occurred. The owned source server is stopped after these checks.
+
+T025/T026 policy/neutral operation work, full T027/T028 review/action/recovery,
+actual default-model UI authoring, both live digital engineering demonstrations,
+vendor migration and installed-native/Docker proof remain required. This milestone
+does not establish live default-model/MCP behavior, engineering or user acceptance.

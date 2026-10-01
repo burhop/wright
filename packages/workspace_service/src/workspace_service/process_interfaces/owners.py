@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pydantic import ValidationError
 
 from core.process_interactions import (
+    PAGE_ITEMS,
     Action,
     ArtifactRef,
     Observation,
@@ -39,6 +40,119 @@ def _blocked(code, message, correction):
         message=redact_text(message)[:8192],
         correction=redact_text(correction)[:8192],
     )
+
+
+async def _human_input(app, resolved, view, *, gateway, session_id):
+    """Present the retained declaration; qualify permission without releasing it."""
+    from .interactions import input_subject, prepare_input_continuation
+
+    reference = view.get("input_checkpoint")
+    if not reference:
+        return (), ()
+    checkpoint = app.human_inputs.get(
+        reference.get("checkpoint_id"),
+        workspace_id=resolved.process.workspace_id,
+        run_id=view["run_id"],
+    )
+    if (
+        checkpoint.workflow_id != resolved.process.source_path
+        or checkpoint.subject_digest != reference.get("subject_digest")
+        or checkpoint.subject.get("definition_digest") != view["source_digest"]
+    ):
+        raise ProcessInterfaceError(
+            "SCOPE_DENIED",
+            "The declared input belongs to another process revision or run.",
+            "Open the exact saved run and its declared checkpoint.",
+        )
+    declaration = input_subject(checkpoint.subject).declaration
+    evidence = tuple(
+        ArtifactRef(artifact_ref=path, sha256=digest)
+        for path, digest in sorted(
+            {
+                (item["path"], item["sha256"])
+                for item in checkpoint.continuation["artifact_files"]
+            }
+        )
+    )
+    if len(evidence) > PAGE_ITEMS:
+        raise ProcessInterfaceError(
+            "READINESS_UNSUPPORTED",
+            "This input checkpoint exceeds the bounded evidence composition size.",
+            "Inspect every artifact in the canonical run and reduce the declared checkpoint's evidence scope.",
+        )
+    reason = None
+    enabled = (
+        view["status"] == "waiting_human"
+        and checkpoint.state == "pending"
+        and checkpoint.continuation.get("response_id") is None
+        and not app.runs.is_live(view["run_id"])
+    )
+    if checkpoint.state == "pending":
+
+        def available_gateway():
+            if gateway is None:
+                raise ProcessInterfaceError(
+                    "CAPABILITY_UNAVAILABLE",
+                    "The configured process tools are unavailable.",
+                    "Reconnect the required providers before continuing.",
+                )
+            return gateway() if callable(gateway) else gateway
+
+        try:
+            prepared = await prepare_input_continuation(
+                app,
+                resolved,
+                checkpoint,
+                gateway=available_gateway,
+                session_id=session_id,
+            )
+            if prepared.runtime is not None:
+                await prepared.runtime.close()
+        except ProcessInterfaceError as error:
+            reason = error.reason
+            enabled = False
+    state = (
+        "stale"
+        if checkpoint.state in {"expired", "stale"}
+        or reason
+        and reason.code in {"SUBJECT_STALE", "SOURCE_CHANGED"}
+        else "consumed"
+        if checkpoint.state == "consumed"
+        else "cancelled"
+        if checkpoint.state == "cancelled"
+        else "responded"
+        if checkpoint.continuation.get("response_id") is not None
+        else "waiting"
+    )
+    interaction = PendingInteraction(
+        checkpoint_id=checkpoint.checkpoint_id,
+        step_id=checkpoint.step_id,
+        kind="input",
+        subject_digest=checkpoint.subject_digest,
+        instructions=redact_text(declaration.instructions),
+        response_schema=declaration.response_schema,
+        evidence=evidence,
+        state=state,
+    )
+    action = Action(
+        action_id=f"respond-{checkpoint.checkpoint_id}",
+        operation="respond",
+        title="Submit response",
+        subject_digest=checkpoint.subject_digest,
+        checkpoint_id=checkpoint.checkpoint_id,
+        enabled=enabled,
+        reasons=()
+        if enabled
+        else (
+            reason
+            or _blocked(
+                "ACTION_NOT_PERMITTED",
+                "This run is not waiting for a new response to this input.",
+                "Follow the recorded run; reconcile a saved response instead of submitting another answer.",
+            ),
+        ),
+    )
+    return (interaction,), (action,)
 
 
 async def _approval(app, resolved, view, *, gateway, session_id):
@@ -305,6 +419,9 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
     approval, action_permissions = await _approval(
         app, resolved, view, gateway=gateway, session_id=session_id
     )
+    human_input, response_permissions = await _human_input(
+        app, resolved, view, gateway=gateway, session_id=session_id
+    )
     review, review_permissions = await _review(app, resolved, view)
     reports = await asyncio.to_thread(_reports, app, resolved, run_id)
     execution = view["execution"]
@@ -367,8 +484,11 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             results_truncated=bool(execution["truncated"]),
         ),
         reports=reports,
-        interactions=approval + review,
-        actions=action_permissions + review_permissions + (cancel_action,),
+        interactions=approval + review + human_input,
+        actions=action_permissions
+        + review_permissions
+        + response_permissions
+        + (cancel_action,),
         observations=observations
         + project_operation_observations(execution, generated_at),
     )

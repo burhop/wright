@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import secrets
 import time
 import json
+from dataclasses import asdict
 
 from pydantic import Field, field_validator
 
@@ -81,6 +82,72 @@ def _unavailable(message, *, code="SUBJECT_STALE"):
         message,
         "Reopen the saved run and inspect the declared input and its evidence.",
     )
+
+
+async def prepare_input_continuation(
+    app, resolved, checkpoint, *, gateway=None, session_id=""
+):
+    """Qualify current source/input/provider/evidence with the existing preparation.
+
+    The returned capsule owns an opened runtime. Caller closes it or transfers it
+    to the run supervisor. Read/inspection invokes no model or provider mutation.
+    """
+    from ..workflow_run_preparation import prepare_authorized_workflow_run
+    from ..workflow_execution_continuation import inspect_input_continuation
+    from ..workflow_source_execution import WorkflowSourceExecutionError
+
+    frozen = app._input_snapshot(
+        resolved.process, checkpoint.continuation["input_snapshot_id"]
+    )
+    context = checkpoint.continuation.get("execution_context")
+    prepared = None
+    try:
+        prepared = await prepare_authorized_workflow_run(
+            service=app.workspace,
+            workspace_dir=resolved.workspace_dir,
+            workspace_id=resolved.process.workspace_id,
+            session_id=session_id,
+            source_path=resolved.process.source_path,
+            source_digest=resolved.process.source_digest,
+            input_snapshot=frozen,
+            gateway=gateway,
+            integration_policy_digest=(context or {}).get("integration_policy_digest"),
+            run_id=checkpoint.run_id,
+        )
+        if prepared.execution_context != context:
+            raise _unavailable(
+                "The saved input continuation's execution policy changed."
+            )
+        if (
+            checkpoint.expires_at is not None
+            and checkpoint.expires_at <= int(time.time())
+            and checkpoint.state == "pending"
+        ):
+            raise _unavailable("The declared input checkpoint expired.")
+        await inspect_input_continuation(
+            state=checkpoint.continuation,
+            checkpoint=asdict(checkpoint),
+            plan=prepared.plan,
+            input_values=prepared.values,
+            service=app.workspace,
+            workspace_dir=resolved.workspace_dir,
+        )
+        return prepared
+    except BaseException as error:
+        if prepared is not None and prepared.runtime is not None:
+            await prepared.runtime.close()
+        if isinstance(error, WorkflowSourceExecutionError):
+            raise ProcessInterfaceError(
+                "SOURCE_CHANGED"
+                if error.code == "WORKFLOW_SOURCE_CONFLICT"
+                else "SUBJECT_STALE"
+                if error.code == "WORKFLOW_CONTINUATION_STALE"
+                else "CAPABILITY_UNAVAILABLE",
+                str(error),
+                error.correction,
+                details={"source_code": error.code},
+            ) from error
+        raise
 
 
 class HumanInputCheckpointService:

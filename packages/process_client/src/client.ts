@@ -158,6 +158,27 @@ function scopedProcess(expected: ProcessRef, actual: ProcessRef): void {
   }
 }
 
+function sameJson(expected: JsonValue, actual: JsonValue): boolean {
+  if (expected === actual) return true;
+  if (
+    expected === null ||
+    actual === null ||
+    typeof expected !== "object" ||
+    typeof actual !== "object"
+  )
+    return false;
+  if (Array.isArray(expected) !== Array.isArray(actual)) return false;
+  const a = Object.entries(expected).sort(([x], [y]) => x.localeCompare(y));
+  const b = Object.entries(actual).sort(([x], [y]) => x.localeCompare(y));
+  return (
+    a.length === b.length &&
+    a.every(
+      ([key, value], index) =>
+        key === b[index][0] && sameJson(value, b[index][1]),
+    )
+  );
+}
+
 function scopedRun(
   expected: string | undefined,
   actual: string | null | undefined,
@@ -811,14 +832,43 @@ export function createNativeProcessClient(
     },
     attach: (runId: string, read: ReadOptions = {}) =>
       getSnapshot({ runId, signal: read.signal }),
-    // These categories are part of the public contract. Their backend routes and
-    // scoped presentation transport are implemented by subsequent feature tasks.
     async respond(
-      _request: ResponseRequest,
-      _read?: ReadOptions,
+      response: ResponseRequest,
+      read: ReadOptions = {},
     ): Promise<InteractionResponse> {
-      return unavailable("declared input responses");
+      const checkpointId = identifier(response.checkpointId, "checkpoint ID");
+      const requestId = identifier(response.requestId, "request ID");
+      const subjectDigest = response.subjectDigest;
+      if (
+        typeof subjectDigest !== "string" ||
+        !/^[a-f0-9]{64}$/.test(subjectDigest)
+      )
+        throw clientError(
+          "RESPONSE_INVALID",
+          "Choose the exact current input subject.",
+          "Refresh the run's declared input before responding.",
+        );
+      checkJson(response.value);
+      // Freeze the request value before crossing the asynchronous transport.
+      const value = JSON.parse(JSON.stringify(response.value)) as JsonValue;
+      const reply = await request(
+        `/interactions/${encodeURIComponent(checkpointId)}/response`,
+        "InteractionResponse",
+        read,
+        { subject_digest: subjectDigest, value, request_id: requestId },
+        requestId,
+      );
+      if (
+        reply.workspace_id !== process.workspace_id ||
+        reply.checkpoint_id !== checkpointId ||
+        reply.subject_digest !== subjectDigest ||
+        reply.request_id !== requestId ||
+        !sameJson(value, reply.value)
+      )
+        throw unknownOutcome(requestId);
+      return reply;
     },
+    // Review/action transports are supplied by subsequent feature tasks.
     async decide(
       _request: DecisionRequest,
       _read?: ReadOptions,

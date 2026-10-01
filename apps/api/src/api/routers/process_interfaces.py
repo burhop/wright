@@ -33,6 +33,7 @@ from api.schemas.process_interfaces import (
     ProcessCancelRequest,
     ProcessRepresentationRequest,
     ProcessNavigationRequest,
+    ProcessInputResponseRequest,
 )
 from core.process_interactions import (
     InputSnapshot,
@@ -44,6 +45,7 @@ from core.process_interactions import (
     ProcessCancellationReceipt,
     ArtifactRef,
     NavigationResolution,
+    InteractionResponse,
 )
 from core.process_validation import Digest, Identifier
 from core.tracing import traced
@@ -69,6 +71,7 @@ def _native_context(request, service, session_id, path, digest):
                 "process.results",
                 "process.navigate",
                 "process.start",
+                "process.respond",
                 "process.cancel",
             }
         ),
@@ -313,6 +316,40 @@ async def start_process_run(
             gateway=getattr(request.app.state, "gateway_service", None),
             session_id=body.session_id,
             integration_policy_digest=body.integration_policy_digest,
+        )
+    except ProcessInterfaceError as error:
+        raise _transport_error(error) from error
+
+
+@router.post(
+    "/interactions/{checkpoint_id}/response",
+    response_model=InteractionResponse,
+    status_code=202,
+)
+@traced("api.process.interface.respond")
+async def respond_to_process_input(
+    checkpoint_id: Identifier,
+    body: ProcessInputResponseRequest,
+    request: Request,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    response.headers["Cache-Control"] = "no-store"
+    application, scope, process = _native_context(
+        request, service, body.session_id, body.path, body.expected_storage_digest
+    )
+    try:
+        return await application.runs.respond(
+            scope,
+            process,
+            checkpoint_id,
+            body.request_id,
+            expected_subject_digest=body.subject_digest,
+            value=body.value,
+            response_generator=generate_workflow_response,
+            action_generator=decide_workflow_tool_action,
+            gateway=getattr(request.app.state, "gateway_service", None),
+            session_id=body.session_id,
         )
     except ProcessInterfaceError as error:
         raise _transport_error(error) from error

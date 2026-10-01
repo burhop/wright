@@ -9,6 +9,7 @@ import {
   type InputSnapshot,
   type InteractionSnapshot,
   type StartReceipt,
+  type InteractionResponse,
 } from "@wright/process-client";
 
 const digest = "a".repeat(64);
@@ -40,6 +41,21 @@ const receipt: StartReceipt = {
   payload_digest: digest,
   principal_id: "server-derived",
   created_at: input.created_at,
+};
+const answer: InteractionResponse = {
+  response_id: "answer-one",
+  workspace_id: process.workspace_id,
+  run_id: "run-one",
+  checkpoint_id: "checkpoint-one",
+  subject_digest: digest,
+  schema_digest: digest,
+  input_digest: digest,
+  value: { selection: "b" },
+  actor: "server-derived",
+  reason: "Response to declared process input",
+  request_id: "response-one",
+  created_at: input.created_at,
+  digest,
 };
 const json = (value: unknown, status = 200) =>
   new Response(JSON.stringify(value), {
@@ -78,6 +94,86 @@ function stream(chunks: string[]) {
 }
 
 describe("public process contract guards", () => {
+  it("submits only the declared response and scopes the retained acknowledgement", async () => {
+    const fetch = fake(async () => json(answer, 202));
+    const scoped = client(fetch);
+    expect(
+      await scoped.respond({
+        checkpointId: answer.checkpoint_id,
+        subjectDigest: digest,
+        value: answer.value,
+        requestId: answer.request_id,
+      }),
+    ).toEqual(answer);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch.mock.calls[0][0]).toBe(
+      "/api/workspace/process-interfaces/interactions/checkpoint-one/response",
+    );
+    expect(JSON.parse(String(fetch.mock.calls[0][1]?.body))).toEqual({
+      session_id: "session",
+      path: process.source_path,
+      expected_storage_digest: digest,
+      subject_digest: digest,
+      value: answer.value,
+      request_id: answer.request_id,
+    });
+  });
+  it.each([
+    { workspace_id: "foreign" },
+    { checkpoint_id: "other" },
+    { subject_digest: "b".repeat(64) },
+    { request_id: "different-request" },
+    { value: { selection: "a" } },
+  ])(
+    "retains uncertainty when the response acknowledgement changes its subject: %j",
+    async (changes) => {
+      await expect(
+        client(fake(async () => json({ ...answer, ...changes }))).respond({
+          checkpointId: answer.checkpoint_id,
+          subjectDigest: digest,
+          value: answer.value,
+          requestId: answer.request_id,
+        }),
+      ).rejects.toMatchObject({
+        uncertain: true,
+        requestId: answer.request_id,
+      });
+    },
+  );
+  it("does not automatically replay a response after a lost acknowledgement", async () => {
+    const fetch = fake(async () => {
+      throw new Error("Disconnected after submit");
+    });
+    await expect(
+      client(fetch).respond({
+        checkpointId: answer.checkpoint_id,
+        subjectDigest: digest,
+        value: answer.value,
+        requestId: answer.request_id,
+      }),
+    ).rejects.toMatchObject({ uncertain: true, requestId: answer.request_id });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it("rejects invalid response IDs, subject and nonfinite values before transport", async () => {
+    const fetch = fake(async () => json(answer));
+    for (const changes of [
+      { checkpointId: "" },
+      { subjectDigest: "invalid" },
+      { requestId: "" },
+      { value: Number.NaN },
+    ]) {
+      await expect(
+        client(fetch).respond({
+          checkpointId: answer.checkpoint_id,
+          subjectDigest: digest,
+          value: answer.value,
+          requestId: answer.request_id,
+          ...changes,
+        }),
+      ).rejects.toBeInstanceOf(ProcessClientError);
+    }
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it("requires a discriminator in owning tagged input unions", () => {
     expect(() =>
       assertContract("InputSnapshot", {
@@ -374,10 +470,11 @@ describe("native process client", () => {
     const fetch = fake(async () => json(snapshot()));
     const scoped = client(fetch);
     await expect(
-      scoped.respond({
+      scoped.decide({
         checkpointId: "cp",
+        decision: "approved",
+        reason: "Review",
         subjectDigest: digest,
-        value: {},
         requestId: "response",
       }),
     ).rejects.toMatchObject({ reason: { code: "CAPABILITY_UNAVAILABLE" } });
