@@ -1,8 +1,7 @@
 """Canonical approval decisions and durable, same-run continuation dispatch.
 
-Only the fixed local review and enrolled integration handoff operations execute
-here. Other external transports need their own authorized dispatcher; no tool or
-network destination is inferred from a user-authored checkpoint.
+Fixed local review, enrolled test handoff and qualified approved MCP operations
+reuse one-shot consumption. No transport is inferred from a tool name or prose.
 """
 
 from dataclasses import asdict, dataclass
@@ -32,7 +31,7 @@ from .workflow_source_execution import (
     WorkflowSourceExecutionError,
     prepare_prompt_workflow,
     execute_prompt_workflow,
-    _approval_settings,
+    _resolved_approval_settings,
     _error,
 )
 from .workspace_path import WorkspacePath
@@ -136,6 +135,15 @@ async def _prepare(
         )
         state = checkpoint.continuation
         cursor = state.get("next_step_index")
+        settings = None
+        if type(cursor) is int and 0 <= cursor < len(plan.steps):
+            settings = await _resolved_approval_settings(
+                pending_action=plan.steps[cursor],
+                plan=plan,
+                workspace_dir=workspace_dir,
+                service=service,
+                continuation=state,
+            )
         if (
             type(cursor) is not int
             or not 0 <= cursor < len(plan.steps)
@@ -148,12 +156,7 @@ async def _prepare(
                 checkpoint.subject.get(key) != plan.steps[cursor].external_action[key]
                 for key in ("binding", "destination", "action")
             )
-            or checkpoint.subject.get("settings")
-            != _approval_settings(
-                pending_action=plan.steps[cursor],
-                plan=plan,
-                workspace_dir=workspace_dir,
-            )
+            or checkpoint.subject.get("settings") != settings
         ):
             raise WorkflowExternalActionError(
                 "approval_stale", "The canonical inputs or approval action changed"
@@ -352,6 +355,8 @@ def _dispatch_kind(checkpoint, context):
         # authorize() has checked the exact enrolled test URI and confined
         # receipt path against every canonical action immediately before this.
         return "test_handoff"
+    if checkpoint.action_kind == "mcp-operation":
+        return "mcp-operation"
     raise _error(
         "WORKFLOW_EXTERNAL_DISPATCH_UNSUPPORTED",
         "This canonical external action has no supported authorized dispatcher.",
@@ -418,6 +423,101 @@ async def _dispatch(*, service, workspace_dir, checkpoint, kind, context):
     }
 
 
+async def _save_operation_receipt(*, service, workspace_dir, checkpoint, evidence):
+    """Publish a confined actual receipt using existing indexed artifact storage."""
+    relative = checkpoint.subject["settings"]["receipt_path"]
+    WorkspacePath(workspace_dir).resolve(relative)
+    receipt = {
+        "schema_version": 1,
+        "checkpoint_id": checkpoint.checkpoint_id,
+        "subject_digest": checkpoint.subject_digest,
+        "run_id": checkpoint.run_id,
+        "action_id": checkpoint.external_action["action_id"],
+        **{
+            key: value for key, value in evidence.items() if key != "delivery_completed"
+        },
+    }
+    text = json.dumps(receipt, ensure_ascii=False, indent=2, allow_nan=False)
+    actual = await service.files.write_generated(
+        workspace_dir, relative, text, "indexed"
+    )
+    if actual != relative:
+        raise _error(
+            "WORKFLOW_RECEIPT_COLLISION",
+            "The operation receipt path was occupied.",
+            "Reconcile the existing operation; it cannot be replayed.",
+        )
+    raw = text.encode("utf-8")
+    if await service.files.read_reference(workspace_dir, actual) != raw:
+        raise _error(
+            "WORKFLOW_RECEIPT_CHANGED",
+            "The operation receipt did not retain its bytes.",
+            "Inspect the stored receipt before continuing.",
+        )
+    return {
+        **evidence,
+        "produced_files": [
+            {
+                "output_path": actual,
+                "output_bytes": len(raw),
+                "sha256": hashlib.sha256(raw).hexdigest(),
+                "output_format": "json",
+                "output_port": "receipt",
+            }
+        ],
+    }
+
+
+def _operation_dispatch_check(checkpoint, workspace_dir, runtime=None, step=None):
+    """Use Gateway's existing final dispatch hook for exact file/tool freshness."""
+    from .workflow_mcp_execution import schema_digest
+
+    def check(tool):
+        if runtime is not None:
+            from .workflow_mcp_operations import qualify_operation
+
+            qualify_operation(
+                runtime,
+                step,
+                integration=bool(checkpoint.continuation.get("execution_context")),
+            )
+        binding = checkpoint.subject["binding"]
+        if (tool.server_id, tool.name, schema_digest(tool)) != (
+            binding["server"],
+            binding["tool"],
+            binding["schema"],
+        ):
+            raise _error(
+                "WORKFLOW_CONTINUATION_STALE",
+                "The approved provider changed before dispatch.",
+                "Reconcile this action before preparing another submission.",
+            )
+        files = [
+            {
+                "path": checkpoint.workflow_id,
+                "sha256": checkpoint.subject["definition_digest"],
+            },
+            *checkpoint.continuation.get("input_files", []),
+            *checkpoint.continuation.get("artifact_files", []),
+        ]
+        paths = WorkspacePath(workspace_dir)
+        try:
+            for item in files:
+                target = paths.resolve(item["path"], must_exist=True)
+                with target.open("rb") as stream:
+                    current = hashlib.file_digest(stream, "sha256").hexdigest()
+                if current != item["sha256"]:
+                    raise ValueError("Identity mismatch")
+        except (OSError, ValueError) as error:
+            raise _error(
+                "WORKFLOW_CONTINUATION_STALE",
+                "An approved file changed before dispatch.",
+                "Inspect the exact saved action; it has not been replayed.",
+            ) from error
+
+    return check
+
+
 async def resume_workflow_approval(
     *,
     service,
@@ -444,15 +544,31 @@ async def resume_workflow_approval(
         )
         try:
             kind = _dispatch_kind(current, context)
+            operation = None
+            if kind == "mcp-operation":
+                from .workflow_mcp_operations import qualify_operation
+
+                operation = qualify_operation(
+                    runtime,
+                    plan.steps[current.continuation["next_step_index"]],
+                    integration=bool(context),
+                )
             if current.state == "consumed":
-                if (current.external_action or {}).get("outcome") != "dispatched":
+                prior = current.external_action or {}
+                if prior.get("outcome") != "dispatched" or (
+                    kind == "mcp-operation"
+                    and not prior.get("evidence", {}).get("delivery_completed")
+                ):
                     raise _error(
                         "WORKFLOW_CONTINUATION_OUTCOME_UNKNOWN",
                         "The consumed action has no confirmed completed outcome.",
                         "Reconcile its existing evidence; do not dispatch it again.",
                     )
             else:
-                if kind == "test_handoff":
+                if kind == "test_handoff" or (
+                    kind == "mcp-operation"
+                    and current.subject["settings"].get("receipt_path")
+                ):
                     receipt = WorkspacePath(workspace_dir).resolve(
                         current.subject["settings"]["receipt_path"]
                     )
@@ -475,21 +591,47 @@ async def resume_workflow_approval(
                         checkpoint=current,
                         kind="external_action_authorized",
                     )
-                    evidence = await _dispatch(
-                        service=service,
-                        workspace_dir=workspace_dir,
-                        checkpoint=current,
-                        kind=kind,
-                        context=context,
-                    )
+                    if kind == "mcp-operation":
+                        from .workflow_mcp_operations import submit_operation
+
+                        invocation, profile, monitor_profile, monitor_bindings = (
+                            operation
+                        )
+                        submitted, evidence = await submit_operation(
+                            runtime,
+                            invocation,
+                            plan.steps[current.continuation["next_step_index"]],
+                            current.subject["settings"],
+                            profile,
+                            integration=bool(context),
+                            before_dispatch=_operation_dispatch_check(
+                                current,
+                                workspace_dir,
+                                runtime,
+                                plan.steps[current.continuation["next_step_index"]],
+                            ),
+                        )
+                    else:
+                        evidence = await _dispatch(
+                            service=service,
+                            workspace_dir=workspace_dir,
+                            checkpoint=current,
+                            kind=kind,
+                            context=context,
+                        )
                 except BaseException as error:
+                    from .workflow_mcp_operations import OperationRejected
+
+                    rejected = isinstance(error, OperationRejected)
                     current = service.workflow_external_actions.reconcile(
                         current.checkpoint_id,
                         workspace_id=workspace_id,
                         run_id=current.run_id,
                         expected_subject_digest=current.subject_digest,
-                        outcome="outcome_unknown",
-                        evidence={
+                        outcome="not_dispatched" if rejected else "outcome_unknown",
+                        evidence=error.evidence
+                        if rejected
+                        else {
                             "dispatch_error_type": type(error).__name__,
                             "replay_permitted": False,
                         },
@@ -502,6 +644,20 @@ async def resume_workflow_approval(
                             kind="external_action_reconciled",
                         )
                     )
+                    if rejected:
+                        raise _error(
+                            "WORKFLOW_MCP_OPERATION_REJECTED",
+                            "The provider rejected the reviewed submission.",
+                            "Inspect its recorded rejection and correct the configuration before preparing a new action.",
+                        ) from error
+                    if kind == "mcp-operation" and not isinstance(
+                        error, asyncio.CancelledError
+                    ):
+                        raise _error(
+                            "WORKFLOW_CONTINUATION_OUTCOME_UNKNOWN",
+                            "The provider submission could not be confirmed.",
+                            "Reconcile the existing action before another submission; it has not been replayed.",
+                        ) from error
                     raise
                 current = service.workflow_external_actions.reconcile(
                     current.checkpoint_id,
@@ -517,6 +673,106 @@ async def resume_workflow_approval(
                     checkpoint=current,
                     kind="external_action_reconciled",
                 )
+                if kind == "mcp-operation":
+                    # Persist acceptance before observation. A monitor failure
+                    # cannot erase the receipt or authorize another submission.
+                    last_observation = {}
+                    cancellation_requested = False
+
+                    async def operation_event(event_kind, **data):
+                        nonlocal last_observation, cancellation_requested
+                        if event_kind != "operation_progress":
+                            raise ValueError("Unexpected approved operation event")
+                        last_observation = data
+                        cancellation_requested |= (
+                            data.get("state") == "cancellation_requested"
+                        )
+                        await record_workflow_approval_transition(
+                            service=service,
+                            workspace_dir=workspace_dir,
+                            checkpoint=current,
+                            kind=event_kind,
+                            operation_event=data,
+                        )
+                        if on_event:
+                            await on_event({"kind": event_kind, **data})
+
+                    try:
+                        if monitor_profile is not None:
+                            from .workflow_async_operations import monitor_operation
+
+                            await monitor_operation(
+                                runtime,
+                                invocation,
+                                submitted,
+                                monitor_profile,
+                                operation_event,
+                                pinned_tools=monitor_bindings,
+                            )
+                            evidence = {**evidence, "observed_outcome": "completed"}
+                        if current.subject["settings"].get("receipt_path"):
+                            evidence = await _save_operation_receipt(
+                                service=service,
+                                workspace_dir=workspace_dir,
+                                checkpoint=current,
+                                evidence=evidence,
+                            )
+                        evidence = {**evidence, "delivery_completed": True}
+                    except BaseException as error:
+                        actual = {
+                            "APPLICATION_FAILED": "failed",
+                            "APPLICATION_CANCELLED": "cancelled",
+                            "APPLICATION_INPUT_REQUIRED": "input_required",
+                        }.get(getattr(error, "code", None), "unknown")
+                        if last_observation.get(
+                            "observation_source"
+                        ) == "provider_status" and last_observation.get("state") in {
+                            "completed",
+                            "failed",
+                            "cancelled",
+                        }:
+                            actual = last_observation["state"]
+                        evidence = {
+                            **evidence,
+                            "delivery_completed": False,
+                            "observation_error_type": type(error).__name__,
+                            "observed_outcome": actual,
+                            "cancellation_requested": cancellation_requested,
+                            "cancellation_outcome": actual
+                            if cancellation_requested
+                            else None,
+                        }
+                        current = service.workflow_external_actions.reconcile(
+                            current.checkpoint_id,
+                            workspace_id=workspace_id,
+                            run_id=current.run_id,
+                            expected_subject_digest=current.subject_digest,
+                            outcome="dispatched",
+                            evidence=evidence,
+                        )
+                        await asyncio.shield(
+                            record_workflow_approval_transition(
+                                service=service,
+                                workspace_dir=workspace_dir,
+                                checkpoint=current,
+                                kind="external_action_reconciled",
+                            )
+                        )
+                        raise
+                    current = service.workflow_external_actions.reconcile(
+                        current.checkpoint_id,
+                        workspace_id=workspace_id,
+                        run_id=current.run_id,
+                        expected_subject_digest=current.subject_digest,
+                        outcome="dispatched",
+                        evidence=evidence,
+                    )
+                    await record_workflow_approval_transition(
+                        service=service,
+                        workspace_dir=workspace_dir,
+                        checkpoint=current,
+                        kind="external_action_reconciled",
+                    )
 
             async def execute(emit):
                 return await execute_prompt_workflow(

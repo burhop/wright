@@ -144,7 +144,7 @@ async def _validate_continuation(
     once. The engine additionally rejects stale source/inputs/files and any
     approval whose action has not been definitively reconciled as dispatched.
     """
-    from .workflow_source_execution import _approval_settings, _error
+    from .workflow_source_execution import _resolved_approval_settings, _error
 
     def stale(message):
         return _error(
@@ -209,12 +209,26 @@ async def _validate_continuation(
         subject.get("binding") != step.external_action["binding"]
         or subject.get("destination") != step.external_action["destination"]
         or subject.get("settings")
-        != _approval_settings(
-            pending_action=step, plan=plan, workspace_dir=workspace_dir
+        != await _resolved_approval_settings(
+            pending_action=step,
+            plan=plan,
+            workspace_dir=workspace_dir,
+            service=service,
+            continuation=state,
         )
         or subject.get("action") != step.external_action["action"]
     ):
         raise stale("The approved action changed.")
+    if kind == "approval" and step.external_action["action_kind"] == "mcp-operation":
+        evidence = (checkpoint.get("external_action") or {}).get("evidence", {})
+        policy = subject["settings"]["operation_policy"]
+        if not evidence.get("delivery_completed") or (
+            policy["mode"] == "observe"
+            and evidence.get("observed_outcome") != "completed"
+        ):
+            raise stale(
+                "The accepted operation has no confirmed required observation or receipt delivery."
+            )
     if state["schema_version"] == 3:
         from core.process_interactions import InputSnapshot
 

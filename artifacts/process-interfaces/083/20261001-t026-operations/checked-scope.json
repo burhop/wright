@@ -1,0 +1,801 @@
+{
+  "task": "T026",
+  "parent_commit": "c7a1a8d5de556eea62de672104dc0ef1f9c08c31",
+  "branch": "codex/083-process-working-interfaces",
+  "scope": "source/storage/approval/runtime/recorder/monitor with controlled digital provider; real GatewayService dispatch-hook and policy fixtures",
+  "model": "synthetic injected response",
+  "reviewer": "synthetic unit reviewer; exact enrolled integration actor for the labelled case",
+  "live_mcp": false,
+  "live_model": false,
+  "engineering_acceptance": false,
+  "human_acceptance": false,
+  "physical_dispatch": false,
+  "browser_checked_in_this_task": false,
+  "environment": {
+    "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "code_hashes": {
+    "packages/workspace_service/src/workspace_service/workflow_mcp_operations.py": "64f9d49b385fadb0ab97f426acfc455f213750945516f251e962d9eb91ea7d50",
+    "packages/workspace_service/tests/test_workflow_mcp_operations.py": "6ffdd8156a165bc9e1a456902a1aff0a74ce0397b967036f5386ee780103eba4",
+    "packages/workspace_service/src/workspace_service/workflow_approval_execution.py": "e4103f8e0a88d97aba39e7cf9a5fd753ead64b6a5bd885d1273a4693f7d4f472",
+    "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py": "a69b71cf9b697f6d4aaa59600fffca8a03e2eff8336f54c0bc5e1af56ebb9350",
+    "packages/workspace_service/src/workspace_service/workflow_external_actions.py": "6774bbc27880bd219ab6e60f56ef75ee6e4c7123818edf7a9e1632df033bc121",
+    "packages/workspace_service/src/workspace_service/workflow_integration_policy.py": "4c4889339f14c88015e9e15cf28971eb7eada3e951591113509eda7edb0128e7",
+    "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py": "b3243ae12d5ef9d46335a73540289262407c86215f04380588d4a8ad4e55532e",
+    "packages/workspace_service/src/workspace_service/workflow_run_record.py": "3da0fdf80b12254de44e78f1ee8009a18c2fb53b0ce1744ca910a815480aae68",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py": "7f187e7869144bf619559d95f85ab386657c62ef1e7419d10867156ddea444e9"
+  },
+  "logs": {
+    "t026-backend-current.log": {
+      "sha256": "2be8ea56772bc2326d913a38362c5e9b6157536f1e1c79565ce7ea0dbd134e76",
+      "summary": "652 passed, 2 warnings in 74.64s (0:01:14)"
+    },
+    "t026-gateway-qualified.log": {
+      "sha256": "52b5f50cdc0c9b7c4e0258193531aaa1c9fe7bbd626d0494ae7caa22639656a0",
+      "summary": "62 passed in 13.00s"
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "recorded_unit_runs": [
+    {
+      "case": "test_accepted_receipt_precedes0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_accepted_receipt_precedes0\\runs\\private-digital\\20261001T105010Z-99ed9e9d51bd.json",
+      "run_log_sha256": "525b587a2bf222ef8fac72f1e676fd07b3d25d222dd2bf5620343545a9e020c2",
+      "status": "completed",
+      "run_id": "fce21682589f4109ad12ea7e5dd107fc",
+      "checkpoint_id": "checkpoint-9f57f881c0cfed9dd171e2b6",
+      "subject_digest": "e05177d33f4ac59a496dc611448281840edf204dbfd6d6bb8f165af2242d3938",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "51b550b426eeca7639fe0a1a59214dd211ab9561e75c80f186cc18c56c28e157",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "dispatched",
+      "evidence": {
+        "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+        "binding": {
+          "schema": "51b550b426eeca7639fe0a1a59214dd211ab9561e75c80f186cc18c56c28e157",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": null,
+        "cancellation_requested": false,
+        "delivery_completed": true,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": false,
+        "observed_outcome": "completed",
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "observe",
+          "profile_digest": "352a3a3f5f4d7931585daf26eeb5cd96e91e47667c6c3267283324e6ae6ead27",
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40",
+          "tool_bindings": {
+            "status": {
+              "name": "digital-proof__status",
+              "schema": "716f8c959b81034f0c9dfb7581123f05f1f35e8174970bd516029f3c2efbac2e"
+            }
+          }
+        },
+        "provider_receipt": {
+          "operation_id": "digital-private-1",
+          "status": "accepted"
+        },
+        "provider_reference": "digital-private-1",
+        "replay_permitted": false,
+        "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+        "submission": "accepted"
+      },
+      "operation_states": [
+        "submitted",
+        "working",
+        "completed",
+        "results_collected"
+      ]
+    },
+    {
+      "case": "test_actual_receipt_file_is_bo0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_actual_receipt_file_is_bo0\\runs\\private-digital\\20261001T105012Z-2b8f3d1bec9e.json",
+      "run_log_sha256": "5942d9b5ddbbbe54752b37a0030d5df758b8c0df5d8697e8545e8aac14ab0011",
+      "status": "completed",
+      "run_id": "4c3a0494b95c45668cd50a91bd45ef77",
+      "checkpoint_id": "checkpoint-b9e4aac98d224a272e2eca8b",
+      "subject_digest": "3276e9bccb98a117b7f16ab02fef758bc3b8d5acc209156df60e6b38402f4e7c",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "dispatched",
+      "evidence": {
+        "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+        "binding": {
+          "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": null,
+        "cancellation_requested": false,
+        "delivery_completed": true,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": false,
+        "observed_outcome": null,
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "receipt",
+          "profile_digest": null,
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40"
+        },
+        "produced_files": [
+          {
+            "output_bytes": 1242,
+            "output_format": "json",
+            "output_path": "receipts/digital.json",
+            "output_port": "receipt",
+            "sha256": "a3a507672890e3cf60ce4ff0862eba410086e882010d3dacf8c22b1b94c53f56"
+          }
+        ],
+        "provider_receipt": {
+          "operation_id": "digital-private-1",
+          "status": "accepted"
+        },
+        "provider_reference": "digital-private-1",
+        "replay_permitted": false,
+        "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+        "submission": "accepted"
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_confirmed_cancellation_is0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_confirmed_cancellation_is0\\runs\\private-digital\\20261001T105014Z-3e84fd6ef8df.json",
+      "run_log_sha256": "5cbf162583876388369e8d52182459b1bc576f9945c08993c58dc9f7d6b00fe7",
+      "status": "cancelled",
+      "run_id": "aad604d0a639455cb35f89d1c0b85234",
+      "checkpoint_id": "checkpoint-3ac0a10f231c52320450cdc8",
+      "subject_digest": "0f687952e55f79e8edfc2070d6ca6aae775c8e5fa69bf958aa8e310c60d3d77f",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "67e9a02dc59bd6592cb6b2455d17717cc6268fac6f23587987eeefd018dddf2c",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "dispatched",
+      "evidence": {
+        "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+        "binding": {
+          "schema": "67e9a02dc59bd6592cb6b2455d17717cc6268fac6f23587987eeefd018dddf2c",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": "cancelled",
+        "cancellation_requested": true,
+        "delivery_completed": false,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": false,
+        "observation_error_type": "CancelledError",
+        "observed_outcome": "cancelled",
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "observe",
+          "profile_digest": "6dc29b1d0b6c54929a73b6a0d98b0714230f91af9245e1e1c725a221ca3da190",
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40",
+          "tool_bindings": {
+            "cancel": {
+              "name": "digital-proof__cancel",
+              "schema": "13e52bcbb984bd118f936d9bd8d6bc79fdb1e60e6f086d00eda4c250b5d96eaf"
+            },
+            "status": {
+              "name": "digital-proof__status",
+              "schema": "716f8c959b81034f0c9dfb7581123f05f1f35e8174970bd516029f3c2efbac2e"
+            }
+          }
+        },
+        "provider_receipt": {
+          "operation_id": "digital-private-1",
+          "status": "accepted"
+        },
+        "provider_reference": "digital-private-1",
+        "replay_permitted": false,
+        "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+        "submission": "accepted"
+      },
+      "operation_states": [
+        "submitted",
+        "working",
+        "cancellation_requested",
+        "cancelled"
+      ]
+    },
+    {
+      "case": "test_enrolled_exact_digital_op0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_enrolled_exact_digital_op0\\runs\\private-digital\\20261001T105005Z-74b5b66c54ca.json",
+      "run_log_sha256": "02cd29ee913291412f7b7bae2eb190aaaacaec74e0fad475f6cbc478cb7f8dc3",
+      "status": "completed",
+      "run_id": "2f989c7005a04dd4834cca341ff92dbc",
+      "checkpoint_id": "checkpoint-c51783312a0f5c7b4d6559e4",
+      "subject_digest": "6bf0b855852103c8069ebd989230d343915a69cfdf9553bf6b8e983f6ecd5771",
+      "actor": "integration_test:083-private-unit",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "dispatched",
+      "evidence": {
+        "argument_digest": "cac2b30509691ff9513be2f0305dc55f3955154540f5bcd72be3db5924b81350",
+        "binding": {
+          "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": null,
+        "cancellation_requested": false,
+        "delivery_completed": true,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": true,
+        "observed_outcome": null,
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "receipt",
+          "profile_digest": null,
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40"
+        },
+        "provider_receipt": {
+          "operation_id": "digital-private-1",
+          "status": "accepted"
+        },
+        "provider_reference": "digital-private-1",
+        "replay_permitted": false,
+        "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+        "submission": "accepted"
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_gateway_dispatch_hook_rec0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_gateway_dispatch_hook_rec0\\runs\\private-digital\\20261001T105012Z-7d3e40f097a5.json",
+      "run_log_sha256": "1ac1611fe211c437306b92b7b25152f737b4bfb0198333f13bb50cd8232d495d",
+      "status": "external_action_outcome_unknown",
+      "run_id": "1401c1e6ad864cdbbddb72ddffb8e1fb",
+      "checkpoint_id": "checkpoint-ea56e406857481b655fd5ea2",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "outcome_unknown",
+      "evidence": {
+        "dispatch_error_type": "WorkflowSourceExecutionError",
+        "replay_permitted": false
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_monitor_disconnect_keeps_0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_monitor_disconnect_keeps_0\\runs\\private-digital\\20261001T105011Z-9fa3bba373e0.json",
+      "run_log_sha256": "b0252659557cc7c3528339f667504335fb362e77771c724ffa3b2f784a75a91e",
+      "status": "external_action_outcome_unknown",
+      "run_id": "e13cef8d004048efb7ab94d7e038e284",
+      "checkpoint_id": "checkpoint-7e6d8115a52281d434eda2d3",
+      "subject_digest": "e05177d33f4ac59a496dc611448281840edf204dbfd6d6bb8f165af2242d3938",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "51b550b426eeca7639fe0a1a59214dd211ab9561e75c80f186cc18c56c28e157",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "dispatched",
+      "evidence": {
+        "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+        "binding": {
+          "schema": "51b550b426eeca7639fe0a1a59214dd211ab9561e75c80f186cc18c56c28e157",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": null,
+        "cancellation_requested": false,
+        "delivery_completed": false,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": false,
+        "observation_error_type": "ConnectionError",
+        "observed_outcome": "unknown",
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "observe",
+          "profile_digest": "352a3a3f5f4d7931585daf26eeb5cd96e91e47667c6c3267283324e6ae6ead27",
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40",
+          "tool_bindings": {
+            "status": {
+              "name": "digital-proof__status",
+              "schema": "716f8c959b81034f0c9dfb7581123f05f1f35e8174970bd516029f3c2efbac2e"
+            }
+          }
+        },
+        "provider_receipt": {
+          "operation_id": "digital-private-1",
+          "status": "accepted"
+        },
+        "provider_reference": "digital-private-1",
+        "replay_permitted": false,
+        "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+        "submission": "accepted"
+      },
+      "operation_states": [
+        "submitted",
+        "reconciliation_required"
+      ]
+    },
+    {
+      "case": "test_qualified_digital_submiss0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_qualified_digital_submiss0\\runs\\private-digital\\20261001T105006Z-d8e79309f759.json",
+      "run_log_sha256": "8803e35501b4c86e868dd4e543ce5950e16b908b217b47beb94ce39fa314bc4c",
+      "status": "completed",
+      "run_id": "94724d20db114555b06b25c0d34350e8",
+      "checkpoint_id": "checkpoint-a58d17914a937e71aa4d2b7b",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "dispatched",
+      "evidence": {
+        "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+        "binding": {
+          "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": null,
+        "cancellation_requested": false,
+        "delivery_completed": true,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": false,
+        "observed_outcome": null,
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "receipt",
+          "profile_digest": null,
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40"
+        },
+        "provider_receipt": {
+          "operation_id": "digital-private-1",
+          "status": "accepted"
+        },
+        "provider_reference": "digital-private-1",
+        "replay_permitted": false,
+        "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+        "submission": "accepted"
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_qualified_rejection_retai0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_qualified_rejection_retai0\\runs\\private-digital\\20261001T105006Z-62d4062c4b69.json",
+      "run_log_sha256": "7afc10ffd5a3407d30577e28b96d4fae9f5b6e1ab5329cb73a85057502ba1d70",
+      "status": "external_action_not_dispatched",
+      "run_id": "f71abd6a514c450699a0d0df7c035e97",
+      "checkpoint_id": "checkpoint-772668c4945d943d67b0d0b1",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "not_dispatched",
+      "evidence": {
+        "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+        "binding": {
+          "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": null,
+        "cancellation_requested": false,
+        "delivery_completed": false,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": false,
+        "observed_outcome": null,
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "receipt",
+          "profile_digest": null,
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40"
+        },
+        "provider_receipt": {
+          "operation_id": null,
+          "status": "rejected"
+        },
+        "provider_reference": null,
+        "replay_permitted": false,
+        "response_digest": "993f67678fbaae1235509c87c2b834db841c4633d25dbc12534993de5bf3ff27",
+        "submission": "rejected"
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_qualified_rejection_retai1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_qualified_rejection_retai1\\runs\\private-digital\\20261001T105007Z-cbed2728d2aa.json",
+      "run_log_sha256": "dd2f63e616e9623e5e27ca10d470a3b9c832a3ec64a78b371d0bf710a185a181",
+      "status": "external_action_not_dispatched",
+      "run_id": "30c3af7ddbea47bd9741f59c81e2390f",
+      "checkpoint_id": "checkpoint-11ff74e3eab17715ca6c21e4",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "not_dispatched",
+      "evidence": {
+        "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+        "binding": {
+          "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+          "server": "digital-proof",
+          "tool": "digital-proof__submit"
+        },
+        "cancellation_outcome": null,
+        "cancellation_requested": false,
+        "delivery_completed": false,
+        "destination": {
+          "id": "test://private/digital-proof",
+          "kind": "digital"
+        },
+        "effect": "digital",
+        "integration_test": false,
+        "observed_outcome": null,
+        "operation": "mcp-operation",
+        "operation_policy": {
+          "mode": "receipt",
+          "profile_digest": null,
+          "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40"
+        },
+        "provider_receipt": {
+          "operation_id": null,
+          "status": "rejected"
+        },
+        "provider_reference": null,
+        "replay_permitted": false,
+        "response_digest": "993f67678fbaae1235509c87c2b834db841c4633d25dbc12534993de5bf3ff27",
+        "submission": "rejected"
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_uncertain_submission_reta0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_uncertain_submission_reta0\\runs\\private-digital\\20261001T105007Z-42e10443c7f1.json",
+      "run_log_sha256": "cb0800e839584663bf53be2d29d7ff6ecb5d60cecea51508a38c38d3f4ffced4",
+      "status": "external_action_outcome_unknown",
+      "run_id": "fb8a51837eef4b438195e53c7183461e",
+      "checkpoint_id": "checkpoint-3f3c8ba4b2327921f42d3cff",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "outcome_unknown",
+      "evidence": {
+        "dispatch_error_type": "TimeoutError",
+        "replay_permitted": false
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_uncertain_submission_reta1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_uncertain_submission_reta1\\runs\\private-digital\\20261001T105008Z-684ec8c6270b.json",
+      "run_log_sha256": "17e20c3553aeac492394496ebc7547cea727b5d88ec1d2f2e3533514ce2cdb7e",
+      "status": "external_action_outcome_unknown",
+      "run_id": "a1615be7810c452e8b4db463fc0d0243",
+      "checkpoint_id": "checkpoint-a8103956a18f5139614b4999",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "outcome_unknown",
+      "evidence": {
+        "dispatch_error_type": "ConnectionError",
+        "replay_permitted": false
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_uncertain_submission_reta2",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_uncertain_submission_reta2\\runs\\private-digital\\20261001T105008Z-bb179db8a4fc.json",
+      "run_log_sha256": "9e3634374c8b38e68d11764a4adf7ae87685743f234e5e27c9980c8eff55b404",
+      "status": "external_action_outcome_unknown",
+      "run_id": "0b58a671485b4c0b801751375aa38275",
+      "checkpoint_id": "checkpoint-5e0eec831bb04baf43b94b2e",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "outcome_unknown",
+      "evidence": {
+        "dispatch_error_type": "WorkflowSourceExecutionError",
+        "replay_permitted": false
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_uncertain_submission_reta3",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_uncertain_submission_reta3\\runs\\private-digital\\20261001T105009Z-1cf2e4d3d204.json",
+      "run_log_sha256": "4706937699cd5a815e0e2d831605b10a239c85b5a15b86ebf2c3655ff159abda",
+      "status": "external_action_outcome_unknown",
+      "run_id": "f38e5c366fb14fae9b5ecfa9e29750bc",
+      "checkpoint_id": "checkpoint-4c22beb5abd38c0590d6b0e3",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "outcome_unknown",
+      "evidence": {
+        "dispatch_error_type": "WorkflowSourceExecutionError",
+        "replay_permitted": false
+      },
+      "operation_states": []
+    },
+    {
+      "case": "test_uncertain_submission_reta4",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t026-backend-current\\test_uncertain_submission_reta4\\runs\\private-digital\\20261001T105009Z-166d0580ab43.json",
+      "run_log_sha256": "cafa846c63e88b45ca6d4b57983fae2f1d25b2cbe12a0c1a3848cda632f40b4e",
+      "status": "external_action_outcome_unknown",
+      "run_id": "22a9cf7f370041b8bcf0efa0bdbbdf2e",
+      "checkpoint_id": "checkpoint-706edce33035b628aa8dcf78",
+      "subject_digest": "8ad7ddb39468e75cf02b8b6c36e405aaac91c7d92c534b392fdc00b27a1b31b1",
+      "actor": "local_workspace_user",
+      "binding": {
+        "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+        "server": "digital-proof",
+        "tool": "digital-proof__submit"
+      },
+      "artifact_digests": [
+        "a913e8cf7f0b6daf4fd333b6f2ce883fec6869e63fffca0fda060daa1981a2c6"
+      ],
+      "action_id": "private-dispatch-1",
+      "outcome": "outcome_unknown",
+      "evidence": {
+        "dispatch_error_type": "WorkflowSourceExecutionError",
+        "replay_permitted": false
+      },
+      "operation_states": []
+    }
+  ],
+  "commands": {
+    "cwd": "D:\\repos\\wright",
+    "backend": [
+      ".venv/Scripts/python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "-rs",
+      "--tb=short",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp",
+      "C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t026-backend-current",
+      "packages/agent_adapters/tests/test_workflow_unattended_outcomes.py",
+      "packages/agent_adapters/tests/test_workflow_response_timeout.py",
+      "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+      "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+      "packages/workspace_service/tests/test_workflow_response_format_repair.py",
+      "packages/workspace_service/tests/test_workflow_mcp_execution.py",
+      "packages/workspace_service/tests/test_workflow_failed_tool_evidence.py",
+      "packages/workspace_service/tests/test_workflow_design_check.py",
+      "packages/workspace_service/tests/test_process_input_supervision.py",
+      "packages/workspace_service/tests/test_process_interface_continuation.py",
+      "packages/workspace_service/tests/test_workflow_execution_continuation.py",
+      "packages/workspace_service/tests/test_workflow_external_action_execution.py",
+      "packages/workspace_service/tests/test_process_human_input_source.py",
+      "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "packages/workspace_service/tests/test_workflow_approval_resume.py",
+      "packages/workspace_service/tests/test_process_approval_inspection.py",
+      "packages/workspace_service/tests/test_workflow_approval_review_settings.py",
+      "packages/workspace_service/tests/test_process_input_execution_overlay.py",
+      "packages/workspace_service/tests/test_process_preparation_service.py",
+      "packages/workspace_service/tests/test_process_interaction_projection.py",
+      "packages/workspace_service/tests/test_workflow_source_execution.py",
+      "packages/workspace_service/tests/test_workflow_async_operations.py",
+      "packages/workspace_service/tests/test_process_operation_cancel.py",
+      "packages/workspace_service/tests/test_process_operation_observations.py",
+      "packages/workspace_service/tests/test_workflow_integration_policy.py",
+      "packages/workspace_service/tests/test_workflow_mcp_integration_restriction.py",
+      "packages/workspace_service/tests/test_workflow_process_validation.py",
+      "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+      "packages/workspace_service/tests/test_validation_result_identity.py",
+      "packages/workspace_service/tests/test_process_validation_feedback.py",
+      "packages/core/tests/test_process_interface_contracts.py",
+      "packages/data_vault/tests/test_workflow_continuation_repository.py",
+      "packages/data_vault/tests/test_process_interface_migrations.py",
+      "apps/api/tests/test_process_interface_checkpoints.py",
+      "apps/api/tests/test_process_interfaces_api.py",
+      "apps/api/tests/test_process_interface_run_lifecycle.py"
+    ],
+    "gateway": [
+      ".venv/Scripts/python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "-rs",
+      "--tb=short",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp",
+      "C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t026-gateway-qualified",
+      "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+      "packages/tool_registry/tests/test_gateway_service.py",
+      "packages/tool_registry/tests/test_gateway_policy.py",
+      "packages/tool_registry/tests/test_gateway_capability_providers.py"
+    ],
+    "lint": [
+      ".venv/Scripts/ruff.exe",
+      "check",
+      "--no-cache",
+      "packages/workspace_service/src/workspace_service/workflow_mcp_operations.py",
+      "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+      "packages/workspace_service/src/workspace_service/workflow_approval_execution.py",
+      "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py",
+      "packages/workspace_service/src/workspace_service/workflow_external_actions.py",
+      "packages/workspace_service/src/workspace_service/workflow_integration_policy.py",
+      "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+      "packages/workspace_service/src/workspace_service/workflow_run_record.py",
+      "packages/workspace_service/src/workspace_service/workflow_source_execution.py"
+    ],
+    "format": [
+      ".venv/Scripts/ruff.exe",
+      "format",
+      "--no-cache",
+      "--check",
+      "packages/workspace_service/src/workspace_service/workflow_mcp_operations.py",
+      "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+      "packages/workspace_service/src/workspace_service/workflow_approval_execution.py",
+      "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py",
+      "packages/workspace_service/src/workspace_service/workflow_external_actions.py",
+      "packages/workspace_service/src/workspace_service/workflow_integration_policy.py",
+      "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+      "packages/workspace_service/src/workspace_service/workflow_run_record.py",
+      "packages/workspace_service/src/workspace_service/workflow_source_execution.py"
+    ],
+    "whitespace": [
+      "git",
+      "diff",
+      "--check"
+    ]
+  },
+  "counts": {
+    "new_operation_tests": 44,
+    "backend_api_regression_tests": 652,
+    "operation_and_gateway_tests": 62,
+    "overlap": "The 44 operation tests are included in both suites; do not add totals."
+  },
+  "limitations": [
+    "Existing TestClient deprecation warnings",
+    "No live provider or engineering/physical qualification",
+    "T027/T028 UI/recovery and all later goal tasks remain required"
+  ]
+}

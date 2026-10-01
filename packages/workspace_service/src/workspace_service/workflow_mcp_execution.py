@@ -73,6 +73,10 @@ def schema_digest(tool):
     }
     if tool.upstream_meta.get("wright/operation"):
         material["operation_adapter"] = tool.upstream_meta["wright/operation"]
+    if tool.upstream_meta.get("wright/approved-operation"):
+        material["approved_operation_adapter"] = tool.upstream_meta[
+            "wright/approved-operation"
+        ]
     if tool.upstream_meta.get("wright/application"):
         material["application_adapter"] = tool.upstream_meta["wright/application"]
     if tool.upstream_meta.get("wright/terminalOperation"):
@@ -477,7 +481,14 @@ class WorkflowMcpRuntime:
         return arguments
 
     async def call(
-        self, step, arguments, *, on_event=None, monitor=True, image_observations=None
+        self,
+        step,
+        arguments,
+        *,
+        on_event=None,
+        monitor=True,
+        image_observations=None,
+        before_dispatch=None,
     ):
         tool = self.resolve(step)
         request_id = uuid.uuid4().hex
@@ -555,6 +566,15 @@ class WorkflowMcpRuntime:
             operation_bindings = validate_operation_profile(
                 self, step, operation_profile
             )
+        if before_dispatch is not None:
+            prior_dispatch = exact_dispatch
+
+            def checked_dispatch(current_tool):
+                before_dispatch(current_tool)
+                if prior_dispatch is not None:
+                    prior_dispatch(current_tool)
+
+            exact_dispatch = checked_dispatch
         try:
             result = await self.gateway.call_tool(
                 self.session_id,

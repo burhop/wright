@@ -555,6 +555,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     "printer_transfer",
                     "supplier_upload_preview",
                     "cart_quote_handoff",
+                    "mcp-operation",
                 }
                 or fields.get("performed_by") != "engineer"
                 or fields.get("step_type") != "review"
@@ -599,6 +600,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     },
                 )
             )
+            if action_kind == "mcp-operation":
+                from .workflow_mcp_operations import operation_step
+
+                operation_step(steps[-1])
             continue
         if settings.get("authoring_template") == "manual-review":
             refs = [
@@ -1291,7 +1296,16 @@ async def prepare_prompt_workflow(
         and metadata.get("option_source")
         for fields in plan.inputs.values()
     )
-    if any(step.tool_name or step.agent_task for step in plan.steps) or option_sources:
+    approved_operations = [
+        step
+        for step in plan.steps
+        if (step.external_action or {}).get("action_kind") == "mcp-operation"
+    ]
+    if (
+        any(step.tool_name or step.agent_task for step in plan.steps)
+        or option_sources
+        or approved_operations
+    ):
         if callable(tool_runtime):
             tool_runtime = tool_runtime()
         if tool_runtime is None:
@@ -1302,6 +1316,11 @@ async def prepare_prompt_workflow(
         for step in plan.steps:
             if step.tool_name or step.agent_task:
                 tool_runtime.preflight(step)
+        if approved_operations:
+            from .workflow_mcp_operations import qualify_operation
+
+            for step in approved_operations:
+                qualify_operation(tool_runtime, step)
     values = {}
     from .workspace_path import WorkspacePath
 
@@ -1606,6 +1625,45 @@ def _approval_settings(
         for requirement_id in requested
     ]
     return settings
+
+
+async def _resolved_approval_settings(
+    *,
+    pending_action,
+    plan,
+    workspace_dir,
+    service,
+    responses=None,
+    continuation=None,
+    artifacts_by_output=None,
+    engineering_results=(),
+):
+    """Resolve operation arguments using the same durable producer values on resume."""
+    if (pending_action.external_action or {}).get("action_kind") != "mcp-operation":
+        return _approval_settings(
+            pending_action=pending_action, plan=plan, workspace_dir=workspace_dir
+        )
+    from .workflow_mcp_operations import resolved_operation_settings
+
+    if continuation is not None:
+        from .workflow_execution_continuation import decode_value, restore_result
+
+        responses = {
+            key: decode_value(value)
+            for key, value in continuation.get("responses", {}).items()
+        }
+        artifacts_by_output = continuation.get("artifacts_by_output", {})
+        engineering_results = [
+            restore_result(value) for value in continuation.get("results", [])
+        ]
+    return await resolved_operation_settings(
+        pending_action,
+        responses or {},
+        service=service,
+        workspace_dir=workspace_dir,
+        artifacts_by_output=artifacts_by_output,
+        engineering_results=engineering_results,
+    )
 
 
 async def execute_prompt_workflow(
@@ -2911,10 +2969,14 @@ async def execute_prompt_workflow(
             "artifact_digests": artifact_digests,
             "binding": action["binding"],
             "destination": action["destination"],
-            "settings": _approval_settings(
+            "settings": await _resolved_approval_settings(
                 pending_action=pending_action,
                 plan=plan,
                 workspace_dir=workspace_dir,
+                service=service,
+                responses=responses,
+                artifacts_by_output=artifacts_by_output,
+                engineering_results=engineering_results,
             ),
             "action": action["action"],
         }

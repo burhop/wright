@@ -2,6 +2,27 @@
 
 ## Latest implementation state — 2026-10-01
 
+T026 is complete. Exact approved MCP-operation dispatch now reuses the existing
+source runtime, approval lease/consume store, gateway, recorder and finite async
+monitor. It pins provider qualification, connected arguments and actual artifact
+hashes, destination/settings and status/result/cancel bindings. Missing later
+configuration blocks preparation before upstream work; the final gateway hook
+rechecks files and current tool qualification immediately before invocation.
+Qualified rejection, uncertain submission, acceptance, observed completion and
+requested/actual cancellation remain separate. Consumed unknown or unfinished
+operations cannot replay or release downstream work. Existing aliases/history
+remain supported; enrolled test authority rejects physical/supplier effects.
+
+Current checked T026 scope: 44 new operation checks inside 652 passing backend/API
+regressions (74.64 s), plus an overlapping 62-test operation/real-gateway run
+(13.00 s). No skips; two existing TestClient warnings. Fourteen actual unit-run
+records and preserved prototype/campaign/context hashes are retained in
+[MCP-operation evidence](evidence/mcp-operations.md). These are controlled digital
+model/provider/reviewer fixtures, not live engineering or physical acceptance.
+T027 review/action forms and source/inspector authoring are next; T028's complete
+UI/recovery proof, T021 and all M3–M5 obligations remain pending. The full goal
+remains active.
+
 T025 is complete. The configured tool-free model adapter now separates a closed
 execution disposition from the requested engineering document. MCP decisions and
 tool-free response repair carry the unattended policy. Undeclared input requests
@@ -33,8 +54,8 @@ T027's declared-input controls are implemented in the public client/kit/common
 workspace view. Review/action controls and source/inspector authoring remain
 pending. T028 has stronger service/API/browser evidence, but its full two-barrier
 UI/recovery/undeclared-question coverage remains pending. T021 remains pending
-for the four older editor Run expectations. T026 is the next runtime
-work. All actual model authoring, live engineering, migration and distribution
+for the four older editor Run expectations. T026's subsequent completion is
+recorded above. All actual model authoring, live engineering, migration and distribution
 requirements through M5 remain in the active goal.
 
 Checked milestone: **231 backend/API tests**, **135 client/kit/component tests**,

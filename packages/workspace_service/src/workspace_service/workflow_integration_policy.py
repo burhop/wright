@@ -203,6 +203,29 @@ class WorkflowIntegrationPolicyService:
                     "Local review authority must bind Wright's fixed review-only operation."
                 )
             return
+        if kind == "mcp-operation":
+            binding = action.get("binding", {})
+            identity = (
+                binding.get("server"),
+                binding.get("tool"),
+                binding.get("schema"),
+            )
+            if identity not in {
+                _tool_identity(tool) for tool in grant["allowed_tools"]
+            }:
+                _fail(
+                    "The approved MCP operation is not an enrolled exact provider tool."
+                )
+            if (
+                _test_uri(action.get("destination", {}).get("id"))
+                not in grant["test_destinations"]
+            ):
+                _fail("The approved MCP operation destination was not enrolled.")
+            if action.get("action") != {"kind": "mcp-operation", "mode": "submit"}:
+                _fail(
+                    "Integration authority requires exact approved submission semantics."
+                )
+            return
         if kind not in {
             "printer_transfer",
             "supplier_upload_preview",
@@ -340,6 +363,10 @@ class WorkflowIntegrationPolicyService:
                             "Every saved or expected output must be inside the enrolled output root."
                         )
                 if step.external_action:
+                    if step.external_action["action_kind"] == "mcp-operation":
+                        from .workflow_mcp_operations import qualify_operation
+
+                        qualify_operation(tool_runtime, step, integration=True)
                     self._action(grant, step.external_action)
                     receipt = step.external_action.get("settings", {}).get(
                         "receipt_path"

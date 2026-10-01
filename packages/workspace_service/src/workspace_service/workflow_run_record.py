@@ -783,7 +783,7 @@ async def _record_run(
 
 
 async def record_workflow_approval_transition(
-    *, service, workspace_dir, checkpoint, kind: str
+    *, service, workspace_dir, checkpoint, kind: str, operation_event=None
 ):
     """Project the durable checkpoint state into its immutable run evidence.
 
@@ -796,6 +796,7 @@ async def record_workflow_approval_transition(
         "approval_decided",
         "external_action_authorized",
         "external_action_reconciled",
+        "operation_progress",
     }:
         raise ValueError("Unknown workflow approval transition")
     relative = checkpoint.continuation.get("run_log_path")
@@ -834,6 +835,15 @@ async def record_workflow_approval_transition(
             ),
             "outcome_unknown": "external_action_outcome_unknown",
         }.get(outcome, "awaiting_external_outcome")
+        if checkpoint.action_kind == "mcp-operation" and outcome == "dispatched":
+            evidence = external_action.get("evidence", {})
+            if not evidence.get("delivery_completed"):
+                state = {
+                    "failed": "failed",
+                    "cancelled": "cancelled",
+                    "unknown": "external_action_outcome_unknown",
+                    "input_required": "external_action_outcome_unknown",
+                }.get(evidence.get("observed_outcome"), "awaiting_external_outcome")
     else:
         state = "awaiting_approval"
     result["status"] = state
@@ -851,12 +861,25 @@ async def record_workflow_approval_transition(
         "checkpoint_id": checkpoint.checkpoint_id,
         "subject_digest": checkpoint.subject_digest,
     }
+    if kind == "operation_progress":
+        if (
+            not isinstance(operation_event, dict)
+            or operation_event.get("task_id") != checkpoint.step_id
+        ):
+            raise ValueError("Operation observation belongs to another approval step")
+        event = {
+            **operation_event,
+            **event,
+            "message": operation_event.get("message", event["message"]),
+        }
     record.setdefault("events", []).append(event)
     if state in {
         "completed",
         "changes_requested",
         "external_action_not_dispatched",
         "external_action_outcome_unknown",
+        "failed",
+        "cancelled",
     }:
         record["completed_at"] = now
     await service.files.write_generated(

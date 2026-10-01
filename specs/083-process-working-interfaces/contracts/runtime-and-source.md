@@ -124,6 +124,17 @@ argument/artifact hashes, destination identity, settings and operation policy.
 Validate qualification/authority/freshness at consumption; invoke through existing
 GatewayService. The browser only requests the existing permitted action ID.
 
+The backend implementation qualifies explicit version-1
+`wright/approved-operation` metadata (effect, destination/file arguments,
+structured accepted/rejected status values and provider reference). This is an
+optional Wright adapter contract. Missing qualification blocks readiness; it is
+not inferred from ordinary MCP tool names or success prose. Source declares exact
+connected text/JSON/file argument representations and pins the qualification
+digest. Observe mode pins `wright/operation` and each actual status/result/cancel
+tool identity before approval. Receipt mode does not imply observed completion.
+See [operation evidence/configuration](../evidence/mcp-operations.md) for the
+bounded declaration and checked ownership.
+
 Retain local_review/test_handoff aliases and historical records. Test authority
 cannot qualify a physical action. Submission accepted, observed start/completion,
 rejection, cancellation and unknown outcome are separate recorded receipts/events.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import secrets
 import time
+import math
 from typing import Any, Mapping
 
 from core.canonical_json import canonical_json_bytes
@@ -63,7 +64,27 @@ def approval_subject_digest(subject: Mapping[str, Any]) -> str:
             )
 
     inspect(subject)
-    encoded = canonical_json_bytes(dict(subject))
+    if (subject.get("action") or {}).get("kind") == "mcp-operation":
+        # New operation subjects can contain measured decimal arguments.
+        # Historical aliases retain their original exact integer JSON hashes.
+        from core.process_validation import canonical_json
+
+        def finite(value):
+            if isinstance(value, float) and not math.isfinite(value):
+                raise WorkflowExternalActionError(
+                    "approval_subject_invalid", "Operation numbers must be finite"
+                )
+            if isinstance(value, Mapping):
+                for child in value.values():
+                    finite(child)
+            elif isinstance(value, (list, tuple)):
+                for child in value:
+                    finite(child)
+
+        finite(subject)
+        encoded = canonical_json(dict(subject)).encode("utf-8")
+    else:
+        encoded = canonical_json_bytes(dict(subject))
     if len(encoded) > 256 * 1024:
         raise WorkflowExternalActionError(
             "approval_subject_invalid", "Approval subject exceeds 256 KiB"
@@ -92,6 +113,7 @@ class WorkflowExternalActionService:
             "supplier_upload_preview",
             "cart_quote_handoff",
             "local_review",
+            "mcp-operation",
         }:
             raise WorkflowExternalActionError(
                 "external_action_unsupported", "External action is unsupported"
