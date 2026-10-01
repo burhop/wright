@@ -42,7 +42,7 @@ remains an explicit implementation step rather than an incidental planning write
 |---|---|---|
 | M0 Baseline/preflight | T001–T004 | Complete; live qualification remains later work |
 | M1 Inputs/runtime/interaction | T005–T016, T022–T028 | In progress; contracts/persistence/service boundary complete |
-| M2 Client/kit/common tabs | T017–T021 | In progress; public native client/kit verified, common tabs pending |
+| M2 Client/kit/common tabs | T017–T021 | In progress; client/kit/common component verified, workspace hosting and served proof pending |
 | M3 Wright AI authoring/hosting/reuse | T029–T042 | Pending |
 | M4 Different processes/migration | T043–T049 | Pending |
 | M5 Distribution/verification/handoff | T050–T057 | Pending |
@@ -360,7 +360,44 @@ authoring/hosting, actual default-model and digital engineering demonstrations,
 vendor migration and installed distribution proofs remain required. The full
 goal is active; no model/provider/physical or remote publication action occurred.
 
+Focused local T018 milestone commit: `a9ea0a53` (23 owned files). After the
+reported chat stream interruption, the active goal, saved progress and working
+tree were checked. No implementation blocker was recorded. The verified kit
+was committed; original prototype/startup/router changes remain unstaged.
+Continue with T019–T021; the full implementation and proof goal remains active.
+
+### 2026-09-30 — Native common process controller
+
+The previous goal turn made progress by saving T018 in `a9ea0a53` after the
+reported stream interruption. This turn advances T019: a common view using the
+public client/kit for explicit preparation/readiness/start, recorded attachment,
+exact result/assessment/evidence navigation, representations/downloads and
+optional-capability fallback. Backend authorities own all process facts/actions.
+Predictable inputs are prepared before start; no run is started on mount.
+
+Compact scoped recovery locators preserve immutable input/request/receipt
+identities without user values or credentials. Lost acknowledgement requires
+explicit same-request reconciliation. Closing detaches only the observer;
+accepted receipts can still be preserved afterward. Another view's pending start
+and an unreadable journal cannot be overwritten by new preparation. Actual
+cancellation outcome remains distinct from its request. Readiness expires while
+idle, and unfinished uploads block preparation.
+
+124 focused frontend checks, whole-app/public-package type checks, focused ESLint,
+owning-schema freshness and whitespace checks pass. These are component/client
+proofs with mocked boundaries, not a served workspace or live engineering
+demonstration. See [common view evidence](evidence/common-view.md) for commands,
+scope, observed corrections and pending host integration.
+
+Protected campaign hashes, approved context and original prototype hashes/deltas
+remain preserved. T001–T019 are checked. T020 workspace hosting and T021 served
+verification are next. Checkpoint response capability, actual default-model UI
+authoring, both digital engineering chains, migration and installed distribution
+proof remain required. The full M0–M5 goal is active; no provider/model/physical
+effect, campaign run or remote publication occurred.
+
 ## Implementation progress format
+
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,
 run/subject/artifact identities, observations/evidence links, failed/pending scope,

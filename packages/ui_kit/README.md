@@ -70,6 +70,8 @@ Progress freshness expires while a view is idle. The timestamp is never renewed
 by reading/rendering. Confirmed terminal history remains historical; a terminal
 operation does not advertise remaining time. The optional `now` prop permits
 a host clock source. No completion percentage is derived from the stage count.
+Readiness expiry also updates while idle: an expired ready assessment is labelled
+as needing refresh, while the host and backend separately guard starting a run.
 
 Actions require both current backend permission and an explicit handler. Read-only
 and missing-capability views remain disabled with reasons. Checkpoint cards only

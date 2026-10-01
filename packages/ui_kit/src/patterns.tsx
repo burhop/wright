@@ -200,20 +200,35 @@ const dependencyLabels = {
 export function ReadinessPanel({
   readiness,
   onNavigate,
+  now,
 }: {
   readiness?: Readiness | null;
   onNavigate?: Navigate;
+  now?: number;
 }) {
+  const [clock, setClock] = useState(Date.now);
+  useEffect(() => {
+    if (now !== undefined) return;
+    const timer = setInterval(() => setClock(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [now]);
+  const expired =
+    readiness?.state === "ready" &&
+    !!readiness.expires_at &&
+    (!Number.isFinite(Date.parse(readiness.expires_at)) ||
+      Date.parse(readiness.expires_at) <= (now ?? clock));
   return (
     <div className="wp-readiness" role="status">
       <strong>
         {!readiness
           ? "Readiness has not been checked"
-          : readiness.state === "ready"
-            ? "Ready to start"
-            : readiness.state === "blocked"
-              ? "Inputs need attention"
-              : "This process needs a supported configuration"}
+          : expired
+            ? "Readiness needs refreshing"
+            : readiness.state === "ready"
+              ? "Ready to start"
+              : readiness.state === "blocked"
+                ? "Inputs need attention"
+                : "This process needs a supported configuration"}
       </strong>
       {(readiness?.reasons ?? []).map((reason, index) => (
         <ReasonNotice
