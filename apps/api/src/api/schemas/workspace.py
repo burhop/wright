@@ -362,6 +362,7 @@ class WorkflowSourceRunRequest(BaseModel):
     session_id: str = Field(min_length=1, max_length=256)
     path: str = Field(min_length=1, max_length=256)
     expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    request_id: str | None = Field(default=None, min_length=1, max_length=160)
     integration_policy_digest: str | None = Field(
         default=None, pattern=r"^[0-9a-f]{64}$"
     )

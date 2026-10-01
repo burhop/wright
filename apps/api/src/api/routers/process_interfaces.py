@@ -264,7 +264,7 @@ async def follow_process_run(
     async def observed_events():
         page = first
         while True:
-            yield f"id: {page['cursor']}\nevent: progress\ndata: {json.dumps(page)}\n\n"
+            yield f"id: {page['cursor']}\nevent: progress\ndata: {json.dumps(page, ensure_ascii=False)}\n\n"
             if not page["following"] and not page["has_more"]:
                 return
             await asyncio.sleep(0 if page["has_more"] else 0.25)

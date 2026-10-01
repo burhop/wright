@@ -76,6 +76,9 @@ if __name__ == "__main__":
 def fresh_service(root):
     """Reopen SQLite and source/file adapters; retain no prior service state."""
     svc = service(root)
+    from apps.api.tests.process_interface_fixtures import bind_process_interfaces
+
+    bind_process_interfaces(svc, root, "ws")
     svc.workflow_sources = WorkspaceWorkflowSourceUseCases(BoundedExecutor())
     svc.workflow_integration_policies = WorkflowIntegrationPolicyService(
         str(root / "state.db"), enabled=True

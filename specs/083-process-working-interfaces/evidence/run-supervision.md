@@ -100,10 +100,9 @@ patch match the saved baselines. No prototype file is included in this increment
 
 ## Remaining
 
-T015 is partial: native transport exists, but the legacy source-start NDJSON/JSON
-route still owns execution in its request. Adapt it to this supervisor, retain
-its payload/diagnostic/review compatibility, and update its cancellation fixtures
-to prove disconnect detaches observation. T016 provider-aware observations and
+The T015 statement at this checkpoint is superseded by the
+[legacy adapter evidence](legacy-run-adapter.md): both source-start formats now
+delegate to the same backend supervisor. T016 provider-aware observations and
 cancellation remain pending. The client/kit/common UI, declared interactions,
 actual Wright model authoring, live digital engineering proofs, vendor migration,
 served editor journey and installed distribution checks are still required.

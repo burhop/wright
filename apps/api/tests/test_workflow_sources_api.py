@@ -20,7 +20,7 @@ SOURCE_PATH = "workflows/mounting-bracket.workflow.wflow"
 
 @pytest.mark.parametrize("accept", ["application/json", "application/x-ndjson"])
 def test_disconnected_process_is_rejected_before_a_run_starts(
-    sync_client, monkeypatch, accept
+    sync_client, monkeypatch, accept, tmp_path
 ):
     from unittest.mock import AsyncMock
     from packages.workspace_service.tests.test_workflow_authoring_preflight import (
@@ -28,6 +28,11 @@ def test_disconnected_process_is_rejected_before_a_run_starts(
     )
 
     service = _Service()
+    from apps.api.tests.process_interface_fixtures import bind_process_interfaces
+
+    bind_process_interfaces(
+        service, tmp_path, "workspace-1", registered_root="/tmp/workspace-1"
+    )
     service.workflow_sources.current = _document(definition("second_result"), 1)
     generate = AsyncMock(side_effect=AssertionError("No model should be called"))
     monkeypatch.setattr("api.routers.workspace.generate_workflow_response", generate)

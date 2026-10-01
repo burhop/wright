@@ -620,6 +620,7 @@ async def _record_run(
             status="failed",
             error=str(error),
             code=getattr(error, "code", "EXECUTION_FAILED"),
+            correction=getattr(error, "correction", ""),
         )
         raise
     finally:

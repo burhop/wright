@@ -18,6 +18,68 @@ from packages.workspace_service.tests.test_process_input_readiness import (
 )
 
 
+@pytest.mark.asyncio
+async def test_concurrent_legacy_requests_share_the_first_frozen_defaults(tmp_path):
+    application, reference, _ = await prepared_case(tmp_path)
+    release = asyncio.Event()
+    calls = []
+
+    async def generate(prompt, fmt):
+        calls.append(prompt)
+        await release.wait()
+        return "One legacy result"
+
+    try:
+        first, retry = await asyncio.gather(
+            *(
+                application.runs.start_legacy(
+                    scope(),
+                    reference,
+                    "same-legacy-request",
+                    response_generator=generate,
+                )
+                for _ in range(2)
+            )
+        )
+        assert first == retry
+        release.set()
+        assert (await application.runs.wait(scope(), reference, first.run_id))[
+            "status"
+        ] == "completed"
+        assert len(calls) == 1
+    finally:
+        release.set()
+        await application.runs.close()
+
+
+@pytest.mark.asyncio
+async def test_legacy_large_progress_uses_exact_log_reference_without_full_payload(
+    tmp_path,
+):
+    application, reference, frozen = await prepared_case(tmp_path)
+
+    async def generate(prompt, fmt):
+        return "Completed result"
+
+    try:
+        receipt = await start(application, reference, frozen, generate)
+        await application.runs.wait(scope(), reference, receipt.run_id)
+        path = tmp_path / receipt.run_log_path
+        record = json.loads(path.read_text(encoding="utf-8"))
+        record["events"].append(
+            {"kind": "operation_progress", "task_id": "first", "payload": "x" * 66_000}
+        )
+        path.write_text(json.dumps(record), encoding="utf-8")
+        page = await application.runs.legacy_events(scope(), reference, receipt.run_id)
+        event = page["events"][-1]
+        assert event["details_truncated"]
+        assert "payload" not in event
+        assert event["event_details_ref"]["run_log_path"] == receipt.run_log_path
+        assert len(json.dumps(page, ensure_ascii=False).encode("utf-8")) < 65_536
+    finally:
+        await application.runs.close()
+
+
 async def prepared_case(root, *, later=False):
     text = source(default="Exact requirements", later=later)
     path = root / process(text).source_path

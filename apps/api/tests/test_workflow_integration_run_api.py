@@ -29,6 +29,9 @@ from packages.workspace_service.tests.test_workflow_artifact_review import secti
 @pytest_asyncio.fixture
 async def prepared(tmp_path, monkeypatch):
     svc = service(tmp_path)
+    from apps.api.tests.process_interface_fixtures import bind_process_interfaces
+
+    bind_process_interfaces(svc, tmp_path, "ws")
     svc.workflow_sources = WorkspaceWorkflowSourceUseCases(BoundedExecutor())
     text = section(
         "workflow",

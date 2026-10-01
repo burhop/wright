@@ -22,6 +22,34 @@ from packages.workspace_service.tests.test_process_input_readiness import (
 PREFIX = "/api/workspace/process-interfaces"
 
 
+def test_legacy_run_denies_viewer_before_resolving_workspace():
+    from fastapi import FastAPI, Request
+    from api.routers.workspace import router
+
+    probe = FastAPI()
+    probe.state.security_settings = SimpleNamespace(enforced=True)
+
+    @probe.middleware("http")
+    async def identity(request: Request, call_next):
+        request.state.principal_role = "viewer"
+        return await call_next(request)
+
+    probe.dependency_overrides[get_workspace_service] = lambda: (_ for _ in ()).throw(
+        AssertionError("Denied callers must not resolve a workspace")
+    )
+    probe.include_router(router, prefix="/api/workspace")
+    with TestClient(probe) as client:
+        response = client.post(
+            "/api/workspace/workflow-sources/run",
+            json={
+                "session_id": "other",
+                "path": "workflows/test.workflow.wflow",
+                "expected_storage_digest": "0" * 64,
+            },
+        )
+    assert response.status_code == 403
+
+
 @pytest.fixture
 def lifecycle_case(tmp_path, monkeypatch):
     text = source(default="Frozen requirements")
@@ -59,6 +87,7 @@ def lifecycle_case(tmp_path, monkeypatch):
 
     monkeypatch.setattr(app.router, "lifespan_context", lifespan)
     monkeypatch.setattr(routes, "generate_workflow_response", generate, raising=False)
+    monkeypatch.setattr("api.routers.workspace.generate_workflow_response", generate)
     app.dependency_overrides[get_workspace_service] = lambda: workspace
     try:
         with TestClient(app) as client:
@@ -281,3 +310,117 @@ def test_missing_log_returns_unknown_without_repeating_work(lifecycle_case):
     assert read.status_code == 503
     assert read.json()["error_code"] == "OUTCOME_UNKNOWN"
     assert len(case.calls) == 1
+
+
+def test_legacy_json_retry_uses_same_durable_run(lifecycle_case):
+    case = lifecycle_case
+    case.release.set()
+    body = {**case.query, "request_id": "legacy-one"}
+    first = case.client.post("/api/workspace/workflow-sources/run", json=body)
+    assert first.status_code == 200
+    result = first.json()
+    retry = case.client.post("/api/workspace/workflow-sources/run", json=body)
+    assert retry.status_code == 200
+    assert retry.json() == result
+    assert len(case.calls) == 1
+    assert result["steps"][0]["format_instructions"]
+
+
+def test_legacy_actual_ndjson_disconnect_detaches_observer(lifecycle_case):
+    case = lifecycle_case
+    body = {**case.query, "request_id": "legacy-disconnect"}
+
+    async def disconnected_request():
+        disconnect = asyncio.Event()
+        request_sent = False
+        bodies = []
+
+        async def receive():
+            nonlocal request_sent
+            if not request_sent:
+                request_sent = True
+                return {
+                    "type": "http.request",
+                    "body": json.dumps(body).encode(),
+                    "more_body": False,
+                }
+            await disconnect.wait()
+            return {"type": "http.disconnect"}
+
+        async def send(message):
+            if message["type"] == "http.response.start":
+                assert message["status"] == 200
+            if message["type"] == "http.response.body" and message.get("body"):
+                bodies.append(message["body"])
+                disconnect.set()
+
+        path = "/api/workspace/workflow-sources/run"
+        scope = {
+            "type": "http",
+            "asgi": {"version": "3.0", "spec_version": "2.0"},
+            "http_version": "1.1",
+            "method": "POST",
+            "scheme": "http",
+            "path": path,
+            "raw_path": path.encode(),
+            "root_path": "",
+            "query_string": b"",
+            "headers": [
+                (b"content-type", b"application/json"),
+                (b"accept", b"application/x-ndjson"),
+            ],
+            "client": ("127.0.0.1", 50001),
+            "server": ("127.0.0.1", 5190),
+        }
+        await asyncio.wait_for(app(scope, receive, send), 3)
+        assert bodies and b'"kind"' in bodies[0]
+        receipt = case.owner.inputs.start_receipt(
+            "local-control-plane", case.reference, "legacy-disconnect"
+        )
+        assert case.owner.runs.is_live(receipt.run_id)
+        return receipt.run_id
+
+    run_id = case.client.portal.call(disconnected_request)
+    case.release.set()
+    assert wait(case, run_id)["status"] == "completed"
+    assert len(case.calls) == 1
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_legacy_failure_replays_recorded_diagnostic_without_retrying_model(
+    lifecycle_case, monkeypatch, stream
+):
+    from workspace_service.workflow_source_execution import WorkflowSourceExecutionError
+
+    case = lifecycle_case
+    calls = []
+
+    async def unavailable(prompt, fmt):
+        calls.append(prompt)
+        raise WorkflowSourceExecutionError(
+            "MODEL_UNAVAILABLE",
+            "Controlled model failure",
+            "Reconnect the configured model.",
+        )
+
+    monkeypatch.setattr("api.routers.workspace.generate_workflow_response", unavailable)
+    body = {**case.query, "request_id": "legacy-failed"}
+    headers = {"Accept": "application/x-ndjson"} if stream else {}
+    first = case.client.post(
+        "/api/workspace/workflow-sources/run", json=body, headers=headers
+    )
+    retry = case.client.post(
+        "/api/workspace/workflow-sources/run", json=body, headers=headers
+    )
+    if stream:
+        assert first.status_code == retry.status_code == 200
+        diagnostic = json.loads(first.text.splitlines()[-1])
+        assert diagnostic["kind"] == "failed"
+        assert diagnostic["code"] == "model_unavailable"
+        assert json.loads(retry.text.splitlines()[-1]) == diagnostic
+    else:
+        assert first.status_code == retry.status_code == 503
+        diagnostic = first.json()
+        assert diagnostic["error_code"] == "model_unavailable"
+    assert "Reconnect the configured model" in json.dumps(diagnostic)
+    assert len(calls) == 1

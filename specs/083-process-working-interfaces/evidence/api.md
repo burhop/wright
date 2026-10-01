@@ -75,8 +75,9 @@ line endings. No reset, overwrite or wholesale staging was used.
 
 **Superseded in part by [run supervision](run-supervision.md):** T013/T014 and
 native start/status/event/cancel routes now exist with controlled ASGI evidence.
-Provider-aware work (T016) and legacy adaptation (T015) remain pending. The old
-source streaming endpoint still owns execution within its request until T015;
-these read/preparation routes do not pretend to fix disconnect behavior. Client,
+Legacy adaptation (T015) is now verified in the
+[legacy adapter evidence](legacy-run-adapter.md). Provider-aware work (T016)
+remains pending. Both source-start formats delegate to the same backend owner;
+disconnect only detaches observation. Client,
 common/tailored UI, model generation, live engineering chains, migration and
 installed distribution verification remain required by the full active goal.

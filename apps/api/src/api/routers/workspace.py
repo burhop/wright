@@ -7,7 +7,6 @@ All handlers are decorated with @traced for OTel span creation.
 """
 
 import asyncio
-import anyio
 import hashlib
 import json
 import time
@@ -199,7 +198,6 @@ from workspace_service.workflow_sources import (
 )
 from workspace_service.workflow_source_execution import (
     WorkflowSourceExecutionError,
-    execute_prompt_workflow,
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
@@ -1870,158 +1868,187 @@ async def workflow_artifact_review_decision(
         ) from error
 
 
-@router.post("/workflow-sources/run", response_model=WorkflowSourceRunResponse)
+@router.post(
+    "/workflow-sources/run",
+    response_model=WorkflowSourceRunResponse,
+    dependencies=[Depends(_require_process_validation_role)],
+)
 @traced("workspace.workflow_sources.run")
 async def run_workflow_source_endpoint(
     body: WorkflowSourceRunRequest,
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    """Execute the saved workspace source; optionally stream actual step events."""
-    scope = _workflow_source_scope(body.session_id, service)
+    """Compatibility view over the same durable backend-owned source run."""
+    from uuid import uuid4
+    from core.process_interactions import ProcessRef
+    from core.redaction import redact_text
+    from workspace_service.process_interfaces.service import ProcessScope
+    from workspace_service.process_interfaces.errors import ProcessInterfaceError
+
+    bound = _workflow_source_scope(body.session_id, service)
+    scope = ProcessScope(
+        getattr(getattr(request, "state", None), "principal_id", None)
+        or "local-control-plane",
+        bound.workspace_id,
+        frozenset({"process.read", "process.inputs", "process.start"}),
+    )
+    application = service.process_interfaces
 
     def detail(error):
+        if isinstance(error, ProcessInterfaceError):
+            cause = error.__cause__
+            source_code = error.diagnostic.get("source_code")
+            if isinstance(cause, WorkflowSourceExecutionError):
+                return detail(cause)
+            code = source_code or {
+                "SOURCE_CHANGED": "WORKFLOW_SOURCE_CONFLICT",
+            }.get(error.reason.code, error.reason.code)
+            return {
+                "code": code.lower(),
+                "message": error.reason.message,
+                "correction": error.reason.correction,
+            }
         if isinstance(error, WorkflowSourceExecutionError):
             return {
                 "code": error.code.lower(),
-                "message": str(error),
-                "correction": error.correction,
+                "message": redact_text(str(error))[:8192],
+                "correction": redact_text(error.correction)[:8192],
             }
         return {
             "code": "workflow_output_unavailable",
-            "message": "The workflow output could not be saved.",
-            "correction": "Check the workspace file path and permissions, then run again.",
+            "message": "The recorded workflow output is unavailable.",
+            "correction": "Inspect the saved run and workspace path before another attempt.",
         }
 
-    runtime = None
     try:
-        from workspace_service.workflow_run_preparation import (
-            prepare_authorized_workflow_run,
-        )
-
-        prepared = await prepare_authorized_workflow_run(
-            service=service,
-            workspace_dir=scope.workspace_dir,
-            workspace_id=scope.workspace_id,
-            session_id=body.session_id,
+        process = ProcessRef(
+            workspace_id=bound.workspace_id,
             source_path=body.path,
             source_digest=body.expected_storage_digest,
-            gateway=lambda: request.app.state.gateway_service,
+        )
+        server = (
+            request.scope.get("app")
+            if isinstance(request, Request)
+            else getattr(request, "app", None)
+        )
+        receipt = await application.runs.start_legacy(
+            scope,
+            process,
+            body.request_id or uuid4().hex,
+            response_generator=generate_workflow_response,
+            action_generator=decide_workflow_tool_action,
+            gateway=getattr(getattr(server, "state", None), "gateway_service", None),
+            session_id=body.session_id,
             integration_policy_digest=body.integration_policy_digest,
         )
-        plan, values, runtime = prepared.plan, prepared.values, prepared.runtime
 
-        async def run(on_event=None):
-            from workspace_service.workflow_run_record import record_workflow_run
-
-            async def execute(emit):
-                return await execute_prompt_workflow(
-                    service=service,
-                    workspace_dir=scope.workspace_dir,
-                    plan=plan,
-                    input_values=values,
-                    response_generator=generate_workflow_response,
-                    on_event=emit,
-                    tool_runtime=runtime,
-                    action_generator=decide_workflow_tool_action,
-                    execution_context=prepared.execution_context,
-                    run_id=prepared.run_id,
+        async def result():
+            recorded = await application.runs.wait(scope, process, receipt.run_id)
+            if recorded["status"] not in {
+                "completed",
+                "pending_review",
+                "awaiting_approval",
+            }:
+                raise WorkflowSourceExecutionError(
+                    recorded.get("code", "OUTCOME_UNKNOWN"),
+                    recorded.get(
+                        "error", "The run needs reconciliation before another attempt."
+                    ),
+                    recorded.get(
+                        "correction",
+                        "Open the exact saved run and inspect its actual outcome.",
+                    ),
                 )
-
-            result = await record_workflow_run(
-                service=service,
-                workspace_dir=scope.workspace_dir,
-                workspace_id=scope.workspace_id,
-                source_path=body.path,
-                source_digest=body.expected_storage_digest,
-                execute=execute,
-                on_event=on_event,
-                execution_context=prepared.execution_context,
-                run_id=prepared.run_id,
-                required_step_ids=[step.id for step in plan.steps],
-            )
-            for step in result["steps"]:
+            for step in recorded.get("steps", []):
                 if step.get("execution_kind") == "ai":
                     step["format_instructions"] = response_instructions(
                         step["output_format"]
                     )
             return {
-                "workspace_id": scope.workspace_id,
+                "workspace_id": bound.workspace_id,
                 "workflow_path": body.path,
-                **result,
+                **recorded,
             }
 
         if "application/x-ndjson" in request.headers.get("accept", ""):
 
             async def events():
-                queue = asyncio.Queue()
-
-                async def emit(event):
-                    if (
-                        event["kind"] == "step_started"
-                        and event.get("execution_kind") == "ai"
-                    ):
-                        event["format_instructions"] = response_instructions(
-                            event["output_format"]
-                        )
-                    await queue.put(event)
-
-                async def produce():
-                    try:
-                        result = await run(emit)
-                        await queue.put(
-                            {
-                                "kind": result.get("status", "completed"),
-                                "result": result,
-                            }
-                        )
-                    except (WorkflowSourceExecutionError, OSError, ValueError) as error:
-                        await queue.put({"kind": "failed", **detail(error)})
-                    finally:
-                        if runtime is not None:
-                            await runtime.close()
-                        await queue.put(None)
-
-                task = asyncio.create_task(produce())
+                cursor = None
                 try:
-                    while (event := await queue.get()) is not None:
-                        yield json.dumps(event) + "\n"
-                finally:
-                    task.cancel()
-                    # Cancel execution first. A disconnected StreamingResponse is
-                    # already in a cancelled scope; unshielded gather would send
-                    # a second Task.cancel into the producer's final checkpoint.
-                    # Only drain cleanup, bounded beyond its five-second write.
-                    with anyio.move_on_after(6.0, shield=True):
-                        await asyncio.gather(task, return_exceptions=True)
+                    while True:
+                        page = await application.runs.legacy_events(
+                            scope,
+                            process,
+                            receipt.run_id,
+                            cursor=cursor,
+                        )
+                        for event in page["events"]:
+                            if (
+                                event.get("kind") == "step_started"
+                                and event.get("execution_kind") == "ai"
+                                and isinstance(event.get("output_format"), str)
+                            ):
+                                event["format_instructions"] = response_instructions(
+                                    event["output_format"]
+                                )
+                            yield json.dumps(event, ensure_ascii=False) + "\n"
+                        cursor = page["cursor"]
+                        if page["has_more"]:
+                            continue
+                        if not page["following"]:
+                            value = await result()
+                            yield (
+                                json.dumps(
+                                    {"kind": value["status"], "result": value},
+                                    ensure_ascii=False,
+                                )
+                                + "\n"
+                            )
+                            return
+                        await asyncio.sleep(0.1)
+                except (
+                    ProcessInterfaceError,
+                    WorkflowSourceExecutionError,
+                    OSError,
+                    ValueError,
+                ) as error:
+                    yield json.dumps({"kind": "failed", **detail(error)}) + "\n"
+                # This request retains no executor/producer task. ASGI cancels
+                # only this recorded-event observer when its browser disconnects.
 
             return StreamingResponse(
                 events(),
                 media_type="application/x-ndjson",
-                headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+                headers={
+                    "Cache-Control": "no-store",
+                    "X-Accel-Buffering": "no",
+                    "X-Wright-Run-Id": receipt.run_id,
+                },
             )
-        try:
-            return WorkflowSourceRunResponse(**await run())
-        finally:
-            if runtime is not None:
-                await runtime.close()
-    except WorkflowSourceExecutionError as error:
-        if runtime is not None:
-            await runtime.close()
+        return WorkflowSourceRunResponse(**await result())
+    except (ProcessInterfaceError, WorkflowSourceExecutionError) as error:
+        info = detail(error)
         status_code = (
             409
-            if error.code
-            in {"WORKFLOW_SOURCE_CONFLICT", "WORKFLOW_TEMPLATE_SETUP_REQUIRED"}
+            if info["code"]
+            in {
+                "workflow_source_conflict",
+                "workflow_template_setup_required",
+                "request_conflict",
+                "subject_stale",
+                "option_stale",
+            }
+            else 403
+            if info["code"] in {"scope_denied", "action_not_permitted"}
             else 503
-            if error.code == "MODEL_UNAVAILABLE"
+            if info["code"]
+            in {"model_unavailable", "capability_unavailable", "outcome_unknown"}
             else 422
         )
-        raise HTTPException(status_code=status_code, detail=detail(error)) from error
+        raise HTTPException(status_code=status_code, detail=info) from error
     except (OSError, ValueError) as error:
-        if runtime is not None:
-            await runtime.close()
         raise HTTPException(status_code=422, detail=detail(error)) from error
-
 
 @router.get(
     "/workflow-source-templates",

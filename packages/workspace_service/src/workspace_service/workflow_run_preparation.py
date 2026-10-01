@@ -21,23 +21,16 @@ class PreparedWorkflowRun:
     run_id: str
 
 
-async def prepare_authorized_workflow_run(
+async def qualify_workflow_run_origin(
     *,
     service,
-    workspace_dir: str,
-    workspace_id: str,
-    session_id: str,
-    source_path: str,
-    source_digest: str,
-    gateway,
-    integration_policy_digest: str | None = None,
-    input_snapshot=None,
-) -> PreparedWorkflowRun:
-    """Public qualification and scoped integration readiness are separate gates.
-
-    The request may reference a locally enrolled grant, but cannot supply its
-    authority, tool set, actor or output boundary.
-    """
+    workspace_dir,
+    workspace_id,
+    source_path,
+    source_digest,
+    integration_policy_digest=None,
+):
+    """Keep origin/grant gates ahead of source values and tool qualification."""
     grant = None
     if integration_policy_digest is not None:
         grant = service.workflow_integration_policies.get(integration_policy_digest)
@@ -69,6 +62,35 @@ async def prepare_authorized_workflow_run(
                     "This engineering template needs setup or qualification before a live run.",
                     " ".join(str(reason) for reason in reasons),
                 )
+
+    return grant
+
+
+async def prepare_authorized_workflow_run(
+    *,
+    service,
+    workspace_dir: str,
+    workspace_id: str,
+    session_id: str,
+    source_path: str,
+    source_digest: str,
+    gateway,
+    integration_policy_digest: str | None = None,
+    input_snapshot=None,
+) -> PreparedWorkflowRun:
+    """Public qualification and scoped integration readiness are separate gates.
+
+    The request may reference a locally enrolled grant, but cannot supply its
+    authority, tool set, actor or output boundary.
+    """
+    grant = await qualify_workflow_run_origin(
+        service=service,
+        workspace_dir=workspace_dir,
+        workspace_id=workspace_id,
+        source_path=source_path,
+        source_digest=source_digest,
+        integration_policy_digest=integration_policy_digest,
+    )
 
     runtime = None
 

@@ -15,7 +15,10 @@ from core.process_validation import Digest, Identifier, canonical_digest
 from core.tracing import traced
 from data_vault.process_input_repository import ProcessRecordConflict
 
-from ..workflow_run_preparation import prepare_authorized_workflow_run
+from ..workflow_run_preparation import (
+    prepare_authorized_workflow_run,
+    qualify_workflow_run_origin,
+)
 from ..workflow_run_record import (
     record_workflow_run,
     read_workflow_run,
@@ -45,6 +48,7 @@ class ProcessRunSupervisor:
         self.maximum_active = maximum_active
         self._owned: dict[str, _OwnedRun] = {}
         self._allocation = asyncio.Lock()
+        self._legacy_preparation = asyncio.Lock()
         self._commands = asyncio.Lock()
         self._cancellations: set[asyncio.Task] = set()
         self._closed = False
@@ -202,7 +206,10 @@ class ProcessRunSupervisor:
                     else "CAPABILITY_UNAVAILABLE"
                 )
                 raise ProcessInterfaceError(
-                    code, str(error), error.correction
+                    code,
+                    str(error),
+                    error.correction,
+                    details={"source_code": error.code},
                 ) from error
             transferred = False
             try:
@@ -307,6 +314,55 @@ class ProcessRunSupervisor:
                 if not transferred and prepared.runtime is not None:
                     await prepared.runtime.close()
 
+    @traced("process.interface.run.legacy.start")
+    async def start_legacy(self, scope, process, request_id, **execution):
+        """Freeze source defaults once; delegate the legacy transport to start.
+
+        The separate preparation lock makes concurrent legacy requests share
+        their first snapshot identity. Native starts already carry a frozen ID.
+        No executor, source edit or runtime ownership exists in the adapter.
+        """
+        scope.require(process, "process.start")
+        request_id = TypeAdapter(Identifier).validate_python(request_id)
+        async with self._legacy_preparation:
+            try:
+                previous = self.application.inputs.start_receipt(
+                    scope.principal_id, process, request_id
+                )
+            except KeyError:
+                previous = None
+            if previous is not None:
+                frozen = self.application._input_snapshot(
+                    previous.process, previous.input_snapshot_id
+                )
+            else:
+                root = self._root(scope, process, "process.start")
+                await qualify_workflow_run_origin(
+                    service=self.application.workspace,
+                    workspace_dir=root,
+                    workspace_id=process.workspace_id,
+                    source_path=process.source_path,
+                    source_digest=process.source_digest,
+                    integration_policy_digest=execution.get(
+                        "integration_policy_digest"
+                    ),
+                )
+                prepared = await self.application.set_inputs(
+                    scope,
+                    process,
+                    gateway=execution.get("gateway"),
+                    session_id=execution.get("session_id", ""),
+                )
+                frozen = prepared.snapshot
+            return await self.start(
+                scope,
+                process,
+                frozen.snapshot_id,
+                request_id,
+                expected_input_digest=frozen.digest,
+                **execution,
+            )
+
     @traced("process.interface.run.events")
     async def events(self, scope, process, run_id, *, cursor=None, limit=256):
         """Read bounded progress from the recorder; subscription starts no work.
@@ -316,6 +372,20 @@ class ProcessRunSupervisor:
         Results, tool arguments, prompts and credentials are read through their
         owning authorized services, never broadcast as progress events.
         """
+        page = await self._event_page(
+            scope, process, run_id, cursor=cursor, limit=limit
+        )
+        return ProcessRunEventPage.model_validate(page).model_dump(
+            mode="json", exclude_none=True
+        )
+
+    async def legacy_events(self, scope, process, run_id, *, cursor=None):
+        """Compatibility progress payloads for the authorized source-run view."""
+        return await self._event_page(
+            scope, process, run_id, cursor=cursor, limit=256, legacy=True
+        )
+
+    async def _event_page(self, scope, process, run_id, *, cursor, limit, legacy=False):
         if type(limit) is not int or not 1 <= limit <= 256:
             raise ValueError("Event pages require a limit between 1 and 256")
         record, view = await asyncio.to_thread(self._record, scope, process, run_id)
@@ -364,6 +434,22 @@ class ProcessRunSupervisor:
                 value = event.get(key)
                 if isinstance(value, str):
                     item[key] = value[:256]
+            if legacy:
+                candidate = dict(event)
+                if (
+                    len(json.dumps(candidate, ensure_ascii=False).encode("utf-8"))
+                    <= 60_000
+                ):
+                    item = candidate
+                else:
+                    item.update(
+                        details_truncated=True,
+                        event_details_ref={
+                            "run_id": run_id,
+                            "run_log_path": view["path"],
+                            "sequence": index,
+                        },
+                    )
             size += len(json.dumps(item, ensure_ascii=False).encode("utf-8"))
             if size > 60_000:
                 break
@@ -371,16 +457,14 @@ class ProcessRunSupervisor:
         offset += len(projected)
         from .projection import _STATES
 
-        return ProcessRunEventPage.model_validate(
-            {
-                "run_id": run_id,
-                "state": _STATES.get(view["status"], "reconciliation_required"),
-                "events": projected,
-                "cursor": f"pe1.{offset}.{identity(offset)}",
-                "has_more": offset < len(history),
-                "following": self.is_live(run_id),
-            }
-        ).model_dump(mode="json", exclude_none=True)
+        return {
+            "run_id": run_id,
+            "state": _STATES.get(view["status"], "reconciliation_required"),
+            "events": projected,
+            "cursor": f"pe1.{offset}.{identity(offset)}",
+            "has_more": offset < len(history),
+            "following": self.is_live(run_id),
+        }
 
     @traced("process.interface.run.wait")
     async def wait(self, scope, process, run_id):
@@ -400,6 +484,16 @@ class ProcessRunSupervisor:
             "run_id": run_id,
             "status": view["status"],
             "run_log_path": view["path"],
+            **(
+                {
+                    "error": record["error"],
+                    "code": record.get("code", "EXECUTION_FAILED"),
+                    "correction": record.get("correction")
+                    or "Open this recorded run's details before starting another attempt.",
+                }
+                if record.get("error")
+                else {}
+            ),
         }
 
     @traced("process.interface.run.cancel")

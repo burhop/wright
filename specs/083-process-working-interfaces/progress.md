@@ -224,6 +224,43 @@ All checked handles reached completion. Twelve preserved runtime/prototype files
 three protected review/binding files and the original main.py prototype patch
 match the baseline. T013/T014 are checked; no later task is checked prematurely.
 
+Focused local milestone commit: `c0d6400d` (16 owned files). No push/merge/release.
+The remaining uncommitted runtime/prototype files retain their original contents.
+
+### 2026-09-30 — Legacy source-start supervision and stream recovery
+
+T015 is implemented and verified. Existing JSON/NDJSON callers now use the same
+backend-owned run supervisor as the native process client routes. Optional start
+request identities freeze defaults once and return the original run on retry;
+clients without an identity still start a fresh run. An actual ASGI disconnect
+leaves execution running. Explicit local cancellation remains separate and
+retains the real recorder outcome, including uncertainty when final checkpoint
+publication cannot complete.
+
+Existing diagnostic codes, format instructions, reviews, approvals, integration
+grant checks and isolated stdio MCP continuation are preserved. The shared
+origin/grant preflight keeps those checks before input freezing. Oversized legacy
+progress events use exact log references; native and legacy streams encode UTF-8
+without inflating non-ASCII event pages. Viewer requests are denied before workspace
+lookup. No second executor or vendor-specific mechanism was introduced.
+
+The chat reported a stream disconnect during this increment. Changes and the
+active goal were intact. The previous final test handle was no longer available;
+its terminal result is not claimed. A separate recovery verification completed:
+**209 passed, one existing skip**, 42.16 seconds, with two existing dependency
+deprecation warnings. Ruff passes. Commands and bounded scope are recorded in
+[legacy adapter evidence](evidence/legacy-run-adapter.md).
+
+Original prototype changes remain outside this increment; three protected
+campaign file hashes match. An initial preservation check incorrectly included
+the explicitly approved feature-pointer activation; the corrected check confirms
+the pointer equals the current committed 083 context. No campaign data changed.
+
+Next: T016 provider observations/cancellation, then the public client/kit/common
+working view. Actual model authoring, live digital engineering proofs, browser
+journeys and installed distribution checks remain pending. The full M0–M5 goal
+is active; this checkpoint does not claim UI or engineering completion.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

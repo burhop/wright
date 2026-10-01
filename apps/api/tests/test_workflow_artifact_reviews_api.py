@@ -17,6 +17,9 @@ from packages.workspace_service.tests.test_workflow_artifact_review import (
 
 
 def scope_service(root, svc):
+    from apps.api.tests.process_interface_fixtures import bind_process_interfaces
+
+    bind_process_interfaces(svc, root, "ws")
     svc.lifecycle = SimpleNamespace(
         get_by_session=lambda session: {
             "workspace_id": "ws" if session == "s" else "other",
