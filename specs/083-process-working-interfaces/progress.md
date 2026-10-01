@@ -42,7 +42,7 @@ remains an explicit implementation step rather than an incidental planning write
 |---|---|---|
 | M0 Baseline/preflight | T001–T004 | Complete; live qualification remains later work |
 | M1 Inputs/runtime/interaction | T005–T016, T022–T028 | In progress; contracts/persistence/service boundary complete |
-| M2 Client/kit/common tabs | T017–T021 | Pending |
+| M2 Client/kit/common tabs | T017–T021 | In progress; public native client verified, kit/common tabs pending |
 | M3 Wright AI authoring/hosting/reuse | T029–T042 | Pending |
 | M4 Different processes/migration | T043–T049 | Pending |
 | M5 Distribution/verification/handoff | T050–T057 | Pending |
@@ -302,6 +302,35 @@ T001–T016 are checked. Next: T017 public typed client, then the shared UI kit 
 common working view in workspace tabs. The full M0–M5 goal remains active; actual
 model authoring, both live digital toolchains, served editor journeys, migration
 and installed distribution proof remain required. No push/merge/physical action.
+
+Focused local T016 milestone commit: `f6513495` (14 owned files). The remaining
+dirty prototype/router/startup files retain their original changes. No service
+was restarted and no remote action was sent outside the controlled fixtures.
+
+### 2026-09-30 — Public process client and recorded attachment
+
+The immediately previous status turn verified saved state/schema freshness but
+did not implement another task. This turn advances T017: generated owning
+contracts, public typed native client, explicit mutation identity and uncertainty,
+bounded recorded-event attachment/reconciliation, and shell auth/desktop adapter.
+No browser executor or independent status authority is introduced. Reserved
+interaction/action/presentation capabilities remain explicit later tasks.
+
+54 Python contract checks and 59 frontend/client/config checks pass, as do SDK
+and whole-app type checks, schema freshness, Ruff and whitespace checks. The
+production build passes into a fresh owned output directory. Existing dist had
+Windows EPERM; corrected the license plugin's hard-coded destination to honor
+resolved output while preserving normal serve/build behavior. Dependency wiring
+uses the existing npm workspace/root lock with only local package additions.
+See [client evidence](evidence/process-client.md) for exact commands, observed
+failures, corrections, runtime warnings and limits.
+
+Protected campaign hashes, active context and original prototype hashes/deltas
+remain preserved. No service restart, model/provider call, physical effect or
+push/merge occurred. T001–T017 are checked. Next is T018 shared UI kit, followed
+by common working tabs. The full goal remains active; actual default-model UI
+authoring, both live digital engineering chains, served workspace journeys,
+vendor migration and installed distribution proof are still required.
 
 ## Implementation progress format
 

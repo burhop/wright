@@ -313,27 +313,31 @@ export default defineConfig(({ command, mode }) => {
   const isBuild = command === "build";
   const isDesktop =
     process.env.BUILD_TARGET === "desktop" || mode === "desktop";
+  // Resolve after Vite applies CLI overrides so isolated verification builds
+  // write their license artifact beside their own bundle, not into served dist.
+  const licenseOutput = {
+    file: "third-party-licenses-web.txt",
+    encoding: "utf-8",
+  };
+  const licenseOutputResolver: Plugin = {
+    name: "wright-web-license-output",
+    configResolved(config) {
+      licenseOutput.file = path.resolve(
+        isBuild
+          ? path.resolve(config.root, config.build.outDir)
+          : config.publicDir,
+        "third-party-licenses-web.txt",
+      );
+    },
+  };
 
   return {
     base: isDesktop ? "./" : "/",
     plugins: [
       react(),
       surfaceDevProxyPlugin(),
-      license({
-        thirdParty: {
-          output: {
-            file: isBuild
-              ? path.resolve(
-                  __dirname,
-                  isDesktop
-                    ? "dist-desktop/third-party-licenses-web.txt"
-                    : "dist/third-party-licenses-web.txt",
-                )
-              : path.resolve(__dirname, "public/third-party-licenses-web.txt"),
-            encoding: "utf-8",
-          },
-        },
-      }),
+      licenseOutputResolver,
+      license({ thirdParty: { output: licenseOutput } }),
     ],
     build: {
       outDir: isDesktop ? "dist-desktop" : "dist",

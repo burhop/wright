@@ -1,4 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
 import {
   extractSurfaceSessionCookie,
@@ -7,6 +10,61 @@ import {
   surfaceProxyMatch,
   surfaceProxyHeaders,
 } from "./vite.config";
+import configuration from "./vite.config";
+
+describe("web license build output", () => {
+  it.each(["build", "serve"] as const)(
+    "writes licenses to the resolved %s directory",
+    async (command) => {
+      const directory = mkdtempSync(
+        path.join(tmpdir(), "wright-license-output-"),
+      );
+      try {
+        if (typeof configuration !== "function")
+          throw new Error("Expected the owning config factory");
+        const config = await configuration({ command, mode: "production" });
+        const plugins = (config.plugins ?? []).flat(Infinity);
+        const resolver = plugins.find(
+          (plugin) =>
+            plugin &&
+            typeof plugin === "object" &&
+            "name" in plugin &&
+            plugin.name === "wright-web-license-output",
+        ) as { configResolved(config: unknown): void };
+        const exporter = plugins.find(
+          (plugin) =>
+            plugin &&
+            typeof plugin === "object" &&
+            "name" in plugin &&
+            plugin.name === "rollup-plugin-license",
+        ) as { generateBundle(): void };
+        resolver.configResolved({
+          root: directory,
+          build: { outDir: "isolated-dist" },
+          publicDir: path.join(directory, "isolated-public"),
+        });
+        exporter.generateBundle();
+        const destination = path.join(
+          directory,
+          command === "build" ? "isolated-dist" : "isolated-public",
+          "third-party-licenses-web.txt",
+        );
+        expect(readFileSync(destination, "utf-8")).toBe(
+          "No third parties dependencies",
+        );
+        expect(existsSync(path.join(directory, "dist"))).toBe(false);
+      } finally {
+        const resolved = path.resolve(directory);
+        if (
+          !resolved.startsWith(path.resolve(tmpdir()) + path.sep) ||
+          !path.basename(resolved).startsWith("wright-license-output-")
+        )
+          throw new Error("Temporary cleanup escaped its root");
+        rmSync(resolved, { recursive: true, force: true });
+      }
+    },
+  );
+});
 
 describe("surface development proxy rewriting", () => {
   it("keeps Rivet AI configuration and completion requests inside the preview", () => {
