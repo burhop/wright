@@ -38,9 +38,53 @@ def _denied():
     )
 
 
+def presentation_start_key(presentation_id):
+    from core.process_validation import canonical_digest
+
+    return "view-start-" + canonical_digest({"presentation_id": presentation_id})
+
+
 class ProcessSurfaceBridge:
     def __init__(self, application, grant_service):
         self.application, self.grants = application, grant_service
+
+    @staticmethod
+    def retain_start(application, context, request):
+        """Retain an exact view/request association before existing start execution.
+
+        This is a locator, not a receipt, permission or independent run status.
+        One view cannot submit a second start identity after an uncertain reply.
+        """
+        from data_vault.process_input_repository import ProcessRecordConflict
+
+        binding = context.binding
+        context.scope.require(binding.process, "process.start")
+        if binding.read_only or binding.run_id is not None:
+            raise _denied()
+        payload = {
+            "binding": binding.model_dump(mode="json"),
+            "principal_id": context.scope.principal_id,
+            "session_id": context.session_id,
+            "instance_id": context.instance_id,
+            "source_version": context.source_version,
+            "request_id": request.request_id,
+            "input_snapshot_id": request.input_snapshot_id,
+            "input_digest": request.expected_input_digest,
+            "integration_policy_digest": request.integration_policy_digest,
+        }
+        try:
+            return application.interfaces.retain_authoring_record(
+                binding.process.workspace_id,
+                context.job_id,
+                presentation_start_key(binding.presentation_id),
+                payload,
+            )
+        except ProcessRecordConflict:
+            raise ProcessInterfaceError(
+                "REQUEST_CONFLICT",
+                "This interface view already identifies a different start request.",
+                "Reconcile its recorded request or prepare another run in a new view.",
+            ) from None
 
     def revalidate(self, route, context, operation="process.read"):
         """Recheck live stream authority without repeatedly reading a bundle.

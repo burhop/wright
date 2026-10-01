@@ -64,6 +64,7 @@ import {
 import {
   checkedProcessWorkspaceTab,
   createProcessWorkspaceTab,
+  type ProcessInterfaceLocator,
   isProcessWorkspaceTabPath,
   processWorkspaceQuery,
   processWorkspaceTabFromQuery,
@@ -535,6 +536,23 @@ export function WorkspacePanel({
       workspaceFileSessionId,
     ],
   );
+
+  const openProcessInterface = useCallback((process: ProcessRef, locator: ProcessInterfaceLocator, title: string, runId?: string) => {
+    if (!workspaceFileSessionId || process.workspace_id !== _workspaceId) return;
+    const tab = checkedProcessWorkspaceTab(createProcessWorkspaceTab(process, {
+      interface: locator, runId, name: `${title.slice(0, 220)} · ${locator.kind === "preview" ? "preview" : "working interface"}`,
+    }), _workspaceId);
+    setProcessTabError(null);
+    setIsSidebarCollapsed(true);
+    openTransientTab(tab);
+    navigate({pathname: location.pathname, search: processWorkspaceQuery(location.search, tab)}, {replace: true});
+  }, [_workspaceId, workspaceFileSessionId, openTransientTab, navigate, location.pathname, location.search]);
+
+  useEffect(() => {
+    const failed = () => setProcessTabError("The interface view closed, but its managed runtime cleanup needs reconciliation. The process was not cancelled.");
+    window.addEventListener("wright-process-ui-close-failed", failed);
+    return () => window.removeEventListener("wright-process-ui-close-failed", failed);
+  }, []);
 
   // Resize and model states
   const [leftSidebarWidth, setLeftSidebarWidth] = useState<number>(
@@ -3546,6 +3564,7 @@ export function WorkspacePanel({
                   tab={tab}
                   sessionId={workspaceFileSessionId}
                   onRunAttached={attachProcessTabRun}
+                  onOpenInterface={openProcessInterface}
                   onPrepareAnother={openProcessView}
                   onNavigate={navigateProcess}
                   navigation={

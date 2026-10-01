@@ -310,6 +310,7 @@ def contract_schemas() -> dict[str, dict]:
             InteractionResponse,
             InterfaceManifest,
             InterfaceRevision,
+            Compatibility,
             ProcessUI,
             SourceEnvelope,
             CodingRole,

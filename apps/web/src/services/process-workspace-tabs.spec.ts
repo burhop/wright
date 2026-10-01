@@ -154,4 +154,32 @@ describe("workspace process locators", () => {
     ).toBeNull();
     expect(processWorkspaceQuery("")).toBe("");
   });
+
+  it.each(["working", "preview"] as const)("round-trips exact %s interface locators in existing tabs", kind => {
+    const locator = {kind, ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32),
+      ...(kind === "preview" ? {job_id: "job-one"} : {})};
+    const view = checkedProcessWorkspaceView({...tab.processView, interface: locator});
+    const app = createProcessWorkspaceTab(process, {viewId: view.view_id, runId: view.run_id, interface: view.interface});
+    expect(checkedProcessWorkspaceTab(JSON.parse(JSON.stringify(app)), process.workspace_id)).toEqual(app);
+    expect(processWorkspaceTabFromQuery(processWorkspaceQuery("?workflow=canonical", app), process.workspace_id)).toEqual(app);
+    expect(app.processView.interface).toEqual(locator);
+    expect(() => checkedProcessWorkspaceTab(app, "different-workspace")).toThrow();
+    const common = processWorkspaceQuery(processWorkspaceQuery("", app), tab);
+    expect(new URLSearchParams(common).has("processUI")).toBe(false);
+  });
+
+  it.each([
+    {kind: "working", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), job_id: "job-one"},
+    {kind: "preview", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32)},
+    {kind: "working", ui_id: "../outside", revision_id: "revision-" + "b".repeat(32)},
+    {kind: "preview", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), job_id: "../outside"},
+    {kind: "working", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), token: "secret"},
+  ])("rejects malformed or authority-bearing interface locators %j", locator => {
+    expect(() => checkedProcessWorkspaceView({...tab.processView, interface: locator})).toThrow();
+  });
+
+  it.each(["&processUI=ui-" + "a".repeat(32), "&processUIKind=working", "&processUIJob=job-one"])(
+    "rejects partial interface queries %s", suffix => {
+      expect(() => processWorkspaceTabFromQuery(processWorkspaceQuery("", tab) + suffix, process.workspace_id)).toThrow();
+    });
 });

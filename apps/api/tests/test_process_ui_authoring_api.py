@@ -363,3 +363,73 @@ def test_cancel_and_bounded_event_observer_do_not_replay_generation(case, monkey
     )
     assert again.status_code == 200 and again.json()["state"] == "cancelled"
     assert len(case.author.engine.calls) <= 1
+
+
+def test_native_start_receipt_checks_exact_owned_preparation_view(case):
+    from workspace_service.process_interfaces.surface_bridge import (
+        AuthorizedProcessPresentation,
+        ProcessSurfaceBridge,
+    )
+    from workspace_service.surfaces.grants import ProcessPresentationBinding
+
+    value = generate(case)
+    saved = save(case, value, preview(case, value))
+    view = case.client.post(
+        PREFIX + f"/uis/{saved['manifest']['ui_id']}/present",
+        json=case.query | {"request_id": "working"},
+    ).json()
+    body = case.query | {
+        "surface_id": view["descriptor"]["surfaceId"],
+        "presentation_id": view["launch"]["presentationId"],
+    }
+    response = case.client.post(PREFIX + "/presentations/start-receipt", json=body)
+    assert response.status_code == 200, response.text
+    assert response.json() == {"receipt": None}
+
+    async def retain():
+        frozen = (await case.application.set_inputs(case.scope, case.process)).snapshot
+        context = AuthorizedProcessPresentation(
+            ProcessPresentationBinding.model_validate(view["binding"]),
+            case.scope,
+            value["job"]["job_id"],
+            case.actor.session_id,
+            view["descriptor"]["source"]["sourceVersion"],
+            view["launch"]["instanceId"],
+        )
+        ProcessSurfaceBridge.retain_start(
+            case.application,
+            context,
+            SimpleNamespace(
+                request_id="retained-start",
+                input_snapshot_id=frozen.snapshot_id,
+                expected_input_digest=frozen.digest,
+                integration_policy_digest=None,
+            ),
+        )
+
+    case.client.portal.call(retain)
+    unknown = case.client.post(
+        PREFIX + "/presentations/start-receipt",
+        json=body | {"request_id": "retained-start"},
+    )
+    assert (
+        unknown.status_code == 503
+        and unknown.json()["detail"]["code"] == "OUTCOME_UNKNOWN"
+    )
+    denied = case.client.post(
+        PREFIX + "/presentations/start-receipt",
+        json=body | {"request_id": "foreign-start"},
+    )
+    assert denied.status_code == 403
+    assert (
+        case.client.post(
+            PREFIX + "/presentations/start-receipt", json=body | {"run_id": "invented"}
+        ).status_code
+        == 422
+    )
+    case.client.post(PREFIX + "/presentations/close", json=body)
+    assert (
+        case.client.post(PREFIX + "/presentations/start-receipt", json=body).status_code
+        == 403
+    )
+    case.application.runs.cancel.assert_not_called()

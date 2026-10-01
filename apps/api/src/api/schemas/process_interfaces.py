@@ -102,3 +102,7 @@ class ProcessUIPreviewRequest(ProcessSourceRequest):
 class ProcessUICloseRequest(ProcessSourceRequest):
     surface_id: Identifier
     presentation_id: Identifier
+
+
+class ProcessUIStartReceiptRequest(ProcessUICloseRequest):
+    request_id: Identifier | None = None

@@ -36,6 +36,162 @@ class ProcessInterfacePresentations:
     def __init__(self, application, surfaces):
         self.application, self.surfaces = application, surfaces
 
+    async def start_receipt(
+        self, scope, process, actor, surface_id, presentation_id, *, request_id=None
+    ):
+        """Resolve a view's retained start through the existing receipt owner.
+
+        The browser supplies no run identity or input authority. Reading this
+        association never resubmits, resumes or cancels an execution.
+        """
+        from .surface_bridge import presentation_start_key
+
+        self._actor(scope, actor)
+        scope.require(process, "process.read")
+        try:
+            record = self.surfaces.presentation_service.get_record(
+                actor=actor, presentation_id=presentation_id
+            )
+        except PresentationUnavailable:
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This start belongs to another view.",
+                "Reopen the process in its owning workspace.",
+            ) from None
+        descriptor = await self.surfaces.service.get(actor=actor, surface_id=surface_id)
+        if (
+            record.surface_id != str(surface_id)
+            or record.session_id != actor.session_id
+            or record.state not in {"issued", "active"}
+            or record.expires_at <= self.surfaces.presentation_service.clock()
+            or descriptor.lifecycle is not SurfaceLifecycle.READY
+            or descriptor.instance is None
+            or descriptor.instance.get("instanceId") != record.instance_id
+            or descriptor.instance.get("generation") != record.generation
+            or descriptor.source.source_id != record.source_id
+            or descriptor.source.source_version != record.source_version
+        ):
+            raise ProcessInterfaceError(
+                "PRESENTATION_EXPIRED",
+                "This interface view is no longer current.",
+                "Use the common view to reconcile the recorded run.",
+            )
+        grants = self.surfaces.grant_service.repository.list(
+            user_id=actor.user_id,
+            workspace_id=actor.workspace_id,
+            source_id=record.source_id,
+            source_version=record.source_version,
+        )
+        bindings = {}
+        for grant in grants:
+            if (
+                grant.capability == "process.read"
+                and grant.instance_id == record.instance_id
+            ):
+                binding = ProcessPresentationBinding.model_validate(grant.constraints)
+                if (
+                    binding.presentation_id == presentation_id
+                    and binding.generation == record.generation
+                ):
+                    bindings[canonical_digest(binding)] = binding
+        if len(bindings) != 1:
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This view has no exact process binding.",
+                "Reopen its saved interface.",
+            )
+        binding = next(iter(bindings.values()))
+        if (
+            binding.process != process
+            or binding.read_only
+            or binding.run_id is not None
+            or record.source_id != f"process.{binding.ui_id}.{binding.revision_id}"
+        ):
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This view cannot attach a preparation request.",
+                "Use its exact process and run view.",
+            )
+        try:
+            self.surfaces.grant_service.authorize(
+                actor=actor,
+                request=CapabilityRequest(
+                    source_id=record.source_id,
+                    source_version=record.source_version,
+                    instance_id=record.instance_id,
+                    capability="process.read",
+                    operation="process.read",
+                    constraints=binding.model_dump(mode="json"),
+                    risk_tier="low",
+                    persistence="instance",
+                    duration_seconds=600,
+                    declared=True,
+                    decision="allow",
+                    reason="Reconcile the exact view's recorded start.",
+                ),
+            )
+        except CapabilityGrantError:
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This view's process grant is unavailable.",
+                "Reopen its saved interface.",
+            ) from None
+        job = self.application.interfaces.job_for_revision(
+            process.workspace_id, binding.ui_id, binding.revision_id
+        )
+        try:
+            retained = self.application.interfaces.get_authoring_record(
+                process.workspace_id,
+                job.job_id,
+                presentation_start_key(presentation_id),
+            )
+        except KeyError:
+            if request_id is None:
+                return None
+            raise ProcessInterfaceError(
+                "OUTCOME_UNKNOWN",
+                "This view has no retained start request.",
+                "Reconcile its request in the common view; do not submit another start.",
+            ) from None
+        if (
+            retained.get("binding") != binding.model_dump(mode="json")
+            or retained.get("principal_id") != scope.principal_id
+            or retained.get("session_id") != actor.session_id
+            or retained.get("instance_id") != record.instance_id
+            or retained.get("source_version") != record.source_version
+            or (request_id is not None and retained.get("request_id") != request_id)
+        ):
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This request does not belong to this view.",
+                "Reconcile its exact recorded start.",
+            )
+        try:
+            receipt = self.application.inputs.start_receipt(
+                scope.principal_id, process, retained["request_id"]
+            )
+        except KeyError:
+            raise ProcessInterfaceError(
+                "OUTCOME_UNKNOWN",
+                "The retained request has no confirmed start receipt.",
+                "Reconcile that same request; do not submit a new start.",
+            ) from None
+        expected = canonical_digest(
+            {
+                "process": process,
+                "input_snapshot_id": retained["input_snapshot_id"],
+                "input_digest": retained["input_digest"],
+                "integration_policy_digest": retained["integration_policy_digest"],
+            }
+        )
+        if receipt.process != process or receipt.payload_digest != expected:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The start receipt and view association disagree.",
+                "Inspect their exact identities before continuing.",
+            )
+        return receipt
+
     @staticmethod
     def _actor(scope, actor):
         if not isinstance(actor, SurfaceActor) or (

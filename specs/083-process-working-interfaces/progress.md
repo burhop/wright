@@ -839,6 +839,28 @@ publication or release is implied.
 
 ## Implementation progress format
 
+### 2026-10-01 — Workspace authoring controls and host connection checkpoint
+
+Implemented T039 in the existing workspace document strip: generation/update
+progress, preview/save, revision/compatibility/rollback controls and common-view
+fallback. Explicit request/job recovery does not regenerate known work. The
+native managed presenter contains StrictMode/late reply cleanup without process
+cancellation. T037's exact frame handshake, allowlisted theme, native navigation
+and receipt-based run attachment are implemented; actual managed browser proof
+remains required.
+
+Qualified checks: 127 backend passes, zero skips, 68.06 seconds; 120 frontend
+passes in ten files, 21.42 seconds. App TypeScript passed. Evidence and
+preservation are in [workspace-authoring-controls.md](evidence/workspace-authoring-controls.md).
+Controlled ports and synthetic preview observations remain clearly labelled;
+no new live-model/MCP/browser/engineering/distribution acceptance is claimed.
+
+Next: actual isolated managed host/served workspace authoring proof and qualified
+default-model generation/preview/save/update/reuse. Fresh-shell authoring preflight
+requires enabling the already-qualified Hermes SDK transport. T021, remaining
+T032/T034/T037/T040–T042, M4 and M5 remain pending. The complete submitted goal
+stays active; no push, hardware effect or user acceptance is implied.
+
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,
 run/subject/artifact identities, observations/evidence links, failed/pending scope,
 resources required and next task. Keep task checkboxes aligned. Do not replace

@@ -15,6 +15,7 @@ from api.schemas.process_interfaces import (
     ProcessUIPresentRequest,
     ProcessUIPreviewRequest,
     ProcessUICloseRequest,
+    ProcessUIStartReceiptRequest,
     ProcessSourceRequest,
 )
 from api.schemas.surfaces import SurfaceDescriptorResponse
@@ -531,5 +532,31 @@ async def close_interface(
             body.presentation_id,
         )
         return Response(status_code=204, headers={"Cache-Control": "no-store"})
+    except (ProcessInterfaceError, KeyError, ValueError) as error:
+        raise _error(error) from error
+
+
+@router.post("/presentations/start-receipt")
+async def presentation_start_receipt(
+    body: ProcessUIStartReceiptRequest,
+    request: Request,
+    response: Response,
+    service=Depends(get_workspace_service),
+    surfaces=Depends(get_process_ui_surfaces),
+):
+    response.headers["Cache-Control"] = "no-store"
+    application, author, process = _context(request, service, body)
+    try:
+        receipt = await ProcessInterfacePresentations(
+            application, surfaces
+        ).start_receipt(
+            author.process_scope,
+            process,
+            _actor(request, author.process_scope, body.session_id),
+            body.surface_id,
+            body.presentation_id,
+            request_id=body.request_id,
+        )
+        return {"receipt": receipt}
     except (ProcessInterfaceError, KeyError, ValueError) as error:
         raise _error(error) from error

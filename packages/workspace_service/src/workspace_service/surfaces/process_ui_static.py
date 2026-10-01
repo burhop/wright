@@ -43,15 +43,51 @@ _INDEX = b"""<!doctype html><html><head><meta charset="utf-8">
 _RUNTIME = b"""const root = document.getElementById('wright-process-ui');
 const connection = document.getElementById('wright-process-connection');
 const observer = new AbortController();
-let dispose;
+let dispose, context, host, mounted = false;
+const themeKeys = new Set(['--color-neutral','--color-surface','--color-surface-elevated','--color-surface-subtle',
+  '--color-primary','--color-secondary','--color-accent','--color-border','--color-success','--color-warning',
+  '--color-error','--color-text-muted','--font-size-md','--space-md','--space-lg','--radius-md']);
+const signalHost = (type, extra = {}) => {
+  if (!host || !context) throw new Error('The Wright workspace connection is unavailable.');
+  window.parent.postMessage({schema_version:'wright.process-host/1', type, nonce:host.nonce,
+    presentation_id:context.presentation_id, generation:context.generation, ...extra}, host.origin);
+};
+const receiveHost = event => {
+  const value = event.data;
+  if (!mounted || !context || event.source !== window.parent || window.parent === window ||
+      !value || typeof value !== 'object' || Array.isArray(value) ||
+      value.schema_version !== 'wright.process-host/1' ||
+      value.presentation_id !== context.presentation_id || value.generation !== context.generation ||
+      typeof value.nonce !== 'string' || !/^[a-z0-9-]{36}$/i.test(value.nonce) ||
+      !['hello','theme'].includes(value.type) ||
+      Object.keys(value).some(key => !['schema_version','type','nonce','presentation_id','generation','tokens'].includes(key))) return;
+  try {
+    const origin = new URL(event.origin);
+    if (!['http:','https:'].includes(origin.protocol) || origin.origin !== event.origin) return;
+  } catch { return; }
+  if (host && (host.origin !== event.origin || host.nonce !== value.nonce)) return;
+  if (!host && value.type !== 'hello') return;
+  host = {origin:event.origin, nonce:value.nonce};
+  if (value.tokens && typeof value.tokens === 'object' && !Array.isArray(value.tokens)) {
+    for (const [key, token] of Object.entries(value.tokens)) {
+      if (themeKeys.has(key) && typeof token === 'string' && token.length <= 128 && !/[;{}@]|url\\s*\\(/i.test(token))
+        document.documentElement.style.setProperty(key, token);
+    }
+  }
+  if (value.type === 'hello') signalHost('ready');
+};
+window.addEventListener('message', receiveHost);
 try {
   const response = await fetch('/__wright/process/context', {credentials:'same-origin', cache:'no-store'});
   if (!response.ok) throw new Error('The presentation context is unavailable.');
-  const context = await response.json();
+  context = await response.json();
   const app = await import('/app.js');
   if (typeof app.createPresentationClient !== 'function' || typeof app.mount !== 'function')
     throw new Error('The saved interface needs a compatible host.');
-  const client = app.createPresentationClient(context);
+  const client = app.createPresentationClient(context, {
+    onRunStarted: receipt => signalHost('started', {request_id:receipt.request_id}),
+    navigate: resolution => signalHost('navigate', {target:resolution.target})
+  });
   const snapshot = await client.getSnapshot();
   dispose = app.mount(root, {client, snapshot, readOnly:context.read_only});
   if (typeof dispose !== 'function' || typeof dispose.update !== 'function')
@@ -65,6 +101,7 @@ try {
     });
     if (!loaded.ok) throw new Error('The preview could not be confirmed.');
   }
+  mounted = true;
   connection.textContent = context.read_only ? 'Preview - process controls are read-only.' : 'Connected to Wright.';
   if (context.run_id) {
     void (async () => {
@@ -90,7 +127,10 @@ try {
   reason.textContent = 'Return to Wright and use the common working view or reopen this saved interface.';
   root.append(title, reason);
 }
-window.addEventListener('pagehide', () => { observer.abort(); if (dispose) dispose(); }, {once:true});
+window.addEventListener('pagehide', () => {
+  mounted = false; window.removeEventListener('message', receiveHost);
+  observer.abort(); if (dispose) dispose();
+}, {once:true});
 """
 
 

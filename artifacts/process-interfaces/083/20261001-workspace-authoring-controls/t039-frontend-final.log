@@ -1,0 +1,12 @@
+argv=['node', '../../node_modules/vitest/vitest.mjs', 'run', 'src/services/process-presentation-host.spec.ts', 'src/services/process-ui-authoring.spec.ts', 'src/services/process-ui-authoring-recovery.spec.ts', 'src/services/process-workspace-tabs.spec.ts', 'src/store/viewer-process-tabs.spec.tsx', 'src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx', 'src/components/process-interfaces/ProcessInterfaceView.spec.tsx', 'src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx', 'src/components/surfaces/LiveAppSurface.spec.tsx', 'src/services/surfaces/presenters/live-app-presenter.spec.ts']
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+
+ Test Files  10 passed (10)
+      Tests  120 passed (120)
+   Start at  18:17:17
+   Duration  21.42s (transform 16.24s, setup 13.84s, import 29.36s, tests 10.01s, environment 115.18s)
+
+
+owned_exit_code=0

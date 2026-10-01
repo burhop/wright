@@ -86,7 +86,7 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
   checks, including two durable-run reuse and close-without-cancel. T034/T037
   retain actual managed browser and host handshake obligations; T039–T042
   retain workspace controls and live-model authoring acceptance.
-- [ ] T039 [US3] Implement Create/Update interface progress, preview/save controls and compatibility fallback in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx`, explicitly using current document tabs/LiveAppSurface rather than a new browser window.
+- [x] T039 [US3] Implement Create/Update interface progress, preview/save controls and compatibility fallback in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx`, explicitly using current document tabs/LiveAppSurface rather than a new browser window. Source/component integration is checked in `evidence/workspace-authoring-controls.md`; actual served/browser and live-model acceptance remains T034/T037/T041/T042.
 - [ ] T040 [US3] Add scope/build/binding/malformed-source/revocation/cross-workspace/run/UI tests in `packages/workspace_service/tests/test_process_ui_authoring.py` and `apps/api/tests/test_process_ui_surface_authority.py`.
 - [ ] T041 [US3] Verify generation/preview/save/update/reuse/theme/accessibility/loading/error states in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx` and `tests/ui-integration/process-ui-authoring.spec.ts`.
 - [ ] T042 [US3] Run an actual configured-model authoring smoke through Wright and retain prompts/role/model/build/preview/save/update evidence in `specs/083-process-working-interfaces/evidence/live-ui-authoring.md`; reference app alone cannot complete this task.

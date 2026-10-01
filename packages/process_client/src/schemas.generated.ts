@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 0c3b7bb8b5fe0c5eaaa542e4f7ab8454d03a4565fb2dac68074aee1f4c860f86
+// Schema SHA-256: 42a7097f0dd60b8ff5c929e4488594ea1b33bdd80f7dd813f2c0fd5ed198dfc7
 export const contractSchemas: Readonly<Record<string, unknown>> = {
   "Action": {
     "additionalProperties": false,
@@ -574,6 +574,59 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
       "instructions_digest"
     ],
     "title": "CodingRole",
+    "type": "object"
+  },
+  "Compatibility": {
+    "additionalProperties": false,
+    "properties": {
+      "current_process": {
+        "$ref": "#/$defs/ProcessRef"
+      },
+      "optional_absences": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/Reason"
+        },
+        "title": "Optional Absences",
+        "type": "array"
+      },
+      "reasons": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/Reason"
+        },
+        "title": "Reasons",
+        "type": "array"
+      },
+      "revision_id": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Revision Id",
+        "type": "string"
+      },
+      "state": {
+        "enum": [
+          "compatible",
+          "incompatible",
+          "unsupported"
+        ],
+        "title": "State",
+        "type": "string"
+      },
+      "ui_id": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Ui Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "ui_id",
+      "revision_id",
+      "current_process",
+      "state"
+    ],
+    "title": "Compatibility",
     "type": "object"
   },
   "FileBinding": {

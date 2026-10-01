@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import re
 import sqlite3
 
 from core.process_interfaces import AuthoringJob, InterfaceRevision, ProcessUI
@@ -318,17 +319,21 @@ class ProcessInterfaceRepository:
         from core.process_validation import canonical_json
 
         raw = canonical_json(payload)
-        if len(raw.encode("utf-8")) > 2_200_000 or record_key not in {
-            "request",
-            "build-0",
-            "build-1",
-            "build-2",
-            "attempt-0",
-            "attempt-1",
-            "attempt-2",
-            "built",
-            "preview",
-        }:
+        if len(raw.encode("utf-8")) > 2_200_000 or (
+            record_key
+            not in {
+                "request",
+                "build-0",
+                "build-1",
+                "build-2",
+                "attempt-0",
+                "attempt-1",
+                "attempt-2",
+                "built",
+                "preview",
+            }
+            and not re.fullmatch(r"view-start-[0-9a-f]{64}", record_key)
+        ):
             raise ValueError("Unsupported or oversized authoring provenance record")
         with connect_state_db(self.db_path) as db:
             db.execute("BEGIN IMMEDIATE")

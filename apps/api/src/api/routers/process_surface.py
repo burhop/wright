@@ -261,6 +261,12 @@ async def _dispatch(path, request, response, service, route, context):
         raise HTTPException(status_code=415, detail="PROCESS_JSON_REQUIRED")
     body = definition[0].model_validate(_json_body(raw))
     _source_matches(context, body)
+    if path == "runs":
+        from workspace_service.process_interfaces.surface_bridge import (
+            ProcessSurfaceBridge,
+        )
+
+        ProcessSurfaceBridge.retain_start(application, context, body)
     if path == "representations/read":
         context.scope.require_run(body.run_id)
         return await definition[1](body=body, request=request, service=service)

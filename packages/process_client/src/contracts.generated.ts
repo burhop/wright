@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 0c3b7bb8b5fe0c5eaaa542e4f7ab8454d03a4565fb2dac68074aee1f4c860f86
+// Schema SHA-256: 42a7097f0dd60b8ff5c929e4488594ea1b33bdd80f7dd813f2c0fd5ed198dfc7
 export type JsonValue = null | boolean | number | string | ReadonlyArray<JsonValue> | { readonly [key: string]: JsonValue };
 
 export type Action = {
@@ -80,6 +80,15 @@ export type CodingRole = {
   readonly "model_policy"?: "inherit_default";
   readonly "role"?: "process-ui-author";
   readonly "version"?: "1";
+};
+
+export type Compatibility = {
+  readonly "current_process": ProcessRef;
+  readonly "optional_absences"?: ReadonlyArray<Reason>;
+  readonly "reasons"?: ReadonlyArray<Reason>;
+  readonly "revision_id": string;
+  readonly "state": "compatible" | "incompatible" | "unsupported";
+  readonly "ui_id": string;
 };
 
 export type FileBinding = {
@@ -399,6 +408,7 @@ export interface ContractTypes {
   readonly BuildReport: BuildReport;
   readonly CapabilityRef: CapabilityRef;
   readonly CodingRole: CodingRole;
+  readonly Compatibility: Compatibility;
   readonly FileBinding: FileBinding;
   readonly InputDefinition: InputDefinition;
   readonly InputDependency: InputDependency;

@@ -102,7 +102,7 @@ function responseString(value: unknown, label: string): string {
   return value;
 }
 
-function parsePresentationLaunch(
+export function parsePresentationLaunch(
   value: unknown,
   requestedKind: "panel" | "browser",
 ): PresentationLaunch {

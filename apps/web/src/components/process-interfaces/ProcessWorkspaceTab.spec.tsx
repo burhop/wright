@@ -3,15 +3,26 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { CommonProcessViewProps } from "./CommonProcessView";
 import { createProcessWorkspaceTab } from "../../services/process-workspace-tabs";
 import { ProcessWorkspaceTab } from "./ProcessWorkspaceTab";
+import type { InterfaceAuthoringPanelProps } from "./InterfaceAuthoringPanel";
+import type { ProcessInterfaceViewProps } from "./ProcessInterfaceView";
+import { authoringView, authoringUi, authoringRevision } from "../../../tests/fixtures/process-ui-authoring";
 
 const mocks = vi.hoisted(() => ({
   createClient: vi.fn(),
   common: vi.fn(),
   upload: vi.fn(),
+  createAuthoring: vi.fn(), authoring: vi.fn(), interfaceView: vi.fn(),
 }));
 vi.mock("../../services/process-client", () => ({
   createWorkspaceProcessClient: mocks.createClient,
 }));
+vi.mock("../../services/process-ui-authoring", () => ({createInterfaceAuthoringClient: mocks.createAuthoring}));
+vi.mock("./InterfaceAuthoringPanel", () => ({InterfaceAuthoringPanel: (props: InterfaceAuthoringPanelProps) => {
+  mocks.authoring(props); return <div data-testid="authoring-host-fixture"/>;
+}}));
+vi.mock("./ProcessInterfaceView", () => ({ProcessInterfaceView: (props: ProcessInterfaceViewProps) => {
+  mocks.interfaceView(props); return <button onClick={props.onUseCommon}>Use common fixture</button>;
+}}));
 vi.mock("./CommonProcessView", () => ({
   CommonProcessView: (props: CommonProcessViewProps) => {
     mocks.common(props);
@@ -40,6 +51,7 @@ const lastCommon = () =>
 describe("trusted process tab host", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.createAuthoring.mockImplementation((process) => ({process}));
     mocks.createClient.mockImplementation((options) => ({
       process: options.process,
       uploadInput: mocks.upload,
@@ -225,5 +237,37 @@ describe("trusted process tab host", () => {
     expect(first).toHaveBeenCalledTimes(1);
     expect(lastCommon().canNavigate).toBe(true);
     expect(mocks.createClient).toHaveBeenCalledTimes(1);
+  });
+
+  it("opening authoring controls does not open a preview or invoke generation", async () => {
+    const onOpenInterface = vi.fn();
+    render(<ProcessWorkspaceTab tab={tab} sessionId="session" onRunAttached={vi.fn()}
+      onPrepareAnother={vi.fn()} onOpenInterface={onOpenInterface}/>);
+    expect(screen.queryByTestId("authoring-host-fixture")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name: "Create or choose interface"}));
+    expect(screen.getByTestId("authoring-host-fixture")).toBeInTheDocument();
+    expect(onOpenInterface).not.toHaveBeenCalled();
+    expect(mocks.createAuthoring).toHaveBeenCalledExactlyOnceWith(process, "session");
+    const props = mocks.authoring.mock.calls.at(-1)![0] as InterfaceAuthoringPanelProps;
+    await props.onOpenPreview(authoringView);
+    expect(onOpenInterface).toHaveBeenCalledWith(process, {kind: "preview", ui_id: authoringUi.ui_id,
+      revision_id: authoringRevision.manifest.revision_id, job_id: authoringView.job.job_id}, authoringUi.title, undefined);
+    await props.onOpenSaved(authoringUi, authoringRevision);
+    expect(onOpenInterface).toHaveBeenLastCalledWith(process, {kind: "working", ui_id: authoringUi.ui_id,
+      revision_id: authoringRevision.manifest.revision_id}, authoringUi.title, undefined);
+  });
+
+  it("switching to the common view keeps the same source and run in the existing tab", () => {
+    const locator = {kind: "working" as const, ui_id: authoringUi.ui_id, revision_id: authoringRevision.manifest.revision_id};
+    const saved = createProcessWorkspaceTab(process, {viewId: "view-saved", runId: "recorded-run", interface: locator});
+    render(<ProcessWorkspaceTab tab={saved} sessionId="session" onRunAttached={vi.fn()}
+      onPrepareAnother={vi.fn()} onOpenInterface={vi.fn()}/>);
+    expect(screen.queryByTestId("common-view-host-fixture")).not.toBeInTheDocument();
+    const props = mocks.interfaceView.mock.calls.at(-1)![0] as ProcessInterfaceViewProps;
+    expect(props.locator).toEqual(locator); expect(props.runId).toBe("recorded-run");
+    fireEvent.click(screen.getByText("Use common fixture"));
+    expect(lastCommon().client.process).toEqual(process); expect(lastCommon().runId).toBe("recorded-run");
+    fireEvent.click(screen.getByRole("button", {name: "Return to interface"}));
+    expect(screen.queryByTestId("common-view-host-fixture")).not.toBeInTheDocument();
   });
 });
