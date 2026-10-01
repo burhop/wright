@@ -557,6 +557,44 @@ All remaining authoring/live-provider/migration/distribution work is still requi
 The complete goal remains active. Next: implement durable declared-input barriers
 and same-run v3 continuation through the existing runtime/storage authorities.
 
+### 2026-10-01 — Durable declared-input backend milestone
+
+Revalidated the goal and worktree after the connection-status turn, which did not
+change implementation state. Continued from `6d449f60`. Completed T023's runtime
+barrier activation: normal preparation recognizes declared inputs, the source
+executor stops at their exact cursor, and the existing recorder seals a v3 input
+checkpoint with immutable run inputs and connected upstream/schema identities.
+No AI is called at an input step. Service instances without the owning capability
+still fail explicitly; execution requires persisted frozen inputs before effects.
+
+T024 is substantially implemented and remains pending until scoped response and
+supervised continuation orchestration are connected. Added an internal input owner,
+atomic immutable response/checkpoint attachment, exact retry semantics and
+one-shot consumption on the existing SQLite continuation store. Input answers
+remain separate from approval/action receipts. Existing recorder segment claims
+prevent replay; source execution publishes typed answer results and resumes the
+same run. New approval checkpoints use v3 frozen inputs; old v2 restoration and
+history remain supported. No new executor or database lifecycle store was added.
+
+184 focused backend checks pass in 58.45 s with no skips, including real SQLite/file
+two-input-barrier execution, service recreation, exact duplicate retries, races,
+schema/scope/stale/expiry rejection, attachment rollback, unknown resumed outcome,
+input-to-approval continuation with a distinct frozen overlay, and old approval
+regressions. Models/reviewer answers in these checks are explicitly synthetic
+unit fixtures; they do not establish default-model, live MCP, engineering, browser
+or human acceptance. Focused Ruff and whitespace checks pass. Scope/actual run and
+checkpoint identities are retained in
+`artifacts/process-interfaces/083/20261001-t024-backend/checked-scope.json`;
+commands and remaining scope are in [interactions.md](evidence/interactions.md).
+
+Ten prototype hashes, three protected campaign hashes, two mixed API deltas and
+approved 083 context are preserved (`t024-preservation.json`). No services were
+started, no physical/supplier effects occurred, and no push/merge/release occurred.
+Next: server-derived scoped respond operation, backend-owned continuation tasks,
+checkpoint projection/currentness and UI forms. T024/T027/T028 remain pending,
+as do all later live authoring/provider/migration/distribution obligations.
+The complete implementation goal remains active.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

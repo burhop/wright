@@ -118,3 +118,81 @@ The owned Vite process was stopped after verification. The ten original prototyp
 hashes, three protected campaign hashes, two mixed API deltas and approved 083
 context match their intended baselines; private report `t022-preservation.json`.
 No push, merge, release or external effect occurred. The complete goal remains active.
+
+## 2026-10-01 — T023 runtime barrier / T024 durable backend
+
+This supersedes the earlier temporary runtime guard for normal WorkspaceService
+instances. The guard remains only when the owning process interface capability is
+missing. Before any unattended execution, declared-input processes require an
+already persisted immutable input snapshot. The canonical executor now stops at
+the declared cursor and its existing recorder creates a v3 input checkpoint.
+The original source store/parser and port validation remain authoritative.
+
+Implemented backend scope:
+
+- `process_interfaces/interactions.py` pins the source, frozen inputs, declaration,
+  schema and connected upstream values; retains exact typed answer provenance.
+- The existing continuation repository attaches immutable response evidence and
+  its cursor reference in one SQLite transaction. Failure rolls both back.
+  Duplicate identical response retries return the original identity; different
+  actors/requests/reasons/values cannot replace it. Concurrent consumption is one-shot.
+- Input checkpoints remain `pending` while an answer is retained, and become
+  `consumed` on exact response consumption. They have no approval state or external
+  action receipt. The approval service rejects input checkpoints.
+- Existing recorder `resume_segments` claims govern resumed work, including
+  read-only completed retries and refusal to replay an uncertain started segment.
+  Execution records the real typed answer at its declared port, not “Approved.”
+- New approval checkpoints with frozen run inputs use v3 and the existing approval
+  dispatcher reloads that exact overlay. Original v2 checks and records are retained.
+
+**T023 is complete. T024 remains pending** for public scoped response orchestration,
+backend-owned continuation task lifetime and projection/currentness integration.
+No response route or end-user input form is claimed here. T027/T028 require the
+served common/tailored journey; this backend milestone is not that completion.
+
+### Checked backend evidence
+
+Windows, Python 3.13.5, branch `codex/083-process-working-interfaces`, base
+`6d449f60`. Root command:
+
+```powershell
+.venv/Scripts/python.exe -m pytest -q -rs -p no:cacheprovider --basetemp C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t024-final packages/workspace_service/tests/test_process_interface_continuation.py packages/workspace_service/tests/test_workflow_execution_continuation.py packages/workspace_service/tests/test_workflow_external_action_execution.py packages/workspace_service/tests/test_workflow_source_execution.py packages/workspace_service/tests/test_process_human_input_source.py packages/workspace_service/tests/test_process_run_supervisor.py packages/workspace_service/tests/test_workflow_approval_execution.py packages/workspace_service/tests/test_workflow_approval_resume.py packages/workspace_service/tests/test_workflow_approval_review_settings.py packages/workspace_service/tests/test_process_approval_inspection.py packages/workspace_service/tests/test_process_input_execution_overlay.py packages/workspace_service/tests/test_process_preparation_service.py packages/data_vault/tests/test_workflow_continuation_repository.py packages/data_vault/tests/test_process_interface_migrations.py
+```
+
+**184 passed, no skips, 58.45 s.** Private output:
+`.local-run/process-interfaces-083/t024-final-pytest.log`. Reproduction needs a fresh
+temp directory. Focused Ruff checks/formats and `git diff --check` pass.
+
+Retained scope:
+`artifacts/process-interfaces/083/20261001-t024-backend/checked-scope.json`.
+It records actual test run/subject/schema/input/answer identities and provenance:
+
+- `same-run`: two successive input barriers, service recreation between them,
+  three synthetic model calls total, same original run file, two completed claims;
+  neither completed retry calls the model. Both answers appear as structured results.
+- `d4c67b00803d499a99d7a641b7c3bbb9`: declared input followed by v3 local review;
+  the existing dispatcher restores distinct run inputs and completes the same run.
+- `fa619d81b06b4e6fbc17820684e379c2`: injected backend failure after resumed model
+  dispatch; the retained claim is `outcome_unknown` and retries are rejected.
+
+These are real SQLite, workspace-file, compiler, source-executor and recorder
+checks with synthetic model/reviewer fixtures. Input responses retain
+`integration_test=true`; the local review retains an explicitly labelled
+`isolated-unit-reviewer` and synthetic decision reason. No real human reviewed
+engineering output, no campaign checkpoint was touched, and no external effect
+occurred. This is not a default-model/live-MCP/HTTP/browser/distribution proof.
+
+Initial fixture failures exposed the distinction between runtime JSON binding
+values and separately published EngineeringResult evidence, and JSON tuple/list
+normalization on retained retry payloads. The binding now follows existing typed
+JSON response semantics; retry checks compare canonical wire content. Expanded
+fixtures also needed globally distinct port IDs before accepted-source preparation;
+all new source fixtures now undergo the existing authoring-shape validator.
+Earlier failed runs remain private diagnostics, not passing evidence.
+
+Preservation was rechecked: ten original prototype hashes, three protected campaign
+hashes, two mixed API deltas and approved 083 context all match their baselines.
+Private report: `.local-run/process-interfaces-083/t024-preservation.json`.
+No owned server was launched. No push, merge, release or physical/supplier operation
+was performed. All later UI-authoring, live engineering, migration and distribution
+requirements remain in the active goal.

@@ -1,4 +1,4 @@
-"""Durable one-shot approval checkpoints for canonical workflow continuations."""
+"""Durable one-shot checkpoints for the existing canonical workflow executor."""
 
 from __future__ import annotations
 
@@ -6,6 +6,9 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
+from core.process_interactions import InteractionResponse, validate_response
+from core.process_validation import canonical_digest
+from .process_input_repository import ProcessInputRepository, encoded
 from .state_store import connect_state_db
 
 
@@ -49,6 +52,11 @@ class WorkflowContinuationCheckpoint:
     updated_at: int
     expires_at: int | None
     external_action: dict[str, Any] | None
+
+    @property
+    def checkpoint_kind(self) -> str:
+        """Old approval records remain unchanged; kind is explicit in v3 JSON."""
+        return self.continuation.get("checkpoint_kind", "approval")
 
 
 class WorkflowContinuationStateConflict(RuntimeError):
@@ -149,6 +157,150 @@ class WorkflowContinuationRepository:
                 (workspace_id, run_id),
             ).fetchall()
         return tuple(self._record(row) for row in rows)
+
+    @staticmethod
+    def _input_checkpoint(connection, checkpoint_id):
+        row = connection.execute(
+            "SELECT * FROM workflow_continuation_checkpoints WHERE checkpoint_id=?",
+            (checkpoint_id,),
+        ).fetchone()
+        checkpoint = WorkflowContinuationRepository._record(row) if row else None
+        if (
+            checkpoint is None
+            or checkpoint.action_kind != "human_input"
+            or checkpoint.continuation.get("schema_version") != 3
+            or checkpoint.checkpoint_kind != "input"
+            or checkpoint.external_action is not None
+        ):
+            raise WorkflowContinuationStateConflict(
+                "This checkpoint is not a declared input continuation"
+            )
+        return checkpoint
+
+    def attach_input_response(
+        self, response: InteractionResponse, *, updated_at: int
+    ) -> tuple[WorkflowContinuationCheckpoint, InteractionResponse, bool]:
+        """Retain the exact response and its cursor reference in one transaction.
+
+        This records an answer, not approval or permission to dispatch an action.
+        The recorder still claims the execution segment separately, before work.
+        """
+        raw = encoded(response)
+        # Initialize additive evidence tables before the write transaction.
+        ProcessInputRepository(self.db_path)
+        with connect_state_db(self.db_path) as connection:
+            self._ensure(connection)
+            connection.execute("BEGIN IMMEDIATE")
+            checkpoint = self._input_checkpoint(connection, response.checkpoint_id)
+            schema = checkpoint.subject.get("declaration", {}).get("response_schema")
+            if (
+                checkpoint.workspace_id != response.workspace_id
+                or checkpoint.run_id != response.run_id
+                or checkpoint.subject_digest != response.subject_digest
+                or checkpoint.subject.get("input_digest") != response.input_digest
+                or not isinstance(schema, dict)
+                or canonical_digest(schema) != response.schema_digest
+                or checkpoint.state not in {"pending", "consumed"}
+                or (
+                    checkpoint.expires_at is not None
+                    and updated_at >= checkpoint.expires_at
+                    and checkpoint.state != "consumed"
+                )
+            ):
+                raise WorkflowContinuationStateConflict(
+                    "The input response does not match a current checkpoint"
+                )
+            validate_response(schema, response.value)
+            reference = checkpoint.continuation.get("response_id")
+            if checkpoint.state == "consumed" and reference is None:
+                raise WorkflowContinuationStateConflict(
+                    "A consumed checkpoint cannot accept a new response"
+                )
+            retained, created = ProcessInputRepository._put_response(
+                connection, response, raw
+            )
+            if reference is not None:
+                if (
+                    reference != retained.response_id
+                    or checkpoint.continuation.get("response_digest") != retained.digest
+                    or created
+                ):
+                    raise WorkflowContinuationStateConflict(
+                        "The retained response and continuation disagree"
+                    )
+                return checkpoint, retained, False
+            continuation = {
+                **checkpoint.continuation,
+                "response_id": retained.response_id,
+                "response_digest": retained.digest,
+            }
+            connection.execute(
+                """UPDATE workflow_continuation_checkpoints
+                SET continuation_json=?,actor=?,reason=?,updated_at=?
+                WHERE checkpoint_id=?""",
+                (
+                    json.dumps(continuation, sort_keys=True, separators=(",", ":")),
+                    retained.actor,
+                    retained.reason,
+                    updated_at,
+                    checkpoint.checkpoint_id,
+                ),
+            )
+            return (
+                self._input_checkpoint(connection, checkpoint.checkpoint_id),
+                retained,
+                created,
+            )
+
+    def consume_input_response(
+        self,
+        checkpoint_id: str,
+        *,
+        workspace_id: str,
+        run_id: str,
+        subject_digest: str,
+        response_id: str,
+        response_digest: str,
+        updated_at: int,
+    ) -> WorkflowContinuationCheckpoint:
+        """Compare and consume one input barrier; never creates an action receipt."""
+        with connect_state_db(self.db_path) as connection:
+            self._ensure(connection)
+            connection.execute("BEGIN IMMEDIATE")
+            checkpoint = self._input_checkpoint(connection, checkpoint_id)
+            if (
+                checkpoint.workspace_id != workspace_id
+                or checkpoint.run_id != run_id
+                or checkpoint.subject_digest != subject_digest
+                or checkpoint.continuation.get("response_id") != response_id
+                or checkpoint.continuation.get("response_digest") != response_digest
+                or checkpoint.state != "pending"
+                or (
+                    checkpoint.expires_at is not None
+                    and updated_at >= checkpoint.expires_at
+                )
+            ):
+                raise WorkflowContinuationStateConflict(
+                    "Input continuation changed before its response was consumed"
+                )
+            row = connection.execute(
+                """SELECT payload_json FROM process_interaction_responses
+                WHERE workspace_id=? AND response_id=? AND run_id=? AND checkpoint_id=?""",
+                (workspace_id, response_id, run_id, checkpoint_id),
+            ).fetchone()
+            if row is None or (
+                InteractionResponse.model_validate_json(row["payload_json"]).digest
+                != response_digest
+            ):
+                raise WorkflowContinuationStateConflict(
+                    "The continuation has no matching immutable input response"
+                )
+            connection.execute(
+                """UPDATE workflow_continuation_checkpoints
+                SET state='consumed',updated_at=? WHERE checkpoint_id=?""",
+                (updated_at, checkpoint_id),
+            )
+            return self._input_checkpoint(connection, checkpoint_id)
 
     def transition(
         self,

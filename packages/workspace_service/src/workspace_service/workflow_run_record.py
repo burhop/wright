@@ -265,6 +265,7 @@ def _execution_snapshot(record, state):
             "design_revision",
             "review_requested",
             "approval_requested",
+            "input_requested",
             "approval_decided",
             "external_action_authorized",
             "external_action_reconciled",
@@ -381,7 +382,9 @@ async def record_workflow_resume(
 
     relative = checkpoint.continuation.get("run_log_path")
     if not isinstance(relative, str) or not relative.startswith("runs/"):
-        raise ValueError("Approval continuation has no run-log path")
+        raise ValueError("Workflow continuation has no run-log path")
+    if checkpoint.workspace_id != workspace_id:
+        raise ValueError("Continuation does not belong to this workspace")
     identity = f"workflow-resume:{workspace_id}:{checkpoint.run_id}"
     async with ApplicationLease(identity):
         raw = await service.files.read_reference(workspace_dir, relative)
@@ -409,15 +412,34 @@ async def record_workflow_resume(
                 "Inspect persisted tool evidence and reconcile before creating another continuation.",
             )
         if (
-            checkpoint.state != "consumed"
-            or (checkpoint.external_action or {}).get("outcome") != "dispatched"
+            checkpoint.checkpoint_kind not in {"approval", "input"}
+            or checkpoint.state != "consumed"
+            or (
+                checkpoint.checkpoint_kind == "approval"
+                and (checkpoint.external_action or {}).get("outcome") != "dispatched"
+            )
         ):
             raise _error(
                 "WORKFLOW_CONTINUATION_NOT_AUTHORIZED",
-                "The checkpoint does not have a completed approved action.",
+                "The checkpoint does not have completed continuation authority.",
                 "Resolve the exact checkpoint before continuing.",
             )
-        current = result.get("approval") or record.get("approval") or {}
+        reference = (
+            "input_checkpoint" if checkpoint.checkpoint_kind == "input" else "approval"
+        )
+        if checkpoint.checkpoint_kind == "input":
+            owner = service.process_interfaces.human_inputs
+            retained = owner.get(
+                checkpoint.checkpoint_id,
+                workspace_id=workspace_id,
+                run_id=checkpoint.run_id,
+            )
+            if retained != checkpoint:
+                raise ValueError(
+                    "Input continuation differs from its retained checkpoint"
+                )
+            owner.response(retained)
+        current = result.get(reference) or record.get(reference) or {}
         if current.get("checkpoint_id") != checkpoint.checkpoint_id:
             raise ValueError("This run is waiting at another checkpoint")
         claims[checkpoint.checkpoint_id] = {
@@ -557,9 +579,52 @@ async def _record_run(
             record["run_id"] = result["run_id"]
         review_request = result.pop("_review_request", None)
         approval_request = result.pop("_approval_request", None)
-        if review_request and approval_request:
-            raise ValueError("A run cannot request two approval mechanisms at once")
-        if approval_request:
+        input_request = result.pop("_input_request", None)
+        if (
+            sum(
+                item is not None
+                for item in (review_request, approval_request, input_request)
+            )
+            > 1
+        ):
+            raise ValueError("A run cannot request two checkpoint mechanisms at once")
+        record.pop("input_checkpoint", None)
+        if input_request:
+            if not workspace_id:
+                raise ValueError("Declared input requires a workspace identity")
+            continuation = {
+                **input_request["continuation"],
+                "run_log_path": filename,
+                "run_id": result["run_id"],
+                "workflow_path": source_path,
+                "source_digest": source_digest,
+                "step_title": input_request["step_title"],
+            }
+            checkpoint_record = service.process_interfaces.human_inputs.request(
+                workspace_id=workspace_id,
+                workflow_id=source_path,
+                run_id=result["run_id"],
+                step_id=input_request["step_id"],
+                subject=input_request["subject"],
+                continuation=continuation,
+            )
+            checkpoint_data = asdict(checkpoint_record)
+            result.update(status="waiting_human", input_checkpoint=checkpoint_data)
+            record.update(
+                status="waiting_human", result=result, input_checkpoint=checkpoint_data
+            )
+            await emit(
+                {
+                    "kind": "input_requested",
+                    "at": datetime.now(timezone.utc).isoformat(),
+                    "task_id": input_request["step_id"],
+                    "task_title": input_request["step_title"],
+                    "message": input_request["instructions"],
+                    "checkpoint_id": checkpoint_record.checkpoint_id,
+                    "subject_digest": checkpoint_record.subject_digest,
+                }
+            )
+        elif approval_request:
             if not workspace_id:
                 raise ValueError(
                     "External-action approval requires a workspace identity"
@@ -678,7 +743,11 @@ async def _record_run(
         if resume_checkpoint_id and record["status"] in {"failed", "cancelled"}:
             record["resume_segments"][resume_checkpoint_id]["state"] = "outcome_unknown"
         record["execution_ended_at"] = datetime.now(timezone.utc).isoformat()
-        if record["status"] not in {"pending_review", "awaiting_approval"}:
+        if record["status"] not in {
+            "pending_review",
+            "awaiting_approval",
+            "waiting_human",
+        }:
             record["completed_at"] = record["execution_ended_at"]
         # Indexed publication never replaces another run. Logs survive reloads and
         # remain accessible through the existing workspace file browser/viewer.
@@ -1002,6 +1071,7 @@ def read_workflow_run(workspace_dir, source_path, run_id, *, run_log_path=None):
         summary.pop("capture_rights", None)
         for key, identity, digest in (
             ("approval", "checkpoint_id", "subject_digest"),
+            ("input_checkpoint", "checkpoint_id", "subject_digest"),
             ("review", "review_id", "package_digest"),
         ):
             reference = (record.get("result") or {}).get(key) or record.get(key)

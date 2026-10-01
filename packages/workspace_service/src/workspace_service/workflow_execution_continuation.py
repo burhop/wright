@@ -112,26 +112,48 @@ async def restore_continuation(
             "Inspect the saved run and approval evidence before starting another attempt.",
         )
 
-    if not isinstance(state, dict) or state.get("schema_version") != 2:
+    if (
+        not isinstance(state, dict)
+        or type(state.get("schema_version")) is not int
+        or state["schema_version"] not in {2, 3}
+    ):
         raise stale("This run has no executable continuation snapshot.")
     state = json.loads(json.dumps(state, allow_nan=False))
+    kind = state.get("checkpoint_kind") if state["schema_version"] == 3 else "approval"
+    if kind not in {"approval", "input"}:
+        raise stale("The continuation checkpoint kind is unsupported.")
     if not isinstance(checkpoint, dict) or (
         checkpoint.get("state") != "consumed"
         or checkpoint.get("run_id") != state.get("run_id")
-        or (checkpoint.get("external_action") or {}).get("outcome") != "dispatched"
+        or (
+            kind == "approval"
+            and (checkpoint.get("external_action") or {}).get("outcome") != "dispatched"
+        )
     ):
-        raise stale("The checkpoint does not have a confirmed completed action.")
+        raise stale("The checkpoint does not have confirmed continuation authority.")
     cursor = state.get("next_step_index")
     if type(cursor) is not int or not 0 <= cursor < len(plan.steps):
         raise stale("The continuation cursor is invalid.")
     step = plan.steps[cursor]
-    if not step.external_action or checkpoint.get("step_id") != step.id:
-        raise stale("The continuation does not match the approved canonical step.")
+    if checkpoint.get("step_id") != step.id or (
+        (kind == "approval" and not step.external_action)
+        or (kind == "input" and (not step.human_interaction or step.external_action))
+    ):
+        raise stale("The continuation does not match its declared canonical step.")
     subject = checkpoint.get("subject", {})
     from .workflow_external_actions import approval_subject_digest
+    from .process_interfaces.interactions import input_subject_digest
 
-    if approval_subject_digest(subject) != checkpoint.get("subject_digest"):
-        raise stale("The approval subject digest does not match its evidence.")
+    try:
+        subject_digest = (
+            input_subject_digest(subject)
+            if kind == "input"
+            else approval_subject_digest(subject)
+        )
+    except (ValueError, RuntimeError) as error:
+        raise stale("The checkpoint subject is invalid.") from error
+    if subject_digest != checkpoint.get("subject_digest"):
+        raise stale("The checkpoint subject digest does not match its evidence.")
     if (
         not plan.definition_digest
         or state.get("definition_digest") != plan.definition_digest
@@ -139,17 +161,90 @@ async def restore_continuation(
         or state.get("input_identities") != input_identities(input_values)
         or subject.get("input_digests")
         != sorted(input_identities(input_values).values())
-        or subject.get("binding") != step.external_action["binding"]
+    ):
+        raise stale("The saved definition or inputs changed.")
+    if kind == "approval" and (
+        subject.get("binding") != step.external_action["binding"]
         or subject.get("destination") != step.external_action["destination"]
         or subject.get("settings")
         != _approval_settings(
-            pending_action=step,
-            plan=plan,
-            workspace_dir=workspace_dir,
+            pending_action=step, plan=plan, workspace_dir=workspace_dir
         )
         or subject.get("action") != step.external_action["action"]
     ):
-        raise stale("The saved definition, inputs, or approved action changed.")
+        raise stale("The approved action changed.")
+    if state["schema_version"] == 3:
+        from core.process_interactions import InputSnapshot
+
+        try:
+            frozen = InputSnapshot.model_validate_json(
+                plan.input_snapshot.model_dump_json()
+            )
+            retained_inputs = service.process_interfaces.inputs.get_snapshot(
+                frozen.process.workspace_id, frozen.snapshot_id
+            )
+            if (
+                frozen.snapshot_id != state.get("input_snapshot_id")
+                or frozen.digest != state.get("input_digest")
+                or frozen.process.source_digest != plan.definition_digest
+                or retained_inputs != frozen
+                or (
+                    kind == "approval"
+                    and (
+                        state.get("response_id") is not None
+                        or state.get("response_digest") is not None
+                    )
+                )
+            ):
+                raise ValueError("The frozen inputs changed")
+        except (AttributeError, KeyError, ValueError, TypeError) as error:
+            raise stale(
+                "The continuation's immutable input snapshot changed."
+            ) from error
+    human_response = None
+    if kind == "input":
+        from core.process_validation import canonical_digest
+        from .process_interfaces.errors import ProcessInterfaceError
+
+        try:
+            owner = service.process_interfaces.human_inputs
+            current = owner.get(
+                checkpoint["checkpoint_id"],
+                workspace_id=checkpoint["workspace_id"],
+                run_id=state["run_id"],
+            )
+            if asdict(current) != checkpoint or current.continuation != state:
+                raise ValueError(
+                    "The continuation differs from its retained checkpoint"
+                )
+            if (
+                current.state != "consumed"
+                or subject.get("step_id") != step.id
+                or subject.get("declaration") != step.human_interaction
+                or subject.get("input_snapshot_id") != frozen.snapshot_id
+                or subject.get("input_digest") != frozen.digest
+                or subject.get("upstream_digests")
+                != {
+                    source: canonical_digest(state["responses"][source])
+                    if source in state["responses"]
+                    else canonical_digest(
+                        encode_value(input_values[source.split(".", 1)[0]])
+                    )
+                    for _, source in step.references
+                }
+            ):
+                raise ValueError("The declared input or its upstream evidence changed")
+            human_response = owner.response(current)
+        except (
+            AttributeError,
+            ValueError,
+            TypeError,
+            KeyError,
+            ProcessInterfaceError,
+        ) as error:
+            raise stale(
+                "The input continuation has no matching immutable response."
+            ) from error
     expected_ids = [candidate.id for candidate in plan.steps[:cursor]]
     if state.get("completed_step_ids") != expected_ids:
         raise stale("The continuation omits or repeats completed canonical steps.")
@@ -187,7 +282,7 @@ async def restore_continuation(
     )
     if subject.get("artifact_digests") != artifact_digests:
         raise stale("The approved artifact identities do not match the continuation.")
-    return {
+    restored = {
         "run_id": state["run_id"],
         "cursor": cursor,
         "responses": {
@@ -200,3 +295,6 @@ async def restore_continuation(
         "revision_counts": state["revision_counts"],
         "feedback": state["feedback"],
     }
+    if human_response is not None:
+        restored["human_response"] = human_response
+    return restored

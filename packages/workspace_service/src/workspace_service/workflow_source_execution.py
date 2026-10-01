@@ -1219,7 +1219,9 @@ async def prepare_prompt_workflow(
         )
     validate_workspace_authoring_shape(document.source)
     plan = compile_prompt_workflow(document.source)
-    if any(step.human_interaction for step in plan.steps):
+    if any(step.human_interaction for step in plan.steps) and not getattr(
+        service, "process_interfaces", None
+    ):
         raise _error(
             "WORKFLOW_HUMAN_INPUT_UNAVAILABLE",
             "This workflow declares human input, but durable input continuation is not available yet.",
@@ -1589,6 +1591,10 @@ async def execute_prompt_workflow(
         file_result,
     )
 
+    if any(step.human_interaction for step in plan.steps):
+        from .workflow_human_input_runtime import input_runtime_owner
+
+        input_runtime_owner(service, plan)
     run_id = run_id or uuid4().hex
     engineering_results = []
     validation_application = None
@@ -1730,115 +1736,167 @@ async def execute_prompt_workflow(
         feedback = restored["feedback"]
         execution_context = continuation.get("execution_context")
         released = plan.steps[cursor]
-        receipt_files = (
-            completed_checkpoint.get("external_action", {}).get("evidence") or {}
-        ).get("produced_files", [])
-        verified_receipts = []
-        if receipt_files:
-            for receipt in receipt_files:
-                path = _safe_path(receipt.get("output_path"))
-                raw = await service.files.read_reference(workspace_dir, path)
-                if (
-                    not raw
-                    or len(raw) != receipt.get("output_bytes")
-                    or hashlib.sha256(raw).hexdigest() != receipt.get("sha256")
-                ):
-                    raise _invalid(
-                        "The completed handoff receipt changed before continuation."
-                    )
-                declared_receipt_ports = [
-                    port
-                    for port, kind in released.output_ports
-                    if kind == "workspace_file"
-                ]
-                port = receipt.get("output_port") or "receipt"
-                if (
-                    port not in declared_receipt_ports
-                    and len(declared_receipt_ports) == 1
-                ):
-                    port = declared_receipt_ports[0]
-                output = {
-                    **receipt,
-                    "output_port": port,
-                    "task_id": released.id,
-                    "task_title": released.title,
-                    "artifact_role": "external_action_receipt",
-                }
-                receipt_result = file_result(
-                    output,
-                    Provenance(run_id, released.id, port),
-                )
-                engineering_results.append(receipt_result)
-                verified_receipts.append(output)
-                if (port, "workspace_file") in released.output_ports:
-                    address = f"{released.id}.{port}"
-                    responses[address] = receipt_result
-                    artifacts_by_output[address] = [output]
-                await emit(
-                    "result_ready",
-                    task_id=released.id,
-                    task_title=released.title,
-                    engineering_result=receipt_result.to_dict(),
-                )
-        # A review may expose the same exact artifact to downstream tasks. The
-        # approval never creates a replacement engineering artifact.
-        if (
-            released.external_action["action_kind"] == "local_review"
-            and released.references
-        ):
-            approved_source = released.references[0][1]
-            for port, _ in released.output_ports:
-                responses[f"{released.id}.{port}"] = responses[approved_source]
-                artifacts_by_output[f"{released.id}.{port}"] = artifacts_by_output.get(
-                    approved_source, []
-                )
-        approval_record = {
-            "task_id": released.id,
-            "task_title": released.title,
-            "execution_kind": "approval",
-            "output_format": "text",
-            "output_path": None,
-            "output_bytes": 0,
-            "response": "Approved",
-            "checkpoint_id": completed_checkpoint["checkpoint_id"],
-            "subject_digest": completed_checkpoint["subject_digest"],
-            "review_authority": {
-                "action_kind": released.external_action["action_kind"],
-                "settings": released.external_action["settings"],
-                "actor": completed_checkpoint.get("actor"),
-                "reason": completed_checkpoint.get("reason"),
-                "subject": completed_checkpoint.get("subject"),
-                "subject_digest": completed_checkpoint["subject_digest"],
-                "checkpoint_id": completed_checkpoint["checkpoint_id"],
-            },
-            "external_action": completed_checkpoint["external_action"],
-            "produced_files": verified_receipts,
-        }
-        if validation_application:
-            approval_record["producer_attempt"] = 1 + sum(
-                1 for item in attempts if item["task_id"] == released.id
-            )
-        records.append(approval_record)
-        if validation_application:
-            from .process_validation.process import register_outputs
+        if released.human_interaction:
+            from .workflow_human_input_runtime import input_response_result
 
-            register_outputs(
-                validation_application,
-                released,
-                approval_record,
-                run_id,
-                responses,
-                artifacts_by_output,
-                engineering_results,
+            answer = restored["human_response"]
+            answered_result, answered_record = input_response_result(
+                step=released,
+                plan=plan,
+                response=answer,
+                checkpoint=completed_checkpoint,
             )
-        await emit(
-            "step_completed",
-            task_id=released.id,
-            task_title=released.title,
-            checkpoint_id=completed_checkpoint["checkpoint_id"],
-            response="Approved",
-            output_format="text",
-        )
+            responses[f"{released.id}.{released.human_interaction['output_port']}"] = (
+                json.loads(answered_record["response"])
+            )
+            engineering_results.append(answered_result)
+            if validation_application:
+                from .process_validation.process import register_outputs
+
+                answered_record["producer_attempt"] = 1 + sum(
+                    1 for item in attempts if item["task_id"] == released.id
+                )
+                register_outputs(
+                    validation_application,
+                    released,
+                    answered_record,
+                    run_id,
+                    responses,
+                    artifacts_by_output,
+                    engineering_results,
+                )
+            records.append(answered_record)
+            await emit(
+                "step_started",
+                task_id=released.id,
+                task_title=released.title,
+                execution_kind="human_input",
+            )
+            await emit(
+                "result_ready",
+                task_id=released.id,
+                task_title=released.title,
+                engineering_result=answered_result.to_dict(),
+            )
+            await emit(
+                "step_completed",
+                task_id=released.id,
+                task_title=released.title,
+                checkpoint_id=answer.checkpoint_id,
+                response_id=answer.response_id,
+                response=answered_record["response"],
+                output_format="json",
+            )
+        else:
+            receipt_files = (
+                completed_checkpoint.get("external_action", {}).get("evidence") or {}
+            ).get("produced_files", [])
+            verified_receipts = []
+            if receipt_files:
+                for receipt in receipt_files:
+                    path = _safe_path(receipt.get("output_path"))
+                    raw = await service.files.read_reference(workspace_dir, path)
+                    if (
+                        not raw
+                        or len(raw) != receipt.get("output_bytes")
+                        or hashlib.sha256(raw).hexdigest() != receipt.get("sha256")
+                    ):
+                        raise _invalid(
+                            "The completed handoff receipt changed before continuation."
+                        )
+                    declared_receipt_ports = [
+                        port
+                        for port, kind in released.output_ports
+                        if kind == "workspace_file"
+                    ]
+                    port = receipt.get("output_port") or "receipt"
+                    if (
+                        port not in declared_receipt_ports
+                        and len(declared_receipt_ports) == 1
+                    ):
+                        port = declared_receipt_ports[0]
+                    output = {
+                        **receipt,
+                        "output_port": port,
+                        "task_id": released.id,
+                        "task_title": released.title,
+                        "artifact_role": "external_action_receipt",
+                    }
+                    receipt_result = file_result(
+                        output,
+                        Provenance(run_id, released.id, port),
+                    )
+                    engineering_results.append(receipt_result)
+                    verified_receipts.append(output)
+                    if (port, "workspace_file") in released.output_ports:
+                        address = f"{released.id}.{port}"
+                        responses[address] = receipt_result
+                        artifacts_by_output[address] = [output]
+                    await emit(
+                        "result_ready",
+                        task_id=released.id,
+                        task_title=released.title,
+                        engineering_result=receipt_result.to_dict(),
+                    )
+            # A review may expose the same exact artifact to downstream tasks. The
+            # approval never creates a replacement engineering artifact.
+            if (
+                released.external_action["action_kind"] == "local_review"
+                and released.references
+            ):
+                approved_source = released.references[0][1]
+                for port, _ in released.output_ports:
+                    responses[f"{released.id}.{port}"] = responses[approved_source]
+                    artifacts_by_output[f"{released.id}.{port}"] = (
+                        artifacts_by_output.get(approved_source, [])
+                    )
+            approval_record = {
+                "task_id": released.id,
+                "task_title": released.title,
+                "execution_kind": "approval",
+                "output_format": "text",
+                "output_path": None,
+                "output_bytes": 0,
+                "response": "Approved",
+                "checkpoint_id": completed_checkpoint["checkpoint_id"],
+                "subject_digest": completed_checkpoint["subject_digest"],
+                "review_authority": {
+                    "action_kind": released.external_action["action_kind"],
+                    "settings": released.external_action["settings"],
+                    "actor": completed_checkpoint.get("actor"),
+                    "reason": completed_checkpoint.get("reason"),
+                    "subject": completed_checkpoint.get("subject"),
+                    "subject_digest": completed_checkpoint["subject_digest"],
+                    "checkpoint_id": completed_checkpoint["checkpoint_id"],
+                },
+                "external_action": completed_checkpoint["external_action"],
+                "produced_files": verified_receipts,
+            }
+            if validation_application:
+                approval_record["producer_attempt"] = 1 + sum(
+                    1 for item in attempts if item["task_id"] == released.id
+                )
+            records.append(approval_record)
+            if validation_application:
+                from .process_validation.process import register_outputs
+
+                register_outputs(
+                    validation_application,
+                    released,
+                    approval_record,
+                    run_id,
+                    responses,
+                    artifacts_by_output,
+                    engineering_results,
+                )
+            await emit(
+                "step_completed",
+                task_id=released.id,
+                task_title=released.title,
+                checkpoint_id=completed_checkpoint["checkpoint_id"],
+                response="Approved",
+                output_format="text",
+            )
         cursor += 1
     while cursor < len(plan.steps):
         if (
@@ -1849,11 +1907,7 @@ async def execute_prompt_workflow(
             tool_runtime._verified_copy_sources = tuple(engineering_results)
         step = plan.steps[cursor]
         if step.human_interaction:
-            raise _error(
-                "WORKFLOW_HUMAN_INPUT_UNAVAILABLE",
-                f"{step.title}: a declared human-input barrier cannot execute as an AI prompt.",
-                "Enable durable declared-input continuation before running this workflow.",
-            )
+            break  # Seal the declared response subject; never call an AI at this cursor.
         if step.human_review:
             break  # Terminal review is persisted by the run recorder after all outputs are sealed.
         if step.external_action:
@@ -2680,6 +2734,24 @@ async def execute_prompt_workflow(
         "results": [result.to_dict() for result in engineering_results],
         "revision_attempts": attempts,
     }
+    if cursor < len(plan.steps) and plan.steps[cursor].human_interaction:
+        from .workflow_human_input_runtime import input_checkpoint_request
+
+        result["_input_request"] = input_checkpoint_request(
+            plan=plan,
+            step=plan.steps[cursor],
+            run_id=run_id,
+            cursor=cursor,
+            execution_context=execution_context,
+            input_values=input_values,
+            responses=responses,
+            records=records,
+            engineering_results=engineering_results,
+            artifacts_by_output=artifacts_by_output,
+            attempts=attempts,
+            revision_counts=revision_counts,
+            feedback=feedback,
+        )
     review = (
         plan.steps[cursor]
         if cursor < len(plan.steps) and plan.steps[cursor].human_review
@@ -2817,4 +2889,13 @@ async def execute_prompt_workflow(
                 ),
             },
         }
+        if plan.input_snapshot is not None:
+            result["_approval_request"]["continuation"].update(
+                schema_version=3,
+                checkpoint_kind="approval",
+                input_snapshot_id=plan.input_snapshot.snapshot_id,
+                input_digest=plan.input_snapshot.digest,
+                response_id=None,
+                response_digest=None,
+            )
     return result

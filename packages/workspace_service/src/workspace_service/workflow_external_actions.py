@@ -285,7 +285,12 @@ class WorkflowExternalActionService:
         self, checkpoint_id: str, workspace_id: str
     ) -> WorkflowContinuationCheckpoint:
         checkpoint = self._repository.get(checkpoint_id)
-        if checkpoint is None or checkpoint.workspace_id != workspace_id:
+        if (
+            checkpoint is None
+            or checkpoint.workspace_id != workspace_id
+            or checkpoint.checkpoint_kind != "approval"
+            or checkpoint.action_kind == "human_input"
+        ):
             raise WorkflowExternalActionError(
                 "approval_not_found", "Approval checkpoint was not found"
             )

@@ -225,6 +225,17 @@ class ProcessInterfaceService:
     def inputs(self) -> ProcessInputRepository:
         return ProcessInputRepository(self.db_path)
 
+    @cached_property
+    def human_inputs(self):
+        from data_vault.workflow_continuation_repository import (
+            WorkflowContinuationRepository,
+        )
+        from .interactions import HumanInputCheckpointService
+
+        return HumanInputCheckpointService(
+            WorkflowContinuationRepository(self.db_path), self.inputs
+        )
+
     async def close(self):
         # Do not create a supervisor solely to shut an unused service down.
         supervisor = self.__dict__.get("runs")

@@ -59,7 +59,16 @@ def _current(service, checkpoint, workspace_id, subject_digest):
         )
     state = current.continuation
     if (
-        state.get("schema_version") != 2
+        type(state.get("schema_version")) is not int
+        or state["schema_version"] not in {2, 3}
+        or (
+            state["schema_version"] == 3
+            and (
+                state.get("checkpoint_kind") != "approval"
+                or state.get("response_id") is not None
+                or state.get("response_digest") is not None
+            )
+        )
         or state.get("workflow_path") != current.workflow_id
         or state.get("run_id") != current.run_id
     ):
@@ -97,12 +106,33 @@ async def _prepare(
         return runtime
 
     try:
+        state = checkpoint.continuation
+        overlay = {}
+        if state.get("schema_version") == 3:
+            try:
+                frozen = service.process_interfaces.inputs.get_snapshot(
+                    workspace_id, state["input_snapshot_id"]
+                )
+                if frozen.digest != state.get("input_digest") or (
+                    frozen.process.source_path != checkpoint.workflow_id
+                    or frozen.process.source_digest
+                    != checkpoint.subject["definition_digest"]
+                ):
+                    raise ValueError("The frozen approval inputs changed")
+                overlay = {"workspace_id": workspace_id, "input_snapshot": frozen}
+            except (AttributeError, KeyError, ValueError, TypeError) as error:
+                raise _error(
+                    "WORKFLOW_CONTINUATION_STALE",
+                    "The approval has no matching frozen input snapshot.",
+                    "Inspect the saved run inputs before continuing.",
+                ) from error
         plan, inputs = await prepare_prompt_workflow(
             service=service,
             workspace_dir=workspace_dir,
             path=checkpoint.workflow_id,
             expected_digest=checkpoint.subject["definition_digest"],
             tool_runtime=get_runtime,
+            **overlay,
         )
         state = checkpoint.continuation
         cursor = state.get("next_step_index")

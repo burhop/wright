@@ -197,35 +197,40 @@ class ProcessInputRepository:
         raw = encoded(response)
         with connect_state_db(self.db_path) as db:
             db.execute("BEGIN IMMEDIATE")
-            row = db.execute(
-                "SELECT payload_json FROM process_interaction_responses WHERE workspace_id=? AND run_id=? AND checkpoint_id=?",
-                (response.workspace_id, response.run_id, response.checkpoint_id),
-            ).fetchone()
-            if row:
-                prior = InteractionResponse.model_validate_json(row["payload_json"])
-                retry_fields = {"response_id", "created_at", "digest"}
-                if prior.model_dump(exclude=retry_fields) != response.model_dump(
-                    exclude=retry_fields
-                ):
-                    raise ProcessRecordConflict(
-                        "Checkpoint already has a different exact response"
-                    )
-                return prior, False
-            try:
-                db.execute(
-                    "INSERT INTO process_interaction_responses VALUES (?,?,?,?,?)",
-                    (
-                        response.workspace_id,
-                        response.response_id,
-                        response.run_id,
-                        response.checkpoint_id,
-                        raw,
-                    ),
-                )
-            except sqlite3.IntegrityError as exc:
+            return self._put_response(db, response, raw)
+
+    @staticmethod
+    def _put_response(db, response, raw) -> tuple[InteractionResponse, bool]:
+        """Share the immutable insert with atomic checkpoint response attachment."""
+        row = db.execute(
+            "SELECT payload_json FROM process_interaction_responses WHERE workspace_id=? AND run_id=? AND checkpoint_id=?",
+            (response.workspace_id, response.run_id, response.checkpoint_id),
+        ).fetchone()
+        if row:
+            prior = InteractionResponse.model_validate_json(row["payload_json"])
+            retry_fields = {"response_id", "created_at", "digest"}
+            if prior.model_dump(exclude=retry_fields) != response.model_dump(
+                exclude=retry_fields
+            ):
                 raise ProcessRecordConflict(
-                    "Response identity already belongs to another checkpoint"
-                ) from exc
+                    "Checkpoint already has a different exact response"
+                )
+            return prior, False
+        try:
+            db.execute(
+                "INSERT INTO process_interaction_responses VALUES (?,?,?,?,?)",
+                (
+                    response.workspace_id,
+                    response.response_id,
+                    response.run_id,
+                    response.checkpoint_id,
+                    raw,
+                ),
+            )
+        except sqlite3.IntegrityError as exc:
+            raise ProcessRecordConflict(
+                "Response identity already belongs to another checkpoint"
+            ) from exc
         return InteractionResponse.model_validate_json(raw), True
 
     @traced("process.response.read")
