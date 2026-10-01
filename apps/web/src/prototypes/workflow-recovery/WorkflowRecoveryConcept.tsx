@@ -4066,7 +4066,9 @@ function WorkflowRecoveryReadyConcept({
                         : template === "mcp-tool"
                           ? `Tool: ${tool.replaceAll("_", " ") || "Not selected"}`
                           : block.executionKind === "human"
-                            ? "Human review"
+                            ? isHumanInputBlock(block)
+                              ? "Declared user input"
+                              : "Human review"
                             : binding
                               ? `${binding.kind === "internal" ? "Internal" : binding.kind} · ${binding.capabilityName}`
                               : "Automation not configured";

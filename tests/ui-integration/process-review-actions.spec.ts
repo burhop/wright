@@ -21,7 +21,7 @@ const source = readFileSync(
   ),
   "utf8",
 );
-for (const lose of ["none", "review", "action"] as const) {
+for (const lose of ["none", "review", "action", "unknown"] as const) {
   test(`reviews then explicitly submits an exact action in the normal workspace (${lose} lost acknowledgement)`, async ({
     page,
     browser,
@@ -44,11 +44,14 @@ for (const lose of ["none", "review", "action"] as const) {
         input_digest: fixture.accepted()!.input_digest,
         generated_at: new Date().toISOString(),
       },
-      state: observed
-        ? "completed"
-        : action
-          ? "waiting_external"
-          : "waiting_human",
+      state:
+        lose === "unknown" && action
+          ? "reconciliation_required"
+          : observed
+            ? "completed"
+            : action
+              ? "waiting_external"
+              : "waiting_human",
       interactions: [
         {
           checkpoint_id: "browser-review",
@@ -189,7 +192,8 @@ for (const lose of ["none", "review", "action"] as const) {
           action = {
             request_id: body.request_id,
             principal_id: "controlled-test-actor",
-            submission: "authorized",
+            submission: lose === "unknown" ? "unknown" : "authorized",
+            observed_outcome: lose === "unknown" ? "unknown" : null,
             delivery_completed: false,
             cancellation_requested: false,
           };
@@ -279,7 +283,9 @@ for (const lose of ["none", "review", "action"] as const) {
     }
     await expect(
       common.getByText(
-        "Action authorized; provider acceptance is not confirmed yet.",
+        lose === "unknown"
+          ? "Submission outcome is unknown; reconcile before another action."
+          : "Action authorized; provider acceptance is not confirmed yet.",
         { exact: true },
       ),
     ).toBeVisible();
@@ -293,24 +299,48 @@ for (const lose of ["none", "review", "action"] as const) {
       path: testInfo.outputPath("authorized-awaiting-observation.png"),
       fullPage: true,
     });
-    observed = true;
-    action = {
-      ...action!,
-      submission: "accepted",
-      delivery_completed: true,
-      observed_outcome: "completed",
-      provider_reference: "browser-operation-one",
-    };
+    if (lose !== "unknown") {
+      observed = true;
+      action = {
+        ...action!,
+        submission: "accepted",
+        delivery_completed: true,
+        observed_outcome: "completed",
+        provider_reference: "browser-operation-one",
+      };
+    }
     await common
       .getByRole("button", { name: "Refresh view", exact: true })
       .click();
     await expect(
-      common.getByText("Observed outcome: completed", { exact: true }),
+      common.getByText(
+        lose === "unknown"
+          ? "Observed outcome: unknown"
+          : "Observed outcome: completed",
+        { exact: true },
+      ),
     ).toBeVisible();
     await page.goto(savedUrl);
     await expect(
-      common.getByText("Observed outcome: completed", { exact: true }),
+      common.getByText(
+        lose === "unknown"
+          ? "Observed outcome: unknown"
+          : "Observed outcome: completed",
+        { exact: true },
+      ),
     ).toBeVisible();
+    if (lose === "unknown") {
+      await expect(
+        common.getByText("Observed outcome: completed", { exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        common
+          .getByRole("button", { name: "Continue process", exact: true })
+          .and(page.locator("button:enabled")),
+      ).toHaveCount(0);
+      expect(action?.submission).toBe("unknown");
+      expect(action?.delivery_completed).toBe(false);
+    }
     expect(fixture.starts()).toBe(1);
     expect(fixture.editor.runCount()).toBe(0);
     expect(fixture.cancellations()).toBe(0);

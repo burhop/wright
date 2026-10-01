@@ -1,0 +1,91 @@
+# Wright engineering workflow source
+# Stable names identify engineering items, steps, connection points, and routes.
+# Versions, history, integrity digests, canvas layout, and run state are managed by Wright.
+# Optional groups are shown only when they improve a larger or explicitly grouped workflow.
+
+workflow test
+  name: "Test"
+  purpose: "Prepared input fixture"
+  discipline: engineering
+  reviewed_ai_suggestions: false
+end
+
+input brief
+  name: "Brief"
+  purpose: "Prepared input"
+  step_type: work
+  group: null
+  provided_by: engineer
+  inputs: []
+  outputs: [{"description":"Document","item":null,"key":"brief_out","kind":"engineering_document","name":"brief_out","quantity":"one","required":false}]
+  instructions: "Use exact input"
+  settings: {"interaction_input":{"default":"Compare a and b after editing.","required":true,"value_schema":{"minLength":2,"type":"string"},"version":1}}
+  tool: null
+  reusable_step: null
+end
+
+task first
+  name: "First"
+  purpose: "Use exact input"
+  step_type: work
+  group: null
+  performed_by: ai_assisted
+  inputs: [{"description":"Document","item":null,"key":"first_in","kind":"engineering_document","name":"first_in","quantity":"one","required":true}]
+  outputs: [{"description":"Document","item":null,"key":"first_out","kind":"engineering_document","name":"first_out","quantity":"one","required":false}]
+  prompt: "Prepare a result"
+  settings: {"output_filename":"first.txt","output_format":"text","save_output":true}
+  tool: null
+  reusable_step: null
+end
+
+task choice
+  name: "Select comparison"
+  purpose: "Declared input"
+  step_type: work
+  group: null
+  performed_by: engineer
+  inputs: [{"description":"Document","item":null,"key":"choice_evidence","kind":"engineering_document","name":"choice_evidence","quantity":"one","required":true}]
+  outputs: [{"description":"Document","item":null,"key":"choice_response","kind":"structured_result","name":"choice_response","quantity":"one","required":true}]
+  instructions: "Review both measured comparison outputs before selecting."
+  settings: {"authoring_template":"human-input","human_interaction":{"instructions":"Review both measured comparison outputs before selecting.","kind":"input","output_port":"choice_response","response_schema":{"additionalProperties":false,"properties":{"selection":{"enum":["a","b","c"],"type":"string"}},"required":["selection"],"type":"object"},"version":1}}
+  tool: null
+  reusable_step: null
+end
+
+task second
+  name: "Use selection"
+  purpose: "Use declared response"
+  step_type: work
+  group: null
+  performed_by: ai_assisted
+  inputs: [{"description":"Document","item":null,"key":"second_input","kind":"structured_result","name":"second_input","quantity":"one","required":true}]
+  outputs: [{"description":"Document","item":null,"key":"second_output","kind":"engineering_document","name":"second_output","quantity":"one","required":false}]
+  prompt: "Use the supplied selection."
+  settings: {"output_filename":"second.txt","output_format":"text"}
+  tool: null
+  reusable_step: null
+end
+
+connection supplied
+  type: item
+  from: "brief.brief_out"
+  to: "first.first_in"
+  label: "Input"
+  when: null
+end
+
+connection evidence
+  type: item
+  from: "first.first_out"
+  to: "choice.choice_evidence"
+  label: "Declared dependency"
+  when: null
+end
+
+connection response
+  type: item
+  from: "choice.choice_response"
+  to: "second.second_input"
+  label: "Declared dependency"
+  when: null
+end

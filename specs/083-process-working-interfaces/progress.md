@@ -725,6 +725,23 @@ Retain the complete 57-task goal. Resume with served inspector save/reopen and
 compiler/readiness proof, T027/T028 completion, then the actual Wright coding-role
 and UI-authoring work. M3–M5 and the two live digital proofs remain required.
 
+### 2026-10-01 — Resumed inspector and interaction recovery checkpoint
+
+The user resumed the complete goal after the CPU pause. Completed T027 served
+inspector acceptance and captured-source backend interoperability, plus T028's
+two-input and review/action recovery matrix. Final serial browser group: 16 pass;
+focused backend/API recovery: 141 pass; source/input: 50 pass; editor modules:
+146 pass. A fixture parity check passes separately. Counts overlap prior checks
+and must not be summed as distinct coverage. Preliminary browser stalls and
+fixture mistakes remain disclosed in the evidence.
+
+Owned Vite source server uses port 5242; other demo/campaign services are untouched.
+The actual saved source and final browser scope are retained. No external
+operation, live MCP/model generation, hardware dispatch or engineering acceptance
+is implied. Protected baselines remain checked. T021 remains pending; continue
+M3 with scoped agent capability/instructions and fixed UI authoring/build/preview,
+then actual digital engineering and installed distribution proof through M5.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

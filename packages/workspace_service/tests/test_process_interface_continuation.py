@@ -6,6 +6,7 @@ import copy
 from dataclasses import asdict, replace
 import hashlib
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -442,6 +443,22 @@ def two_checkpoint_source():
             when=None,
         )
     return text
+
+
+def test_browser_two_input_source_matches_actual_continuation_fixture():
+    root = Path(__file__).resolve().parents[3]
+    source = (
+        root
+        / "specs/083-process-working-interfaces/fixtures/two-declared-human-inputs.workflow.wflow"
+    ).read_text(encoding="utf-8")
+    assert source == two_checkpoint_source()
+    assert [step.id for step in compile_prompt_workflow(source).steps] == [
+        "first",
+        "choice",
+        "second",
+        "choice_two",
+        "final",
+    ]
 
 
 def test_two_source_barriers_resume_original_record_and_retry_without_model_replay(

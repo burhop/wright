@@ -329,3 +329,47 @@ T025/T026 policy/neutral operation work, full T027/T028 review/action/recovery,
 actual default-model UI authoring, both live digital engineering demonstrations,
 vendor migration and installed-native/Docker proof remain required. This milestone
 does not establish live default-model/MCP behavior, engineering or user acceptance.
+
+## Recovery qualification — resumed 2026-10-01
+
+T027/T028 are complete within their declared interaction scope. **141 focused
+backend/API tests pass** (144.34 s, zero skips) across continuation, scoped
+checkpoint routes, input/action supervision, unattended policy and shared
+contracts. They extend the earlier real file/SQLite two-barrier restoration,
+duplicate/race/stale/schema/expiry and v2 history checks recorded above.
+One additional check proves the served two-input source fixture equals the
+actual backend continuation fixture and compiles to the same five steps.
+
+The served serial group passes **16 browser tests** (1.7 min, zero skips/flakes):
+common view (3), declared interactions (3), inspector (2), review/action (4),
+and two-input recovery (4). The new two-barrier journey preserves one run through
+close/reopen, a lost accepted acknowledgement and explicit reconciliation with
+the identical request body/ID. Schema rejection stays at the first barrier and
+requires a new explicit submission. Stale evidence remains blocked. Accepted
+responses are retained after reload. Unknown action submission remains unknown
+after refresh/reopen with no duplicate action or enabled continuation.
+
+Command (repository root, existing private installed-Chrome configuration):
+
+```powershell
+$env:PLAYWRIGHT_BASE_URL='http://127.0.0.1:5242'
+$env:WRIGHT_PLAYWRIGHT_OUTPUT_DIR='D:/repos/wright/artifacts/process-interfaces/083/20261001-t028-ui-serial'
+$env:PLAYWRIGHT_JSON_OUTPUT_FILE='D:/repos/wright/.local-run/process-interfaces-083/t028-ui-serial.json'
+node node_modules/@playwright/test/cli.js test tests/ui-integration/process-common-view.spec.ts tests/ui-integration/process-declared-interactions.spec.ts tests/ui-integration/process-input-inspector.spec.ts tests/ui-integration/process-review-actions.spec.ts tests/ui-integration/process-two-input-recovery.spec.ts --config=.local-run/process-interfaces-083/playwright-system-chrome.config.ts --project=chromium --workers=1 --reporter=json --trace=retain-on-failure --global-timeout=180000
+```
+
+Preliminary checks remain diagnostic: a new fixture referenced the wrong helper
+property (corrected); another failed before workspace entry; the first full group
+had two 30-second stalls, one before input preparation and one after a response.
+Both passed in a traced diagnostic run (49.6 s), and the full unchanged serial
+group then passed. Heavy backend tests were concurrent with the failed group;
+contention is possible but is not established as the cause. No timeout increase
+or production workaround was used. These stalls remain a browser reliability
+limitation, not silently discarded evidence.
+
+The [checked-scope manifest](../../../artifacts/process-interfaces/083/20261001-t028-recovery/checked-scope.json)
+retains reports, source/code hashes, browser request scope and baseline checks.
+HTTP/browser/model responses here are controlled fixtures. The saved-source
+interoperability uses actual compiler/storage, and backend recovery uses actual
+SQLite/file services. Live default-model/MCP engineering and distribution remain
+M3–M5 work. T021's outstanding editor Run regressions remain pending.

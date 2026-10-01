@@ -70,3 +70,33 @@ No background service was started during this checkpoint. All four owned final
 test/type/lint/build process handles reported terminal exit code zero before the
 requested pause. Protected prototype/campaign files and mixed API deltas remain
 preserved; nothing was pushed, merged, released or sent to hardware.
+
+## Resumed acceptance — 2026-10-01
+
+The earlier partial checkpoint above is retained as history. T027 is now complete
+within its source/forms scope. Through the normal workspace Workflow control,
+two served browser checks exercise schema/default editing, planned-input
+instructions and response schema, atomic Apply, Undo/Redo, Save and cold Reopen.
+The canvas identifies this as **Declared user input**. A new user-input step
+remains a blank, saveable draft; Apply rejects missing instructions.
+
+The final serial browser group passes all **16 tests**, including these two,
+using Vite source on `http://127.0.0.1:5242`, Chrome 154.0.8037.58 and 1440×1000
+inspector viewport. It uses controlled HTTP contracts, not a live API server.
+Actual screenshots and scope hashes are indexed by
+[the recovery manifest](../../../artifacts/process-interfaces/083/20261001-t028-recovery/checked-scope.json).
+
+Captured saved source has SHA-256
+`ad91dad8c2ca77b59be680592b6960fe4e5fcd317f928d92c94439a36eda22b4`.
+The real Python source store creates/reads these bytes, the source compiler
+retains the edited declaration and exact response port, and input preparation
+classifies explicit default, upstream evidence and declared human response
+correctly. The captured source is retained as
+`fixtures/inspector-edited-human-input.workflow.wflow` and has a backend regression
+test. The 50 focused source/input checks and 146 editor checks pass.
+
+The actual saved draft is disconnected and therefore cannot run. A separately
+labelled derived variant with its evidence edge connected fails with
+`WORKFLOW_NOT_READY` for the incomplete declaration. That derived variant is a
+compiler check, not proof of a connection made in the browser. No model, MCP,
+engineering acceptance or physical dispatch is established here.

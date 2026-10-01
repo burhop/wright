@@ -105,6 +105,49 @@ def test_shared_browser_and_source_fixture_matches_the_compiled_declaration():
     assert fixture.read_text(encoding="utf-8") == human_source()
 
 
+def test_actual_inspector_saved_source_compiles_with_edited_declarations(tmp_path):
+    """Captured from served inspector edits; no manual source normalization."""
+    root = Path(__file__).resolve().parents[3]
+    text = (
+        root
+        / "specs/083-process-working-interfaces/fixtures/inspector-edited-human-input.workflow.wflow"
+    ).read_text(encoding="utf-8")
+    store = WorkspaceWorkflowSourceStore(str(tmp_path))
+    saved = store.create("workflows/inspector.workflow.wflow", text)
+    loaded = store.read(saved.path)
+    assert loaded.source == text
+    plan = compile_prompt_workflow(loaded.source)
+    human = next(step for step in plan.steps if step.id == "choice")
+    assert (
+        human.human_interaction["instructions"]
+        == "Review both measured comparison outputs before selecting."
+    )
+    assert human.human_interaction["response_schema"]["properties"]["selection"][
+        "enum"
+    ] == ["a", "b", "c"]
+    assert human.human_interaction["output_port"] == "choice_response"
+    assert human.references == (("choice_evidence", "first.first_out"),)
+    assert not human.prompt and not human.human_review and human.external_action is None
+    prepared = asyncio.run(
+        prepare_inputs(
+            service=application(tmp_path, text),
+            workspace_dir=str(tmp_path),
+            process=process(text),
+            source=loaded.source,
+        )
+    )
+    assert prepared.values == {"brief": "Compare a and b after editing."}
+    assert not prepared.reasons
+    dependency = next(
+        item
+        for item in prepared.dependencies
+        if item.binding_id == "second.second_input"
+    )
+    assert dependency.classification == "declared_human_response"
+    assert dependency.interaction_step == "choice"
+    validate_response(human.human_interaction["response_schema"], {"selection": "c"})
+
+
 def changed_source(change):
     blocks = _parse(human_source())
     change(blocks)
