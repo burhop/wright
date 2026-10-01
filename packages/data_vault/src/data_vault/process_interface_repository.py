@@ -37,6 +37,21 @@ PROCESS_INTERFACE_SCHEMA = (
     ),
 )
 
+PROCESS_AUTHORING_RECORD_SCHEMA = (
+    """CREATE TABLE IF NOT EXISTS process_ui_authoring_records (
+        workspace_id TEXT NOT NULL, job_id TEXT NOT NULL, record_key TEXT NOT NULL,
+        payload_json TEXT NOT NULL, PRIMARY KEY(workspace_id,job_id,record_key),
+        FOREIGN KEY(workspace_id,job_id)
+            REFERENCES process_ui_authoring_jobs(workspace_id,job_id)
+    )""",
+    *(
+        f"""CREATE TRIGGER IF NOT EXISTS process_ui_authoring_records_no_{operation.lower()}
+        BEFORE {operation} ON process_ui_authoring_records
+        BEGIN SELECT RAISE(ABORT, 'Authoring provenance is immutable'); END"""
+        for operation in ("UPDATE", "DELETE")
+    ),
+)
+
 _JOB_TRANSITIONS = {
     "queued": {"resolving", "cancelled", "failed"},
     "resolving": {"generating", "cancelled", "failed"},
@@ -54,7 +69,10 @@ class ProcessInterfaceRepository:
     def __init__(self, db_path):
         self.db_path = db_path
         with connect_state_db(db_path, ensure_parent=True) as db:
-            for statement in PROCESS_INTERFACE_SCHEMA:
+            for statement in (
+                *PROCESS_INTERFACE_SCHEMA,
+                *PROCESS_AUTHORING_RECORD_SCHEMA,
+            ):
                 db.execute(statement)
 
     @traced("process.ui.create")
@@ -265,6 +283,92 @@ class ProcessInterfaceRepository:
         if not row:
             raise KeyError("Authoring job not found in workspace")
         return AuthoringJob.model_validate_json(row["payload_json"])
+
+    def job_for_request(
+        self, workspace_id: str, source_path: str, request_id: str
+    ) -> AuthoringJob | None:
+        """Reconcile an acknowledgement before resolving a model or allocating work."""
+        with connect_state_db(self.db_path, read_only=True) as db:
+            row = db.execute(
+                "SELECT payload_json FROM process_ui_authoring_jobs WHERE workspace_id=? AND source_path=? AND request_id=?",
+                (workspace_id, source_path, request_id),
+            ).fetchone()
+        return AuthoringJob.model_validate_json(row["payload_json"]) if row else None
+
+    def retain_authoring_record(
+        self, workspace_id: str, job_id: str, record_key: str, payload: dict
+    ) -> dict:
+        """Immutable bounded request/attempt/artifact provenance, never credentials."""
+        import json
+        from core.process_validation import canonical_json
+
+        raw = canonical_json(payload)
+        if len(raw.encode("utf-8")) > 2_200_000 or record_key not in {
+            "request",
+            "build-0",
+            "build-1",
+            "build-2",
+            "attempt-0",
+            "attempt-1",
+            "attempt-2",
+            "built",
+            "preview",
+        }:
+            raise ValueError("Unsupported or oversized authoring provenance record")
+        with connect_state_db(self.db_path) as db:
+            db.execute("BEGIN IMMEDIATE")
+            if not db.execute(
+                "SELECT 1 FROM process_ui_authoring_jobs WHERE workspace_id=? AND job_id=?",
+                (workspace_id, job_id),
+            ).fetchone():
+                raise ProcessRecordConflict("Authoring record requires its scoped job")
+            existing = db.execute(
+                "SELECT payload_json FROM process_ui_authoring_records WHERE workspace_id=? AND job_id=? AND record_key=?",
+                (workspace_id, job_id, record_key),
+            ).fetchone()
+            if existing:
+                if existing["payload_json"] != raw:
+                    raise ProcessRecordConflict("Authoring provenance is immutable")
+                return json.loads(existing["payload_json"])
+            db.execute(
+                "INSERT INTO process_ui_authoring_records VALUES (?,?,?,?)",
+                (workspace_id, job_id, record_key, raw),
+            )
+        return json.loads(raw)
+
+    def get_authoring_record(
+        self, workspace_id: str, job_id: str, record_key: str
+    ) -> dict:
+        import json
+
+        with connect_state_db(self.db_path, read_only=True) as db:
+            row = db.execute(
+                "SELECT payload_json FROM process_ui_authoring_records WHERE workspace_id=? AND job_id=? AND record_key=?",
+                (workspace_id, job_id, record_key),
+            ).fetchone()
+        if not row:
+            raise KeyError("Authoring provenance is unavailable in this workspace")
+        return json.loads(row["payload_json"])
+
+    def job_for_revision(
+        self, workspace_id: str, ui_id: str, revision_id: str
+    ) -> AuthoringJob:
+        """Exact built revision provenance; no unscoped revision-name lookup."""
+        with connect_state_db(self.db_path, read_only=True) as db:
+            rows = db.execute(
+                "SELECT jobs.payload_json FROM process_ui_authoring_jobs AS jobs "
+                "JOIN process_ui_authoring_records AS records "
+                "ON jobs.workspace_id=records.workspace_id AND jobs.job_id=records.job_id "
+                "WHERE jobs.workspace_id=? AND records.record_key='built' "
+                "AND json_extract(records.payload_json,'$.manifest.ui_id')=? "
+                "AND json_extract(records.payload_json,'$.manifest.revision_id')=? LIMIT 2",
+                (workspace_id, ui_id, revision_id),
+            ).fetchall()
+        if not rows:
+            raise KeyError("Revision has no retained authoring provenance")
+        if len(rows) != 1:
+            raise ProcessRecordConflict("Revision provenance is ambiguous")
+        return AuthoringJob.model_validate_json(rows[0]["payload_json"])
 
     @traced("process.ui.authoring.update")
     def update_job(self, job: AuthoringJob, *, expected_digest: str) -> AuthoringJob:

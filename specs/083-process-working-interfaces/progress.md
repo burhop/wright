@@ -742,6 +742,35 @@ is implied. Protected baselines remain checked. T021 remains pending; continue
 M3 with scoped agent capability/instructions and fixed UI authoring/build/preview,
 then actual digital engineering and installed distribution proof through M5.
 
+### 2026-10-01 — Confined authoring and immutable revision checkpoint
+
+Implemented T029/T030/T031/T033 owner boundaries: optional prepared invocation
+context, actual inherited-default model resolution, model-only installed Hermes
+SDK transport, versioned role/public API/schema/template resources, durable bounded
+generation/update/cancel jobs, immutable request/attempt/artifact records,
+currentness checks and synthetic preview/save/update/rollback/source-reuse checks.
+The source-tree fixed compiler is implemented; T032 remains pending packaged
+public client/kit resources. T034–T042 managed hosting/API/UI integration and its
+actual model/preview/save/update proof are still required.
+
+The actual model-only smoke succeeded with configured `gpt-5.6-sol` through
+`openai-codex`, returning valid frontend source and a successful first-attempt
+fixed build. Its inputs were strictly synthetic public UI data. It did not run
+an engineering workflow, access MCPs, open a managed preview or save an interface.
+The owner/revision tests use controlled model responses and labelled synthetic
+presenter observations; an owner test performs a real local TypeScript/Vite build.
+The final focused group passes 155 checks, zero skips, in 67.51 seconds. Deep
+Windows compiler-cwd and migration expectation failures were corrected and
+retained in the evidence. Migration 23 leaves the existing 22-ledger checksum
+intact. Trace/model/instruction/build identities and preservation are retained.
+
+See [live-ui-authoring.md](evidence/live-ui-authoring.md) and its checkpoint
+manifest. No native authoring route, browser preview, live MCP/engineering
+acceptance, physical operation or installed distribution acceptance is implied.
+Next: managed static runtime and presentation-bound process grants/bridge, then
+the native authoring workspace journey. T021 and M4–M5 remain pending. Retain the
+full submitted goal; this is an intermediate checkpoint.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

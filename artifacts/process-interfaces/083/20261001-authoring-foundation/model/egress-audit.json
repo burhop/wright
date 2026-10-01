@@ -1,0 +1,13 @@
+{
+  "destination": "openai-codex",
+  "model": "gpt-5.6-sol",
+  "payload_scope": "synthetic UI manifest, shared presentation contracts and reference template only",
+  "repository_workflow_source_read_or_sent": false,
+  "customer_engineering_data": false,
+  "credentials_in_payload": false,
+  "process_execution": false,
+  "hardware_effects": false,
+  "authority": "Feature 083 approved implementation goal: actual configured-default-model authoring smoke through Wright",
+  "message_bytes": 8143,
+  "message_sha256": "a1950430ff33e97dd840094f122df7839e96a060da4531f9273133099593d711"
+}

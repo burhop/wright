@@ -187,7 +187,10 @@ def test_additive_migration_preserves_v2_checkpoint_and_legacy_run(tmp_path):
             dict(row) for row in db.execute("SELECT * FROM wright_schema_migrations")
         ]
     upgraded = upgrade_database(db_path)
-    assert upgraded.applied == ({"version": 22, "name": "process_working_interfaces"},)
+    assert upgraded.applied == (
+        {"version": 22, "name": "process_working_interfaces"},
+        {"version": 23, "name": "process_ui_authoring_provenance"},
+    )
     assert existing.get("old") == old
     assert historical.read_bytes() == raw
     with connect_state_db(db_path) as db:
@@ -218,6 +221,34 @@ def test_snapshot_is_immutable_scoped_and_read_after_reopen(tmp_path):
     with connect_state_db(path) as db:
         with pytest.raises(Exception, match="immutable"):
             db.execute("UPDATE process_input_snapshots SET payload_json='{}'")
+
+
+def test_existing_083_database_keeps_its_ledger_when_authoring_records_are_added(
+    tmp_path,
+):
+    path = tmp_path / "m2.db"
+    upgrade_database(path, migrations=MIGRATIONS[:22])
+    with connect_state_db(path) as db:
+        prior = [
+            dict(row)
+            for row in db.execute(
+                "SELECT * FROM wright_schema_migrations ORDER BY version"
+            )
+        ]
+    upgraded = upgrade_database(path)
+    assert upgraded.applied == (
+        {"version": 23, "name": "process_ui_authoring_provenance"},
+    )
+    with connect_state_db(path) as db:
+        assert [
+            dict(row)
+            for row in db.execute(
+                "SELECT * FROM wright_schema_migrations WHERE version<=22 ORDER BY version"
+            )
+        ] == prior
+        assert db.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='process_ui_authoring_records'"
+        ).fetchone()
 
 
 def test_atomic_start_retry_returns_recorded_identity_and_rejects_conflict(tmp_path):

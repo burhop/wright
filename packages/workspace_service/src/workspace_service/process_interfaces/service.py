@@ -247,6 +247,29 @@ class ProcessInterfaceService:
         supervisor = self.__dict__.get("runs")
         if supervisor is not None:
             await supervisor.close()
+        authoring = self.__dict__.get("_authoring")
+        if authoring is not None:
+            await authoring.close()
+
+    def configure_authoring(self, engine, toolchain):
+        """Native composition supplies existing engine and trusted compiler config."""
+        from .authoring import ProcessInterfaceAuthoring
+
+        prior = self.__dict__.get("_authoring")
+        if prior is None:
+            prior = ProcessInterfaceAuthoring(self, engine, toolchain)
+            self.__dict__["_authoring"] = prior
+        elif prior.engine is not engine or prior.toolchain != toolchain:
+            raise ValueError(
+                "An active authoring owner cannot silently change its model/compiler configuration"
+            )
+        return prior
+
+    @cached_property
+    def ui_revisions(self):
+        from .artifacts import ProcessInterfaceRevisions
+
+        return ProcessInterfaceRevisions(self)
 
     @cached_property
     def artifacts(self):

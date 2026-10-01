@@ -17,8 +17,10 @@ from .base import (
     AgentSessionInfo,
     AgentChatMessage,
     AgentCommand,
+    AgentInvocationCapabilities,
 )
 from .hermes_config import hermes_config_path, resolve_hermes_api_settings
+from .hermes_role import HermesRoleTransport
 
 logger = structlog.get_logger(__name__)
 
@@ -712,6 +714,19 @@ class HermesAdapter(BaseAgentEngine):
     async def _build_messages(self, request: AgentChatRequest) -> list[dict]:
         """Fetch chat history and append the current user message to construct messages list."""
         history = await self.get_chat_history(request.session_id)
+        if request.invocation_context is not None:
+            # A scoped authoring session cannot inherit broad workspace hints,
+            # a Rivet target, or historical system instructions. The immutable
+            # prepared role is supplied on every generation/correction turn.
+            return [
+                {"role": "system", "content": request.invocation_context.instructions},
+                *[
+                    {"role": msg.role, "content": msg.content}
+                    for msg in history
+                    if msg.role in ("user", "assistant")
+                ],
+                {"role": "user", "content": request.message},
+            ]
         messages = [{"role": "system", "content": WRIGHT_SYSTEM_HINT}]
         if request.active_rivet_slug:
             quoted_slug = json.dumps(request.active_rivet_slug)
@@ -760,10 +775,92 @@ class HermesAdapter(BaseAgentEngine):
         messages.append({"role": "user", "content": content})
         return messages
 
+    async def get_invocation_capabilities(self) -> AgentInvocationCapabilities:
+        # Hermes's current native API constructs tools from platform config.
+        # OpenAI tools=[]/tool_choice=none in a request does not qualify a
+        # per-invocation restriction on its server-side agent. General chat
+        # remains supported; a separately qualified confined transport can
+        # override this capability later without changing the global profile.
+        transport = HermesRoleTransport.from_host()
+        if transport is not None:
+            try:
+                resolution = await transport.probe()
+                return AgentInvocationCapabilities(
+                    adapter="hermes",
+                    available=True,
+                    effective_instructions_every_turn=True,
+                    no_tools=True,
+                    inherited_default_model=True,
+                    model_reference=resolution["model_reference"],
+                    configuration_digest=resolution["configuration_digest"],
+                    provider_reference=resolution["provider"],
+                    transport="hermes-model-sdk",
+                )
+            except (OSError, ValueError, TimeoutError, KeyError):
+                pass
+        return AgentInvocationCapabilities(
+            adapter="hermes",
+            effective_instructions_every_turn=True,
+            reason=(
+                "The Hermes native API has no qualified per-invocation tool restriction. "
+                "Configure a qualified confined authoring transport; the common process "
+                "view and saved interfaces remain available."
+            ),
+        )
+
     async def stream_chat(
         self, request: AgentChatRequest
     ) -> AsyncIterator[AgentStreamEvent]:
         """Stream chat via Hermes native OpenAI-compatible API."""
+        if request.invocation_context is not None:
+            transport = HermesRoleTransport.from_host()
+            try:
+                if transport is None:
+                    raise ValueError("No confined model transport")
+                resolution = await transport.probe()
+                expected = request.invocation_context
+                if expected.expected_model_reference is not None and (
+                    resolution["model_reference"] != expected.expected_model_reference
+                    or resolution["configuration_digest"]
+                    != expected.expected_configuration_digest
+                ):
+                    raise ValueError(
+                        "The prepared job's default model configuration changed"
+                    )
+                result = await transport.generate(
+                    request.invocation_context,
+                    request.message,
+                    resolution,
+                )
+                if (
+                    result["effective_instructions_digest"]
+                    != request.invocation_context.instructions_digest
+                ):
+                    raise ValueError("Effective instructions could not be confirmed")
+                yield AgentStreamEvent(
+                    type="progress",
+                    data={
+                        "role": request.invocation_context.role,
+                        "transport": "hermes-model-sdk",
+                        "resolution": result["resolution"],
+                        "instructions_version": request.invocation_context.instructions_version,
+                        "effective_instructions_digest": result[
+                            "effective_instructions_digest"
+                        ],
+                        "response_model": result.get("response_model"),
+                    },
+                )
+                yield AgentStreamEvent(type="token", data={"text": result["text"]})
+                yield AgentStreamEvent(type="stream_end", data={})
+            except (OSError, ValueError, TimeoutError, KeyError):
+                yield AgentStreamEvent(
+                    type="error",
+                    data={
+                        "code": "SCOPED_INVOCATION_UNAVAILABLE",
+                        "message": "Confined default-model authoring is unavailable. Check the qualified Hermes SDK runtime and configured model; the common view remains available.",
+                    },
+                )
+            return
         messages = await self._build_messages(request)
         session_id = request.session_id
 

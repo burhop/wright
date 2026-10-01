@@ -1,0 +1,41 @@
+{
+  "capability": {
+    "adapter": "hermes",
+    "available": true,
+    "effective_instructions_every_turn": true,
+    "no_tools": true,
+    "inherited_default_model": true,
+    "reason": null,
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "provider_reference": "openai-codex",
+    "transport": "hermes-model-sdk"
+  },
+  "instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+  "accepted_source_sha256": null,
+  "process_reference_is_synthetic": true,
+  "builds": [
+    {
+      "attempt": 0,
+      "build": {
+        "build_id": "build-65e979a8fbc34476b7b274d89383b77f",
+        "source_digest": "342d99b6fe074553df2ae2d57c5c2d0dc8d533765fc8068778f1c16c69bb5e6f",
+        "manifest_digest": "84c5cee1f14c961a9c726e59931fb1fbc39702fb3585840839e04792738c0c3b",
+        "toolchain_digest": "6d68344dacd3bf31aa25304e0ef03c130b680e8556a0c7bf560568c59572fcec",
+        "bundle_digest": "8735ba016c5cb9e8c6d07dcac9fe303ffc66c21fce0e1a55be14bf08d716a450",
+        "state": "built",
+        "created_at": "2026-10-01T16:44:56.975016+00:00",
+        "diagnostics": [],
+        "bundled_bytes": 777046
+      },
+      "root": ".local-run/process-interfaces-083/t029-public-model-smoke/builds/build-65e979a8fbc34476b7b274d89383b77f"
+    }
+  ],
+  "state": "built",
+  "real_default_model": true,
+  "previewed": false,
+  "saved": false,
+  "actual_process_execution": false,
+  "live_mcp": false,
+  "hardware_dispatch": false
+}

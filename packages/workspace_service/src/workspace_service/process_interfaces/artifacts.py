@@ -229,3 +229,288 @@ class ProcessArtifactAccess:
                 "Inspect the canonical process and run record before opening this file.",
             ) from error
         raise _denied()
+
+
+@dataclass(frozen=True)
+class ProcessUIPreviewObservation:
+    """Server-derived observation from a validated presentation handshake.
+
+    This is not a public request model. The managed surface owner supplies it
+    only after the exact preview bundle loaded in its current presentation.
+    """
+
+    presentation_id: str
+    ui_id: str
+    revision_id: str
+    bundle_digest: str
+
+
+class ProcessInterfaceRevisions:
+    """Immutable presentation artifacts and metadata; no run/input mutations."""
+
+    def __init__(self, application):
+        self.application = application
+        self.repository = application.interfaces
+
+    def _load_built(self, scope, process, job_id):
+        import json
+        from core.process_interfaces import (
+            BuildReport,
+            InterfaceManifest,
+            SourceEnvelope,
+        )
+        from core.process_validation import canonical_digest
+        from data_vault.process_ui_artifacts import ImmutableFileSet
+        from ..workspace_path import WorkspacePath
+
+        scope.require(process, "process.read")
+        job = self.repository.get_job(process.workspace_id, job_id)
+        if job.process != process or job.state not in {"preview_ready", "saved"}:
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This job has no available built preview for this process.",
+                "Open its current authoring job or use the common view.",
+            )
+        record = self.repository.get_authoring_record(
+            process.workspace_id, job_id, "built"
+        )
+        manifest = InterfaceManifest.model_validate(record["manifest"])
+        report = BuildReport.model_validate(record["build"])
+        if manifest.process != job.process or manifest.revision_id != job.revision_id:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The built revision and its job disagree.",
+                "Inspect the immutable authoring records before presenting it.",
+            )
+        # IDs must be opaque identifiers allocated by the authoring owner. Never
+        # interpolate arbitrary core.Identifier strings into filesystem paths.
+        if not re.fullmatch(r"ui-[0-9a-f]{32}", manifest.ui_id) or not re.fullmatch(
+            r"revision-[0-9a-f]{32}", manifest.revision_id
+        ):
+            raise ProcessInterfaceError(
+                "UI_INCOMPATIBLE",
+                "This revision uses an unsupported artifact identity.",
+                "Create a current managed interface; retain older metadata for inspection.",
+            )
+        root = self.application.runs._root(scope, process)
+        location = WorkspacePath(root).resolve(
+            f".wright/process-uis/{manifest.ui_id}/revisions/{manifest.revision_id}"
+        )
+        try:
+            content = ImmutableFileSet(location).read(record["inventory_digest"])
+            source = SourceEnvelope.model_validate_json(content["source.json"])
+            if (
+                json.loads(content["binding.json"]) != manifest.model_dump(mode="json")
+                or json.loads(content["build-report.json"])
+                != report.model_dump(mode="json")
+                or canonical_digest(source) != report.source_digest
+                or canonical_digest(manifest) != report.manifest_digest
+                or report.state != "built"
+            ):
+                raise ValueError("Immutable metadata changed")
+            bundle = {
+                name.removeprefix("dist/"): raw
+                for name, raw in content.items()
+                if name.startswith("dist/")
+            }
+            hashes = {
+                name: hashlib.sha256(raw).hexdigest() for name, raw in bundle.items()
+            }
+            if (
+                canonical_digest(hashes) != report.bundle_digest
+                or sum(len(raw) for raw in bundle.values()) != report.bundled_bytes
+            ):
+                raise ValueError("Immutable bundle changed")
+        except (OSError, ValueError, KeyError) as error:
+            raise ProcessInterfaceError(
+                "UI_INCOMPATIBLE",
+                "The saved interface files could not be verified.",
+                "Use the common view and restore or regenerate the exact interface revision.",
+            ) from error
+        return job, manifest, report, source, bundle
+
+    def preview_bundle(self, scope, process, job_id):
+        return self._load_built(scope, process, job_id)
+
+    def observe_preview(
+        self, scope, process, job_id, observation: ProcessUIPreviewObservation
+    ):
+        from pydantic import TypeAdapter
+        from core.process_validation import Identifier
+        from datetime import datetime, timezone
+
+        job, manifest, report, _, _ = self._load_built(scope, process, job_id)
+        if (
+            not isinstance(observation, ProcessUIPreviewObservation)
+            or observation.ui_id != manifest.ui_id
+            or observation.revision_id != manifest.revision_id
+            or observation.bundle_digest != report.bundle_digest
+        ):
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "The preview observation belongs to another presentation bundle.",
+                "Open the exact validated preview in Wright.",
+            )
+        presentation = TypeAdapter(Identifier).validate_python(
+            observation.presentation_id
+        )
+        try:
+            return self.repository.get_authoring_record(
+                process.workspace_id, job.job_id, "preview"
+            )
+        except KeyError:
+            return self.repository.retain_authoring_record(
+                process.workspace_id,
+                job.job_id,
+                "preview",
+                {
+                    "presentation_id": presentation,
+                    "previewed_at": datetime.now(timezone.utc).isoformat(),
+                    "bundle_digest": report.bundle_digest,
+                    "revision_id": manifest.revision_id,
+                },
+            )
+
+    async def save(
+        self,
+        author_scope,
+        process,
+        job_id,
+        *,
+        expected_source_digest,
+        expected_manifest_digest,
+        expected_bundle_digest,
+        expected_active_revision,
+    ):
+        from core.process_interfaces import InterfaceRevision
+        from core.process_validation import canonical_digest
+        from datetime import datetime, timezone
+        from .compatibility import check_interface_compatibility
+
+        author_scope.require(process)
+        scope = author_scope.process_scope
+        job, manifest, report, _, _ = self._load_built(scope, process, job_id)
+        if (
+            expected_source_digest,
+            expected_manifest_digest,
+            expected_bundle_digest,
+        ) != (report.source_digest, report.manifest_digest, report.bundle_digest):
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "This save request identifies different source or build bytes.",
+                "Reload the exact validated preview before saving.",
+            )
+        try:
+            preview = self.repository.get_authoring_record(
+                process.workspace_id, job_id, "preview"
+            )
+        except KeyError:
+            raise ProcessInterfaceError(
+                "ACTION_NOT_PERMITTED",
+                "This interface has not been opened in its managed preview.",
+                "Open and inspect the built preview before saving it.",
+            ) from None
+        if (
+            preview["bundle_digest"] != report.bundle_digest
+            or preview["revision_id"] != manifest.revision_id
+        ):
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The recorded preview does not identify this built revision.",
+                "Open its exact preview again.",
+            )
+        revision = InterfaceRevision(
+            manifest=manifest,
+            source_digest=report.source_digest,
+            build=report,
+            role_resolution=job.role_resolution,
+            generation_request_digest=job.request_digest,
+            created_at=report.created_at,
+            previewed_at=preview["previewed_at"],
+        )
+        compatibility = await check_interface_compatibility(
+            self.application, scope, process, revision
+        )
+        if compatibility.state != "compatible":
+            raise ProcessInterfaceError(
+                "UI_INCOMPATIBLE",
+                "This preview is incompatible with the current process view.",
+                "Update its required bindings/capabilities or use the common working view.",
+                details={
+                    "reasons": [
+                        reason.model_dump(mode="json")
+                        for reason in compatibility.reasons
+                    ]
+                },
+            )
+        self.repository.save_revision(process.workspace_id, revision)
+        ui = self.repository.get_ui(process.workspace_id, manifest.ui_id)
+        if ui.active_revision != manifest.revision_id:
+            self.repository.activate(
+                process.workspace_id,
+                manifest.ui_id,
+                manifest.revision_id,
+                expected_revision=expected_active_revision,
+                updated_at=datetime.now(timezone.utc).isoformat(),
+            )
+        if job.state == "preview_ready":
+            updated = type(job).model_validate(
+                {
+                    **job.model_dump(),
+                    "state": "saved",
+                    "updated_at": datetime.now(timezone.utc).isoformat(),
+                }
+            )
+            self.repository.update_job(updated, expected_digest=canonical_digest(job))
+        return revision
+
+    async def activate(
+        self, author_scope, process, ui_id, revision_id, *, expected_active_revision
+    ):
+        from datetime import datetime, timezone
+        from .compatibility import check_interface_compatibility
+
+        author_scope.require(process)
+        revision = self.repository.get_revision(
+            process.workspace_id, ui_id, revision_id
+        )
+        job = self.repository.job_for_revision(process.workspace_id, ui_id, revision_id)
+        self._load_built(author_scope.process_scope, process, job.job_id)
+        compatibility = await check_interface_compatibility(
+            self.application, author_scope.process_scope, process, revision
+        )
+        if compatibility.state != "compatible":
+            raise ProcessInterfaceError(
+                "UI_INCOMPATIBLE",
+                "This saved revision cannot be activated for the current process.",
+                "Use the common view or update the changed bindings.",
+            )
+        return self.repository.activate(
+            process.workspace_id,
+            ui_id,
+            revision_id,
+            expected_revision=expected_active_revision,
+            updated_at=datetime.now(timezone.utc).isoformat(),
+        )
+
+    def saved_source(self, scope, process, revision):
+        from core.process_validation import canonical_digest
+
+        manifest = revision.manifest
+        job = self.repository.job_for_revision(
+            process.workspace_id, manifest.ui_id, manifest.revision_id
+        )
+        _, actual_manifest, report, source, _ = self._load_built(
+            scope, process, job.job_id
+        )
+        if (
+            canonical_digest(actual_manifest) != canonical_digest(manifest)
+            or report != revision.build
+            or canonical_digest(source) != revision.source_digest
+        ):
+            raise ProcessInterfaceError(
+                "UI_INCOMPATIBLE",
+                "The saved revision and its artifact provenance disagree.",
+                "Restore the immutable revision before updating it.",
+            )
+        return source.model_dump(mode="json")

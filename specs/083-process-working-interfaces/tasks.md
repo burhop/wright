@@ -65,11 +65,15 @@ consume responses once on the same run; undeclared questions never create forms.
 **Independent verification:** Actual default-model generation through Wright,
 isolated preview/save/update/rollback and second-run reuse with no fresh build.
 
-- [ ] T029 [US3] Add backward-compatible scoped invocation context/capability reporting in `packages/agent_adapters/src/agent_adapters/base.py` and `hermes.py`; verify effective instructions every turn/default model/no broad tool activation in `packages/agent_adapters/tests/test_process_ui_author_role.py`.
-- [ ] T030 [US3] Package versioned role/API/kit instructions, structured output schema and a useful reference template in `packages/workspace_service/src/workspace_service/process_interfaces/resources/`, with actual resolved provenance and no arbitrary authoring tools.
-- [ ] T031 [US3] Implement durable generate/update/cancel job with bounded diagnostic repair budget in `packages/workspace_service/src/workspace_service/process_interfaces/authoring.py`, invoking BaseAgentEngine without changing global model/gateway configuration.
+- [x] T029 [US3] Add backward-compatible scoped invocation context/capability reporting in `packages/agent_adapters/src/agent_adapters/base.py` and `hermes.py`; verify effective instructions every turn/default model/no broad tool activation in `packages/agent_adapters/tests/test_process_ui_author_role.py`.
+- [x] T030 [US3] Package versioned role/API/kit instructions, structured output schema and a useful reference template in `packages/workspace_service/src/workspace_service/process_interfaces/resources/`, with actual resolved provenance and no arbitrary authoring tools.
+- [x] T031 [US3] Implement durable generate/update/cancel job with bounded diagnostic repair budget in `packages/workspace_service/src/workspace_service/process_interfaces/authoring.py`, invoking BaseAgentEngine without changing global model/gateway configuration.
 - [ ] T032 [US3] Implement fixed static-app binding/path/import validator and compiler envelope in `packages/workspace_service/src/workspace_service/process_interfaces/build.py` with packaged public client/kit distributions; reject model scripts/plugins/backends/launch commands.
-- [ ] T033 [US3] Implement immutable source/bundle/report revisions, save/compatibility/activate/rollback in `packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py` and `compatibility.py`; distinguish layout edits from engineering input invalidation.
+- [x] T033 [US3] Implement immutable source/bundle/report revisions, save/compatibility/activate/rollback in `packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py` and `compatibility.py`; distinguish layout edits from engineering input invalidation.
+  Owner-level controlled checks pass. The preview observation is synthetic;
+  actual managed browser authority and preview/save/update proof remain T034–T042.
+  T032 remains pending its packaged public client/kit distributions and installed
+  toolchain envelope; its source-tree fixed builder is implemented and tested.
 - [ ] T034 [US3] Add installed generic static asset runtime and internal manifest generation in `packages/workspace_service/src/workspace_service/surfaces/`, using existing isolated origins/bootstrap/limits and no model-selected process launch.
 - [ ] T035 [US3] Extend closed managed capability/grant contracts in `packages/core/src/core/surfaces/live_app_manifest.py` and existing surface grant services for bounded process operations, preserving MCP App same-server grants.
 - [ ] T036 [US3] Implement reserved presentation-bound `/__wright/process` bridge in `apps/api/src/api/routers/surface_preview.py` and `apps/api/src/api/surface_route_authority.py`; derive process/UI/run/workspace scope on server and delegate owning services.
