@@ -2,6 +2,22 @@
 
 ## Latest implementation state — 2026-10-01
 
+T027/T028 interaction/editor recovery, T029–T031 confined authoring, T033 immutable
+revisions, T035/T036 presentation-bound transport and T038 native authoring API
+are checked. Latest focused backend group: **150 passed**, zero skips. Native
+preview/saved opening composes the existing surface owners and exact grants;
+controlled tests prove two durable-run reuse and closing a view without cancelling
+active work. See [native authoring evidence](evidence/native-ui-authoring.md).
+
+Native frontend authoring work is in progress. Remaining obligations include
+T021, packed toolchain resources in T032, actual managed hosting and host handshake
+in T034/T037, workspace authoring controls/browser/live-model journey in
+T039–T042, both live digital engineering proofs and migration in M4, and installed
+distribution/audit/documentation in M5. The complete goal remains active. No
+physical dispatch, engineering acceptance or product acceptance is implied.
+
+### Earlier milestone summaries
+
 T027 now includes supervised native action requests and visible review/action
 controls. Backend ownership survives observer detach; retained authorization,
 provider acceptance, observed completion and requested/actual cancellation are
@@ -795,6 +811,31 @@ acceptance. The full submitted goal remains active. T021/T032, remaining M3,
 M4 and M5 remain pending. Next: native managed preview creation and authoring
 routes/tab controls, then actual through-Wright UI generation and both digital
 engineering proofs.
+
+### 2026-10-01 — Native UI authoring API checkpoint
+
+Completed T038 native capability/generation/update/status/events/cancel,
+preview/save/compatibility/rollback and saved presentation/close routes. Added
+scoped interface/revision discovery and server-derived preview-observation status.
+The managed presentation owner composes existing surface declaration, runtime,
+bootstrap and exact grants with immutable revision and optional run verification.
+Closing revokes the view and stops only its static UI runtime, never the process.
+Trusted source-tree compiler discovery reports missing resources explicitly;
+installed packed resources remain pending.
+
+Qualified group: 150 passes, zero skips, 102.38 seconds. Controlled model/compiler/
+runtime ports use real storage, authoring, revision, surface/grant and process
+owners. A controlled source run stays active when its UI closes; two durable runs
+reuse the same built revision with one model invocation. Preview observations
+remain synthetic. Exact commands/hashes, intermediate corrections and preservation
+are recorded in [native-ui-authoring.md](evidence/native-ui-authoring.md).
+
+T034/T037 still require actual managed host/browser and native handshake; T039–T042
+require workspace controls and the complete actual-model authoring journey. Native
+frontend authoring work has begun but is excluded from this backend checkpoint.
+T021, remaining T032, live engineering M4 and installed/migration M5 remain required.
+The full submitted goal stays active; no engineering/hardware/user acceptance,
+publication or release is implied.
 
 ## Implementation progress format
 

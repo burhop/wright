@@ -81,7 +81,11 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
   `evidence/surface-bridge.md`. T034/T037 remain pending managed presenter creation,
   native handshake and actual browser integration; T040 retains the broader audit.
 - [ ] T037 [US3] Add preview-origin transport/theme/navigation handshake in `packages/process_client/` and `apps/web/src/services/surfaces/`, exposing no bearer credentials or generic invokeTool.
-- [ ] T038 [US3] Expose authoring capability/generation/status/preview/save/update/rollback routes through `apps/api/src/api/routers/process_interfaces.py` with durable request identities and exact revision validation.
+- [x] T038 [US3] Expose authoring capability/generation/status/preview/save/update/rollback routes through `apps/api/src/api/routers/process_interfaces.py` with durable request identities and exact revision validation.
+  Native API and existing managed presentation/grant owners pass controlled
+  checks, including two durable-run reuse and close-without-cancel. T034/T037
+  retain actual managed browser and host handshake obligations; T039–T042
+  retain workspace controls and live-model authoring acceptance.
 - [ ] T039 [US3] Implement Create/Update interface progress, preview/save controls and compatibility fallback in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx`, explicitly using current document tabs/LiveAppSurface rather than a new browser window.
 - [ ] T040 [US3] Add scope/build/binding/malformed-source/revocation/cross-workspace/run/UI tests in `packages/workspace_service/tests/test_process_ui_authoring.py` and `apps/api/tests/test_process_ui_surface_authority.py`.
 - [ ] T041 [US3] Verify generation/preview/save/update/reuse/theme/accessibility/loading/error states in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx` and `tests/ui-integration/process-ui-authoring.spec.ts`.

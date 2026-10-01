@@ -1,0 +1,17 @@
+argv=['D:\\repos\\wright\\.venv\\Scripts\\python.exe', '-m', 'pytest', 'apps/api/tests/test_process_ui_authoring_api.py', 'packages/workspace_service/tests/test_process_ui_presentations.py', 'packages/workspace_service/tests/test_process_ui_toolchain.py', 'packages/workspace_service/tests/test_process_ui_authoring.py', 'packages/workspace_service/tests/test_process_ui_build.py', 'packages/data_vault/tests/test_process_interface_migrations.py', 'apps/api/tests/test_process_ui_surface_authority.py', 'apps/api/tests/test_process_interfaces_api.py', 'packages/workspace_service/tests/test_process_interface_service_boundaries.py', 'packages/workspace_service/tests/surfaces/test_process_ui_static.py', 'packages/workspace_service/tests/surfaces/test_live_app_service.py', '-q', '--tb=short', '-p', 'no:cacheprovider', '--basetemp', 'D:\\repos\\wright\\.local-run\\process-interfaces-083\\t038-qualified-final']
+........................................................................ [ 48%]
+........................................................................ [ 96%]
+......                                                                   [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\repos\wright\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+150 passed, 2 warnings in 102.38s (0:01:42)
+
+owned_exit_code=0

@@ -37,6 +37,7 @@ from api.schemas.process_interfaces import (
     ProcessReviewDecisionRequest,
     ProcessActionRequest,
 )
+from api.routers.process_ui_authoring import router as authoring_router
 from core.process_interactions import (
     InputSnapshot,
     InteractionSnapshot,
@@ -56,6 +57,7 @@ from workspace_service.process_interfaces.errors import ProcessInterfaceError
 from workspace_service.process_interfaces.service import ProcessScope
 
 router = APIRouter(dependencies=[Depends(_require_process_validation_role)])
+router.include_router(authoring_router)
 
 
 def _native_context(request, service, session_id, path, digest):

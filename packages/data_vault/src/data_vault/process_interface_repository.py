@@ -109,6 +109,21 @@ class ProcessInterfaceRepository:
             raise KeyError("Interface not found in workspace")
         return ProcessUI.model_validate_json(row["payload_json"])
 
+    def list_uis(
+        self, workspace_id: str, source_path: str, *, limit: int = 256
+    ) -> tuple[ProcessUI, ...]:
+        """Saved and draft UI identities for one exact process association."""
+        if not 1 <= limit <= 256:
+            raise ValueError("Interface page must contain 1 to 256 items")
+        with connect_state_db(self.db_path, read_only=True) as db:
+            rows = db.execute(
+                "SELECT payload_json FROM process_uis WHERE workspace_id=? "
+                "AND json_extract(payload_json, '$.process.source_path')=? "
+                "ORDER BY rowid DESC LIMIT ?",
+                (workspace_id, source_path, limit),
+            ).fetchall()
+        return tuple(ProcessUI.model_validate_json(row["payload_json"]) for row in rows)
+
     @traced("process.ui.revision.save")
     def save_revision(
         self, workspace_id: str, revision: InterfaceRevision

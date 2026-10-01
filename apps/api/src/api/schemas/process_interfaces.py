@@ -63,3 +63,42 @@ class ProcessRepresentationRequest(ProcessSourceRequest):
 
 class ProcessNavigationRequest(ProcessSourceRequest):
     target: NavigationTarget
+
+
+class ProcessUIAuthoringRequest(ProcessSourceRequest):
+    request_id: Identifier
+    instruction: str = Field(strict=True, min_length=1, max_length=16384)
+    title: str = Field(
+        default="Process interface", strict=True, min_length=1, max_length=512
+    )
+    ui_id: Identifier | None = None
+    base_revision: Identifier | None = None
+
+
+class ProcessUISaveRequest(ProcessSourceRequest):
+    job_id: Identifier
+    source_digest: Digest
+    manifest_digest: Digest
+    bundle_digest: Digest
+    expected_active_revision: Identifier | None
+
+
+class ProcessUIActivateRequest(ProcessSourceRequest):
+    revision_id: Identifier
+    expected_active_revision: Identifier | None
+
+
+class ProcessUIPresentRequest(ProcessSourceRequest):
+    request_id: Identifier
+    revision_id: Identifier | None = None
+    run_id: Identifier | None = None
+
+
+class ProcessUIPreviewRequest(ProcessSourceRequest):
+    request_id: Identifier
+    run_id: Identifier | None = None
+
+
+class ProcessUICloseRequest(ProcessSourceRequest):
+    surface_id: Identifier
+    presentation_id: Identifier
