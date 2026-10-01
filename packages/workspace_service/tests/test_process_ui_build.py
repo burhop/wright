@@ -70,6 +70,11 @@ def test_installed_role_resources_are_versioned_and_closed():
     assert result.manifest.process == reference()
 
 
+def test_interface_requires_explicit_process_read_capability():
+    with pytest.raises(ProcessInterfaceError, match="scoped read operation"):
+        validate_manifest_bindings(manifest(capabilities=()), reference(), [])
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -183,6 +188,9 @@ async def test_reference_compiles_with_public_packages_and_no_generated_scripts(
     assert output.dist and (output.dist / "app.js").is_file()
     assert output.report.bundled_bytes > 0
     assert output.report.bundle_digest
+    assert "createPresentationClient" in (output.dist / "app.js").read_text(
+        encoding="utf-8"
+    )
     assert not (output.root / "package.json").exists()
     assert not (output.root / "vite.config.js").exists()
     assert (output.root / "build-report.json").is_file()

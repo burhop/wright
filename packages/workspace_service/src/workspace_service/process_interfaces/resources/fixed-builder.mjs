@@ -55,7 +55,24 @@ try {
     });
   }
   const entry = path.join(root, 'wright-entry.tsx');
-  fs.writeFileSync(entry, `import {createRoot} from 'react-dom/client';\nimport type {ComponentType} from 'react';\nimport type {ProcessClient, InteractionSnapshot} from '@wright/process-client';\nimport App from './App';\ninterface HostProps { client: ProcessClient; snapshot: InteractionSnapshot; readOnly: boolean; }\nconst CheckedApp: ComponentType<HostProps> = App;\nexport function mount(node: Element, props: HostProps) { const root = createRoot(node); root.render(<CheckedApp {...props}/>); return () => root.unmount(); }\n`);
+  fs.writeFileSync(entry, `import {createRoot} from 'react-dom/client';
+import type {ComponentType} from 'react';
+import {createPresentationProcessClient} from '@wright/process-client';
+import type {ProcessClient, InteractionSnapshot, PresentationClientPorts} from '@wright/process-client';
+import App from './App';
+interface HostProps { client: ProcessClient; snapshot: InteractionSnapshot; readOnly: boolean; }
+const CheckedApp: ComponentType<HostProps> = App;
+export function createPresentationClient(context: unknown, ports?: Omit<PresentationClientPorts, 'fetch'>) {
+  return createPresentationProcessClient(context, {...ports, fetch: (input, init) => globalThis.fetch(input, init)});
+}
+export function mount(node: Element, props: HostProps) {
+  const root = createRoot(node);
+  root.render(<CheckedApp {...props}/>);
+  const dispose = () => root.unmount();
+  dispose.update = (snapshot: InteractionSnapshot) => root.render(<CheckedApp {...props} snapshot={snapshot}/>);
+  return dispose;
+}
+`);
   if (!diagnostics.length) {
     const options = {
       target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext,

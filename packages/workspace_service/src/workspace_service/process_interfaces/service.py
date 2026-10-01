@@ -39,6 +39,10 @@ class ProcessScope:
     principal_id: str
     workspace_id: str
     capabilities: frozenset[ProcessCapability]
+    # Managed presentations bind one run (or preparation with no run). Native
+    # workspace callers retain their existing multi-run scope.
+    run_bound: bool = False
+    run_id: str | None = None
 
     def __post_init__(self):
         identifier = TypeAdapter(Identifier)
@@ -48,11 +52,25 @@ class ProcessScope:
         object.__setattr__(
             self, "workspace_id", identifier.validate_python(self.workspace_id)
         )
+        if type(self.run_bound) is not bool or (
+            self.run_id is not None and not self.run_bound
+        ):
+            raise ValueError("Run binding requires a server-derived presentation scope")
+        if self.run_id is not None:
+            object.__setattr__(self, "run_id", identifier.validate_python(self.run_id))
         if not isinstance(self.capabilities, frozenset) or not self.capabilities <= set(
             get_args(ProcessCapability)
         ):
             raise ValueError(
                 "Process invocation requires closed configured capabilities"
+            )
+
+    def require_run(self, run_id: str | None) -> None:
+        if self.run_bound and run_id != self.run_id:
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This presentation is bound to a different run.",
+                "Open the exact run in its Wright workspace.",
             )
 
     def require(self, process: ProcessRef, operation: ProcessCapability) -> None:
@@ -100,6 +118,7 @@ class ProcessInterfaceService:
         from .owners import recorded_run_facts
         from .projection import project_interactions
 
+        scope.require_run(run_id)
         resolved = await self.resolve_process(scope, process)
         if run_id is not None:
             if input_snapshot_id is not None:

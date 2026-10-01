@@ -132,6 +132,7 @@ class ProcessArtifactAccess:
         self, scope, process, reference, *, run_id=None, input_snapshot_id=None
     ):
         app = self.application
+        scope.require_run(run_id)
         scope.require(process, "process.results")
         if process.source_contract != "canonical-source":
             raise _denied()

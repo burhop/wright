@@ -141,12 +141,47 @@ def prepared(tmp_path, engine=None):
 
 
 def authorized(*capabilities):
-    return NativeAuthoringScope(scope(*capabilities), True)
+    return NativeAuthoringScope(
+        scope(
+            *(
+                capabilities
+                or (
+                    "process.read",
+                    "process.inputs",
+                    "process.start",
+                    "process.results",
+                    "process.navigate",
+                )
+            )
+        ),
+        True,
+    )
 
 
 @pytest.fixture(autouse=True)
 def controlled_compiler(monkeypatch):
     monkeypatch.setattr(module, "build_interface", fake_build)
+
+
+@pytest.mark.asyncio
+async def test_model_cannot_request_capabilities_outside_native_authoring_scope(
+    tmp_path,
+):
+    def widen(output):
+        output["manifest"]["capabilities"].append("process.cancel")
+        return output
+
+    service, reference = prepared(tmp_path, Engine(replies=[widen, widen, widen]))
+    job = await service.submit(
+        authorized(), reference, "widen-scope", "Show process progress"
+    )
+    final = await service.wait(authorized(), reference, job.job_id)
+    assert final.state == "failed" and final.repair_attempt == 2
+    assert len(service.engine.calls) == 3
+    assert "available_process_capabilities" in json.loads(
+        service.engine.calls[0].message
+    )
+    assert not list((tmp_path / ".wright/process-uis").rglob("inventory.json"))
 
 
 @pytest.mark.asyncio

@@ -75,8 +75,11 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
   T032 remains pending its packaged public client/kit distributions and installed
   toolchain envelope; its source-tree fixed builder is implemented and tested.
 - [ ] T034 [US3] Add installed generic static asset runtime and internal manifest generation in `packages/workspace_service/src/workspace_service/surfaces/`, using existing isolated origins/bootstrap/limits and no model-selected process launch.
-- [ ] T035 [US3] Extend closed managed capability/grant contracts in `packages/core/src/core/surfaces/live_app_manifest.py` and existing surface grant services for bounded process operations, preserving MCP App same-server grants.
-- [ ] T036 [US3] Implement reserved presentation-bound `/__wright/process` bridge in `apps/api/src/api/routers/surface_preview.py` and `apps/api/src/api/surface_route_authority.py`; derive process/UI/run/workspace scope on server and delegate owning services.
+- [x] T035 [US3] Extend closed managed capability/grant contracts in `packages/core/src/core/surfaces/live_app_manifest.py` and existing surface grant services for bounded process operations, preserving MCP App same-server grants.
+- [x] T036 [US3] Implement reserved presentation-bound `/__wright/process` bridge in `apps/api/src/api/routers/surface_preview.py` and `apps/api/src/api/surface_route_authority.py`; derive process/UI/run/workspace scope on server and delegate owning services.
+  Exact immutable artifact/grant/native-owner API checks pass; see
+  `evidence/surface-bridge.md`. T034/T037 remain pending managed presenter creation,
+  native handshake and actual browser integration; T040 retains the broader audit.
 - [ ] T037 [US3] Add preview-origin transport/theme/navigation handshake in `packages/process_client/` and `apps/web/src/services/surfaces/`, exposing no bearer credentials or generic invokeTool.
 - [ ] T038 [US3] Expose authoring capability/generation/status/preview/save/update/rollback routes through `apps/api/src/api/routers/process_interfaces.py` with durable request identities and exact revision validation.
 - [ ] T039 [US3] Implement Create/Update interface progress, preview/save controls and compatibility fallback in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx`, explicitly using current document tabs/LiveAppSurface rather than a new browser window.

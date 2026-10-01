@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "parent": "5534fc0dcea829eefe04e52a331e05d77d17048e",
+  "owned_source_hashes": {
+    "apps/api/src/api/routers/process_interfaces.py": "e8353c8c8221f270d74e71ebff423e81c653ca7b91b2fccff0e1dd5dc3e6ec10",
+    "apps/api/src/api/routers/process_surface.py": "69d9b1417d051346da2fbcbea7584049619a2e76044d4bc710e236555b3389da",
+    "apps/api/src/api/routers/surface_preview.py": "c753a954b71fa889fe7faebb551f15d1bf802a878658b103921b874f9e27fbae",
+    "apps/api/src/api/surface_route_authority.py": "e10d59899888cde7c4480f8bfff82a8d46a51e30a7c3f1b0aadda38f8808824c",
+    "apps/api/tests/test_process_ui_surface_authority.py": "a19e9f54c2a5e4ae752ed4a1c3470b7158aa70823a36246f9667388cd361a707",
+    "apps/api/tests/test_surface_preview_routes.py": "a63fb5330580651b02a2d7c641b1b2918852aebc9b818d8a0d45a11576657cc9",
+    "apps/web/src/services/surfaces/process-presentation.spec.ts": "06fac252b07a4dd5e366ba20ce8852e53b0c13cf5e5afb18bf9273b6393d0b6b",
+    "packages/core/src/core/surfaces/live_app_manifest.py": "9339e7eccfdf19d8104914a9e80f3f20cba2c995bd9ff1bbf80d351eb4f39633",
+    "packages/process_client/src/index.ts": "86176c6b4ae5646d64dfb099d9a958218a5d57c5db1adbe218c8f82b4a9b2882",
+    "packages/process_client/src/presentation.ts": "6e236bcfd02d5c7bec0406ae7b30c949442e0efaf2f48db1d1123f6a4353d16b",
+    "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py": "3aa155549ccf7cc22e7e00c32244912a26c5c48041e42b455ce5d1afbeaefa85",
+    "packages/workspace_service/src/workspace_service/process_interfaces/authoring.py": "c1e860f5df4b8439f1f0bb5c30664d2745535daad9760ca96c5b213c28929b0a",
+    "packages/workspace_service/src/workspace_service/process_interfaces/build.py": "f419e11ae55dfee686947b39f304d75348662589a37f0a389759df9a93e391a6",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs": "467f816f354d09f148f0b21f590ed0b2de2d6d43ca89702f0358c1faa5530f0b",
+    "packages/workspace_service/src/workspace_service/process_interfaces/runs.py": "3c71ed98e00624079b5f4a040b165f3110ca5bdd9b1f9c408fdfc3278b035d33",
+    "packages/workspace_service/src/workspace_service/process_interfaces/service.py": "025c6fdf339d23bb4a4ac7b97e3d3757bb728a5d528c6df4aca334028bd6585d",
+    "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py": "a743e9a97ae1ff292416d8a2e4645b1288b7b51198760e72109097029ec3207b",
+    "packages/workspace_service/src/workspace_service/surfaces/grants.py": "a399cf12880afd105e01da771b774dff1636d717f52b042f6b2fa41c28fab554",
+    "packages/workspace_service/src/workspace_service/surfaces/process_ui_manifest.py": "a4fd983af486d0b9b59f9bd4fdc01491f8eb5e0d59b610fabb99f4f0dcd00a8d",
+    "packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py": "2951bfe7fe0464bece18083a8229dcef6585e32ac6253b39fecede8991894a39",
+    "packages/workspace_service/tests/surfaces/test_capability_grants.py": "6b42dd4f87a4ef0220af850b68b4d1a0796a1dba0f591b2df058f687c218d935",
+    "packages/workspace_service/tests/surfaces/test_process_ui_static.py": "41cc5690fbadf4884786ffedde5cc6bc38254e0531e7990a5fc27b7288a5ac07",
+    "packages/workspace_service/tests/test_process_ui_authoring.py": "8a039e89ce7b543b69558efa208a4d3c38825c6e4162fe53c14ade23997babdd",
+    "packages/workspace_service/tests/test_process_ui_build.py": "f1cadbf4fe9ff2234da873331d1930258e2b4db129828cf022c3cd558527aff0",
+    "specs/083-process-working-interfaces/tasks.md": "1499d1564e00204c9baaa003b3a87fdd3d3295d112e0e4e3f4ac67a6c130f52a",
+    "specs/083-process-working-interfaces/progress.md": "2e421ee64da27d7a5b881c73cefee45aa03ec3b5b0a7e00ddf3e22a2436d0180",
+    "specs/083-process-working-interfaces/evidence/surface-bridge.md": "dc4d6cdfc4a34c81875cc966cb03a3fc4cca4ba373964fdcbfb60d67cbd4e53e"
+  },
+  "task_scope": {
+    "T035": "implemented/controlled API checked",
+    "T036": "implemented/controlled API checked",
+    "T034": "runtime/manifest partial; managed presentation pending",
+    "T037": "client/fixed entry partial; native handshake pending"
+  },
+  "commands": {
+    "backend": "from pathlib import Path\nimport subprocess\nimport sys\n\nroot = Path('D:/repos/wright')\nlocal = root / '.local-run/process-interfaces-083'\ngroups = {\n    'backend': [\n        'apps/api/tests/test_process_ui_surface_authority.py',\n        'apps/api/tests/test_process_interfaces_api.py',\n        'apps/api/tests/test_process_interface_run_lifecycle.py',\n        'apps/api/tests/test_process_interface_artifacts.py',\n        'apps/api/tests/test_process_interface_reviews.py',\n        'apps/api/tests/test_process_interface_actions.py',\n        'apps/api/tests/test_process_interface_checkpoints.py',\n        'apps/api/tests/test_surface_preview_routes.py',\n        'apps/api/tests/test_surface_preview_security.py',\n        'apps/api/tests/test_surface_mcp_apps_api.py',\n        'apps/api/tests/test_surface_scope_security.py',\n        'packages/workspace_service/tests/test_process_ui_authoring.py',\n        'packages/workspace_service/tests/test_process_ui_build.py',\n        'packages/workspace_service/tests/test_process_interface_service_boundaries.py',\n        'packages/workspace_service/tests/test_process_artifact_access.py',\n        'packages/workspace_service/tests/test_process_interface_continuation.py',\n        'packages/workspace_service/tests/surfaces/test_process_ui_static.py',\n        'packages/workspace_service/tests/surfaces/test_capability_grants.py',\n    ],\n}\nname = sys.argv[1]\nlabel = sys.argv[2] if len(sys.argv) > 2 else 'final'\nargv = [sys.executable, '-m', 'pytest', '-p', 'no:cacheprovider', *groups[name],\n        '-q', '--tb=short', '--basetemp', str(local / ('t036-' + name + '-' + label))]\nfor path in groups[name]:\n    assert (root / path).is_file(), path\nwith (local / ('t036-' + name + '-' + label + '.log')).open('w', encoding='utf-8') as log:\n    process = subprocess.Popen(argv, cwd=root, stdout=subprocess.PIPE,\n                               stderr=subprocess.STDOUT, text=True, encoding='utf-8', errors='replace')\n    for line in process.stdout:\n        log.write(line)\n        log.flush()\n        print(line, end='', flush=True)\n    code = process.wait()\n    log.write(f'\\nowned_exit_code={code}\\n')\nsys.exit(code)\n",
+    "client": "from pathlib import Path\nimport subprocess\nimport sys\n\nroot = Path('D:/repos/wright')\nlocal = root / '.local-run/process-interfaces-083'\nnode = 'node'\nchecks = [\n    ('client-types', [node, str(root / 'node_modules/typescript/bin/tsc'), '--project',\n                     str(root / 'packages/process_client/tsconfig.json'), '--noEmit'], root),\n    ('test-types', [node, str(root / 'node_modules/typescript/bin/tsc'), '--noEmit',\n                    '--module', 'esnext', '--moduleResolution', 'bundler', '--target', 'es2023',\n                    '--lib', 'ES2023,DOM,DOM.Iterable', '--strict', '--skipLibCheck',\n                    'src/services/surfaces/process-presentation.spec.ts'], root / 'apps/web'),\n    ('client-tests', [node, str(root / 'node_modules/vitest/vitest.mjs'), 'run',\n                     'src/services/surfaces/process-presentation.spec.ts', 'src/services/process-client.spec.ts',\n                     '--maxWorkers=1', '--reporter=dot'], root / 'apps/web'),\n]\ncode = 0\nfor name, argv, cwd in checks:\n    with (local / ('t037-' + name + '-final.log')).open('w', encoding='utf-8') as log:\n        process = subprocess.Popen(argv, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,\n                                   text=True, encoding='utf-8', errors='replace')\n        for line in process.stdout:\n            log.write(line)\n            log.flush()\n            print(line, end='', flush=True)\n        result = process.wait()\n        log.write(f'\\nowned_exit_code={result}\\n')\n        code = max(code, result)\nsys.exit(code)\n"
+  },
+  "logs": {
+    "t036-backend-final.log": {
+      "sha256": "b29cd2956205fc9d4e6b96d4c45cd26ec2108b6b3bf1d913100dcb505043e15b",
+      "exit_code": 1,
+      "summaries": [
+        "256 passed, 2 warnings in 115.80s (0:01:55)"
+      ]
+    },
+    "t036-backend-final2.log": {
+      "sha256": "cfc6845764dc609bfa65140deb5eb1f7c0e5ac19064dac1d0ea486588b2c0f2a",
+      "exit_code": 0,
+      "summaries": [
+        "262 passed, 2 warnings in 124.31s (0:02:04)"
+      ]
+    },
+    "t037-client-types-final.log": {
+      "sha256": "90e2c2735b4fef635e397e6f2e6ca09038cf0b35e183971e112bed429731d18d",
+      "exit_code": 0,
+      "summaries": []
+    },
+    "t037-test-types-final.log": {
+      "sha256": "90e2c2735b4fef635e397e6f2e6ca09038cf0b35e183971e112bed429731d18d",
+      "exit_code": 0,
+      "summaries": []
+    },
+    "t037-client-tests-final.log": {
+      "sha256": "284cb75a19e1db87090fe9578ec3c8f88b0fe575176c487e6233504c7aaa4bf5",
+      "exit_code": 0,
+      "summaries": [
+        "2 passed (2)",
+        "Tests  90 passed (90)",
+        "Duration  6.74s (transform 259ms, setup 619ms, import 312ms, tests 154ms, environment 4.93s)"
+      ]
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "claims": {
+    "controlled_model_and_pinned_route": true,
+    "real_local_fixed_compilation": true,
+    "real_default_model_this_checkpoint": false,
+    "managed_browser_preview": false,
+    "served_workspace_authoring": false,
+    "live_engineering_MCP": false,
+    "hardware_or_supplier_dispatch": false,
+    "installed_distribution": false,
+    "human_engineering_acceptance": false,
+    "full_feature_complete": false
+  }
+}

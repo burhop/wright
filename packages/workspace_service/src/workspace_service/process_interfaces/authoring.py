@@ -299,6 +299,7 @@ class ProcessInterfaceAuthoring:
                     "template": resources.template,
                     "output_schema": resources.output_schema,
                     "catalog": catalog,
+                    "available_capabilities": sorted(scope.process_scope.capabilities),
                     "manifest": manifest.model_dump(mode="json"),
                     "previous_source": previous,
                 },
@@ -504,6 +505,7 @@ class ProcessInterfaceAuthoring:
                 "request": record["request"]["instruction"],
                 "manifest": record["manifest"],
                 "binding_catalog": record["catalog"],
+                "available_process_capabilities": record["available_capabilities"],
                 "output_schema": record["output_schema"],
                 "reference_template": record["template"],
                 "previous_source": record["previous_source"],
@@ -540,6 +542,14 @@ class ProcessInterfaceAuthoring:
                             "Keep Wright's exact UI/revision/parent/process identities.",
                         )
                     validate_manifest_bindings(manifest, job.process, record["catalog"])
+                    if not set(manifest.capabilities) <= set(
+                        record["available_capabilities"]
+                    ):
+                        raise ProcessInterfaceError(
+                            "UI_INCOMPATIBLE",
+                            "The interface requests a process capability unavailable to this authoring view.",
+                            "Use only Wright's supplied available_process_capabilities and disclose unavailable operations.",
+                        )
                     job = self._transition(job, "building")
                     report, payload = await self._build_candidate(output, job, record)
                     self.repository.retain_authoring_record(

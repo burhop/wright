@@ -771,6 +771,31 @@ Next: managed static runtime and presentation-bound process grants/bridge, then
 the native authoring workspace journey. T021 and M4–M5 remain pending. Retain the
 full submitted goal; this is an intermediate checkpoint.
 
+### 2026-10-01 — Presentation-bound process transport checkpoint
+
+Implemented and tested T035/T036: closed grants and reserved preview-origin
+transport derive exact UI/process/run/presentation scope and delegate the existing
+native owners. Preview mutations, cross-scope selectors and expired/revoked access
+are denied. Bound run constraints apply in existing receipt/snapshot/artifact
+owners. Stream chunks retain live grant/generation checks without rereading the
+full UI bundle. Existing MCP App/native process regression tests remain passing.
+
+T034's fixed static runtime/manifest factory and T037's public isolated client,
+fixed compiled entry and loaded-preview observation are partial. Managed presenter
+creation, native theme/navigation/start-rebinding and workspace authoring controls
+remain required. The qualified backend/API group passes 262 checks with zero
+skips in 124.31 seconds; client tests pass 90 checks in 6.74 seconds, with client
+and presentation-test TypeScript checks and Ruff passing. Preliminary fixture/
+assertion failures are retained and corrected without weakening scope checks.
+
+See [surface-bridge.md](evidence/surface-bridge.md) and its source/log/preservation
+manifest. This is controlled API/compiler/client proof, not a managed browser,
+new live-model/MCP/engineering run, physical effect or installed distribution
+acceptance. The full submitted goal remains active. T021/T032, remaining M3,
+M4 and M5 remain pending. Next: native managed preview creation and authoring
+routes/tab controls, then actual through-Wright UI generation and both digital
+engineering proofs.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

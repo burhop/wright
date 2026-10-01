@@ -111,6 +111,12 @@ def validate_manifest_bindings(
             "The interface requires unsupported client or kit versions.",
             "Generate against the installed public client and kit version 1.0.0.",
         )
+    if "process.read" not in manifest.capabilities:
+        raise ProcessInterfaceError(
+            "UI_INCOMPATIBLE",
+            "A process interface must declare its scoped read operation.",
+            "Include process.read so the host can supply authoritative process context.",
+        )
     missing = []
     for binding in manifest.bindings:
         matches = [

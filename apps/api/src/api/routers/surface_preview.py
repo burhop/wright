@@ -28,6 +28,7 @@ from starlette.background import BackgroundTask
 
 from api.config import get_workspace_surface_settings
 from api.composition import surface_application
+from api.routers.process_surface import router as process_surface_router
 from api.surface_http_proxy import HttpProxyError, ProxyHttpRequest, SurfaceHttpProxy
 from api.surface_route_authority import (
     AuthorizedSurfaceRoute,
@@ -358,6 +359,10 @@ def exchange_bootstrap(
         max_age=remaining,
     )
     return response
+
+
+# Reserved process transport must precede the general application catch-all.
+router.include_router(process_surface_router)
 
 
 @router.api_route(

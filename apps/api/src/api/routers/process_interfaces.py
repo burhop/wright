@@ -59,6 +59,26 @@ router = APIRouter(dependencies=[Depends(_require_process_validation_role)])
 
 
 def _native_context(request, service, session_id, path, digest):
+    from workspace_service.process_interfaces.surface_bridge import (
+        AuthorizedProcessPresentation,
+    )
+
+    presentation = getattr(request.state, "process_presentation", None)
+    if isinstance(presentation, AuthorizedProcessPresentation):
+        process = presentation.binding.process
+        if (session_id, path, digest) != (
+            presentation.session_id,
+            process.source_path,
+            process.source_digest,
+        ):
+            raise _transport_error(
+                ProcessInterfaceError(
+                    "SCOPE_DENIED",
+                    "This request differs from its authorized presentation.",
+                    "Reopen the exact process interface in Wright.",
+                )
+            )
+        return service.process_interfaces, presentation.scope, process
     bound = _workflow_source_scope(session_id, service)
     # Local control-plane authentication currently has one administrator token.
     # A supplied actor is never accepted; richer auth may provide its own ID.

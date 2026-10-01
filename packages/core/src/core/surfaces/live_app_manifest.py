@@ -48,6 +48,24 @@ _CAPABILITIES = frozenset(
     }
 )
 
+# These closed operations are for a server-bound process presentation. Adding
+# them to a managed declaration does not give an MCP App generic tool access or
+# bypass the process owner's input/review/action authority.
+PROCESS_SURFACE_CAPABILITIES = frozenset(
+    {
+        "process.read",
+        "process.inputs",
+        "process.start",
+        "process.respond",
+        "process.review",
+        "process.action",
+        "process.cancel",
+        "process.results",
+        "process.navigate",
+    }
+)
+_CAPABILITIES = _CAPABILITIES | PROCESS_SURFACE_CAPABILITIES
+
 
 def _record(value: Any, label: str) -> dict[str, Any]:
     if not isinstance(value, dict):

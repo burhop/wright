@@ -88,6 +88,7 @@ class ProcessRunSupervisor:
         return root
 
     def _receipt(self, scope, process, run_id, operation="process.read"):
+        scope.require_run(run_id)
         root = self._root(scope, process, operation)
         receipt = self.application.inputs.receipt_for_run(
             process.workspace_id, process.source_path, run_id
@@ -96,7 +97,10 @@ class ProcessRunSupervisor:
             receipt is None
             or receipt.process.workspace_id != process.workspace_id
             or receipt.process.source_path != process.source_path
-            or (operation != "process.read" and receipt.process != process)
+            or (
+                (operation != "process.read" or scope.run_bound)
+                and receipt.process != process
+            )
         ):
             raise ProcessInterfaceError(
                 "SCOPE_DENIED",
