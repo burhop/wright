@@ -102,10 +102,17 @@ uncertain acknowledgement; changed identities or decisions conflict. Review
 acceptance alone does not submit an external action. Terminal output reviews
 update the existing run recorder without executing completed steps again.
 
-The public interface also names `requestAction`.
-Action routes and the isolated presentation
-transport are later Feature 083 tasks: those operations currently report
-`CAPABILITY_UNAVAILABLE` without speculative requests. Trusted native hosts may
+Native `requestAction({actionId, subjectDigest, requestId})` submits only the exact
+approved action to `/actions/{action_id}`. The backend derives run and principal
+and supervises the existing executor independently of the HTTP observer. Its 202
+snapshot acknowledges retained authorization; `action_receipt.submission` and
+actual provider observations separately establish acceptance and completion.
+Closing the view does not stop the operation. Keep the exact request after a lost
+acknowledgement and explicitly reconcile it; uncertain consumed actions cannot
+be blindly dispatched again. A completed identical retry is read-only.
+
+The isolated presentation transport remains a later Feature 083 task and
+reports `CAPABILITY_UNAVAILABLE`. Trusted native hosts may
 provide alternate representation/navigation ports through their owning authorized services;
 no generic file/tool/shell/admin operation is exposed. Full feature completion
 requires those later capabilities and their backend/browser proofs.

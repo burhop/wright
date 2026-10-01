@@ -13,7 +13,6 @@ import {
   type Reason,
   type StartReceipt,
   type JsonValue,
-  type ResponseRequest,
 } from "@wright/process-client";
 import {
   ActionButton,
@@ -39,6 +38,7 @@ import {
   processViewRequestId,
   type ProcessViewRecovery,
   type ProcessViewRecoveryStore,
+  type ProcessViewMutation,
 } from "../../services/process-view-recovery";
 
 export interface CommonProcessViewProps {
@@ -192,8 +192,14 @@ function CommonProcessController({
   const preparedRef = useRef<InputSnapshot | undefined>(undefined);
   const [readiness, setReadiness] = useState<Readiness>();
   const [drafts, setDrafts] = useState<Record<string, InputBinding | null>>({});
-  const [answers, setAnswers] = useState<Record<string, JsonValue | undefined>>({});
-  const [pendingResponse, setPendingResponse] = useState<ResponseRequest>();
+  const [answers, setAnswers] = useState<Record<string, JsonValue | undefined>>(
+    {},
+  );
+  const [pendingInteraction, setPendingInteraction] =
+    useState<ProcessViewMutation>();
+  const [reviewReasons, setReviewReasons] = useState<Record<string, string>>(
+    {},
+  );
   const draftsRef = useRef<Record<string, InputBinding | null>>({});
   const [dirty, setDirty] = useState(false);
   const [recovery, setRecovery] = useState<ProcessViewRecovery | null>(null);
@@ -270,6 +276,26 @@ function CommonProcessController({
     },
     [store, remember],
   );
+
+  useEffect(() => {
+    if (!activeRun) return;
+    try {
+      const saved = store.readInteraction(activeRun);
+      setPendingInteraction(saved ?? undefined);
+      if (saved?.kind === "response")
+        setAnswers((current) => ({
+          ...current,
+          [saved.request.subjectDigest]: saved.request.value,
+        }));
+      if (saved?.kind === "review")
+        setReviewReasons((current) => ({
+          ...current,
+          [saved.request.subjectDigest]: saved.request.reason,
+        }));
+    } catch (error) {
+      setStorageReason(message(error));
+    }
+  }, [activeRun, store]);
 
   useEffect(() => {
     alive.current = true;
@@ -797,71 +823,153 @@ function CommonProcessController({
       if (alive.current) setBusy("");
     }
   };
-  const respond = async (
-    action: Action,
-    value: JsonValue,
-    reconcile = false,
-  ) => {
+  const permitted = (action: Action) =>
+    !operation.current &&
+    !readOnly &&
+    !storageReason &&
+    !pendingInteraction &&
+    !!activeRunRef.current &&
+    !!action.checkpoint_id &&
+    !!action.subject_digest &&
+    action.enabled &&
+    !!snapshotRef.current?.actions?.some(
+      (item) =>
+        item.enabled &&
+        item.action_id === action.action_id &&
+        item.operation === action.operation &&
+        item.checkpoint_id === action.checkpoint_id &&
+        item.subject_digest === action.subject_digest,
+    );
+  const submitInteraction = async (attempt: ProcessViewMutation) => {
     if (
       operation.current ||
       readOnly ||
-      !activeRunRef.current ||
-      !action.checkpoint_id ||
-      !action.subject_digest
+      storageReason ||
+      attempt.runId !== activeRunRef.current
     )
       return;
-    if (
-      !reconcile &&
-      (!action.enabled ||
-        pendingResponse ||
-        !snapshotRef.current?.actions?.some(
-          (item) =>
-            item.operation === "respond" &&
-            item.enabled &&
-            item.checkpoint_id === action.checkpoint_id &&
-            item.subject_digest === action.subject_digest,
-        ))
-    )
-      return;
-    const attempt = reconcile
-      ? pendingResponse
-      : {
-          checkpointId: action.checkpoint_id,
-          subjectDigest: action.subject_digest,
-          value: JSON.parse(JSON.stringify(value)) as JsonValue,
-          requestId: crypto.randomUUID(),
-        };
-    if (!attempt) return;
     operation.current = true;
-    setPendingResponse(attempt);
-    setBusy("respond");
+    setBusy(attempt.kind);
     setReason(undefined);
+    let retained = false;
     try {
-      const response = await client.respond(attempt);
-      if (response.run_id !== activeRunRef.current)
+      store.writeInteraction(attempt); // Retain intent before any mutation; never auto-submit on reopen.
+      retained = true;
+      if (alive.current) setPendingInteraction(attempt);
+      const reply =
+        attempt.kind === "response"
+          ? await client.respond(attempt.request)
+          : attempt.kind === "review"
+            ? await client.decide(attempt.request)
+            : await client.requestAction(attempt.request);
+      const returnedRun =
+        "context" in reply ? reply.context.run_id : reply.run_id;
+      if (returnedRun !== attempt.runId)
         throw new ProcessClientError(
           {
             code: "OUTCOME_UNKNOWN",
-            message: "The saved response does not identify this run.",
+            message: "The acknowledged interaction does not identify this run.",
             correction:
-              "Refresh this exact run and inspect its declared input before continuing.",
+              "Refresh this exact run and reconcile its saved request before continuing.",
           },
-          { uncertain: true, requestId: attempt.requestId },
+          { uncertain: true, requestId: attempt.request.requestId },
         );
+      store.clearInteraction(attempt.runId, attempt.request.requestId);
       if (!alive.current) return;
-      setPendingResponse(undefined);
+      setPendingInteraction(undefined);
+      setActivity(
+        attempt.kind === "action"
+          ? "Action authorized; following recorded provider observations."
+          : "Response recorded; following this run.",
+      );
       setRefreshKey((key) => key + 1);
     } catch (error) {
+      if (retained && error instanceof ProcessClientError && !error.uncertain) {
+        try {
+          store.clearInteraction(attempt.runId, attempt.request.requestId);
+          if (alive.current) setPendingInteraction(undefined);
+        } catch (storageError) {
+          if (alive.current) setStorageReason(message(storageError));
+        }
+      }
       if (alive.current) {
         setReason(message(error));
-        if (error instanceof ProcessClientError && !error.uncertain)
-          setPendingResponse(undefined);
+        if (!retained) {
+          try {
+            setPendingInteraction(
+              store.readInteraction(attempt.runId) ?? undefined,
+            );
+          } catch (storageError) {
+            setStorageReason(message(storageError));
+          }
+        }
       }
     } finally {
       operation.current = false;
       if (alive.current) setBusy("");
     }
   };
+  const respond = async (action: Action, value: JsonValue) => {
+    if (action.operation !== "respond" || !permitted(action)) return;
+    await submitInteraction({
+      kind: "response",
+      runId: activeRunRef.current!,
+      request: {
+        checkpointId: action.checkpoint_id!,
+        subjectDigest: action.subject_digest!,
+        value: JSON.parse(JSON.stringify(value)) as JsonValue,
+        requestId: crypto.randomUUID(),
+      },
+    });
+  };
+  const decide = async (
+    action: Action,
+    decision: "approved" | "changes_requested",
+    reviewReason: string,
+  ) => {
+    if (
+      action.operation !== "review" ||
+      !permitted(action) ||
+      !snapshotRef.current?.interactions?.some(
+        (item) =>
+          item.checkpoint_id === action.checkpoint_id &&
+          item.subject_digest === action.subject_digest &&
+          item.decisions?.includes(decision),
+      )
+    )
+      return;
+    await submitInteraction({
+      kind: "review",
+      runId: activeRunRef.current!,
+      request: {
+        checkpointId: action.checkpoint_id!,
+        subjectDigest: action.subject_digest!,
+        decision,
+        reason: reviewReason.trim(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  };
+  const requestAction = async (action: Action) => {
+    if (action.operation !== "action" || !permitted(action)) return;
+    await submitInteraction({
+      kind: "action",
+      runId: activeRunRef.current!,
+      checkpointId: action.checkpoint_id!,
+      request: {
+        actionId: action.action_id,
+        subjectDigest: action.subject_digest!,
+        requestId: crypto.randomUUID(),
+      },
+    });
+  };
+  const interactionBlocked: Reason | undefined = pendingInteraction
+    ? {
+        code: "OUTCOME_UNKNOWN",
+        message: "This interaction is awaiting confirmation.",
+        correction: `Use Reconcile ${pendingInteraction.kind} request to check the same saved request.`,
+      }
+    : storageReason;
   const pendingStart = !!recovery?.start && !recovery.start.receipt;
   const startDisabledReason: Reason | undefined = pendingStart
     ? {
@@ -956,27 +1064,14 @@ function CommonProcessController({
             Reconcile start request
           </button>
         )}
-        {pendingResponse && !busy && (
+        {pendingInteraction && !busy && (
           <button
             type="button"
             className="wp-link"
-            disabled={readOnly}
-            onClick={() =>
-              void respond(
-                {
-                  action_id: "reconcile-response",
-                  operation: "respond",
-                  title: "Reconcile response request",
-                  enabled: false,
-                  checkpoint_id: pendingResponse.checkpointId,
-                  subject_digest: pendingResponse.subjectDigest,
-                },
-                pendingResponse.value,
-                true,
-              )
-            }
+            disabled={readOnly || !!storageReason}
+            onClick={() => void submitInteraction(pendingInteraction)}
           >
-            Reconcile response request
+            Reconcile {pendingInteraction.kind} request
           </button>
         )}
         {snapshot && (
@@ -1168,16 +1263,36 @@ function CommonProcessController({
                             onSubmit: (action, value) =>
                               void respond(action, value),
                             busy: !!busy,
-                            readOnly: readOnly || !!pendingResponse,
-                            blockedReason: pendingResponse
-                              ? {
-                                  code: "OUTCOME_UNKNOWN",
-                                  message:
-                                    "This response is awaiting confirmation.",
-                                  correction:
-                                    "Use Reconcile response request to check the same saved answer.",
-                                }
-                              : undefined,
+                            readOnly: readOnly || !!interactionBlocked,
+                            blockedReason: interactionBlocked,
+                          }
+                        : undefined
+                    }
+                    review={
+                      interaction.kind !== "input"
+                        ? {
+                            reason:
+                              reviewReasons[interaction.subject_digest] ?? "",
+                            onReasonChange: (value) =>
+                              setReviewReasons((current) => ({
+                                ...current,
+                                [interaction.subject_digest]: value,
+                              })),
+                            onSubmit: (action, decision, value) =>
+                              void decide(action, decision, value),
+                            busy: !!busy,
+                            readOnly: readOnly || !!interactionBlocked,
+                            blockedReason: interactionBlocked,
+                          }
+                        : undefined
+                    }
+                    execution={
+                      interaction.kind === "action"
+                        ? {
+                            onSubmit: (action) => void requestAction(action),
+                            busy: !!busy,
+                            readOnly: readOnly || !!interactionBlocked,
+                            blockedReason: interactionBlocked,
                           }
                         : undefined
                     }
@@ -1191,12 +1306,13 @@ function CommonProcessController({
                       }}
                       onNavigate={navigate}
                     />
-                    {interaction.kind !== "input" && (
-                      <p className="wp-muted">
-                        Open the interaction step to inspect this checkpoint.
-                        Response controls are unavailable in this view.
-                      </p>
-                    )}
+                    {interaction.kind !== "input" &&
+                      !interaction.decisions?.length && (
+                        <p className="wp-muted">
+                          Open the interaction step to inspect this checkpoint.
+                          Response controls are unavailable in this view.
+                        </p>
+                      )}
                   </CheckpointCard>
                 ))}
               </Section>

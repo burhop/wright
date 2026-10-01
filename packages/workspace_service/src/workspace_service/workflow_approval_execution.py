@@ -548,6 +548,10 @@ async def resume_workflow_approval(
     response_generator,
     action_generator=None,
     on_event=None,
+    principal_id=None,
+    on_runtime=None,
+    on_authorized=None,
+    cancellation_status=None,
 ):
     async with _lease(workspace_id, checkpoint):
         current = _current(service, checkpoint, workspace_id, subject_digest)
@@ -560,6 +564,25 @@ async def resume_workflow_approval(
             session_id=session_id,
         )
         try:
+            publication = asyncio.Lock()
+
+            async def publish(kind, event=None):
+                async with publication:
+                    await record_workflow_approval_transition(
+                        service=service,
+                        workspace_dir=workspace_dir,
+                        checkpoint=current,
+                        kind=kind,
+                        operation_event=event,
+                    )
+
+            async def publish_cancel(event):
+                if event.get("kind") != "cancellation_requested":
+                    raise ValueError("Unexpected approved action request event")
+                await publish("cancellation_requested", event)
+
+            if on_runtime:
+                on_runtime(runtime, publish_cancel, False)
             kind = _dispatch_kind(current, context)
             operation = None
             if kind == "mcp-operation":
@@ -600,14 +623,12 @@ async def resume_workflow_approval(
                     workspace_id=workspace_id,
                     current_subject=current.subject,
                     action_id=request_id,
+                    principal_id=principal_id,
                 )
                 try:
-                    await record_workflow_approval_transition(
-                        service=service,
-                        workspace_dir=workspace_dir,
-                        checkpoint=current,
-                        kind="external_action_authorized",
-                    )
+                    await publish("external_action_authorized")
+                    if on_authorized:
+                        on_authorized(current)
                     if kind == "mcp-operation":
                         from .workflow_mcp_operations import submit_operation
 
@@ -653,14 +674,7 @@ async def resume_workflow_approval(
                             "replay_permitted": False,
                         },
                     )
-                    await asyncio.shield(
-                        record_workflow_approval_transition(
-                            service=service,
-                            workspace_dir=workspace_dir,
-                            checkpoint=current,
-                            kind="external_action_reconciled",
-                        )
-                    )
+                    await asyncio.shield(publish("external_action_reconciled"))
                     if rejected:
                         raise _error(
                             "WORKFLOW_MCP_OPERATION_REJECTED",
@@ -684,12 +698,7 @@ async def resume_workflow_approval(
                     outcome="dispatched",
                     evidence=evidence,
                 )
-                await record_workflow_approval_transition(
-                    service=service,
-                    workspace_dir=workspace_dir,
-                    checkpoint=current,
-                    kind="external_action_reconciled",
-                )
+                await publish("external_action_reconciled")
                 if kind == "mcp-operation":
                     # Persist acceptance before observation. A monitor failure
                     # cannot erase the receipt or authorize another submission.
@@ -704,13 +713,7 @@ async def resume_workflow_approval(
                         cancellation_requested |= (
                             data.get("state") == "cancellation_requested"
                         )
-                        await record_workflow_approval_transition(
-                            service=service,
-                            workspace_dir=workspace_dir,
-                            checkpoint=current,
-                            kind=event_kind,
-                            operation_event=data,
-                        )
+                        await publish(event_kind, data)
                         if on_event:
                             await on_event({"kind": event_kind, **data})
 
@@ -767,14 +770,7 @@ async def resume_workflow_approval(
                             outcome="dispatched",
                             evidence=evidence,
                         )
-                        await asyncio.shield(
-                            record_workflow_approval_transition(
-                                service=service,
-                                workspace_dir=workspace_dir,
-                                checkpoint=current,
-                                kind="external_action_reconciled",
-                            )
-                        )
+                        await asyncio.shield(publish("external_action_reconciled"))
                         raise
                     current = service.workflow_external_actions.reconcile(
                         current.checkpoint_id,
@@ -784,14 +780,27 @@ async def resume_workflow_approval(
                         outcome="dispatched",
                         evidence=evidence,
                     )
-                    await record_workflow_approval_transition(
-                        service=service,
-                        workspace_dir=workspace_dir,
-                        checkpoint=current,
-                        kind="external_action_reconciled",
-                    )
+                    await publish("external_action_reconciled")
+
+            if on_authorized and current.state == "consumed":
+                on_authorized(current)
 
             async def execute(emit):
+                if on_runtime:
+                    on_runtime(
+                        runtime,
+                        emit,
+                        not any(
+                            step.tool_name
+                            or step.agent_task
+                            or step.external_action
+                            or step.cad
+                            or step.application
+                            for step in plan.steps[
+                                current.continuation["next_step_index"] + 1 :
+                            ]
+                        ),
+                    )
                 return await execute_prompt_workflow(
                     service=service,
                     workspace_dir=workspace_dir,
@@ -814,6 +823,7 @@ async def resume_workflow_approval(
                 checkpoint=current,
                 execute=execute,
                 on_event=on_event,
+                cancellation_status=cancellation_status,
             )
             return current, result
         finally:

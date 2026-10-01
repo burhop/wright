@@ -921,10 +921,50 @@ export function createNativeProcessClient(
       return reply;
     },
     async requestAction(
-      _request: ActionRequest,
-      _read?: ReadOptions,
+      action: ActionRequest,
+      read: ReadOptions = {},
     ): Promise<InteractionSnapshot> {
-      return unavailable("process actions");
+      const actionId = identifier(action.actionId, "action ID");
+      const requestId = identifier(action.requestId, "request ID");
+      const subjectDigest = action.subjectDigest;
+      if (
+        typeof subjectDigest !== "string" ||
+        !/^[a-f0-9]{64}$/.test(subjectDigest)
+      )
+        throw clientError(
+          "RESPONSE_INVALID",
+          "Choose the exact approved action subject.",
+          "Refresh this run and its current permitted action.",
+        );
+      const reply = await request(
+        `/actions/${encodeURIComponent(actionId)}`,
+        "InteractionSnapshot",
+        read,
+        { subject_digest: subjectDigest, request_id: requestId },
+        requestId,
+      );
+      try {
+        scopedProcess(process, reply.context.process);
+      } catch {
+        throw unknownOutcome(requestId);
+      }
+      const permission = (reply.actions || []).find(
+        (item) => item.action_id === actionId,
+      );
+      const checkpoint = (reply.interactions || []).find(
+        (item) =>
+          item.checkpoint_id === permission?.checkpoint_id &&
+          item.subject_digest === subjectDigest,
+      );
+      if (
+        !reply.context.run_id ||
+        permission?.operation !== "action" ||
+        permission.subject_digest !== subjectDigest ||
+        checkpoint?.kind !== "action" ||
+        checkpoint.action_receipt?.request_id !== requestId
+      )
+        throw unknownOutcome(requestId);
+      return reply;
     },
     async cancel(runId: string, requestId: string, read: ReadOptions = {}) {
       identifier(runId, "run ID");

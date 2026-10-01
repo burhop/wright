@@ -87,6 +87,18 @@ and declared interaction without replacing the refined canvas/inspectors.
 
 ## Backend-owned lifecycle
 
+Native approved action requests are supervised on the same recorded run through
+the existing approval executor and consume authority. Persist the exact request
+and authenticated principal before provider dispatch. Observer detach does not
+cancel the owner. The response may acknowledge authorization before provider
+acceptance: `PendingInteraction.action_receipt` retains the separate submission,
+delivery, observed outcome and cancellation evidence. Unknown consumed operations
+and unfinished continuation claims cannot be replayed; confirmed delivery with
+no downstream claim may continue without re-dispatch. Interrupted claims are
+sealed as outcome_unknown before final recorder publication. A matching finished
+retry is read-only. Browser-cached intent is for explicit reconciliation only,
+scoped to the exact process revision/run; it does not grant action authority.
+
 One source-run use case handles readiness, input snapshot, durable start receipt,
 run allocation and execution task ownership. It invokes existing
 `execute_prompt_workflow`, gateway, recorder, approval/rework and async-operation

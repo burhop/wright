@@ -15,6 +15,7 @@ from core.process_interactions import (
     Observation,
     PendingInteraction,
     ReviewDecision,
+    ApprovedActionReceipt,
     ProcessRef,
     Reason,
 )
@@ -157,6 +158,36 @@ async def _human_input(app, resolved, view, *, gateway, session_id):
     return (interaction,), (action,)
 
 
+def _action_receipt(checkpoint):
+    action = checkpoint.external_action
+    if not action:
+        return None
+    evidence = action.get("evidence") or {}
+    outcome = action.get("outcome")
+    submission = (
+        "unknown"
+        if outcome == "outcome_unknown"
+        else "rejected"
+        if evidence.get("submission") == "rejected"
+        or (outcome == "not_dispatched" and action.get("reconciled_at"))
+        else "accepted"
+        if outcome == "dispatched"
+        else "authorized"
+    )
+    return ApprovedActionReceipt(
+        request_id=action["action_id"],
+        principal_id=action.get("principal_id"),
+        submission=submission,
+        delivery_completed=bool(evidence.get("delivery_completed"))
+        if checkpoint.action_kind == "mcp-operation"
+        else outcome == "dispatched",
+        observed_outcome=evidence.get("observed_outcome"),
+        provider_reference=evidence.get("provider_reference"),
+        cancellation_requested=bool(evidence.get("cancellation_requested")),
+        cancellation_outcome=evidence.get("cancellation_outcome"),
+    )
+
+
 async def _approval(app, resolved, view, *, gateway, session_id):
     reference = view.get("approval")
     if (
@@ -201,6 +232,13 @@ async def _approval(app, resolved, view, *, gateway, session_id):
         )
         checkpoint = inspection.checkpoint
         can_decide, can_resume = inspection.can_decide, inspection.can_resume
+        if app.runs.is_live(view["run_id"]):
+            can_decide = can_resume = False
+            reason = _blocked(
+                "ACTION_NOT_PERMITTED",
+                "This run is already executing a segment.",
+                "Follow the saved run and its current action receipt.",
+            )
         if inspection.resume_error_code:
             reason = _blocked(
                 "CAPABILITY_UNAVAILABLE",
@@ -238,6 +276,7 @@ async def _approval(app, resolved, view, *, gateway, session_id):
         instructions="Review the exact process action and its evidence before continuing.",
         decisions=("approved", "changes_requested"),
         state=state,
+        action_receipt=_action_receipt(checkpoint),
         decision=ReviewDecision(
             decision=(checkpoint.continuation.get("decision_receipt") or {}).get(
                 "decision",

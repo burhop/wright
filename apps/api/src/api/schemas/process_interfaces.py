@@ -50,6 +50,11 @@ class ProcessReviewDecisionRequest(ProcessSourceRequest):
     request_id: Identifier
 
 
+class ProcessActionRequest(ProcessSourceRequest):
+    subject_digest: Digest
+    request_id: Identifier
+
+
 class ProcessRepresentationRequest(ProcessSourceRequest):
     reference: ArtifactRef
     run_id: Identifier | None = None

@@ -23,6 +23,8 @@ def decision_error(error):
     return ProcessInterfaceError(
         "SOURCE_CHANGED"
         if code == "WORKFLOW_SOURCE_CONFLICT"
+        else "OUTCOME_UNKNOWN"
+        if "OUTCOME_UNKNOWN" in code.upper()
         else "SUBJECT_STALE"
         if "STALE" in code.upper() or "EXPIRED" in code.upper()
         else "REQUEST_CONFLICT"

@@ -751,8 +751,16 @@ async def _record_run(
         )
         raise
     finally:
-        if resume_checkpoint_id and record["status"] in {"failed", "cancelled"}:
-            record["resume_segments"][resume_checkpoint_id]["state"] = "outcome_unknown"
+        if resume_checkpoint_id:
+            claim = record["resume_segments"][resume_checkpoint_id]
+            if claim["state"] == "executing":
+                # Shutdown and unconfirmed cancellation also leave an unfinished
+                # claim. Persist uncertainty rather than a departed live owner;
+                # no unfinished segment may be replayed on service recreation.
+                claim.update(
+                    state="outcome_unknown",
+                    finished_at=datetime.now(timezone.utc).isoformat(),
+                )
         record["execution_ended_at"] = datetime.now(timezone.utc).isoformat()
         if record["status"] not in {
             "pending_review",
@@ -861,6 +869,7 @@ async def record_workflow_approval_transition(
         "external_action_authorized",
         "external_action_reconciled",
         "operation_progress",
+        "cancellation_requested",
     }:
         raise ValueError("Unknown workflow approval transition")
     relative = checkpoint.continuation.get("run_log_path")
@@ -947,12 +956,17 @@ async def record_workflow_approval_transition(
             else {}
         ),
     }
-    if kind == "operation_progress":
+    if kind in {"operation_progress", "cancellation_requested"}:
         if (
             not isinstance(operation_event, dict)
             or operation_event.get("task_id") != checkpoint.step_id
         ):
             raise ValueError("Operation observation belongs to another approval step")
+        if (
+            kind == "cancellation_requested"
+            and operation_event.get("run_id") != checkpoint.run_id
+        ):
+            raise ValueError("Cancellation belongs to another approved run")
         event = {
             **operation_event,
             **event,

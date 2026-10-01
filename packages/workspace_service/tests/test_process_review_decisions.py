@@ -69,8 +69,8 @@ def review_source(*, artifact=False):
     )
 
 
-async def waiting_review_case(root, *, artifact=False):
-    text = review_source(artifact=artifact)
+async def waiting_review_case(root, *, artifact=False, text=None, gateway=None):
+    text = text or review_source(artifact=artifact)
     reference = process(text)
     (root / "workflows").mkdir(parents=True, exist_ok=True)
     store = WorkspaceWorkflowSourceStore(str(root))
@@ -106,7 +106,11 @@ async def waiting_review_case(root, *, artifact=False):
 
     async def generate(prompt, fmt):
         calls.append(prompt)
-        return "Synthetic test document for declared review"
+        return (
+            '{"synthetic":"prepared test package"}'
+            if fmt == "json"
+            else "Synthetic test document for declared review"
+        )
 
     receipt = await app.runs.start(
         review_scope(),
@@ -115,6 +119,7 @@ async def waiting_review_case(root, *, artifact=False):
         "start-review",
         expected_input_digest=frozen.digest,
         response_generator=generate,
+        gateway=gateway,
     )
     view = await app.runs.wait(review_scope(), reference, receipt.run_id)
     assert view["status"] == ("pending_review" if artifact else "awaiting_approval"), (

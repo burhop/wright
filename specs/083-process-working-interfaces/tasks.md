@@ -53,9 +53,10 @@ consume responses once on the same run; undeclared questions never create forms.
 - [x] T025 [US2] Enforce undeclared-question diagnostics and unattended step policy in `packages/workspace_service/src/workspace_service/workflow_mcp_execution.py` and `workflow_source_execution.py`, retaining bounded existing 082 repair scope.
 - [x] T026 [US2] Add bounded approved `mcp-operation` dispatch through current gateway/consume authority in `packages/workspace_service/src/workspace_service/workflow_approval_execution.py` and `workflow_external_actions.py`; test rejection/unknown outcome with a nonphysical isolated provider.
 - [ ] T027 [US2] Wire declared input/review/action forms and inspector/source edits through `apps/web/src/components/process-interfaces/` and `apps/web/src/prototypes/workflow-recovery/`, retaining exact checkpoint and subject context.
-  Scoped review owner/API/client and retained-decision display are implemented.
-  Review/action forms, supervised action transport and inspector/source edits
-  remain pending; this checkbox does not denote backend-only completion.
+  Scoped review/action owners, native client/transport, supervised continuation,
+  common-view forms and durable explicit-request reconciliation are implemented.
+  Inspector declarations remain pending; bounded served journeys do not replace
+  T028's complete recovery proof or the later authoring/live acceptance obligations.
 - [ ] T028 [US2] Verify two-checkpoint reopen/duplicate/stale/schema/unknown-outcome/undeclared-question paths in `apps/api/tests/test_process_interface_checkpoints.py`, `packages/workspace_service/tests/test_process_interface_continuation.py` and `tests/ui-integration/process-declared-interactions.spec.ts`; record scope in `specs/083-process-working-interfaces/evidence/interactions.md`.
 
 ## Phase 5 — US3: Wright creates and maintains the UI / M3

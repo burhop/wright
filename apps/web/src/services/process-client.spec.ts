@@ -466,20 +466,107 @@ describe("native process client", () => {
     ).rejects.toBeInstanceOf(ProcessClientError);
     expect(navigate).toHaveBeenCalledTimes(1);
   });
-  it("fails reserved capabilities explicitly without speculative calls", async () => {
+  it("rejects invalid action subjects and missing representation ownership without calls", async () => {
     const fetch = fake(async () => json(snapshot()));
     const scoped = client(fetch);
     await expect(
       scoped.requestAction({
         actionId: "continue-cp",
-        subjectDigest: digest,
+        subjectDigest: "invalid-subject",
         requestId: "response",
       }),
-    ).rejects.toMatchObject({ reason: { code: "CAPABILITY_UNAVAILABLE" } });
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
     await expect(
       scoped.getRepresentation({ artifact_ref: "part.stl", sha256: digest }),
     ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
     expect(fetch).not.toHaveBeenCalled();
+  });
+  it("acknowledges an exact authorized action without treating it as provider acceptance", async () => {
+    const authorized: InteractionSnapshot = {
+      ...snapshot("run-one", "waiting_external"),
+      actions: [
+        {
+          action_id: "continue-cp",
+          operation: "action",
+          title: "Continue process",
+          enabled: false,
+          checkpoint_id: "cp",
+          subject_digest: digest,
+          reasons: [
+            {
+              code: "ACTION_NOT_PERMITTED",
+              message: "Already consumed",
+              correction: "Follow its receipt",
+            },
+          ],
+        },
+      ],
+      interactions: [
+        {
+          checkpoint_id: "cp",
+          step_id: "dispatch",
+          kind: "action",
+          subject_digest: digest,
+          instructions: "Review exact output",
+          decisions: ["approved", "changes_requested"],
+          state: "consumed",
+          action_receipt: {
+            request_id: "action-request",
+            principal_id: "server-derived",
+            submission: "authorized",
+            delivery_completed: false,
+          },
+        },
+      ],
+    };
+    const fetch = fake(async () => json(authorized, 202));
+    expect(
+      await client(fetch).requestAction({
+        actionId: "continue-cp",
+        subjectDigest: digest,
+        requestId: "action-request",
+      }),
+    ).toEqual(authorized);
+    expect(fetch.mock.calls[0][0]).toBe(
+      "/api/workspace/process-interfaces/actions/continue-cp",
+    );
+    expect(JSON.parse(fetch.mock.calls[0][1]!.body as string)).toEqual({
+      session_id: "session",
+      path: process.source_path,
+      expected_storage_digest: digest,
+      subject_digest: digest,
+      request_id: "action-request",
+    });
+    const wrong = {
+      ...authorized,
+      interactions: [
+        {
+          ...authorized.interactions![0],
+          action_receipt: {
+            ...authorized.interactions![0].action_receipt!,
+            request_id: "other",
+          },
+        },
+      ],
+    };
+    await expect(
+      client(fake(async () => json(wrong))).requestAction({
+        actionId: "continue-cp",
+        subjectDigest: digest,
+        requestId: "action-request",
+      }),
+    ).rejects.toMatchObject({ uncertain: true });
+    const lost = fake(async () => {
+      throw new Error("Synthetic lost action acknowledgement");
+    });
+    await expect(
+      client(lost).requestAction({
+        actionId: "continue-cp",
+        subjectDigest: digest,
+        requestId: "action-request",
+      }),
+    ).rejects.toMatchObject({ uncertain: true, requestId: "action-request" });
+    expect(lost).toHaveBeenCalledTimes(1);
   });
   it("records an exact review request and verifies its retained decision", async () => {
     const reviewed: InteractionSnapshot = {

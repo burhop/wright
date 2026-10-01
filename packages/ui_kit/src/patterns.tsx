@@ -539,6 +539,8 @@ export function CheckpointCard({
   onNavigate,
   children,
   response,
+  review,
+  execution,
 }: {
   interaction: PendingInteraction;
   actions: readonly Action[];
@@ -554,7 +556,27 @@ export function CheckpointCard({
     readOnly?: boolean;
     blockedReason?: Reason;
   };
+  review?: {
+    reason: string;
+    onReasonChange: (reason: string) => void;
+    onSubmit: (
+      action: Action,
+      decision: "approved" | "changes_requested",
+      reason: string,
+    ) => void;
+    busy?: boolean;
+    readOnly?: boolean;
+    blockedReason?: Reason;
+  };
+  execution?: {
+    onSubmit: (action: Action) => void;
+    busy?: boolean;
+    readOnly?: boolean;
+    blockedReason?: Reason;
+  };
 }) {
+  const reasonId = useId();
+  const [confirmedSubject, setConfirmedSubject] = useState<string>();
   const matching = actions.filter(
     (action) =>
       action.checkpoint_id === interaction.checkpoint_id &&
@@ -584,6 +606,32 @@ export function CheckpointCard({
           {interaction.decision.reason && <p>{interaction.decision.reason}</p>}
         </div>
       )}
+      {interaction.action_receipt && (
+        <div className="wp-muted" aria-live="polite">
+          <p>
+            {interaction.action_receipt.submission === "authorized"
+              ? "Action authorized; provider acceptance is not confirmed yet."
+              : interaction.action_receipt.submission === "accepted"
+                ? "Provider accepted the action."
+                : interaction.action_receipt.submission === "rejected"
+                  ? "Provider rejected the action."
+                  : "Submission outcome is unknown; reconcile before another action."}
+          </p>
+          {interaction.action_receipt.observed_outcome && (
+            <p>
+              Observed outcome: {interaction.action_receipt.observed_outcome}
+            </p>
+          )}
+          {interaction.action_receipt.cancellation_requested && (
+            <p>
+              Cancellation requested.
+              {interaction.action_receipt.cancellation_outcome
+                ? ` Observed cancellation outcome: ${interaction.action_receipt.cancellation_outcome}.`
+                : " Waiting for an observed outcome."}
+            </p>
+          )}
+        </div>
+      )}
       {(interaction.evidence ?? []).map((reference) => (
         <EvidenceReference
           key={`${reference.artifact_ref}:${reference.sha256}`}
@@ -592,6 +640,105 @@ export function CheckpointCard({
         />
       ))}
       {children}
+      {review &&
+        interaction.decisions?.some(
+          (choice) => choice !== "approved" && choice !== "changes_requested",
+        ) && (
+          <p className="wp-muted">
+            Some declared review choices are unsupported in this view. Open the
+            interaction step to inspect them.
+          </p>
+        )}
+      {review &&
+        (!interaction.decision ||
+          matching.some(
+            (item) => item.operation === "review" && item.enabled,
+          )) &&
+        matching.some((item) => item.operation === "review") &&
+        !!interaction.decisions?.length && (
+          <div className="wp-field">
+            <label htmlFor={reasonId}>Review reason</label>
+            <textarea
+              id={reasonId}
+              value={review.reason}
+              maxLength={2000}
+              disabled={
+                review.busy ||
+                review.readOnly ||
+                !matching.some(
+                  (item) => item.operation === "review" && item.enabled,
+                )
+              }
+              onChange={(event) => review.onReasonChange(event.target.value)}
+            />
+            <p className="wp-muted">
+              Explain requested changes. A reason is optional for approval.
+            </p>
+            {matching
+              .filter((item) => item.operation === "review")
+              .flatMap((item) =>
+                (interaction.decisions ?? [])
+                  .filter(
+                    (choice): choice is "approved" | "changes_requested" =>
+                      choice === "approved" || choice === "changes_requested",
+                  )
+                  .map((choice) => {
+                    const blocked =
+                      review.blockedReason ??
+                      (choice === "changes_requested" && !review.reason.trim()
+                        ? {
+                            code: "INPUT_REQUIRED",
+                            message:
+                              "Explain the changes needed before submitting.",
+                            correction: "Enter a review reason above.",
+                          }
+                        : undefined);
+                    return (
+                      <ActionButton
+                        key={`${item.action_id}:${choice}`}
+                        action={{
+                          ...item,
+                          title:
+                            choice === "approved"
+                              ? "Approve"
+                              : "Request changes",
+                          ...(item.enabled && blocked
+                            ? { enabled: false, reasons: [blocked] }
+                            : {}),
+                        }}
+                        busy={review.busy}
+                        readOnly={review.readOnly}
+                        onAction={
+                          interaction.state === undefined ||
+                          interaction.state === "waiting"
+                            ? () => review.onSubmit(item, choice, review.reason)
+                            : undefined
+                        }
+                        onNavigate={onNavigate}
+                      />
+                    );
+                  }),
+              )}
+          </div>
+        )}
+      {execution &&
+        matching.some(
+          (item) => item.operation === "action" && item.enabled,
+        ) && (
+          <label className="wp-field">
+            <input
+              type="checkbox"
+              checked={confirmedSubject === interaction.subject_digest}
+              disabled={execution.busy || execution.readOnly}
+              onChange={(event) =>
+                setConfirmedSubject(
+                  event.target.checked ? interaction.subject_digest : undefined,
+                )
+              }
+            />
+            I reviewed this action and its evidence
+          </label>
+        )}
       {interaction.kind === "input" &&
         response &&
         interaction.response_schema && (
@@ -609,43 +756,79 @@ export function CheckpointCard({
             required
           />
         )}
-      {matching.map((action) => (
-        <ActionButton
-          key={action.action_id}
-          action={
-            action.operation === "respond" &&
-            response &&
-            action.enabled &&
-            (response.blockedReason || response.value === undefined)
-              ? {
-                  ...action,
-                  enabled: false,
-                  reasons: [
-                    response.blockedReason ?? {
-                      code: "INPUT_REQUIRED",
-                      message:
-                        "Provide the declared response before submitting.",
-                      correction:
-                        "Complete the response fields above. Wright will validate the answer before continuing.",
-                    },
-                  ],
-                }
-              : action
-          }
-          onAction={
-            interaction.state === undefined || interaction.state === "waiting"
-              ? action.operation === "respond" && response
-                ? response.value === undefined
-                  ? undefined
-                  : () => response.onSubmit(action, response.value!)
-                : onAction
-              : undefined
-          }
-          busy={response?.busy}
-          readOnly={response?.readOnly}
-          onNavigate={onNavigate}
-        />
-      ))}
+      {matching
+        .filter(
+          (item) =>
+            !(
+              execution &&
+              item.operation === "action" &&
+              interaction.action_receipt
+            ) &&
+            !(
+              review &&
+              item.operation === "review" &&
+              interaction.decisions?.length
+            ),
+        )
+        .map((action) => (
+          <ActionButton
+            key={action.action_id}
+            action={
+              action.operation === "respond" &&
+              response &&
+              action.enabled &&
+              (response.blockedReason || response.value === undefined)
+                ? {
+                    ...action,
+                    enabled: false,
+                    reasons: [
+                      response.blockedReason ?? {
+                        code: "INPUT_REQUIRED",
+                        message:
+                          "Provide the declared response before submitting.",
+                        correction:
+                          "Complete the response fields above. Wright will validate the answer before continuing.",
+                      },
+                    ],
+                  }
+                : action.operation === "action" &&
+                    execution &&
+                    action.enabled &&
+                    (execution.blockedReason ||
+                      confirmedSubject !== interaction.subject_digest)
+                  ? {
+                      ...action,
+                      enabled: false,
+                      reasons: [
+                        execution.blockedReason ?? {
+                          code: "INPUT_REQUIRED",
+                          message:
+                            "Review and confirm this action before continuing.",
+                          correction:
+                            "Inspect its evidence and select the confirmation above.",
+                        },
+                      ],
+                    }
+                  : action
+            }
+            onAction={
+              interaction.state === undefined || interaction.state === "waiting"
+                ? action.operation === "respond" && response
+                  ? response.value === undefined
+                    ? undefined
+                    : () => response.onSubmit(action, response.value!)
+                  : action.operation === "action" && execution
+                    ? () => execution.onSubmit(action)
+                    : onAction
+                : undefined
+            }
+            busy={response?.busy || review?.busy || execution?.busy}
+            readOnly={
+              response?.readOnly || review?.readOnly || execution?.readOnly
+            }
+            onNavigate={onNavigate}
+          />
+        ))}
       {!matching.length && (
         <p className="wp-muted">
           No permitted response action is available in this view.

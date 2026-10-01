@@ -1,0 +1,780 @@
+{
+  "parent_commit": "c62f7ba19f9782b8186529177ddb5104c3fccf7c",
+  "branch": "codex/083-process-working-interfaces",
+  "scope": "Partial T027: supervised native action + declared review/action controls; no live engineering acceptance",
+  "backend": {
+    "passed": 745,
+    "command": [
+      ".venv/Scripts/python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "-rs",
+      "--tb=short",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp",
+      "C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t027-actions-current-final",
+      "packages/agent_adapters/tests/test_workflow_unattended_outcomes.py",
+      "packages/agent_adapters/tests/test_workflow_response_timeout.py",
+      "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+      "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+      "packages/workspace_service/tests/test_workflow_response_format_repair.py",
+      "packages/workspace_service/tests/test_workflow_mcp_execution.py",
+      "packages/workspace_service/tests/test_workflow_failed_tool_evidence.py",
+      "packages/workspace_service/tests/test_workflow_design_check.py",
+      "packages/workspace_service/tests/test_process_input_supervision.py",
+      "packages/workspace_service/tests/test_process_interface_continuation.py",
+      "packages/workspace_service/tests/test_workflow_execution_continuation.py",
+      "packages/workspace_service/tests/test_workflow_external_action_execution.py",
+      "packages/workspace_service/tests/test_process_human_input_source.py",
+      "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "packages/workspace_service/tests/test_workflow_approval_resume.py",
+      "packages/workspace_service/tests/test_process_approval_inspection.py",
+      "packages/workspace_service/tests/test_workflow_approval_review_settings.py",
+      "packages/workspace_service/tests/test_process_input_execution_overlay.py",
+      "packages/workspace_service/tests/test_process_preparation_service.py",
+      "packages/workspace_service/tests/test_process_interaction_projection.py",
+      "packages/workspace_service/tests/test_workflow_source_execution.py",
+      "packages/workspace_service/tests/test_workflow_async_operations.py",
+      "packages/workspace_service/tests/test_process_operation_cancel.py",
+      "packages/workspace_service/tests/test_process_operation_observations.py",
+      "packages/workspace_service/tests/test_workflow_integration_policy.py",
+      "packages/workspace_service/tests/test_workflow_mcp_integration_restriction.py",
+      "packages/workspace_service/tests/test_workflow_process_validation.py",
+      "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+      "packages/workspace_service/tests/test_validation_result_identity.py",
+      "packages/workspace_service/tests/test_process_validation_feedback.py",
+      "packages/core/tests/test_process_interface_contracts.py",
+      "packages/data_vault/tests/test_workflow_continuation_repository.py",
+      "packages/data_vault/tests/test_process_interface_migrations.py",
+      "apps/api/tests/test_process_interface_checkpoints.py",
+      "apps/api/tests/test_process_interfaces_api.py",
+      "apps/api/tests/test_process_interface_run_lifecycle.py",
+      "packages/workspace_service/tests/test_process_review_decisions.py",
+      "apps/api/tests/test_process_interface_reviews.py",
+      "packages/workspace_service/tests/test_workflow_artifact_review.py",
+      "packages/workspace_service/tests/test_process_interaction_owners.py",
+      "packages/data_vault/tests/test_workflow_artifact_review_repository.py",
+      "packages/workspace_service/tests/test_process_action_supervision.py",
+      "apps/api/tests/test_process_interface_actions.py"
+    ],
+    "unit_run_records": [
+      {
+        "test_case": "test_cancel_observer_disconnec0",
+        "record_sha256": "d7c47438511380a9e16f3b29c30a3e2e541fc864157c9af3ce13e31617fe019e",
+        "run_id": null,
+        "source_digest": "98e46cc5748595608d3ed80f11a59e917563f41cfafb914abeff35ef2e90d95e",
+        "status": "cancelled",
+        "checkpoint_id": null,
+        "subject_digest": null,
+        "external_action": null,
+        "resume_segments": {}
+      },
+      {
+        "test_case": "test_confirmed_delivery_can_co0",
+        "record_sha256": "a88518d639a3a3e038a46d021829b3d3f7fad7456c4a9259102edd8b5710818a",
+        "run_id": "ce40a2bfdc4f494a96a2871618aa60d0",
+        "source_digest": "966b7837ba6db5d0dbcbf9f2eeea7def2fecf6cd50826e8fafacb1d863ebc38a",
+        "status": "completed",
+        "checkpoint_id": "checkpoint-989b95ec7128f7abe3adb5f3",
+        "subject_digest": "613e27c508c62139e3003447e6f7c04a28795824e5426533af4848296c52d55d",
+        "external_action": {
+          "action_id": "action-one",
+          "dispatch_authorized_at": 1790858189,
+          "evidence": {
+            "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+            "binding": {
+              "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+              "server": "digital-proof",
+              "tool": "digital-proof__submit"
+            },
+            "cancellation_outcome": null,
+            "cancellation_requested": false,
+            "delivery_completed": true,
+            "destination": {
+              "id": "test://private/digital-proof",
+              "kind": "digital"
+            },
+            "effect": "digital",
+            "integration_test": false,
+            "observed_outcome": null,
+            "operation": "mcp-operation",
+            "operation_policy": {
+              "mode": "receipt",
+              "profile_digest": null,
+              "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40"
+            },
+            "provider_receipt": {
+              "operation_id": "digital-private-1",
+              "status": "accepted"
+            },
+            "provider_reference": "digital-private-1",
+            "replay_permitted": false,
+            "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+            "submission": "accepted"
+          },
+          "outcome": "dispatched",
+          "principal_id": "operator",
+          "reconciled_at": 1790858189,
+          "subject_digest": "613e27c508c62139e3003447e6f7c04a28795824e5426533af4848296c52d55d"
+        },
+        "resume_segments": {
+          "checkpoint-989b95ec7128f7abe3adb5f3": {
+            "state": "completed",
+            "subject_digest": "613e27c508c62139e3003447e6f7c04a28795824e5426533af4848296c52d55d"
+          }
+        }
+      },
+      {
+        "test_case": "test_disconnected_observer_doe0",
+        "record_sha256": "02425f53a575c7db72eb66246a2de32ffeab4d5335c8a0fda37db2a755173e0b",
+        "run_id": "9ee131f52f0545648075d9e46e6ca19d",
+        "source_digest": "98e46cc5748595608d3ed80f11a59e917563f41cfafb914abeff35ef2e90d95e",
+        "status": "completed",
+        "checkpoint_id": null,
+        "subject_digest": null,
+        "external_action": null,
+        "resume_segments": {}
+      },
+      {
+        "test_case": "test_lost_start_observer_durin0",
+        "record_sha256": "859ae7e2dc7fdf0951dc9728e64ddfcdd5c4ddf25d290c19dc1197e41784443c",
+        "run_id": "2e7788ac500746c09d03f00d7e15f5da",
+        "source_digest": "98e46cc5748595608d3ed80f11a59e917563f41cfafb914abeff35ef2e90d95e",
+        "status": "completed",
+        "checkpoint_id": null,
+        "subject_digest": null,
+        "external_action": null,
+        "resume_segments": {}
+      },
+      {
+        "test_case": "test_unfinished_claimed_action0",
+        "record_sha256": "d7b719579a2816b661bbfa8f37ba9c41edcd401860be1c4bbe8a53c24d41b4f8",
+        "run_id": "d09b58ce9b5842158b4744211e1a95d0",
+        "source_digest": "966b7837ba6db5d0dbcbf9f2eeea7def2fecf6cd50826e8fafacb1d863ebc38a",
+        "status": "interrupted",
+        "checkpoint_id": "checkpoint-bd6df0c716d9ecba45610207",
+        "subject_digest": "613e27c508c62139e3003447e6f7c04a28795824e5426533af4848296c52d55d",
+        "external_action": {
+          "action_id": "action-one",
+          "dispatch_authorized_at": 1790858188,
+          "evidence": {
+            "argument_digest": "365fc2199bb92f41a26509216e23f5e257039b2a4a72c6ec5c27ad4f264b2225",
+            "binding": {
+              "schema": "b60a35d340b24a4aceb49c9ac638a87e416f9260d178a74d3c6603eca14e2d73",
+              "server": "digital-proof",
+              "tool": "digital-proof__submit"
+            },
+            "cancellation_outcome": null,
+            "cancellation_requested": false,
+            "delivery_completed": true,
+            "destination": {
+              "id": "test://private/digital-proof",
+              "kind": "digital"
+            },
+            "effect": "digital",
+            "integration_test": false,
+            "observed_outcome": null,
+            "operation": "mcp-operation",
+            "operation_policy": {
+              "mode": "receipt",
+              "profile_digest": null,
+              "qualification_digest": "9d5d4256630288d25c1ffad03c3aa88a190994d3c5e0c7f2e712da98c79a7e40"
+            },
+            "provider_receipt": {
+              "operation_id": "digital-private-1",
+              "status": "accepted"
+            },
+            "provider_reference": "digital-private-1",
+            "replay_permitted": false,
+            "response_digest": "3cf7c3861b7a254fb4fa8599008eaed667d7642935f156429e4ed041b699bdd5",
+            "submission": "accepted"
+          },
+          "outcome": "dispatched",
+          "principal_id": "operator",
+          "reconciled_at": 1790858188,
+          "subject_digest": "613e27c508c62139e3003447e6f7c04a28795824e5426533af4848296c52d55d"
+        },
+        "resume_segments": {
+          "checkpoint-bd6df0c716d9ecba45610207": {
+            "state": "outcome_unknown",
+            "subject_digest": "613e27c508c62139e3003447e6f7c04a28795824e5426533af4848296c52d55d"
+          }
+        }
+      }
+    ]
+  },
+  "frontend": {
+    "passed": 158,
+    "report_sha256": "9499cea3c32b38c244f273c84b9702b78888eb572dd9b478a0d3e9e412ecda8b",
+    "cwd": "D:/repos/wright/apps/web",
+    "command": [
+      "node",
+      "../../node_modules/vitest/vitest.mjs",
+      "run",
+      "src/components/process-interfaces/CommonProcessView.spec.tsx",
+      "src/components/common/ProcessUIKit.spec.tsx",
+      "src/services/process-client.spec.ts",
+      "src/services/process-view-recovery.spec.ts",
+      "--reporter=json",
+      "--outputFile=D:/repos/wright/.local-run/process-interfaces-083/t027-ui-forms-qualified.json"
+    ],
+    "files": [
+      {
+        "name": "apps/web/src/services/process-client.spec.ts",
+        "passed": 71
+      },
+      {
+        "name": "apps/web/src/services/process-view-recovery.spec.ts",
+        "passed": 11
+      },
+      {
+        "name": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+        "passed": 31
+      },
+      {
+        "name": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+        "passed": 45
+      }
+    ]
+  },
+  "browser": {
+    "stats": {
+      "startTime": "2026-10-01T12:36:38.103Z",
+      "duration": 41229.286,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "report_sha256": "3cdcc3ed2d2663544da0a9dfe459871de3dba334507bb582e1e13db592bdbabf",
+    "url": "http://127.0.0.1:5241",
+    "flags": [
+      "VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1",
+      "VITE_WRIGHT_WORKFLOW_COMPOSER=1",
+      "VITE_WRIGHT_WORKFLOW_RECOVERY=1"
+    ],
+    "command": [
+      "node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/ui-integration/process-review-actions.spec.ts",
+      "tests/ui-integration/process-declared-interactions.spec.ts",
+      "--config=.local-run/process-interfaces-083/playwright-system-chrome.config.ts",
+      "--project=chromium",
+      "--workers=1",
+      "--reporter=json",
+      "--global-timeout=120000"
+    ],
+    "cases": [
+      {
+        "title": "preserves declared input schemas through workspace source editing, saving and reopening",
+        "scope": [
+          {
+            "browser": "154.0.8037.58",
+            "viewport": {
+              "width": 1280,
+              "height": 720
+            },
+            "url": "http://127.0.0.1:5241/workspace/ws-recovery?workflow=canonical",
+            "original_source_sha256": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+            "saved_source_sha256": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d",
+            "saved_definition_revision": 3,
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d"
+            },
+            "controlled_run_start_count": 0,
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "source_edit_save_reopen": true,
+            "runtime_checkpoint_consumption": false,
+            "live_api": false,
+            "live_model": false,
+            "live_mcp": false,
+            "engineering_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "declared response resumes the saved workspace run after closing and reopening its tab",
+        "scope": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5241/workspace/ws-recovery?workflow=canonical&processView=dd79b090-b72f-4f2c-93ab-2a11c6bd5041&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4&processRun=common-browser-run",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4"
+            },
+            "run_id": "common-browser-run",
+            "checkpoint_id": "browser-input-checkpoint",
+            "subject_digest": "580ad2b6f17d96d7ba1b08d9cd76689bde87b23557f8695d18eefb1a82382535",
+            "start_count": 1,
+            "response_request_count": 1,
+            "same_request_retry": false,
+            "close_without_cancel": true,
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "live_api": false,
+            "live_model": false,
+            "live_mcp": false,
+            "engineering_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "declared response resumes the saved workspace run after explicit lost-ack reconciliation",
+        "scope": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5241/workspace/ws-recovery?workflow=canonical&processView=aba273b2-102e-4b6f-92e9-022f5cd55778&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4&processRun=common-browser-run",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4"
+            },
+            "run_id": "common-browser-run",
+            "checkpoint_id": "browser-input-checkpoint",
+            "subject_digest": "580ad2b6f17d96d7ba1b08d9cd76689bde87b23557f8695d18eefb1a82382535",
+            "start_count": 1,
+            "response_request_count": 2,
+            "same_request_retry": true,
+            "close_without_cancel": true,
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "live_api": false,
+            "live_model": false,
+            "live_mcp": false,
+            "engineering_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "reviews then explicitly submits an exact action in the normal workspace (none lost acknowledgement)",
+        "scope": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5241/workspace/ws-recovery?workflow=canonical&processView=57a1c546-a692-4b14-a2b9-6b65a4ca81bc&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e&processRun=common-browser-run",
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+            },
+            "run_id": "common-browser-run",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "reviews": [
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "decision": "approved",
+                "reason": "Controlled review of the exact document",
+                "request_id": "8c79baf1-51cd-48f6-a447-d91d9ac31a08"
+              }
+            ],
+            "actions": [
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "request_id": "9060212f-7f53-4a16-82e9-b1fcdecc7d80"
+              }
+            ],
+            "starts": 1,
+            "decision": {
+              "decision": "approved",
+              "actor": "controlled-test-actor",
+              "reason": "Controlled review of the exact document",
+              "request_id": "8c79baf1-51cd-48f6-a447-d91d9ac31a08",
+              "integration_test": false
+            },
+            "action": {
+              "request_id": "9060212f-7f53-4a16-82e9-b1fcdecc7d80",
+              "principal_id": "controlled-test-actor",
+              "submission": "accepted",
+              "delivery_completed": true,
+              "cancellation_requested": false,
+              "observed_outcome": "completed",
+              "provider_reference": "browser-operation-one"
+            },
+            "served_workspace": true,
+            "controlled_http": true,
+            "live_backend": false,
+            "live_model": false,
+            "live_mcp": false,
+            "physical_operation": false,
+            "engineering_acceptance": false,
+            "user_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "reviews then explicitly submits an exact action in the normal workspace (review lost acknowledgement)",
+        "scope": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5241/workspace/ws-recovery?workflow=canonical&processView=b685a625-b515-4d2a-83a8-5c6bbf65ae4d&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e&processRun=common-browser-run",
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+            },
+            "run_id": "common-browser-run",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "reviews": [
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "decision": "approved",
+                "reason": "Controlled review of the exact document",
+                "request_id": "d4be3419-46c8-4085-8e42-8a7a968d09f1"
+              },
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "decision": "approved",
+                "reason": "Controlled review of the exact document",
+                "request_id": "d4be3419-46c8-4085-8e42-8a7a968d09f1"
+              }
+            ],
+            "actions": [
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "request_id": "7b2079b6-11b9-4999-ac02-5b5432626b87"
+              }
+            ],
+            "starts": 1,
+            "decision": {
+              "decision": "approved",
+              "actor": "controlled-test-actor",
+              "reason": "Controlled review of the exact document",
+              "request_id": "d4be3419-46c8-4085-8e42-8a7a968d09f1",
+              "integration_test": false
+            },
+            "action": {
+              "request_id": "7b2079b6-11b9-4999-ac02-5b5432626b87",
+              "principal_id": "controlled-test-actor",
+              "submission": "accepted",
+              "delivery_completed": true,
+              "cancellation_requested": false,
+              "observed_outcome": "completed",
+              "provider_reference": "browser-operation-one"
+            },
+            "served_workspace": true,
+            "controlled_http": true,
+            "live_backend": false,
+            "live_model": false,
+            "live_mcp": false,
+            "physical_operation": false,
+            "engineering_acceptance": false,
+            "user_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "reviews then explicitly submits an exact action in the normal workspace (action lost acknowledgement)",
+        "scope": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5241/workspace/ws-recovery?workflow=canonical&processView=041af854-1821-428c-8573-2af2bfa91943&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e&processRun=common-browser-run",
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+            },
+            "run_id": "common-browser-run",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "reviews": [
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "decision": "approved",
+                "reason": "Controlled review of the exact document",
+                "request_id": "f25cfa04-e891-4d43-8fc7-452b69b0825d"
+              }
+            ],
+            "actions": [
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "request_id": "98f283dc-dd40-41e7-9974-2f60126a4296"
+              },
+              {
+                "session_id": "session-recovery",
+                "path": "workflows/mounting-bracket.workflow.wflow",
+                "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+                "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+                "request_id": "98f283dc-dd40-41e7-9974-2f60126a4296"
+              }
+            ],
+            "starts": 1,
+            "decision": {
+              "decision": "approved",
+              "actor": "controlled-test-actor",
+              "reason": "Controlled review of the exact document",
+              "request_id": "f25cfa04-e891-4d43-8fc7-452b69b0825d",
+              "integration_test": false
+            },
+            "action": {
+              "request_id": "98f283dc-dd40-41e7-9974-2f60126a4296",
+              "principal_id": "controlled-test-actor",
+              "submission": "accepted",
+              "delivery_completed": true,
+              "cancellation_requested": false,
+              "observed_outcome": "completed",
+              "provider_reference": "browser-operation-one"
+            },
+            "served_workspace": true,
+            "controlled_http": true,
+            "live_backend": false,
+            "live_model": false,
+            "live_mcp": false,
+            "physical_operation": false,
+            "engineering_acceptance": false,
+            "user_acceptance": false
+          }
+        ]
+      }
+    ],
+    "screenshots": {
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-declared-interacti-24a49-diting-saving-and-reopening-chromium/declared-input-source.png": "5eb2f58035a325554fa1a85afb22eec58385898eafb8045f437e32efa5539393",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-declared-interacti-65f4a-cit-lost-ack-reconciliation-chromium/reopened-input-form.png": "4dce41042f4cf13e7791466c98f2ff0a0594d6ec78a1b03a6d2c86fd45a57388",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-declared-interacti-65f4a-cit-lost-ack-reconciliation-chromium/same-run-response-completed.png": "ab5e21d803b365e02d17bdf13adc44ac64d13bd131644ea4184a6c56fce5fe7b",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-declared-interacti-91469-osing-and-reopening-its-tab-chromium/reopened-input-form.png": "cee1e0d32df4b8c15eeed45048f12122d014b24eb6fff04ea76423128dbf9471",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-declared-interacti-91469-osing-and-reopening-its-tab-chromium/same-run-response-completed.png": "4391aeb251fc0504d8ec9d7ab2f2544865e53f2898d8b712c2cb4f8b4b027f8d",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-2e2ce-eview-lost-acknowledgement--chromium/authorized-awaiting-observation.png": "a0b07feb080eac57e62a3f1bb8d276d23752b90cb060c1524db07bdf6803603b",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-2e2ce-eview-lost-acknowledgement--chromium/declared-review-controls.png": "2b12e17b3b2bef9f502c16cf4cf64856ab72298cf7bab08290ce6c556b58995e",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-2e2ce-eview-lost-acknowledgement--chromium/reopened-observed-completion.png": "4d6c3d837c9835194205686a9d2232e4defff6c6e887cfbe39435b93ff12c48e",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-5cdc4--none-lost-acknowledgement--chromium/authorized-awaiting-observation.png": "c84d71437f32c50ec69c23b9594e7800b31d91e87dd08e873c9017b8648d3109",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-5cdc4--none-lost-acknowledgement--chromium/declared-review-controls.png": "a78aba09397dc50e6b4f071ea95c7dbbdae70b01d580fbdc0847841bbdcab432",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-5cdc4--none-lost-acknowledgement--chromium/reopened-observed-completion.png": "4a4393046838f8f00e94165e50117683a76b34beb0ebe68cad2c5c9a6070d503",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-fc5d5-ction-lost-acknowledgement--chromium/authorized-awaiting-observation.png": "a9b5134033eccf2d23f8029a7ac0a9985887bbfb5dbe97604ba95cd3d857f868",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-fc5d5-ction-lost-acknowledgement--chromium/declared-review-controls.png": "988df4b6941a2cec89c058f0e0be3f79bf999d47572467a5323b565890d8daa1",
+      "artifacts/process-interfaces/083/20261001-t027-actions-browser-qualified/process-review-actions-rev-fc5d5-ction-lost-acknowledgement--chromium/reopened-observed-completion.png": "020a690268a68a8ce9ff4c1f27233bc672f625234802a1506716890f9620a8f3"
+    }
+  },
+  "checks": {
+    "app_types": [
+      "node",
+      "apps/web/node_modules/typescript/bin/tsc",
+      "-p",
+      "apps/web/tsconfig.app.json",
+      "--noEmit"
+    ],
+    "client_types": [
+      "node",
+      "apps/web/node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/process_client/tsconfig.json",
+      "--noEmit"
+    ],
+    "kit_types": [
+      "node",
+      "apps/web/node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/ui_kit/tsconfig.json",
+      "--noEmit"
+    ],
+    "schema": [
+      ".venv/Scripts/python.exe",
+      "packages/process_client/scripts/generate_contracts.py",
+      "--check"
+    ],
+    "ruff": [
+      ".venv/Scripts/python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "--no-cache",
+      "apps/api/src/api/routers/process_interfaces.py",
+      "apps/api/src/api/schemas/process_interfaces.py",
+      "apps/api/tests/test_process_interface_actions.py",
+      "packages/core/src/core/process_interactions.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/decisions.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/owners.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/runs.py",
+      "packages/workspace_service/src/workspace_service/workflow_approval_execution.py",
+      "packages/workspace_service/src/workspace_service/workflow_external_actions.py",
+      "packages/workspace_service/src/workspace_service/workflow_run_record.py",
+      "packages/workspace_service/tests/test_process_review_decisions.py",
+      "packages/workspace_service/tests/test_process_action_supervision.py"
+    ],
+    "ruff_format": [
+      ".venv/Scripts/python.exe",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "--no-cache",
+      "packages/workspace_service/src/workspace_service/process_interfaces/runs.py",
+      "packages/workspace_service/src/workspace_service/workflow_run_record.py"
+    ],
+    "eslint": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "--config",
+      "apps/web/eslint.config.js",
+      "packages/process_client/src/client.ts",
+      "packages/ui_kit/src/patterns.tsx",
+      "apps/web/src/components/process-interfaces/CommonProcessView.tsx",
+      "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+      "apps/web/src/services/process-view-recovery.ts",
+      "apps/web/src/services/process-view-recovery.spec.ts",
+      "apps/web/src/services/process-client.spec.ts",
+      "tests/ui-integration/process-review-actions.spec.ts",
+      "--rule",
+      "no-control-regex: off"
+    ],
+    "build": {
+      "cwd": "D:/repos/wright/apps/web",
+      "command": [
+        "node",
+        "../../node_modules/vite/bin/vite.js",
+        "build",
+        "--outDir",
+        "D:/repos/wright/.local-run/process-interfaces-083/t027-action-dist-qualified"
+      ]
+    }
+  },
+  "code_hashes": {
+    "apps/api/src/api/routers/process_interfaces.py": "76c41edec1bb1bc5f51416f294f445a895852e6f0fb2a1f55ffa69bc2cc67132",
+    "apps/api/src/api/schemas/process_interfaces.py": "8d611359295e1e5559485550ddf2ab6debb871ae7c56b080bf6a0b155a7409f0",
+    "apps/api/tests/test_process_interface_actions.py": "1897c93bff4f3d2d82d52f8a7c3ba32dbf715b528c876080547807057d2603e7",
+    "apps/web/src/components/process-interfaces/CommonProcessView.tsx": "f53979a428355a630f291e4550d4a63ebe4a35c7fafc083d0dfcc24a28f4c531",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx": "9ee9a6fbb4e49d0b538db47f62695f2c6abed8fe786a3a9458636f25aa7a1ea7",
+    "apps/web/src/services/process-client.spec.ts": "ae93d79b006cf0d0b88a5000197d64e716acf2b721c43f2850aa90dbbde404a6",
+    "apps/web/src/services/process-view-recovery.ts": "085f555eed841ad34149f0c70646ce831c53fc45160585393c4510d46e9cd392",
+    "apps/web/src/services/process-view-recovery.spec.ts": "176f49cd9e06d2aec8a93e104524aa8244f67551d19ed0625b9a6977d8bdeb30",
+    "packages/core/src/core/process_interactions.py": "609750acee7acb117c9864d179b1fd6b205f5881382f22e89e46a1d3bdbdd831",
+    "packages/core/src/core/process_schemas/contracts-v1.json": "60156abd5534ae0d5707727d149803edf4622a3617592c39ebdd24bbc6553c3e",
+    "packages/process_client/README.md": "d1ca7f21ad39480d4fdecc4aba487b3a5ddbc326ec30726e49459bb7b2e504f9",
+    "packages/process_client/src/client.ts": "93489fcc97648101b6c7b330cb202287884030af5bfae2c85ac6c30df1e6f6d3",
+    "packages/process_client/src/contracts.generated.ts": "a487924f00a4f634684cc647bbdb17a172cc88ca120b16585f5b2946ee12955c",
+    "packages/process_client/src/schemas.generated.ts": "6902b833458ea533ec5ef8cc2c26349b133625f21f4847edf437c6b3500e0c23",
+    "packages/ui_kit/README.md": "7640719e25f65490b491cf45a1b2435f00623ea74cfbbe4dbf10ccfe231d3d0b",
+    "packages/ui_kit/src/patterns.tsx": "805adb0858a2194e0fc1ce0267646954b43282afad0f4451c5a472fe8f73c2b9",
+    "packages/workspace_service/src/workspace_service/process_interfaces/decisions.py": "4a6bd6a616536a17566ba74e685450f99d39405c7a4999d61845cd956223db2a",
+    "packages/workspace_service/src/workspace_service/process_interfaces/owners.py": "d20159b3a08605928b25c771f1631079d68abdf77b4cef71b6ed255af5cbaeaa",
+    "packages/workspace_service/src/workspace_service/process_interfaces/runs.py": "23e478fe551867f765dbc27c91ed4abd05c1041382672a81fbf37d3127d34693",
+    "packages/workspace_service/src/workspace_service/workflow_approval_execution.py": "0d0b5ea2ac9f25cc274c6973373ed1ebd4497a27202b6c598d97f8cd46d5c2c3",
+    "packages/workspace_service/src/workspace_service/workflow_external_actions.py": "e5c68454deadc6707e92c08704319dc996cd53509c1e54540bbd993efaf1e8be",
+    "packages/workspace_service/src/workspace_service/workflow_run_record.py": "e74e6ac36df7d0540b29dcdd9eea52ea0cfd328c9fddce7d0356f2276b91538a",
+    "packages/workspace_service/tests/test_process_review_decisions.py": "305b0309a12499e44de7a546de5dceef6cf251ca5ce90f00dd2175215b946e50",
+    "packages/workspace_service/tests/test_process_action_supervision.py": "7cb6b4c5d485bed80fb23ca93b469a34808b1377ad8fe7cd68bba0bfc342e079",
+    "tests/ui-integration/process-review-actions.spec.ts": "f1163fbcc844fcd67bed48e670f574373b7fffc56c45bb6bed21185ed6fd56e0",
+    "specs/083-process-working-interfaces/fixtures/declared-review-action.workflow.wflow": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+  },
+  "logs": {
+    "t027-actions-backend-final.log": {
+      "sha256": "c5937356e7001182ccbbb8d56fdd05b9c92e4be697a7b380c3c28c44ea3a7be3",
+      "summary": "745 passed, 2 warnings in 183.37s (0:03:03)"
+    },
+    "t027-ui-forms-types-qualified.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "t027-action-sdk-types-final.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "t027-action-kit-types-qualified.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "t027-action-schema.log": {
+      "sha256": "8f6838fb12e9ad9e1791003dc7c68e44b56e03125dc5bdead078d7ab9b2a295a"
+    },
+    "t027-action-ruff-final.log": {
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "t027-action-ruff-format-final.log": {
+      "sha256": "97d85b4b6c185a05396e2d09a3c304ff0f7cc77f8b7b7bb7989ec6cd875b3898"
+    },
+    "t027-action-eslint-final.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "t027-action-build-qualified.log": {
+      "sha256": "010122f9f2ee25fbc50aa947a6a27710be9bba31197d69a87c27f58c10d4e3a0"
+    },
+    "t027-actions-browser-qualified.log": {
+      "sha256": "413dca49b3fd80f9dd0487d970129e9595ed086c588ab79e96572a75e2b843d0"
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "limitations": {
+    "live_backend_browser": false,
+    "live_default_model": false,
+    "live_engineering_mcp": false,
+    "engineering_acceptance": false,
+    "physical_operation": false,
+    "user_acceptance": false
+  },
+  "remaining": [
+    "T027 inspector declarations",
+    "T028 complete UI recovery",
+    "T021 remaining editor regressions",
+    "M3 AI authoring",
+    "M4 live engineering and migration",
+    "M5 distribution/acceptance"
+  ]
+}

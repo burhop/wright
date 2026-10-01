@@ -67,6 +67,19 @@ to provide; busy, read-only, stale and consumed controls stay disabled. The host
 calls the scoped client's `respond` explicitly and follows the same run. The
 component never submits on mount or decides engineering acceptance.
 
+For declared reviews, `CheckpointCard.review` accepts
+`{reason, onReasonChange, onSubmit, busy?, readOnly?, blockedReason?}`. It renders
+only the supported choices actually listed in `interaction.decisions` for a
+matching backend review action. Requested changes require a reason; approval is
+separate from dispatch. The controller explicitly calls the scoped `decide`.
+
+`CheckpointCard.execution` accepts `{onSubmit, busy?, readOnly?, blockedReason?}`
+for a matching permitted action. The user confirms review of its exact evidence
+before continuing. A changed subject clears that confirmation. The host explicitly
+calls `requestAction`; saved decision and action receipts are evidence rather than
+permission. Authorization, provider acceptance, observed completion and cancellation
+outcome are displayed separately. No mutation runs on mounting a component.
+
 File upload is a host callback returning an exact ArtifactRef. The browser
 does not embed files in input JSON. Selecting a replacement clears the old
 binding before upload. Upload failure does not reuse the previous file. The

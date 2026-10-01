@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: cfc9a1993f5bc3d8b9c0b86068a87aa56fbf9ae1d125c777710ca746c0f02f40
+// Schema SHA-256: 0c3b7bb8b5fe0c5eaaa542e4f7ab8454d03a4565fb2dac68074aee1f4c860f86
 export type JsonValue = null | boolean | number | string | ReadonlyArray<JsonValue> | { readonly [key: string]: JsonValue };
 
 export type Action = {
@@ -11,6 +11,17 @@ export type Action = {
   readonly "reasons"?: ReadonlyArray<Reason>;
   readonly "subject_digest"?: (string | null);
   readonly "title": string;
+};
+
+export type ApprovedActionReceipt = {
+  readonly "cancellation_outcome"?: ("completed" | "failed" | "cancelled" | "unknown" | "input_required" | null);
+  readonly "cancellation_requested"?: boolean;
+  readonly "delivery_completed"?: boolean;
+  readonly "observed_outcome"?: ("completed" | "failed" | "cancelled" | "unknown" | "input_required" | null);
+  readonly "principal_id"?: (string | null);
+  readonly "provider_reference"?: (string | null);
+  readonly "request_id": string;
+  readonly "submission": "authorized" | "accepted" | "rejected" | "unknown";
 };
 
 export type ArtifactRef = {
@@ -253,6 +264,7 @@ export type OutputRef = {
 };
 
 export type PendingInteraction = {
+  readonly "action_receipt"?: (ApprovedActionReceipt | null);
   readonly "checkpoint_id": string;
   readonly "decision"?: (ReviewDecision | null);
   readonly "decisions"?: ReadonlyArray<string>;
@@ -380,6 +392,7 @@ export type InputBinding = (ValueBinding & { readonly kind: 'value' }) | (FileBi
 
 export interface ContractTypes {
   readonly Action: Action;
+  readonly ApprovedActionReceipt: ApprovedActionReceipt;
   readonly ArtifactRef: ArtifactRef;
   readonly AssessmentRef: AssessmentRef;
   readonly AuthoringJob: AuthoringJob;

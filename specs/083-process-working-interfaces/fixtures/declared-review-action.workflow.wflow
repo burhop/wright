@@ -1,0 +1,79 @@
+workflow test
+  name: "Test"
+  purpose: "Prepared input fixture"
+  discipline: "engineering"
+  reviewed_ai_suggestions: false
+end
+input brief
+  name: "Brief"
+  purpose: "Prepared input"
+  group: null
+  provided_by: "engineer"
+  step_type: "work"
+  tool: null
+  reusable_step: null
+  instructions: "Use exact input"
+  inputs: []
+  outputs: [{"key": "brief_out", "name": "brief_out", "kind": "engineering_document", "item": null, "required": false, "quantity": "one", "description": "Document"}]
+  settings: {"input_text": "Synthetic review requirements"}
+end
+task first
+  name: "First"
+  purpose: "Use exact input"
+  group: null
+  step_type: "work"
+  performed_by: "ai_assisted"
+  inputs: [{"key": "first_in", "name": "first_in", "kind": "engineering_document", "item": null, "required": true, "quantity": "one", "description": "Document"}]
+  outputs: [{"key": "first_out", "name": "first_out", "kind": "engineering_document", "item": null, "required": false, "quantity": "one", "description": "Document"}]
+  prompt: "Prepare a result"
+  tool: null
+  reusable_step: null
+  settings: {"output_format": "text", "save_output": true, "output_filename": "first.txt"}
+end
+connection supplied
+  type: "item"
+  from: "brief.brief_out"
+  to: "first.first_in"
+  label: "Input"
+  when: null
+end
+task review
+  name: "Review prepared document"
+  purpose: "Declared exact evidence review"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key": "evidence", "name": "evidence", "kind": "engineering_document", "item": null, "required": true, "quantity": "one", "description": "Document"}]
+  outputs: []
+  instructions: "Review the prepared test document before continuing."
+  tool: null
+  reusable_step: null
+  settings: {"authoring_template": "external-action-approval", "action_kind": "local_review", "approval_binding": {"server": "wright", "tool": "review_artifacts", "schema": "f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"}, "approval_destination": {"kind": "local_review", "id": "workspace"}, "approval_settings": {"review_task_id": "review"}, "approval_action": {"kind": "local_review", "mode": "review_only"}}
+end
+connection review_evidence
+  type: "item"
+  from: "first.first_out"
+  to: "review.evidence"
+  label: "Actual reviewed document"
+  when: null
+end
+task after
+  name: "Use the reviewed result"
+  purpose: "Continue the same run"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: []
+  outputs: [{"key": "after_out", "name": "after_out", "kind": "engineering_document", "item": null, "required": false, "quantity": "one", "description": "Document"}]
+  prompt: "Use the completed approved step."
+  tool: null
+  reusable_step: null
+  settings: {"output_format": "text", "output_filename": "after.txt"}
+end
+connection continue_after
+  type: "order"
+  from: "review"
+  to: "after"
+  label: "After the declared action"
+  when: null
+end

@@ -492,6 +492,25 @@ class ReviewDecision(Contract):
     integration_test: StrictBool = False
 
 
+class ApprovedActionReceipt(Contract):
+    """One consumed action request; acceptance and observed completion are distinct."""
+
+    request_id: Identifier
+    principal_id: Identifier | None = None
+    submission: Literal["authorized", "accepted", "rejected", "unknown"]
+    delivery_completed: StrictBool = False
+    observed_outcome: (
+        Literal["completed", "failed", "cancelled", "unknown", "input_required"] | None
+    ) = None
+    provider_reference: str | None = Field(
+        default=None, min_length=1, max_length=160, strict=True
+    )
+    cancellation_requested: StrictBool = False
+    cancellation_outcome: (
+        Literal["completed", "failed", "cancelled", "unknown", "input_required"] | None
+    ) = None
+
+
 class PendingInteraction(Contract):
     checkpoint_id: Identifier
     step_id: Identifier
@@ -503,6 +522,7 @@ class PendingInteraction(Contract):
     evidence: tuple[ArtifactRef, ...] = Field(default=(), max_length=PAGE_ITEMS)
     state: Literal["waiting", "responded", "consumed", "stale", "cancelled"] = "waiting"
     decision: ReviewDecision | None = None
+    action_receipt: ApprovedActionReceipt | None = None
 
     @field_validator("response_schema")
     @classmethod
@@ -511,6 +531,10 @@ class PendingInteraction(Contract):
 
     @model_validator(mode="after")
     def declared_response(self):
+        if self.kind != "action" and self.action_receipt is not None:
+            raise ValueError(
+                "Only an action checkpoint can carry a consumed action receipt"
+            )
         if self.kind == "input" and self.decision is not None:
             raise ValueError("Input answers are not review decisions")
         if self.kind == "input" and (self.response_schema is None or self.decisions):

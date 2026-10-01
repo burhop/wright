@@ -25,6 +25,7 @@ import {
   processViewRequestId,
   type ProcessViewRecovery,
   type ProcessViewRecoveryStore,
+  type ProcessViewMutation,
 } from "../../services/process-view-recovery";
 
 const hash = "a".repeat(64);
@@ -201,7 +202,22 @@ function fixture() {
     navigate: vi.fn(async () => undefined),
   };
   let saved: ProcessViewRecovery | null = null;
+  let interaction: ProcessViewMutation | null = null;
   const store: ProcessViewRecoveryStore = {
+    readInteraction: vi.fn((runId) =>
+      interaction?.runId === runId ? interaction : null,
+    ),
+    writeInteraction: vi.fn((value) => {
+      interaction = structuredClone(value);
+    }),
+    clearInteraction: vi.fn((runId, requestId) => {
+      if (
+        interaction &&
+        interaction.runId === runId &&
+        interaction.request.requestId === requestId
+      )
+        interaction = null;
+    }),
     read: vi.fn(() => saved),
     write: vi.fn((value) => {
       saved = value;
@@ -212,6 +228,302 @@ function fixture() {
   };
   return { client, store, saved: () => saved };
 }
+
+const waitingReview: InteractionSnapshot = {
+  ...waitingInput,
+  interactions: [
+    {
+      checkpoint_id: "review-checkpoint",
+      step_id: "review",
+      kind: "action",
+      subject_digest: hash,
+      state: "waiting",
+      instructions: "Inspect the exact digital action package.",
+      decisions: ["approved", "changes_requested"],
+    },
+  ],
+  actions: [
+    {
+      action_id: "review-action",
+      operation: "review",
+      title: "Review action",
+      enabled: true,
+      checkpoint_id: "review-checkpoint",
+      subject_digest: hash,
+    },
+  ],
+};
+const approvedReview: InteractionSnapshot = {
+  ...waitingReview,
+  interactions: [
+    {
+      ...waitingReview.interactions![0],
+      decision: {
+        decision: "approved",
+        actor: "server-actor",
+        request_id: "filled-by-test",
+        reason: "Checked the package",
+        integration_test: false,
+      },
+    },
+  ],
+  actions: [
+    {
+      action_id: "continue-action",
+      operation: "action",
+      title: "Continue process",
+      enabled: true,
+      checkpoint_id: "review-checkpoint",
+      subject_digest: hash,
+    },
+  ],
+};
+const lostInteraction = () =>
+  new ProcessClientError(
+    {
+      code: "OUTCOME_UNKNOWN",
+      message: "Interaction acknowledgement was lost.",
+      correction: "Reconcile the saved request.",
+    },
+    { uncertain: true },
+  );
+
+describe("declared review and action controls", () => {
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
+  it("requires a changes reason and records only the declared exact review", async () => {
+    const { client, store } = fixture();
+    let current = waitingReview;
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield { type: "snapshot", snapshot: current };
+    });
+    vi.mocked(client.decide).mockImplementation(async (request) => {
+      current = {
+        ...waitingReview,
+        interactions: [
+          {
+            ...waitingReview.interactions![0],
+            state: "responded",
+            decision: {
+              decision: "changes_requested",
+              actor: "server-actor",
+              request_id: request.requestId,
+              reason: request.reason,
+              integration_test: false,
+            },
+          },
+        ],
+        actions: [],
+      };
+      return current;
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    const reason = await screen.findByLabelText("Review reason");
+    expect(
+      screen.getByRole("button", { name: "Request changes" }),
+    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Approve" })).toBeEnabled();
+    fireEvent.change(reason, {
+      target: { value: "Correct the documented units" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Request changes" }));
+    await screen.findByText("Review recorded: Changes requested");
+    expect(client.decide).toHaveBeenCalledTimes(1);
+    expect(client.decide).toHaveBeenCalledWith(
+      expect.objectContaining({
+        checkpointId: "review-checkpoint",
+        subjectDigest: hash,
+        decision: "changes_requested",
+        reason: "Correct the documented units",
+        requestId: expect.any(String),
+      }),
+    );
+    expect(client.requestAction).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+    expect(store.readInteraction("run-one")).toBeNull();
+  });
+  it("keeps review approval separate from confirmed action submission and provider observations", async () => {
+    const { client, store } = fixture();
+    let current = waitingReview;
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield { type: "snapshot", snapshot: current };
+    });
+    vi.mocked(client.decide).mockImplementation(async (request) => {
+      current = {
+        ...approvedReview,
+        interactions: [
+          {
+            ...approvedReview.interactions![0],
+            decision: {
+              ...approvedReview.interactions![0].decision!,
+              request_id: request.requestId,
+            },
+          },
+        ],
+      };
+      return current;
+    });
+    vi.mocked(client.requestAction).mockImplementation(async (request) => {
+      current = {
+        ...approvedReview,
+        state: "waiting_external",
+        actions: [],
+        interactions: [
+          {
+            ...approvedReview.interactions![0],
+            state: "consumed",
+            action_receipt: {
+              request_id: request.requestId,
+              submission: "authorized",
+              delivery_completed: false,
+              cancellation_requested: false,
+            },
+          },
+        ],
+      };
+      return current;
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    fireEvent.click(await screen.findByRole("button", { name: "Approve" }));
+    await screen.findByText("Review recorded: Approved");
+    expect(client.requestAction).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: "Continue process" }),
+    ).toBeDisabled();
+    fireEvent.click(
+      screen.getByLabelText("I reviewed this action and its evidence"),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Continue process" }));
+    await screen.findByText(
+      "Action authorized; provider acceptance is not confirmed yet.",
+    );
+    expect(client.requestAction).toHaveBeenCalledTimes(1);
+    expect(client.requestAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        actionId: "continue-action",
+        subjectDigest: hash,
+        requestId: expect.any(String),
+      }),
+    );
+    expect(
+      screen.queryByText("Provider accepted the action."),
+    ).not.toBeInTheDocument();
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it.each(["response", "review", "action"] as const)(
+    "reopens a lost %s acknowledgement without replay, then explicitly reconciles the same intent",
+    async (kind) => {
+      const { client, store } = fixture();
+      const snapshot =
+        kind === "response"
+          ? waitingInput
+          : kind === "review"
+            ? waitingReview
+            : approvedReview;
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot };
+      });
+      if (kind === "response")
+        vi.mocked(client.respond).mockRejectedValue(lostInteraction());
+      else if (kind === "review")
+        vi.mocked(client.decide).mockRejectedValue(lostInteraction());
+      else vi.mocked(client.requestAction).mockRejectedValue(lostInteraction());
+      const props = {
+        client,
+        sessionId: "session",
+        runId: "run-one",
+        recoveryStore: store,
+      };
+      const first = render(<CommonProcessView {...props} />);
+      if (kind === "response") {
+        fireEvent.change(await screen.findByLabelText("selection (required)"), {
+          target: { value: "1" },
+        });
+        fireEvent.click(
+          screen.getByRole("button", { name: "Submit response" }),
+        );
+      } else if (kind === "review") {
+        fireEvent.change(await screen.findByLabelText("Review reason"), {
+          target: { value: "Checked the package" },
+        });
+        fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+      } else {
+        fireEvent.click(
+          await screen.findByLabelText(
+            "I reviewed this action and its evidence",
+          ),
+        );
+        fireEvent.click(
+          screen.getByRole("button", { name: "Continue process" }),
+        );
+      }
+      await screen.findByText("Interaction acknowledgement was lost.");
+      const original = store.readInteraction("run-one")!;
+      const method =
+        kind === "response"
+          ? client.respond
+          : kind === "review"
+            ? client.decide
+            : client.requestAction;
+      expect(method).toHaveBeenCalledTimes(1);
+      first.unmount();
+      render(<CommonProcessView {...props} />);
+      const reconcile = await screen.findByRole("button", {
+        name: `Reconcile ${kind} request`,
+      });
+      expect(method).toHaveBeenCalledTimes(1);
+      expect(client.start).not.toHaveBeenCalled();
+      fireEvent.click(reconcile);
+      await waitFor(() => expect(method).toHaveBeenCalledTimes(2));
+      expect(vi.mocked(method).mock.calls[1][0]).toEqual(original.request);
+      expect(store.readInteraction("run-one")).toEqual(original);
+    },
+  );
+  it.each([false, true])(
+    "does not dispatch when request preservation is unavailable or the view is read-only (%s)",
+    async (readOnly) => {
+      const { client, store } = fixture();
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot: waitingReview };
+      });
+      vi.mocked(store.writeInteraction).mockImplementation(() => {
+        throw new Error("Synthetic storage unavailable");
+      });
+      render(
+        <CommonProcessView
+          client={client}
+          sessionId="session"
+          runId="run-one"
+          recoveryStore={store}
+          readOnly={readOnly}
+        />,
+      );
+      const approve = await screen.findByRole("button", { name: "Approve" });
+      fireEvent.click(approve);
+      if (!readOnly)
+        await screen.findByText("Wright could not finish this request.");
+      else expect(approve).toBeDisabled();
+      expect(client.decide).not.toHaveBeenCalled();
+      expect(client.requestAction).not.toHaveBeenCalled();
+    },
+  );
+});
 async function prepareView(
   client: ProcessClient,
   store: ProcessViewRecoveryStore,
@@ -260,7 +572,9 @@ describe("common process preparation and authority", () => {
           state: "failed",
           actions: [],
           interactions: [],
-          navigation: [{ kind: "block", block_id: "measure", run_id: "run-one" }],
+          navigation: [
+            { kind: "block", block_id: "measure", run_id: "run-one" },
+          ],
           diagnostics: [
             {
               code: "INTERACTION_NOT_DECLARED",

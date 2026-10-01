@@ -42,6 +42,8 @@ class _OwnedRun:
     tool_runtime: object = None
     cancel_target: object = None
     checkpoint_id: str | None = None
+    action_request: dict | None = None
+    action_ready: asyncio.Event | None = None
 
     def cancellation_outcome(self):
         if self.cancel_request is None:
@@ -553,6 +555,259 @@ class ProcessRunSupervisor:
             finally:
                 if not transferred and prepared.runtime is not None:
                     await prepared.runtime.close()
+
+    @traced("process.interface.run.action")
+    async def request_action(
+        self,
+        scope,
+        process,
+        action_id,
+        request_id,
+        *,
+        expected_subject_digest,
+        response_generator,
+        gateway=None,
+        session_id="",
+        action_generator=None,
+    ):
+        """Own an exact approval continuation; observation never owns dispatch.
+
+        The canonical approval lease, consume store, gateway and recorder retain
+        authority. This adapter allocates their task and returns its durable request
+        identity; it does not execute a graph or infer an external outcome.
+        """
+        from ..workflow_approval_execution import (
+            inspect_workflow_approval,
+            resume_workflow_approval,
+        )
+        from ..workflow_external_actions import WorkflowExternalActionError
+        from .decisions import decision_error
+
+        scope.require(process, "process.action")
+        scope.require(process, "process.read")
+        action_id = TypeAdapter(Identifier).validate_python(action_id)
+        request_id = TypeAdapter(Identifier).validate_python(request_id)
+        expected_subject_digest = TypeAdapter(Digest).validate_python(
+            expected_subject_digest
+        )
+        if not action_id.startswith("continue-") or len(action_id) <= len("continue-"):
+            raise ProcessInterfaceError(
+                "ACTION_NOT_PERMITTED",
+                "This action has no declared continuation.",
+                "Choose the exact permitted action in this process's current run.",
+            )
+        checkpoint_id = action_id[len("continue-") :]
+        intent = {
+            "request_id": request_id,
+            "principal_id": scope.principal_id,
+            "subject_digest": expected_subject_digest,
+            "action_id": action_id,
+        }
+        try:
+            async with self._allocation:
+                await self.application.resolve_process(
+                    scope, process, operation="process.action"
+                )
+                checkpoint = (
+                    self.application.workspace.workflow_external_actions.lookup(
+                        checkpoint_id
+                    )
+                )
+                if (
+                    checkpoint.workspace_id != process.workspace_id
+                    or checkpoint.workflow_id != process.source_path
+                    or checkpoint.checkpoint_kind != "approval"
+                    or checkpoint.subject.get("definition_digest")
+                    != process.source_digest
+                ):
+                    raise ProcessInterfaceError(
+                        "SCOPE_DENIED",
+                        "This action does not belong to this exact process.",
+                        "Open its registered process and recorded checkpoint.",
+                    )
+                if checkpoint.subject_digest != expected_subject_digest:
+                    raise ProcessInterfaceError(
+                        "SUBJECT_STALE",
+                        "The reviewed action subject changed.",
+                        "Refresh the exact checkpoint and its recorded evidence.",
+                    )
+                root, receipt = self._receipt(
+                    scope, process, checkpoint.run_id, "process.action"
+                )
+                record, view = await asyncio.to_thread(
+                    self._record, scope, process, receipt.run_id
+                )
+                reference = view.get("approval") or {}
+                if (
+                    reference.get("checkpoint_id") != checkpoint_id
+                    or reference.get("subject_digest") != expected_subject_digest
+                ):
+                    raise ProcessInterfaceError(
+                        "SCOPE_DENIED",
+                        "This is not the recorded run's exact action.",
+                        "Open its current saved checkpoint before continuing.",
+                    )
+                owned = self._owned.get(receipt.run_id)
+                if self.is_live(receipt.run_id):
+                    if (
+                        owned.checkpoint_id != checkpoint_id
+                        or owned.action_request != intent
+                    ):
+                        raise ProcessInterfaceError(
+                            "REQUEST_CONFLICT",
+                            "This run already owns another continuation request.",
+                            "Follow that request and its actual recorded outcome.",
+                        )
+                else:
+                    claim = record.get("resume_segments", {}).get(checkpoint_id)
+                    if checkpoint.state == "consumed":
+                        prior = checkpoint.external_action or {}
+                        if (
+                            prior.get("action_id") != request_id
+                            or prior.get("principal_id") != scope.principal_id
+                        ):
+                            raise ProcessInterfaceError(
+                                "REQUEST_CONFLICT",
+                                "A different action request already consumed this checkpoint.",
+                                "Inspect the original request; it cannot be submitted as another identity.",
+                            )
+                        if (
+                            claim
+                            and claim.get("subject_digest") != expected_subject_digest
+                        ):
+                            raise ProcessInterfaceError(
+                                "SUBJECT_STALE",
+                                "The continuation claim belongs to another subject.",
+                                "Inspect this run's exact action and continuation evidence.",
+                            )
+                        if claim and claim.get("state") == "completed":
+                            return await self.application.get_snapshot(
+                                scope,
+                                process,
+                                run_id=receipt.run_id,
+                                gateway=gateway,
+                                session_id=session_id,
+                            )
+                        if (
+                            claim
+                            or prior.get("outcome") != "dispatched"
+                            or (
+                                checkpoint.action_kind == "mcp-operation"
+                                and not prior.get("evidence", {}).get(
+                                    "delivery_completed"
+                                )
+                            )
+                        ):
+                            raise ProcessInterfaceError(
+                                "OUTCOME_UNKNOWN",
+                                "This consumed action cannot be replayed.",
+                                "Reconcile its submission and unfinished continuation before another action.",
+                            )
+                    else:
+                        inspection = await inspect_workflow_approval(
+                            service=self.application.workspace,
+                            workspace_id=process.workspace_id,
+                            workspace_dir=root,
+                            checkpoint=checkpoint,
+                            subject_digest=expected_subject_digest,
+                            gateway=gateway,
+                            session_id=session_id,
+                        )
+                        if not inspection.can_resume:
+                            raise ProcessInterfaceError(
+                                "ACTION_NOT_PERMITTED",
+                                "This action is not approved and ready to continue.",
+                                inspection.resume_correction
+                                or "Complete its declared review and inspect the current evidence.",
+                            )
+                    if (
+                        self._closed
+                        or sum(self.is_live(key) for key in self._owned)
+                        >= self.maximum_active
+                    ):
+                        raise ProcessInterfaceError(
+                            "CAPABILITY_UNAVAILABLE",
+                            "The runtime cannot continue this action yet.",
+                            "Wait for capacity, then reconcile this same request.",
+                        )
+                    owned = _OwnedRun(
+                        checkpoint_id=checkpoint_id,
+                        action_request=intent,
+                        action_ready=asyncio.Event(),
+                    )
+
+                    def runtime_ready(runtime, emit, local_cancel_supported):
+                        owned.tool_runtime = runtime
+                        owned.emit = emit
+                        owned.local_cancel_supported = local_cancel_supported
+
+                    def authorized(current):
+                        action = current.external_action or {}
+                        if (
+                            action.get("action_id") != request_id
+                            or action.get("principal_id") != scope.principal_id
+                        ):
+                            raise ValueError(
+                                "The consumed action does not match its supervised request"
+                            )
+                        owned.action_ready.set()
+
+                    async def run():
+                        return await resume_workflow_approval(
+                            service=self.application.workspace,
+                            workspace_id=process.workspace_id,
+                            workspace_dir=root,
+                            checkpoint=checkpoint,
+                            subject_digest=expected_subject_digest,
+                            request_id=request_id,
+                            principal_id=scope.principal_id,
+                            gateway=gateway,
+                            session_id=session_id,
+                            response_generator=response_generator,
+                            action_generator=action_generator,
+                            on_runtime=runtime_ready,
+                            on_authorized=authorized,
+                            cancellation_status=owned.cancellation_outcome,
+                        )
+
+                    # The task is registered before the first scheduling point.
+                    owned.task = asyncio.create_task(
+                        run(),
+                        name=f"wright-process-action:{receipt.run_id}:{checkpoint_id}",
+                    )
+                    self._owned[receipt.run_id] = owned
+
+                    def finished(task):
+                        if self._owned.get(receipt.run_id) is owned:
+                            self._owned.pop(receipt.run_id, None)
+                        if not task.cancelled():
+                            task.exception()
+
+                    owned.task.add_done_callback(finished)
+            waiter = asyncio.create_task(owned.action_ready.wait())
+            try:
+                await asyncio.wait(
+                    (owned.task, waiter), timeout=6, return_when=asyncio.FIRST_COMPLETED
+                )
+                if not owned.action_ready.is_set():
+                    if owned.task.done():
+                        await asyncio.shield(owned.task)
+                    raise ProcessInterfaceError(
+                        "OUTCOME_UNKNOWN",
+                        "The action request is still awaiting durable confirmation.",
+                        "Reconcile this same request; do not submit a new action identity.",
+                    )
+            finally:
+                waiter.cancel()
+            return await self.application.get_snapshot(
+                scope,
+                process,
+                run_id=receipt.run_id,
+                gateway=gateway,
+                session_id=session_id,
+            )
+        except (WorkflowExternalActionError, WorkflowSourceExecutionError) as error:
+            raise decision_error(error) from error
 
     @traced("process.interface.run.legacy.start")
     async def start_legacy(self, scope, process, request_id, **execution):

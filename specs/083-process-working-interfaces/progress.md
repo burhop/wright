@@ -2,6 +2,23 @@
 
 ## Latest implementation state — 2026-10-01
 
+T027 now includes supervised native action requests and visible review/action
+controls. Backend ownership survives observer detach; retained authorization,
+provider acceptance, observed completion and requested/actual cancellation are
+distinct. Exact requests cannot replay uncertain submissions or unfinished
+continuations. The recorder seals interrupted executing continuation claims as
+outcome_unknown. Scoped browser request intent survives reopen and requires
+explicit same-ID reconciliation rather than automatic submission.
+
+Current checked scope: **745 backend/API checks**, **158 frontend checks**,
+**six served normal-workspace journeys**, app/client/kit types, schemas, focused
+lint and fresh production build. Browser screenshots were visually inspected.
+These use synthetic unit/HTTP providers and establish no live model/MCP,
+engineering or user acceptance. See [action-control evidence](evidence/action-controls.md).
+T027 remains pending for inspector declarations; T028/T021 and all M3–M5 work
+remain required. Earlier dated milestone scopes below are historical. The full
+goal remains active.
+
 T027 is progressing. Scoped action-approval and terminal artifact-review decisions
 now delegate to the existing review owners. Actor/run are server-derived; current
 source/actual evidence and exact recorded checkpoint are checked. Request identity

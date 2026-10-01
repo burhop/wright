@@ -292,6 +292,7 @@ class WorkflowExternalActionService:
         workspace_id: str,
         current_subject: Mapping[str, Any],
         action_id: str,
+        principal_id: str | None = None,
     ) -> WorkflowContinuationCheckpoint:
         checkpoint = self._required(checkpoint_id, workspace_id)
         current_digest = approval_subject_digest(current_subject)
@@ -326,6 +327,7 @@ class WorkflowExternalActionService:
             "subject_digest": current_digest,
             "outcome": "not_dispatched",
             "dispatch_authorized_at": int(time.time()),
+            **({"principal_id": principal_id} if principal_id is not None else {}),
         }
         try:
             return self._repository.transition(

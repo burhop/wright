@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: cfc9a1993f5bc3d8b9c0b86068a87aa56fbf9ae1d125c777710ca746c0f02f40
+// Schema SHA-256: 0c3b7bb8b5fe0c5eaaa542e4f7ab8454d03a4565fb2dac68074aee1f4c860f86
 export const contractSchemas: Readonly<Record<string, unknown>> = {
   "Action": {
     "additionalProperties": false,
@@ -82,6 +82,110 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
       "enabled"
     ],
     "title": "Action",
+    "type": "object"
+  },
+  "ApprovedActionReceipt": {
+    "additionalProperties": false,
+    "description": "One consumed action request; acceptance and observed completion are distinct.",
+    "properties": {
+      "cancellation_outcome": {
+        "anyOf": [
+          {
+            "enum": [
+              "completed",
+              "failed",
+              "cancelled",
+              "unknown",
+              "input_required"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Cancellation Outcome"
+      },
+      "cancellation_requested": {
+        "default": false,
+        "title": "Cancellation Requested",
+        "type": "boolean"
+      },
+      "delivery_completed": {
+        "default": false,
+        "title": "Delivery Completed",
+        "type": "boolean"
+      },
+      "observed_outcome": {
+        "anyOf": [
+          {
+            "enum": [
+              "completed",
+              "failed",
+              "cancelled",
+              "unknown",
+              "input_required"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Observed Outcome"
+      },
+      "principal_id": {
+        "anyOf": [
+          {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Principal Id"
+      },
+      "provider_reference": {
+        "anyOf": [
+          {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Provider Reference"
+      },
+      "request_id": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Request Id",
+        "type": "string"
+      },
+      "submission": {
+        "enum": [
+          "authorized",
+          "accepted",
+          "rejected",
+          "unknown"
+        ],
+        "title": "Submission",
+        "type": "string"
+      }
+    },
+    "required": [
+      "request_id",
+      "submission"
+    ],
+    "title": "ApprovedActionReceipt",
     "type": "object"
   },
   "ArtifactRef": {
@@ -1844,6 +1948,17 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
   "PendingInteraction": {
     "additionalProperties": false,
     "properties": {
+      "action_receipt": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ApprovedActionReceipt"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
       "checkpoint_id": {
         "maxLength": 160,
         "minLength": 1,
