@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "recorded_at": "2026-10-01T13:22:02.353723+00:00",
+  "parent_commit": "3ed267007096ff836d8c2c2f9fcc0341a8c2ceee",
+  "branch": "codex/083-process-working-interfaces",
+  "task": "T027 partial",
+  "owned_paths": [
+    "apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx",
+    "apps/web/src/prototypes/workflow-recovery/authoring-objects.ts",
+    "apps/web/src/prototypes/workflow-recovery/command-system.ts",
+    "apps/web/src/prototypes/workflow-recovery/recovery-authoring.ts",
+    "apps/web/src/prototypes/workflow-recovery/InteractionDeclarationEditor.tsx",
+    "apps/web/src/prototypes/workflow-recovery/InteractionDeclarationEditor.spec.tsx",
+    "apps/web/src/prototypes/workflow-recovery/interaction-settings.ts",
+    "apps/web/src/prototypes/workflow-recovery/interaction-settings.spec.ts",
+    "specs/083-process-working-interfaces/evidence/input-inspector.md",
+    "specs/083-process-working-interfaces/tasks.md",
+    "specs/083-process-working-interfaces/progress.md",
+    "artifacts/process-interfaces/083/20261001-t027-declarations/checked-scope.json"
+  ],
+  "code_hashes": {
+    "apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx": "8f51e6a56cf81cce4bb023ec9b6414486105dfd6867e9e9ec40645c25b0a814d",
+    "apps/web/src/prototypes/workflow-recovery/authoring-objects.ts": "5f958f2cf0d076e94924e56429da142782b96460d90f95bdff8a0131c55312ae",
+    "apps/web/src/prototypes/workflow-recovery/command-system.ts": "2d571457fe47af6585bbda1436170f303ddc7780bace24f2f3d296d443a13471",
+    "apps/web/src/prototypes/workflow-recovery/recovery-authoring.ts": "810952eada08fa09c31a65fb6ae4c998d15afd6d4831ab1d98cb27b1f5b8c696",
+    "apps/web/src/prototypes/workflow-recovery/InteractionDeclarationEditor.tsx": "f3b6773f87ad39b287ecb1ceaed668113e971e94b90bbadb5aa8ec7e473f49d4",
+    "apps/web/src/prototypes/workflow-recovery/InteractionDeclarationEditor.spec.tsx": "a58c2dc0cdf4669acfa4500eca4cc3644bad60e57d2fe7053ec27d749faa928c",
+    "apps/web/src/prototypes/workflow-recovery/interaction-settings.ts": "678e9a489c26b3a5dffafc56735115c35df2323d21a5b37c4cf9ba3f048c9382",
+    "apps/web/src/prototypes/workflow-recovery/interaction-settings.spec.ts": "80e35a5b3426fcd06c196bd373fd311560ddc5c1f18c4472a11c07d6848b592f"
+  },
+  "report_hashes": {
+    ".local-run/process-interfaces-083/t027-declarations-pause-final.json": "101ce8fd2e3dbd26a43be3eb7409bc92a13dff6e03509f81d952f7c80885bf08",
+    ".local-run/process-interfaces-083/t027-declarations-pause-final.log": "1fa9cd35f79d859ad93909ab8bca06500f30a9a052f5663bf2c992b6bd4b5116",
+    ".local-run/process-interfaces-083/t027-declarations-types-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".local-run/process-interfaces-083/t027-declarations-lint-final.log": "93fe8712a4c2ce6265898d33e01d57c92d0404f9bac09459db9a8fd9adb89730",
+    ".local-run/process-interfaces-083/t027-declarations-build-final.log": "85fa414050e402bcc09757261f6ddceb5c40a38066ed940e1fa978f0c245a60e"
+  },
+  "verification": {
+    "editor_modules": [
+      "D:/repos/wright/apps/web/src/prototypes/workflow-recovery/authoring-objects.spec.ts",
+      "D:/repos/wright/apps/web/src/prototypes/workflow-recovery/command-system.spec.ts",
+      "D:/repos/wright/apps/web/src/prototypes/workflow-recovery/interaction-settings.spec.ts",
+      "D:/repos/wright/apps/web/src/prototypes/workflow-recovery/InteractionDeclarationEditor.spec.tsx",
+      "D:/repos/wright/apps/web/src/prototypes/workflow-recovery/recovery-authoring.spec.ts",
+      "D:/repos/wright/apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.spec.tsx"
+    ],
+    "passed": 146,
+    "failed": 0,
+    "pending": 0,
+    "typescript": "exit 0",
+    "eslint": "exit 0; existing presentedRun hook warning",
+    "build": "exit 0; 929 modules; fresh private output; standard chunk warning",
+    "served_inspector_acceptance": false,
+    "live_backend_compiler_interoperability": false,
+    "live_model": false,
+    "live_mcp": false,
+    "hardware": false,
+    "user_acceptance": false,
+    "commands": [
+      "node ../../node_modules/vitest/vitest.mjs run src/prototypes/workflow-recovery/interaction-settings.spec.ts src/prototypes/workflow-recovery/InteractionDeclarationEditor.spec.tsx src/prototypes/workflow-recovery/command-system.spec.ts src/prototypes/workflow-recovery/authoring-objects.spec.ts src/prototypes/workflow-recovery/recovery-authoring.spec.ts src/prototypes/workflow-recovery/WorkflowRecoveryConcept.spec.tsx --reporter=json --outputFile=D:/repos/wright/.local-run/process-interfaces-083/t027-declarations-pause-final.json",
+      "node apps/web/node_modules/typescript/bin/tsc -p apps/web/tsconfig.app.json --noEmit",
+      "node node_modules/eslint/bin/eslint.js --config apps/web/eslint.config.js apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx apps/web/src/prototypes/workflow-recovery/authoring-objects.ts apps/web/src/prototypes/workflow-recovery/command-system.ts apps/web/src/prototypes/workflow-recovery/recovery-authoring.ts apps/web/src/prototypes/workflow-recovery/InteractionDeclarationEditor.tsx apps/web/src/prototypes/workflow-recovery/InteractionDeclarationEditor.spec.tsx apps/web/src/prototypes/workflow-recovery/interaction-settings.ts apps/web/src/prototypes/workflow-recovery/interaction-settings.spec.ts",
+      "node ../../node_modules/vite/bin/vite.js build --outDir D:/repos/wright/.local-run/process-interfaces-083/t027-declarations-dist-final"
+    ]
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "owned_terminal_handles": {
+    "24119": 0,
+    "74718": 0,
+    "8299": 0,
+    "90285": 0
+  },
+  "owned_services_started": [],
+  "pause_requested": true,
+  "next": [
+    "Served normal-workspace inspector edit/apply/undo/redo/save/reopen",
+    "Actual saved-source backend compiler/readiness",
+    "T027/T028 completion",
+    "M3 actual Wright coding-role/interface authoring"
+  ]
+}

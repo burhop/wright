@@ -1306,8 +1306,15 @@ export function parseRecoveryAuthoringSource(
       section.kind === "input" ? "provided_by" : "performed_by",
       diagnostics,
     );
+    // A new declared-input step is a saveable draft, like an empty AI prompt.
+    // Runtime compilation still rejects it until its declaration is complete.
     const instructions =
-      instructionField === "prompt" &&
+      (instructionField === "prompt" ||
+        (section.kind === "task" &&
+          (section.fields.settings as Record<string, unknown> | null)
+            ?.authoring_template === "human-input" &&
+          !(section.fields.settings as Record<string, unknown>)
+            .human_interaction)) &&
       typeof section.fields[instructionField] === "string"
         ? (section.fields[instructionField] as string)
         : stringField(section, instructionField, diagnostics);

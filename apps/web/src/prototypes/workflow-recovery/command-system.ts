@@ -2,6 +2,8 @@ import { validateOutputChanges } from "./output-contracts";
 import {
   cloneLayout,
   cloneWorkflow,
+  recoveryAuthoringSectionKind,
+  RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
   validateRecoveryLayoutDocument,
   type RecoveryBlock,
   type RecoveryDiagnostic,
@@ -45,6 +47,12 @@ export type RecoveryCommand =
       blockId: string;
       key: string;
       value: string | number | boolean;
+    }
+  | {
+      kind: "set_block_object_configuration";
+      blockId: string;
+      key: "interaction_input" | "human_interaction";
+      value: Record<string, unknown> | null;
     }
   | {
       kind: "set_artifact_definition";
@@ -232,6 +240,36 @@ function applyCommand(
   }
   if (command.kind === "set_block_configuration") {
     block(workflow, command.blockId).configuration[command.key] = command.value;
+    return;
+  }
+  if (command.kind === "set_block_object_configuration") {
+    const target = block(workflow, command.blockId);
+    if (
+      !["interaction_input", "human_interaction"].includes(command.key) ||
+      (command.key === "interaction_input" &&
+        recoveryAuthoringSectionKind(target) !== "input") ||
+      (command.key === "human_interaction" &&
+        target.configuration.authoring_template !== "human-input")
+    )
+      throw new Error("This declaration does not belong to the selected step.");
+    const retained =
+      target.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
+    const objects = typeof retained === "string" ? JSON.parse(retained) : {};
+    if (!objects || typeof objects !== "object" || Array.isArray(objects))
+      throw new Error(
+        "Inspect the stored declaration object before editing it.",
+      );
+    if (
+      command.value !== null &&
+      (typeof command.value !== "object" || Array.isArray(command.value))
+    )
+      throw new Error("Use an object for the declaration.");
+    if (command.value === null) delete objects[command.key];
+    else objects[command.key] = command.value;
+    if (Object.keys(objects).length)
+      target.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY] =
+        stableValue(objects);
+    else delete target.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
     return;
   }
   if (command.kind === "set_port_type" || command.kind === "delete_port") {
@@ -748,6 +786,22 @@ export function textEditCommands(
       ...Object.keys(edited.configuration),
     ]);
     for (const key of keys) {
+      if (
+        edited.configuration[key] === undefined &&
+        key === RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY &&
+        recoveryAuthoringSectionKind(current) === "input" &&
+        Object.keys(JSON.parse(String(current.configuration[key]))).every(
+          (item) => item === "interaction_input",
+        )
+      ) {
+        edits.push({
+          kind: "set_block_object_configuration",
+          blockId: current.id,
+          key: "interaction_input",
+          value: null,
+        });
+        continue;
+      }
       if (edited.configuration[key] === undefined)
         return [
           {

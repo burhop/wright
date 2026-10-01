@@ -258,6 +258,28 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
     ports: [{ ...documentOut, name: "Validation assessment" }],
   },
   {
+    id: "human-input",
+    group: "more",
+    label: "User input step",
+    description: "Pause at a declared point for a structured user response",
+    executionKind: "human",
+    instructions: "",
+    ports: [
+      {
+        ...documentOut,
+        key: "evidence-in",
+        name: "Evidence to review",
+        direction: "input",
+      },
+      {
+        key: "response-out",
+        name: "User response",
+        typeId: "type.result.structured",
+        direction: "output",
+      },
+    ],
+  },
+  {
     id: "mcp-task",
     group: "tool",
     label: "AI task with MCP",
@@ -453,7 +475,7 @@ export function createAuthoringObject(
       input_text: "",
       workspace_file: "",
     });
-  else if (template.id !== "process-validator")
+  else if (template.id !== "process-validator" && template.id !== "human-input")
     configuration.binding_state = "unbound";
   if (template.applicationHint)
     configuration.application_hint = template.applicationHint;

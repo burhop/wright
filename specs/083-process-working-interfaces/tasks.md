@@ -55,7 +55,8 @@ consume responses once on the same run; undeclared questions never create forms.
 - [ ] T027 [US2] Wire declared input/review/action forms and inspector/source edits through `apps/web/src/components/process-interfaces/` and `apps/web/src/prototypes/workflow-recovery/`, retaining exact checkpoint and subject context.
   Scoped review/action owners, native client/transport, supervised continuation,
   common-view forms and durable explicit-request reconciliation are implemented.
-  Inspector declarations remain pending; bounded served journeys do not replace
+  Inspector declarations are implemented and component/source checks pass;
+  served inspector acceptance remains pending. Bounded served journeys do not replace
   T028's complete recovery proof or the later authoring/live acceptance obligations.
 - [ ] T028 [US2] Verify two-checkpoint reopen/duplicate/stale/schema/unknown-outcome/undeclared-question paths in `apps/api/tests/test_process_interface_checkpoints.py`, `packages/workspace_service/tests/test_process_interface_continuation.py` and `tests/ui-integration/process-declared-interactions.spec.ts`; record scope in `specs/083-process-working-interfaces/evidence/interactions.md`.
 

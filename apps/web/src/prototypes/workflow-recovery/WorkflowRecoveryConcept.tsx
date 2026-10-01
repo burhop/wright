@@ -72,6 +72,14 @@ import {
   hiddenMcpInputs,
 } from "./mcp-settings";
 import { InputBlockEditor } from "./InputBlockEditor";
+import {
+  InputDeclarationEditor,
+  HumanInputDeclarationEditor,
+} from "./InteractionDeclarationEditor";
+import {
+  declarationEditorKey,
+  isHumanInputBlock,
+} from "./interaction-settings";
 import { PromptBlockEditor } from "./PromptBlockEditor";
 import { ValidatorBlockEditor } from "./ValidatorBlockEditor";
 import { isValidatorBlock } from "./validation-settings";
@@ -3923,7 +3931,8 @@ function WorkflowRecoveryReadyConcept({
                   (!observer.checked ||
                     Boolean(observer.error && !observer.record))) ||
                 saveState === "saving" ||
-                (Boolean(onRun) && (sourceDirty || !sourceValid || saveConflict)) ||
+                (Boolean(onRun) &&
+                  (sourceDirty || !sourceValid || saveConflict)) ||
                 (simulationPreview && !canRun)
               }
               title={
@@ -4316,20 +4325,22 @@ function WorkflowRecoveryReadyConcept({
                 {selectedBlock
                   ? recoveryAuthoringSectionKind(selectedBlock) === "input"
                     ? "Input source · supplies text or a file"
-                    : selectedBlock.configuration.authoring_template ===
-                        "mcp-task"
-                      ? "AI task · MCP"
-                      : isPromptBlock(selectedBlock)
-                        ? "AI prompt"
-                        : isMcpBlock(selectedBlock)
-                          ? "MCP tool"
-                          : isValidatorBlock(selectedBlock)
-                            ? "Output validator"
-                            : selectedBlock.executionKind === "ai_capable"
-                              ? "AI task"
-                              : selectedBlock.executionKind === "human"
-                                ? "Engineer review"
-                                : "Task"
+                    : isHumanInputBlock(selectedBlock)
+                      ? "Declared user input · pauses the run"
+                      : selectedBlock.configuration.authoring_template ===
+                          "mcp-task"
+                        ? "AI task · MCP"
+                        : isPromptBlock(selectedBlock)
+                          ? "AI prompt"
+                          : isMcpBlock(selectedBlock)
+                            ? "MCP tool"
+                            : isValidatorBlock(selectedBlock)
+                              ? "Output validator"
+                              : selectedBlock.executionKind === "ai_capable"
+                                ? "AI task"
+                                : selectedBlock.executionKind === "human"
+                                  ? "Engineer review"
+                                  : "Task"
                   : selectedResult
                     ? "Output files · read-only"
                     : selectedPort
@@ -4368,20 +4379,28 @@ function WorkflowRecoveryReadyConcept({
               )}
               {selectedBlock &&
                 recoveryAuthoringSectionKind(selectedBlock) === "input" && (
-                  <InputBlockEditor
-                    isImage={selectedBlock.outputPortIds.some(
-                      (id) =>
-                        findPort(inspectionWorkflow, id)?.typeId ===
-                        "type.image.reference-set",
-                    )}
-                    key={selectedBlock.id}
-                    block={selectedBlock}
-                    sessionId={workspaceSessionId}
-                    onListFiles={onListWorkspaceFiles}
-                    onOpenFile={onOpenFile}
-                    readOnly={blockEditorReadOnly}
-                    onApply={(commands) => applyCommands("form", commands)}
-                  />
+                  <>
+                    <InputBlockEditor
+                      isImage={selectedBlock.outputPortIds.some(
+                        (id) =>
+                          findPort(inspectionWorkflow, id)?.typeId ===
+                          "type.image.reference-set",
+                      )}
+                      key={selectedBlock.id}
+                      block={selectedBlock}
+                      sessionId={workspaceSessionId}
+                      onListFiles={onListWorkspaceFiles}
+                      onOpenFile={onOpenFile}
+                      readOnly={blockEditorReadOnly}
+                      onApply={(commands) => applyCommands("form", commands)}
+                    />
+                    <InputDeclarationEditor
+                      key={declarationEditorKey(selectedBlock)}
+                      block={selectedBlock}
+                      readOnly={blockEditorReadOnly}
+                      onApply={(commands) => applyCommands("form", commands)}
+                    />
+                  </>
                 )}
               {selectedBlock && isMcpBlock(selectedBlock) && (
                 <McpBlockEditor
@@ -4418,14 +4437,24 @@ function WorkflowRecoveryReadyConcept({
                 !isValidatorBlock(selectedBlock) &&
                 recoveryAuthoringSectionKind(selectedBlock) !== "input" && (
                   <>
-                    <AuthoringSettings
-                      direct
-                      key={selectedBlock.id}
-                      block={selectedBlock}
-                      workflow={inspectionWorkflow}
-                      readOnly={blockEditorReadOnly}
-                      onApply={(commands) => applyCommands("form", commands)}
-                    />
+                    {isHumanInputBlock(selectedBlock) ? (
+                      <HumanInputDeclarationEditor
+                        key={declarationEditorKey(selectedBlock)}
+                        block={selectedBlock}
+                        workflow={inspectionWorkflow}
+                        readOnly={blockEditorReadOnly}
+                        onApply={(commands) => applyCommands("form", commands)}
+                      />
+                    ) : (
+                      <AuthoringSettings
+                        direct
+                        key={selectedBlock.id}
+                        block={selectedBlock}
+                        workflow={inspectionWorkflow}
+                        readOnly={blockEditorReadOnly}
+                        onApply={(commands) => applyCommands("form", commands)}
+                      />
+                    )}
                     {(selectedBlock.inputPortIds.length > 0 ||
                       selectedBlock.outputPortIds.length > 0) && (
                       <details

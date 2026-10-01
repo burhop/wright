@@ -702,6 +702,29 @@ checkpoint projection/currentness and UI forms. T024/T027/T028 remain pending,
 as do all later live authoring/provider/migration/distribution obligations.
 The complete implementation goal remains active.
 
+### 2026-10-01 — Input inspector checkpoint and requested pause
+
+Continued from `3ed26700`. The intervening morning status update changed no
+implementation state. Added input-declaration and planned-user-input inspector
+controls to the existing accepted command/source editor. New Engineer input
+steps remain saveable drafts until explicitly configured; run values remain
+separate from process metadata. Existing input text/file controls and port
+connections are retained. T027 remains partial pending served inspector checks
+and actual saved-source backend interoperability.
+
+All 146 checks across six editor/helper/component modules pass, with no failures
+or pending cases. App TypeScript and a fresh production build pass. Focused lint
+passes with one existing integrated-editor hook dependency warning. Commands,
+code/report hashes, corrections and preservation are recorded in
+[input-inspector.md](evidence/input-inspector.md) and its checked-scope manifest.
+No new live/browser/engineering/hardware acceptance is established.
+
+The user requested a pause within ten minutes to free the CPU. All final owned
+test/type/lint/build handles exited zero before pausing; no service was started.
+Retain the complete 57-task goal. Resume with served inspector save/reopen and
+compiler/readiness proof, T027/T028 completion, then the actual Wright coding-role
+and UI-authoring work. M3–M5 and the two live digital proofs remain required.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,
