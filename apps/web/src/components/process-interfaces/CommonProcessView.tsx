@@ -241,6 +241,8 @@ function CommonProcessController({
     [store],
   );
   const publish = useCallback((value: InteractionSnapshot) => {
+    // Compare new observations with the read's receipt time, not a previous tick.
+    setNow(Date.now());
     snapshotRef.current = value;
     setSnapshot(value);
     if (!activeRunRef.current && preparedRef.current && value.readiness)

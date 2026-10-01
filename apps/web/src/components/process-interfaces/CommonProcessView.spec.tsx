@@ -204,6 +204,42 @@ afterEach(() => {
 });
 
 describe("common process preparation and authority", () => {
+  it("evaluates fresh observations at snapshot receipt without waiting for a clock tick", async () => {
+    const measuredAt = Date.now();
+    const clock = vi.spyOn(Date, "now").mockReturnValue(measuredAt - 2000);
+    const { client, store } = fixture();
+    const fresh = {
+      ...running,
+      observations: [
+        {
+          observation_id: "fresh-read",
+          provider_binding: "controlled-test",
+          state: "running" as const,
+          observed_at: new Date(measuredAt).toISOString(),
+          stale_after: new Date(measuredAt + 60_000).toISOString(),
+          progress_percent: 20,
+        },
+      ],
+    };
+    client.follow = vi.fn(async function* () {
+      clock.mockReturnValue(measuredAt + 10);
+      yield { type: "snapshot" as const, snapshot: fresh };
+    });
+    await act(async () => {
+      render(
+        <CommonProcessView
+          client={client}
+          sessionId="session"
+          runId="run-one"
+          recoveryStore={store}
+        />,
+      );
+    });
+    expect(screen.getByText("20% complete")).toBeInTheDocument();
+    expect(
+      screen.queryByText(/status needs a fresh observation/),
+    ).not.toBeInTheDocument();
+  });
   it("reads on mount without preparing, starting, reviewing or cancelling", async () => {
     const { client, store } = fixture();
     render(

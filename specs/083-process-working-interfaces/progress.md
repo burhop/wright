@@ -485,6 +485,41 @@ that acceptance. All later declared-interaction, actual default-model authoring,
 digital MCP, migration and installed-distribution requirements remain necessary.
 The complete goal is active. Next: the normal served workspace journey.
 
+### 2026-10-01 — Served common-view proof and recorded editor failures
+
+Continued from navigation commit `ce6c1b3d`. Added the real-browser common-view
+journey through the normal workspace Workflows control, with explicitly
+controlled HTTP contracts. Three focused browser checks pass on installed Chrome
+154.0.8037.58 at 1280×720: readiness before start, visible preparation/progress,
+event reconnection, exact assessment-file/producer navigation, retained source
+draft, close/reopen without cancel or another start, and lost-acknowledgement
+reconciliation with the original request identity. No live API/model/MCP or
+engineering/hardware acceptance is claimed. Screenshots and exact checked scope
+are retained under `artifacts/process-interfaces/083/20261001-t021-common-final/`.
+
+Visual inspection exposed a presentation clock defect: a newly received
+observation could compare against the preceding timer tick and briefly appear
+stale. Refreshing the clock when publishing a snapshot fixes it while retaining
+future/expired observation checks. All 34 common-view component checks pass;
+app/browser-test types, focused lint and a fresh 927-module production build pass.
+
+The broader served editor/082 batch completed with **11 passing and seven failing
+checks**. Five concern Run availability for unsupported/invalid editor contexts,
+one concerns a layout-only save changing definition revision, and one expects
+earlier requirements-review wording. Their assertions and product behaviour need
+investigation; no complete editor preservation or acceptance claim is made.
+Exact test names/reports are retained in [common-view.md](evidence/common-view.md).
+T021 stays partial, with these affected checks also tracked for T027/T052/T053.
+All later implementation and live/distribution proofs remain required.
+
+The host lacked Playwright's expected cached browser. Used installed Chrome with
+a private config; corrected its working directory and avoided a Windows managed
+web-server cleanup timeout by owning the Vite launch separately. The exact
+orphaned Vite PID/command was verified before stopping it. Both owned test servers
+are stopped; unrelated services and the original dirty/campaign work remain
+preserved. The complete goal remains active. Next: investigate editor failures
+while implementing the remaining declared-input/readiness integration.
+
 ## Implementation progress format
 
 Append dated entries: task IDs, branch/commit/build, owned files, exact commands,

@@ -309,3 +309,107 @@ operation ran, and no user acceptance is claimed. Historical changed-source
 compatibility, declared interactions, actual model-authored interfaces, the two
 digital engineering proofs, migration and installed-distribution checks retain
 their later task scope. The full goal remains active.
+
+## 2026-10-01 — Served workspace common view and open regression findings
+
+Product navigation baseline: `ce6c1b3d` on
+`codex/083-process-working-interfaces`, `D:/repos/wright`. The tested working
+changes are the new browser fixture/journeys and the snapshot-receipt clock fix.
+The common view is entered from `/workspace/ws-recovery` by clicking Workflows
+and then Use saved process. It uses the actual frontend/native client/kit/tab and
+refined editor components, with explicitly controlled HTTP contract responses.
+**This is served frontend evidence, not a live API/model/MCP/tool-chain proof.**
+
+Focused final run: **three passed in 15.2 s**, no skipped/flaky/unexpected tests.
+Installed Chrome **154.0.8037.58**, 1280×720; Vite **8.2.0** at
+`http://127.0.0.1:5236`. Flags `VITE_WRIGHT_WORKFLOW_RECOVERY`,
+`VITE_WRIGHT_PROCESS_DEFINITION_VIEW` and `VITE_WRIGHT_WORKFLOW_COMPOSER` were `1`.
+The actual browser version, URLs, source digest, flags, screenshot hashes and
+claim boundaries are in
+[checked-scope.json](../../../artifacts/process-interfaces/083/20261001-t021-common-final/checked-scope.json).
+The URL identifies the tested service; it is now stopped and is not an operator
+URL for a live process. API requests were intercepted browser contracts.
+
+Verified behaviours: initial start disabled; missing input blocks start; entered
+input preparation is visibly busy; only an explicit start sends the request;
+event connection failure reconciles snapshots; output/assessment identities
+remain distinct; the actual producing step opens in the retained editor without
+losing its unapplied source draft; closing the working document does not request
+cancellation; reopening its exact run link does not start again. A separate test
+loses start acknowledgement, reloads, prohibits another new start, and reconciles
+the original request identity. The fixture records one accepted receipt across
+the two requests; actual durable dispatch authority is tested separately by the
+backend checks above. No engineering result was generated or accepted here.
+
+The screenshots were visually inspected. The assessment screenshot includes its
+actual controlled JSON representation; the source screenshot includes the
+unapplied draft and exact producer inspector. The completion screenshot displays
+100% last reported after receipt-clock correction. Initially fresh observations
+could be compared with the previous timer tick and appear momentarily stale.
+Publishing the snapshot now refreshes presentation time; a dedicated component
+test verifies fresh progress without waiting for the next tick. Existing future/
+expired observation handling is retained. **34 common-view tests pass** in
+`.local-run/process-interfaces-083/t021-clock-vitest.json`.
+
+Commands (root directory, private installed-browser config):
+
+```powershell
+$env:VITE_WRIGHT_WORKFLOW_RECOVERY = '1'
+$env:VITE_WRIGHT_PROCESS_DEFINITION_VIEW = '1'
+$env:VITE_WRIGHT_WORKFLOW_COMPOSER = '1'
+node node_modules/vite/bin/vite.js apps/web --config apps/web/vite.config.ts --host 127.0.0.1 --port 5236 --strictPort
+```
+
+Then, with that owned service:
+
+```powershell
+$env:PLAYWRIGHT_BASE_URL = 'http://127.0.0.1:5236'
+$env:WRIGHT_PLAYWRIGHT_OUTPUT_DIR = 'D:/repos/wright/artifacts/process-interfaces/083/20261001-t021-common-final'
+$env:PLAYWRIGHT_JSON_OUTPUT_NAME = 'D:/repos/wright/.local-run/process-interfaces-083/t021-common-final-playwright.json'
+node node_modules/@playwright/test/cli.js test tests/ui-integration/process-common-view.spec.ts tests/ui-integration/workflow-composer.spec.ts --config .local-run/process-interfaces-083/playwright-system-chrome.config.ts --project=chromium --workers=1 --reporter=line,json --global-timeout=120000
+```
+
+Use a **fresh output directory** when reproducing. The private config imports the
+repository config, sets absolute root test/server paths and selects installed
+`C:/Program Files/Google/Chrome/Application/chrome.exe`; with explicit base URL it
+does not own a web server. Default repository/CI browser configuration is unchanged.
+The expected Playwright browser cache was unavailable. Initial attempts also
+identified incomplete test ports and a reused typed port key; corrected the
+fixture to complete, uniquely named source ports. Windows managed-web-server
+cleanup timed out on an earlier attempt. The saved Vite PID 54608 was checked
+for its exact Vite/5235 command before stopping; the final 5236 owned tool session
+was separately stopped. No unrelated service was terminated.
+
+App/browser-test type checks and focused lint pass. The production build at
+`.local-run/process-interfaces-083/t021-common-build` passes (927 modules, 2.10 s)
+with the existing chunk-size/out-of-tree notices. Browser tests used the served
+development build; the separately built production files were not served in this
+check. Existing React Flow attribution warnings and one unrelated surfaces-event
+proxy refusal were observed in the broader run's Vite log.
+
+### Broader editor/082 batch remains unresolved
+
+The same browser/served workspace also ran `workflow-recovery.spec.ts` and
+`process-validation.spec.ts` alongside the three common/composer checks, with a
+180 s bound. **11 passed, seven failed, none skipped** in 151.3 s. Report:
+`.local-run/process-interfaces-083/t021-common-qualified-playwright.json`.
+Failure contexts remain under
+`artifacts/process-interfaces/083/20261001-t021-common-qualified/`.
+
+| Existing test location | Observed failure / pending investigation |
+|---|---|
+| `process-validation.spec.ts:279` | Expected “Requirements review”; panel displays “Review results against the requirements.” Later review assertions remain unverified by this run. |
+| `workflow-recovery.spec.ts:173` | Expected Run disabled after partial input configuration; displayed Save & run enabled. Remaining reopen assertions not reached. |
+| `workflow-recovery.spec.ts:386` | Expected Run disabled after invalid draft containment; displayed Save & run enabled. |
+| `workflow-recovery.spec.ts:536` | Layout save expected definition revision 2, received 3; exact semantic/source preservation requires inspection. |
+| `workflow-recovery.spec.ts:695` | Expected unsupported production Run disabled; displayed Run enabled. |
+| `workflow-recovery.spec.ts:759` | Feedback latency checks reached their Run assertion, which expected disabled but received enabled. |
+| `workflow-recovery.spec.ts:798` | Initial accessibility checks reached their Run assertion, which expected disabled but received enabled; later mobile assertions not reached. |
+
+Do not infer that these are all stale tests or all new regressions. Diagnose the
+accepted source, current editor baseline and owning execution/readiness semantics
+before changing behaviour or assertions. Preserve engineering gates and the refined
+editor. **T021 stays partial** while affected served preservation checks remain
+open; T027/T052/T053 also retain the integration/regression obligations. The
+complete Feature 083 goal, live authoring/tool chains and installed checks remain
+active and unfinished. User/engineering/physical acceptance is not claimed.

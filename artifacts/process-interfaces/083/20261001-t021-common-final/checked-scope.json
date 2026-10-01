@@ -1,0 +1,84 @@
+{
+  "branch": "codex/083-process-working-interfaces",
+  "product_navigation_head": "ce6c1b3ddaf929b3942294f61753670889ec9db4",
+  "tested_working_changes": [
+    "CommonProcessView snapshot receipt clock",
+    "new common-view browser fixture/tests"
+  ],
+  "stats": {
+    "startTime": "2026-10-01T06:18:57.047Z",
+    "duration": 15243.646,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "scope": [
+    {
+      "browser": "154.0.8037.58",
+      "url": "http://127.0.0.1:5236/workspace/ws-recovery?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow&processView=34325105-d103-468f-b6a8-ead7c51d323a&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "served_frontend": true,
+      "controlled_http_contracts": true,
+      "live_backend": false,
+      "live_model": false,
+      "live_mcp": false,
+      "physical_operation": false,
+      "user_acceptance": false
+    },
+    {
+      "browser": "154.0.8037.58",
+      "url": "http://127.0.0.1:5236/workspace/ws-recovery?workflow=canonical&processView=99596ded-f53d-4ef6-a5db-64871f809203&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "served_frontend": true,
+      "controlled_http_contracts": true,
+      "live_backend": false,
+      "live_model": false,
+      "live_mcp": false,
+      "physical_operation": false,
+      "user_acceptance": false
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "process-common-view-reconc-bdce2-e-original-request-identity-chromium/reconciled-start.png",
+      "sha256": "d7864d307b21c90e2d9d0b02fe05f732c97beef814a518e96e8d6f7e914b21e5"
+    },
+    {
+      "path": "process-common-view-reconc-bdce2-e-original-request-identity-chromium/workspace-final-state.png",
+      "sha256": "e9469b2473253e73b64f966d62f0ec9ba94a0bf2eae559743a314f2a94488111"
+    },
+    {
+      "path": "process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/exact-assessment.png",
+      "sha256": "fc796a46428d25d5cbbaff249033d44a8f303491979e804ceeef26b709e8460d"
+    },
+    {
+      "path": "process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/reopened-exact-run.png",
+      "sha256": "2183d53a6edce9e9806f10c73cc47babc0710d607e183df785af5d58bb25621a"
+    },
+    {
+      "path": "process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/retained-editor-draft.png",
+      "sha256": "7543a766a80f700c914b6e7570f520245d40b20b9d04d36c305e1022aeb21391"
+    },
+    {
+      "path": "process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/workspace-final-state.png",
+      "sha256": "8819e91423f1be24a9570297a3aba1c088408563ceecbfd0e1f000ad95533c11"
+    }
+  ],
+  "frontend": "http://127.0.0.1:5236",
+  "api": "controlled browser HTTP contracts; no live API",
+  "flags": {
+    "VITE_WRIGHT_WORKFLOW_RECOVERY": "1",
+    "VITE_WRIGHT_PROCESS_DEFINITION_VIEW": "1",
+    "VITE_WRIGHT_WORKFLOW_COMPOSER": "1"
+  },
+  "browser_driver": "installed C:/Program Files/Google/Chrome/Application/chrome.exe",
+  "production_build": ".local-run/process-interfaces-083/t021-common-build",
+  "services_now": "owned Vite 5236 stopped; owned managed 5235 orphan separately verified and stopped"
+}
