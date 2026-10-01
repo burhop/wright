@@ -78,6 +78,14 @@ function stream(chunks: string[]) {
 }
 
 describe("public process contract guards", () => {
+  it("requires a discriminator in owning tagged input unions", () => {
+    expect(() =>
+      assertContract("InputSnapshot", {
+        ...input,
+        bindings: [{ input_id: "prompt", value: "hello" }],
+      }),
+    ).toThrow(ProcessClientError);
+  });
   it("uses the owning shared shapes and optional defaults", () => {
     expect(assertContract("InteractionSnapshot", snapshot())).toEqual(
       snapshot(),

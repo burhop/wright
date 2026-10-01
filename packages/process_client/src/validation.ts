@@ -91,6 +91,18 @@ function matches(
   for (const keyword of ["anyOf", "oneOf"]) {
     const variants = schema[keyword];
     if (!Array.isArray(variants)) continue;
+    // Pydantic's owning tagged unions require their discriminator even though
+    // an individual defaulted model field may be optional in its JSON schema.
+    if (schema.discriminator) {
+      const discriminator = schemaObject(schema.discriminator);
+      const key = discriminator.propertyName;
+      if (
+        typeof key !== "string" ||
+        !object(value) ||
+        !Object.hasOwn(value, key)
+      )
+        invalid(path);
+    }
     let accepted = 0;
     for (const variant of variants) {
       try {

@@ -42,7 +42,7 @@ remains an explicit implementation step rather than an incidental planning write
 |---|---|---|
 | M0 Baseline/preflight | T001–T004 | Complete; live qualification remains later work |
 | M1 Inputs/runtime/interaction | T005–T016, T022–T028 | In progress; contracts/persistence/service boundary complete |
-| M2 Client/kit/common tabs | T017–T021 | In progress; public native client verified, kit/common tabs pending |
+| M2 Client/kit/common tabs | T017–T021 | In progress; public native client/kit verified, common tabs pending |
 | M3 Wright AI authoring/hosting/reuse | T029–T042 | Pending |
 | M4 Different processes/migration | T043–T049 | Pending |
 | M5 Distribution/verification/handoff | T050–T057 | Pending |
@@ -331,6 +331,34 @@ push/merge occurred. T001–T017 are checked. Next is T018 shared UI kit, follow
 by common working tabs. The full goal remains active; actual default-model UI
 authoring, both live digital engineering chains, served workspace journeys,
 vendor migration and installed distribution proof are still required.
+
+Focused local T017 milestone commit: `4a111724` (21 owned files). Original
+prototype/startup/router edits remain unstaged and unchanged. The full goal
+continues with T018; no push, merge or physical action occurred.
+
+### 2026-09-30 — Shared public presentation kit
+
+The previous goal turn made progress and saved T017 in `4a111724`. This turn
+advances T018: shared unchanged Wright tokens, composable declared-input/image/
+readiness/progress/findings/result/checkpoint/action/navigation patterns and
+bounded neutral STL/toolpath/table/profile/field views in `@wright/ui-kit`.
+Callbacks and owning services retain authority. The old STL component reexports
+the public viewer; the refined editor and document lifecycle remain intact.
+
+94 focused frontend checks and 54 shared Python contract checks pass, as do both
+public package and whole-app type checks. Idle freshness, terminal history,
+disabled/exact-subject actions, invalid-model fallback, actual layer visibility,
+renderer disposal, inert document fallback, Blob identity/cleanup and bounded
+data views are covered. Geometry renderer checks are mocked WebGL tests, not
+browser/GPU or engineering acceptance. See [kit evidence](evidence/ui-kit.md).
+
+The kit token copy matches the original owning definitions exactly. Protected
+campaign hashes, active context and original prototype hashes/deltas remain
+preserved. T001–T018 are checked. Next: T019 common process view and T020–T021
+workspace tabs/served verification. Declared-interaction execution, scoped
+authoring/hosting, actual default-model and digital engineering demonstrations,
+vendor migration and installed distribution proofs remain required. The full
+goal is active; no model/provider/physical or remote publication action occurred.
 
 ## Implementation progress format
 

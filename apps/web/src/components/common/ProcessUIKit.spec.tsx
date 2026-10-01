@@ -1,0 +1,598 @@
+import { useState } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  cleanup,
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import {
+  ProcessUI,
+  ReasonNotice,
+  ActionButton,
+  ReadinessPanel,
+  ProgressPanel,
+  InputEditor,
+  ResultCard,
+  CheckpointCard,
+  SchemaField,
+  parseToolpaths,
+  parseCsv,
+  DataTable,
+  NumericPlot,
+  ImageThumbnail,
+  RepresentationViewer,
+  FindingsPanel,
+  ScalarFieldPlot,
+  type ToolpathDocument,
+} from "@wright/ui-kit";
+import type {
+  InputBinding,
+  InputDefinition,
+  Observation,
+  OutputRef,
+} from "@wright/process-client";
+
+const hash = "a".repeat(64);
+const input: InputDefinition = {
+  input_id: "prompt",
+  block_id: "intent",
+  port_id: "out",
+  title: "What should Wright make?",
+  required: true,
+  value_schema: { type: "string" },
+};
+const reason = {
+  code: "INPUT_REQUIRED",
+  message: "Choose a material before starting.",
+  correction: "Return to material choices.",
+};
+const observation: Observation = {
+  observation_id: "operation",
+  provider_binding: "configured-tool",
+  state: "running",
+  observed_at: "2026-09-30T12:00:00Z",
+  stale_after: "2026-09-30T12:01:00Z",
+  progress_percent: 25,
+  estimated_remaining_seconds: 120,
+  activity: "Measuring geometry",
+};
+const output: OutputRef = {
+  result_id: "run:mesh:output",
+  step_id: "mesh",
+  port_id: "output",
+  role: "geometry",
+  title: "Repaired geometry",
+  representations: [
+    { artifact_ref: "outputs/mesh.stl", sha256: hash, media_type: "model/stl" },
+  ],
+  assessments: [
+    {
+      assessment_id: "check-one",
+      subject_digest: hash,
+      currentness: "current",
+      outcome: "fail",
+    },
+  ],
+};
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
+
+describe("public kit presentation and authority", () => {
+  it("uses an explicit theme without private shell state", () => {
+    const { container } = render(
+      <ProcessUI theme="light">
+        <p>Design task</p>
+      </ProcessUI>,
+    );
+    expect(container.firstChild).toHaveAttribute("data-theme", "light");
+    expect(container.firstChild).toHaveClass("wright-process-ui");
+  });
+  it("shows readable correction and keeps raw identifiers in details", () => {
+    render(<ReasonNotice reason={reason} />);
+    expect(screen.getByRole("alert")).toHaveTextContent(reason.message);
+    expect(screen.getByRole("alert")).toHaveTextContent(reason.correction);
+    expect(screen.getByText("Technical details")).toBeInTheDocument();
+  });
+  it("requires both backend permission and an explicit handler for actions", () => {
+    const onAction = vi.fn();
+    const { rerender } = render(
+      <ActionButton
+        action={{
+          action_id: "start",
+          operation: "start",
+          title: "Start process",
+          enabled: false,
+          reasons: [reason],
+        }}
+        onAction={onAction}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Start process" }));
+    expect(onAction).not.toHaveBeenCalled();
+    rerender(
+      <ActionButton
+        action={{
+          action_id: "start",
+          operation: "start",
+          title: "Start process",
+          enabled: true,
+        }}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Start process" }),
+    ).toBeDisabled();
+    rerender(
+      <ActionButton
+        action={{
+          action_id: "start",
+          operation: "start",
+          title: "Start process",
+          enabled: true,
+        }}
+        onAction={onAction}
+      />,
+    );
+    expect(onAction).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Start process" }));
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+  it("shows missing readiness and declared later dependency distinctions", () => {
+    render(
+      <ReadinessPanel
+        readiness={{
+          process: {
+            workspace_id: "ws",
+            source_path: "part.wflow",
+            source_digest: hash,
+          },
+          assessment_id: "ready",
+          assessed_at: observation.observed_at,
+          state: "blocked",
+          reasons: [reason],
+          dependencies: [
+            {
+              binding_id: "mesh",
+              classification: "upstream_produced",
+              producer_step: "create",
+            },
+            {
+              binding_id: "decision",
+              classification: "declared_human_response",
+              interaction_step: "review",
+            },
+          ],
+        }}
+      />,
+    );
+    expect(screen.getByText("Inputs need attention")).toBeInTheDocument();
+    expect(screen.getByText(/Produced by an earlier step/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Provided at a declared interaction/),
+    ).toBeInTheDocument();
+  });
+  it("displays only observed progress and does not refresh stale measurements", () => {
+    const { rerender } = render(
+      <ProgressPanel
+        state="waiting_external"
+        observations={[observation]}
+        now={Date.parse("2026-09-30T12:00:30Z")}
+      />,
+    );
+    expect(screen.getByRole("progressbar")).toHaveAttribute("value", "25");
+    expect(screen.getByText(/2 min/)).toBeInTheDocument();
+    rerender(
+      <ProgressPanel
+        state="waiting_external"
+        observations={[observation]}
+        now={Date.parse("2026-09-30T12:02:00Z")}
+      />,
+    );
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    expect(screen.getByText(/needs a fresh observation/i)).toBeInTheDocument();
+    expect(screen.queryByText(/2 min remaining/)).not.toBeInTheDocument();
+  });
+  it("does not fabricate percentage or a confirmed stop for cancellation requests", () => {
+    render(<ProgressPanel state="cancellation_requested" observations={[]} />);
+    expect(screen.getByText("Cancellation requested")).toBeInTheDocument();
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Waiting for the actual outcome/),
+    ).toBeInTheDocument();
+  });
+  it("retains terminal historical progress without advertising a remaining time", () => {
+    render(
+      <ProgressPanel
+        state="failed"
+        observations={[{ ...observation, state: "failed" }]}
+        now={Date.parse("2026-09-30T12:10:00Z")}
+      />,
+    );
+    expect(screen.getByText("25% last reported")).toBeInTheDocument();
+    expect(screen.queryByText(/2 min remaining/)).not.toBeInTheDocument();
+  });
+  it("expires observations while the view is quiet, without changing the observed timestamp", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-09-30T12:00:30Z"));
+      render(
+        <ProgressPanel state="waiting_external" observations={[observation]} />,
+      );
+      expect(screen.getByRole("progressbar")).toHaveAttribute("value", "25");
+      act(() => vi.advanceTimersByTime(31_000));
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(screen.getByText(/needs a fresh observation/)).toBeInTheDocument();
+      expect(screen.getByText(observation.observed_at)).toBeInTheDocument();
+    } finally {
+      cleanup();
+      vi.useRealTimers();
+    }
+  });
+  it("keeps failing exact assessments visible with navigation to their owner", () => {
+    const onNavigate = vi.fn();
+    render(<ResultCard output={output} onNavigate={onNavigate} />);
+    expect(screen.getByText("Failed")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Open assessment" }));
+    expect(onNavigate).toHaveBeenCalledWith({
+      kind: "assessment",
+      assessment_id: "check-one",
+      result_id: output.result_id,
+    });
+    expect(
+      screen.getByRole("button", { name: "Open representation" }),
+    ).toBeDisabled();
+  });
+  it("shows declared review evidence without enabling an invented approval", () => {
+    const onAction = vi.fn();
+    render(
+      <CheckpointCard
+        interaction={{
+          checkpoint_id: "cp",
+          step_id: "review",
+          subject_digest: hash,
+          kind: "review",
+          instructions: "Check the thermal limit.",
+          decisions: ["approve", "reject"],
+          evidence: output.representations,
+        }}
+        actions={[
+          {
+            action_id: "other",
+            checkpoint_id: "elsewhere",
+            subject_digest: hash,
+            operation: "review",
+            title: "Approve",
+            enabled: true,
+          },
+        ]}
+        onAction={onAction}
+      />,
+    );
+    expect(screen.getByText("Check the thermal limit.")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Approve" }),
+    ).not.toBeInTheDocument();
+    expect(onAction).not.toHaveBeenCalled();
+  });
+});
+
+describe("schema and provider-backed input controls", () => {
+  it("edits a prompt as a typed binding without executing the process", () => {
+    const onChange = vi.fn();
+    render(<InputEditor definition={input} onChange={onChange} />);
+    fireEvent.change(screen.getByLabelText(/What should Wright make/), {
+      target: { value: "A focus wheel" },
+    });
+    expect(onChange).toHaveBeenCalledWith({
+      kind: "value",
+      input_id: "prompt",
+      value: "A focus wheel",
+      provenance: "supplied",
+    });
+  });
+  it("preserves explicit false and clears numeric values without inventing defaults", () => {
+    const onChange = vi.fn();
+    const { rerender } = render(
+      <SchemaField
+        title="Calibrate"
+        schema={{ type: "boolean" }}
+        value={false}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByLabelText("Calibrate")).not.toBeChecked();
+    fireEvent.click(screen.getByLabelText("Calibrate"));
+    expect(onChange).toHaveBeenLastCalledWith(true);
+    rerender(
+      <SchemaField
+        title="Width"
+        schema={{ type: "number", minimum: 1 }}
+        value={10}
+        onChange={onChange}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Width"), { target: { value: "" } });
+    expect(onChange).toHaveBeenLastCalledWith(undefined);
+  });
+  it("renders configured option identities and their actual capability provenance", () => {
+    const onChange = vi.fn();
+    render(
+      <InputEditor
+        definition={{
+          ...input,
+          title: "Material",
+          binding_kind: "option",
+          option_source: { binding_id: "materials", schema_digest: hash },
+          options_observed_at: observation.observed_at,
+          available_options: [
+            {
+              option_id: "slot-b",
+              title: "Loaded PLA · red",
+              value: { material: "PLA", location: "B" },
+            },
+          ],
+        }}
+        onChange={onChange}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText(/Material/), {
+      target: { value: "slot-b" },
+    });
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "option",
+        option_id: "slot-b",
+        capability: { binding_id: "materials", schema_digest: hash },
+        observed_at: observation.observed_at,
+        value: { material: "PLA", location: "B" },
+      }),
+    );
+  });
+  it("does not guess missing provider option lists or unsupported schemas", () => {
+    render(
+      <>
+        <InputEditor
+          definition={{ ...input, title: "Material", binding_kind: "option" }}
+          onChange={vi.fn()}
+        />
+        <SchemaField
+          title="Unusual data"
+          schema={{ type: "object", patternProperties: {} }}
+          onChange={vi.fn()}
+        />
+      </>,
+    );
+    expect(
+      screen.getByText(/configured choices are unavailable/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/unsupported schema/i)).toBeInTheDocument();
+  });
+  it("renders a bounded structured field with declared units", () => {
+    function Form() {
+      const [binding, setBinding] = useState<InputBinding>();
+      return (
+        <InputEditor
+          definition={{
+            ...input,
+            title: "Dimensions",
+            unit: "mm",
+            value_schema: {
+              type: "object",
+              properties: {
+                width: { type: "number" },
+                quantity: { type: "integer" },
+              },
+              required: ["width"],
+            },
+          }}
+          binding={binding}
+          onChange={(value) => setBinding(value ?? undefined)}
+        />
+      );
+    }
+    render(<Form />);
+    expect(screen.getByText(/mm/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/width/), {
+      target: { value: "12.5" },
+    });
+    expect(screen.getByLabelText(/width/)).toHaveValue(12.5);
+  });
+  it("shows a selected image while the host stores an exact file reference", async () => {
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:local-image");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    const onChange = vi.fn();
+    const onUpload = vi.fn(async () => ({
+      artifact_ref: "inputs/pumpkin.png",
+      sha256: hash,
+      media_type: "image/png",
+    }));
+    render(
+      <InputEditor
+        definition={{
+          ...input,
+          title: "Reference image",
+          binding_kind: "file",
+        }}
+        onChange={onChange}
+        onUpload={onUpload}
+      />,
+    );
+    const file = new File(["png-data"], "pumpkin.png", { type: "image/png" });
+    fireEvent.change(screen.getByLabelText(/Reference image/), {
+      target: { files: [file] },
+    });
+    expect(
+      await screen.findByAltText("Selected reference: pumpkin.png"),
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith({
+        kind: "file",
+        input_id: "prompt",
+        reference: {
+          artifact_ref: "inputs/pumpkin.png",
+          sha256: hash,
+          media_type: "image/png",
+        },
+        provenance: "supplied",
+      }),
+    );
+  });
+});
+
+describe("bounded neutral toolpath data", () => {
+  const document = {
+    format: "wright.gcode.toolpaths.v1",
+    package_sha256: hash,
+    layers: [{ index: 1, z: 0.2, model: [[0, 0, 10, 0]], support: [] }],
+  };
+  it("accepts actual finite layer paths only for their matching package", () => {
+    expect(parseToolpaths(document, hash).layers).toHaveLength(1);
+    expect(() => parseToolpaths(document, "b".repeat(64))).toThrow(/package/i);
+  });
+  it("keeps legacy absent classification evidence unknown", () => {
+    const value: ToolpathDocument = parseToolpaths(document, hash);
+    expect(value.classificationKnown).toBe(false);
+  });
+  it.each([NaN, Infinity, "10", undefined])(
+    "rejects invalid path coordinate %s",
+    (coordinate) => {
+      expect(() =>
+        parseToolpaths(
+          {
+            ...document,
+            layers: [{ ...document.layers[0], model: [[0, 0, coordinate, 0]] }],
+          },
+          hash,
+        ),
+      ).toThrow();
+    },
+  );
+  it("rejects malformed, empty, duplicate and excessive layer documents", () => {
+    for (const layers of [
+      [],
+      [{ ...document.layers[0], z: null }],
+      [document.layers[0], document.layers[0]],
+      Array.from({ length: 10001 }, (_, i) => ({
+        ...document.layers[0],
+        index: i,
+      })),
+    ]) {
+      expect(() => parseToolpaths({ ...document, layers }, hash)).toThrow();
+    }
+  });
+});
+
+describe("bounded representation views", () => {
+  it("presents actionable findings without treating absent findings as approval", () => {
+    const { rerender } = render(<FindingsPanel findings={[reason]} />);
+    expect(screen.getByText(reason.correction)).toBeInTheDocument();
+    rerender(<FindingsPanel findings={[]} />);
+    expect(screen.getByText(/this is not an approval/)).toBeInTheDocument();
+  });
+  it("shows supplied scalar samples with actual ranges and explicit units", () => {
+    render(
+      <ScalarFieldPlot
+        title="Thermal field"
+        xLabel="x · mm"
+        yLabel="y · mm"
+        valueLabel="Temperature · K"
+        points={[
+          { x: 0, y: 0, value: 300 },
+          { x: 1, y: 1, value: 320 },
+        ]}
+      />,
+    );
+    expect(screen.getByRole("img")).toHaveAccessibleName(
+      /samples from 300 to 320/,
+    );
+    expect(
+      screen.getByText(/without interpolated geometry/),
+    ).toBeInTheDocument();
+  });
+  it("parses quoted CSV fields and Windows line endings as actual table data", () => {
+    expect(
+      parseCsv('\ufeffPosition,Temperature\r\n"1,2","310"\r\n"3""4",320\r\n'),
+    ).toEqual({
+      columns: ["Position", "Temperature"],
+      rows: [
+        ["1,2", "310"],
+        ['3"4', "320"],
+      ],
+    });
+    expect(() => parseCsv("x,y\n1\n")).toThrow();
+    expect(() => parseCsv('x\n"unfinished')).toThrow();
+  });
+  it("paginates data instead of silently claiming that the first rows are the whole result", () => {
+    render(
+      <DataTable
+        columns={["Temperature · K"]}
+        rows={[[300], [310], [320]]}
+        pageSize={2}
+      />,
+    );
+    expect(screen.getByText("Page 1 of 2")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Next rows" }));
+    expect(screen.getByText("320")).toBeInTheDocument();
+    expect(screen.queryByText("300")).not.toBeInTheDocument();
+  });
+  it("plots finite supplied data and labels the range and units", () => {
+    const { rerender } = render(
+      <NumericPlot
+        title="Temperature profile"
+        xLabel="Position · mm"
+        yLabel="Temperature · K"
+        points={[
+          [0, 300],
+          [10, 320],
+        ]}
+      />,
+    );
+    expect(screen.getByRole("img")).toHaveAccessibleName(
+      /Position · mm from 0 to 10/,
+    );
+    rerender(
+      <NumericPlot
+        title="Bad plot"
+        xLabel="x"
+        yLabel="y"
+        points={[[NaN, 300]]}
+      />,
+    );
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+  it("does not render HTML or SVG representations as executable content", async () => {
+    const blob = new Blob(["<script>window.bad=true</script>"], {
+      type: "text/html",
+    });
+    render(<RepresentationViewer blob={blob} title="Unsupported document" />);
+    expect(await screen.findByText(/no supported preview/)).toBeInTheDocument();
+    expect(document.querySelector("script, iframe, object, embed")).toBeNull();
+  });
+  it("releases thumbnails and never reuses a bitmap for a different blob", () => {
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:old-image");
+    const revoke = vi
+      .spyOn(URL, "revokeObjectURL")
+      .mockImplementation(() => undefined);
+    const { rerender, unmount } = render(
+      <ImageThumbnail
+        blob={new Blob(["bitmap"], { type: "image/png" })}
+        title="First image"
+      />,
+    );
+    expect(screen.getByAltText("First image")).toBeInTheDocument();
+    rerender(
+      <ImageThumbnail
+        blob={new Blob(["data"], { type: "application/octet-stream" })}
+        title="Different file"
+      />,
+    );
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(revoke).toHaveBeenCalledWith("blob:old-image");
+    unmount();
+  });
+});

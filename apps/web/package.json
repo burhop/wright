@@ -18,6 +18,7 @@
     "@opentelemetry/sdk-trace-web": "^2.10.0",
     "@testing-library/user-event": "^14.6.1",
     "@wright/process-client": "file:../../packages/process_client",
+    "@wright/ui-kit": "file:../../packages/ui_kit",
     "@xyflow/react": "12.11.6",
     "dompurify": "3.4.14",
     "idb": "^8.0.3",
