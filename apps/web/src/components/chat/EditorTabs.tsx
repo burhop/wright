@@ -52,7 +52,11 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
             key={tab.path}
             onClick={() => onSelectTab(tab.path)}
             data-testid={`editor-tab-${tab.path}`}
-            title={tab.path}
+            title={
+              tab.processView
+                ? `${tab.processView.process.source_path}${tab.processView.run_id ? ` · run ${tab.processView.run_id}` : " · prepare inputs"}`
+                : tab.path
+            }
             role="tab"
             aria-label={tab.name.replace(/\.workflow\.wflow$/i, ".wflow")}
             aria-selected={isActive}

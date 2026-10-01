@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import type { ProcessRef } from "@wright/process-client";
 
 import WorkflowRecoveryConcept, {
   type WorkflowRunOptions,
@@ -29,6 +30,8 @@ export interface WorkflowRecoveryPageProps {
   reopenRequest?: number;
   onOpenWorkflow?: (path: string) => void;
   onOpenFile?: (path: string) => void;
+  onOpenProcess?: (process: ProcessRef) => void;
+  createIfMissing?: boolean;
 }
 
 export function WorkflowRecoveryPage({
@@ -39,6 +42,8 @@ export function WorkflowRecoveryPage({
   reopenRequest = 0,
   onOpenWorkflow,
   onOpenFile,
+  onOpenProcess,
+  createIfMissing = true,
 }: WorkflowRecoveryPageProps) {
   const visiblePath = workflowFilePath.replace(/^\/+/, "");
   const dialogId = useId();
@@ -112,6 +117,9 @@ export function WorkflowRecoveryPage({
       if (!(error instanceof WorkspaceWorkflowSourceNotFoundError)) {
         throw error;
       }
+      if (!createIfMissing) {
+        throw new Error("The saved workflow file is no longer available. Choose an existing workflow or create a new one explicitly.", { cause: error });
+      }
     }
 
     let created: WorkspaceWorkflowSourceDocument;
@@ -140,6 +148,7 @@ export function WorkflowRecoveryPage({
 
     return requireScopedDocument(created);
   }, [
+    createIfMissing,
     requireScopedDocument,
     sessionId,
     visiblePath,
@@ -147,7 +156,7 @@ export function WorkflowRecoveryPage({
     workspaceName,
   ]);
 
-  const workflowScope = `${workspaceId}\u0000${sessionId}\u0000${visiblePath}`;
+  const workflowScope = `${workspaceId}\u0000${sessionId}\u0000${visiblePath}\u0000${createIfMissing}`;
 
   const openWorkflow = useCallback(
     (retry = false) => {
@@ -517,7 +526,27 @@ export function WorkflowRecoveryPage({
         overflow: "hidden",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "flex-end", padding: "5px 12px", borderBottom: "1px solid var(--color-border)" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-end", padding: "5px 12px", borderBottom: "1px solid var(--color-border)" }}>
+        {onOpenProcess && (
+          <button
+            type="button"
+            className="recovery-button recovery-button--secondary"
+            data-testid="workflow-working-view-open"
+            disabled={state !== "ready" || !currentDocument}
+            onClick={() => {
+              if (!currentDocument) return;
+              onOpenProcess({
+                workspace_id: currentDocument.workspace_id,
+                source_path: currentDocument.path,
+                source_digest: currentDocument.storage_digest,
+              });
+            }}
+            style={{ padding: "5px 12px", marginRight: 8 }}
+            title="Prepare inputs and run the saved workflow in a working view"
+          >
+            Use saved process
+          </button>
+        )}
         <button
           type="button"
           className="recovery-button recovery-button--secondary"

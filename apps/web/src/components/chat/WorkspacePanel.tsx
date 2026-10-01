@@ -52,6 +52,15 @@ import {
 } from "../../services/surfaces/focus-manager";
 import { isBrepToolActivity } from "../../services/brep-panel-activity";
 import { workspaceRivetWorkflowSlug } from "../../services/rivet-editor";
+import type { ProcessRef } from "@wright/process-client";
+import {
+  checkedProcessWorkspaceTab,
+  createProcessWorkspaceTab,
+  isProcessWorkspaceTabPath,
+  processWorkspaceQuery,
+  processWorkspaceTabFromQuery,
+} from "../../services/process-workspace-tabs";
+import { ProcessWorkspaceTab } from "../process-interfaces/ProcessWorkspaceTab";
 
 const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
 const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
@@ -458,6 +467,7 @@ export function WorkspacePanel({
     activeTabPath,
     openTab,
     openTransientTab,
+    attachProcessTabRun,
     closeTab,
     setActiveTabPath,
     getDocument,
@@ -466,6 +476,54 @@ export function WorkspacePanel({
     reloadDocument,
     resetViewer,
   } = useViewerPanel();
+
+  const [processTabError, setProcessTabError] = useState<string | null>(null);
+  const processLink = useMemo(() => {
+    if (!_workspaceId) return { tab: null, error: null };
+    try {
+      return {
+        tab: processWorkspaceTabFromQuery(location.search, _workspaceId),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        tab: null,
+        error:
+          error instanceof Error
+            ? error.message
+            : "This working view could not be reopened.",
+      };
+    }
+  }, [_workspaceId, location.search]);
+  const hasProcessLink = Boolean(processLink.tab || processLink.error);
+  const openProcessView = useCallback(
+    (process: ProcessRef) => {
+      if (!workspaceFileSessionId || process.workspace_id !== _workspaceId)
+        return;
+      const tab = checkedProcessWorkspaceTab(
+        createProcessWorkspaceTab(process),
+        _workspaceId,
+      );
+      setProcessTabError(null);
+      setIsSidebarCollapsed(true);
+      openTransientTab(tab);
+      navigate(
+        {
+          pathname: location.pathname,
+          search: processWorkspaceQuery(location.search, tab),
+        },
+        { replace: true },
+      );
+    },
+    [
+      _workspaceId,
+      location.pathname,
+      location.search,
+      navigate,
+      openTransientTab,
+      workspaceFileSessionId,
+    ],
+  );
 
   // Resize and model states
   const [leftSidebarWidth, setLeftSidebarWidth] = useState<number>(
@@ -727,6 +785,7 @@ export function WorkspacePanel({
 
   useEffect(() => {
     resetViewer();
+    setProcessTabError(null);
     setWorkspaceRoot(null);
     workspaceRootRef.current = null;
     setActiveDiffFile(null);
@@ -739,6 +798,12 @@ export function WorkspacePanel({
 
   // Synchronise stored tabs from savedLayout on mount/initialisation
   const tabsInitialized = useRef(false);
+  const restoreScope = useRef("");
+  const restoreSearch = useRef(location.search);
+  useEffect(() => {
+    restoreScope.current = `${layoutKey}\u0000${workspaceFileSessionId}`;
+    restoreSearch.current = location.search;
+  }, [layoutKey, workspaceFileSessionId, location.search]);
   useEffect(() => {
     tabsInitialized.current = false;
   }, [layoutKey]);
@@ -746,13 +811,45 @@ export function WorkspacePanel({
   useEffect(() => {
     if (
       !tabsInitialized.current &&
-      savedLayout?.openTabs &&
+      Array.isArray(savedLayout?.openTabs) &&
+      _workspaceId &&
       workspaceFileSessionId
     ) {
       tabsInitialized.current = true;
+      const scope = restoreScope.current;
+      const search = restoreSearch.current;
       const syncTabs = async () => {
-        for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
+        const restorableTabs = savedLayout.openTabs.filter(
+          (candidate: unknown): candidate is EditorTab => {
+            if (!candidate || typeof candidate !== "object") return false;
+            const tab = candidate as Partial<EditorTab>;
+            const valid =
+              typeof tab.path === "string" &&
+              typeof tab.name === "string" &&
+              typeof tab.type === "string";
+            if (
+              !valid &&
+              (tab.type === "process" || tab.processView !== undefined)
+            )
+              setProcessTabError(
+                "A saved working view is incomplete. Open its saved process or recorded run again. No run was started.",
+              );
+            return valid;
+          },
+        );
+        for (const tab of dedupeEditorTabs(restorableTabs)) {
+          if (restoreScope.current !== scope) return;
           const tabPath = normalizeEditorTabPath(tab.path);
+          if (tab.type === "process" || isProcessWorkspaceTabPath(tabPath)) {
+            try {
+              openTransientTab(checkedProcessWorkspaceTab(tab, _workspaceId));
+            } catch {
+              setProcessTabError(
+                "A saved working view could not be restored. Open its saved process or recorded run again. No run was started.",
+              );
+            }
+            continue;
+          }
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(tabPath);
           if (isWorkspaceWorkflowTab(tabPath) || tab.type === "workflow") {
             if (
@@ -764,6 +861,7 @@ export function WorkspacePanel({
                 name: tabPath.split("/").at(-1)!,
                 path: tabPath,
                 type: "workflow",
+                createIfMissing: false,
               });
             }
             continue;
@@ -818,7 +916,12 @@ export function WorkspacePanel({
           };
           await openTab(file, "preview", workspaceFileSessionId || undefined);
         }
-        if (savedLayout.activeTabPath) {
+        if (restoreScope.current !== scope) return;
+        if (processLink.tab && restoreSearch.current === search) {
+          setActiveTabPath(processLink.tab.path);
+          return;
+        }
+        if (savedLayout.activeTabPath && !hasProcessLink) {
           const normalizedActiveTab = normalizeEditorTabPath(
             savedLayout.activeTabPath,
           );
@@ -831,6 +934,16 @@ export function WorkspacePanel({
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(
             savedLayout.activeTabPath,
           );
+          if (isProcessWorkspaceTabPath(normalizedActiveTab)) {
+            const savedTab = savedLayout.openTabs.find(
+              (tab: EditorTab) => tab.path === normalizedActiveTab,
+            );
+            try {
+              checkedProcessWorkspaceTab(savedTab, _workspaceId);
+            } catch {
+              return;
+            }
+          }
           setActiveTabPath(
             savedWorkflowSlug
               ? directRivetTabPath(savedWorkflowSlug)
@@ -842,6 +955,9 @@ export function WorkspacePanel({
     }
   }, [
     savedLayout,
+    _workspaceId,
+    hasProcessLink,
+    processLink,
     canonicalWorkflowAvailable,
     requestedWorkflowPath,
     workspaceFileSessionId,
@@ -850,11 +966,37 @@ export function WorkspacePanel({
     setActiveTabPath,
   ]);
 
+  useEffect(() => {
+    if (!processLink.tab || !workspaceFileSessionId) return;
+    const tab = processLink.tab;
+    const existing = openTabsRef.current.find((item) => item.path === tab.path);
+    if (existing) {
+      const view = existing.processView;
+      if (
+        !view ||
+        view.process.workspace_id !== tab.processView.process.workspace_id ||
+        view.process.source_path !== tab.processView.process.source_path ||
+        view.process.source_digest !== tab.processView.process.source_digest ||
+        (tab.processView.run_id !== undefined &&
+          view.run_id !== tab.processView.run_id)
+      ) {
+        setProcessTabError(
+          "This link identifies a different process or run from the open view. Close that view before opening this link.",
+        );
+        return;
+      }
+      setActiveTabPath(tab.path);
+    } else {
+      openTransientTab(tab);
+    }
+  }, [processLink, workspaceFileSessionId, openTransientTab, setActiveTabPath]);
+
   // Pluggable resolution of active tab viewer
   useEffect(() => {
     if (!activeTabPath || !viewerContainerRef.current) return;
     if (
       isWorkspaceWorkflowTab(activeTabPath) ||
+      isProcessWorkspaceTabPath(activeTabPath) ||
       isDirectRivetTab(activeTabPath) ||
       isDirectBrepTab(activeTabPath)
     ) {
@@ -1379,6 +1521,22 @@ export function WorkspacePanel({
     const normalizedPath = normalizeEditorTabPath(path);
     const remainingTabs = openTabs.filter((tab) => tab.path !== normalizedPath);
     closeTab(path);
+    if (processLink.tab?.path === normalizedPath) {
+      const next =
+        activeTabPath === normalizedPath ? remainingTabs.at(-1) : undefined;
+      navigate(
+        {
+          pathname: location.pathname,
+          search: processWorkspaceQuery(
+            location.search,
+            next?.type === "process"
+              ? checkedProcessWorkspaceTab(next, _workspaceId)
+              : undefined,
+          ),
+        },
+        { replace: true },
+      );
+    }
 
     if (remainingTabs.length === 0) {
       setIsInspectorOpen(false);
@@ -1392,13 +1550,24 @@ export function WorkspacePanel({
 
   const handleSelectTab = (path: string) => {
     setActiveTabPath(path);
+    const tab = openTabs.find(
+      (item) => item.path === normalizeEditorTabPath(path),
+    );
+    const search = processWorkspaceQuery(
+      location.search,
+      tab?.type === "process"
+        ? checkedProcessWorkspaceTab(tab, _workspaceId)
+        : undefined,
+    );
     if (canonicalWorkflowAvailable && isWorkspaceWorkflowTab(path)) {
-      const query = new URLSearchParams(location.search);
+      const query = new URLSearchParams(search);
       query.set("workflowPath", path.replace(/^\//, ""));
       navigate(
         { pathname: location.pathname, search: `?${query.toString()}` },
         { replace: true },
       );
+    } else if (search !== location.search) {
+      navigate({ pathname: location.pathname, search }, { replace: true });
     }
   };
 
@@ -1554,6 +1723,7 @@ export function WorkspacePanel({
       name: requestedWorkflowPath.split("/").at(-1)!,
       path: requestedWorkflowPath,
       type: "workflow",
+      createIfMissing: true,
     });
     if (surfaceLayout.mode === "narrow") {
       surfaceLayoutDispatch({
@@ -1575,7 +1745,7 @@ export function WorkspacePanel({
       if (!isWorkspaceWorkflowTab(path))
         throw new Error("Choose a valid workspace workflow file.");
       requestWorkflowReopen(path);
-      const query = new URLSearchParams(location.search);
+      const query = new URLSearchParams(processWorkspaceQuery(location.search));
       query.set("workflow", "canonical");
       query.set("workflowPath", path.replace(/^\//, ""));
       navigate(
@@ -1586,6 +1756,7 @@ export function WorkspacePanel({
         name: path.split("/").at(-1)!,
         path: normalizeEditorTabPath(path),
         type: "workflow",
+        createIfMissing: true,
       });
     },
     [
@@ -1597,11 +1768,73 @@ export function WorkspacePanel({
     ],
   );
 
+  const openProcessDefinition = useCallback(
+    (process: ProcessRef) => {
+      if (process.workspace_id !== _workspaceId || !workspaceFileSessionId)
+        return;
+      const path = normalizeEditorTabPath(process.source_path);
+      if (!isWorkspaceWorkflowTab(path)) return;
+      const query = new URLSearchParams(processWorkspaceQuery(location.search));
+      query.set("workflow", "canonical");
+      query.set("workflowPath", process.source_path);
+      navigate(
+        { pathname: location.pathname, search: `?${query.toString()}` },
+        { replace: true },
+      );
+      // Retain authoring drafts and undo/layout state. Returning from a working
+      // view is selection, not the file menu's explicit reload action.
+      if (
+        openTabsRef.current.some(
+          (tab) => tab.type === "workflow" && tab.path === path,
+        )
+      ) {
+        setActiveTabPath(path);
+      } else {
+        openTransientTab({
+          name: path.split("/").at(-1)!,
+          path,
+          type: "workflow",
+          createIfMissing: false,
+        });
+      }
+    },
+    [
+      _workspaceId,
+      workspaceFileSessionId,
+      location.search,
+      location.pathname,
+      navigate,
+      setActiveTabPath,
+      openTransientTab,
+    ],
+  );
+
+  const lastWorkflowAutoOpen = useRef<string | null>(null);
   useEffect(() => {
-    if (canonicalWorkflowAvailable) {
-      openWorkspaceWorkflowTab();
+    if (!canonicalWorkflowAvailable) {
+      lastWorkflowAutoOpen.current = null;
+      return;
     }
-  }, [canonicalWorkflowAvailable, openWorkspaceWorkflowTab]);
+    const key = `${_workspaceId}\u0000${workspaceFileSessionId}\u0000${requestedWorkflowPath}`;
+    if (lastWorkflowAutoOpen.current === key) return;
+    lastWorkflowAutoOpen.current = key;
+    // A passive working-view link only reads its saved process/run. Do not
+    // bootstrap a default workflow or steal focus from that view.
+    if (
+      !hasProcessLink &&
+      !openTabsRef.current.some(
+        (tab) => tab.type === "workflow" && tab.path === requestedWorkflowPath,
+      )
+    )
+      openWorkspaceWorkflowTab();
+  }, [
+    canonicalWorkflowAvailable,
+    openWorkspaceWorkflowTab,
+    _workspaceId,
+    workspaceFileSessionId,
+    requestedWorkflowPath,
+    hasProcessLink,
+  ]);
 
   const openRivetWorkflowTab = useCallback(
     (slug?: string) => {
@@ -1682,6 +1915,51 @@ export function WorkspacePanel({
       : [];
   const activeWorkspaceWorkflow =
     canonicalWorkflowAvailable && isWorkspaceWorkflowTab(activeTabPath);
+  const processTabs = openTabs.flatMap((tab) => {
+    if (tab.type !== "process" || !_workspaceId) return [];
+    try {
+      return [checkedProcessWorkspaceTab(tab, _workspaceId)];
+    } catch {
+      return [];
+    }
+  });
+  const activeProcessView = processTabs.some(
+    (tab) => tab.path === activeTabPath,
+  );
+  useEffect(() => {
+    const linked = processLink.tab;
+    if (!linked || linked.processView.run_id) return;
+    const tab = openTabs.find((item) => item.path === linked.path);
+    if (
+      !tab?.processView?.run_id ||
+      activeTabPath !== tab.path ||
+      tab.processView.process.workspace_id !==
+        linked.processView.process.workspace_id ||
+      tab.processView.process.source_path !==
+        linked.processView.process.source_path ||
+      tab.processView.process.source_digest !==
+        linked.processView.process.source_digest
+    )
+      return;
+    navigate(
+      {
+        pathname: location.pathname,
+        search: processWorkspaceQuery(
+          location.search,
+          checkedProcessWorkspaceTab(tab, _workspaceId),
+        ),
+      },
+      { replace: true },
+    );
+  }, [
+    activeTabPath,
+    openTabs,
+    processLink,
+    _workspaceId,
+    navigate,
+    location.pathname,
+    location.search,
+  ]);
 
   useEffect(() => {
     if (canonicalWorkflowAvailable) return;
@@ -3045,6 +3323,7 @@ export function WorkspacePanel({
               )}
             {activeTabPath &&
               !activeWorkspaceWorkflow &&
+              !activeProcessView &&
               !activeDirectRivet &&
               !activeDirectBrep && (
                 <button
@@ -3080,6 +3359,31 @@ export function WorkspacePanel({
             position: "relative",
           }}
         >
+          {(processLink.error || processTabError) && (
+            <section
+              role="alert"
+              data-testid="workspace-process-view-error"
+              style={{ padding: 16 }}
+            >
+              <p>{processLink.error || processTabError}</p>
+              <button
+                type="button"
+                className="recovery-button recovery-button--secondary"
+                onClick={() => {
+                  setProcessTabError(null);
+                  navigate(
+                    {
+                      pathname: location.pathname,
+                      search: processWorkspaceQuery(location.search),
+                    },
+                    { replace: true },
+                  );
+                }}
+              >
+                Dismiss
+              </button>
+            </section>
+          )}
           {canonicalWorkflowAvailable && !requestedWorkflowPath && (
             <section
               role="alert"
@@ -3127,6 +3431,42 @@ export function WorkspacePanel({
                     ] ?? 0
                   }
                   onOpenWorkflow={selectWorkspaceWorkflow}
+                  onOpenProcess={openProcessView}
+                  createIfMissing={tab.createIfMissing}
+                />
+              </div>
+            );
+          })}
+          {processTabs.map((tab) => {
+            if (!workspaceFileSessionId) return null;
+            const isActive = activeTabPath === tab.path;
+            return (
+              <div
+                key={tab.path}
+                data-testid="retained-workspace-process-panel"
+                aria-hidden={!isActive}
+                style={{
+                  position: isActive ? "relative" : "absolute",
+                  inset: isActive ? undefined : 0,
+                  zIndex: isActive ? 1 : 0,
+                  display: isActive ? "flex" : "none",
+                  width: "100%",
+                  height: "100%",
+                  minHeight: 0,
+                  minWidth: 0,
+                }}
+              >
+                <ProcessWorkspaceTab
+                  tab={tab}
+                  sessionId={workspaceFileSessionId}
+                  onRunAttached={attachProcessTabRun}
+                  onPrepareAnother={openProcessView}
+                  onOpenDefinition={
+                    recoveryWorkflowEnabled &&
+                    isWorkspaceWorkflowTab(tab.processView.process.source_path)
+                      ? openProcessDefinition
+                      : undefined
+                  }
                 />
               </div>
             );
@@ -3192,6 +3532,7 @@ export function WorkspacePanel({
             );
           })}
           {!activeWorkspaceWorkflow &&
+          !activeProcessView &&
           !activeDirectRivet &&
           !activeDirectBrep &&
           activeTabPath ? (
@@ -3344,6 +3685,7 @@ export function WorkspacePanel({
               )}
             </>
           ) : !activeWorkspaceWorkflow &&
+            !activeProcessView &&
             !activeDirectRivet &&
             !activeDirectBrep ? (
             /* Welcome / landing screen when no tabs are open */

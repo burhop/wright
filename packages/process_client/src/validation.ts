@@ -1,4 +1,8 @@
-import type { ContractName, ContractTypes } from "./contracts.generated";
+import type {
+  ContractName,
+  ContractTypes,
+  ProcessRef,
+} from "./contracts.generated";
 import { contractSchemas } from "./schemas.generated";
 import { clientError } from "./errors";
 
@@ -241,4 +245,12 @@ export function relativeLocator(value: string): string {
   )
     invalid("relative locator");
   return value;
+}
+
+/** Owning JSON schema plus locator rules that JSON Schema cannot express. */
+export function assertProcessReference(value: unknown): ProcessRef {
+  const process = assertContract("ProcessRef", value);
+  identifier(process.workspace_id, "workspace identity");
+  relativeLocator(process.source_path);
+  return process;
 }

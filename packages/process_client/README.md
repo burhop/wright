@@ -56,6 +56,10 @@ is no automatic mutation retry or new request-ID generation in the client.
 - Returned process/run/input identities are checked against the host scope.
   App requests cannot set a principal, workspace, destination or provider tool.
   Backend services independently enforce all scope, currentness and authority.
+- `assertProcessReference(value)` checks the owning reference shape and confined
+  relative-locator rules before a native host restores a tab or parses a link.
+  It validates a locator, not permission to read or run that process; the normal
+  scoped server operation must still authorize it.
 
 ## Public operation coverage at T017
 

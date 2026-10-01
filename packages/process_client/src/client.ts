@@ -18,6 +18,7 @@ import type {
 import { clientError, ProcessClientError, unknownOutcome } from "./errors";
 import {
   assertContract,
+  assertProcessReference,
   checkJson,
   identifier,
   relativeLocator,
@@ -300,10 +301,8 @@ export function createNativeProcessClient(
   options: NativeProcessClientOptions,
 ): ProcessClient {
   const process = Object.freeze({
-    ...assertContract("ProcessRef", options.process),
+    ...assertProcessReference(options.process),
   });
-  identifier(process.workspace_id, "workspace ID");
-  relativeLocator(process.source_path);
   const sessionId = identifier(options.sessionId, "session ID");
   const fetch = options.fetch;
   const base = options.baseUrl ?? "/api/workspace/process-interfaces";

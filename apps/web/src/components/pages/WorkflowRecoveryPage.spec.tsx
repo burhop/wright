@@ -163,7 +163,9 @@ const document: WorkspaceWorkflowSourceDocument = {
 function renderPage({
   strict = false,
   onOpenWorkflow,
-}: { strict?: boolean; onOpenWorkflow?: (path: string) => void } = {}) {
+  onOpenProcess,
+  createIfMissing,
+}: { strict?: boolean; onOpenWorkflow?: (path: string) => void; onOpenProcess?: (process: import("@wright/process-client").ProcessRef) => void; createIfMissing?: boolean } = {}) {
   const page = (
     <WorkflowRecoveryPage
       workspaceId="workspace-1"
@@ -171,6 +173,8 @@ function renderPage({
       workspaceName="Bracket Program"
       workflowFilePath="/workflows/mounting-bracket.workflow.wflow"
       onOpenWorkflow={onOpenWorkflow}
+      onOpenProcess={onOpenProcess}
+      createIfMissing={createIfMissing}
     />
   );
   return render(strict ? <StrictMode>{page}</StrictMode> : page);
@@ -184,6 +188,39 @@ describe("workspace workflow page", () => {
     mocks.create.mockReset();
     mocks.update.mockReset();
     mocks.files.mockReset();
+  });
+
+  it("opens the accepted saved process without saving, executing or opening another window", async () => {
+    mocks.get.mockResolvedValue(document);
+    const onOpenProcess = vi.fn();
+    renderPage({ onOpenProcess });
+    expect(screen.getByTestId("workflow-working-view-open")).toBeDisabled();
+    await waitFor(() => expect(screen.getByTestId("workflow-working-view-open")).toBeEnabled());
+    await userEvent.click(screen.getByTestId("workflow-working-view-open"));
+    expect(onOpenProcess).toHaveBeenCalledExactlyOnceWith({ workspace_id: document.workspace_id, source_path: document.path, source_digest: document.storage_digest });
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  it("does not offer a working view for a failed source read", async () => {
+    mocks.get.mockRejectedValue(new Error("read failed"));
+    const onOpenProcess = vi.fn();
+    renderPage({ onOpenProcess });
+    await screen.findByTestId("workflow-source-load-error");
+    expect(screen.getByTestId("workflow-working-view-open")).toBeDisabled();
+    expect(onOpenProcess).not.toHaveBeenCalled();
+  });
+
+  it("does not create a missing workflow on passive process navigation or restoration", async () => {
+    mocks.get.mockRejectedValue(new WorkspaceWorkflowSourceNotFoundError());
+    renderPage({ createIfMissing: false, onOpenProcess: vi.fn() });
+    const error = await screen.findByTestId("workflow-source-load-error");
+    expect(error).toHaveTextContent("saved workflow file is no longer available");
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.update).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByTestId("workflow-source-load-retry"));
+    await waitFor(() => expect(mocks.get).toHaveBeenCalledTimes(2));
+    expect(mocks.create).not.toHaveBeenCalled();
   });
 
   it("loads the exact workspace file and passes host metadata to the editor", async () => {

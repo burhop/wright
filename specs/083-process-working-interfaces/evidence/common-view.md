@@ -98,3 +98,62 @@ Wright, scoped hosting, actual digital engineering tools, migration and installe
 distribution proofs remain required. No service restart, live model/provider
 invocation, physical effect, campaign execution or remote publication occurred
 during T019.
+
+## 2026-10-01 — Workspace tab hosting (T020 partial)
+
+Branch: `codex/083-process-working-interfaces`. This extends the existing viewer
+store, workspace layout persistence and document strip. `Use saved process` opens
+the common working view from the accepted source document; it does not save a
+draft or start a run. The retained authoring panel remains mounted. Returning to
+an open workflow selects it without triggering a reload or replacing its drafts,
+layout or undo state. Passive definition navigation/restoration reads an existing
+source; a missing file produces a reason instead of creating a replacement.
+
+Versioned process-tab metadata contains only view/process/run locators. Host
+workspace scope is checked on restore, and ordinary providers do not resolve the
+reserved virtual paths. Links preserve other workspace/editor parameters while
+identifying the accepted source hash and recorded run. A late accepted receipt
+can update an existing view without changing focus, replacing its subject, or
+reopening a closed tab. URL observation does not act as a tab-lifecycle authority.
+
+The native host memoizes the scoped client across equivalent restored metadata
+and run attachment. Closing unmounts the existing common controller's observer;
+no implicit start, review or cancellation operation is introduced. The SDK exports
+the existing shape/relative-locator checks as `assertProcessReference` for native
+restoration. Normal backend authorization remains required.
+
+### Checks and limits
+
+From `apps/web`:
+
+```text
+node ../../node_modules/vitest/vitest.mjs run src/services/process-workspace-tabs.spec.ts src/store/viewer-process-tabs.spec.tsx src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx tests/WorkspacePanelSessions.spec.tsx tests/EditorTabs.spec.tsx src/components/pages/WorkflowRecoveryPage.spec.tsx src/services/process-client.spec.ts src/components/process-interfaces/CommonProcessView.spec.tsx --reporter=json --outputFile=D:/repos/wright/.local-run/process-interfaces-083/t020-workspace-tabs-vitest.json
+```
+
+**176 checks pass in eight files**: 32 locator, 11 store, six host, 34 mocked
+workspace, two document-strip, 16 source-page, 45 scoped-client and 30 common-view
+checks. These exercise component/client/store and mocked workspace boundaries;
+they do not prove an actual served-browser, live provider, GPU or engineering
+journey. An initial failing traversal case exposed a shape-only locator check;
+the native host now reuses the SDK's confined-reference check. Two failing
+navigation cases exposed the old-URL tab-reopening/focus race, corrected before
+the final passing run. Returning to an existing editor was also changed from
+explicit reload to selection so authoring state remains intact.
+
+Whole-app and public-client type checks, owning-schema freshness, and whitespace
+checks pass. Focused ESLint across the changed native components/tests has no
+errors; its one pre-existing stream-activity dependency warning uses an expression
+identical to HEAD. The final production build passes (926 modules, 1.90 seconds)
+at `.local-run/process-interfaces-083/t020-workspace-tabs-final`; its existing
+license artifact is 236,029 bytes. The existing large-chunk and external-output
+directory notices remain. No preview/API service was launched or browser served.
+
+Ten original prototype hashes, three protected campaign hashes, approved
+feature/agent context and the original startup/router deltas remain preserved.
+
+**T020 stays unchecked:** exact block/result/assessment/evidence navigation and
+authorized representation/input-upload host ports still require their owning
+service integration. This host currently reports those common-view capabilities
+as unavailable; it does not supply a broad generic file-read or vendor shortcut.
+T021 still requires actual served-workspace/editor/reconnect verification. The
+full remaining M0–M5 scope is unchanged.

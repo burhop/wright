@@ -11,6 +11,13 @@ import type {
   BackupHandle,
 } from "../services/viewer-panel";
 import { useChat } from "./sessions";
+import type { ProcessRef } from "@wright/process-client";
+import {
+  checkedProcessWorkspaceTab,
+  checkedProcessWorkspaceView,
+  isProcessWorkspaceTabPath,
+  type ProcessWorkspaceView,
+} from "../services/process-workspace-tabs";
 
 export interface EditorTab {
   name: string;
@@ -18,6 +25,9 @@ export interface EditorTab {
   type: string; // "code" | "stl" | "pdf" | etc.
   isDirty?: boolean;
   last_modified?: number;
+  processView?: ProcessWorkspaceView;
+  /** Explicit workflow creation intent; passive navigation/restoration sets false. */
+  createIfMissing?: boolean;
 }
 
 export const normalizeEditorTabPath = (path: string): string => {
@@ -58,6 +68,11 @@ interface ViewerPanelContextType {
     sessionId?: string,
   ) => Promise<void>;
   openTransientTab: (tab: EditorTab) => void;
+  attachProcessTabRun: (
+    path: string,
+    process: ProcessRef,
+    runId: string,
+  ) => void;
   closeTab: (path: string) => void;
   setActiveTabPath: (path: string | null) => void;
   setTabDirty: (path: string, isDirty: boolean) => void;
@@ -262,6 +277,8 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const openTransientTab = useCallback(
     (tab: EditorTab) => {
+      if (tab.type === "process" || isProcessWorkspaceTabPath(tab.path))
+        tab = checkedProcessWorkspaceTab(tab);
       const normalizedPath = normalizeEditorTabPath(tab.path);
       const normalizedTab: EditorTab = {
         ...tab,
@@ -269,10 +286,57 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
         name: tab.name || normalizedPath.split("/").pop() || normalizedPath,
         isDirty: Boolean(tab.isDirty),
       };
-      setOpenTabs((prev) => dedupeEditorTabs([...prev, normalizedTab]));
+      setOpenTabs((prev) => {
+        const existing = prev.find(
+          (item) => item.path === normalizedPath,
+        )?.processView;
+        const incoming = normalizedTab.processView;
+        if (
+          existing &&
+          incoming &&
+          (existing.process.workspace_id !== incoming.process.workspace_id ||
+            existing.process.source_path !== incoming.process.source_path ||
+            existing.process.source_digest !== incoming.process.source_digest ||
+            (existing.run_id !== undefined &&
+              existing.run_id !== incoming.run_id))
+        )
+          return prev;
+        return dedupeEditorTabs([...prev, normalizedTab]);
+      });
       activateTabPath(normalizedPath);
     },
     [activateTabPath],
+  );
+
+  // A late accepted receipt may update an open view. It cannot reopen a closed
+  // view, change its process/run subject, or steal focus from another document.
+  const attachProcessTabRun = useCallback(
+    (path: string, process: ProcessRef, runId: string) => {
+      const normalizedPath = normalizeEditorTabPath(path);
+      checkedProcessWorkspaceView({
+        version: "1",
+        view_id: "receipt-validation",
+        process,
+        run_id: runId,
+      });
+      setOpenTabs((previous) =>
+        previous.map((tab) => {
+          const view = tab.processView;
+          if (
+            tab.path !== normalizedPath ||
+            tab.type !== "process" ||
+            !view ||
+            view.process.workspace_id !== process.workspace_id ||
+            view.process.source_path !== process.source_path ||
+            view.process.source_digest !== process.source_digest ||
+            (view.run_id !== undefined && view.run_id !== runId)
+          )
+            return tab;
+          return { ...tab, processView: { ...view, run_id: runId } };
+        }),
+      );
+    },
+    [],
   );
 
   const closeTab = useCallback(
@@ -599,6 +663,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
         activeTabPath,
         openTab,
         openTransientTab,
+        attachProcessTabRun,
         closeTab,
         setActiveTabPath: activateTabPath,
         setTabDirty,

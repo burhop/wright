@@ -396,6 +396,40 @@ authoring, both digital engineering chains, migration and installed distribution
 proof remain required. The full M0–M5 goal is active; no provider/model/physical
 effect, campaign run or remote publication occurred.
 
+Focused local T019 milestone commit: `942af505` (eight owned files). Original
+prototype/startup/router changes remain unstaged and unchanged. No live tool or
+service handle remains from this milestone. Continue with T020 workspace tab
+hosting/restore/native ports and T021 actual served verification.
+
+### 2026-10-01 — Working views in the workspace document strip
+
+The previous goal turn was a connection/status check with no durable implementation
+change. Revalidated the active full goal, branch, saved milestone and dirty
+preservation baseline, then implemented the tab-hosting portion of T020.
+
+The existing viewer/layout mechanism now hosts typed process tabs alongside
+retained workflow/file documents. The saved-process entry opens the public common
+view on its accepted source. Versioned compact locators restore the exact
+process/run within host workspace scope; links preserve workspace/editor context.
+Accepted receipts update an existing tab without stealing focus or reopening a
+closed view. Returning to an existing workflow preserves authoring drafts; passive
+navigation/restoration cannot create a missing source file. SDK/native reference
+guards share the existing confined-locator checks.
+
+176 component/client/store/mocked-workspace checks pass. Whole-app/public-client
+types, owning-schema freshness, whitespace and the final production build pass.
+Focused lint has no errors and one verified pre-existing dependency warning.
+See [common view evidence](evidence/common-view.md) for exact commands, limitations
+and corrections. Ten prototype hashes, three campaign hashes, approved context
+and original startup/router deltas remain preserved. No service/model/provider,
+physical operation, campaign execution or remote publication occurred.
+
+T001–T019 remain checked. T020 is partial: next wire exact navigation and
+authorized representation/upload ports over existing owners, then perform T021
+served workspace/editor proof. Declared interactions, Wright default-model UI
+authoring/hosting, both digital engineering chains, migration and installed
+distribution proofs remain required. The complete goal remains active.
+
 ## Implementation progress format
 
 
