@@ -114,8 +114,9 @@ interfaces use the same foundation, with honest engineering checks and limits.
   common/tailored engineering presentation are still pending.
   Later live evidence verifies accepted source, basis wait/continuation, actual
   CAD/solver outputs, full assessment and common results. An initial actual-model
-  tailored comparison is previewed/saved/opened; focused correction, complete
-  preparation/review controls and second-run reuse remain pending.
+  tailored comparison is previewed/saved/opened. Focused correction, actual
+  evidence navigation and unchanged saved-bundle reuse on a second waiting run
+  are checked. Complete preparation/review controls remain pending.
 - [ ] T047 [US4] Execute both fresh isolated digital tool chains; generate/save/update/reuse each UI through Wright and inspect actual handoffs/common-tailored parity; retain evidence in `specs/083-process-working-interfaces/evidence/printed-proof.md` and `heat-proof.md` without touching campaign checkpoints.
 - [ ] T048 [US4] Migrate all active demo callers/startup/API/UI operations, remove embedded vendor protocols/Studio automation after migration, and preserve old URLs through a read-only historical adapter in `packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py`; update the inventory in `docs/architecture/workflow-platform-refactoring-plan.md` with each disposition.
 - [ ] T049 [US4] Audit shared packages for provider/process coupling and stale/missing/effect errors; record two-process comparison and active-code retirement evidence in `specs/083-process-working-interfaces/evidence/generality-and-migration.md`, preserving immutable historical catalog/campaign data.

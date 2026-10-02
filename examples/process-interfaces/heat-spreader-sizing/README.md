@@ -2,8 +2,9 @@
 
 **Current status:** declarative preparation and the original live digital
 CAD/solver chain are checked. The common results view and an initial actual-model
-comparison are browser-verified; focused correction and second-run reuse remain
-pending. See the [recorded proof](../../../specs/083-process-working-interfaces/evidence/heat-proof.md).
+comparison are browser-verified. A focused correction, actual evidence navigation
+and reuse on a second waiting run are checked; complete preparation/review controls
+remain pending. See the [recorded proof](../../../specs/083-process-working-interfaces/evidence/heat-proof.md).
 This example does not grant
 reviews, execute a process, install a provider, or claim engineering acceptance.
 
@@ -83,5 +84,7 @@ creation to obtain measurements. OASiS retains `critic_approved=false`.
 
 Saving/reopening a built UI and reusing it on another run requires no new UI model
 call or build. CAD source reuse is explicitly checked against the connected basis;
-changed engineering inputs require a revised source. Complete live reuse evidence
-has not yet been recorded for this example.
+changed engineering inputs require a revised source. The same compiled comparison
+has been reopened and reloaded on a second real run at its declared basis review,
+with unchanged UI authoring records and bundle bytes. That review remains waiting;
+this does not establish a second complete CAD/solver execution or acceptance.

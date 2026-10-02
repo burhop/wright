@@ -110,6 +110,12 @@ from the presentation. Parent bearer tokens and printer credentials never appear
 in app JavaScript. SSE reconnect uses cursor replay; a lost/expired cursor obtains
 a full snapshot. Backend events are retained authority, browser state is cache.
 
+For managed navigation only, the bridge supplies its authorized presentation run
+when the target omits `run_id`. Explicit run selectors must match that binding;
+they are never replaced. A preparation presentation supplies no run. The native
+navigation owner still requires an explicit run for recorded output evidence and
+verifies exact source/result/assessment membership before resolving it.
+
 Representation reads accept optional `preview: "toolpaths"` and a confined
 `archive_entry` only in that mode. They retain the same process/results grant,
 exact run or preparation membership and original artifact SHA-256. The passive

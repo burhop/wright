@@ -43,6 +43,16 @@ ProgressPanel displays actual state/observations and reported freshness. Closing
 the app disposes observers, not the run. Abort pending reads when context changes
 so a stale reply cannot enter a different process/run.
 
+Wire result controls explicitly: `ResultCard` needs `onNavigate` and `onOpen`
+callbacks. Use `client.navigate(target)` for its block/assessment targets and
+`client.navigate({kind: "evidence", artifact_ref: reference.artifact_ref,
+result_id: reference.result_id})` for exact evidence. In a managed presentation,
+the backend supplies its already-authorized run when a navigation target omits
+`run_id`. An explicit different run is rejected; a preparation presentation has
+no run to supply. Native clients outside a managed presentation must specify the
+recorded run for output navigation. Handle rejected navigation visibly rather
+than interpreting a rendered or clickable card as verified evidence.
+
 For a recorded 3MF or G-code artifact, `getRepresentation(reference, context)`
 returns the unchanged bytes. An additive `preview: "toolpaths"` option requests
 a bounded passive view through the same result/preparation scope; optional

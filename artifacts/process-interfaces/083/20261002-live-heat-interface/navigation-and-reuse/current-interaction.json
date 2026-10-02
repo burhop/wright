@@ -1,0 +1,174 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+      "source_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "9cfe133164bd4e70b97be9a058d0feb8",
+    "input_snapshot_id": "inputs-d89fdf8d7e6149688687d140880fc692",
+    "input_digest": "2cd270947705c170aa5d16ffc14d91ff475c2b7d186ad3a7bdd481ded8c781f8",
+    "cursor": 7,
+    "generated_at": "2026-10-02T05:10:51.863924+00:00"
+  },
+  "state": "waiting_human",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "9cfe133164bd4e70b97be9a058d0feb8:define_thermal_case_live_default_model_002:define_thermal_case_live_default_model_002_result",
+      "step_id": "define_thermal_case_live_default_model_002",
+      "port_id": "define_thermal_case_live_default_model_002_result",
+      "role": "deliverable",
+      "title": "Define geometry, material, load, and boundaries",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/live-default-model-002/outputs/thermal-basis.md",
+          "sha256": "f22ff4dfb4cc02c6baa3ebe5bafa45e5b940f8c85b6604c72363e9c06e74f580",
+          "media_type": null,
+          "result_id": "9cfe133164bd4e70b97be9a058d0feb8:define_thermal_case_live_default_model_002:define_thermal_case_live_default_model_002_result",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [
+    {
+      "checkpoint_id": "checkpoint-2fca72e2bb201d603778b1cd",
+      "step_id": "review_basis_live_default_model_002",
+      "kind": "action",
+      "subject_digest": "10fdfb009f32542ecd5e4c355ffd0c179a1322d7d219b9e0ae455c8b5ed4a31a",
+      "instructions": "Review the exact process action and its evidence before continuing.",
+      "response_schema": null,
+      "decisions": [
+        "approved",
+        "changes_requested"
+      ],
+      "evidence": [],
+      "state": "waiting",
+      "decision": null,
+      "action_receipt": null
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "review-checkpoint-2fca72e2bb201d603778b1cd",
+      "operation": "review",
+      "title": "Review action",
+      "enabled": true,
+      "subject_digest": "10fdfb009f32542ecd5e4c355ffd0c179a1322d7d219b9e0ae455c8b5ed4a31a",
+      "reasons": [],
+      "checkpoint_id": "checkpoint-2fca72e2bb201d603778b1cd",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "continue-checkpoint-2fca72e2bb201d603778b1cd",
+      "operation": "action",
+      "title": "Continue process",
+      "enabled": false,
+      "subject_digest": "10fdfb009f32542ecd5e4c355ffd0c179a1322d7d219b9e0ae455c8b5ed4a31a",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This checkpoint is not ready to continue.",
+          "correction": "Complete its required review; an already consumed action cannot be submitted again.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": "checkpoint-2fca72e2bb201d603778b1cd",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "164a301ccce5fd077ea15b9a1a45fdf7f1624c9c0246f7429f901f54463c271a",
+      "reasons": [
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+          "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "waiting_human",
+      "observed_at": "2026-10-02T05:10:51.863924+00:00",
+      "stale_after": null,
+      "operation_id": "9cfe133164bd4e70b97be9a058d0feb8",
+      "activity": "Review these exact basis bytes and original engineering assumptions. No physical acceptance follows.",
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 7,
+        "completed_steps": 1
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "9cfe133164bd4e70b97be9a058d0feb8",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "9cfe133164bd4e70b97be9a058d0feb8",
+      "result_id": "9cfe133164bd4e70b97be9a058d0feb8:define_thermal_case_live_default_model_002:define_thermal_case_live_default_model_002_result",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "9cfe133164bd4e70b97be9a058d0feb8",
+      "result_id": "9cfe133164bd4e70b97be9a058d0feb8:define_thermal_case_live_default_model_002:define_thermal_case_live_default_model_002_result",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/live-default-model-002/outputs/thermal-basis.md"
+    },
+    {
+      "kind": "block",
+      "block_id": "review_basis_live_default_model_002",
+      "run_id": "9cfe133164bd4e70b97be9a058d0feb8",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    }
+  ],
+  "next_page": null
+}

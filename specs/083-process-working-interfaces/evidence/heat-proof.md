@@ -253,3 +253,48 @@ and the corrected manual checklist are in
 [the focused-update record](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/focused-update/checked-scope.json).
 Actual navigation activation, second-run reuse and complete preparation/review
 controls retain separate proof obligations. T047 remains unchecked.
+
+### Saved navigation and second-run reuse
+
+The saved comparison's first actual evidence click exposed a missing run selector.
+The exact-output owner rejected it with `SCOPE_DENIED`. The shared managed bridge
+now supplies the presentation's already-authorized run when the target omits it;
+explicit foreign runs still fail, and native navigation retains its explicit-run
+requirement. Saved source/bundle bytes were not changed. Ten presentation-binding
+cases and the existing authority/navigation group pass: **46 tests**, two existing
+deprecation warnings. The first test attempt included an invalid run-only target;
+its validation failure is retained and that unsupported fixture was removed.
+
+After the owned API's graceful restart, the navigation rerun reached the actual
+table but stopped on a test-only guessed table label. A fresh corrected journey
+passed **12 browser checks**: the saved interface opens the exact fine CSV, all
+**765** supplied numerical samples, the full held assessment with exact result
+focus, and the accepted producing editor. Browser error lists are empty.
+
+Fresh private run `9cfe133164bd4e70b97be9a058d0feb8` uses the same accepted source
+and frozen inputs. Its actual configured process model generated one thermal-basis
+output; the run stopped at declared checkpoint
+`checkpoint-2fca72e2bb201d603778b1cd`. No decision or continuation was submitted.
+The first two preflight scripts made no execution request (rejected extra fields,
+then an incorrect readiness assertion key). The corrected request submitted one
+start identity and received a separate durable run receipt.
+
+The same saved revision opened against this second run and survived reload in a
+**10-check** normal-workspace walkthrough. It displays only that run's one result
+and its waiting review. All saved vault-file hashes, UI authoring job records and
+UI revision records are byte-identical before/after reuse: no new UI generation,
+build or dependency download was needed. This is not a second complete CAD/solver
+execution or human acceptance. The original measured gate remains held.
+
+The [navigation and reuse evidence](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/navigation-and-reuse/checked-scope.json)
+includes unchanged-bundle checks, actual readiness/start/interaction receipts and
+both browser reports. Their structure validators pass; authenticated traces stay
+private. The compact comparison still lacks preparation/mutation controls;
+common-view controls remain available. Those enhancements, the printed workflow,
+vendor-code migration and full installed workspace acceptance remain pending.
+
+The broader authority/native API/navigation/presenter regression group subsequently
+passed **63 tests** in 40.38 seconds, with the same two existing deprecation
+warnings. Ruff, exact evidence bytes, report structure and protected-baseline
+checks pass. An earlier invocation named a nonexistent test module and collected
+no tests; the corrected command uses the existing presenter module.

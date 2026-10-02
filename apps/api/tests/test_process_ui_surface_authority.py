@@ -566,3 +566,87 @@ def test_corrupted_built_asset_never_receives_bridge_authority(case):
     response = case.client.get(PREFIX + "/context")
     assert response.status_code == 409
     assert response.json()["detail"]["code"] == "UI_INCOMPATIBLE"
+
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        {"kind": "process"},
+        {"kind": "block", "block_id": "make-output", "result_id": "result-one"},
+        {"kind": "result", "result_id": "result-one"},
+        {
+            "kind": "assessment",
+            "assessment_id": "assessment-one",
+            "result_id": "result-one",
+        },
+        {
+            "kind": "evidence",
+            "artifact_ref": "results/fine.csv",
+            "result_id": "result-one",
+        },
+    ],
+)
+@pytest.mark.parametrize("bound_run", [None, "run-one"])
+def test_presentation_navigation_supplies_only_its_authorized_run(
+    case, monkeypatch, target, bound_run
+):
+    from api.routers import process_interfaces as native
+    from api.routers.process_surface import _dispatch
+    from starlette.requests import Request
+    from starlette.responses import Response
+
+    calls = []
+
+    async def resolve(**kwargs):
+        calls.append(kwargs["body"].target.model_dump(exclude_none=True))
+        return calls[-1]
+
+    monkeypatch.setattr(native, "resolve_process_navigation", resolve)
+    context = SimpleNamespace(
+        binding=case.binding.model_copy(update={"run_id": bound_run}),
+        scope=ProcessScope(
+            "user",
+            "workspace",
+            frozenset({"process.navigate"}),
+            run_bound=True,
+            run_id=bound_run,
+        ),
+        session_id="owned-session",
+    )
+
+    def dispatch(requested):
+        raw = json.dumps(case.query | {"target": requested}).encode()
+
+        async def receive():
+            return {"type": "http.request", "body": raw, "more_body": False}
+
+        request = Request(
+            {
+                "type": "http",
+                "method": "POST",
+                "path": PREFIX + "/navigation",
+                "query_string": b"",
+                "headers": [(b"content-type", b"application/json")],
+            },
+            receive,
+        )
+        return asyncio.run(
+            _dispatch(
+                "navigation",
+                request,
+                Response(),
+                case.owner.workspace,
+                case.route,
+                context,
+            )
+        )
+
+    expected = target | ({"run_id": bound_run} if bound_run else {})
+    assert dispatch(target) == expected
+    assert calls == [expected]
+    assert target.get("run_id") is None  # Caller data was not mutated.
+    if bound_run:
+        assert dispatch(target | {"run_id": bound_run}) == expected
+    with pytest.raises(ProcessInterfaceError, match="different run"):
+        dispatch(target | {"run_id": "other-run"})
+    assert all(call.get("run_id") == bound_run for call in calls)

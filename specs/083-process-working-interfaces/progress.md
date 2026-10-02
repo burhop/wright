@@ -1064,3 +1064,19 @@ immutable revision. Its thirteen-check actual browser journey passes, correcting
 the invented fields and enabling scoped evidence/navigation callbacks. Actual
 link activation and reuse on a second run are next; full preparation/review
 controls, printed proof, migration and installed workspace remain pending.
+
+### 2026-10-02 — Saved heat navigation and a second durable run
+
+Actual clicks uncovered an omitted run identity in generated evidence navigation.
+The shared managed bridge now pins omitted runs to its existing authorized
+presentation; foreign selectors remain denied. Forty-six authority/navigation
+checks pass. The unchanged saved bundle then passed twelve browser checks opening
+its exact numerical evidence, all 765 samples, held assessment and producing step.
+
+A fresh private run produced its thermal basis and remains at its declared review,
+without a response or CAD/solver continuation. The same saved revision passed ten
+browser checks on that run, including reload. Vault bytes and authoring/revision
+records are unchanged: reuse did not regenerate/build the UI. Earlier failed
+browser and preflight attempts remain retained. See [heat-proof.md](evidence/heat-proof.md).
+T046/T047 still require preparation/review controls and the printed proof; no
+engineering gate, physical operation or user acceptance was claimed.

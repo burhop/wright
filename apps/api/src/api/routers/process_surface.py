@@ -270,8 +270,15 @@ async def _dispatch(path, request, response, service, route, context):
     if path == "representations/read":
         context.scope.require_run(body.run_id)
         return await definition[1](body=body, request=request, service=service)
-    if path == "navigation" and body.target.run_id is not None:
-        context.scope.require_run(body.target.run_id)
+    if path == "navigation":
+        # A saved app need not repeat the run already fixed by this presentation.
+        # Native navigation still requires an explicit run; only this authorized
+        # bridge may supply it. An explicit foreign run never gets replaced.
+        target = body.target
+        if target.run_id is None and binding.run_id is not None:
+            target = target.model_copy(update={"run_id": binding.run_id})
+            body = body.model_copy(update={"target": target})
+        context.scope.require_run(target.run_id)
     return await definition[1](
         body=body, request=request, response=response, service=service, **extra
     )

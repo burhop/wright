@@ -1,0 +1,9 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+  "expected_storage_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+  "input_snapshot_id": "inputs-d89fdf8d7e6149688687d140880fc692",
+  "expected_input_digest": "2cd270947705c170aa5d16ffc14d91ff475c2b7d186ad3a7bdd481ded8c781f8",
+  "integration_policy_digest": "d8cd6c89fb42fee2beac3ab71bfad31e76bf27cb4e8cfca101ed669c795aa553",
+  "request_id": "heat-saved-interface-reuse-001"
+}
