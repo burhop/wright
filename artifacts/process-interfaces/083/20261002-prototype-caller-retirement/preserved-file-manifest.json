@@ -1,0 +1,80 @@
+{
+  "scope": "Exact private byte-preservation before authorized prototype retirement; not executable integration or a new vendor project",
+  "files": [
+    {
+      "path": "apps/api/src/api/main.py",
+      "sha256": "18402f424200130ebd5e05fc3aa3921569863dc61bb641b6a11ba5860e6b63df",
+      "bytes": 36306
+    },
+    {
+      "path": "apps/api/src/api/routers/workspace.py",
+      "sha256": "2171910e3611bbef53854e2db268fb2133cab3664e0a34817570b2ea6a6bf70c",
+      "bytes": 177806
+    },
+    {
+      "path": "apps/api/src/api/schemas/workspace.py",
+      "sha256": "98294bc1f0a781c5ca2f2609dd2fd1e72c7b2361da32ff2ec67084713b25a832",
+      "bytes": 36276
+    },
+    {
+      "path": "apps/web/src/components/pages/PrintPartDemoPage.tsx",
+      "sha256": "59e293c931181501b8a0a38d7427c50c7355e5d72f5f4211a56849122bd2a061",
+      "bytes": 49053
+    },
+    {
+      "path": "apps/web/src/components/pages/PrintPartDemoPage.css",
+      "sha256": "93afde09d0c2841afd8367c32733f5d34e2cf6c5fc251efef435e543a6f5f4a5",
+      "bytes": 8308
+    },
+    {
+      "path": "apps/web/src/services/workspace-service.ts",
+      "sha256": "f7680b5673df7e78903caa4ecd3f7de44c8312e70ecdcebb508399a5d84632ea",
+      "bytes": 113929
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/print_part_demo.py",
+      "sha256": "45084e4a719a30747ea904fd26af6381633e2d8684b49deb521390ebc250f80c",
+      "bytes": 15310
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/print_part_demo_printer.py",
+      "sha256": "e785e87b67677fbed4554d866cfbff0ca21e4d4c02ff56a1a5ba1848d7fd5518",
+      "bytes": 29520
+    },
+    {
+      "path": "scripts/configure_print_demo_offline.py",
+      "sha256": "211998c08fea7ee48ffbd4cc77701cb60caa563178595c379cfcc466098ab8ec",
+      "bytes": 5656
+    },
+    {
+      "path": "scripts/print_demo_p1s_mcp.py",
+      "sha256": "a431668558168257e249f4477190ac3c0b646d4f2351956db79c1c4a271ffcb8",
+      "bytes": 7839
+    },
+    {
+      "path": "docs/demos/prompt-to-printed-part-studio-automation.md",
+      "sha256": "1bd2662dd169484fdf3cf84f12b6c46fd4fdef6c9e72b45fd55a314930b7cfc9",
+      "bytes": 11055
+    },
+    {
+      "path": "scripts/configure_print_demo_studio.py",
+      "sha256": "3c4cc0ed5f6f13df193618288b43913f9ecf6e0f921d7322c25509a7f7b3e2e3",
+      "bytes": 2563
+    },
+    {
+      "path": "scripts/print_demo_studio.py",
+      "sha256": "d76d53ac4f854a32e032f079e16798395253cf27776fed1b9978c1933fc159ac",
+      "bytes": 17376
+    },
+    {
+      "path": "scripts/windows/inspect-bambu-studio.ps1",
+      "sha256": "aa41f7a58eccaf2a5a55a7d7746ff12330889ca27f1541dcb08c1e7a7579e000",
+      "bytes": 4861
+    },
+    {
+      "path": "scripts/windows/studio-desktop.ps1",
+      "sha256": "23250d4cdc76967aacdb8f885bc2062cc25b8daae67a1cf41b902f5af0bc6bda",
+      "bytes": 9169
+    }
+  ]
+}

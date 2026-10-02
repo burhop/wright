@@ -65,6 +65,13 @@ automation remain retirement debt.
 
 ## Remaining migration work
 
+The [operational caller retirement checkpoint](prototype-caller-retirement.md)
+supersedes the API/startup/client/page rows of the pre-migration inventory.
+Those callers are retired in source; old operational URLs return an inert 410.
+Exact original prototype bytes are preserved privately. Remaining service/script/
+transitive provider dispositions and installed history verification retain
+T048/T049 as incomplete.
+
 T048/T049 remain incomplete. Prove the replacement engineering/UI journey,
 inspect saved prototype sources/run formats and all transitive references,
 implement bounded read-only history restoration, migrate callers, retire the

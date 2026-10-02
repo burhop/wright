@@ -1585,3 +1585,17 @@ authoring/revision/continuation hashes match the copied original baseline. T051
 is now checked. Earlier 011–013 failures and diagnostic audit remain intact.
 Owned native host 008 remains on 8032 and corrected Docker host 014 on 8033.
 All reviews remain unanswered; full Feature 083 completion remains unproven.
+
+Prototype caller retirement continuation: preserved exact original bytes of 15
+mixed/untracked files and their original patch before changes. Removed the
+uncommitted Studio startup restoration hook, eight operational API handlers,
+three request schemas, client operational methods/status types and unused vendor
+page/style. Retained canonical image upload under uploadWorkflowImage and a hidden
+inert HTTP 410 compatibility reply; saved-result history remains read-only.
+Fourteen API/history checks pass in 2.02 seconds, fourteen affected component
+tests pass, TypeScript passes and preservation/Ruff checks pass. The initial
+fixture prefix failure is retained separately. T048/T049 remain open for service/
+script/transitive provider retirement and fresh installed history verification.
+See evidence/prototype-caller-retirement.md. Use t048-check-preservation-001.py
+for this deliberate active-location migration; the prior checker expects removed
+locations. Neither second-run review was answered and no provider action occurred.

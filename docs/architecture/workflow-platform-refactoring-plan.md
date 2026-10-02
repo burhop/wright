@@ -327,3 +327,21 @@ startup restoration, client methods and repo-local automation remain retirement
 debt; they are not removed or made independent by this checkpoint. T048/T049
 remain incomplete until those active paths are retired and installed historical
 navigation is verified.
+
+### Operational caller retirement checkpoint, 2 October 2026
+
+The source web client no longer exposes prototype preparation/status/dispatch/
+retry/cancel methods or vendor status types. Its canonical image upload remains
+as `uploadWorkflowImage`. The unused vendor page/style and three obsolete API
+request models are removed. The Studio startup restoration hook is removed.
+Eight operational API handlers are replaced by a hidden, inert HTTP 410
+compatibility response directing users to the saved workflow/common working view.
+The history adapter remains read-only and exact-source/run bound.
+
+Original mixed/untracked prototype bytes are preserved in a private ignored
+archive, with protected campaign/context checks retained. Fourteen API/history
+checks and fourteen affected component tests pass; web TypeScript passes.
+See [caller retirement evidence](../../specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
+Service modules, vendor scripts, transitive slicing bindings and fresh installed
+history verification remain open T048/T049 work. Source retirement alone does
+not establish their removal or the full migration.

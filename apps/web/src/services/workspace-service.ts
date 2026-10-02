@@ -5,30 +5,6 @@ import type { RecoveryLayout } from "../prototypes/workflow-recovery/model";
 
 const workspaceLogger = logger.child("WorkspaceService");
 
-export interface PrintDemoPrinterStatus {
-  status: string;
-  connected: boolean;
-  ready: boolean;
-  readiness_reason: string;
-  job_name: string | null;
-  gcode_file: string | null;
-  progress: number | null;
-  time_remaining_minutes: number | null;
-  current_layer: number | null;
-  total_layers: number | null;
-  telemetry_at?: string | null;
-  telemetry_age_seconds?: number | null;
-  telemetry_stale?: boolean;
-  print_error?: number | null;
-  hms?: Array<{ attr?: number; code?: number }>;
-  stage?: number | null;
-  nozzle_c?: number | null;
-  nozzle_target_c?: number | null;
-  bed_c?: number | null;
-  bed_target_c?: number | null;
-  trays: Array<{ slot: number; label: string; type: string | null; color: string | null; empty: boolean; supported: boolean }>;
-}
-
 export interface WorkspaceNode {
   name: string;
   path: string;
@@ -1314,7 +1290,7 @@ export class WorkspaceService {
     return response.json();
   }
 
-  async uploadPrintDemoImage(sessionId: string, file: File): Promise<string> {
+  async uploadWorkflowImage(sessionId: string, file: File): Promise<string> {
     const form = new FormData();
     form.append("file", file);
     const response = await hostAdapter.fetch(
@@ -1328,90 +1304,6 @@ export class WorkspaceService {
     const payload = await response.json();
     if (typeof payload.path !== "string") throw new Error("Image upload returned no path.");
     return payload.path;
-  }
-
-  async preparePrintPartDemo(
-    sessionId: string,
-    prompt: string,
-    imagePath: string | null,
-    targetMm: number,
-    filamentType = "PETG",
-  ): Promise<{ workspace_id: string; workflow_path: string; storage_digest: string; artifact_root: string }> {
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/prepare`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId, prompt, image_path: imagePath, target_mm: targetMm, filament_type: filamentType }),
-    });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(typeof payload.detail === "string" ? payload.detail : "The print workflow could not be prepared.");
-    }
-    return response.json();
-  }
-
-  async getPrintDemoPrinterStatus(sessionId: string, fresh = false): Promise<PrintDemoPrinterStatus> {
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/print-demo/printer-status?${new URLSearchParams({ session_id: sessionId, fresh: String(fresh) })}`,
-      { cache: "no-store" },
-    );
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(typeof payload.message === "string" ? payload.message : typeof payload.detail === "string" ? payload.detail : "P1S status is unavailable. Check the printer MCP connection.");
-    }
-    return response.json();
-  }
-
-  async getPrintDemoCapabilities(): Promise<{ printer_enabled: boolean; monitor_enabled: boolean }> {
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/capabilities`, { cache: "no-store" });
-    if (!response.ok) return { printer_enabled: false, monitor_enabled: false };
-    return response.json();
-  }
-
-  async printDemoPackage(
-    sessionId: string, workflowPath: string, runId: string, packageSha256: string, amsSlot: number,
-  ): Promise<{ state: string; receipt_path: string; printer_response?: { message?: string; command_response?: Record<string, unknown> } }> {
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/print`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256, ams_slot: amsSlot }),
-    });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(typeof payload.message === "string" ? payload.message : typeof payload.detail === "string" ? payload.detail : "The printer did not accept this package.");
-    }
-    return response.json();
-  }
-
-  async getPrintDemoDispatch(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string; ams_slot?: number; remote_name?: string; error?: string; submitted_at?: string; printer_response?: { message?: string; command_response?: Record<string, unknown> } }> {
-    const query = new URLSearchParams({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256 });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/dispatch?${query}`, { cache: "no-store" });
-    if (!response.ok) throw new Error("The print dispatch record is unavailable.");
-    return response.json();
-  }
-
-  async cancelPrintDemo(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string; message: string }> {
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/cancel`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256 }),
-    });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(typeof payload.message === "string" ? payload.message : typeof payload.detail === "string" ? payload.detail : "The P1S did not accept the stop request.");
-    }
-    return response.json();
-  }
-
-  async allowPrintDemoRetry(sessionId: string, workflowPath: string, runId: string, packageSha256: string): Promise<{ state: string }> {
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/print-demo/allow-retry?operator_confirmed_not_started=true`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId, workflow_path: workflowPath, run_id: runId, package_sha256: packageSha256 }),
-    });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(payload.message ?? payload.detail ?? "The printer is not ready for a checked retry.");
-    }
-    return response.json();
   }
 
   async getWorkspaceWorkflowSourceReadiness(
