@@ -95,3 +95,11 @@ temporary-fixture access. See [retirement details](prototype-caller-retirement.m
 Vendor slicing wrappers and their campaign/proof dependencies remain unresolved.
 Installed history and complete engineering replacement are not proved by source
 removal or package-resource tests. T048/T049 stay open.
+
+Installed native continuation: a fresh aggregate wheel excludes the retired
+modules and passes six read-only history/workspace/file-tab browser checks on
+copied retained canonical history. Eight retired API URLs return 410, and saved
+source/run/UI/continuation hashes stay unchanged. Initial launch/configuration
+failures are retained. See [installed history evidence](installed-history-retirement.md).
+Original user prototype formats, transitive slicing and complete replacement
+remain open; this checkpoint does not close T048/T049.

@@ -106,3 +106,13 @@ proof, separate from installed browser acceptance.
 Dataset/jig slicing wrappers still have campaign/proof dependencies. Independent
 provider qualification, their disposition, the complete engineering replacement
 and fresh installed historical navigation remain pending. T048/T049 stay open.
+
+## Installed history continuation
+
+The subsequent [installed history proof](installed-history-retirement.md) uses a
+new aggregate wheel with retired modules absent. Six native browser checks now
+pass on copied retained canonical history, including editor return and exact
+recorder file tabs; eight retired URLs return inert 410 replies. Source/run and
+durable UI/continuation hashes are unchanged. Two earlier fixture failures are
+preserved. Original user prototype data shapes, transitive slicing and complete
+engineering replacement remain unverified; T048/T049 stay open.

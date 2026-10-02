@@ -1614,3 +1614,21 @@ private and source-archive-rebuilt wheels. T048/T049 remain open for transitive
 slicing/campaign dependencies, independent provider proof and installed history.
 No protected review, provider command or saved user configuration changed.
 See evidence/prototype-caller-retirement.md.
+
+Installed retirement/history continuation: fresh frontend plus staged wheel
+SHA bdf22b705bade14132c75ead42e92ad8020f23d77e01b783b05b021ccaabdcae
+passes the native artifact inspector and excludes both retired service modules.
+Installed owning modules are verified inside a dedicated native venv. Read-only
+API history succeeds and all eight retired URLs return inert 410 replies. Browser
+001 was sandbox-denied before navigation; 002 passed five checks then stopped on
+host credential-directory and unrelated agent-service configuration errors. Both
+are retained. Confirmed the exact owned host terminal before using a fresh fixture
+with local credential/Hermes paths and an explicit unused loopback agent endpoint.
+Browser 003 passes all six checks with no unexpected failed responses/page errors;
+one expected missing-model 503 is disclosed. Source/run hashes and all five scoped
+durable UI/continuation table hashes are unchanged; report structure and credential
+scan pass. The installed test fixture serves on 8035 with no compiler or provider
+autostart. Source/prototype preservation still verifies. T048/T049 remain open for
+actual original prototype formats, transitive slicing and full replacement proof.
+See evidence/installed-history-retirement.md. No review response or engineering
+operation occurred; the full goal remains active.

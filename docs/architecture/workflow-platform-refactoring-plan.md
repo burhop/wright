@@ -362,3 +362,10 @@ This supersedes the historical inventory's two `print_part_demo` service rows
 and device/Studio script rows. Dataset/jig slicing still has campaign/proof
 dependencies. T048/T049 remain open for those dispositions, full replacement
 proof and fresh installed history. See the [retirement evidence](../../specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
+
+Fresh installed native history now passes six read-only workspace/editor/file-tab
+checks with the retired modules absent and eight inert compatibility replies.
+Copied source/run/UI/continuation identities remain unchanged. The first launcher
+and configuration failures are retained separately. Original user prototype
+formats, transitive slicing and complete engineering replacement remain open;
+T048/T049 are not complete. See [installed history evidence](../../specs/083-process-working-interfaces/evidence/installed-history-retirement.md).

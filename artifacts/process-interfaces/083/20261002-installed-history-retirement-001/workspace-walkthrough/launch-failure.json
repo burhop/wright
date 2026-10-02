@@ -1,0 +1,7 @@
+{
+  "status": "blocked_before_navigation",
+  "error": "browserType.launch: spawn EPERM",
+  "cause": "Sandbox denied cached Chromium process launch",
+  "ui_actions": 0,
+  "browser_validation": false
+}

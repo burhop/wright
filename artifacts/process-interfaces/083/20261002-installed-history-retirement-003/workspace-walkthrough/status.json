@@ -1,0 +1,119 @@
+{
+  "title": "Historical wheel result through the workspace",
+  "summary": "Exact retained failed native run, saved outputs and file tabs; no active vendor panel or process replay.",
+  "overall": "pass",
+  "updated": "2026-10-02T22:06:09.073Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the proof workspace and click Workflows."
+    },
+    {
+      "label": "History",
+      "instruction": "Open its saved workflow link with printDemoRun identifying the retained failed run."
+    },
+    {
+      "label": "Return",
+      "instruction": "Click Back to workflow, then View saved result."
+    },
+    {
+      "label": "Saved record",
+      "instruction": "Click Open saved run record and inspect its workspace file tab."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace entry",
+      "summary": "Normal workspace loads.",
+      "purpose": "Use normal workspace context.",
+      "action": "Open workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workflows visible.",
+      "actual": "Workflows visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Shared authoring entry",
+      "summary": "Established workflow editor remains; the active vendor demo entry is absent.",
+      "purpose": "Verify entry migration.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflow files"
+      ],
+      "expected": "Editor controls without active print demo.",
+      "actual": "Editor controls present; Print a part demo absent.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Exact read-only history",
+      "summary": "Historical link shows the retained failed run and eleven saved outputs without device controls.",
+      "purpose": "Preserve actual run/artifact identity.",
+      "action": "Open historical workspace link.",
+      "controls": [
+        "Back to workflow",
+        "Open saved artifact",
+        "Open saved run record"
+      ],
+      "expected": "Exact failed run, original error and saved outputs; no print controls.",
+      "actual": "Exact retained failed run/error and artifact links verified.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Return to its editor",
+      "summary": "History returns to the same saved workflow.",
+      "purpose": "Retain authoring navigation.",
+      "action": "Click Back to workflow.",
+      "controls": [
+        "View saved result",
+        "Workflow files"
+      ],
+      "expected": "Exact workflow editor restored.",
+      "actual": "Exact workflow editor and history reopen control visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Reopen saved history",
+      "summary": "History reopens without preparing or executing a new process.",
+      "purpose": "Verify read-only reuse.",
+      "action": "Click View saved result.",
+      "controls": [
+        "Open saved run record"
+      ],
+      "expected": "Same retained run.",
+      "actual": "Same retained run restored.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Saved record in a workspace tab",
+      "summary": "The exact recorder file opens in Wright’s file tabs.",
+      "purpose": "Preserve evidence navigation without an external window.",
+      "action": "Click Open saved run record.",
+      "controls": [
+        "runs/printed-replacement-part-retained-consumer-001/a87d84b40a244bcaa035d9ed8308ac5a.json"
+      ],
+      "expected": "Exact saved recorder tab selected.",
+      "actual": "Exact saved recorder file tab selected.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    }
+  ]
+}
