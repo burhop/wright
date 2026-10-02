@@ -1118,3 +1118,12 @@ pass. The shared authoring reference now supplies scoped evidence/navigation
 callbacks with visible error handling. T045–T047 remain incomplete: no live wheel
 geometry, slicing, full assessment or tailored wheel UI is claimed. Protected
 campaign, physical dispatch and user engineering acceptance remain unchanged.
+
+The subsequent complete-basis run reached Blender after a second nine-check
+workspace walkthrough and a synthetic exact review/HTTP-202 continuation. Its
+two allowed calls exposed a safety-rule rejection and an obsolete export option;
+the task timed out without an STL. A separate read-only installed-capability
+query confirms actual 4.5.10 import/export parameters. Qualified geometry guidance
+is now a bounded frozen example input, with 78 focused checks passing. A fresh
+digital run uses the proven export recipe. Live geometry/slicing remains pending;
+no transport-success response is described as a successful engineering operation.

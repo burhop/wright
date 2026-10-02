@@ -75,6 +75,34 @@ scoped result/evidence navigation callbacks and reports navigation errors, witho
 executing work on mount. This improves future generated interfaces; it does not
 rewrite existing saved revisions or prove a complete tailored wheel interface.
 
+## Installed geometry capability correction
+
+Run `8050d870b2254dfe92e84d9ddc144977` produced a complete JSON basis and
+passed another nine-check normal-workspace waiting/reload walkthrough with no
+browser errors. Its exact synthetic review was consumed once and continuation
+returned HTTP 202. Geometry reached the existing Blender provider, but the first
+script was rejected for using a protected module namespace as a value. Its
+bounded correction reached native code and failed on the unsupported STL export
+option `apply_scene_unit`. The 180-second task deadline then ended the run with
+no STL artifact. Provider transport success is explicitly not geometry success.
+The [retained walkthrough and native failure evidence](../../../artifacts/process-interfaces/083/20261002-wheel-native-capability-recovery/workspace-review/report.html)
+preserve this journey alongside the actual provider responses.
+
+A separate read-only production-gateway query of the owned native session reports
+Blender `4.5.10 LTS` and its actual STL import/export parameter identifiers. Both
+operators support `use_scene_unit`; neither lists `apply_scene_unit`. The query
+changed no geometry and performed no export. The earlier actual tiny-STL export
+qualification provides the minimal concrete export recipe. Neither qualification
+is a focus-wheel engineering result.
+
+The example now requires bounded, operator-supplied qualified geometry guidance
+and freezes it as an explicit input to construction/repair. Missing, empty or
+excessive guidance blocks preparation. Seventy-eight preparation/reader checks
+pass in `t045-printed-proposal-015`. Fresh run
+`b3302d597ce344c2be288233f106aeb8` uses the recorded native version, proven export
+recipe and unique attempt object prefix. It remains an in-progress digital proof;
+original requirements, profile and final review remain unchanged.
+
 ## Remaining evidence
 
 T045–T047 remain incomplete. Run the original assignment through freshly bound

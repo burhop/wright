@@ -1,0 +1,21 @@
+{
+  "status": 202,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-live-default-model-007.workflow.wflow",
+      "source_digest": "ef30253a7af2a3ca16820b3a568e351b24d598a1441fb5c21b956082dcab8061",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "printed-original-wheel-live-start-007",
+    "payload_digest": "9a424e02e356ff517a60b4e5fc26183052c9dddc511718f737120749a629ae48",
+    "input_snapshot_id": "inputs-c2552a774aeb40999bbc0ef18bef17b6",
+    "input_digest": "06d44a076ab5fbace0775264ee3e23abecbfc0060125ce97e792e35e8a178b28",
+    "run_id": "8050d870b2254dfe92e84d9ddc144977",
+    "run_log_path": "runs/printed-replacement-part-live-default-model-007/8050d870b2254dfe92e84d9ddc144977.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-02T06:32:35.988670+00:00"
+  }
+}

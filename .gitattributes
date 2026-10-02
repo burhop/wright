@@ -76,3 +76,4 @@ artifacts/engineering-workflow-datasets/retry-evidence/heat01-aluminum-scope-902
 
 # Private digital-process proof records retain their captured byte identities.
 artifacts/process-interfaces/083/20261002-wheel-preparation-review/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-native-capability-recovery/** -text -whitespace

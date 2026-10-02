@@ -27,7 +27,11 @@ it does not certify fit, strength, printer compatibility or physical printing.
    `write_text_document` and `inspect_file`.
 4. Copy `bindings.example.json` to private configuration, replacing placeholders
    with the exact enabled providers, profile paths/digests, Python provider mount
-   and qualified slicer success semantics. Use a `test://` destination. Run:
+   and qualified slicer success semantics. Record bounded `geometry_guidance`
+   describing the selected native application version, actually qualified
+   import/export calls and safety limits. This guidance is frozen as an input to
+   geometry stages; it does not establish engineering acceptance or bypass the
+   provider's safeguards. Use a `test://` destination. Run:
 
    ```powershell
    .venv/Scripts/python.exe examples/process-interfaces/printed-replacement-part/prepare.py --workspace ABSOLUTE_WORKSPACE --attempt wheel-ui-001 --tools PRIVATE_TOOLS_JSON --bindings PRIVATE_BINDINGS_JSON

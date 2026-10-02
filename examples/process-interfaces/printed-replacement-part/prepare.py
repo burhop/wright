@@ -39,6 +39,13 @@ def prepare(workspace, attempt, tools, bindings):
         or not bindings["slice_success_contract"].strip()
     ):
         raise ValueError("Record the selected provider's qualified success contract")
+    geometry_guidance = bindings.get("geometry_guidance")
+    if (
+        not isinstance(geometry_guidance, str)
+        or not geometry_guidance.strip()
+        or len(geometry_guidance.encode("utf-8")) > 8192
+    ):
+        raise ValueError("Record bounded qualified geometry application guidance")
     geometry, files, slicer, inspection = (
         bindings[key]
         for key in (
@@ -141,6 +148,9 @@ def prepare(workspace, attempt, tools, bindings):
         item["id"] + ": " + item["text"] for item in profile["baseline"]["requirements"]
     )
     requirements_ref = flow.input_bytes("requirements.md", requirements.encode())
+    guidance_ref = flow.input_bytes(
+        "geometry-capability-guidance.md", geometry_guidance.encode()
+    )
     profiles = {
         role: flow.input_bytes(
             role + "-profile.json",
@@ -189,6 +199,7 @@ def prepare(workspace, attempt, tools, bindings):
     )
     flow.reference(basis_result, create, "reviewed_basis")
     flow.reference(requirements_ref, create, "requirements")
+    flow.reference(guidance_ref, create, "qualified_application_guidance")
     flow.reference(
         refs["concept.png"], create, "original_reference", "reference_images"
     )
@@ -209,6 +220,7 @@ def prepare(workspace, attempt, tools, bindings):
     )
     flow.reference(source_result, repair, "construction_report")
     flow.reference(requirements_ref, repair, "requirements")
+    flow.reference(guidance_ref, repair, "qualified_application_guidance")
     repaired_roles = flow.file_outputs(
         repair,
         {

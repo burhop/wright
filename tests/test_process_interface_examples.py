@@ -203,6 +203,7 @@ def printed_configuration(tmp_path):
         inspection_server="fixture-inspection",
         inspection_workspace="/workspace",
         inspection_backend="skfem",
+        geometry_guidance="Fixture geometry guidance; no native operation is claimed",
         slice_success_contract="Fixture success declaration; no native execution is claimed",
         simulator_destination="test://private-fixture/printer/printed-replacement-part-01",
         profiles={},
@@ -401,4 +402,15 @@ def test_printed_unqualified_success_contract_blocks_before_staging(
     bindings["slice_success_contract"] = ""
     with pytest.raises(ValueError, match="qualified success contract"):
         printed_preparer().prepare(workspace, "missing-contract", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+@pytest.mark.parametrize("guidance", [None, "", "x" * 8193])
+def test_printed_missing_or_excessive_geometry_guidance_blocks_before_staging(
+    printed_configuration, guidance
+):
+    workspace, bindings, tools = printed_configuration
+    bindings["geometry_guidance"] = guidance
+    with pytest.raises(ValueError, match="qualified geometry application guidance"):
+        printed_preparer().prepare(workspace, "missing-guidance", tools, bindings)
     assert not (workspace / "process-proofs").exists()
