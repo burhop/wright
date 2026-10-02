@@ -1167,3 +1167,15 @@ a preview/build was available. Its failed authoring job and stopping walkthrough
 are retained, with the prior saved comparison still selected. Full preparation/
 review behavior remains unqualified; the next change should reduce generated
 control boilerplate through shared Wright UI functionality.
+
+Resume checkpoint: supplied/defaulted file inputs now retain their prepared
+path/hash/size identity through exact-tool and scoped-AI dependency checks. The
+57-check focused runtime suite and Ruff pass. The shared public `WorkingControls`
+composition provides preparation and declared interactions over the existing
+client, including exact backend Start permission, retained requests, no replay,
+and read-only receipt reconciliation. One serialized 100-check controls/kit/common
+view suite and web TypeScript compilation pass; the earlier unrelated parallel
+layer-slider failure remains retained. See
+[shared-working-controls.md](evidence/shared-working-controls.md). A fresh loaded
+wheel chain and default-model heat update remain pending. T045–T047 are still
+incomplete; no physical operation or engineering acceptance is claimed.

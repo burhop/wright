@@ -26,7 +26,7 @@ Use `@wright/ui-kit` public components: ProcessUI, Section, InputEditor,
 SchemaField, ImageThumbnail, ReadinessPanel, ReasonNotice, ProgressPanel,
 ActionButton, CheckpointCard, ResultCard, EvidenceReference, FindingsPanel,
 NavigationButton, RepresentationViewer, DataTable, ThreeDViewer, ToolpathViewer,
-NumericPlot and ScalarFieldPlot. Component/type signatures are supplied from
+NumericPlot, ScalarFieldPlot and WorkingControls. Component/type signatures are supplied from
 the installed version. Kit styles are imported by the kit; use its theme tokens.
 
 Snapshot inputs are declared input definitions, not frozen values. Frozen values
@@ -72,6 +72,15 @@ checkReadiness for that exact InputSnapshot. Only an explicit, writable start
 control calls start with the frozen snapshot and one retained request identity.
 An input edit invalidates the local readiness display. The native host handles
 the accepted start receipt and rebinds the working presentation to its run.
+
+Prefer the shared `WorkingControls({client, snapshot, readOnly, onNavigate?})`
+composition for preparation and declared interaction controls. It delegates to
+the scoped client, checks Start permission for the exact frozen inputs, retains
+mutation request identities before sending, and holds uncertain outcomes without
+replay. The host still supplies authoritative snapshots and owns run observation
+and start rebinding. Use a visible navigation error callback. If the current
+projection cannot reconcile a retained receipt, offer the common working view;
+never implement an alternative executor or guess a successful outcome.
 
 For declared interactions, CheckpointCard's response, review and execution props
 are public UI-kit callbacks, not additional AppProps. Match the currently enabled

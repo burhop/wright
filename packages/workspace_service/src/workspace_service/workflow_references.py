@@ -113,16 +113,36 @@ def verified_file_dependencies(step, responses, workspace_dir):
     records = []
     for source_id, expected_path in step.file_dependencies.items():
         value = responses.get(source_id)
-        if not isinstance(value, EngineeringResult):
-            raise _invalid(f"{step.title}: its connected file was not produced.")
-        representations = [
-            rep for rep in value.representations if rep.kind == "workspace_file"
-        ]
-        if len(representations) != 1 or representations[0].location != expected_path:
+        if isinstance(value, EngineeringResult):
+            representations = [
+                rep for rep in value.representations if rep.kind == "workspace_file"
+            ]
+            if len(representations) != 1:
+                raise _invalid(
+                    f"{step.title}: its connected file differs from the declared input."
+                )
+            rep = representations[0]
+            location, expected_hash, expected_size = (
+                rep.location,
+                rep.sha256,
+                rep.size_bytes,
+            )
+        elif isinstance(value, WorkflowReference):
+            # Supplied/defaulted input files are pinned by preparation, without
+            # pretending that an engineering tool produced those input bytes.
+            location, expected_hash, expected_size = (
+                value.path,
+                value.sha256,
+                value.size_bytes,
+            )
+        else:
+            raise _invalid(
+                f"{step.title}: its connected file was not supplied or produced."
+            )
+        if location != expected_path or expected_size is None:
             raise _invalid(
                 f"{step.title}: its connected file differs from the declared input."
             )
-        rep = representations[0]
         try:
             target = WorkspacePath(workspace_dir).resolve(
                 expected_path, must_exist=True
@@ -134,7 +154,7 @@ def verified_file_dependencies(step, responses, workspace_dir):
             raise _invalid(
                 f"{step.title}: its connected file is unavailable."
             ) from error
-        if actual_hash != rep.sha256 or actual_size != rep.size_bytes:
+        if actual_hash != expected_hash or actual_size != expected_size:
             raise _invalid(
                 f"{step.title}: its connected file changed after the previous stage."
             )

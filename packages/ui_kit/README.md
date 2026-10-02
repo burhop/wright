@@ -2,8 +2,10 @@
 
 `@wright/ui-kit` supplies the same public React presentation components to native
 working views and saved process interfaces. It imports no private application
-state, routes or services. It never starts a process, qualifies a provider,
-records a review or decides whether engineering output is acceptable.
+state, routes or services. Presentation patterns do not execute operations.
+The optional `WorkingControls` composition delegates explicit user requests to
+the existing scoped process client. The backend remains the owner of execution,
+provider qualification, review records and engineering acceptance.
 
 ## Compose a working view
 
@@ -48,6 +50,7 @@ accepted-revision key; stale async replies must never enter another process/run.
 | ReadinessPanel, ReasonNotice | Backend readiness, later-input classifications, correction and technical detail disclosure. |
 | ProgressPanel | Distinct run states and fresh observed progress; no extrapolated time/percentage or fabricated completion. |
 | ActionButton, CheckpointCard | Explicit callbacks and exact permitted checkpoint/subject actions; no implicit approval. |
+| WorkingControls | Shared preparation and declared-interaction controls over the supplied scoped client, with retained request identities. |
 | ResultCard, EvidenceReference | Exact result/representation/assessment links, currentness and producer navigation. |
 | FindingsPanel, NavigationButton | Owning-service findings/corrections and exact host navigation intents. |
 | RepresentationViewer, DataTable | Bounded bitmap/STL/plaintext/CSV views and paginated tables; unsupported-format fallback. |
@@ -58,6 +61,25 @@ Schema editors show unsupported forms explicitly instead of dropping required
 fields. Defaults are shown only when present in backend bindings; schema constants
 require a deliberate choice. Clearing a number removes the value; false is
 preserved. The backend owns full schema validation and readiness.
+
+`WorkingControls` takes `{client, snapshot, readOnly, onNavigate?}`. Use it in
+an interface receiving Wright's public `AppProps`; supply the host's current
+snapshot rather than implementing another process monitor. It freezes explicit
+input drafts, checks readiness and reads the permitted Start action for that
+exact frozen input digest. Input edits invalidate preparation. An expired
+assessment or missing/disabled Start permission keeps Start disabled.
+
+Reviews, declared responses, actions and cancellation use only the current
+backend actions and exact checkpoint/subject identity. Every mutation records
+one request identity in session storage before sending; unavailable storage
+prevents sending. Mounting and restoration never replay operations. An unknown
+outcome holds new mutations. Explicit reconciliation only clears a retained
+review/action when the exact receipt is present in the same process/run snapshot.
+Start, response and cancellation recovery use the canonical common working view
+when the public projection lacks a matching receipt; the component does not
+invent one. The native host owns accepted-start rebinding and run observation.
+Reads and uploads are aborted when the process/run scope unmounts; that does
+not cancel an accepted run.
 
 `CheckpointCard` accepts an optional `response` control for declared input steps:
 `{value, onChange, onSubmit, busy?, readOnly?, blockedReason?}`. It uses the exact

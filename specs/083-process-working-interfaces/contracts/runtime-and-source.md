@@ -168,7 +168,11 @@ dispatch needs separate authorization and qualification.
 
 Explicit `mcp_file_dependencies` are supported on both exact MCP calls and scoped
 AI MCP tasks. Each connected `workspace_file` must match its producer's retained
-path, byte count and SHA-256 immediately before consumption. The AI receives
+path, byte count and SHA-256 immediately before consumption. Explicitly supplied
+or defaulted prepared file inputs are supported through the same identity check;
+they are not represented as tool-produced engineering results. A missing recorded
+byte count, changed bytes, mismatched path or unavailable file blocks consumption.
+The AI receives
 verified locator metadata; binary contents are not loaded as prompt documents.
 This declaration does not add tools or widen an agent's capability scope. Plain
 AI tasks cannot declare application file imports. Missing, changed or mismatched

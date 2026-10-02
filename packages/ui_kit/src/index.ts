@@ -4,3 +4,4 @@ export * from "./inputs";
 export * from "./representations";
 export * from "./geometry";
 export * from "./toolpaths";
+export * from "./working-controls";

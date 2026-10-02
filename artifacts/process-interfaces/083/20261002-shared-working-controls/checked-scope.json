@@ -1,0 +1,26 @@
+{
+  "component_tests_passed": 100,
+  "runtime_tests_passed": 57,
+  "web_typescript_exit_code": 0,
+  "changed_python_ruff_exit_code": 0,
+  "execution_owner": "existing scoped process services",
+  "component_scope": [
+    "preparation",
+    "exact frozen-input Start permission",
+    "declared interactions",
+    "request persistence before mutation",
+    "unknown-outcome no replay",
+    "same-run exact receipt reconciliation",
+    "read-only preview"
+  ],
+  "prepared_file_scope": "supplied/defaulted input locator/hash/size checked before exact-tool or scoped-AI consumption",
+  "live_generated_interface_qualified": false,
+  "live_slicer_completed": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "prior_parallel_slider_failure": "retained privately in t046-working-controls-003.json",
+  "artifact_sha256": {
+    "component-checks.json": "b79f6e8a4e91d82a105e355754164ec4ae8245ae7eed62dd7b9364f347cd745a",
+    "runtime-checks.xml": "f3e6c11eb4d39866f2908d26ec7ca3244932dd0cd4c8ce0baf436de4651879fa"
+  }
+}
