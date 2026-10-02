@@ -1,0 +1,8 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-retained-report-002.workflow.wflow",
+  "expected_storage_digest": "69a7065c7e9cb1e859a0fd162d872710c9bd854a40b406b4e0cd148289c1c5cc",
+  "input_snapshot_id": "inputs-bf5c297f1126425cb91c16bc124ffbda",
+  "expected_input_digest": "63700375ac868cedf758c162d8738a901b737ee73bec69b013a6c837aedb8655",
+  "request_id": "083-retained-wheel-report-start-002"
+}

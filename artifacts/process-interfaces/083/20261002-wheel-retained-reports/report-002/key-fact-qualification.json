@@ -1,0 +1,7 @@
+{
+  "report_sha256": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+  "corrected_wrapper_vs_retained_output_statement": true,
+  "actual_triangle_topology_layer_support_observations_match": true,
+  "full_engineering_review": false,
+  "physical_dispatch": false
+}

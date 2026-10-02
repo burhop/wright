@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "feature": "083-process-working-interfaces",
+  "status": "prepared_not_executed",
+  "template_id": "printed-replacement-part",
+  "attempt": "retained-report-001",
+  "source_path": "process-proofs/printed-replacement-part/retained-report-001/prepared.workflow.wflow",
+  "accepted_source_path": "workflows/printed-replacement-part-retained-report-001.workflow.wflow",
+  "source_acceptance_required": true,
+  "source_sha256": "1211738f306aa3cb36c7ac86a1f8016b9934a4d9ec44162d4c1eb715250948be",
+  "template_source_sha256": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf",
+  "input_files": [
+    {
+      "path": "process-proofs/printed-replacement-part/retained-report-001/inputs/actual-artifact-facts.json",
+      "sha256": "406b136705ec345f90977f1982f841fac729c56fb46585505f383996c32abf4a",
+      "original": "retained consumer a87d84b40a244bcaa035d9ed8308ac5a"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-report-001/inputs/actual-native-responses.json",
+      "sha256": "5d7f5abe0160d2e8c890d3ab7fce19f35528c24128071258bcd2a57fa56ad36a",
+      "original": "retained consumer a87d84b40a244bcaa035d9ed8308ac5a"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-report-001/inputs/original-requirements.md",
+      "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7",
+      "original": "retained consumer a87d84b40a244bcaa035d9ed8308ac5a"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-report-001/inputs/machine-profile.json",
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "original": "retained consumer a87d84b40a244bcaa035d9ed8308ac5a"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-report-001/inputs/process-profile.json",
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "original": "retained consumer a87d84b40a244bcaa035d9ed8308ac5a"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-report-001/inputs/filament-profile.json",
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "original": "retained consumer a87d84b40a244bcaa035d9ed8308ac5a"
+    }
+  ],
+  "output_root": "process-proofs/printed-replacement-part/retained-report-001/outputs",
+  "tool_allowlist": [],
+  "step_count": 1,
+  "physical_dispatch": false,
+  "approval_policy_not_enrolled": true,
+  "engineering_acceptance": false
+}

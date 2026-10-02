@@ -1,0 +1,65 @@
+{
+  "state": "ready",
+  "assessment_id": "readiness-158477cbbce448f5aab04c0128ae0517",
+  "process": {
+    "workspace_id": "083-heat-live-005",
+    "source_path": "workflows/printed-replacement-part-retained-report-001.workflow.wflow",
+    "source_digest": "1211738f306aa3cb36c7ac86a1f8016b9934a4d9ec44162d4c1eb715250948be",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "8f9ef1325b93c6029cdc56536c1c05c273cca614856e99e36bc9f5f1f3a8b98a",
+  "assessed_at": "2026-10-02T14:18:43.005513+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "input_actual_artifact_facts_json_retained_report_001",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_actual_native_responses_json_retained_report_001",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_original_requirements_md_retained_report_001",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_machine_profile_json_retained_report_001",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_process_profile_json_retained_report_001",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_filament_profile_json_retained_report_001",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": []
+}

@@ -1303,3 +1303,16 @@ optional computational budget before staging. All 125 focused checks pass; the
 earlier canonical-validator-inclusive suite passed 89. No native/model/review/
 action replay, no physical effects, no original-gate completion claim. The full
 goal remains active.
+
+Resume checkpoint: retained reports now have actual independent Wright model runs
+and one bounded correction. First report's wrapper/retention confusion is preserved;
+corrected run `97f4c017f8a04d7eab8011e4ad6c5298` completes with key facts checked.
+Independent assessment `assessment-af6ee9073b5d418e8fdd9a1e105aa497` reads its
+actual saved report plus the eight canonical native subjects: sixteen passes,
+two blocks for simulated receipt and mandatory engineering review. Report-only
+sources do not register validator outputs; exact durable result/file identity was
+verified through the direct-caller contract, without inventing a registry entry.
+Original failed logs remain unchanged. Evidence is in
+`20261002-wheel-retained-reports`. Fresh Wright interface authoring job
+`job-57569905755f41f4bee61da253c03204` is accepted for the retained consumer;
+preview/save/update/reuse remain unproved. All task scope and M5 remain active.

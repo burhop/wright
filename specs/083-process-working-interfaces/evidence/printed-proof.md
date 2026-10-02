@@ -300,3 +300,34 @@ the failed process's original gate or production release. Native operations,
 model generation, review decisions and transfer are not replayed. The source
 report, simulated handoff and final mandatory review still need their appropriate
 independent process/authority. Tailored wheel UI and M5 remain incomplete.
+
+## Independent report correction and full-profile readback
+
+Two separate accepted report-only processes consumed the retained native responses,
+artifact facts, original requirements and frozen profiles through Wright's actual
+configured model. Run `9120cbe321b84604abd202bede82e772` completed but conflated
+the inspection wrapper's empty discovery list with absence of retained outputs.
+Its report and specific critique remain retained. One bounded correction in fresh
+run `97f4c017f8a04d7eab8011e4ad6c5298` completed and distinguishes wrapper critic
+metadata from Wright's five actual retained inspection files. Selected topology,
+layer/support counts and package/preview identities match actual evidence; this
+is a limited semantic check, not authenticated engineering review.
+
+Independent multi-producer assessment
+`assessment-af6ee9073b5d418e8fdd9a1e105aa497` binds that actual report plus the
+eight unchanged native subjects against the original eighteen-check profile and
+baseline: sixteen passes and two blocks. Simulated transfer receipt and mandatory
+engineering review remain absent. The native subjects retain canonical registry
+identities. A report-only process has no validator registry entry; the report
+subject is verified against its actual durable `result_ready` representation,
+saved file and hash, and assessed through the existing direct-caller contract.
+It is not asserted to have a canonical validator registry entry or to have run
+the failed consumer's skipped gate. Both original failed run logs remain unchanged.
+
+Local evidence: `artifacts/process-interfaces/083/20261002-wheel-retained-reports/`.
+Both reports, actual process definitions/durable events, critique, corrected facts,
+assessment and shared exports are retained and scanned for private credentials.
+No native tool operation, old review, old process start or hardware action was
+replayed. A fresh tailored-interface authoring job was separately accepted through
+Wright, `job-57569905755f41f4bee61da253c03204`; acceptance alone proves neither
+built preview nor saved UI. T045/T047 and the complete goal remain pending.

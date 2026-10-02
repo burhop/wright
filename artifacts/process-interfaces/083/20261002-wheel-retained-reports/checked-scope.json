@@ -1,0 +1,25 @@
+{
+  "report_runs": [
+    "9120cbe321b84604abd202bede82e772",
+    "97f4c017f8a04d7eab8011e4ad6c5298"
+  ],
+  "assessment_id": "assessment-af6ee9073b5d418e8fdd9a1e105aa497",
+  "actual_default_model_through_existing_Wright_runtime": true,
+  "first_report_semantic_defect_preserved": true,
+  "one_bounded_correction": true,
+  "native_registry_verified_subjects": 8,
+  "report_subject_durable_result_and_file_verified": true,
+  "report_only_source_has_no_validator_output_registry_entry": true,
+  "counts": {
+    "pass": 16,
+    "blocked": 2
+  },
+  "remaining": [
+    "simulated transfer receipt",
+    "mandatory engineering review"
+  ],
+  "original_failed_run_and_original_gate_not_rewritten": true,
+  "physical_dispatch": false,
+  "engineering_acceptance": false,
+  "full_feature_complete": false
+}
