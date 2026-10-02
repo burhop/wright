@@ -340,7 +340,15 @@ class Definition:
         )
         validate_workspace_authoring_shape(source)
         plan = compile_prompt_workflow(source)
-        relative = "workflows/" + self.case + "-" + self.attempt + ".workflow.wflow"
+        # A prepared file is a proposal. Only the normal source service creates
+        # accepted workflow revision history and supplies runtime authority.
+        relative = (
+            self.root.relative_to(self.workspace).as_posix()
+            + "/prepared.workflow.wflow"
+        )
+        accepted_path = (
+            "workflows/" + self.case + "-" + self.attempt + ".workflow.wflow"
+        )
         write_new(self.workspace / relative, source.encode())
         report = dict(
             schema_version=1,
@@ -349,6 +357,8 @@ class Definition:
             template_id=self.case,
             attempt=self.attempt,
             source_path=relative,
+            accepted_source_path=accepted_path,
+            source_acceptance_required=True,
             source_sha256=sha(source.encode()),
             template_source_sha256=sha(self.template_bytes),
             input_files=self.staged,

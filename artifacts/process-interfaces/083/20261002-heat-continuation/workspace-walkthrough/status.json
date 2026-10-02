@@ -1,0 +1,187 @@
+{
+  "title": "Heat-spreader process workspace entry",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-02T02:50:02.073Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Heat-spreader comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved heat-spreader workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Continue exact test review",
+      "instruction": "Inspect the labelled synthetic test review. Check I reviewed this action and its evidence, then click Continue process."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Heat-spreader comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the heat workflow",
+      "summary": "The exact accepted heat workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/heat-spreader-sizing-live-default-model-001.workflow.wflow"
+      ],
+      "expected": "The accepted heat workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Heat workflow diagram",
+      "summary": "The original heat assignment opens with its connected review, CAD and analysis stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted heat workflow file.",
+      "controls": [
+        "workflows/heat-spreader-sizing-live-default-model-001.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved heat source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Durable review wait",
+      "summary": "Reopening the recorded run shows its actual declared basis review.",
+      "purpose": "Reconcile backend waiting state without replaying work.",
+      "action": "Open the exact recorded heat run link in the same workspace.",
+      "controls": [
+        "Declared basis review",
+        "Continue process"
+      ],
+      "expected": "Declared review waiting state, no automatic continuation.",
+      "actual": "Actual run waiting for review is visible.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08a",
+      "state": "pass",
+      "label": "Explicit continuation confirmation",
+      "summary": "The test decision is labelled; continuation retains an explicit confirmation.",
+      "purpose": "Observe the declared action confirmation before using it.",
+      "action": "Inspect the recorded test decision and confirmation.",
+      "controls": [
+        "Test review recorded: Approved",
+        "I reviewed this action and its evidence"
+      ],
+      "expected": "A synthetic review label and explicit confirmation.",
+      "actual": "Test review and confirmation visible.",
+      "raw": "screenshots/raw/S08a.png",
+      "annotated": "screenshots/annotated/S08a.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Synthetic test review is labelled",
+      "summary": "The authorized test decision is shown separately from human acceptance.",
+      "purpose": "Confirm the exact synthetic decision permits only its declared continuation.",
+      "action": "Inspect the recorded test decision.",
+      "controls": [
+        "Test review recorded: Approved",
+        "Continue process"
+      ],
+      "expected": "Test review label and enabled continuation for this exact run.",
+      "actual": "Synthetic decision visible; Continue process enabled.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Same run continues",
+      "summary": "Wright continues CAD and analysis after the declared review.",
+      "purpose": "Exercise the normal scoped continuation while retaining the run identity.",
+      "action": "Click Continue process.",
+      "controls": [
+        "Continue process"
+      ],
+      "expected": "The same recorded run becomes Running.",
+      "actual": "Continuation accepted; same-run running progress visible.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    }
+  ]
+}

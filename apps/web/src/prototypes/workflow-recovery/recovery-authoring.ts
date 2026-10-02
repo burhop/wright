@@ -304,6 +304,39 @@ function isExpectedFilePortsObject(key: string, value: unknown): boolean {
   );
 }
 
+// Direct MCP calls can consume files separately from their JSON arguments.
+// Keep the exact public map during editor round trips. The runtime still
+// verifies each connected workspace-file port, file identity and authority.
+function isMcpFileDependenciesObject(
+  sectionKind: string,
+  settings: Record<string, unknown>,
+  key: string,
+  value: unknown,
+): boolean {
+  return (
+    sectionKind === "task" &&
+    settings.authoring_template === "mcp-tool" &&
+    key === "mcp_file_dependencies" &&
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    Object.entries(value).every(
+      ([port, file]) =>
+        port.length > 0 &&
+        typeof file === "string" &&
+        file.length > 0 &&
+        file.length <= 256 &&
+        !/[\\:%]/.test(file) &&
+        file
+          .split("/")
+          .every(
+            (part) =>
+              part.length > 0 && !part.startsWith(".") && !/[ .]$/.test(part),
+          ),
+    )
+  );
+}
+
 function instructionFields(block: RecoveryBlock): [string, unknown][] {
   const active =
     block.configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] ??
@@ -1375,6 +1408,12 @@ export function parseRecoveryAuthoringSource(
           !["string", "number", "boolean"].includes(typeof value) &&
           !isApprovalObject(settings as Record<string, unknown>, key, value) &&
           !isExpectedFilePortsObject(key, value) &&
+          !isMcpFileDependenciesObject(
+            section.kind,
+            settings as Record<string, unknown>,
+            key,
+            value,
+          ) &&
           !isInteractionObject(
             section.kind,
             settings as Record<string, unknown>,
@@ -1388,7 +1427,7 @@ export function parseRecoveryAuthoringSource(
         diagnostic(
           "WFR-SOURCE-FIELD-TYPE",
           `${section.kind} ${section.key}.settings must contain scalar values or documented configuration objects.`,
-          "Use scalar settings or the documented file-port, approval, validator, input metadata and human-input declaration objects.",
+          "Use scalar settings or the documented tool file-dependency, file-port, approval, validator, input metadata and human-input declaration objects.",
           baseBlock?.id ?? null,
           section.startLine,
         ),
@@ -1522,7 +1561,8 @@ export function parseRecoveryAuthoringSource(
         ([key, value]) =>
           isApprovalObject(configuration, key, value) ||
           isInteractionObject(section.kind, configuration, key, value) ||
-          isExpectedFilePortsObject(key, value),
+          isExpectedFilePortsObject(key, value) ||
+          isMcpFileDependenciesObject(section.kind, configuration, key, value),
       ),
     );
     if (Object.keys(approvalObjects).length) {

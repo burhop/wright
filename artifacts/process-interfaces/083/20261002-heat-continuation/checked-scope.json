@@ -1,0 +1,95 @@
+{
+  "parent": "42a9705684edb03990513c2034271d91544ea731",
+  "branch": "codex/083-process-working-interfaces",
+  "scope": "editor documented MCP file-dependency roundtrip; durable continuation acknowledgement; prepared-source acceptance boundary; normal workspace declared test review/resume",
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "tests": {
+    "action_and_example": {
+      "tests": 28,
+      "seconds": "15.712",
+      "junit_sha256": "020407cdc00e9bdc5bc3a34bd3c455deabe9a5b866ebdd53a7a2a49be35b3a8d"
+    },
+    "approval_and_continuation_regressions": {
+      "tests": 89,
+      "seconds": "26.993",
+      "junit_sha256": "4a57ce26fc8ef6b967bced3a490802587d96b3b7358c063278da4dba86f45cd6"
+    },
+    "frontend": {
+      "tests": 47,
+      "files": 3,
+      "seconds": 2.37
+    },
+    "typescript": "passed",
+    "ruff": "passed",
+    "action_and_example_final": {
+      "tests": 28,
+      "seconds": "20.248",
+      "junit_sha256": "d74c5ebf43f7d37f3be9361c6c844abdaa3646908e5aebbcdb81b52bc990fe3d"
+    },
+    "frontend_final": {
+      "tests": 57,
+      "files": 4,
+      "seconds": 4.89
+    }
+  },
+  "browser": {
+    "steps": 10,
+    "status": "pass",
+    "entry": "normal workspace Workflows control, actual accepted heat file",
+    "report": "artifacts/process-interfaces/083/20261002-heat-continuation/workspace-walkthrough/report.html",
+    "routes_mocked": false,
+    "continuation_http": 202,
+    "trace_private": true
+  },
+  "claims": {
+    "actual_default_model_basis": true,
+    "actual_declared_wait": true,
+    "synthetic_test_review": true,
+    "same_run_browser_continuation": true,
+    "complete_cad_solver_chain": false,
+    "tailored_ui_complete": false,
+    "engineering_acceptance": false,
+    "physical_dispatch": false,
+    "complete_feature": false
+  },
+  "owned_source_hashes": {
+    "apps/web/src/prototypes/workflow-recovery/mcp-settings.spec.ts": "78734800baf49120b24e5541f00a5ec6500fad91e11190e87febd46f73fbb8b1",
+    "apps/web/src/prototypes/workflow-recovery/recovery-authoring.ts": "dc1ce97ac03d25f913f2067f978aca516ab8eb90b774dd0b583cf8d1b9571657",
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx": "2fe9bd167d9e66fd014617625df46a4586c4072ef1a9395482279f7788052508",
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx": "21d6f9768adb3cbbc54db12b6d32eeca66f29cee64714ed94999593cf0e4fb34",
+    "packages/workspace_service/src/workspace_service/workflow_approval_execution.py": "07ce17f788605c9ff3dd0f4dab861b7f498edc3f7bcca3e8dfef155cf6939bb0",
+    "packages/workspace_service/tests/test_process_action_supervision.py": "490fbeee0822c89717dbb466c11778b5c565f874ca0b2b4bfdb659ebf8d69ee7",
+    "examples/process-interfaces/definition.py": "04c2262fe292521f72943c667ee821ab0279096b8481c12aed27e5b9754a47ea",
+    "examples/process-interfaces/heat-spreader-sizing/prepare.py": "3ef60ec742d4c011a22bd2f3e6dad25eec116939ffe7ca27f29d1220eb2b181f",
+    "examples/process-interfaces/heat-spreader-sizing/README.md": "fc5c2889794f9a1e0b86af7a041d43c68de5c23abb3c4ebf47a8e1d2737b575d",
+    "tests/test_process_interface_examples.py": "d3383c6be0b439042e53b95469ad9dc024ade3906b70c9be80a9f325f3fcacf3",
+    "specs/083-process-working-interfaces/evidence/heat-proof.md": "ee1617dc8f79db43a643f07c98467289c222d2be6cd00058cc3946e3384db96f",
+    "specs/083-process-working-interfaces/progress.md": "32dd67c338d531b58c7994884cc1d66ce132a6b1727243ba2fc6998d350e78c9"
+  }
+}

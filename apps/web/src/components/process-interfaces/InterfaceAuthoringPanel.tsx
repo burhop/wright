@@ -35,6 +35,7 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
   const store = useMemo(() => recoveryStore ?? createInterfaceAuthoringRecoveryStore(client.process, sessionId, viewId),
     [client, sessionId, viewId, recoveryStore]);
   const [capabilities, setCapabilities] = useState<InterfaceAuthoringCapabilities>();
+  const [capabilitiesLoading, setCapabilitiesLoading] = useState(true);
   const [interfaces, setInterfaces] = useState<readonly ProcessUI[]>([]);
   const [selectedUi, setSelectedUi] = useState(initialUiId ?? "");
   const [revisions, setRevisions] = useState<readonly InterfaceRevision[]>([]);
@@ -54,13 +55,21 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
 
   useEffect(() => {
     const abort = new AbortController();
-    void Promise.allSettled([client.capabilities(abort.signal), client.interfaces(abort.signal)]).then(([available, saved]) => {
-      if (abort.signal.aborted) return;
-      if (available.status === "fulfilled") setCapabilities(available.value);
-      else setError(interfaceAuthoringReason(available.reason));
-      if (saved.status === "fulfilled") setInterfaces(saved.value);
-      else setError(interfaceAuthoringReason(saved.reason));
+    setCapabilities(undefined); setCapabilitiesLoading(true);
+    // Creation readiness must not wait for an independent saved-interface read.
+    const available = client.capabilities(abort.signal).then(value => {
+      if (!abort.signal.aborted) setCapabilities(value);
+    }).catch(error => {
+      if (!abort.signal.aborted) setError(interfaceAuthoringReason(error));
+    }).finally(() => {
+      if (!abort.signal.aborted) setCapabilitiesLoading(false);
     });
+    const saved = client.interfaces(abort.signal).then(value => {
+      if (!abort.signal.aborted) setInterfaces(value);
+    }).catch(error => {
+      if (!abort.signal.aborted) setError(interfaceAuthoringReason(error));
+    });
+    void Promise.allSettled([available, saved]);
     return () => abort.abort();
   }, [client, refresh]);
 
@@ -143,6 +152,7 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
 
   return <ProcessTheme><Section title="Interface for this process">
     <p>Create a reusable working interface with Wright's configured model, or open a saved interface.</p>
+    {capabilitiesLoading && <p role="status">Checking interface creation availability…</p>}
     {error && <ReasonNotice reason={error}/>}
     {capabilities && !capabilities.available && <ReasonNotice reason={capabilities.compiler_reason ?? {
       code: "CAPABILITY_UNAVAILABLE", message: "Interface creation is unavailable with the current model or adapter.",
@@ -166,7 +176,7 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
       <button className="wp-button" type="button" disabled={busy} onClick={reconcile}>Reconcile request</button></div>}
     {job && <section aria-label="Interface creation progress" aria-live="polite">
       <h3>{progress[job.job.state]}</h3>
-      {!!job.job.repair_attempt && <p>Correcting the interface Â· attempt {job.job.repair_attempt} of {job.job.role_resolution.profile.max_repairs ?? 2}</p>}
+      {!!job.job.repair_attempt && <p>Correcting the interface · attempt {job.job.repair_attempt} of {job.job.role_resolution.profile.max_repairs ?? 2}</p>}
       {job.job.diagnostics?.map((reason, index) => <ReasonNotice key={index} reason={reason}/>)}
       <div className="wp-row">
         {job.preview && <button className="wp-button" type="button" disabled={busy} onClick={() => void command(() => onOpenPreview(job))}>Open preview</button>}
@@ -179,8 +189,8 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
         })}>Cancel interface creation</button>}
       </div>
       {job.preview && !job.preview.previewed_at && <p>Open the preview and wait for it to load before saving.</p>}
-      <details><summary>Creation details</summary><p>Model: {job.job.role_resolution.model_reference} Â· adapter: {job.job.role_resolution.adapter}</p>
-        <p>Job {job.job.job_id} Â· revision {job.job.revision_id}</p></details>
+      <details><summary>Creation details</summary><p>Model: {job.job.role_resolution.model_reference} · adapter: {job.job.role_resolution.adapter}</p>
+        <p>Job {job.job.job_id} · revision {job.job.revision_id}</p></details>
     </section>}
     {observerExpired && <p role="status">Progress observation stopped. The backend job keeps its own state.
       <button className="wp-button" type="button" onClick={() => setRefresh(value => value + 1)}>Refresh job status</button></p>}
@@ -190,7 +200,7 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
     </select></label>
     {!!selectedUi && <label className="wp-field">Saved revision<select className="wp-input" value={selectedRevision} onChange={event => setSelectedRevision(event.target.value)}>
       <option value="">Choose a revision</option>{revisions.map(value => <option key={value.manifest.revision_id} value={value.manifest.revision_id}>
-        {value.manifest.revision_id === ui?.active_revision ? "Current Â· " : "Earlier Â· "}{value.manifest.title} Â· {value.created_at}
+        {value.manifest.revision_id === ui?.active_revision ? "Current · " : "Earlier · "}{value.manifest.title} · {value.created_at}
       </option>)}
     </select></label>}
     <div className="wp-row">

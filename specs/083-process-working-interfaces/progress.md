@@ -970,3 +970,29 @@ compiler or original validation gates. Failed private test roots are retained.
 T046 is still pending its live accepted-workflow/readiness and engineering UI
 composition checks. The example README makes that scope explicit. T043 retains
 the CAD creation-response limitation; remaining M3/M4/M5 tasks are still open.
+
+### 2026-10-02 UTC — Actual workspace review and continuation
+
+Normal production API/default-model heat basis reached its declared review. The
+actual workspace Workflows control and named accepted-file chooser exposed a
+settings-shape editor defect, now fixed for documented MCP file dependencies.
+A synthetic decision was labelled as an integration test in durable authority/UI.
+The first continuation exposed slow publication before acknowledgement; the
+callback now follows durable consume, with no change to dispatch/publication order
+or replay guards. A fresh browser proof passed ten checks and returned 202 with
+same-run Running state.
+
+The first manual-policy run failed before CAD source creation; its consumed action
+and policy were preserved. The fresh automatic-policy run wrote and reread actual
+CAD source, then correctly blocked on exports mistakenly assigned to authoring.
+The example now explicitly delegates execution/exports to the next declared CAD
+step. Both failures and source bytes remain retained; neither ran native geometry
+or the solver. A new exact source/output attempt is proceeding. Interface creation
+also now shows its capability check, independently of reading saved interfaces.
+
+Final checks: 28 action/example tests, 89 approval/continuation regressions,
+57 frontend tests across four files, TypeScript and Ruff passed. The ten-step
+normal workspace report passes walkthrough structure validation. Protected prototype/campaign/context hashes still
+match the saved baseline. No engineering acceptance or physical action occurred.
+See [heat-proof.md](evidence/heat-proof.md). Full tailored UI, native tool-chain,
+printed proof, migration and final distribution tasks remain open.

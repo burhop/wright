@@ -1,0 +1,1 @@
+Authenticated trace retained privately in .local-run/process-interfaces-083/t047-heat-live-005/entry-trace.zip. It is not published because it contains control-plane credentials. Screenshots and bounded diagnostics are retained here.

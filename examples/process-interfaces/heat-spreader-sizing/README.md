@@ -36,12 +36,21 @@ material certification and physical thermal qualification are outside this case.
 
 Preparation copies the original frozen assignment bytes into a new
 `process-proofs/heat-spreader-sizing/<attempt>/inputs` folder and writes a connected
-workflow under `workflows/`. It preserves the three original substantive stages
+workflow proposal at `process-proofs/heat-spreader-sizing/<attempt>/prepared.workflow.wflow`.
+It preserves the three original substantive stages
 and adds declared basis/final reviews, source authoring, native read-back and exact
 validation. It does not write into historical campaign roots. The manifest records
 the source, inputs, selected tool schemas and expected output root.
 
-Open the resulting workflow file in the Wright workspace. The common working
+Accept this proposal through Wright's normal source service before opening it:
+`POST /api/workspace/workflow-sources` with the selected `session_id`, the manifest's
+`accepted_source_path` as `path`, and the proposal's exact UTF-8 text as `source`.
+Use the existing authenticated operator client; do not put credentials in the
+workflow or interface. Read the accepted source back through
+`GET /api/workspace/workflow-sources` and verify its `storage_digest` equals the
+manifest's `source_sha256`. Preparation alone creates no accepted revision history.
+
+Open that accepted workflow file in the Wright workspace. The common working
 view prepares immutable run inputs and checks current tool readiness. Use Wright's
 UI authoring control to compose a tailored comparison view from the same contract.
 Any isolated synthetic reviewer policy must be separately enrolled by trusted

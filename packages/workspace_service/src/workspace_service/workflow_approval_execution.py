@@ -626,9 +626,14 @@ async def resume_workflow_approval(
                     principal_id=principal_id,
                 )
                 try:
-                    await publish("external_action_authorized")
+                    # The database consume has durably bound this exact request
+                    # and subject. Acknowledge that authority before publishing
+                    # the run-log projection, which can be slow on native hosts.
+                    # Dispatch still waits for publication; acknowledgement is
+                    # not provider acceptance or evidence of an external effect.
                     if on_authorized:
                         on_authorized(current)
+                    await publish("external_action_authorized")
                     if kind == "mcp-operation":
                         from .workflow_mcp_operations import submit_operation
 

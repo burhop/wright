@@ -28,6 +28,32 @@ function describeInterface() {
 const intent: InterfaceAuthoringIntent = {version: "1", process, request: {request_id: "retained-request", instruction: "Compare exact results", title: "Comparison"}};
 
 describe("native interface authoring controls", () => {
+  it("shows creation readiness while a separate saved-interface read is pending", async () => {
+    const f = fixture();
+    let resolveSaved!: (value: (typeof ui)[]) => void;
+    f.client.interfaces.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveSaved = resolve;
+        }),
+    );
+    const view = render(f.element);
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Checking interface creation availability",
+    );
+    describeInterface();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Create interface" }),
+      ).toBeEnabled(),
+    );
+    expect(
+      screen.queryByText("Checking interface creation availability…"),
+    ).not.toBeInTheDocument();
+    resolveSaved([ui]);
+    await ready();
+    view.unmount();
+  });
   it("preserves a chosen earlier revision when a background refresh reports a new active revision", async () => {
     const f = fixture();
     const newer = {...revision, manifest: {...revision.manifest, revision_id: "revision-newer"}};

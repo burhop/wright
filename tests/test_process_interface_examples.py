@@ -70,6 +70,16 @@ def test_heat_source_preserves_original_stages_and_exact_full_validation(configu
     assert report["physical_dispatch"] is False
     assert report["approval_policy_not_enrolled"] is True
     assert report["engineering_acceptance"] is False
+    assert report["source_acceptance_required"] is True
+    assert report["source_path"] == (
+        "process-proofs/heat-spreader-sizing/source-test/prepared.workflow.wflow"
+    )
+    assert report["accepted_source_path"] == (
+        "workflows/heat-spreader-sizing-source-test.workflow.wflow"
+    )
+    assert not (workspace / report["accepted_source_path"]).exists()
+    assert 'Do not execute CAD here' in source
+    assert 'the next declared native CAD operation produces them' in source
     assert len(plan.steps) == 10
     assert {
         "define_thermal_case_source_test",

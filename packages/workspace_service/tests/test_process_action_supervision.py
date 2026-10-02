@@ -221,6 +221,63 @@ async def test_action_preflight_rejects_unapproved_changed_or_unscoped_requests(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("publication_fails", [False, True])
+async def test_action_acknowledges_durable_consume_before_slow_run_log_publication(
+    tmp_path, monkeypatch, publication_fails
+):
+    from workspace_service import workflow_approval_execution as approvals
+
+    case, gateway = await approved_action_case(tmp_path, digital=True)
+    app, reference, receipt, cp, _, calls, _ = case
+    entered, release = asyncio.Event(), asyncio.Event()
+    original = approvals.record_workflow_approval_transition
+
+    async def delayed_publication(**kwargs):
+        if kwargs["kind"] == "external_action_authorized":
+            entered.set()
+            await release.wait()
+            if publication_fails:
+                raise OSError("Synthetic run-log publication failure")
+        return await original(**kwargs)
+
+    monkeypatch.setattr(
+        approvals, "record_workflow_approval_transition", delayed_publication
+    )
+    try:
+        snapshot = await asyncio.wait_for(submit(case, gateway), 4)
+        await asyncio.wait_for(entered.wait(), 4)
+        interaction = next(
+            item for item in snapshot.interactions if item.checkpoint_id == cp
+        )
+        assert interaction.action_receipt.request_id == "action-one"
+        assert interaction.action_receipt.submission == "authorized"
+        assert not interaction.action_receipt.delivery_completed
+        retained = app.workspace.workflow_external_actions.lookup(cp)
+        assert retained.state == "consumed"
+        assert retained.external_action["action_id"] == "action-one"
+        assert not gateway.calls and len(calls) == 1
+        assert app.runs.is_live(receipt.run_id)
+        release.set()
+        if publication_fails:
+            # The wait API returns recorded authority even when its owned task
+            # fails; the checkpoint remains the authority for replay refusal.
+            await app.runs.wait(action_scope(), reference, receipt.run_id)
+            retained = app.workspace.workflow_external_actions.lookup(cp)
+            assert retained.external_action["outcome"] == "outcome_unknown"
+            with pytest.raises(ProcessInterfaceError) as unknown:
+                await submit(case, gateway)
+            assert unknown.value.reason.code == "OUTCOME_UNKNOWN"
+            assert not gateway.calls and len(calls) == 1
+        else:
+            completed = await app.runs.wait(action_scope(), reference, receipt.run_id)
+            assert completed["status"] == "completed"
+            assert completed["run_id"] == receipt.run_id and len(gateway.calls) == 1
+    finally:
+        release.set()
+        await app.close()
+
+
+@pytest.mark.asyncio
 async def test_accepted_digital_operation_is_observed_and_cancelled_via_existing_owner(
     tmp_path,
 ):

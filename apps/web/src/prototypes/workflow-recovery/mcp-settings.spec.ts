@@ -150,3 +150,66 @@ it("converts compatible text connection types atomically and rejects non-JSON wh
     connectMcpInput(block, state.workflow, args.id, text.id),
   ).toThrow("matches");
 });
+
+function sourceWithFileDependencies(dependencies: unknown): string {
+  let state = { workflow: initialWorkflow, layout: initialLayout };
+  const added = createAuthoringObject("mcp-tool", state.workflow, state.layout);
+  state = apply(state, [added]);
+  state = apply(state, configureMcpTool(added.block, state.workflow, tool));
+  return formatRecoveryAuthoringSource(state.workflow).text.replace(
+    /(^task [^\n]+\n[\s\S]*?\n  settings: )([^\n]+)/gm,
+    (match, prefix: string, value: string) => {
+      const settings = JSON.parse(value);
+      if (settings.mcp_tool !== tool.name) return match;
+      return (
+        prefix +
+        JSON.stringify({
+          ...settings,
+          mcp_file_dependencies: dependencies,
+          expected_file_ports: { model: "process-proofs/case/plate.step" },
+        })
+      );
+    },
+  );
+}
+
+it("cold-round-trips exact MCP file dependencies alongside produced file ports", () => {
+  const dependencies = {
+    authored_source: "process-proofs/case/plate-source.py",
+  };
+  const source = sourceWithFileDependencies(dependencies);
+  expect(source).toContain('"mcp_file_dependencies":');
+  const parsed = parseRecoveryAuthoringSource(source, initialWorkflow);
+  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+  const formatted = formatRecoveryAuthoringSource(parsed.workflow!).text;
+  expect(formatted).toContain(
+    '"mcp_file_dependencies":{"authored_source":"process-proofs/case/plate-source.py"}',
+  );
+  expect(formatted).toContain(
+    '"expected_file_ports":{"model":"process-proofs/case/plate.step"}',
+  );
+  const reopened = parseRecoveryAuthoringSource(formatted, initialWorkflow);
+  expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
+  expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(
+    formatted,
+  );
+});
+
+it.each([
+  null,
+  [],
+  { source: 42 },
+  { source: { path: "plate.py" } },
+  { source: "../plate.py" },
+  { source: "C:/plate.py" },
+  { source: "plate\\source.py" },
+])("rejects malformed tool file-dependency maps (%#)", (dependencies) => {
+  const parsed = parseRecoveryAuthoringSource(
+    sourceWithFileDependencies(dependencies),
+    initialWorkflow,
+  );
+  expect(parsed.ok).toBe(false);
+  expect(
+    parsed.diagnostics.some((item) => item.code === "WFR-SOURCE-FIELD-TYPE"),
+  ).toBe(true);
+});

@@ -1,0 +1,48 @@
+{
+  "run_id": "258ba276bbf34d3e970dbcd6be1061a8",
+  "source": {
+    "workspace_id": "083-heat-live-004",
+    "source_path": "workflows/heat-spreader-sizing-live-default-model-001-accepted.workflow.wflow",
+    "source_digest": "2c878b6b5eb802897a65d6032190ebcd94dbcc1ffde0f4994ce4691477ac2c6f",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "status": "failed",
+  "diagnostic": {
+    "code": "WORKFLOW_INTEGRATION_POLICY_INVALID",
+    "message": "Document writing requires current immutable automatic integration authority.",
+    "correction": "Re-enroll the exact isolated test run through local campaign management.",
+    "binding_id": null,
+    "step_id": "author_cad_live_default_model_001",
+    "navigation": {
+      "kind": "block",
+      "block_id": "author_cad_live_default_model_001",
+      "run_id": "258ba276bbf34d3e970dbcd6be1061a8",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    "technical_details_ref": "runs/heat-spreader-sizing-live-default-model-001-accepted/258ba276bbf34d3e970dbcd6be1061a8.json"
+  },
+  "decision": {
+    "decision": "approved",
+    "actor": "integration_test:083-private-digital-heat-004",
+    "reason": "SYNTHETIC INTEGRATION TEST: exercise the declared basis review and resume; not human engineering acceptance. Original basis/limits retained; no numerical or physical results accepted.",
+    "request_id": "synthetic-basis-review-001",
+    "integration_test": true
+  },
+  "action_receipt": {
+    "request_id": "8e5c4872-46fd-41af-95a4-047eb766676b",
+    "principal_id": "local-control-plane",
+    "submission": "accepted",
+    "delivery_completed": true,
+    "observed_outcome": null,
+    "provider_reference": null,
+    "cancellation_requested": false,
+    "cancellation_outcome": null
+  },
+  "cad_created": false,
+  "solver_executed": false,
+  "physical_dispatch": false,
+  "engineering_acceptance": false
+}
