@@ -305,3 +305,9 @@ This is the durable product direction. It does not amend the constitution or
 rewrite historical approvals, frozen campaign data, feature evidence, or release
 records. New feature plans must reconcile their implementation with both this
 vision and the existing constitution and contributor gates.
+
+For Feature 083's current implementation and limits, use the
+[operator/developer guide](../workflows/process-working-interfaces.md) and
+[task record](../../specs/083-process-working-interfaces/tasks.md). Local
+implementation evidence does not establish the complete goal, installed browser
+acceptance, physical verification or human engineering acceptance.

@@ -240,5 +240,9 @@ binding or engineering verification.
    as needed; keep provider-specific compatibility work outside Wright.
 
 See the [refactoring plan](../architecture/workflow-platform-refactoring-plan.md).
+The [operator/developer guide](../workflows/process-working-interfaces.md) describes
+the implemented controls, native API, replaceable coding role and current
+qualification limits. Runnable read-only examples are in
+[process-interface examples](../../examples/process-interfaces/README.md).
 This is a bounded addition to the workflow platform, not a requirement to build
 or maintain a new Bambu MCP, replace the flowchart, or generate every UI by AI.

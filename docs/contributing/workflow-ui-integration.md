@@ -25,6 +25,13 @@ a replacement editor or a claim of full source/native runtime, engineering or
 installed-distribution acceptance. Read its task/progress records before treating
 individual checks as complete feature support.
 
+Use the [operator/developer guide](../workflows/process-working-interfaces.md)
+for implemented working-view and authoring controls. The
+[neutral examples](../../examples/process-interfaces/README.md) reuse Wright's
+owning services; they do not provide a separate process executor. Their API
+read checks and packaged-template read are narrower than served-editor or
+installed-workspace acceptance.
+
 Explicit workflow file links must take precedence over a restored active tab.
 Opening an existing source or its history must not create a missing workflow.
 Historical result links attach only to their exact source and use the native

@@ -37,9 +37,36 @@ instructions. Map the role/profile into existing configuration and adapters.
 The role describes its job, model, instructions, and allowed capabilities; the
 agent platform provides its execution environment. Hermes is the current path,
 with other platforms qualified separately rather than assumed equivalent.
-This is agreed direction; a complete generation/profile feature is not claimed
-as delivered. The manager-specific examples below do not make each platform
-an immutable engineering role.
+Feature 083 implements a local `process-ui-author/1` path through this boundary.
+Actual configured-model preview/save/update and saved reuse have recorded
+evidence; complete feature/distribution acceptance remains pending. The
+manager-specific examples below do not make each platform an immutable
+engineering role or qualify it for scoped UI authoring.
+
+### Qualified process UI coding role
+
+`CodingRole` separates the role/profile, versioned instruction identity, repair
+budget and model selection from the platform adapter. The initial path inherits
+the configured default model; UI creation does not change global chat/model/tool
+settings. The adapter must attest effective instructions on every turn, no
+authoring tools and default-model inheritance through
+`get_invocation_capabilities`. General chat health alone is insufficient.
+
+Wright resolves the role with the accepted process bindings, public client/kit
+documentation and packaged reference. It records adapter/model/configuration
+and effective instruction digests in the durable job and immutable revision.
+The model returns a bounded frontend envelope. Wright validates bindings and
+uses its fixed compiler; it does not accept model package scripts, backends,
+shell commands or a new runtime executor. At most two recorded diagnostic
+repairs are allowed. Generated-interface process grants are separate from the
+author's no-tools invocation.
+
+Hermes is the locally verified adapter path. Other adapters/platforms or model
+overrides need independent capability qualification; being named in this
+architecture document is not proof of scoped authoring support. See
+[process working interfaces](../workflows/process-working-interfaces.md), the
+[public authoring resource](../../packages/workspace_service/src/workspace_service/process_interfaces/resources/public-api.md)
+and [actual-model evidence](../../specs/083-process-working-interfaces/evidence/live-ui-authoring.md).
 
 The agent adapter layer bridges the system to any target LLM provider:
 
@@ -50,7 +77,9 @@ The agent adapter layer bridges the system to any target LLM provider:
 
 ## Per-Agent Risk Profiles & Guidance
 
-Wright orchestrates three distinct agents, each with a specific operational profile and specialized guidelines:
+The following deployment profiles describe operational conventions. They are
+not permanent platform-to-role assignments and do not establish capability
+qualification for process UI creation:
 
 ### Hermes (Coordination & Task Routing)
 *   **Risk Level**: Low

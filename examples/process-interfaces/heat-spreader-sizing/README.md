@@ -3,8 +3,10 @@
 **Current status:** declarative preparation and the original live digital
 CAD/solver chain are checked. The common results view and an initial actual-model
 comparison are browser-verified. A focused correction, actual evidence navigation
-and reuse on a second waiting run are checked; complete preparation/review controls
-remain pending. See the [recorded proof](../../../specs/083-process-working-interfaces/evidence/heat-proof.md).
+and unchanged saved reuse on a second waiting run are checked. Eleven served
+preparation/reuse checks pass without starting or answering that second review.
+Full feature/migration/installed acceptance remains pending. See the
+[recorded proof](../../../specs/083-process-working-interfaces/evidence/heat-proof.md).
 This example does not grant
 reviews, execute a process, install a provider, or claim engineering acceptance.
 

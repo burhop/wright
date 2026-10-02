@@ -1,14 +1,19 @@
 # Implementation and operator quickstart
 
 **Workspace:** `D:/repos/wright`.
-**Planned branch:** `codex/083-process-working-interfaces`.
-**Current state:** Planning only. Commands/routes/components in contracts are
-proposed until implementation evidence records them.
+**Implementation branch:** `codex/083-process-working-interfaces`.
+**Current state:** Approved implementation in progress. Local shared-interface,
+actual-model and served-workspace checks have evidence; full engineering,
+migration and installed browser acceptance remain pending. See the
+[operator/developer guide](../../docs/workflows/process-working-interfaces.md)
+and [task record](tasks.md) for checked scope.
 
 ## Start the long-running implementation
 
-Submit the complete block in [implementation-goal.md](implementation-goal.md).
-It approves this technical package, tests and isolated digital proof work, and
+The complete block in [implementation-goal.md](implementation-goal.md) has been
+submitted for this implementation. Do not start a duplicate goal or repeat its
+initial branch preparation. For a new approved implementation, that block
+approves this technical package, tests and isolated digital proof work, and
 permits unattended progress between implementation milestones. It does not
 approve physical actions, pending campaign subjects, push/merge/release or publication.
 Do not use `/speckit-implement` while the active pointer still names 082.
@@ -50,12 +55,14 @@ configuration requirements; selected provider onboarding owns them when relevant
 
 ## Evidence and verification after approval
 
-Implementation must add runnable neutral examples and exact commands for its new
-services/tests; do not pretend these proposed APIs already run. Use existing
+Runnable neutral examples and a bounded read-only native inspection command are
+in [examples/process-interfaces](../../examples/process-interfaces/README.md).
+The operator guide records existing controls, native routes and local proof
+addresses. Use existing
 test tooling (pytest, Vitest, Playwright) and record actual versions/environment.
 Evidence roots and individual gates are in [acceptance-cases.md](acceptance-cases.md).
-The final operator guide must contain working URLs from the verified served build,
-not historic prototype ports copied into a completion report.
+Installed/native/Docker full browser proof remains pending; the current local
+source-checkout URLs must not be presented as a release or public deployment.
 
 No integration push/merge is implied. If later authorized, follow root AGENTS and
 the authoritative dev/release scripts/runbooks at that transition.

@@ -261,14 +261,19 @@ updates. This proposal does not start runtime implementation or an autonomous go
 The concrete follow-on is
 [Feature 083: Process working interfaces](../../specs/083-process-working-interfaces/plan.md),
 with a [saved implementation goal](../../specs/083-process-working-interfaces/implementation-goal.md).
-It delivers the complete experience selected by the user: interaction/runtime
+Its approved scope is the complete experience selected by the user: interaction/runtime
 foundation, shared client/kit/common view, actual UI generation/preview/save/update
 through Wright's coding role, and proof on two different existing engineering
 processes. The shared foundation is an increment, not the final deliverable.
-Its technical package receives human approval through submission of that saved
-goal before runtime implementation starts.
+The user submitted that goal and approved local implementation and verification.
+Local interaction/runtime, client/kit/common view, actual-model authoring and
+saved reuse have evidence. Full engineering parity, active vendor-code retirement,
+installed browser acceptance and the final completion audit remain pending. See
+the [operator guide](../workflows/process-working-interfaces.md) and the feature's
+[task record](../../specs/083-process-working-interfaces/tasks.md).
 
-Keep the managed 082 context pointer and historical approvals intact. This roadmap
+The managed context now points to approved Feature 083; preserve Feature 082's
+historical approvals and validator contracts. This roadmap
 does not create a new vendor project or authorise device/supplier actions or
 external publication. The following inventory informs later migration work.
 

@@ -1483,3 +1483,34 @@ verified and still needs loading in the served API. API 011's successful opt-in
 handoff path was already verified; no success claim is made for an unflagged
 supplied-file process. Protected campaign and unrelated mixed deltas remain
 unchanged. Goal stays active.
+
+User-requested token-reset pause: T054/T055 documentation work is saved but not
+committed. Added docs/workflows/process-working-interfaces.md, neutral examples
+README/reference instruction and inspect_interface.py, plus 17 controlled CLI
+tests. Updated quickstart, agent-adapter role guidance, example statuses and
+mkdocs navigation. Two real authenticated read-only API probes verified authoring
+available and an existing saved job; interface/authoring rows were unchanged.
+Private evidence is t054-operator-read-001; its earlier checked-scope records the
+initial 12 tests, while the final suite t054-operator-example-002 passed 17 tests
+in 1.36 seconds. No generation/build/start/approval/action was submitted in this
+turn. MkDocs is absent in the current venv; no installation was attempted.
+Resume by finishing link/resource verification, rerunning the latest CLI against
+the API as needed, publishing scoped evidence, and making a focused commit.
+T054/T055 remain unchecked. API 011/owned UI remain available; neither second
+review was answered. Prior commit is 3467ee97. Pause requested by the user pending
+the token reset; the complete implementation objective remains unfinished.
+
+Resumed after token reset. Current goal status is active. Protected campaign,
+prototype hashes and unrelated mixed deltas pass the preservation check. Final
+operator example passes 17 tests in 0.78 seconds; Ruff check/format pass and the
+documented packaged reference reads 1,825 characters. Sixty-four documentation
+link targets exist. Retained 20261002-operator-examples includes current JUnit,
+link inventory and the earlier actual scoped GET evidence, with credential-value
+scan passed. Latest live read failed WRIGHT_READ_UNAVAILABLE: old owned shell
+handle is missing and direct psutil socket inspection finds neither 8030 nor 5243
+listener. Do not treat earlier addresses as live or replay engineering work.
+Guide, neutral examples, role documentation, navigation and implementation-status
+guidance now distinguish actual local checks from pending whole-feature proof.
+MkDocs render remains unverified because the package is absent. No model,
+process, review or external action was submitted. Both second reviews remain
+unanswered; full engineering parity/migration/distribution/audit work is pending.

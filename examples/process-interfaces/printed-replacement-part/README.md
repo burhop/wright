@@ -1,8 +1,12 @@
 # Printed replacement-part working-interface example
 
-**Status:** declarative preparation and passive inspection fixtures are checked.
-The connected live geometry/slicer run and generated working interface remain
-pending. See the [proof record](../../../specs/083-process-working-interfaces/evidence/printed-proof.md).
+**Status:** actual native geometry, retained mesh repair/slicing/inspection and
+actual-model interface preview/save/update/reuse have evidence. A separate exact
+retained-package simulator handoff completed; independent unchanged-profile
+assessment records 17 passes and mandatory review blocked. The original failed
+consumer's skipped gate was not rewritten. Full source-gate parity, migration and
+installed acceptance remain pending. See the
+[proof record](../../../specs/083-process-working-interfaces/evidence/printed-proof.md).
 
 This retains the original focus-wheel assignment, image, dimensions, materials
 and full 082 validation profile. It prepares a digital manufacturing package;

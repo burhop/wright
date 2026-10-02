@@ -1,0 +1,322 @@
+[
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../specs/083-process-working-interfaces/tasks.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../examples/process-interfaces/reference-instruction.txt",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../packages/process_client/README.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../packages/ui_kit/README.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../examples/process-interfaces/README.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../examples/process-interfaces/inspect_interface.py",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../specs/083-process-working-interfaces/contracts/runtime-and-source.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../specs/083-process-working-interfaces/evidence/workspace-acceptance.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../specs/083-process-working-interfaces/evidence/heat-proof.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../specs/083-process-working-interfaces/evidence/printed-proof.md",
+    "exists": true
+  },
+  {
+    "source": "docs/workflows/process-working-interfaces.md",
+    "target": "../../specs/083-process-working-interfaces/evidence/distribution.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "workflow-platform-vision.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../../specs/083-process-working-interfaces/plan.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../../specs/083-process-working-interfaces/tasks.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../../specs/083-process-working-interfaces/progress.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "workflow-platform-vision.md#how-users-work",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../workspace-surfaces/README.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../workspace-surfaces/mcp-and-webmcp.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../contributing/workflow-ui-integration.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../architecture/workflow-platform-refactoring-plan.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../workflows/process-working-interfaces.md",
+    "exists": true
+  },
+  {
+    "source": "docs/design/process-apps.md",
+    "target": "../../examples/process-interfaces/README.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../design/workflow-platform-vision.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../design/process-apps.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../contributing/workflow-ui-integration.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../mcp-catalog/mcp-server-testing-process.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../../specs/083-process-working-interfaces/plan.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../../specs/083-process-working-interfaces/implementation-goal.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../workflows/process-working-interfaces.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/workflow-platform-refactoring-plan.md",
+    "target": "../../specs/083-process-working-interfaces/tasks.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/agent-adapters.md",
+    "target": "../design/workflow-platform-vision.md#ai-authoring-through-wright",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/agent-adapters.md",
+    "target": "../workflows/process-working-interfaces.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/agent-adapters.md",
+    "target": "../../packages/workspace_service/src/workspace_service/process_interfaces/resources/public-api.md",
+    "exists": true
+  },
+  {
+    "source": "docs/architecture/agent-adapters.md",
+    "target": "../../specs/083-process-working-interfaces/evidence/live-ui-authoring.md",
+    "exists": true
+  },
+  {
+    "source": "docs/contributing/workflow-ui-integration.md",
+    "target": "../design/workflow-platform-vision.md",
+    "exists": true
+  },
+  {
+    "source": "docs/contributing/workflow-ui-integration.md",
+    "target": "../design/process-apps.md",
+    "exists": true
+  },
+  {
+    "source": "docs/contributing/workflow-ui-integration.md",
+    "target": "../workflows/process-working-interfaces.md",
+    "exists": true
+  },
+  {
+    "source": "docs/contributing/workflow-ui-integration.md",
+    "target": "../../examples/process-interfaces/README.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/README.md",
+    "target": "../../docs/workflows/process-working-interfaces.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/README.md",
+    "target": "../../specs/083-process-working-interfaces/tasks.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/README.md",
+    "target": "reference-instruction.txt",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/README.md",
+    "target": "../../specs/083-process-working-interfaces/evidence/live-ui-authoring.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/README.md",
+    "target": "../../specs/083-process-working-interfaces/evidence/operator-examples.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/README.md",
+    "target": "heat-spreader-sizing/README.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/README.md",
+    "target": "printed-replacement-part/README.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/heat-spreader-sizing/README.md",
+    "target": "../../../specs/083-process-working-interfaces/evidence/heat-proof.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/heat-spreader-sizing/README.md",
+    "target": "../../../specs/083-process-working-interfaces/evidence/provider-qualification.md",
+    "exists": true
+  },
+  {
+    "source": "examples/process-interfaces/printed-replacement-part/README.md",
+    "target": "../../../specs/083-process-working-interfaces/evidence/printed-proof.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "../../docs/workflows/process-working-interfaces.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "tasks.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "implementation-goal.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "spec.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "plan.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "tasks.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "research.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "data-model.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "contracts/process-interaction.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "acceptance-cases.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "progress.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "../../docs/contributing/workflow-ui-integration.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "../../examples/process-interfaces/README.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/quickstart.md",
+    "target": "acceptance-cases.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/evidence/operator-examples.md",
+    "target": "../../../docs/workflows/process-working-interfaces.md",
+    "exists": true
+  },
+  {
+    "source": "specs/083-process-working-interfaces/evidence/operator-examples.md",
+    "target": "../../../examples/process-interfaces/README.md",
+    "exists": true
+  }
+]

@@ -137,8 +137,17 @@ interfaces use the same foundation, with honest engineering checks and limits.
 - [ ] T051 Verify installed native and clean Docker saved-UI/open/common-view behavior without checkout/model/compiler/network installs; record exact artifact/platform and authoring capability limits in `specs/083-process-working-interfaces/evidence/distribution.md`.
 - [ ] T052 Run served normal-workspace walkthrough preserving refined editor controls and both working/preview journeys at realistic viewport/zoom/accessibility; retain screenshots/build/flags/report in `artifacts/process-interfaces/083/` and `specs/083-process-working-interfaces/evidence/workspace-acceptance.md`.
 - [ ] T053 Run targeted unit/API/component/mocked/browser/security/package-boundary and prior affected continuation/082/editor regression checks; record commands/results/limits in `specs/083-process-working-interfaces/evidence/verification.md`, fixing failures within this feature.
-- [ ] T054 Add runnable neutral authoring/reference examples and operator/developer/API/role-provider documentation in `examples/process-interfaces/`, `docs/workflows/process-working-interfaces.md` and `docs/architecture/agent-adapters.md`, using actual verified routes/commands/URLs.
-- [ ] T055 Refresh vision/refactoring/contributor guidance and docs navigation in `docs/design/process-apps.md`, `docs/architecture/workflow-platform-refactoring-plan.md`, `docs/contributing/workflow-ui-integration.md` and `mkdocs.yml` to distinguish implemented/verified/unsupported scope without rewriting historical evidence.
+- [x] T054 Add runnable neutral authoring/reference examples and operator/developer/API/role-provider documentation in `examples/process-interfaces/`, `docs/workflows/process-working-interfaces.md` and `docs/architecture/agent-adapters.md`, using actual verified routes/commands/URLs.
+  Seventeen controlled read-only utility tests, the packaged reference read,
+  earlier actual scoped API reads and 64 resolved documentation links establish
+  this documentation/example scope. Latest services are stopped and explicitly
+  labelled; no new live success or installed browser acceptance is claimed.
+  See `evidence/operator-examples.md`.
+- [x] T055 Refresh vision/refactoring/contributor guidance and docs navigation in `docs/design/process-apps.md`, `docs/architecture/workflow-platform-refactoring-plan.md`, `docs/contributing/workflow-ui-integration.md` and `mkdocs.yml` to distinguish implemented/verified/unsupported scope without rewriting historical evidence.
+  Guide/navigation and durable vision links distinguish checked local mechanisms
+  from incomplete migration, full engineering parity and distribution acceptance.
+  Historical approvals and reviewed-editor evidence remain intact. MkDocs rendering
+  is unverified (package absent); target-link existence is the checked scope.
 - [ ] T056 Check every FR/SC against task/evidence coverage and publish status/limitations/reproducible evidence index in `specs/083-process-working-interfaces/completion.md`; distinguish fixture/live model/MCP/browser/engineering/test-decision/physical/user acceptance claims.
 - [ ] T057 Finish focused local commits of owned work, verify unrelated dirty baselines and protected campaign/context history, and update `specs/083-process-working-interfaces/progress.md` with final task IDs/commit/evidence/resources still needed; no push/merge/release is implied.
 
