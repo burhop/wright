@@ -7,7 +7,7 @@ import type { InterfaceAuthoringIntent } from "../../services/process-ui-authori
 import {authoringProcess as process, authoringCapabilities as capabilities, authoringJob as job, authoringView as built,
   authoringUi as ui, authoringRevision as revision, authoringNow as now} from "../../../tests/fixtures/process-ui-authoring";
 
-function fixture(initial: InterfaceAuthoringIntent | null = null) {
+function fixture(initial: InterfaceAuthoringIntent | null = null, initialJobId?: string) {
   const client = {
     process, capabilities: vi.fn(async () => capabilities), interfaces: vi.fn(async () => [ui]),
     revisions: vi.fn(async () => [revision]), compatibility: vi.fn(async () => ({ui_id: ui.ui_id, revision_id: revision.manifest.revision_id, current_process: process, state: "compatible" as const})),
@@ -18,6 +18,7 @@ function fixture(initial: InterfaceAuthoringIntent | null = null) {
   const store = {read: vi.fn(() => retained), write: vi.fn((value: InterfaceAuthoringIntent) => {retained = value;}), clear: vi.fn(() => {retained = null;})};
   const onOpenPreview = vi.fn(async () => {}), onOpenSaved = vi.fn(async () => {});
   const element = <InterfaceAuthoringPanel client={client} sessionId="session" viewId="view" recoveryStore={store}
+    initialUiId={initialJobId ? ui.ui_id : undefined} initialJobId={initialJobId}
     onOpenPreview={onOpenPreview} onOpenSaved={onOpenSaved}/>;
   return {client, store, onOpenPreview, onOpenSaved, element};
 }
@@ -94,6 +95,33 @@ describe("native interface authoring controls", () => {
     expect(f.client.getJob).toHaveBeenCalledWith("job-one", expect.any(AbortSignal));
     expect(f.client.submit).not.toHaveBeenCalled();
     view.unmount(); expect(f.client.cancel).not.toHaveBeenCalled();
+  });
+
+  it("restores preview-tab save controls from its exact job without a local creation intent", async () => {
+    const f = fixture(null, job.job_id);
+    f.client.getJob.mockResolvedValue({...built, preview: {...built.preview!, previewed_at: now}});
+    const view = render(f.element);
+    await screen.findByRole("heading", {name: "Preview ready"});
+    expect(screen.getByRole("button", {name: "Create interface"})).toBeDisabled();
+    expect(screen.getByRole("button", {name: "Save interface"})).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", {name: "Save interface"}));
+    await waitFor(() => expect(f.client.save).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({job}), null));
+    expect(f.client.getJob).toHaveBeenCalledWith(job.job_id, expect.any(AbortSignal));
+    expect(f.client.submit).not.toHaveBeenCalled();
+    expect(f.store.write).not.toHaveBeenCalled();
+    view.unmount();
+    expect(f.client.cancel).not.toHaveBeenCalled();
+  });
+
+  it("rejects a restored preview whose job identifies a different interface", async () => {
+    const f = fixture(null, job.job_id);
+    f.client.getJob.mockResolvedValue({...built, preview: {...built.preview!, manifest: {...built.preview!.manifest, ui_id: "ui-other"}}});
+    const view = render(f.element);
+    await screen.findByRole("alert");
+    expect(screen.queryByRole("button", {name: "Save interface"})).not.toBeInTheDocument();
+    expect(f.client.submit).not.toHaveBeenCalled();
+    expect(f.client.save).not.toHaveBeenCalled();
+    view.unmount();
   });
 
   it("an uncertain request waits for explicit same-ID reconciliation", async () => {

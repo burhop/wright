@@ -1,0 +1,239 @@
+{
+  "manifest": {
+    "schema_version": "wright.process-ui/1",
+    "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+    "revision_id": "revision-04c1d0b36d3347b0b5c24318028e4f61",
+    "parent_revision": null,
+    "title": "Heat-spreader candidate comparison",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+      "source_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "interaction_version": "wright.process-interaction/1",
+    "client_version": "1.0.0",
+    "kit_version": "1.0.0",
+    "bindings": [
+      {
+        "binding_id": "define_thermal_case_live_default_model_002.define_thermal_case_live_default_model_002_result",
+        "kind": "output",
+        "selector": "define_thermal_case_live_default_model_002.define_thermal_case_live_default_model_002_result",
+        "block_id": "define_thermal_case_live_default_model_002",
+        "port_id": "define_thermal_case_live_default_model_002_result",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "This result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "create_plate_geometry_live_default_model_002.create_plate_geometry_live_default_model_002_result",
+        "kind": "output",
+        "selector": "create_plate_geometry_live_default_model_002.create_plate_geometry_live_default_model_002_result",
+        "block_id": "create_plate_geometry_live_default_model_002",
+        "port_id": "create_plate_geometry_live_default_model_002_result",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "This result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "create_plate_geometry_live_default_model_002.baseline_40_geometry",
+        "kind": "output",
+        "selector": "create_plate_geometry_live_default_model_002.baseline_40_geometry",
+        "block_id": "create_plate_geometry_live_default_model_002",
+        "port_id": "baseline_40_geometry",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The baseline 40 geometry is not available in the current snapshot."
+      },
+      {
+        "binding_id": "create_plate_geometry_live_default_model_002.revision_60_geometry",
+        "kind": "output",
+        "selector": "create_plate_geometry_live_default_model_002.revision_60_geometry",
+        "block_id": "create_plate_geometry_live_default_model_002",
+        "port_id": "revision_60_geometry",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The revision 60 geometry is not available in the current snapshot."
+      },
+      {
+        "binding_id": "create_plate_geometry_live_default_model_002.geometry_measurements",
+        "kind": "output",
+        "selector": "create_plate_geometry_live_default_model_002.geometry_measurements",
+        "block_id": "create_plate_geometry_live_default_model_002",
+        "port_id": "geometry_measurements",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "Geometry measurements are not available in the current snapshot."
+      },
+      {
+        "binding_id": "solve_and_verify_live_default_model_002.solve_and_verify_live_default_model_002_result",
+        "kind": "output",
+        "selector": "solve_and_verify_live_default_model_002.solve_and_verify_live_default_model_002_result",
+        "block_id": "solve_and_verify_live_default_model_002",
+        "port_id": "solve_and_verify_live_default_model_002_result",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The solve and verification result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "cad_documentation_live_default_model_002.cad_documentation_live_default_model_002_result",
+        "kind": "output",
+        "selector": "cad_documentation_live_default_model_002.cad_documentation_live_default_model_002_result",
+        "block_id": "cad_documentation_live_default_model_002",
+        "port_id": "cad_documentation_live_default_model_002_result",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "CAD documentation is not available in the current snapshot."
+      },
+      {
+        "binding_id": "author_cad_live_default_model_002.author_cad_live_default_model_002_result",
+        "kind": "output",
+        "selector": "author_cad_live_default_model_002.author_cad_live_default_model_002_result",
+        "block_id": "author_cad_live_default_model_002",
+        "port_id": "author_cad_live_default_model_002_result",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The CAD authoring result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "author_cad_live_default_model_002.cad_source",
+        "kind": "output",
+        "selector": "author_cad_live_default_model_002.cad_source",
+        "block_id": "author_cad_live_default_model_002",
+        "port_id": "cad_source",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The CAD source is not available in the current snapshot."
+      },
+      {
+        "binding_id": "measure_candidates_live_default_model_002.measure_candidates_live_default_model_002_result",
+        "kind": "output",
+        "selector": "measure_candidates_live_default_model_002.measure_candidates_live_default_model_002_result",
+        "block_id": "measure_candidates_live_default_model_002",
+        "port_id": "measure_candidates_live_default_model_002_result",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "Candidate measurements are not available in the current snapshot."
+      },
+      {
+        "binding_id": "compute_fields_live_default_model_002.compute_fields_live_default_model_002_result",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.compute_fields_live_default_model_002_result",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "compute_fields_live_default_model_002_result",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The field-computation result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "compute_fields_live_default_model_002.baseline_40_coarse",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.baseline_40_coarse",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "baseline_40_coarse",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The baseline 40 coarse result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "compute_fields_live_default_model_002.baseline_40_fine",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.baseline_40_fine",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "baseline_40_fine",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The baseline 40 fine result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "compute_fields_live_default_model_002.revision_60_coarse",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.revision_60_coarse",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "revision_60_coarse",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The revision 60 coarse result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "compute_fields_live_default_model_002.revision_60_fine",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.revision_60_fine",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "revision_60_fine",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The revision 60 fine result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "compute_fields_live_default_model_002.decision",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.decision",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "decision",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "No recorded decision is available in the current snapshot."
+      },
+      {
+        "binding_id": "compute_fields_live_default_model_002.correspondence",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.correspondence",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "correspondence",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "Correspondence evidence is not available in the current snapshot."
+      },
+      {
+        "binding_id": "validate_outputs_live_default_model_002.assessment",
+        "kind": "output",
+        "selector": "validate_outputs_live_default_model_002.assessment",
+        "block_id": "validate_outputs_live_default_model_002",
+        "port_id": "assessment",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The output assessment is not available in the current snapshot."
+      }
+    ],
+    "capabilities": [
+      "process.read",
+      "process.results",
+      "process.navigate"
+    ],
+    "navigation": [],
+    "viewers": []
+  },
+  "source_digest": "6fdf4b5b2b5717ff80d3bd103d16e0accf0607031fa5d77a2deb9229b091160a",
+  "build": {
+    "build_id": "build-0ec6137bc48e461cb8484e16b136591d",
+    "source_digest": "6fdf4b5b2b5717ff80d3bd103d16e0accf0607031fa5d77a2deb9229b091160a",
+    "manifest_digest": "99ecdb413762990bedbde7066e2e12bd513c6448393ccbf536fe56e4e42d8f03",
+    "toolchain_digest": "8571d26fe5cab56ebbabec2a033dca5ecfbca7922b7c4c6751273f825e749bd3",
+    "bundle_digest": "8c4c7a52e668f8c40ed7278b881ec8d93c404e3b8dcd607bf92f9a4eff45f064",
+    "state": "built",
+    "created_at": "2026-10-02T04:17:39.405445+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 344174
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "4234294d9fab8a5ff738f11a8e7ad45a56b9a51a23dd78eac847aa9a9a73773d",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "4234294d9fab8a5ff738f11a8e7ad45a56b9a51a23dd78eac847aa9a9a73773d",
+    "capability_scope": []
+  },
+  "generation_request_digest": "807ec5f64dc9c1f18c741bee1dbe16f47b2beb97eb186d8c4f79034d94d63106",
+  "created_at": "2026-10-02T04:17:39.405445+00:00",
+  "previewed_at": "2026-10-02T04:36:12.212224+00:00"
+}

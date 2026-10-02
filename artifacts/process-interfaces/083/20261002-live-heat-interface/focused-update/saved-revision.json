@@ -1,0 +1,58 @@
+{
+  "manifest": {
+    "schema_version": "wright.process-ui/1",
+    "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+    "revision_id": "revision-13d5997c275849df87ce1cd08bfa0ac2",
+    "parent_revision": "revision-04c1d0b36d3347b0b5c24318028e4f61",
+    "title": "Heat-spreader candidate comparison",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+      "source_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "interaction_version": "wright.process-interaction/1",
+    "client_version": "1.0.0",
+    "kit_version": "1.0.0",
+    "bindings": [],
+    "capabilities": [
+      "process.read",
+      "process.results",
+      "process.navigate"
+    ],
+    "navigation": [],
+    "viewers": []
+  },
+  "source_digest": "a5fb963d84e0a226882ca9fa307d3926dbb7c8380aad750a78efe91960de91f3",
+  "build": {
+    "build_id": "build-11c59258ffce4d5eb1c43e36e0afa57a",
+    "source_digest": "a5fb963d84e0a226882ca9fa307d3926dbb7c8380aad750a78efe91960de91f3",
+    "manifest_digest": "4ce6e270633435d5325386ab8e48cd6045939ce78bb69ed8c399136139af11fa",
+    "toolchain_digest": "8571d26fe5cab56ebbabec2a033dca5ecfbca7922b7c4c6751273f825e749bd3",
+    "bundle_digest": "30354fd7a20906c24203186517a39640059fc17c0bcea5d8c6f38643cc3ea667",
+    "state": "built",
+    "created_at": "2026-10-02T04:44:13.576058+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 359454
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "4234294d9fab8a5ff738f11a8e7ad45a56b9a51a23dd78eac847aa9a9a73773d",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "4234294d9fab8a5ff738f11a8e7ad45a56b9a51a23dd78eac847aa9a9a73773d",
+    "capability_scope": []
+  },
+  "generation_request_digest": "59398317069f77cb17723d849dc931eacc1b451e8335881ae0807cb0b708d03c",
+  "created_at": "2026-10-02T04:44:13.576058+00:00",
+  "previewed_at": "2026-10-02T04:44:22.897706+00:00"
+}

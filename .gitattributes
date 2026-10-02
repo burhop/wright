@@ -21,6 +21,7 @@ artifacts/process-validation/** -text -whitespace
 # Exact native CAD/solver outputs and their recorded hashes are proof evidence.
 # Preserve original bytes, including the native STEP writer's whitespace.
 artifacts/process-interfaces/083/20261002-live-heat-analysis/** -text -whitespace
+artifacts/process-interfaces/083/20261002-live-heat-interface/** -text -whitespace
 
 # Process-definition contracts are byte-hashed and installed byte-for-byte.
 specs/078-process-definition-view/contracts/*.json text eol=lf

@@ -1,7 +1,10 @@
 # Heat-spreader working-interface example
 
-**Current status:** declarative preparation and compilation tested. The full live
-engineering/common/tailored journey remains pending. This example does not grant
+**Current status:** declarative preparation and the original live digital
+CAD/solver chain are checked. The common results view and an initial actual-model
+comparison are browser-verified; focused correction and second-run reuse remain
+pending. See the [recorded proof](../../../specs/083-process-working-interfaces/evidence/heat-proof.md).
+This example does not grant
 reviews, execute a process, install a provider, or claim engineering acceptance.
 
 The original controller-strap assignment compares actual 100×40×2 and 100×60×2 mm

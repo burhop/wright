@@ -9,6 +9,7 @@ import {
   rewriteSurfaceText,
   surfaceProxyMatch,
   surfaceProxyHeaders,
+  surfaceProxyConnection,
 } from "./vite.config";
 import configuration from "./vite.config";
 
@@ -67,6 +68,16 @@ describe("web license build output", () => {
 });
 
 describe("surface development proxy rewriting", () => {
+  it.each([
+    ["http://127.0.0.1:8030", "http:", "127.0.0.1", "8030"],
+    ["http://localhost:8018", "http:", "localhost", "8018"],
+    ["https://localhost:8443", "https:", "localhost", "8443"],
+    ["http://localhost", "http:", "localhost", "80"],
+    ["https://localhost", "https:", "localhost", "443"],
+  ])("connects surface previews to the configured API %s", (target, protocol, hostname, port) => {
+    expect(surfaceProxyConnection(target)).toEqual({ protocol, hostname, port });
+  });
+
   it("keeps Rivet AI configuration and completion requests inside the preview", () => {
     const authority = encodeURIComponent("s-editor.localhost:8000");
     const rewritten = rewriteSurfaceText(

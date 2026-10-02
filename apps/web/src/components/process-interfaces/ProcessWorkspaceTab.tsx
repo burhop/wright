@@ -126,7 +126,9 @@ export function ProcessWorkspaceTab({
         </button>}
       </div>}
       {authoringShown && onOpenInterface && <InterfaceAuthoringPanel client={authoring} sessionId={sessionId} viewId={tab.processView.view_id}
-        initialUiId={tab.processView.interface?.ui_id} onOpenPreview={async view => {
+        initialUiId={tab.processView.interface?.ui_id}
+        initialJobId={tab.processView.interface?.kind === "preview" ? tab.processView.interface.job_id : undefined}
+        onOpenPreview={async view => {
           if (!view.preview) return;
           onOpenInterface(process, {kind: "preview", ui_id: view.preview.manifest.ui_id, revision_id: view.preview.manifest.revision_id,
             job_id: view.job.job_id}, view.preview.manifest.title, tab.processView.run_id);

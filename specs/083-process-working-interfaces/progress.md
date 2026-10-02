@@ -1024,3 +1024,43 @@ Resume checks: 124 readback/continuation/082 tests, 131 authoring/API/contracts,
 pass; explicit-config app ESLint passes, with the kit outside its configured base.
 Protected prototype/campaign/context hashes match the saved baseline. See
 [heat-proof.md](evidence/heat-proof.md) for exact identities, scope and limitations.
+
+### 2026-10-02 — Installed saved-asset qualification
+
+The current package checks pass (3 tests). The actual previously AI-generated
+saved revision also serves its exact compiled bytes from the extracted wheel
+under native isolated Python and a fresh network-disabled cached Linux container,
+with model/compiler launches unavailable. This proves static installed reuse;
+the full installed workspace browser/bridge remains pending. A further 54
+presentation/association/authority/static regressions pass. See
+[distribution.md](evidence/distribution.md). T050/T051 remain partial.
+
+The unchanged configured default model passed one tool-free minimal connectivity
+diagnostic in 6.877 seconds. A single smaller heat-results composition is being
+requested through Wright to distinguish request complexity from connection
+failure; prior failed jobs and reports remain intact. No engineering or physical
+action is replayed.
+
+### 2026-10-02 — Actual heat interface saved in the workspace
+
+The smaller actual-default-model Wright request built a 56-line heat comparison.
+Its real preview exposed and led to fixes for the generic development proxy's
+hardcoded upstream port and preview-tab job restoration. After isolating the
+owned Vite dependency cache and correcting its private launch flags, eleven
+normal-workspace checks pass: exact source/run, all 18 actual result cards,
+owner-observed preview, native Save and saved working-tab open. Original failed
+reports and earlier model timeouts remain retained.
+
+The initial generated source has a recorded usability/contract limitation:
+guessed pending-review fields and omitted exact evidence navigation. One bounded
+focused update is in progress through Wright. No engineering process is rerun.
+T046/T047 remain partial until that correction, preparation/review enhancement,
+second-run reuse and the printed workflow are proved. Additional focused tests
+pass (54 final recovery/proxy checks, 49 overlapping host/proxy checks); TypeScript
+and explicit changed-file lint pass. See [heat-proof.md](evidence/heat-proof.md).
+
+The subsequent focused heat UI update succeeded with zero repairs and saved a new
+immutable revision. Its thirteen-check actual browser journey passes, correcting
+the invented fields and enabling scoped evidence/navigation callbacks. Actual
+link activation and reuse on a second run are next; full preparation/review
+controls, printed proof, migration and installed workspace remain pending.

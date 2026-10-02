@@ -270,4 +270,16 @@ describe("trusted process tab host", () => {
     fireEvent.click(screen.getByRole("button", {name: "Return to interface"}));
     expect(screen.queryByTestId("common-view-host-fixture")).not.toBeInTheDocument();
   });
+
+  it("restores preview controls with the locator's job and UI identity", () => {
+    const locator = {kind: "preview" as const, ui_id: authoringUi.ui_id,
+      revision_id: authoringRevision.manifest.revision_id, job_id: authoringView.job.job_id};
+    const preview = createProcessWorkspaceTab(process, {viewId: "view-preview", runId: "recorded-run", interface: locator});
+    render(<ProcessWorkspaceTab tab={preview} sessionId="session" onRunAttached={vi.fn()}
+      onPrepareAnother={vi.fn()} onOpenInterface={vi.fn()}/>);
+    fireEvent.click(screen.getByRole("button", {name: "Create or choose interface"}));
+    const props = mocks.authoring.mock.calls.at(-1)![0] as InterfaceAuthoringPanelProps;
+    expect(props.initialUiId).toBe(locator.ui_id);
+    expect(props.initialJobId).toBe(locator.job_id);
+  });
 });

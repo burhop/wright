@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import license from "rollup-plugin-license";
 import path from "path";
 import { request as httpRequest } from "node:http";
+import { request as httpsRequest } from "node:https";
 import type {
   ClientRequest,
   IncomingHttpHeaders,
@@ -19,7 +20,17 @@ const extraAllowedHosts = (process.env.WRIGHT_WEB_ALLOWED_HOSTS ?? "")
   .filter((host) => host.length > 0);
 const apiProxyTarget =
   process.env.WRIGHT_WEB_API_PROXY_TARGET ?? "http://127.0.0.1:8000";
-const apiProxyPort = new URL(apiProxyTarget).port || "80";
+export function surfaceProxyConnection(target = apiProxyTarget) {
+  const endpoint = new URL(target);
+  return {
+    protocol: endpoint.protocol,
+    hostname: endpoint.hostname,
+    port: endpoint.port || (endpoint.protocol === "https:" ? "443" : "80"),
+  };
+}
+
+const apiProxyConnection = surfaceProxyConnection();
+const apiProxyPort = apiProxyConnection.port;
 
 function surfacePreviewHostHeader(host: string): string {
   return `${host.replace(/:\d+$/, "")}:${apiProxyPort}`;
@@ -247,10 +258,12 @@ function surfaceDevProxyPlugin(): Plugin {
             surfaceSessions.get(match.authority),
           );
 
-          const proxyReq = httpRequest(
+          const request = apiProxyConnection.protocol === "https:"
+            ? httpsRequest
+            : httpRequest;
+          const proxyReq = request(
             {
-              hostname: "127.0.0.1",
-              port: 8000,
+              ...apiProxyConnection,
               method: req.method,
               path: match.targetPath,
               headers,

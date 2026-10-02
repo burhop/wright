@@ -187,3 +187,69 @@ T046/T047 remain incomplete until tailored generation/preview/save/update/reuse
 and the second engineering workflow are proved. Provider clean-container checks,
 migration and final installed distribution also remain open. No protected
 campaign subject, physical action, human acceptance, push or release was changed.
+
+## Actual tailored composition, preview recovery and save
+
+The unchanged default-model connection answered one minimal tool-free diagnostic
+in 6.877 seconds. A single smaller Wright authoring request then produced a real
+56-line comparison with exact optional output bindings. Job
+`job-c165c08bc5bb4f77809f38f8e423e274` produced UI
+`ui-8858f2ec2bc24bc588ce5042626503ab`, revision
+`revision-04c1d0b36d3347b0b5c24318028e4f61`. Source digest is
+`6fdf4b5b2b5717ff80d3bd103d16e0accf0607031fa5d77a2deb9229b091160a`;
+the recorded role remains Hermes/default `gpt-5.6-sol`, with no tools or global
+model/configuration change. The previous three failed jobs remain intact.
+
+The actual preview uncovered a development-proxy defect: its isolated host
+authority followed the configured 8030 API port but its HTTP connection still
+targeted 8000. The generic proxy now connects to the configured API host/port and
+uses the matching HTTP/HTTPS transport. Exact-host/cookie/origin protections remain
+in place. Restored preview tabs also pass their recorded job identity into native
+authoring controls, enabling owner-observed Save without another generation.
+Mismatched preview/UI identities are rejected; mount never submits a job.
+
+A subsequent browser attempt stopped on stale shared Vite optimized dependencies.
+The owned UI was restarted with a private cache. Its first private launch used
+incorrect feature-flag names; that failed report is retained separately. The
+corrected launch uses the existing `VITE_WRIGHT_*` editor flags. None of these
+recovery attempts replayed the engineering process or changed protected records.
+
+The fresh corrected normal-workspace journey passed **11 checks**: established
+Workflows/file entry, common view and exact run, existing built-preview restoration,
+actual managed rendering of all **18** results, explicit native save and saved
+working-tab opening. Console, page-error and failed-response lists are empty.
+Source/bindings/build/saved provenance and screenshots are in
+[the tailored-interface evidence](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/checked-scope.json)
+and its [workspace report](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/workspace-walkthrough/report.html).
+Authenticated traces remain private. The report structure validator passes.
+
+This first compact interface is a presentation milestone, not complete acceptance:
+source inspection found guessed pending-review fields and missing evidence
+navigation callbacks. Its recorded source and limitation are preserved. One
+explicit focused correction is now being requested through Wright to use the
+actual typed interaction fields and exact navigation. Full preparation/review
+controls and second-run reuse remain pending, as does the printed workflow.
+
+Additional checks: final proxy/panel/tab/recovery group **54 passed**, other
+proxy/host/presenter group **49 passed** (overlapping config tests), TypeScript and
+explicit-config changed-file ESLint pass. Installed saved-asset checks are
+recorded separately in [distribution.md](distribution.md). No missing task was
+checked complete because the compact source builds or renders.
+
+### Focused correction saved
+
+That explicit focused update completed with **zero repairs**. Actual default-model
+job `job-331a7203cbb142da80a9f0ea20a7d023` saved revision
+`revision-13d5997c275849df87ce1cd08bfa0ac2` under the same UI, with the first revision
+as parent. Its 70-line source uses typed `snapshot.interactions`, actual candidate
+role prefixes, and explicit scoped evidence/assessment/block navigation callbacks.
+It no longer interprets an absent checkpoint as engineering acceptance. The
+original generated revision remains immutable and available.
+
+The normal-workspace update/preview/save/open journey passed **13 checks**, with
+all 18 actual result cards, enabled navigation controls and empty browser error
+lists. It did not invoke CAD/solver work. Exact source/build/role/revision evidence
+and the corrected manual checklist are in
+[the focused-update record](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/focused-update/checked-scope.json).
+Actual navigation activation, second-run reuse and complete preparation/review
+controls retain separate proof obligations. T047 remains unchecked.
