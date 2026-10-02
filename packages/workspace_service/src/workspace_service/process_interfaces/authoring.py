@@ -223,6 +223,7 @@ class ProcessInterfaceAuthoring:
             resources = load_authoring_resources()
             catalog = accepted_binding_catalog(resolved.document)
             previous = None
+            previous_manifest = None
             if ui_id:
                 ui = self.repository.get_ui(process.workspace_id, ui_id)
                 revision = self.repository.get_revision(
@@ -237,6 +238,7 @@ class ProcessInterfaceAuthoring:
                 previous = self.application.ui_revisions.saved_source(
                     scope.process_scope, revision.manifest.process, revision
                 )
+                previous_manifest = revision.manifest
             capability = await self.engine.get_invocation_capabilities()
             if (
                 not capability.available
@@ -270,6 +272,16 @@ class ProcessInterfaceAuthoring:
                 process=process,
                 client_version="1.0.0",
                 kit_version="1.0.0",
+                **(
+                    {
+                        "bindings": previous_manifest.bindings,
+                        "capabilities": previous_manifest.capabilities,
+                        "navigation": previous_manifest.navigation,
+                        "viewers": previous_manifest.viewers,
+                    }
+                    if previous_manifest is not None
+                    else {}
+                ),
             )
             now = _now()
             job = AuthoringJob(
@@ -302,6 +314,9 @@ class ProcessInterfaceAuthoring:
                     "available_capabilities": sorted(scope.process_scope.capabilities),
                     "manifest": manifest.model_dump(mode="json"),
                     "previous_source": previous,
+                    "previous_manifest": previous_manifest.model_dump(mode="json")
+                    if previous_manifest is not None
+                    else None,
                 },
             )
             if not ui_id:
@@ -531,6 +546,7 @@ class ProcessInterfaceAuthoring:
                 "output_schema": record["output_schema"],
                 "reference_template": record["template"],
                 "previous_source": record["previous_source"],
+                "previous_manifest": record.get("previous_manifest"),
             }
             correction = None
             job = self._transition(job, "generating")

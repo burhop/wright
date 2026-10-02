@@ -1199,3 +1199,12 @@ Eighty-two boundary/build/static checks, changed-file Ruff and TypeScript pass;
 focused controls activity checks pass. API restart 003 stopped gracefully and
 restart 004 loads these changes without replaying a process. Saved-bundle styling
 and embedded preparation still require a fresh built revision and served proof.
+
+The fresh revision now proves actual Wright styling through the served preview
+and saved interface. Its follow-up preparation test caught a model/manifest
+regression: retained controls but only three read capabilities. The update input
+now preserves and exposes the saved manifest alongside source, with 50 checks
+passing and current scope validation unchanged. A fresh model correction will
+restore explicitly available control declarations; the denied revision remains
+retained. Fresh wheel run `aee8d1771e1442babd28ff0fab3df0cf` is at its declared
+basis review after original-profile preparation/readiness; no physical dispatch.

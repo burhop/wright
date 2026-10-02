@@ -57,6 +57,19 @@ still required; historical saved bundles and failed screenshots are unchanged.
 Shared controls now display activity while checking inputs or confirming a
 recorded request; their focused component checks pass.
 
+Fresh revision `revision-6c898939554e4db5801b2bc95a81d88b` passes the 13-step
+update/preview/save/open walkthrough with actual shared styling: computed
+background `rgb(9, 13, 22)` and Wright's Outfit/system font stack. Its embedded
+preparation check then correctly denied input mutation: the model had returned
+only read/results/navigation manifest capabilities while keeping WorkingControls.
+The authoring update input previously supplied the prior source but seeded a new
+read-only manifest. It now also supplies the exact saved manifest and seeds its
+bindings/capabilities/navigation/viewers under new assigned revision identities.
+Current scope and binding validation still apply; no permission is inferred from
+source code. Fifty authoring/build checks and Ruff pass for this correction.
+Restoring the requested control capabilities needs a fresh default-model update;
+the denied revision and its stopping screenshot remain intact.
+
 ## Prepared file consumption
 
 The completed wheel construction and repair exposed a distinct handoff defect:

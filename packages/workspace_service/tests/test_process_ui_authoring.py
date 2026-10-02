@@ -611,7 +611,12 @@ async def preview_and_save(service, reference, job, *, expected_active=None):
 async def test_save_update_rollback_and_saved_source_reuse_without_model_or_compile(
     tmp_path,
 ):
-    service, reference = prepared(tmp_path)
+    def with_controls(output):
+        output["manifest"]["capabilities"] += ["process.inputs", "process.start"]
+        output["manifest"]["viewers"] = ["text"]
+        return output
+
+    service, reference = prepared(tmp_path, Engine(replies=[with_controls]))
     first = await service.submit(working_scope(), reference, "create", "Show outputs")
     await service.wait(working_scope(), reference, first.job_id)
     revision_one = await preview_and_save(service, reference, first)
@@ -632,6 +637,13 @@ async def test_save_update_rollback_and_saved_source_reuse_without_model_or_comp
         await service.wait(working_scope(), reference, second.job_id)
     ).state == "preview_ready"
     update_prompt = json.loads(service.engine.calls[-1].message)
+    assert update_prompt["previous_manifest"] == revision_one.manifest.model_dump(
+        mode="json"
+    )
+    assert update_prompt["manifest"]["capabilities"] == list(
+        revision_one.manifest.capabilities
+    )
+    assert update_prompt["manifest"]["viewers"] == list(revision_one.manifest.viewers)
     assert (
         update_prompt["previous_source"]["files"]["App.tsx"]
         == load_authoring_resources().template
@@ -640,6 +652,8 @@ async def test_save_update_rollback_and_saved_source_reuse_without_model_or_comp
         service, reference, second, expected_active=revision_one.manifest.revision_id
     )
     assert revision_two.manifest.parent_revision == revision_one.manifest.revision_id
+    assert revision_two.manifest.capabilities == revision_one.manifest.capabilities
+    assert revision_two.manifest.viewers == revision_one.manifest.viewers
     original_calls = len(service.engine.calls)
     original_probes = service.engine.probes
     ui = await service.application.ui_revisions.activate(

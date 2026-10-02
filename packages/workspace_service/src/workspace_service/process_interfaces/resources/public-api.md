@@ -82,6 +82,15 @@ and start rebinding. Use a visible navigation error callback. If the current
 projection cannot reconcile a retained receipt, offer the common working view;
 never implement an alternative executor or guess a successful outcome.
 
+For an update, Wright supplies `previous_manifest` and seeds the assigned
+manifest with the saved bindings, capabilities, navigation and viewers. Preserve
+those declarations when retaining their controls. `WorkingControls` preparation
+requires `process.inputs`; starting requires `process.start`; declared responses,
+reviews, actions and cancellation require their corresponding capabilities.
+Include only capabilities supplied in `available_process_capabilities`. A source
+import or visible control does not grant permission. A deliberately read-only
+interface must disclose unavailable operations and offer the common view.
+
 For declared interactions, CheckpointCard's response, review and execution props
 are public UI-kit callbacks, not additional AppProps. Match the currently enabled
 Action to both checkpoint_id and subject_digest. Use respond, decide or
