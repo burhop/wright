@@ -76,3 +76,35 @@ deprecation warnings. Evidence is
 These are controlled contract/service/API checks. They do not replace the
 remaining live-model, two engineering workflows, installed workspace or human
 acceptance obligations.
+
+## Current frontend qualification candidate, resumed 2 October
+
+The complete web app passes TypeScript checking with the existing configuration:
+
+```text
+node node_modules/typescript/bin/tsc -p apps/web/tsconfig.app.json --incremental --tsBuildInfoFile .local-run/process-interfaces-083/t053-typescript-app-001.tsbuildinfo
+```
+
+An isolated production Vite build using the three existing recovery/composer/
+process-definition flags compiled 936 modules in 2.56 seconds. Output is private
+`t051-installed-web-002`, not the served or tracked packaged frontend. The existing
+large-chunk warning remains; no network/dependency installation occurred.
+
+A private copy of the actual wheel package/force-include sources was staged,
+the existing native build script's frontend staging/manifest function was applied
+only to that copy, and the standard Python wheel build ran with `--no-isolation`.
+The checked native distribution inspector passes. Bundled manifest bytes match
+the fresh frontend digest. Retained [build record](../../../artifacts/process-interfaces/083/20261002-current-installed-candidate/build-record.json)
+and command/output identify the candidate:
+
+- Wheel SHA-256: `88f3afa844dd8f2d5de1956a194b94922ad68c64a00bde9c173e639d5ab34820`.
+- Frontend manifest SHA-256: `34ca258c1b727b49c8b9584b0a7a75f1e59c94b74600aff75304ce7d30c779b1`.
+- Private root: `.local-run/process-interfaces-083/t051-current-installed-002`.
+
+This is an unpublished local qualification artifact at the existing source
+version, built from the recorded development worktree. It is not the public
+artifact of that version or a release candidate approved for publication. The
+original packaged frontend has no worktree changes; protected/unrelated-work
+checks pass. T050/T051 remain incomplete: next verify actual installed workspace,
+common/saved interface mounting, authority and compiler/model-free reuse on native
+and clean Docker. The earlier static HTTP proof is not substituted for that work.
