@@ -1654,3 +1654,18 @@ committed. Resume by committing the scoped checkpoint, building a fresh installe
 candidate containing the copy correction, then continuing T052 through the real
 workspace editor. The currently installed candidate still contains the old copy.
 No engineering review or external action was submitted during this checkpoint.
+
+2026-10-02 explicit user resume: saved the dialog fix and stopped evidence in
+local commit e01f7eb5. Fresh compiled frontend and installed wheel 01f9e227…
+run through owning native services in a copied workspace on 8037. Nine installed
+authoring checks pass, followed by incompatible type rejection, layout-only drag
+and exact position reopen, zoom controls, compact keyboard input inspection at
+measured page scale 2, and actual CAS conflict preservation. Preserved sandbox
+launch/selector/type-assumption/layout-digest/title-assertion failures in separate
+reports. All six browser report structures validate; credential byte scan and
+trace mutation audit pass. Original history hashes and five durable UI/authoring/
+continuation tables are unchanged. No model generation, process start, review or
+external operation was submitted. See evidence/workspace-acceptance.md and
+artifacts/process-interfaces/083/20261002-editor-native-verified/verification.json.
+T052 remains open for pointer sockets/pan/broader accessibility and current-build
+working/preview journeys, alongside the other uncompleted full-goal tasks.

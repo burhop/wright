@@ -94,3 +94,51 @@ agent port. Those requests failed and submitted no model/tool work; its six
 history checks and exact unchanged hashes retain their recorded scope. They
 should not be described as proving every server-side fallback stayed on the
 configured unavailable endpoint.
+
+## Resumed installed editor continuation, 2 October 2026
+
+The user explicitly resumed work after the pause. Dialog correction commit
+`e01f7eb5` was compiled into a fresh production frontend and genuine installed
+wheel. Wheel SHA-256:
+`01f9e2270872522d99ed8939471bbc5bcee5b00c9b9db020ec7ff9abe70b3885`;
+frontend manifest SHA-256:
+`fb52d2f15433cc0c2842b1644a914ec3c2f5e2ecf87e9c6d2ae3cdfdcc49b05b`.
+The installed native host on loopback port 8037 asserts all owning modules and
+served frontend are installed, with no checkout imports, authoring compiler,
+provider autostart or available model. The workspace/database are fresh copies;
+the original engineering source and human reviews are untouched.
+
+| Evidence | Checked scope |
+|---|---|
+| `20261002-editor-native-004/workspace-walkthrough/report.html` | Nine checks: normal Workflows entry, accurate blank-workflow instructions, separate blank source creation, direct text input, Undo/Redo, two individual AI steps, keyboard typed connection, exact saved-source reopen, invalid managed-field draft containment. |
+| `20261002-editor-native-007/workspace-walkthrough/report.html` | Three passed checks before a stopped assertion: actual incompatible document/file socket rejection, live drag with layout commit on release and exact saved position reopen, canvas zoom controls. |
+| `20261002-editor-native-008/workspace-walkthrough/report.html` | Measured visual viewport scale 2 at 720 by 550, reachable compact controls and keyboard-selected actual input field; real CAS save conflict preserves local 102 mm text and concurrent saved 101 mm text. |
+| `20261002-editor-native-verified/verification.json` | Exact build/host identities, unchanged five UI/authoring/continuation tables and historical source/run hashes; trace audit rejects run/review/authoring/action/interaction mutations, and byte scan finds no fixture credential in public evidence. |
+
+All roots above are below `artifacts/process-interfaces/083/`. Six browser report
+structure validations pass. The fixture-created sources are
+`workflows/editor-verification-083-002.workflow.wflow` and
+`workflows/editor-verification-083-004.workflow.wflow`. The latter deliberately
+ends with the concurrent 101 mm source saved; the conflicting local 102 mm edit
+was retained in the browser and trace. Neither workflow was executed. No model
+generation, process start, engineering review or external operation was submitted.
+The only failed response in the final compact/conflict report is its expected
+409 conflict, with no page errors. Authenticated traces stay private.
+
+Retained attempts document verification errors rather than silently converting
+them to product failures: 002 could not spawn cached Chromium in the sandbox
+before navigation; 003 selected both active and retained editor panels; 005
+incorrectly assumed an AI prompt could not accept text (that is a supported
+connection); 006 compared a full layout digest across a server layout-revision
+increment instead of positions; 007 expected a particular compact inspector
+title string. Corrections scope selectors to the actual active tab and verify
+the real type contracts, saved positions and actual input field. No UI behavior
+was changed to satisfy these harness expectations. Original reports/screenshots
+and the saved scratch sources are retained.
+
+This is installed authoring evidence, not complete T052 acceptance. Pointer port
+connections, pan, broader accessibility, working/preview journeys on this build,
+completed engineering-output parity and final task/evidence audit remain open.
+Two-times CDP page scale is stated as measured page scale, not a claim about
+changing the user's desktop browser zoom preference. Product/engineering user
+acceptance remains separate.

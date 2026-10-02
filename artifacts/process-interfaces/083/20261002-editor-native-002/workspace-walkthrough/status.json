@@ -1,0 +1,21 @@
+{
+  "title": "New workflow authoring through the installed workspace",
+  "summary": "A fresh empty verification workflow, preserved editor authoring and no execution; stop at the first confusing or failing state.",
+  "overall": "pending",
+  "updated": "2026-10-02T22:33:10.596Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": []
+}

@@ -1,0 +1,170 @@
+{
+  "title": "New workflow authoring through the installed workspace",
+  "summary": "A fresh empty verification workflow, preserved editor authoring and no execution; stop at the first confusing or failing state.",
+  "overall": "pass",
+  "updated": "2026-10-02T22:34:17.932Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Normal workspace editor entry",
+      "summary": "Existing editor and workflow file menu are visible.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Workflow files"
+      ],
+      "expected": "Existing editor opens within the workspace.",
+      "actual": "Existing editor and workflow file menu are visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Accurate new-workflow instructions",
+      "summary": "The installed dialog describes blank-workflow creation and readiness.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Open New workflow.",
+      "controls": [
+        "Workflow name",
+        "Create workflow"
+      ],
+      "expected": "Instructions describe a blank workflow.",
+      "actual": "The installed dialog describes blank-workflow creation and readiness.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Fresh blank source",
+      "summary": "The scratch workflow source contains its name and no task/input/connection/item declarations.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Create Editor verification 083 004 and open Source.",
+      "controls": [
+        "Workflow name",
+        "Create workflow",
+        "Source"
+      ],
+      "expected": "A new, separate workflow has no prefilled engineering steps.",
+      "actual": "The scratch workflow source contains its name and no task/input/connection/item declarations.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Direct input configuration",
+      "summary": "Text input and its direct inspector field are visible and configured.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Create Text input and enter engineering text.",
+      "controls": [
+        "Create",
+        "Text input",
+        "Text"
+      ],
+      "expected": "Input inspector edits the same workflow.",
+      "actual": "Text input and its direct inspector field are visible and configured.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Undo and redo",
+      "summary": "Undo removes the entered value and Redo restores it.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Undo the text edit, then Redo.",
+      "controls": [
+        "Undo",
+        "Redo"
+      ],
+      "expected": "Both controls restore accepted editing state.",
+      "actual": "Undo removes the entered value and Redo restores it.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Individual AI steps",
+      "summary": "Two separate AI prompt steps appear; no model work is started.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Create two AI prompt steps.",
+      "controls": [
+        "Create",
+        "AI prompt"
+      ],
+      "expected": "Both new steps appear in the established canvas.",
+      "actual": "Two separate AI prompt steps appear; no model work is started.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Typed connection in source",
+      "summary": "The keyboard-created connection appears in canonical source.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Connect the first Response to the second Prompt using Enter.",
+      "controls": [
+        "Response output",
+        "Prompt input",
+        "Source"
+      ],
+      "expected": "A type-compatible connection appears in the same source.",
+      "actual": "The keyboard-created connection appears in canonical source.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Saved source reopens",
+      "summary": "Reload restores the saved input, two AI steps and connection exactly.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Save and reload the workspace.",
+      "controls": [
+        "Save",
+        "Source"
+      ],
+      "expected": "The exact saved workflow reopens without execution.",
+      "actual": "Reload restores the saved input, two AI steps and connection exactly.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Invalid draft stays isolated",
+      "summary": "Managed-field diagnostic is visible, accepted revision is unchanged and Run is disabled.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Enter a source draft containing managed revision: 99 and Apply.",
+      "controls": [
+        "Source",
+        "Apply",
+        "Run"
+      ],
+      "expected": "Invalid source leaves accepted revision intact and blocks Run.",
+      "actual": "Managed-field diagnostic is visible, accepted revision is unchanged and Run is disabled.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    }
+  ]
+}

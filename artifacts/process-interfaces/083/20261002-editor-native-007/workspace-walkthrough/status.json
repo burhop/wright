@@ -1,0 +1,87 @@
+{
+  "title": "New workflow authoring through the installed workspace",
+  "summary": "Continue the newly saved scratch workflow through type rejection, layout persistence, zoom and concurrent-save protection. No process execution or engineering review.",
+  "overall": "blocked",
+  "updated": "2026-10-02T22:38:42.639Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Incompatible socket rejection",
+      "summary": "A connection diagnostic is visible and the semantic digest is unchanged.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Try connecting Response output to its reference-file input using Enter.",
+      "controls": [
+        "Engineering document",
+        "Response output",
+        "Reference document input"
+      ],
+      "expected": "Explain incompatible types without changing the accepted graph.",
+      "actual": "A connection diagnostic is visible and the semantic digest is unchanged.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Dragging persists only layout",
+      "summary": "The node moves live; position commits on release and reopens exactly while semantics/revision remain unchanged; the full layout digest includes server revision metadata.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Drag Text input, release, Save and reload.",
+      "controls": [
+        "Text input",
+        "Save"
+      ],
+      "expected": "Movement changes saved layout without changing semantics or definition revision.",
+      "actual": "The node moves live; position commits on release and reopens exactly while semantics/revision remain unchanged; the full layout digest includes server revision metadata.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "Canvas zoom controls",
+      "summary": "Zoom changes the canvas transform and all three controls remain reachable.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Use Zoom in, Zoom out and Fit workflow to view.",
+      "controls": [
+        "Zoom in",
+        "Zoom out",
+        "Fit workflow to view"
+      ],
+      "expected": "Canvas navigation controls work within the editor.",
+      "actual": "Zoom changes the canvas transform and all three controls remain reachable.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Editor continuation stopped at Compact two-times page scale",
+      "summary": "First unexpected state retained; no execution or review submitted.",
+      "purpose": "Preserve real failure.",
+      "action": "Compact two-times page scale",
+      "controls": [
+        "Compact two-times page scale"
+      ],
+      "expected": "Editor action succeeds without guesses or workarounds.",
+      "actual": "expect(locator).toContainText(expected) failed\n\nLocator: locator('[data-testid=\"retained-workspace-workflow-panel\"][aria-hidden=\"false\"]').getByTestId('workflow-recovery-inspector')\nTimeout: 5000ms\n- Expected substring  - 1\n+ Received string     + 7\n\n- Text input\n+ Inspector⌄Input source · supplies text or a fileWhat this input suppliesWrite requirements, design intent, or notesTextAssess a 100 mm engineering specimen. Units: mm.Input schema and defaultsDefine what this process needs before it starts. Values entered in the working view belong to a run.Input declaration (JSON){\n+   \"version\": 1,\n+   \"value_schema\": {\n+     \"type\": \"string\"\n+   },\n+   \"required\": true\n+ }Use value_schema for the value shape, required for readiness, and optional unit, frame and default fields. Preserve configured option_source bindings when editing.A declared default takes precedence over legacy input text. Wright checks supported schema, provider options and actual values before starting.Apply input declaration\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for locator('[data-testid=\"retained-workspace-workflow-panel\"][aria-hidden=\"false\"]').getByTestId('workflow-recovery-inspector')\n    14 × locator resolved to <aside class=\"recovery-inspector\" data-testid=\"workflow-recovery-inspector\">…</aside>\n       - unexpected value \"Inspector⌄Input source · supplies text or a fileWhat this input suppliesWrite requirements, design intent, or notesTextAssess a 100 mm engineering specimen. Units: mm.Input schema and defaultsDefine what this process needs before it starts. Values entered in the working view belong to a run.Input declaration (JSON){\n  \"version\": 1,\n  \"value_schema\": {\n    \"type\": \"string\"\n  },\n  \"required\": true\n}Use value_schema for the value shape, required for readiness, and optional unit, frame and default fields. Preserve configured option_source bindings when editing.A declared default takes precedence over legacy input text. Wright checks supported schema, provider options and actual values before starting.Apply input declaration\"\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}
