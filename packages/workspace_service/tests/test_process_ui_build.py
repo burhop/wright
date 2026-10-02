@@ -187,6 +187,12 @@ async def test_reference_compiles_with_public_packages_and_no_generated_scripts(
     )
     assert output.report.state == "built", output.report.diagnostics
     assert output.dist and (output.dist / "app.js").is_file()
+    # The fixed host explicitly retains shared styles, even if the package index
+    # is tree-shaken while resolving named component exports.
+    assert (output.dist / "style.css").is_file()
+    assert ".wright-process-ui" in (output.dist / "style.css").read_text(
+        encoding="utf-8"
+    )
     assert output.report.bundled_bytes > 0
     assert output.report.bundle_digest
     assert "createPresentationClient" in (output.dist / "app.js").read_text(

@@ -336,6 +336,9 @@ it("prevents a second click while the first review is unresolved", async () => {
   fireEvent.click(button);
   await waitFor(() => expect(c.decide).toHaveBeenCalledTimes(1));
   expect(button).toBeDisabled();
+  expect(
+    screen.getByText("Waiting for Wright to confirm the recorded request…"),
+  ).toBeVisible();
   expect(sessionStorage.length).toBe(1);
 });
 

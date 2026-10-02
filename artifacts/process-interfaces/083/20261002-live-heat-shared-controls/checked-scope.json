@@ -1,0 +1,21 @@
+{
+  "schema_version": "wright.process-ui-checked-scope/1",
+  "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+  "revision_id": "revision-7de5f2d40aef4d26b44a172b85c631f9",
+  "parent_revision": "revision-13d5997c275849df87ce1cd08bfa0ac2",
+  "source_digest": "d79b2487920c631fa303677d1fca43fa4eb8fb26ff3eff2c0e1a2e29bc2e6689",
+  "inventory_digest": "82ae23aabe6ad3d8336d4572d7297e7f61013b71b3c13ccabda327668c53b6a5",
+  "model_reference": "gpt-5.6-sol",
+  "instructions_digest": "df8b813ae9a35008dd97dd0a81313974b7c283d51a9014eafbcb8cacaabca4a8",
+  "source_line_count": 97,
+  "browser_steps": 13,
+  "result_cards": 18,
+  "actual_default_model_update": true,
+  "fixed_build": true,
+  "preview_save_open": true,
+  "prepared_and_waiting_controls_qualified": false,
+  "second_run_reuse_qualified": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "limitation": "Saved shared controls built and rendered. Fresh preparation/waiting/reuse checks pending; prior slow-loading stop retained."
+}

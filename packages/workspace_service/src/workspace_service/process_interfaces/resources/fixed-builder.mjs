@@ -56,6 +56,7 @@ try {
   }
   const entry = path.join(root, 'wright-entry.tsx');
   fs.writeFileSync(entry, `import {createRoot} from 'react-dom/client';
+import ${JSON.stringify(path.join(request.kitRoot, 'src/styles.css').replaceAll('\\', '/'))};
 import type {ComponentType} from 'react';
 import {createPresentationProcessClient} from '@wright/process-client';
 import type {ProcessClient, InteractionSnapshot, PresentationClientPorts} from '@wright/process-client';

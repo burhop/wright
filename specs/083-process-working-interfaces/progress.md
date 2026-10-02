@@ -1179,3 +1179,23 @@ layer-slider failure remains retained. See
 [shared-working-controls.md](evidence/shared-working-controls.md). A fresh loaded
 wheel chain and default-model heat update remain pending. T045–T047 are still
 incomplete; no physical operation or engineering acceptance is claimed.
+
+The fresh default-model update now succeeds: Wright generated a 97-line heat
+comparison using `WorkingControls`, built it, displayed the managed preview,
+saved revision `revision-7de5f2d40aef4d26b44a172b85c631f9` and reopened it in a
+workspace tab, with 13 served checks passing. The actual preparation/review reuse
+checks stopped while a run snapshot loaded; timing evidence shows HTTP 200 after
+32.849 seconds, beyond the original 30-second check. Read-only reconciliation
+confirms run `9cfe133164bd4e70b97be9a058d0feb8` remains waiting and undecided.
+Successful update evidence and the precise unqualified scope are retained in
+`20261002-live-heat-shared-controls`; slow-loading failures remain private. A
+fresh bounded longer-read check is running. No process or review was submitted.
+
+That longer-read check reached the waiting review and stopped at a real
+preparation defect: the isolated presentation shell lacked the native gateway.
+Shared startup now binds the existing owner to it. A second defect dropped the
+shared stylesheet; the fixed build entry explicitly retains that stylesheet.
+Eighty-two boundary/build/static checks, changed-file Ruff and TypeScript pass;
+focused controls activity checks pass. API restart 003 stopped gracefully and
+restart 004 loads these changes without replaying a process. Saved-bundle styling
+and embedded preparation still require a fresh built revision and served proof.

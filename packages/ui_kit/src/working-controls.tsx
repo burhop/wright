@@ -291,6 +291,11 @@ function ScopedControls({
   return (
     <>
       <Section title={runId ? "Run inputs" : "Prepare the process"}>
+        {busy && !runId && !pending && (
+          <p role="status">
+            Checking the declared inputs and required capabilities…
+          </p>
+        )}
         {!snapshot.inputs?.length && (
           <p>This process uses its configured inputs.</p>
         )}
@@ -373,6 +378,11 @@ function ScopedControls({
         )}
       </Section>
       <Section title="Declared reviews and actions">
+        {busy && pending && (
+          <p role="status">
+            Waiting for Wright to confirm the recorded request…
+          </p>
+        )}
         {readOnly && <p>Preview: process controls are read-only.</p>}
         {reason && <ReasonNotice reason={reason} onNavigate={onNavigate} />}
         {pending && (

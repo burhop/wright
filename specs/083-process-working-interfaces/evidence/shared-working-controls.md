@@ -33,9 +33,29 @@ retained. The preceding parallel run had one existing layer-slider assertion
 failure; it is not reported as passing. No geometry renderer change was made.
 The authoring/build/toolchain suite also passes **58 checks**, including the
 fixed local builder. Private report: `t046-working-controls-authoring-001.xml`.
-The generated heat interface still needs a fresh default-model update and served
-browser qualification using this composition. The earlier timed-out update is
-retained and the previous saved comparison remains authoritative.
+The fresh default-model heat update succeeded through normal Wright controls:
+13 browser steps prove generation, fixed build, preview, save and opening revision
+`revision-7de5f2d40aef4d26b44a172b85c631f9`. Its 97-line source imports the shared
+controls and retains the comparison and exact evidence callbacks. Actual prepared
+and waiting-state control qualification remains pending. Three fresh reuse checks
+stopped at loading; a timing trace records the requested run snapshot returning
+HTTP 200 after 32.849 seconds, beyond their 30-second limit. A read-only snapshot
+confirms the second run is waiting and undecided. These failed checks are retained;
+the delay remains usability debt. The earlier timed-out authoring update is also
+retained. The successful update/build scope is published separately in
+`artifacts/process-interfaces/083/20261002-live-heat-shared-controls/`.
+
+The longer-read walkthrough reached the waiting review, then exposed a genuine
+preparation defect: the presentation API shell lacked the main API's gateway,
+so required MCP-tool qualification reported unavailable. Startup now binds the
+same existing gateway and proxy/authority owners to that shell; it constructs no
+second gateway. The actual saved build also contained no stylesheet. The fixed
+host entry now explicitly imports the installed kit stylesheet so named-export
+tree shaking cannot discard it. The 82-check gateway-boundary/build/static suite,
+changed-file Ruff and web TypeScript pass. A fresh revision and served check are
+still required; historical saved bundles and failed screenshots are unchanged.
+Shared controls now display activity while checking inputs or confirming a
+recorded request; their focused component checks pass.
 
 ## Prepared file consumption
 

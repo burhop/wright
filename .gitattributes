@@ -80,3 +80,4 @@ artifacts/process-interfaces/083/20261002-wheel-native-capability-recovery/** -t
 artifacts/process-interfaces/083/20261002-wheel-retained-native-export/** -text -whitespace
 artifacts/process-interfaces/083/20261002-wheel-ai-file-handoff/** -text -whitespace
 artifacts/process-interfaces/083/20261002-shared-working-controls/** -text -whitespace
+artifacts/process-interfaces/083/20261002-live-heat-shared-controls/** -text -whitespace

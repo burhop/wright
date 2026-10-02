@@ -283,13 +283,9 @@ async def lifespan(app: FastAPI):
                         app.state.surface_application.runtime_registry.manager_for
                     ),
                 )
-                for name in (
-                    "surface_http_proxy",
-                    "surface_sse_proxy",
-                    "surface_websocket_proxy",
-                    "surface_route_authority",
-                ):
-                    setattr(preview_app.state, name, getattr(app.state, name))
+                from api.preview_runtime import bind_preview_runtime
+
+                bind_preview_runtime(app, preview_app)
         logger.info("api_startup_stage", stage="surfaces_ready")
         async with app.state.mcp_transport.run():
             logger.info("api_startup_stage", stage="serving")
