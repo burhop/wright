@@ -9,7 +9,12 @@ const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   update: vi.fn(),
   files: vi.fn(),
+  history: vi.fn(),
 }));
+
+vi.mock("../process-interfaces/HistoricalResultView", () => ({HistoricalResultView: (props: {workflowPath: string; runLogPath: string; onClose: () => void}) => {
+  mocks.history(props);return <button data-testid="historical-result-fixture" onClick={props.onClose}>Back to workflow</button>;
+}}));
 
 vi.mock("../../services/workspace-service", async (importOriginal) => {
   const actual =
@@ -182,12 +187,35 @@ function renderPage({
 
 describe("workspace workflow page", () => {
   beforeEach(() => {
+    window.history.replaceState({}, "", "/");
+    mocks.history.mockReset();
     mocks.get.mockReset();
     mocks.readiness.mockReset();
     mocks.readiness.mockResolvedValue({ state: "not_template" });
     mocks.create.mockReset();
     mocks.update.mockReset();
     mocks.files.mockReset();
+  });
+
+  it("offers shared process entry without the retired active demo", async () => {
+    mocks.get.mockResolvedValue(document);renderPage({onOpenProcess: vi.fn()});
+    await screen.findByTestId("workflow-editor-fixture");
+    expect(screen.getByRole("button", {name: "Use saved process"})).toBeVisible();
+    expect(screen.queryByRole("button", {name: "Print a part demo"})).not.toBeInTheDocument();
+    expect(screen.queryByTestId("workflow-print-demo-open")).not.toBeInTheDocument();
+    expect(mocks.history).not.toHaveBeenCalled();
+  });
+
+  it("preserves the historical result query as a read-only view and returns to its editor", async () => {
+    window.history.replaceState({}, "", "/?printDemoRun=runs%2Fmounting-bracket%2Fold.json");
+    mocks.get.mockResolvedValue(document);renderPage();
+    await screen.findByTestId("historical-result-fixture");
+    expect(mocks.history.mock.calls.at(-1)![0]).toMatchObject({workflowPath: document.path, runLogPath: "runs/mounting-bracket/old.json"});
+    expect(screen.queryByTestId("workflow-editor-fixture")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", {name: "Back to workflow"}));
+    await screen.findByTestId("workflow-editor-fixture");
+    expect(screen.getByRole("button", {name: "View saved result"})).toBeVisible();
+    expect(mocks.update).not.toHaveBeenCalled();expect(mocks.create).not.toHaveBeenCalled();
   });
 
   it("opens the accepted saved process without saving, executing or opening another window", async () => {

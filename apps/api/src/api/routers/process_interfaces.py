@@ -60,6 +60,34 @@ router = APIRouter(dependencies=[Depends(_require_process_validation_role)])
 router.include_router(authoring_router)
 
 
+@router.get("/historical-results")
+async def historical_result(
+    session_id: Identifier,
+    path: Locator,
+    run_log_path: Locator,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Preserve exact old result links without activating a prototype runtime."""
+    from workspace_service.process_interfaces.legacy_results import read_legacy_result
+    from workspace_service.workflow_run_record import WorkflowRunReadError
+
+    scope = _workflow_source_scope(session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await asyncio.to_thread(
+            read_legacy_result, scope.workspace_dir, path, run_log_path
+        )
+    except WorkflowRunReadError as error:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "historical_result_unavailable",
+                "message": "This saved result could not be verified in its owning workspace.",
+            },
+        ) from error
+
+
 def _native_context(request, service, session_id, path, digest):
     from workspace_service.process_interfaces.surface_bridge import (
         AuthorizedProcessPresentation,

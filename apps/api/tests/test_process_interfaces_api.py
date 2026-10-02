@@ -1,5 +1,7 @@
 """Native process APIs derive scope and compose real preparation/readiness."""
 
+import json
+from pathlib import PurePosixPath
 from types import SimpleNamespace
 
 import pytest
@@ -78,6 +80,48 @@ def test_preparation_inputs_and_readiness_use_the_existing_owner(sync_client, ca
     assert readiness.json()["state"] == "ready"
     assert readiness.json()["input_digest"] == frozen["digest"]
     assert not (case.root / "first.txt").exists()
+
+
+def test_historical_result_is_read_only_exact_and_scoped(sync_client, case):
+    source = case.query["path"]
+    source_file = case.root / source
+    source_file.parent.mkdir(parents=True, exist_ok=True)
+    source_file.write_text(case.text)
+    slug = PurePosixPath(source).name.removesuffix(".workflow.wflow")
+    relative = f"runs/{slug}/history.json"
+    path = case.root / relative
+    path.parent.mkdir(parents=True)
+    path.write_text(
+        json.dumps(
+            {
+                "workflow_path": source,
+                "run_id": "history-run",
+                "status": "failed",
+                "events": [],
+                "result": {"run_id": "history-run", "results": []},
+            }
+        )
+    )
+    before = path.read_bytes()
+    query = {"session_id": "owned-session", "path": source, "run_log_path": relative}
+    response = sync_client.get(
+        "/api/workspace/process-interfaces/historical-results", params=query
+    )
+    assert response.status_code == 200, response.text
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json()["read_only"] and response.json()["permitted_actions"] == []
+    assert response.json()["run"]["run_id"] == "history-run"
+    assert path.read_bytes() == before
+    foreign = sync_client.get(
+        "/api/workspace/process-interfaces/historical-results",
+        params=query | {"session_id": "another-session"},
+    )
+    assert foreign.status_code in {403, 404}
+    invalid = sync_client.get(
+        "/api/workspace/process-interfaces/historical-results",
+        params=query | {"run_log_path": "runs/another/history.json"},
+    )
+    assert invalid.status_code == 404
 
 
 def test_foreign_session_and_changed_source_do_not_receive_other_context(

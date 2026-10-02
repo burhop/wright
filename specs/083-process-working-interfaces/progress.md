@@ -1414,3 +1414,16 @@ and report validation pass; S05 was visually inspected. Evidence is retained in
 `20261002-workspace-process-controls` and `evidence/workspace-acceptance.md`.
 Full T052 editor/zoom/accessibility/both-process acceptance is still pending;
 no start or review response occurred. Full goal remains active.
+
+T048 entry migration: WorkflowRecoveryPage no longer imports the active vendor
+demo panel or offers Print a part demo for new work. Use saved process remains
+the shared working path. Existing printDemoRun queries open a read-only history
+view; exact source/run records are verified through the existing recorder, with
+saved artifact navigation and no permitted actions. Add the scoped native
+historical-results GET route and compatibility service. Five service tests plus
+native process API regressions pass (17 total), and history/editor component
+checks pass (21). The first API fixture omitted its actual source file; it was
+corrected to create the retained source, preserving strict recorder checks.
+Ruff and protected/mixed-work preservation checks pass. Served legacy browser
+proof and loading the new API route remain pending. Vendor routes/startup/client
+methods and automation still need retirement; no T048/T049 completion claim.

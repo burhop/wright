@@ -296,3 +296,22 @@ removing or reusing code; preserve campaign sources and recorded digests.
 The current prototype scripts import `printer_status_summary` from Wright's demo
 service. This reverse coupling must disappear with their retirement. Copying
 scripts into another repository is not the proposed solution; use existing MCPs.
+
+### Entry-point migration checkpoint, 2 October 2026
+
+The workflow workspace entry no longer imports the active `PrintPartDemoPage`.
+New work uses the existing **Use saved process** common/tailored interface path.
+Historical `printDemoRun` queries select a read-only `HistoricalResultView` over
+the existing canonical run recorder, with exact source/run locator checks,
+original result/error metadata, saved artifact navigation and no permitted
+actions. Its native route is
+`GET /api/workspace/process-interfaces/historical-results` with `session_id`,
+`path` and `run_log_path`. It has no provider dependency or device monitoring.
+
+This is an implemented, focused-test-verified entry migration. Served historical
+browser verification remains pending. The original prototype files and existing
+mixed worktree changes are preserved. Demo endpoint implementations, vendor
+startup restoration, client methods and repo-local automation remain retirement
+debt; they are not removed or made independent by this checkpoint. T048/T049
+remain incomplete until those active paths are retired and installed historical
+navigation is verified.

@@ -5,7 +5,7 @@ import WorkflowRecoveryConcept, {
   type WorkflowRunOptions,
   type WorkflowRecoveryStoredSource,
 } from "../../prototypes/workflow-recovery/WorkflowRecoveryConcept";
-import { PrintPartDemoPage } from "./PrintPartDemoPage";
+import { HistoricalResultView } from "../process-interfaces/HistoricalResultView";
 import { EngineeringTemplateDialog } from "../../prototypes/workflow-recovery/EngineeringTemplateDialog";
 import {
   initialWorkflow,
@@ -549,15 +549,15 @@ export function WorkflowRecoveryPage({
             Use saved process
           </button>
         )}
-        <button
+        {initialPrintDemoRun && <button
           type="button"
           className="recovery-button recovery-button--secondary"
           data-testid="workflow-print-demo-open"
           onClick={() => setPrintDemoOpen(true)}
           style={{ padding: "5px 12px" }}
         >
-          Print a part demo
-        </button>
+          View saved result
+        </button>}
       </div>
       {currentDocument?.layout_status === "stale" && (
         <p role="status">
@@ -675,15 +675,11 @@ export function WorkflowRecoveryPage({
         </button>
       </dialog>
       <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        {printDemoOpen && <PrintPartDemoPage
+        {printDemoOpen && initialPrintDemoRun && <HistoricalResultView
           sessionId={sessionId}
-          workspaceId={workspaceId}
-          initialWorkflowPath={visiblePath}
-          initialRunLogPath={initialPrintDemoRun}
-          onOpenWorkflow={(path) => {
-            setPrintDemoOpen(false);
-            onOpenWorkflow?.(path);
-          }}
+          workflowPath={visiblePath}
+          runLogPath={initialPrintDemoRun}
+          onOpenFile={onOpenFile}
           onClose={() => setPrintDemoOpen(false)}
         />}
         {!printDemoOpen && <>
