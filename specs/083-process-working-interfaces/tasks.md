@@ -134,7 +134,18 @@ interfaces use the same foundation, with honest engineering checks and limits.
 ## Phase 7 — Polish and cross-cutting completion / M5
 
 - [ ] T050 Package public kit/client/instructions/template/asset runtime and offline resources through existing wheel/native/Docker build paths in `pyproject.toml` and `packages/workspace_service/pyproject.toml`; add installed-resource tests in `tests/test_process_interface_installed_resources.py`.
-- [ ] T051 Verify installed native and clean Docker saved-UI/open/common-view behavior without checkout/model/compiler/network installs; record exact artifact/platform and authoring capability limits in `specs/083-process-working-interfaces/evidence/distribution.md`.
+- [x] T051 Verify installed native and clean Docker saved-UI/open/common-view behavior without checkout/model/compiler/network installs; record exact artifact/platform and authoring capability limits in `specs/083-process-working-interfaces/evidence/distribution.md`.
+  Both actual saved interfaces pass ten native and ten clean Linux Docker browser
+  checks each, including normal workspace entry, common view, compiler-unavailable
+  selection, original built revision mounting and reload. No generation, compiler
+  download, engineering start or review response occurs; durable records match the
+  copied baseline. Docker diagnostic audit found MCP/settings 500s caused by the
+  read-only fixture's unconfigured credential-store directory. Corrected fixture
+  014 passes both diagnostic-strict journeys with zero unexpected responses/page
+  errors; expected missing-model 503s are disclosed.
+  See `evidence/installed-native-reuse.md` and
+  `evidence/installed-docker-reuse.md`. Full editor, completed engineering-output
+  parity and migration are separate open tasks.
 - [ ] T052 Run served normal-workspace walkthrough preserving refined editor controls and both working/preview journeys at realistic viewport/zoom/accessibility; retain screenshots/build/flags/report in `artifacts/process-interfaces/083/` and `specs/083-process-working-interfaces/evidence/workspace-acceptance.md`.
 - [ ] T053 Run targeted unit/API/component/mocked/browser/security/package-boundary and prior affected continuation/082/editor regression checks; record commands/results/limits in `specs/083-process-working-interfaces/evidence/verification.md`, fixing failures within this feature.
 - [x] T054 Add runnable neutral authoring/reference examples and operator/developer/API/role-provider documentation in `examples/process-interfaces/`, `docs/workflows/process-working-interfaces.md` and `docs/architecture/agent-adapters.md`, using actual verified routes/commands/URLs.

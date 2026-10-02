@@ -71,7 +71,8 @@ host restart occurred.
 These checks do not complete Docker qualification, installed completed-output
 inspection, full editor manipulation/responsiveness/keyboard acceptance,
 engineering parity, embedded prototype retirement or the final requirement
-audit. T050/T051/T052/T053 remain open for their broader scopes. No physical or
+audit. T051 retains the [clean Docker qualification](installed-docker-reuse.md);
+T050/T052/T053 retain their other obligations. No physical or
 supplier effects, release, publication or human engineering acceptance follows.
 
 The owned native proof host 008 remains available on port 8032 for subsequent

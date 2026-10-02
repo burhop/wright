@@ -1,0 +1,29 @@
+{
+  "container_id": "d0f4e05f50864e7efb7d765dbf959ac6cd4c45af863c6046756b113989d5f1a6",
+  "image_id": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "read_only_root": true,
+  "memory_bytes": 2147483648,
+  "cpu_nanocpus": 2000000000,
+  "networks": [
+    "bridge"
+  ],
+  "ports": {
+    "8033/tcp": [
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "8033"
+      }
+    ]
+  },
+  "mounts": [
+    {
+      "source": "D:/repos/wright/.local-run/process-interfaces-083/t051-docker-mounted-014",
+      "destination": "/proof-input",
+      "read_write": false
+    }
+  ],
+  "state": "running",
+  "offline_install": true,
+  "compiler_available": false,
+  "provider_autostart": false
+}

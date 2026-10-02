@@ -14,8 +14,10 @@ and all 57 [tasks](tasks.md) retain their original authority.
 Latest bounded installed-native evidence:
 [saved-interface reuse](evidence/installed-native-reuse.md). Both jobs' common,
 saved and reload paths pass with compiler unavailable and unchanged durable
-reviews. Clean Docker, installed completed-output parity, complete editor checks,
-migration and full engineering/audit obligations remain open.
+reviews. Subsequent [clean Docker reuse](evidence/installed-docker-reuse.md), including
+corrected diagnostic-strict fixture 014, completes T051's installed behavior scope.
+Installed completed-output parity,
+complete editor checks, migration and full engineering/audit obligations remain open.
 
 The evidence column identifies retained records to inspect; a link alone is not
 proof. “Partial” means the broad requirement remains unproven even where narrower
@@ -40,7 +42,7 @@ checks passed. No row grants an engineering review or external-effect authority.
 | FR-015 Independent providers and vendor retirement | **Incomplete:** [migration](evidence/generality-and-migration.md), [provider qualification](evidence/provider-qualification.md). Workspace entry migrated; active endpoints/startup/client/protocol/automation debt remains. | Finish T043/T048/T049; preserve unrelated dirty changes and historical campaign bindings. |
 | FR-016 Two actual engineering/UI chains | **Partial:** [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). Actual tools/files/model UIs exist; wheel original gate/parity remains incomplete. | T045/T047 full engineering/common-tailored proof, keeping failed runs and genuine review barriers. |
 | FR-017 Protected evidence/history/reporting ownership | [Baseline](evidence/pre-implementation-baseline.json), [legacy adapter](evidence/legacy-run-adapter.md); preservation checks and six source-served history checks. | Finish migration/installed history and final protected/unrelated byte verification. |
-| FR-018 Installed resources and compiler-free saved UI | **Partial:** [distribution](evidence/distribution.md): native/Linux installed static HTTP assets checked, no checkout/compiler/model. | T050/T051 mounted common/saved workspace/presentation journeys; static HTTP alone is insufficient. |
+| FR-018 Installed resources and compiler-free saved UI | [Distribution](evidence/distribution.md): current wheel inspection/resource tests and both native/clean Linux mounted common/saved/reload journeys checked; T051 complete. | Finish T050 packaging audit; retain authoring capability limits and separate full engineering/editor gates. |
 | FR-019 Useful progress/previews/failures/diagnostics | [Shared controls](evidence/shared-working-controls.md), [readers](evidence/representation-readers.md), [workspace acceptance](evidence/workspace-acceptance.md). | Complete served loading/error/freshness/accessibility/trace and two-process acceptance. |
 
 ## Success criteria
@@ -54,7 +56,7 @@ checks passed. No row grants an engineering review or external-effect authority.
 | SC-005 Matching evidence/stale/binding denials in both views | Controlled boundary coverage exists; complete common/tailored parity pending. |
 | SC-006 Tab/lost acknowledgement cannot duplicate dispatch | Runtime/client checks exist; full served/installed negative journey pending. |
 | SC-007 Tools, real handoffs, outcomes/checks/limits | Actual CAD/solver and geometry/slicer artifacts retained; original wheel gate and overall proof remain incomplete. No fixture substitutes. |
-| SC-008 Editor and native/Docker installed checks/reopen | **Incomplete:** full editor and installed mounted working-view checks pending. |
+| SC-008 Editor and native/Docker installed checks/reopen | **Partial:** native/Docker mounted working-view/reload checks pass; full preserved-editor acceptance remains pending. |
 | SC-009 No active vendor control in migrated path/history preserved | **Incomplete:** source history entry is read-only; active API/startup/client/modules/scripts remain. |
 
 ## Evidence index and authority

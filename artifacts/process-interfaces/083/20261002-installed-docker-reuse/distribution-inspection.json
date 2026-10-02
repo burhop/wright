@@ -1,0 +1,14 @@
+{
+  "artifact_kind": "wheel",
+  "bundled_modules": [
+    "wright_engineering",
+    "api",
+    "core",
+    "agent_adapters",
+    "tool_registry",
+    "data_vault",
+    "workspace_service"
+  ],
+  "ui_manifest_sha256": "26823255eaf425c406ffa006409cf519bd156a3b8ab5eb6386658246082b0465",
+  "runtime_extra_lock_sha256": "2e4e6d77ebcbcb37ee36dd317a31e5fdcd5b76682ffc2c48c2e964970e79b5b8"
+}

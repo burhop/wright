@@ -114,3 +114,11 @@ See [installed-native reuse](installed-native-reuse.md) for the corrected privat
 wheel and both ten-step served workspace/common/saved/reload journeys with the
 compiler unavailable. This strengthens native evidence but does not close the
 remaining clean Docker, full editor or engineering parity obligations.
+
+The subsequent [clean Docker reuse](installed-docker-reuse.md) verifies both
+saved-interface/common/reload interaction checks using the same candidate.
+Unexpected surrounding workspace MCP/settings errors in fixture 013 were retained;
+corrected fixture 014 passes both diagnostic-strict journeys, completing T051's
+installed behavior scope. Full editor and engineering proof
+obligations remain separate. The current wheel passes native distribution inspection and
+exact frontend manifest comparison. No release qualification is implied.

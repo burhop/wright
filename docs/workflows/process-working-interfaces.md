@@ -158,3 +158,23 @@ environment, not an installed-release guarantee. Evidence:
 [heat proof](../../specs/083-process-working-interfaces/evidence/heat-proof.md),
 [wheel proof](../../specs/083-process-working-interfaces/evidence/printed-proof.md),
 and [installed scope](../../specs/083-process-working-interfaces/evidence/distribution.md).
+
+### Fresh installed qualification, 2 October
+
+The fresh local installed proof opens at [native Wright home](http://wright.localhost:8032/).
+Open home first for its normal native session bootstrap, then open the copied
+`083-heat-live-005` workspace and use **Workflows**. Choose either retained wheel
+preparation or heat-spreader workflow, then **Use saved process** and
+**Create or choose interface**. Previously saved revisions remain usable while
+the authoring compiler is unavailable. These views retain their exact waiting
+run/review; opening or reloading does not resume engineering work.
+
+The clean Docker proof uses [Docker Wright home](http://wright.localhost:8033/)
+with an existing authorized operator session. Its browser fixture supplies that
+session; this is not a new login mechanism or a weakening of native loopback
+bootstrap. Both environments are copied private qualification workspaces, with
+provider autostart disabled. They may stop with their owned services.
+See the [native report](../../artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/report.html)
+and [current Docker qualification record](../../specs/083-process-working-interfaces/evidence/installed-docker-reuse.md)
+for exact build, capability limits and checked scope. These local candidate
+checks do not establish release, full engineering parity or human acceptance.

@@ -1,0 +1,1 @@
+{"interaction_steps_passed_per_job": 10, "qualification": "incomplete", "unexpected_http": [{"path": "/api/mcp/servers", "status": 500}, {"path": "/api/mcp/servers/installed", "status": 500}, {"path": "/api/settings", "status": 500}], "cause": "Read-only file system for unconfigured default credential-store parent", "expected_unavailable_model_http": 503}

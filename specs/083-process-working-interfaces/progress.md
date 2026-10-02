@@ -1555,3 +1555,33 @@ The owned host 008 is live on 8032, provider autostart disabled. Full installed
 completed-output/editor/Docker qualification, engineering parity, migration and
 completion audit remain pending; no broad task is marked complete from these
 bounded proofs. Preserved unrelated dirty work and original campaign evidence.
+
+Local milestone commit 31f0d7bf saves the installed styling/label/declaration
+relocation repairs and preserved native failures/successes. Clean Docker
+continuation retained fixture 011's invalid wheel filename and fixture 012's
+missing published port; neither ran engineering work. Confirmed exact owned
+container configuration before stopping it. Fresh bridge fixture 013 installs
+the same wheel offline in its dedicated Linux venv with no checkout mount,
+compiler or provider autostart. Both saved-interface/common/reload journeys pass
+ten interaction checks with UI/authoring/continuation hashes matching the original
+copied baseline. Diagnostic audit subsequently found MCP/settings 500s from the
+read-only fixture's unconfigured credential-store parent; expected missing-model
+503s are separate. T051 stays open pending a correctly configured fresh rerun.
+Current native wheel inspector/manifest check passes; 52 presentation/association/
+API-authority regressions pass in 43.13 seconds. See evidence/installed-docker-reuse.md.
+Owned native 008 host remains live on 8032. Docker 013 was stopped after confirmed
+configuration errors; fresh fixture 014 uses the supported WRIGHT_SECRETS_PATH
+in bounded writable temporary storage and stricter unexpected-diagnostic checks.
+Both second-run
+reviews remain unanswered. Full goal remains active; engineering parity, editor
+acceptance, packaging audit, retirement and final completion work remain open.
+
+Corrected clean Docker fixture 014 uses the supported WRIGHT_SECRETS_PATH within
+bounded writable state storage, without adding provider credentials. Both jobs
+pass ten diagnostic-strict browser checks with zero unexpected API responses and
+zero uncaught page errors. Expected missing-model 503s (three per journey) remain
+disclosed; no model/compiler is needed to open saved interfaces. Durable UI/
+authoring/revision/continuation hashes match the copied original baseline. T051
+is now checked. Earlier 011–013 failures and diagnostic audit remain intact.
+Owned native host 008 remains on 8032 and corrected Docker host 014 on 8033.
+All reviews remain unanswered; full Feature 083 completion remains unproven.

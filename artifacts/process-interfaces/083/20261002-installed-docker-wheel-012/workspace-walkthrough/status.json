@@ -1,0 +1,45 @@
+{
+  "title": "Installed Wright: common and saved process interfaces",
+  "summary": "Clean Linux container, genuine local wheel installation, cached dependencies, copied isolated engineering workspace; no model/compiler or engineering dispatch.",
+  "overall": "blocked",
+  "updated": "2026-10-02T21:00:46.123Z",
+  "manualSteps": [
+    {
+      "label": "Open installed Wright",
+      "instruction": "Open the installed native Wright home page, then the isolated proof workspace."
+    },
+    {
+      "label": "Open process",
+      "instruction": "Click Workflows, Workflow files, Open workflow, then choose the saved wheel workflow."
+    },
+    {
+      "label": "Use working view",
+      "instruction": "Click Use saved process and open the second recorded run link."
+    },
+    {
+      "label": "Reuse interface",
+      "instruction": "Click Create or choose interface, choose the saved focus-wheel interface and current revision, then Open saved interface."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working tab and inspect the same waiting review. Leave the review unanswered."
+    }
+  ],
+  "steps": [
+    {
+      "id": "STOP",
+      "label": "Installed journey stopped",
+      "action": "Stop at first unexpected state.",
+      "controls": [
+        "Current workspace control"
+      ],
+      "expected": "Installed common/saved journey remains usable.",
+      "actual": "page.goto: net::ERR_CONNECTION_REFUSED at http://wright.localhost:8033/\nCall log:\n\u001b[2m  - navigating to \"http://wright.localhost:8033/\", waiting until \"load\"\u001b[22m\n",
+      "state": "blocked",
+      "purpose": "Installed journey stopped",
+      "summary": "page.goto: net::ERR_CONNECTION_REFUSED at http://wright.localhost:8033/\nCall log:\n\u001b[2m  - navigating to \"http://wright.localhost:8033/\", waiting until \"load\"\u001b[22m\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}
