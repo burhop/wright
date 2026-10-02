@@ -405,3 +405,21 @@ it("does not start after a ready assessment expires", async () => {
   expect(screen.getByRole("button", { name: "Start process" })).toBeDisabled();
   expect(c.start).not.toHaveBeenCalled();
 });
+
+it.each([null, undefined])(
+  "permits exact prepared inputs when readiness has no expiring choice (%s)",
+  async (expires_at) => {
+    const c = client();
+    vi.mocked(c.checkReadiness).mockResolvedValue({ ...ready, expires_at });
+    render(<WorkingControls client={c} snapshot={initial} readOnly={false} />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Check inputs and readiness" }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Start process" })).toBeEnabled(),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Start process" }));
+    await waitFor(() => expect(c.start).toHaveBeenCalledTimes(1));
+    expect(c.start).toHaveBeenCalledWith(frozen, expect.any(String));
+  },
+);

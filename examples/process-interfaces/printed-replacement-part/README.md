@@ -75,6 +75,16 @@ code or engineering approval. Unsupported package/motion semantics fail explicit
 Source geometry, slicer success, nominal preview, measured compliance and physical
 acceptance remain separate claims.
 
+If the qualified slicer emits separate startup, layer and shutdown sections,
+private bindings may declare `nominal_layer_section` with exact `start_marker`
+and `end_marker` comment lines. Inspect those markers in the actual package
+first. The passive reader requires one ordered pair and explicit axis/unit/
+extrusion modes inside the selected body; unsupported body semantics still fail.
+It retains the full package/G-code hashes, selected text hash and excluded line
+counts. This is a nominal layer view: excluded machine setup/shutdown, firmware
+conditionals and physical execution remain unverified. With no declaration the
+original complete-file parser remains strict. Wright has no vendor command table.
+
 ## Intended working interface
 
 Present the original image and requirements, preparation readiness and current

@@ -276,10 +276,12 @@ function ScopedControls({
   const expires = readiness?.expires_at
     ? Date.parse(readiness.expires_at)
     : NaN;
+  const fresh =
+    readiness?.expires_at == null ||
+    (Number.isFinite(expires) && expires > clock);
   const ready =
     readiness?.state === "ready" &&
-    Number.isFinite(expires) &&
-    expires > clock &&
+    fresh &&
     !!frozen &&
     prepared?.actions?.some(
       (action) =>
@@ -364,7 +366,9 @@ function ScopedControls({
                 if (
                   !frozen ||
                   !ready ||
-                  Date.parse(readiness!.expires_at!) <= Date.now()
+                  (readiness?.expires_at != null &&
+                    (!Number.isFinite(Date.parse(readiness.expires_at)) ||
+                      Date.parse(readiness.expires_at) <= Date.now()))
                 )
                   return;
                 void mutate({ kind: "start" }, (id) =>

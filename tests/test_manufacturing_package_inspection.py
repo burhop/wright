@@ -174,3 +174,23 @@ def test_missing_profile_does_not_partially_publish(handoff):
     with pytest.raises(FileNotFoundError):
         operation.run(config, read_3mf_toolpaths)
     assert not list((root / "outputs").iterdir())
+
+
+def test_explicit_nominal_layer_section_retains_full_package_identity(handoff):
+    root, config, _ = handoff
+    archive = io.BytesIO()
+    with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as package:
+        package.writestr(
+            "Metadata/plate_1.gcode",
+            "G999 X1\n; BODY START\nG90\nG21\nM83\nG1 X0 Y0 Z0.2\n;CHANGE_LAYER\n;Z_HEIGHT:0.2\n;FEATURE:Support\nG1 X10 Y0 E1\n; BODY END\nG999 X2\n",
+        )
+    (root / config["slice_package"]).write_bytes(archive.getvalue())
+    config["nominal_layer_section"] = {
+        "start_marker": "; BODY START",
+        "end_marker": "; BODY END",
+    }
+    result = operation.run(config, read_3mf_toolpaths)
+    view = json.loads((root / result["support_preview"]["path"]).read_bytes())
+    assert view["provenance"]["selected_section"]["excluded_prefix_lines"] == 2
+    assert view["package_sha256"] == hashlib.sha256(archive.getvalue()).hexdigest()
+    assert view["layers"][0]["support"]

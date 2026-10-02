@@ -444,7 +444,19 @@ export function InputEditor({
   now?: number;
 }) {
   const id = useId();
-  const current = binding === undefined ? definition.current_value : binding;
+  const supplied =
+    binding === undefined
+      ? (definition.current_value ?? definition.default)
+      : binding;
+  // Owning schemas may omit default discriminators. Preserve their actual
+  // prepared values/references rather than displaying them as missing inputs.
+  const current = supplied
+    ? "reference" in supplied
+      ? { ...supplied, kind: "file" as const }
+      : "option_id" in supplied
+        ? { ...supplied, kind: "option" as const }
+        : { ...supplied, kind: "value" as const }
+    : supplied;
   const [file, setFile] = useState<File>();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");

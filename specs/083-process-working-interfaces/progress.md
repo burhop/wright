@@ -1208,3 +1208,17 @@ passing and current scope validation unchanged. A fresh model correction will
 restore explicitly available control declarations; the denied revision remains
 retained. Fresh wheel run `aee8d1771e1442babd28ff0fab3df0cf` is at its declared
 basis review after original-profile preparation/readiness; no physical dispatch.
+
+Resume correction, 2 October: shared controls now accept backend readiness with
+no timed option expiry and render declared defaults without uploads. Fifty-nine
+focused UI tests and frontend TypeScript pass. The nominal package reader supports
+an explicitly configured comment-bounded layer section, with full-file hashes
+and excluded startup/shutdown provenance; 87 reader/inspection/example tests pass.
+Retained actual failed wheel package qualification shows 90 layers with actual
+support paths. The original failed run remains failed; fresh run
+`d5b7916386f8419b9e3031da9f3caf44` is waiting at its declared basis review.
+Heat default-model update/save/open passes, but complete preparation/reuse browser
+qualification is pending after connection/provider delays. See
+`evidence/shared-working-controls.md` and the local evidence under
+`artifacts/process-interfaces/083/20261002-preparation-and-nominal-view/`.
+The full implementation goal remains active; no engineering or physical acceptance.

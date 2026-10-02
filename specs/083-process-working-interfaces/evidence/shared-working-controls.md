@@ -3,6 +3,39 @@
 Resume checkpoint, 2 October 2026. Implementation evidence; not complete live
 interface, engineering or user acceptance.
 
+## Subsequent preparation and nominal-view correction
+
+The served heat check exposed a false disabled Start: readiness without an
+expiring option legitimately has no `expires_at`. Shared controls now accept
+that backend result while still requiring the exact frozen digest and enabled
+Start action; supplied expiry times must be valid and future. Two regression
+cases prove omitted/null expiry. Explicitly defaulted file references and numeric
+zero also render correctly when the backend omits the default binding discriminator.
+The focused controls/kit run passes **59 tests**, and frontend TypeScript passes.
+Default-model update `revision-31324f212db34e57acb184b50467544f` passes 13 served
+update/preview/save/open steps. Preparation and waiting-run reuse remain under
+qualification; the retained prior connection/preparation failures are not passes.
+
+Actual wheel run `aee8d1771e1442babd28ff0fab3df0cf` created/repaired STL and
+completed offline slicing to a 361197-byte 3MF. The next passive inspection failed
+on unsupported startup motion `G380`; the run remains failed. The neutral reader
+now optionally accepts externally declared exact comment markers for a nominal
+layer section, preserving full-file identity and explicit excluded-line provenance.
+It requires body modal declarations and still rejects unsupported body motions.
+A read-only qualification of the retained package observes 90 layers, 46804 model
+segments and 22388 support segments. Startup/shutdown and engineering acceptance
+are not established. **87 reader/inspection/example tests pass**; the first run
+had temporary-directory permission errors and is retained separately. A fresh
+digital run is required to prove the corrected handoff inside the full process.
+
+A separate authenticated frame diagnostic confirms the prepared snapshot returns
+an enabled exact-subject Start action after the corrected no-expiry readiness.
+The 45-second browser limit was too short for sequential provider qualification;
+the longer diagnostic completed. The review journey remains under qualification.
+Input rendering now also uses the declared default when no current binding is
+present; an explicit cleared binding still suppresses that fallback. No default
+is written by rendering and no upload is triggered.
+
 ## Shared controls
 
 `@wright/ui-kit` exports `WorkingControls`, a composition over the existing

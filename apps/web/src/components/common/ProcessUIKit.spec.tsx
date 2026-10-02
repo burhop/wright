@@ -481,6 +481,61 @@ describe("schema and provider-backed input controls", () => {
       }),
     );
   });
+  it("shows a prepared file reference with an omitted default discriminator", () => {
+    const onUpload = vi.fn();
+    render(
+      <InputEditor
+        definition={{
+          ...input,
+          binding_kind: "file",
+          current_value: {
+            input_id: input.input_id,
+            reference: { artifact_ref: "inputs/prepared.png", sha256: hash },
+            provenance: "explicit_default",
+          },
+        }}
+        onChange={vi.fn()}
+        onUpload={onUpload}
+      />,
+    );
+    expect(screen.getByText("inputs/prepared.png")).toBeVisible();
+    expect(onUpload).not.toHaveBeenCalled();
+  });
+  it("preserves an explicit prepared zero with an omitted default discriminator", () => {
+    render(
+      <InputEditor
+        definition={{
+          ...input,
+          value_schema: { type: "number" },
+          current_value: {
+            input_id: input.input_id,
+            value: 0,
+            provenance: "explicit_default",
+          },
+        }}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("spinbutton")).toHaveValue(0);
+  });
+  it("shows an explicit default file before preparation without uploading it", () => {
+    const onUpload = vi.fn();
+    const definition = {
+      ...input,
+      binding_kind: "file" as const,
+      current_value: null,
+      default: {
+        input_id: input.input_id,
+        reference: { artifact_ref: "inputs/default.png", sha256: hash },
+        provenance: "explicit_default" as const,
+      },
+    };
+    const view = render(<InputEditor definition={definition} onChange={vi.fn()} onUpload={onUpload} />);
+    expect(screen.getByText("inputs/default.png")).toBeVisible();
+    expect(onUpload).not.toHaveBeenCalled();
+    view.rerender(<InputEditor definition={definition} binding={null} onChange={vi.fn()} onUpload={onUpload} />);
+    expect(screen.queryByText("inputs/default.png")).not.toBeInTheDocument();
+  });
 });
 
 describe("bounded neutral toolpath data", () => {
@@ -802,9 +857,15 @@ describe("bounded representation views", () => {
         title="Exact assessment"
       />,
     );
-    await waitFor(() => expect(view.container.querySelector("pre")?.textContent).toBe(text));
-    expect(view.container.querySelector("script, iframe, object, embed")).toBeNull();
-    expect(screen.queryByText(/exceeds the supported preview size/)).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(view.container.querySelector("pre")?.textContent).toBe(text),
+    );
+    expect(
+      view.container.querySelector("script, iframe, object, embed"),
+    ).toBeNull();
+    expect(
+      screen.queryByText(/exceeds the supported preview size/),
+    ).not.toBeInTheDocument();
   });
   it.each([
     ["application/json", 1024 * 1024 + 1],
@@ -813,7 +874,9 @@ describe("bounded representation views", () => {
     const blob = new Blob(["x".repeat(size)], { type });
     const read = vi.spyOn(blob, "text");
     render(<RepresentationViewer blob={blob} title="Bounded evidence" />);
-    expect(await screen.findByText(/exceeds the supported preview size/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/exceeds the supported preview size/),
+    ).toBeInTheDocument();
     expect(read).not.toHaveBeenCalled();
   });
   it("releases thumbnails and never reuses a bitmap for a different blob", () => {

@@ -1,0 +1,47 @@
+{
+  "qualification": "read-only nominal-section parser against retained actual failed-run package; not workflow completion",
+  "layers": 90,
+  "provenance": {
+    "reader": "wright.passive-representations/1",
+    "source_sha256": "9ec0bca5e65981df722bd93ef661be2d0beec1e4af0f6ba4d328382ab02bbdd2",
+    "archive_entry": "Metadata/plate_1.gcode",
+    "method": "recorded planar extrusion commands and explicit layer/feature comments",
+    "units": "mm",
+    "segments": 69563,
+    "extruding_arcs": 10862,
+    "arc_maximum_chord_error_mm": 0.02,
+    "unlayered_extrusion_commands_excluded": 0,
+    "recognized_features": [
+      "bottom surface",
+      "bridge",
+      "inner wall",
+      "internal solid infill",
+      "outer wall",
+      "overhang wall",
+      "sparse infill",
+      "support",
+      "support interface",
+      "top surface"
+    ],
+    "unclassified_features": [
+      "custom",
+      "floating vertical shell",
+      "gap infill"
+    ],
+    "limits": "Nominal paths; firmware commands are not executed, and machine/material acceptance is not established.",
+    "engineering_acceptance": false,
+    "selected_section": {
+      "start_marker": "; MACHINE_START_GCODE_END",
+      "end_marker": "; MACHINE_END_GCODE_START",
+      "first_line": 857,
+      "last_line": 44237,
+      "excluded_prefix_lines": 856,
+      "excluded_suffix_lines": 57,
+      "selected_text_sha256": "9763df78bbba7dae25f41a44715581d6e9a72f0b6cdb9ba5bf83a12ad77e676c",
+      "scope": "Selected nominal layer section only; excluded startup/shutdown commands are unverified."
+    }
+  },
+  "package_sha256": "5ccf1be1d66a902a5a2ac33732f8c595719ff091b015f460168ee0bf985fc7a7",
+  "model_segments": 46804,
+  "support_segments": 22388
+}

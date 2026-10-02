@@ -335,6 +335,7 @@ def prepare(workspace, attempt, tools, bindings):
             role: flow.input_root + "/" + role + "-profile.json" for role in profiles
         },
         "gcode_entry": "Metadata/plate_1.gcode",
+        "nominal_layer_section": bindings.get("nominal_layer_section"),
         "success_field": "ok",
         "expected_response_fields": {
             "source": arguments["source"],

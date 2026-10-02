@@ -66,7 +66,16 @@ def run(config, read_toolpaths):
     mesh = read(config["source_mesh"])
     package = read(config["slice_package"])
     package_digest = sha(package)
-    view = read_toolpaths(package, package_digest, entry=config["gcode_entry"])
+    view = read_toolpaths(
+        package,
+        package_digest,
+        entry=config["gcode_entry"],
+        **(
+            {"section": config["nominal_layer_section"]}
+            if config.get("nominal_layer_section") is not None
+            else {}
+        ),
+    )
     if not view.get("layers"):
         raise ValueError("No actual layered extrusion paths were observed")
     output = (workspace / config["output_root"]).resolve(strict=True)

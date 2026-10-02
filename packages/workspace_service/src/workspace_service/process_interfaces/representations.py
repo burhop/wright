@@ -193,6 +193,7 @@ def read_gcode_toolpaths(
     *,
     package_digest: str | None = None,
     entry: str | None = None,
+    section: dict | None = None,
 ):
     """Read true layer comments and extrusion moves; never execute G-code.
 
@@ -209,13 +210,81 @@ def read_gcode_toolpaths(
         raise RepresentationUnavailable(
             "The G-code is not supported UTF-8 text."
         ) from error
+    lines = text.splitlines()
+    if len(lines) > 2_000_000 or any(len(line) > 65_536 for line in lines):
+        raise RepresentationUnavailable("The G-code line bound is exceeded.")
+    selected_section = None
+    if section is not None:
+        if not isinstance(section, dict) or set(section) != {
+            "start_marker",
+            "end_marker",
+        }:
+            raise RepresentationUnavailable(
+                "The nominal section declaration is unsupported."
+            )
+        markers = [section[key] for key in ("start_marker", "end_marker")]
+        if any(
+            not isinstance(marker, str)
+            or not marker.startswith(";")
+            or "\n" in marker
+            or "\r" in marker
+            or len(marker) > 256
+            for marker in markers
+        ):
+            raise RepresentationUnavailable(
+                "The nominal section markers are unsupported."
+            )
+        matches = [
+            [i for i, line in enumerate(lines) if line.strip() == marker]
+            for marker in markers
+        ]
+        if (
+            any(len(indices) != 1 for indices in matches)
+            or matches[0][0] >= matches[1][0]
+        ):
+            raise RepresentationUnavailable(
+                "The nominal section must have one ordered marker pair."
+            )
+        begin, end = matches[0][0] + 1, matches[1][0]
+        selected = lines[begin:end]
+        # Scope is explicit: startup/shutdown commands are excluded, not interpreted.
+        # The selected body must establish its own modal state before any motion.
+        established = set()
+        for line in selected:
+            command = line.partition(";")[0].strip()
+            if not command:
+                continue
+            match = _COMMAND.match(command)
+            if match:
+                word = match[1].upper() + match[2]
+                if word in {"G90", "G21", "M82", "M83"}:
+                    established.add(word)
+                if word.startswith("G") and word not in {"G90", "G21", "G17", "G4"}:
+                    if not {
+                        "G90",
+                        "G21",
+                    } <= established or not established.intersection({"M82", "M83"}):
+                        raise RepresentationUnavailable(
+                            "The nominal section must establish axis, units and extrusion modes before motion."
+                        )
+                    break
+        selected_section = {
+            **section,
+            "first_line": begin + 1,
+            "last_line": end,
+            "excluded_prefix_lines": begin,
+            "excluded_suffix_lines": len(lines) - end,
+            "selected_text_sha256": _digest("\n".join(selected).encode()),
+            "scope": "Selected nominal layer section only; excluded startup/shutdown commands are unverified.",
+        }
+        lines = selected
     layers, layer = [], None
     position = {axis: None for axis in "XYZ"}
     units, axes_absolute, extrusion_absolute, center_absolute = 1.0, True, True, False
     extrusions, tool, plane = {0: 0.0}, 0, "G17"
     feature, known_features, unknown_features = "unclassified", set(), set()
     total, arc_count, unlayered = 0, 0, 0
-    for line_number, original in enumerate(text.splitlines(), 1):
+    for line_number, original in enumerate(lines, 1):
         if line_number > 2_000_000 or len(original) > 65_536:
             raise RepresentationUnavailable("The G-code line bound is exceeded.")
         command_text, _, comment = original.partition(";")
@@ -414,12 +483,17 @@ def read_gcode_toolpaths(
             "unclassified_features": sorted(unknown_features),
             "limits": "Nominal paths; firmware commands are not executed, and machine/material acceptance is not established.",
             "engineering_acceptance": False,
+            "selected_section": selected_section,
         },
     }
 
 
 def read_3mf_toolpaths(
-    content: bytes, expected_digest: str, *, entry: str | None = None
+    content: bytes,
+    expected_digest: str,
+    *,
+    entry: str | None = None,
+    section: dict | None = None,
 ):
     """Read one explicit plate, never merge or select an ambiguous package."""
     _source(content, expected_digest, MAX_SOURCE_BYTES)
@@ -494,6 +568,7 @@ def read_3mf_toolpaths(
                 _digest(gcode),
                 package_digest=expected_digest,
                 entry=selected.filename,
+                section=section,
             )
     except (zipfile.BadZipFile, RuntimeError, EOFError, OSError) as error:
         raise RepresentationUnavailable(

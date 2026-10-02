@@ -31,6 +31,49 @@ def parse(content):
     return readers.read_gcode_toolpaths(content, digest(content))
 
 
+def test_explicit_nominal_section_excludes_unverified_machine_setup():
+    content = b"G999 X100\n; BODY START\n" + gcode() + b"; BODY END\nG999 X200\n"
+    with pytest.raises(readers.RepresentationUnavailable, match="Unsupported motion"):
+        parse(content)
+    section = {"start_marker": "; BODY START", "end_marker": "; BODY END"}
+    data = readers.read_gcode_toolpaths(content, digest(content), section=section)
+    assert data["layers"][0]["model"] == [[0, 0, 10, 0]]
+    scope = data["provenance"]["selected_section"]
+    assert scope["excluded_prefix_lines"] == 2
+    assert scope["excluded_suffix_lines"] == 2
+    assert scope["selected_text_sha256"] == digest(gcode().rstrip(b"\n"))
+    assert data["provenance"]["source_sha256"] == digest(content)
+    assert data["provenance"]["engineering_acceptance"] is False
+
+
+@pytest.mark.parametrize(
+    "body", [gcode(body="G999 X1"), gcode(header="M83"), gcode(header="G90\nG21")]
+)
+def test_nominal_section_does_not_hide_unsupported_body_or_guess_modal_state(body):
+    content = b"; BODY START\n" + body + b"; BODY END\n"
+    with pytest.raises(readers.RepresentationUnavailable):
+        readers.read_gcode_toolpaths(
+            content,
+            digest(content),
+            section={"start_marker": "; BODY START", "end_marker": "; BODY END"},
+        )
+
+
+@pytest.mark.parametrize(
+    "section",
+    [
+        {},
+        {"start_marker": "BODY START", "end_marker": "; BODY END"},
+        {"start_marker": "; BODY END", "end_marker": "; BODY START"},
+        {"start_marker": "; MISSING", "end_marker": "; BODY END"},
+    ],
+)
+def test_nominal_section_requires_exact_ordered_unique_comment_markers(section):
+    content = b"; BODY START\n" + gcode() + b"; BODY END\n"
+    with pytest.raises(readers.RepresentationUnavailable):
+        readers.read_gcode_toolpaths(content, digest(content), section=section)
+
+
 def archive(entries):
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as output:
