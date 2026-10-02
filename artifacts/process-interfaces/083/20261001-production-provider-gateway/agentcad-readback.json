@@ -1,0 +1,61 @@
+{
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "server_id": "qualification-083-agentcad",
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "source_revision": "0.6.0",
+  "selected_tool_count": 11,
+  "tool": "qualification-083-agentcad__measure",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "status": "passed",
+  "checked_scope": "actual agent-facing production gateway protocol/catalog/workspace/lifecycle and selected backend; not complete engineering assignment or clean-base installation",
+  "audit": [
+    {
+      "operation": "tool.call",
+      "target": "measure",
+      "outcome": "started",
+      "reason": "policy_allowed"
+    },
+    {
+      "operation": "tool.call",
+      "target": "measure",
+      "outcome": "succeeded",
+      "reason": "policy_allowed"
+    }
+  ],
+  "qualification": {
+    "path": ".local-run/process-interfaces-083/t043-agentcad-http-measure-production-001/gateway/qualification.json",
+    "sha256": "7a2acc5f30439b2b5816678082c308f9e33c433cab22d77d4ec0e3185e769054"
+  },
+  "response": {
+    "path": ".local-run/process-interfaces-083/t043-agentcad-http-measure-production-001/gateway/result.json",
+    "sha256": "a30212d9a27675315ef4ad6c8228fe13b7ab429203f0ed583b8e5e411fa8bf3a"
+  },
+  "listed_tools": {
+    "path": ".local-run/process-interfaces-083/t043-agentcad-http-measure-production-001/gateway/gateway-tools.json",
+    "sha256": "909905c98d68e7180ff8552119ab3b85db072224f707ff91b904754db15bbf5f"
+  },
+  "outputs": [],
+  "gateway_stopped": true,
+  "additional_dispatches": 0,
+  "public_catalog_promoted": false,
+  "transport": "streamable_http",
+  "launch": "standard uvicorn factory agentcad.mcp.server:mcp.streamable_http_app",
+  "readback_step_sha256": "9b49c8404cedbe26cc66640f7e2c537cc6835fb48bf6e40be0066cf53182b720",
+  "readback_only": true,
+  "creation_operation_qualified": false,
+  "creation_limitation": "Native STEP committed successfully, but upstream MCP formats mixed progress plus JSON as status=error. No creation retry or error masking.",
+  "creation_response": {
+    "path": ".local-run/process-interfaces-083/t043-agentcad-http-production-002/gateway/result.json",
+    "sha256": "525097884dfe301bb902da99cc2f48c5374b2c21dbc9953d4a15ba857935ff26"
+  },
+  "native_metadata": {
+    "path": ".local-run/process-interfaces-083/t043-agentcad-http-production-002/gateway/project/build/v1_production-probe/meta.json",
+    "sha256": "ed60c28e8e2d0b4754fc9c0bbc18bb4c1437edb3dc0b94ee5cb579062d9bac54"
+  },
+  "transport_record": {
+    "path": ".local-run/process-interfaces-083/t043-agentcad-http-measure-production-001/transport.json",
+    "sha256": "d0c6e70892b700604e3038388c4e9ef0e434961fd925e45788892385a469aad9"
+  },
+  "exact_owned_pids_exited": true
+}

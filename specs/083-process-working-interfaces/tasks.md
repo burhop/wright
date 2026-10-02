@@ -108,6 +108,10 @@ interfaces use the same foundation, with honest engineering checks and limits.
   See `evidence/representation-readers.md` for limits and scope.
 - [ ] T045 [US4] Migrate printed-preparation saved workflow/bindings and entry to common/scoped interfaces in `examples/process-interfaces/printed-replacement-part/` and `apps/web/src/components/chat/WorkspacePanel.tsx`, retaining assignment/requirements and exact 082 gates.
 - [ ] T046 [US4] Provide heat-analysis saved workflow/bindings and comparison/evidence composition in `examples/process-interfaces/heat-spreader-sizing/`, retaining original stages/limits/critic status and actual STEP-to-analysis mapping.
+  Declarative preparation now preserves the original three stages, full profile,
+  fresh provider schemas, explicit CAD/solver calls and actual-file dependencies.
+  Seven fixture preparation checks pass; live accepted workflow/readiness and
+  common/tailored engineering presentation are still pending.
 - [ ] T047 [US4] Execute both fresh isolated digital tool chains; generate/save/update/reuse each UI through Wright and inspect actual handoffs/common-tailored parity; retain evidence in `specs/083-process-working-interfaces/evidence/printed-proof.md` and `heat-proof.md` without touching campaign checkpoints.
 - [ ] T048 [US4] Migrate all active demo callers/startup/API/UI operations, remove embedded vendor protocols/Studio automation after migration, and preserve old URLs through a read-only historical adapter in `packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py`; update the inventory in `docs/architecture/workflow-platform-refactoring-plan.md` with each disposition.
 - [ ] T049 [US4] Audit shared packages for provider/process coupling and stale/missing/effect errors; record two-process comparison and active-code retirement evidence in `specs/083-process-working-interfaces/evidence/generality-and-migration.md`, preserving immutable historical catalog/campaign data.

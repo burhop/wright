@@ -49,3 +49,45 @@ promotion, public setup recipe changes, physical dispatch, campaign execution an
 engineering acceptance are outside this checkpoint. T045–T047 will use original
 assignment geometry, meaningful handoffs and exact 082 checks rather than these
 small qualification artifacts.
+
+## Production gateway checkpoint — 2 October UTC
+
+The actual `python -m api.gateway_stdio` launcher, official MCP framing, database
+catalog/workspace authorization and production engine lifecycle now list and proxy
+safe backend operations for all four selected providers. Summaries and exact raw
+record/response/artifact hashes are in
+`artifacts/process-interfaces/083/20261001-production-provider-gateway/`.
+
+| Provider | Actual production gateway result | Scope and limitation |
+|---|---|---|
+| Blender | 28 prefixed tools; `execute_blender_code` exported owned STL | Fresh hidden native session on private port 19984; native owner saved recovery and closed its exact session. |
+| Slicer | 11 prefixed tools; `slice_model_file` emitted actual PETG package | Four walls, 35% infill, 0.2 mm layers, supports enabled. Read-only reconciliation of the retained successful third call corrected private harness summary checks; zero additional dispatches. |
+| OASiS | 17 prefixed tools; `run_simulation` produced CSV/VTU and numerical checks | Fresh network-disabled selected-dependency container, stopped after use; `critic_approved=false`. This does not establish a fresh clean-base install. |
+| AgentCAD | 11 prefixed tools; `measure` reopened actual 2×3×4 mm STEP | Existing FastMCP HTTP app served by standard uvicorn factory on a private loopback port. Read-back passed; creation response remains unqualified as described below. |
+
+### AgentCAD creation response remains a provider defect
+
+The nested Windows stdio startup exceeded its deadline. The existing provider's
+standard SDK HTTP transport worked without adding an adapter or workaround to
+Wright. A first copied project was correctly rejected because its manifest bound
+the original project directory. A fresh project initialized through the existing
+AgentCAD CLI then committed real STEP/native metadata successfully.
+
+That creation call nevertheless returned JSON `status=error`, with exit code zero:
+AgentCAD 0.6.0's MCP implementation feeds Click's combined progress/JSON output to
+its JSON formatter. Native metadata records success and deliverable validation;
+the raw MCP response records failure. Neither is rewritten or promoted into a
+successful creation receipt. A separate **read-only** gateway measurement of those
+exact STEP bytes succeeded. The [upstream MCP source](https://github.com/jdilla1277/agentcad/blob/main/src/agentcad/mcp/server.py)
+also shows the combined-output formatter; a mutable upstream page is context,
+not qualification of a new provider revision.
+
+All exact owned CAD HTTP process IDs were subsequently checked exited. Failed
+attempt roots are retained. No native creation was retried after the committed
+STEP was observed. Complete engineering examples must expose the creation warning
+and reconcile exact outputs, or use a separately qualified provider revision;
+they must not mask the response or blindly recreate geometry.
+
+T043 remains pending overall qualification and selected creation-binding checks.
+These small backend probes do not execute either original engineering assignment,
+promote the public catalog, establish human acceptance, or authorize physical work.

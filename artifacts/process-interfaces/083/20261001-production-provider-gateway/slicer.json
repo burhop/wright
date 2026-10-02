@@ -1,0 +1,56 @@
+{
+  "status": "passed",
+  "scope": "actual production api.gateway_stdio/official MCP framing/private database catalog and engine lifecycle; no model/engineering/physical acceptance",
+  "original_driver_summary_status": "failed",
+  "summary_failure_reason": "Harness checked a prefixed target against the native local-tool audit name and overwritten output-loop variable; actual call succeeded. Original summary is retained.",
+  "additional_dispatches": 0,
+  "original_summary_sha256": "f4adc664476c93b4d9cfd58c6f44467f55362b810cec04e1e1b0d8c3663a26b7",
+  "response_sha256": "77b8f08877695b3583103cf73200656013c9627f454b01f050550b696ba52210",
+  "gateway_tools_sha256": "f0f36de2ce8d0e5b529240da019be5039961e686c2c51caaf3f6bdc980b79ef9",
+  "audited_calls": [
+    [
+      "tool.call",
+      "slice_model_file",
+      "started",
+      "policy_allowed",
+      "private-provider-probe",
+      "workspace-083-qualification"
+    ],
+    [
+      "tool.call",
+      "slice_model_file",
+      "succeeded",
+      "policy_allowed",
+      "private-provider-probe",
+      "workspace-083-qualification"
+    ]
+  ],
+  "package_sha256": "2c7d71fb5fc440c44560111ad06b6e4402280de5d3c62dba0c10b8ef551e0293",
+  "package_bytes": 41988,
+  "gcode_sha256": "705c2a65be866b3aa3b8af66bc7cb59e0148aacea6e9eaa1b1c4a5ea05f4e0c5",
+  "actual_sliced_settings": {
+    "filament_type": "PETG",
+    "filament_density": "1.28",
+    "wall_loops": "4",
+    "sparse_infill_density": "35%",
+    "enable_support": "1",
+    "layer_height": "0.2",
+    "printer_model": "Bambu Lab P1S"
+  },
+  "production_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "api.gateway_stdio",
+    "--session-id",
+    "session-083-qualification",
+    "--workspace-id",
+    "workspace-083-qualification",
+    "--principal-id",
+    "private-provider-probe"
+  ],
+  "private_evidence": ".local-run/process-interfaces-083/t043-slicer-production-003",
+  "selected_tool_count": 11,
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "fresh_clean_base_install": false
+}

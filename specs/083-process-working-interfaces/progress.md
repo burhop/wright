@@ -930,3 +930,43 @@ Next: remaining provider qualification, original replacement-part/heat-analysis
 workflows and their actual common/tailored interface proofs. Remaining M3/M4/M5
 tasks stay open. Prototype/campaign/context baselines are checked before this
 focused local checkpoint; no device action, push or release is authorized.
+
+### 2026-10-02 UTC — Normal agent-facing provider gateway
+
+Actual production `api.gateway_stdio` now lists and proxies backend operations
+for Blender, the independent slicer, OASiS and AgentCAD read-back. Fresh Blender
+native ownership/recovery/close and network-disabled OASiS container cleanup were
+retained. Slicer success was reconciled from existing exact response/audit/package
+evidence after a private summary check failed, without another dispatch.
+
+AgentCAD standard SDK HTTP resolved the nested Windows stdio startup problem.
+Its creation call committed a valid native STEP but reported `status=error` due
+to its upstream mixed-output formatter. A separate exact-STEP read-only measure
+passed. Creation remains unqualified; raw failure/native success are separate.
+All owned HTTP process IDs were checked exited. No Wright vendor code was added.
+
+See [provider-qualification.md](evidence/provider-qualification.md) and
+`artifacts/process-interfaces/083/20261001-production-provider-gateway/`.
+T043 remains partial; full original engineering, common/tailored UI and distribution
+proofs remain outstanding. Continuing with isolated saved workflow bindings.
+
+### 2026-10-02 UTC — Heat workflow definition preparation
+
+Added a declarative preparation helper and heat example with explicit provider
+configuration. It preserves every frozen original input, the three substantive
+stages, exact full 082 profile and declared basis/final reviews. CAD and solver
+calls bind fresh Wright schema identities and actual upstream file dependencies;
+solver mapping retains native STEP hashes/measurements and `critic_approved=false`.
+Preparation performs no model/provider call, execution or policy enrollment.
+
+Seven fixture tests pass (2.35 seconds), with original-byte/profile preservation,
+source compilation, exact validator subjects, missing tools, invalid mount,
+wrong project identity, refusal of pre-existing native history and existing-attempt
+preservation. Ruff passes. Initial failures caught an invalid source identifier,
+an unconnected operation-source input, unassigned direct-tool references and
+newline normalization of a source copy; these were fixed without weakening the
+compiler or original validation gates. Failed private test roots are retained.
+
+T046 is still pending its live accepted-workflow/readiness and engineering UI
+composition checks. The example README makes that scope explicit. T043 retains
+the CAD creation-response limitation; remaining M3/M4/M5 tasks are still open.

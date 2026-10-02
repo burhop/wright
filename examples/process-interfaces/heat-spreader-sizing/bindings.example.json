@@ -1,0 +1,7 @@
+{
+  "cad_server": "your-enabled-cad-server",
+  "files_server": "wright-workspace-files",
+  "solver_server": "your-enabled-solver-server",
+  "cad_project": "ABSOLUTE_PATH_TO_FRESH_WORKSPACE_CAD_PROJECT",
+  "solver_workspace": "/workspace"
+}

@@ -1,0 +1,69 @@
+{
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "server_id": "qualification-083-oasis",
+  "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+  "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "selected_tool_count": 17,
+  "tool": "qualification-083-oasis__run_simulation",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "status": "passed",
+  "checked_scope": "actual agent-facing production gateway protocol/catalog/workspace/lifecycle and selected backend; not complete engineering assignment or clean-base installation",
+  "audit": [
+    {
+      "operation": "tool.call",
+      "target": "run_simulation",
+      "outcome": "started",
+      "reason": "policy_allowed"
+    },
+    {
+      "operation": "tool.call",
+      "target": "run_simulation",
+      "outcome": "succeeded",
+      "reason": "policy_allowed"
+    }
+  ],
+  "qualification": {
+    "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/workspace/gateway/qualification.json",
+    "sha256": "5a779b61b94e95e3cf06172f4894e142254b014530c8176d50b124d07f57d045"
+  },
+  "response": {
+    "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/workspace/gateway/result.json",
+    "sha256": "f967183f952d17ad79eabeee7192d48943ea273a445883796e4ba3bfdb6e0d34"
+  },
+  "listed_tools": {
+    "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/workspace/gateway/gateway-tools.json",
+    "sha256": "63ac71c500c197922671dbefa3c2e66a759516aff27f69f62ef578ef4d607fe8"
+  },
+  "outputs": [
+    {
+      "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/workspace/gateway/solve/qualification_fixed-fine-temperature.csv",
+      "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+    },
+    {
+      "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/workspace/gateway/solve/qualification_fixed-fine-temperature.vtu",
+      "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3"
+    },
+    {
+      "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/workspace/gateway/solve/heat-balance.json",
+      "sha256": "2879bf370f454f572f883ccc680118dc24173ce144c8ddcd6266ac0e78372657"
+    },
+    {
+      "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/workspace/gateway/solve/mesh-comparison.json",
+      "sha256": "234ab0540a9e69e94fa1169da9420bc369e2399e65b7e64ee6815295c9a054ef"
+    }
+  ],
+  "gateway_stopped": true,
+  "additional_dispatches": 0,
+  "public_catalog_promoted": false,
+  "container_image": "sha256:49ad6b866d93cf85fa4c82c175241be5e0e7c17239773c658e550b50e0580f8d",
+  "fresh_selected_dependency_container": true,
+  "clean_base_installation": false,
+  "network": "none",
+  "critic_approved": false,
+  "owned_container_stopped": true,
+  "container_record": {
+    "path": ".local-run/process-interfaces-083/t043-oasis-gateway-001/container.json",
+    "sha256": "470befcafa353b6702a90e050ddaa7a7f87bd93fc3b39f229d41f8ece5eeb816"
+  }
+}
