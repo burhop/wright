@@ -331,3 +331,20 @@ No native tool operation, old review, old process start or hardware action was
 replayed. A fresh tailored-interface authoring job was separately accepted through
 Wright, `job-57569905755f41f4bee61da253c03204`; acceptance alone proves neither
 built preview nor saved UI. T045/T047 and the complete goal remain pending.
+
+The same authoring job subsequently corrected its optional-binding fallback
+errors within its existing repair budget and built revision
+`revision-2bf6d4d49c224290a0416503a627d0e7` for
+`ui-1e7b6edb71e74b19a754b7fd2b88633a`. Eleven served browser checks pass through
+the normal Workflows entry, exact saved source/common run, restored built preview,
+actual retained result cards, explicit save and saved working-view open. No new
+process start or review response was submitted. Generation used Wright's existing
+scoped Hermes role and actual configured `gpt-5.6-sol`; the fixed local builder
+and managed presentation retained the source, manifest and build identities.
+
+Evidence is in `artifacts/process-interfaces/083/20261002-wheel-live-interface/`;
+the walkthrough structure validator passes. Its published manual checklist is
+corrected to the actual recovery/save journey while raw screenshots remain
+unchanged. The generated source and reusable asset are real, but focused update,
+second-run reuse and full original-gate/handoff proof remain pending. This does
+not make the failed native consumer successful or grant engineering acceptance.

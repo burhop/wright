@@ -1,0 +1,19 @@
+{
+  "job_id": "job-57569905755f41f4bee61da253c03204",
+  "ui_id": "ui-1e7b6edb71e74b19a754b7fd2b88633a",
+  "revision_id": "revision-2bf6d4d49c224290a0416503a627d0e7",
+  "native_consumer_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "actual_default_model": "gpt-5.6-sol",
+  "browser_checks": 11,
+  "preview_save_saved_open_verified": true,
+  "generation_submitted_through_Wright_API": true,
+  "initial_binding_failure_corrected_by_existing_bounded_job": true,
+  "working_view_current_native_failed_run_not_reclassified": true,
+  "focused_update_verified": false,
+  "second_run_reuse_verified": false,
+  "full_original_gate_completed": false,
+  "physical_dispatch": false,
+  "engineering_acceptance": false,
+  "full_feature_complete": false,
+  "inventory_digest": "40827a47e6e5647f513c20bf987c27789be49965635e251cece89f3fb7bf54e0"
+}

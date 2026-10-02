@@ -91,3 +91,4 @@ artifacts/process-interfaces/083/20261002-wheel-retained-native-chain/** -text -
 artifacts/process-interfaces/083/20261002-wheel-isolated-assessments/** -text -whitespace
 # Retained model reports and independent assessment preserve exact evidence bytes.
 artifacts/process-interfaces/083/20261002-wheel-retained-reports/** -text
+artifacts/process-interfaces/083/20261002-wheel-live-interface/** -text

@@ -1324,3 +1324,12 @@ invariant and the known schema failure receives bounded actionable correction
 without arbitrary exception messages/private input values. All 26 controlled
 authoring tests pass, including a missing-fallback repair and no private selector
 disclosure. Build success is separate from the ongoing served preview check.
+
+The wheel served preview check completed: eleven checks pass for normal workspace
+entry, retained-source/common-run attachment, recovered built preview, actual
+result cards, save and saved working open. Saved UI
+`ui-1e7b6edb71e74b19a754b7fd2b88633a` retains its actual-model source and build.
+Public local evidence `20261002-wheel-live-interface` includes unchanged raw and
+annotated screenshots plus a validated human-repeatable walkthrough. No native
+replay, new engineering run or review response was issued. Focused wheel update,
+second-run reuse, original gate/handoff and remaining M5 are still pending.
