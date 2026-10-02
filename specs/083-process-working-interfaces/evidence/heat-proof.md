@@ -298,3 +298,31 @@ passed **63 tests** in 40.38 seconds, with the same two existing deprecation
 warnings. Ruff, exact evidence bytes, report structure and protected-baseline
 checks pass. An earlier invocation named a nonexistent test module and collected
 no tests; the corrected command uses the existing presenter module.
+
+## Final shared-controls update, preparation and reuse
+
+Wright's actual configured default model generated the revised comparison using
+public `WorkingControls`, with all nine explicitly scoped capabilities retained.
+The fixed host includes Wright styles and current default-input/readiness fixes.
+After the managed-startup correction, the existing built preview was recovered,
+saved and opened without regenerating it. Its source, role/build/revision and
+three served recovery checks are retained in
+`artifacts/process-interfaces/083/20261002-managed-preview-recovery/`.
+
+The final **eleven-check** workspace walkthrough verifies the refined diagram
+entry, common view, deliberate waiting review, embedded input preparation and
+saved second-run reuse/reload. Start is disabled before readiness and enabled
+afterward for those inputs, but is not clicked. Second run
+`9cfe133164bd4e70b97be9a058d0feb8` retains one actual basis result and an
+undecided declared review. Saved revision
+`revision-9c8c8b164ea34a9ba65910567b41b170`, its source/bundle files and UI
+authoring/revision records are unchanged before and after reuse. No model
+generation, recompilation, process start or review response occurred during that
+walkthrough. Evidence and screenshots are retained in
+`artifacts/process-interfaces/083/20261002-heat-preparation-and-saved-reuse/`.
+Both report structure checks pass; authentication context/traces remain private.
+
+This completes T046's saved-workflow/comparison scope. The original analysis gate
+remains honestly held, and long provider-qualified loading times remain usability
+debt. This does not certify thermal performance or human acceptance, complete
+the printed workflow/migration/distribution proof, or close the full feature goal.

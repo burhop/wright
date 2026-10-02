@@ -157,3 +157,20 @@ three-step walkthrough, screenshots and checked limits are retained locally in
 `artifacts/process-interfaces/083/20261002-managed-preview-recovery/`.
 Authentication context and raw browser trace are excluded; captured files were
 checked against the private API token and browser cookie before retention.
+
+## Final heat preparation and saved reuse
+
+Eleven served checks pass through workspace Workflows, accepted source discovery,
+diagram controls, the common working view, and the saved heat interface. Start is
+disabled before explicit preparation and enabled after backend readiness for the
+frozen inputs. The same saved revision then displays the second run's one basis
+result and exact waiting review; reload restores both. Start and review controls
+are inspected but never submitted. Before/after comparison confirms unchanged
+UI authoring/revision records and every saved source/bundle file hash. The report
+structure validator passes; authentication context/raw trace remain private.
+
+Evidence: `artifacts/process-interfaces/083/20261002-heat-preparation-and-saved-reuse/`.
+These live checks complete the heat controls/reuse scope previously pending.
+Long provider-qualified loading times remain usability debt. The second run is
+still waiting, and this evidence is not a human engineering approval, physical
+operation, complete wheel proof or full feature completion.

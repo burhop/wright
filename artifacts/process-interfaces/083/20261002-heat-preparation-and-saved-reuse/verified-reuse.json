@@ -1,0 +1,11 @@
+{
+  "saved_revision": "revision-9c8c8b164ea34a9ba65910567b41b170",
+  "authoring_and_revision_records_unchanged": true,
+  "saved_source_and_bundle_files_unchanged": true,
+  "served_checks": 11,
+  "second_run": "9cfe133164bd4e70b97be9a058d0feb8",
+  "waiting_review_left_undecided": true,
+  "start_or_review_requested_by_walkthrough": false,
+  "physical_dispatch": false,
+  "scope": "Actual browser preparation, second-run saved-bundle reuse and reload; no human acceptance or complete feature claim"
+}

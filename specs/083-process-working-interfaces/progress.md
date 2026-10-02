@@ -1242,3 +1242,13 @@ process/model/review replay. Existing job
 with 18 actual heat results and Wright styling: three served recovery checks pass.
 Preparation and reuse on the second, still-undecided heat run remain pending.
 The full goal remains active; earlier failed previews and checks are retained.
+
+The resumed heat preparation/reuse walkthrough now passes all eleven served
+checks through the normal workspace/editor entry. The saved interface shows
+prepared inputs, denies Start before explicit readiness and enables it afterward,
+then displays the second run's exact basis result and pending review. Reload
+restores that same waiting run. Before/after comparison confirms all authoring
+and revision records and saved source/bundle bytes are unchanged. No Start or
+review response was submitted. T046 is complete for its saved-workflow/comparison
+scope; T047 and the full feature remain incomplete. Evidence:
+`artifacts/process-interfaces/083/20261002-heat-preparation-and-saved-reuse/`.
