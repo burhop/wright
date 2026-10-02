@@ -1,0 +1,224 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-live-default-model-004.workflow.wflow",
+      "source_digest": "bb43c03ebc365a77785527a699e807bed060b5caf264b9773804d892a5d798c6",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+    "input_snapshot_id": "inputs-81d81158f76f48e78168b4ed4396fc34",
+    "input_digest": "f4a8a2f560d6821d88da4299f6dd4770da24fedfa30f097e841980c906279411",
+    "cursor": 16,
+    "generated_at": "2026-10-02T06:09:57.670008+00:00"
+  },
+  "state": "failed",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "adb5cefc54a545eda7abcb9ab9b9fbdc:define_geometry_basis_live_default_model_004:define_geometry_basis_live_default_model_004_result",
+      "step_id": "define_geometry_basis_live_default_model_004",
+      "port_id": "define_geometry_basis_live_default_model_004_result",
+      "role": "deliverable",
+      "title": "Interpret the original wheel and manufacturing requirements",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/printed-replacement-part/live-default-model-004/outputs/geometry-basis.json",
+          "sha256": "57c5210e3247c479102c502fccaad600e4e313ed7de54ac200304261eb88c1f9",
+          "media_type": null,
+          "result_id": "adb5cefc54a545eda7abcb9ab9b9fbdc:define_geometry_basis_live_default_model_004:define_geometry_basis_live_default_model_004_result",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [
+    {
+      "checkpoint_id": "checkpoint-f42781124eba9b2c339afb55",
+      "step_id": "review_basis_live_default_model_004",
+      "kind": "action",
+      "subject_digest": "b0434bd9667bad2e966b72e8291df3e14995227aa092dec7556149a0b6cbd298",
+      "instructions": "Review the exact process action and its evidence before continuing.",
+      "response_schema": null,
+      "decisions": [
+        "approved",
+        "changes_requested"
+      ],
+      "evidence": [],
+      "state": "consumed",
+      "decision": {
+        "decision": "approved",
+        "actor": "integration_test:083-private-digital-wheel-004",
+        "reason": "Integration campaign 083-private-digital-wheel-004 policy 33ca3ac35aad186afae81ea8150acb6b73775b39aadb2deed8842c90536f7dd6",
+        "request_id": "synthetic-wheel-basis-review-004",
+        "integration_test": true
+      },
+      "action_receipt": {
+        "request_id": "wheel-basis-continuation-004",
+        "principal_id": "local-control-plane",
+        "submission": "accepted",
+        "delivery_completed": true,
+        "observed_outcome": null,
+        "provider_reference": null,
+        "cancellation_requested": false,
+        "cancellation_outcome": null
+      }
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "review-checkpoint-f42781124eba9b2c339afb55",
+      "operation": "review",
+      "title": "Review action",
+      "enabled": false,
+      "subject_digest": "b0434bd9667bad2e966b72e8291df3e14995227aa092dec7556149a0b6cbd298",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This checkpoint is not awaiting a review decision.",
+          "correction": "Inspect its recorded decision or prepare a new exact subject.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": "checkpoint-f42781124eba9b2c339afb55",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "continue-checkpoint-f42781124eba9b2c339afb55",
+      "operation": "action",
+      "title": "Continue process",
+      "enabled": false,
+      "subject_digest": "b0434bd9667bad2e966b72e8291df3e14995227aa092dec7556149a0b6cbd298",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This checkpoint is not ready to continue.",
+          "correction": "Complete its required review; an already consumed action cannot be submitted again.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": "checkpoint-f42781124eba9b2c339afb55",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "fe2bf24d310548adffa1ce10fdf431f6c967dfd05c6c91dc47ada3d42ef70124",
+      "reasons": [
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+          "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "failed",
+      "observed_at": "2026-10-02T06:09:57.670008+00:00",
+      "stale_after": null,
+      "operation_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+      "activity": "Create source mesh: additional user input was requested in an unattended step.",
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 16,
+        "completed_steps": 2
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "INTERACTION_NOT_DECLARED",
+      "message": "Create source mesh: additional user input was requested in an unattended step.",
+      "correction": "Supply the missing requirement before starting, connect an upstream producer, or declare a human-input step before this task. Inspect completed operations before another run; they have not been replayed.",
+      "binding_id": null,
+      "step_id": "create_mesh_live_default_model_004",
+      "navigation": {
+        "kind": "block",
+        "block_id": "create_mesh_live_default_model_004",
+        "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      "technical_details_ref": "runs/printed-replacement-part-live-default-model-004/adb5cefc54a545eda7abcb9ab9b9fbdc.json"
+    }
+  ],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+      "result_id": "adb5cefc54a545eda7abcb9ab9b9fbdc:define_geometry_basis_live_default_model_004:define_geometry_basis_live_default_model_004_result",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+      "result_id": "adb5cefc54a545eda7abcb9ab9b9fbdc:define_geometry_basis_live_default_model_004:define_geometry_basis_live_default_model_004_result",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/printed-replacement-part/live-default-model-004/outputs/geometry-basis.json"
+    },
+    {
+      "kind": "block",
+      "block_id": "review_basis_live_default_model_004",
+      "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "block",
+      "block_id": "create_mesh_live_default_model_004",
+      "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    }
+  ],
+  "next_page": null
+}

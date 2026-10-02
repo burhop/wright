@@ -307,7 +307,16 @@ class Definition:
         return step
 
     def save(self, chain):
+        existing_order = {
+            (item["fields"]["from"], item["fields"]["to"])
+            for item in self.sections
+            if item["kind"] == "connection"
+            and item["fields"]["type"] == "order"
+            and item["fields"].get("when") is None
+        }
         for before, after in zip(chain, chain[1:]):
+            if (before["id"], after["id"]) in existing_order:
+                continue
             self.sections.append(
                 dict(
                     kind="connection",

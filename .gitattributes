@@ -73,3 +73,6 @@ integrations/rivet/runner/src/** text eol=lf
 # Captured native qualification files are hash-bound; do not normalize bytes.
 artifacts/campaign-example-renewal/qualification/harness-native-20260922/** -text whitespace=cr-at-eol
 artifacts/engineering-workflow-datasets/retry-evidence/heat01-aluminum-scope-902.json -text whitespace=cr-at-eol
+
+# Private digital-process proof records retain their captured byte identities.
+artifacts/process-interfaces/083/20261002-wheel-preparation-review/** -text -whitespace

@@ -4,6 +4,7 @@
   "slicer_server": "your-enabled-offline-slicer-server",
   "inspection_server": "your-enabled-engineering-python-server",
   "inspection_workspace": "/workspace",
+  "inspection_backend": "skfem",
   "slice_success_contract": "RECORD_THE_QUALIFIED_PROVIDER_SUCCESS_SEMANTICS_AND_VERSION",
   "simulator_destination": "test://YOUR_PRIVATE_TEST_CAMPAIGN/printer/printed-replacement-part-01",
   "profiles": {

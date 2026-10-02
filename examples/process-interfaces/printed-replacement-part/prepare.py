@@ -156,7 +156,8 @@ def prepare(workspace, attempt, tools, bindings):
     )
     basis_result = flow.ai(
         basis,
-        "Record the original supplied dimensions and unresolved design interpretations. Preserve the 38 mm maximum diameter, 18 mm overall height including 2 mm front hub, six equally spaced shallow scallops, >=33 mm minimum grip, nominal 1 mm exposed rounds and subtle grip dots. The D socket uses the 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and flat clearance, 10 mm blind depth and >=3 mm material above it. No insert, set screw, taper or keyway. Preserve PETG/P1S 0.4/0.20 mm/four walls/35% profiles, proposed +/-0.25 mm non-mating tolerance and original human-review requirements. No geometry, fit, strength, standards or print-success claim yet. Do not ask undeclared runtime questions; record interpretation for the next declared review.",
+        "Prepare a complete proposed digital geometry design for the next declared review, separating supplied requirements from your proposed construction choices. Preserve the 38 mm maximum diameter, 18 mm overall height including 2 mm front hub, six equally spaced shallow scallops, >=33 mm minimum grip, nominal 1 mm exposed rounds and subtle grip dots. The D socket uses the 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and flat clearance, 10 mm blind depth and >=3 mm material above it. No insert, set screw, taper or keyway. Preserve PETG/P1S 0.4/0.20 mm/four walls/35% profiles, proposed +/-0.25 mm non-mating tolerance and original human-review requirements. Propose explicit numeric scallop profile/depth/phase, hub diameter, dot count/dimensions/placement and exposed-edge treatment within the original limits; derive and record the D-boundary/flat construction and depth direction. These are design proposals, not additional requirements or verified fit. Distinguish decisions that must be resolved at this declared basis review from later inspection of actual geometry, supports and final package. Do not leave a predictable construction choice to a later unattended question. No geometry, fit, strength, standards or print-success claim yet. Do not ask runtime questions; output one complete proposal for the declared review."
+        " Keep the entire response below 3000 characters. Return only one valid JSON object, with no markdown, comments or trailing commas. Use these keys: supplied_requirements (short object), proposed_geometry (numeric dimensions plus short construction descriptions for scallops, hub, dots, rounds, socket and orientation), basis_review (short list of proposed choices requiring this review), remaining_verification (short list), engineering_acceptance (false). Expressions must be JSON strings; do not put equations in numeric values. Do not repeat input documents or provide lengthy rationale.",
         "geometry-basis.json",
     )
     for name, reference in refs.items():
@@ -173,14 +174,14 @@ def prepare(workspace, attempt, tools, bindings):
     )
     flow.review(
         basis_review,
-        "Review the exact basis, supplied image scale and unresolved geometry/socket interpretations. This digital process does not establish fit, strength or printing success.",
+        "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success.",
     )
     flow.reference(basis_result, basis_review, "basis")
     absolute_output = workspace / flow.output
     create = flow.original("create_mesh")
     source_result = flow.ai(
         create,
-        f"Use the existing Blender execute_blender_code tool to construct the reviewed focus wheel from the actual supplied image and dimensions. Work only with uniquely named owned objects and actual geometry. Export binary STL in explicit millimetres at {str(absolute_output / 'source_mesh.stl')!r}. Preserve the complete original feature requirements; do not substitute a cylinder/cube or infer verified fit. Keep <=80000 triangles. Return compact actual construction observations and unresolved limits; Wright retains the exact tool call. Use guarded bpy/bmesh/mathutils modelling and Blender STL export only: no open/pathlib/os/sys/hashlib/runpy/subprocess/network/handlers/timers/drivers/addon operations or raw filesystem calls. Do not overwrite unrelated objects. Geometry failure is explicit; no fabricated export or verdict.",
+        f"Use the existing Blender execute_blender_code tool to construct the reviewed focus wheel from the actual supplied image and dimensions. Wright runs this stage only after consuming its declared exact-subject basis review. The reviewed_basis input remains the unchanged proposed design; use the design released by that order barrier rather than treating its earlier proposal status as a new runtime question. A labelled integration-test decision permits digital construction only and is not human engineering acceptance; retain final measured-feature/support/package review. Work only with uniquely named owned objects and actual geometry. Export binary STL in explicit millimetres at {str(absolute_output / 'source_mesh.stl')!r}. Preserve the complete original feature requirements; do not substitute a cylinder/cube or infer verified fit. Keep <=80000 triangles. Return compact actual construction observations and unresolved physical limits; Wright retains the exact tool call. Do not request an undeclared review or missing construction choice. If the released design cannot be implemented within original limits, return an explicit blocked technical outcome instead of making up evidence. Use guarded bpy/bmesh/mathutils modelling and Blender STL export only: no open/pathlib/os/sys/hashlib/runpy/subprocess/network/handlers/timers/drivers/addon operations or raw filesystem calls. Do not overwrite unrelated objects. Geometry failure is explicit; no fabricated export or verdict.",
         "source-model-report.json",
         server=geometry,
         expected=("source_mesh.stl",),
@@ -352,6 +353,7 @@ def prepare(workspace, attempt, tools, bindings):
         (
             json.dumps(
                 {
+                    "solver": bindings["inspection_backend"],
                     "input_content": input_content,
                     "job_name": flow.relative + "/package-inspection",
                     "critic_approved": False,
@@ -478,7 +480,7 @@ def prepare(workspace, attempt, tools, bindings):
     )
     flow.reference(report_result, transfer, "preparation_review")
     for role, reference in profiles.items():
-        flow.reference(reference, transfer, role + "_profile")
+        flow.reference(reference, transfer, role + "_profile", "workspace_file")
     sources = {
         **source_roles,
         "repaired_mesh": repaired_roles["repaired_mesh"],

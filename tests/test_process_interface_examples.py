@@ -202,6 +202,7 @@ def printed_configuration(tmp_path):
         slicer_server="fixture-slicer",
         inspection_server="fixture-inspection",
         inspection_workspace="/workspace",
+        inspection_backend="skfem",
         slice_success_contract="Fixture success declaration; no native execution is claimed",
         simulator_destination="test://private-fixture/printer/printed-replacement-part-01",
         profiles={},
@@ -257,6 +258,16 @@ def test_printed_proposal_preserves_assignment_and_full_gate(printed_configurati
         "authorize_transfer_source_test",
     } <= {step.id for step in plan.steps}
     assert report["step_count"] == 11
+    create = next(step for step in plan.steps if step.id == "create_mesh_source_test")
+    assert any(
+        source
+        == "define_geometry_basis_source_test.define_geometry_basis_source_test_result"
+        for _, source in create.references
+    )
+    assert [step.id for step in plan.steps].index("review_basis_source_test") < [
+        step.id for step in plan.steps
+    ].index(create.id)
+    assert "not human engineering acceptance" in create.prompt
     assert (
         report["physical_dispatch"] is False
         and report["engineering_acceptance"] is False
@@ -268,6 +279,24 @@ def test_printed_proposal_preserves_assignment_and_full_gate(printed_configurati
     assert "geometry-only preview" in source
     assert '"tool":"test_handoff"' in source
     assert '"kind":"integration_test"' in source
+    sections = module.definition._parse(source)
+    endpoints = [
+        (block["fields"]["from"], block["fields"]["to"])
+        for block in sections
+        if block["kind"] == "connection"
+    ]
+    assert len(endpoints) == len(set(endpoints))
+    ports = {
+        block["id"] + "." + port["key"]: port["kind"]
+        for block in sections
+        if block["kind"] in {"task", "input"}
+        for direction in ("inputs", "outputs")
+        for port in block["fields"].get(direction, [])
+    }
+    for block in sections:
+        if block["kind"] == "connection" and block["fields"]["type"] == "item":
+            fields = block["fields"]
+            assert ports[fields["from"]] == ports[fields["to"]], fields
     assert '"max_revisions":0' in source
     assert "printer_print" not in source and "printer_upload" not in source
     validator = next(

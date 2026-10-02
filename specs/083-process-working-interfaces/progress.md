@@ -1094,3 +1094,27 @@ tools, test-only destination, unsuccessful response and evidence preservation.
 These are preparation/passive-reader checks, not a live wheel or slicer proof.
 See [printed-proof.md](evidence/printed-proof.md). T045–T047 remain pending live
 engineering/browser evidence; the next step is private native/provider binding.
+
+### 2026-10-02 — Original wheel basis review and explicit failure recovery
+
+Fresh independent native geometry/offline-slicer bindings are confined to the
+private proof workspace. Actual schema/editor checks identified missing solver
+configuration, mismatched file kinds and duplicate order links; declaration fixes
+preserve compiler validation and original assignment/profile bytes. Nine served
+workspace checks now verify the actual model-produced basis, common working view,
+declared waiting review, evidence and reload.
+
+A labelled exact synthetic decision resumed that run once. An uncertain HTTP
+acknowledgement was reconciled read-only; the consumed checkpoint was not replayed.
+The geometry model rejected unresolved construction choices before any native
+operation. The design prompt now resolves complete proposed geometry at its
+declared review. A later basis response failed JSON validation; it is retained,
+and a bounded compact structure is requested next. A helper database error caused
+one additional known pre-start rejection and was corrected without bypassing
+integration-grant validation. See [printed-proof.md](evidence/printed-proof.md).
+
+Seventy-five focused preparation/reader checks and fifty authoring/build checks
+pass. The shared authoring reference now supplies scoped evidence/navigation
+callbacks with visible error handling. T045–T047 remain incomplete: no live wheel
+geometry, slicing, full assessment or tailored wheel UI is claimed. Protected
+campaign, physical dispatch and user engineering acceptance remain unchanged.

@@ -33,6 +33,48 @@ classification, profile byte retention, workspace confinement, missing profiles
 and preservation of existing evidence. Fixtures establish these boundaries only;
 their mesh is explicitly synthetic and no native slicing is claimed.
 
+## Actual declared-review journey and retained failures
+
+The independent Blender host and offline slicer binding were registered only in
+the isolated proof workspace. Fresh schema preflight exposed a missing solver
+argument; the example now requires an explicit inspection backend. Actual workspace
+editor navigation then exposed mismatched file ports and duplicate order links.
+Those declaration defects were fixed without relaxing source validation or
+replacing the editor. Connected kinds and unique links have focused regression
+coverage.
+
+Run `adb5cefc54a545eda7abcb9ab9b9fbdc` reached the declared basis review through
+the actual default model. Nine normal-workspace browser checks passed, including
+the existing editor, common working tab, exact basis evidence, visible waiting
+state and reload. The
+[retained report](../../../artifacts/process-interfaces/083/20261002-wheel-preparation-review/workspace-review/report.html)
+and receipt records describe this scope.
+
+An exact-subject synthetic integration decision exercised continuation. Its HTTP
+acknowledgement was uncertain; read-only reconciliation confirmed that the
+checkpoint was consumed once. The geometry model subsequently rejected unresolved
+design choices as an undeclared question. No Blender operation or STL export
+occurred. This is a retained failure, not a completed manufacturing proof or human
+engineering acceptance. The proposal now asks the earlier design stage to supply
+all numeric construction choices for the declared basis review; the geometry step
+recognizes that consumed review boundary while retaining measured final review.
+
+The next actual model run, `dc678be3c6d34270988c194dd8ab4c5a`, failed JSON
+validation at the basis stage, with no outputs or geometry calls. Its usage record
+reports 6,639 output tokens; invalid response text was not retained by the existing
+runtime, so the precise syntax defect is unknown. The prompt now requests a compact
+JSON object with explicit keys and quoted expressions. A subsequent local start
+was rejected before execution because the helper enrolled the test grant in the
+wrong isolated database; the retained rejection is not an uncertain print outcome.
+The helper configuration was corrected for a fresh, separately identified attempt.
+
+Latest focused checks: 75 preparation/passive-reader tests pass in
+`t045-printed-proposal-014`; 50 authoring/build checks pass in
+`t045-reference-navigation-001`. The packaged shared reference now wires actual
+scoped result/evidence navigation callbacks and reports navigation errors, without
+executing work on mount. This improves future generated interfaces; it does not
+rewrite existing saved revisions or prove a complete tailored wheel interface.
+
 ## Remaining evidence
 
 T045–T047 remain incomplete. Run the original assignment through freshly bound
