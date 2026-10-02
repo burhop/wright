@@ -167,6 +167,29 @@ run is required after loading the fix; failed historical runs remain unchanged.
 
 ## Remaining evidence
 
+### Actual offline slice checkpoint, 2 October
+
+Run `aee8d1771e1442babd28ff0fab3df0cf` completed native construction and repair,
+then the existing offline slicer produced a 361197-byte 3MF and its actual
+provider response. Source STL has 10824 triangles; repaired STL has 10808.
+The next passive inspection rejected unsupported startup motion `G380`, so the
+run remains failed and the full 18-check assessment was not reached. The exact
+source, outputs, tool observations and labelled test decision are retained under
+`artifacts/process-interfaces/083/20261002-wheel-actual-slice/`. The original
+profiles, requirements, campaign and final engineering review are unchanged.
+
+A separate read-only qualification of that same package uses explicitly declared
+nominal-section markers and observes 90 layers with model and support paths.
+It records excluded startup/shutdown lines and full package/source identities;
+it does not complete or replay the failed process or verify firmware execution.
+The corrected handoff is being qualified in fresh isolated run
+`d5b7916386f8419b9e3031da9f3caf44`. Its waiting/reload browser check passes before
+the labelled synthetic basis decision. A continuation read timeout occurred
+before any mutation; a subsequent POST lost its acknowledgement during expensive
+qualification. No POST was replayed: the durable record confirms authorization,
+dispatch and same-run native geometry execution. This client timeout and latency
+remain visible limitations, not a failed physical print or engineering approval.
+
 T045–T047 remain incomplete. Run the original assignment through freshly bound
 independent native geometry/slicing tools, retain exact outputs and the unchanged
 assessment, then prove common and actual-default-model generated interfaces,

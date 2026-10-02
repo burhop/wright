@@ -1,0 +1,44 @@
+{
+  "run_id": "aee8d1771e1442babd28ff0fab3df0cf",
+  "source_digest": "a4d06fa25e6c5ad86ec37de35d23f6fe68da1e45e9d1f899d28f9475c2d27ebb",
+  "terminal_status": "failed",
+  "completed_native_construction": true,
+  "completed_native_repair": true,
+  "completed_actual_offline_slice": true,
+  "failed_stage": "inspect_slice_handoff_live_default_model_011",
+  "failure": "Strict passive reader rejected G380 startup motion; slice-evidence.json was not produced.",
+  "full_18_check_gate_reached": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "synthetic_basis_review": true,
+  "failed_run_replayed_or_reclassified": false,
+  "later_read_only_nominal_section_qualification": "Separate reader qualification only; it does not complete this failed workflow.",
+  "files": {
+    "geometry-basis.json": {
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e",
+      "bytes": 3882
+    },
+    "source_mesh.stl": {
+      "sha256": "2f5dff606bedc60a9b63d551740df54c426bbee49176c4a16a08a47772fe1a3b",
+      "bytes": 541284,
+      "triangles": 10824
+    },
+    "repaired_mesh.stl": {
+      "sha256": "8f35f0e61f06b065f3ed0b824c3563a913948e1c198c721674f34f5c362a4ae7",
+      "bytes": 540484,
+      "triangles": 10808
+    },
+    "mesh-preview.png": {
+      "sha256": "252d8ec708efc094b55839507758daaae20076009646dec83dcc6632c4aa2b2d",
+      "bytes": 296149
+    },
+    "slice_package.gcode.3mf": {
+      "sha256": "5ccf1be1d66a902a5a2ac33732f8c595719ff091b015f460168ee0bf985fc7a7",
+      "bytes": 361197
+    },
+    "slice-provider-response.json": {
+      "sha256": "d68baaf6774a26c4da1016ddfa1bcedc5b62a3e2e09de39879d5e726c4892296",
+      "bytes": 1999
+    }
+  }
+}
