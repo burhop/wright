@@ -1080,3 +1080,17 @@ records are unchanged: reuse did not regenerate/build the UI. Earlier failed
 browser and preflight attempts remain retained. See [heat-proof.md](evidence/heat-proof.md).
 T046/T047 still require preparation/review controls and the printed proof; no
 engineering gate, physical operation or user acceptance was claimed.
+
+### 2026-10-02 — Printed example proposal and passive inspection
+
+The original focus-wheel process now prepares a connected eleven-stage proposal
+using existing geometry, offline slicing, document and engineering Python tools.
+Actual slicer response retention is explicit; package inspection receives exact
+file dependencies and uses the existing bounded nominal toolpath reader. Original
+PETG/profile limits and the full 18-check 082 gate remain unchanged.
+
+Seventy-five fixture/reader checks pass, including material mismatch, missing
+tools, test-only destination, unsuccessful response and evidence preservation.
+These are preparation/passive-reader checks, not a live wheel or slicer proof.
+See [printed-proof.md](evidence/printed-proof.md). T045–T047 remain pending live
+engineering/browser evidence; the next step is private native/provider binding.
