@@ -1442,3 +1442,14 @@ restart 009 loaded the read-only route without engineering replay; both second
 reviews remain unanswered. Original user workspace and installed historical
 navigation are untested, and active vendor code still requires retirement.
 T048/T049 and the full goal remain incomplete.
+
+Resumed boundary verification completed with 149 passing tests, no skips, in
+117.98 seconds. The combined authoring/build/presentation/API/existing surface
+security group verifies exact scope, revocation, malformed/corrupt source,
+preview denials, fixed builds and durable cancellation/reuse distinctions.
+T040 is checked for that controlled regression scope; new verification.md records
+the full command and limits. T053 full acceptance is still pending. Refresh stale
+process-app and editor guidance to identify implementation versus acceptance,
+and update the two-process migration comparison with later actual evidence.
+Services left stopped during the CPU pause remain stopped; these tests did not
+restart model/MCP work or answer either declared review. Full goal stays active.

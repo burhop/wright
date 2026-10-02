@@ -2,13 +2,18 @@
 
 **Date:** 30 September 2026.
 **Direction:** [Workflow platform vision](workflow-platform-vision.md), V1-V7.
-**Status:** Agreed user experience and architectural direction. The reusable
-interaction contract, UI kit, and client remain proposed implementation work.
+**Status:** Agreed user experience and architectural direction. Feature 083 is
+under implementation; its interaction contract, scoped client, common view,
+public UI kit and configured-model authoring path have local verification.
+Complete engineering, distribution and migration acceptance remains pending.
 
 The concrete technical package and ready-to-use goal are in
 [Feature 083](../../specs/083-process-working-interfaces/plan.md). It includes
 the complete AI-created/reusable interface experience and two engineering proofs,
-not only the shared kit. Preparation of that package has not started implementation.
+not only the shared kit. The submitted goal approved implementation. See the
+[task record](../../specs/083-process-working-interfaces/tasks.md) and
+[progress record](../../specs/083-process-working-interfaces/progress.md) for
+checked scope; this vision is not a completion or release claim.
 
 ## User experience
 

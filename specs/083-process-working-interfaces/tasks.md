@@ -87,7 +87,13 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
   retain actual managed browser and host handshake obligations; T039–T042
   retain workspace controls and live-model authoring acceptance.
 - [x] T039 [US3] Implement Create/Update interface progress, preview/save controls and compatibility fallback in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx`, explicitly using current document tabs/LiveAppSurface rather than a new browser window. Source/component integration is checked in `evidence/workspace-authoring-controls.md`; actual served/browser and live-model acceptance remains T034/T037/T041/T042.
-- [ ] T040 [US3] Add scope/build/binding/malformed-source/revocation/cross-workspace/run/UI tests in `packages/workspace_service/tests/test_process_ui_authoring.py` and `apps/api/tests/test_process_ui_surface_authority.py`.
+- [x] T040 [US3] Add scope/build/binding/malformed-source/revocation/cross-workspace/run/UI tests in `packages/workspace_service/tests/test_process_ui_authoring.py` and `apps/api/tests/test_process_ui_surface_authority.py`.
+  The resumed combined owner/build/API/surface-security group passes 149 tests,
+  no skips. Exact identities, revoked/expired grants, preview mutations,
+  malformed inputs, corrupt bundles and bounded repair/build/cancellation are
+  checked. This is controlled boundary verification; broader served engineering,
+  installed distribution and T053 acceptance remain separate obligations. See
+  `evidence/verification.md`.
 - [ ] T041 [US3] Verify generation/preview/save/update/reuse/theme/accessibility/loading/error states in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx` and `tests/ui-integration/process-ui-authoring.spec.ts`.
 - [x] T042 [US3] Run an actual configured-model authoring smoke through Wright and retain prompts/role/model/build/preview/save/update evidence in `specs/083-process-working-interfaces/evidence/live-ui-authoring.md`; reference app alone cannot complete this task.
   Actual model/compiler/managed browser smoke passed with fresh generation,

@@ -11,8 +11,8 @@ interface composition and transport success.
 
 | Engineering job | Actual useful tools and handoffs | Current proof limit |
 | --- | --- | --- |
-| Heat-spreader sizing | Actual model basis → AgentCAD native STEP construction/reopen/measurement → OASiS coarse/fine 3D conduction → exact files and full assessment. | Analysis completed with 25 checks passing and original mandatory review held. Actual model-created tailored UI was saved, refined, navigated and reused; complete preparation/review controls remain pending. |
-| Printed replacement focus wheel | Actual model design proposal → declared review → existing Blender MCP construction/correction → actual binary source STL. Independent offline slicer and passive package-inspection stages are connected in the accepted definition. | Native export occurred in a failed task whose deadline expired before model completion. Slicer handoff, full assessment and tailored wheel UI remain unproved. |
+| Heat-spreader sizing | Actual model basis → AgentCAD native STEP construction/reopen/measurement → OASiS coarse/fine 3D conduction → exact files and full assessment. | Analysis completed with 25 checks passing and original mandatory review held. Actual-model tailored UI was saved, refined and reused unchanged. Eleven served preparation/reuse checks pass; the second run's review remains unanswered. |
+| Printed replacement focus wheel | Actual model proposal → declared review → existing Blender MCP → binary source STL; an isolated retained-artifact consumer performed actual mesh repair, offline slicing and inspection. | The consumer failed before the original report/gate because its full preview exceeded an input bound. Separate report/assessment checks are labelled separately. Actual-model tailored preview/save/update and eleven saved preparation/reuse checks pass; the full original gate/handoff remains unproved. |
 
 Observed failures improved the declaration and provider guidance: required solver
 configuration, matching file kinds, unique order links, complete proposed
@@ -43,11 +43,27 @@ Read-only source audit on 2 October 2026 found these production connections:
 | `scripts/configure_print_demo_*`, `scripts/print_demo_p1s_*`, `scripts/print_demo_studio.py`, Studio Windows helpers | Repo-local setup, device transport and desktop automation; reverse imports from demo service. | Retire active vendor scripts after replacement. Preserve experimental evidence and unrelated dirty bytes. |
 | `scripts/engineering_dataset_slice*`, `scripts/engineering_jig_slice_mcp.py` | Operational vendor slicing also referenced by campaign preparation and binding probes. | Inventory/protect those callers before retirement. Historical campaign artifacts and counters stay immutable; do not substitute a new generation campaign. |
 
+This table records the pre-migration caller audit. The later entry checkpoint
+below supersedes its first row; it does not imply retirement of other rows.
 The audit used searches of actual `apps`, `packages` and `scripts` sources,
 excluding tests to identify production callers. It is not an assertion that all
 transitive/data/configuration callers have been migrated.
 
-## Pending work
+## Served entry migration checkpoint
+
+`WorkflowRecoveryPage` now uses the shared saved-process path for new work and a
+native read-only historical adapter for retained `printDemoRun` links. Explicit
+workflow links win over restored active tabs and only attach their own history.
+Six served checks pass on an isolated retained failed engineering run, including
+its eleven outputs, original failure, editor return and exact saved JSON tab.
+Source/run hashes are unchanged. Initial product routing and subsequent harness
+selector failures remain separate retained reports in
+`artifacts/process-interfaces/083/20261002-historical-result-navigation/`.
+This is source-checkout proof; original user workspace and installed historical
+navigation remain untested. Active vendor endpoints/startup/client methods and
+automation remain retirement debt.
+
+## Remaining migration work
 
 T048/T049 remain incomplete. Prove the replacement engineering/UI journey,
 inspect saved prototype sources/run formats and all transitive references,

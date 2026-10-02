@@ -18,9 +18,19 @@ with backend state without replaying work. Verify both the existing authoring
 experience and this working journey through the served workspace entry. A new
 route, detached form, or extra tab strip alone is not proof of integration.
 
-The historical editor recovery evidence below remains intact. The new shared
-process UI foundation is proposed work, not a replacement editor or claim that
-the recovered source/native runtime integration has been completed.
+The historical editor recovery evidence below remains intact. Feature 083's
+shared process UI foundation is now under implementation with local common-view,
+actual-model preview/save/update/reuse and served-workspace evidence. It is not
+a replacement editor or a claim of full source/native runtime, engineering or
+installed-distribution acceptance. Read its task/progress records before treating
+individual checks as complete feature support.
+
+Explicit workflow file links must take precedence over a restored active tab.
+Opening an existing source or its history must not create a missing workflow.
+Historical result links attach only to their exact source and use the native
+read-only recorder adapter; they expose no process or device actions. Verify
+editor return and saved artifact navigation through the workspace entry. Retain
+failed walkthroughs when a repaired continuation passes.
 
 ## Continue the existing design
 
