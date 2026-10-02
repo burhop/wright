@@ -59,6 +59,8 @@ class ProcessRepresentationRequest(ProcessSourceRequest):
     reference: ArtifactRef
     run_id: Identifier | None = None
     input_snapshot_id: Identifier | None = None
+    preview: Literal["toolpaths"] | None = None
+    archive_entry: Locator | None = None
 
 
 class ProcessNavigationRequest(ProcessSourceRequest):

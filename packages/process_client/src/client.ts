@@ -42,6 +42,10 @@ export interface SnapshotOptions extends ReadOptions {
 export interface RepresentationOptions extends ReadOptions {
   readonly runId?: string;
   readonly inputSnapshotId?: string;
+  /** Passive derived data from the same authorized artifact; raw remains the default. */
+  readonly preview?: "toolpaths";
+  /** Exact plate entry for a multi-plate archive; never an independent file locator. */
+  readonly archiveEntry?: string;
 }
 export interface FollowOptions extends ReadOptions {
   readonly runId: string;
@@ -314,6 +318,7 @@ async function representationBody(
   response: Response,
   reference: ArtifactRef,
   signal?: AbortSignal,
+  preview?: "toolpaths",
 ): Promise<Blob> {
   const maximum = 104_857_600;
   const size = response.headers.get("content-length");
@@ -323,7 +328,12 @@ async function representationBody(
     Number(size) > maximum ||
     response.headers.get("x-wright-artifact-sha256") !== reference.sha256 ||
     response.headers.get("x-content-type-options") !== "nosniff" ||
-    !response.body
+    !response.body ||
+    (preview === "toolpaths" &&
+      (response.headers.get("x-wright-view-format") !==
+        "wright.gcode.toolpaths.v1" ||
+        response.headers.get("content-type")?.split(";", 1)[0] !==
+          "application/vnd.wright.toolpaths+json"))
   ) {
     await response.body?.cancel().catch(() => undefined);
     throw clientError(
@@ -376,7 +386,10 @@ async function representationBody(
       "model/3mf",
       "model/obj",
       "model/step",
+      "text/x-gcode",
     ]);
+    if (preview === "toolpaths")
+      passive.add("application/vnd.wright.toolpaths+json");
     return new Blob(parts, {
       type: passive.has(type) ? type : "application/octet-stream",
     });
@@ -986,6 +999,21 @@ export function createNativeProcessClient(
     ) {
       const checked = assertContract("ArtifactRef", reference);
       relativeLocator(checked.artifact_ref);
+      if (read.preview !== undefined && read.preview !== "toolpaths")
+        throw clientError(
+          "RESPONSE_INVALID",
+          "This passive preview is unsupported.",
+          "Download the exact recorded file.",
+        );
+      if (read.archiveEntry !== undefined) {
+        if (read.preview !== "toolpaths")
+          throw clientError(
+            "RESPONSE_INVALID",
+            "Select a toolpath preview before choosing a plate.",
+            "Open the exact package preview.",
+          );
+        relativeLocator(read.archiveEntry);
+      }
       if (readRepresentation) return readRepresentation(process, checked, read);
       if ((read.runId === undefined) === (read.inputSnapshotId === undefined))
         throw clientError(
@@ -1017,6 +1045,10 @@ export function createNativeProcessClient(
             ...source(),
             reference: checked,
             ...ownership,
+            ...(read.preview ? { preview: read.preview } : {}),
+            ...(read.archiveEntry !== undefined
+              ? { archive_entry: read.archiveEntry }
+              : {}),
           }),
         });
       } catch {
@@ -1028,7 +1060,7 @@ export function createNativeProcessClient(
         );
       }
       if (!response.ok) return httpFailure(response);
-      return representationBody(response, checked, read.signal);
+      return representationBody(response, checked, read.signal, read.preview);
     },
     async navigate(target: NavigationTarget) {
       const checked = assertContract("NavigationTarget", target);

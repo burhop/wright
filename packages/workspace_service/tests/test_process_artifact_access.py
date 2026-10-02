@@ -3,6 +3,8 @@
 from contextlib import asynccontextmanager
 from dataclasses import replace
 import hashlib
+import json
+import threading
 from types import SimpleNamespace
 
 import pytest
@@ -10,6 +12,7 @@ import pytest
 from core.process_interactions import ArtifactRef, FileBinding
 from workspace_service.adapters.filesystem import LocalWorkspaceFiles
 from workspace_service.executor import BoundedExecutor
+from workspace_service.errors import WorkspaceTimeoutError
 from workspace_service.use_cases.files import WorkspaceFileUseCases
 from workspace_service.process_interfaces.errors import ProcessInterfaceError
 from packages.workspace_service.tests.test_process_preparation_service import (
@@ -35,6 +38,7 @@ async def case(root, *, text=None):
     path.write_text(text, encoding="utf-8")
     app = owner(root, text)
     executor = BoundedExecutor()
+    app.workspace.executor = executor
     app.workspace.files = WorkspaceFileUseCases(
         app.db_path, executor, LocalWorkspaceFiles
     )
@@ -319,3 +323,131 @@ async def test_file_read_bound_and_traversal_are_enforced_by_the_file_owner(tmp_
             )
             == b"12345"
         )
+
+
+@pytest.mark.asyncio
+async def test_passive_preview_uses_exact_recorded_result_and_never_replays_work(
+    tmp_path,
+):
+    text = source(default="Prepared view fixture")
+    async with case(tmp_path, text=text) as c:
+        prepared = await c.app.set_inputs(scope(*CAPABILITIES), c.process)
+        calls = []
+        content = "G90\nM83\nG1 X0 Y0 Z0.2\n;CHANGE_LAYER\n;Z_HEIGHT:0.2\n;FEATURE:Support\nG1 X10 E1"
+
+        async def generate(prompt, fmt):
+            calls.append(prompt)
+            return content
+
+        receipt = await start(c.app, c.process, prepared.snapshot, generate)
+        await c.app.runs.wait(scope(*CAPABILITIES), c.process, receipt.run_id)
+        snapshot = await c.app.get_snapshot(
+            scope(*CAPABILITIES), c.process, run_id=receipt.run_id
+        )
+        reference = snapshot.outputs[0].representations[0]
+        derived = await c.app.artifacts.preview(
+            scope(*CAPABILITIES), c.process, reference, run_id=receipt.run_id
+        )
+        assert derived.media_type == "application/vnd.wright.toolpaths+json"
+        data = json.loads(derived.content)
+        assert data["package_sha256"] == reference.sha256
+        assert data["layers"][0]["support"] == [[0, 0, 10, 0]]
+        assert (tmp_path / reference.artifact_ref).read_text() == content
+        raw = await c.app.artifacts.read(
+            scope(*CAPABILITIES), c.process, reference, run_id=receipt.run_id
+        )
+        assert raw.content == content.encode()
+        assert len(calls) == 1
+        for changed in (
+            reference.model_copy(update={"sha256": "0" * 64}),
+            reference.model_copy(update={"result_id": "foreign"}),
+        ):
+            with pytest.raises(ProcessInterfaceError) as denied:
+                await c.app.artifacts.preview(
+                    scope(*CAPABILITIES), c.process, changed, run_id=receipt.run_id
+                )
+            assert denied.value.reason.code == "SCOPE_DENIED"
+        (tmp_path / reference.artifact_ref).write_bytes(b"changed")
+        with pytest.raises(ProcessInterfaceError) as stale:
+            await c.app.artifacts.preview(
+                scope(*CAPABILITIES), c.process, reference, run_id=receipt.run_id
+            )
+        assert stale.value.reason.code == "SUBJECT_STALE"
+
+
+@pytest.mark.asyncio
+async def test_passive_parse_and_serialization_use_the_owned_bounded_worker(
+    tmp_path, monkeypatch
+):
+    from workspace_service.process_interfaces import representations
+
+    async with case(tmp_path) as c:
+        content = b"G90\nM83\nG1 X0 Y0 Z0.2\n;CHANGE_LAYER\nG1 X10 E1"
+        reference = await c.app.artifacts.upload(
+            scope(*CAPABILITIES), c.process, "brief", "paths.txt", content
+        )
+        prepared = await c.app.set_inputs(
+            scope(*CAPABILITIES),
+            c.process,
+            bindings=(FileBinding(input_id="brief", reference=reference),),
+        )
+        main_thread = threading.get_ident()
+        threads = []
+        read = representations.read_gcode_toolpaths
+
+        def observed(*args, **kwargs):
+            threads.append(threading.get_ident())
+            return read(*args, **kwargs)
+
+        monkeypatch.setattr(representations, "read_gcode_toolpaths", observed)
+        derived = await c.app.artifacts.preview(
+            scope(*CAPABILITIES),
+            c.process,
+            reference,
+            input_snapshot_id=prepared.snapshot.snapshot_id,
+        )
+        assert threads and threads[0] != main_thread
+        assert (
+            json.loads(derived.content)["provenance"]["engineering_acceptance"] is False
+        )
+        assert (tmp_path / reference.artifact_ref).read_bytes() == content
+
+
+@pytest.mark.asyncio
+async def test_passive_deadline_failure_preserves_exact_download(tmp_path, monkeypatch):
+    async with case(tmp_path) as c:
+        content = b"Recorded engineering file"
+        reference = await c.app.artifacts.upload(
+            scope(*CAPABILITIES), c.process, "brief", "paths.txt", content
+        )
+        prepared = await c.app.set_inputs(
+            scope(*CAPABILITIES),
+            c.process,
+            bindings=(FileBinding(input_id="brief", reference=reference),),
+        )
+        bounded = c.app.workspace.executor.run
+
+        async def timed_out(operation, work, *, timeout_seconds):
+            if operation == "process.representation.preview":
+                assert timeout_seconds == c.app.limits.representation_timeout_seconds
+                raise WorkspaceTimeoutError(
+                    "Controlled passive deadline", operation=operation
+                )
+            return await bounded(operation, work, timeout_seconds=timeout_seconds)
+
+        monkeypatch.setattr(c.app.workspace.executor, "run", timed_out)
+        with pytest.raises(ProcessInterfaceError) as failure:
+            await c.app.artifacts.preview(
+                scope(*CAPABILITIES),
+                c.process,
+                reference,
+                input_snapshot_id=prepared.snapshot.snapshot_id,
+            )
+        assert failure.value.reason.code == "CAPABILITY_UNAVAILABLE"
+        raw = await c.app.artifacts.read(
+            scope(*CAPABILITIES),
+            c.process,
+            reference,
+            input_snapshot_id=prepared.snapshot.snapshot_id,
+        )
+        assert raw.content == content

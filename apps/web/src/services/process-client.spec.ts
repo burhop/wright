@@ -706,6 +706,62 @@ describe("scoped input upload and representation reads", () => {
         ...headers,
       },
     });
+  it("reads passive toolpaths with the same source identity and an exact optional plate", async () => {
+    const fetch = fake(async () =>
+      binary("data", {
+        "content-type": "application/vnd.wright.toolpaths+json",
+        "x-wright-view-format": "wright.gcode.toolpaths.v1",
+      }),
+    );
+    const blob = await client(fetch).getRepresentation(reference, {
+      runId: "run-one",
+      preview: "toolpaths",
+      archiveEntry: "Metadata/plate_2.gcode",
+    });
+    expect(blob.type).toBe("application/vnd.wright.toolpaths+json");
+    expect(JSON.parse(fetch.mock.calls[0][1]!.body as string)).toMatchObject({
+      reference,
+      run_id: "run-one",
+      preview: "toolpaths",
+      archive_entry: "Metadata/plate_2.gcode",
+    });
+    await expect(
+      client(fetch).getRepresentation(reference, {
+        runId: "run-one",
+        archiveEntry: "plate.gcode",
+      }),
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    await expect(
+      client(fetch).getRepresentation(reference, {
+        runId: "run-one",
+        preview: "toolpaths",
+        archiveEntry: "../private.gcode",
+      }),
+    ).rejects.toThrow();
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it.each([
+    {
+      "content-type": "application/json",
+      "x-wright-view-format": "wright.gcode.toolpaths.v1",
+    },
+    {
+      "content-type": "application/vnd.wright.toolpaths+json",
+      "x-wright-view-format": "",
+    },
+    {
+      "content-type": "application/vnd.wright.toolpaths+json",
+      "x-wright-view-format": "wright.gcode.toolpaths.v2",
+    },
+  ])("rejects an unsupported derived format envelope: %s", async (headers) => {
+    const fetch = fake(async () => binary("data", headers));
+    await expect(
+      client(fetch).getRepresentation(reference, {
+        runId: "run-one",
+        preview: "toolpaths",
+      }),
+    ).rejects.toMatchObject({ reason: { code: "UI_INCOMPATIBLE" } });
+  });
   it("uploads only the declared input and host source fields without execution", async () => {
     const fetch = fake(async () => json(reference));
     await expect(

@@ -43,6 +43,19 @@ ProgressPanel displays actual state/observations and reported freshness. Closing
 the app disposes observers, not the run. Abort pending reads when context changes
 so a stale reply cannot enter a different process/run.
 
+For a recorded 3MF or G-code artifact, `getRepresentation(reference, context)`
+returns the unchanged bytes. An additive `preview: "toolpaths"` option requests
+a bounded passive view through the same result/preparation scope; optional
+`archiveEntry` selects one explicit G-code entry in a multi-plate archive.
+Never silently select or merge ambiguous plates. Pass the artifact SHA-256 as
+`sourceSha256` and an abortable scoped `readToolpaths` callback to
+`RepresentationViewer`. The reader retains source/package digests, version,
+true layers, nominal arc approximation and unknown feature labels. Neither a
+preview nor recognized model/support comments establish engineering acceptance.
+Unsupported motion, unreadable or excessive data keeps the exact download.
+CSV views retain the actual table; numerical axes are explicit display choices,
+without inferred units, interpolated geometry or compliance claims.
+
 For updates, preserve valid bindings and change the requested presentation.
 Layout/title changes do not invalidate engineering evidence. Changed required
 binding/schema needs compatibility checks and a common-view fallback. UI version,

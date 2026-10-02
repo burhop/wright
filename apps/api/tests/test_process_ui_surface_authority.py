@@ -299,6 +299,61 @@ def test_revoked_process_read_grant_denies_context(case):
     assert case.client.get(PREFIX + "/context").status_code == 403
 
 
+def test_passive_toolpath_preview_keeps_exact_managed_results_grant(case, monkeypatch):
+    from workspace_service.process_interfaces.artifacts import ProcessArtifactBytes
+
+    calls = []
+
+    async def passive(scope, process, reference, **options):
+        calls.append((scope, process, reference, options))
+        return ProcessArtifactBytes(
+            reference,
+            b'{"format":"wright.gcode.toolpaths.v1"}',
+            "application/vnd.wright.toolpaths+json",
+        )
+
+    monkeypatch.setattr(case.owner.artifacts, "preview", passive)
+    body = case.query | {
+        "reference": {"artifact_ref": "outputs/slice.3mf", "sha256": "a" * 64},
+        "input_snapshot_id": "input-one",
+        "preview": "toolpaths",
+        "archive_entry": "Metadata/plate_1.gcode",
+    }
+    response = case.client.post(
+        PREFIX + "/representations/read", json=body, headers={"Origin": ORIGIN}
+    )
+    assert response.status_code == 200
+    assert response.headers["x-wright-artifact-sha256"] == "a" * 64
+    assert response.headers["x-wright-view-format"] == "wright.gcode.toolpaths.v1"
+    assert len(calls) == 1
+    scope, process, reference, options = calls[0]
+    assert scope.run_bound is True and scope.run_id is None
+    assert process == case.reference
+    assert reference.artifact_ref == "outputs/slice.3mf"
+    assert options == {
+        "run_id": None,
+        "input_snapshot_id": "input-one",
+        "archive_entry": "Metadata/plate_1.gcode",
+    }
+    foreign = body | {"run_id": "other-run", "input_snapshot_id": None}
+    assert (
+        case.client.post(
+            PREFIX + "/representations/read", json=foreign, headers={"Origin": ORIGIN}
+        ).status_code
+        == 403
+    )
+    for record in case.records:
+        if record.capability == "process.results":
+            case.grants.revoke(actor=case.actor, grant_id=record.grant_id)
+    assert (
+        case.client.post(
+            PREFIX + "/representations/read", json=body, headers={"Origin": ORIGIN}
+        ).status_code
+        == 403
+    )
+    assert len(calls) == 1
+
+
 @pytest.mark.parametrize(
     "path,body",
     [

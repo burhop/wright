@@ -1372,6 +1372,19 @@ function CommonProcessController({
                     <RepresentationViewer
                       blob={representation.blob}
                       title={representation.reference.artifact_ref}
+                      sourceSha256={representation.reference.sha256}
+                      readToolpaths={(signal) =>
+                        client.getRepresentation(representation.reference, {
+                          ...(activeRunRef.current
+                            ? { runId: activeRunRef.current }
+                            : {
+                                inputSnapshotId:
+                                  preparedRef.current?.snapshot_id,
+                              }),
+                          preview: "toolpaths",
+                          signal,
+                        })
+                      }
                     />
                     <RepresentationDownload
                       blob={representation.blob}

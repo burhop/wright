@@ -382,6 +382,46 @@ export function ToolpathViewer({ document }: { document: ToolpathDocument }) {
         Drag to rotate · scroll to zoom · reveal layers with the slider.
         Geometry uses actual toolpaths; it is not a machine approval.
       </p>
+      {document.provenance ? (
+        <details>
+          <summary>Toolpath reader evidence</summary>
+          <p>{document.provenance.method}</p>
+          <p>
+            Reader: {document.provenance.reader} ·{" "}
+            {document.provenance.segments} segments
+          </p>
+          <p>Package SHA-256: {document.packageSha256}</p>
+          <p>Path source SHA-256: {document.provenance.sourceSha256}</p>
+          {document.provenance.archiveEntry && (
+            <p>Package entry: {document.provenance.archiveEntry}</p>
+          )}
+          <p>
+            {document.provenance.extrudingArcs} extrusion arcs · maximum chord
+            error {document.provenance.arcMaximumChordErrorMm} mm
+          </p>
+          {document.provenance.unclassifiedFeatures.length > 0 && (
+            <p>
+              Unclassified feature labels:{" "}
+              {document.provenance.unclassifiedFeatures.join(", ")}
+            </p>
+          )}
+          {document.provenance.excludedUnlayeredCommands > 0 && (
+            <p>
+              {document.provenance.excludedUnlayeredCommands} extrusion commands
+              outside recorded layers are excluded from this view.
+            </p>
+          )}
+          <p>
+            Nominal recorded paths. Firmware commands are not executed; material
+            compatibility and engineering acceptance require their separate
+            checks.
+          </p>
+        </details>
+      ) : (
+        <p className="wp-muted">
+          Reader provenance is unavailable for this representation.
+        </p>
+      )}
     </div>
   );
 }

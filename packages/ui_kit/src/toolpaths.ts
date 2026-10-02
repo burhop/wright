@@ -11,6 +11,18 @@ export interface ToolpathDocument {
   readonly packageSha256: string;
   readonly layers: readonly ToolpathLayer[];
   readonly classificationKnown: boolean;
+  readonly provenance?: ToolpathReaderProvenance;
+}
+export interface ToolpathReaderProvenance {
+  readonly reader: string;
+  readonly sourceSha256: string;
+  readonly archiveEntry: string | null;
+  readonly method: string;
+  readonly segments: number;
+  readonly extrudingArcs: number;
+  readonly arcMaximumChordErrorMm: number;
+  readonly excludedUnlayeredCommands: number;
+  readonly unclassifiedFeatures: readonly string[];
 }
 
 export function parseToolpaths(
@@ -85,9 +97,69 @@ export function parseToolpaths(
     };
   });
   if (!total) return failure();
+  let provenance: ToolpathReaderProvenance | undefined;
+  if (data.provenance !== undefined) {
+    if (
+      !data.provenance ||
+      typeof data.provenance !== "object" ||
+      Array.isArray(data.provenance)
+    )
+      return failure();
+    const raw = data.provenance as Record<string, unknown>;
+    const count = (value: unknown, maximum: number): value is number =>
+      typeof value === "number" &&
+      Number.isInteger(value) &&
+      value >= 0 &&
+      value <= maximum;
+    const entry = raw.archive_entry;
+    if (
+      raw.reader !== "wright.passive-representations/1" ||
+      raw.units !== "mm" ||
+      raw.engineering_acceptance !== false ||
+      typeof raw.source_sha256 !== "string" ||
+      !/^[0-9a-f]{64}$/.test(raw.source_sha256) ||
+      (entry !== null &&
+        (typeof entry !== "string" ||
+          entry.length > 1024 ||
+          !entry ||
+          /[\\:\u0000-\u001f]/.test(entry) ||
+          entry.startsWith("/") ||
+          entry
+            .split("/")
+            .some((part) => !part || part === "." || part === ".."))) ||
+      (entry === null && raw.source_sha256 !== expectedPackageSha256) ||
+      typeof raw.method !== "string" ||
+      raw.method.length > 512 ||
+      raw.segments !== total ||
+      !count(raw.extruding_arcs, total) ||
+      typeof raw.arc_maximum_chord_error_mm !== "number" ||
+      !Number.isFinite(raw.arc_maximum_chord_error_mm) ||
+      raw.arc_maximum_chord_error_mm <= 0 ||
+      raw.arc_maximum_chord_error_mm > 0.02 ||
+      !count(raw.unlayered_extrusion_commands_excluded, 2_000_000) ||
+      !Array.isArray(raw.unclassified_features) ||
+      raw.unclassified_features.length > 256 ||
+      raw.unclassified_features.some(
+        (item) => typeof item !== "string" || item.length > 256,
+      )
+    )
+      return failure();
+    provenance = {
+      reader: raw.reader,
+      sourceSha256: raw.source_sha256,
+      archiveEntry: entry as string | null,
+      method: raw.method,
+      segments: total,
+      extrudingArcs: raw.extruding_arcs,
+      arcMaximumChordErrorMm: raw.arc_maximum_chord_error_mm,
+      excludedUnlayeredCommands: raw.unlayered_extrusion_commands_excluded,
+      unclassifiedFeatures: raw.unclassified_features as string[],
+    };
+  }
   return {
     packageSha256: expectedPackageSha256,
     layers,
     classificationKnown: known,
+    ...(provenance ? { provenance } : {}),
   };
 }

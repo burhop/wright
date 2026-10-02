@@ -901,3 +901,32 @@ T021, remaining M3 acceptance, engineering M4 and final production/Docker/native
 M5 remain pending. Next: fresh existing-provider qualification and the two
 isolated engineering runs. The goal remains active; no physical action, user
 acceptance, push or release is implied.
+
+### 2026-10-01 — Passive engineering readers and provider preflight
+
+Completed T044: exact-subject passive G-code/3MF toolpaths, true layer/feature
+data, bounded planar arc tessellation, visible source/parser evidence and safe
+unsupported fallback. Reads compose existing result/preparation authority and
+the workspace worker pool with a deadline. Common and tailored clients use the
+same operation. CSV retains the exact table and offers explicit numerical
+projection without invented geometry or units; STL uses the shared existing view.
+
+Checks: 78 parser/file/native API passes, 32 managed surface authority passes,
+157 frontend passes across three files, TypeScript and Ruff. The component test
+checks layer controls/evidence; its unavailable WebGL context is not a rendered
+browser proof. Actual provider artifacts read successfully in the isolated smoke.
+See [representation-readers.md](evidence/representation-readers.md).
+
+Fresh selected-host Blender, AgentCAD, independent slicer and retained selected
+OASiS container probes touched their actual backends. Stock leaf slicer presets
+silently produced PLA/default settings; complete retained flat preset data then
+produced actual PETG/four-wall/35%-infill/support-enabled slices. No resolver or
+vendor protocol was added to Wright. Failed attempts are retained. T043 remains
+pending the remaining qualification path; backend probes are not completed
+engineering assignments or public catalog promotion. Evidence is in
+[provider-qualification.md](evidence/provider-qualification.md).
+
+Next: remaining provider qualification, original replacement-part/heat-analysis
+workflows and their actual common/tailored interface proofs. Remaining M3/M4/M5
+tasks stay open. Prototype/campaign/context baselines are checked before this
+focused local checkpoint; no device action, push or release is authorized.

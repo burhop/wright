@@ -26,11 +26,15 @@ PREFIX = "/api/workspace/process-interfaces"
 
 
 @pytest.fixture
-def artifact_case(tmp_path):
-    text = source(file="original.txt")
+def artifact_case(tmp_path, request):
+    text = getattr(request, "param", source(file="original.txt"))
+    source_path = tmp_path / process(text).source_path
+    source_path.parent.mkdir(parents=True, exist_ok=True)
+    source_path.write_text(text, encoding="utf-8")
     application = owner(tmp_path, text)
     workspace = application.workspace
     executor = BoundedExecutor()
+    workspace.executor = executor
     workspace.files = WorkspaceFileUseCases(
         application.db_path, executor, LocalWorkspaceFiles
     )
@@ -118,6 +122,77 @@ def test_upload_prepare_and_read_exact_bytes_without_execution(
     assert downloaded.headers["x-wright-artifact-sha256"] == reference["sha256"]
     assert not (c.root / "first.txt").exists()
     assert not (c.root / "runs").exists()
+
+
+@pytest.mark.parametrize(
+    "artifact_case", [source(default="Prepared passive view")], indirect=True
+)
+def test_passive_preview_keeps_original_download_and_exact_run_authority(
+    sync_client, artifact_case
+):
+    from packages.workspace_service.tests.test_process_preparation_service import scope
+    from packages.workspace_service.tests.test_process_run_supervisor import start
+
+    c = artifact_case
+    capabilities = (
+        "process.read",
+        "process.inputs",
+        "process.results",
+        "process.start",
+    )
+    content = "G90\nM83\nG1 X0 Y0 Z0.2\n;CHANGE_LAYER\n;Z_HEIGHT:0.2\n;FEATURE:Support\nG1 X10 E1"
+
+    async def record():
+        # Fixture source and stored digest are the same accepted process reference.
+        text = source(default="Prepared passive view")
+        selected = process(text)
+        prepared = await c.owner.set_inputs(scope(*capabilities), selected)
+
+        async def generate(prompt, fmt):
+            return content
+
+        receipt = await start(c.owner, selected, prepared.snapshot, generate)
+        await c.owner.runs.wait(scope(*capabilities), selected, receipt.run_id)
+        snapshot = await c.owner.get_snapshot(
+            scope(*capabilities), selected, run_id=receipt.run_id
+        )
+        return receipt.run_id, snapshot.outputs[0].representations[0].model_dump(
+            mode="json"
+        )
+
+    run_id, reference = asyncio.run(record())
+    response = read(sync_client, c, reference, None, run_id=run_id, preview="toolpaths")
+    assert response.status_code == 200, response.text
+    assert response.headers["content-type"] == "application/vnd.wright.toolpaths+json"
+    assert response.headers["x-wright-view-format"] == "wright.gcode.toolpaths.v1"
+    assert response.headers["x-wright-artifact-sha256"] == reference["sha256"]
+    assert response.json()["layers"][0]["support"] == [[0, 0, 10, 0]]
+    raw = read(sync_client, c, reference, None, run_id=run_id)
+    assert raw.content == content.encode()
+    assert "x-wright-view-format" not in raw.headers
+    assert (
+        read(
+            sync_client,
+            c,
+            {**reference, "sha256": "0" * 64},
+            None,
+            run_id=run_id,
+            preview="toolpaths",
+        ).status_code
+        == 403
+    )
+    assert (
+        read(
+            sync_client, c, reference, None, run_id=run_id, preview="shell"
+        ).status_code
+        == 422
+    )
+    assert (
+        read(
+            sync_client, c, reference, None, run_id=run_id, archive_entry="plate.gcode"
+        ).status_code
+        == 422
+    )
 
 
 def test_uploaded_html_is_inert_download_even_with_caller_mime(

@@ -9,6 +9,7 @@ class ProcessInterfaceLimits:
     maximum_upload_bytes: int = 33_554_432
     maximum_input_request_bytes: int = 67_108_864
     maximum_representation_bytes: int = 104_857_600
+    representation_timeout_seconds: int = 30
     maximum_source_bytes: int = 1_048_576
     maximum_asset_bytes: int = 10_485_760
     maximum_bundle_bytes: int = 31_457_280

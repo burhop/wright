@@ -1,0 +1,629 @@
+{
+  "scope": "private selected-provider preflight; T043 remains pending; no public catalog promotion",
+  "agentcad_metadata_correction": "attempt002 provider URL is erroneous; catalog source https://github.com/jdilla1277/agentcad",
+  "probes": [
+    {
+      "attempt": "t043-agentcad-001",
+      "private_record": ".local-run/process-interfaces-083/t043-agentcad-001/qualification.json",
+      "record_sha256": "941fd7ffc28fc71186268b8f208a39d81193b856b612ff20950b88557232b54b",
+      "facts": {
+        "status": "failed",
+        "scope": "selected Windows host prerequisite; separate actual tiny CAD, no campaign execution; controlled catalog with actual GatewayService, not Hermes-facing gateway qualification",
+        "command": [
+          "uv",
+          "run",
+          "--offline",
+          "--no-project",
+          "--isolated",
+          "--python",
+          "3.12.11",
+          "--with",
+          "agentcad[mcp]==0.6.0",
+          "--with",
+          "numpy==2.5.2",
+          "--with",
+          "build123d==0.10.0",
+          "python",
+          "-B",
+          "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-001\\sources\\agentcad-bootstrap-f4335c71c3990a8f\\bootstrap.py"
+        ],
+        "base_image_changed": false,
+        "error_type": "RuntimeError",
+        "bootstrap_sha256": "f4335c71c3990a8fa10d2a5ab9e77081afb41f9039c6eb4d15c936ae53a254e6",
+        "snapshot": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-001\\sources\\agentcad-bootstrap-f4335c71c3990a8f\\bootstrap.py",
+        "continuous_open_stdin": true,
+        "registry_changed": false,
+        "error": "MCP handshake failed within 45 seconds: "
+      },
+      "hermes_facing_proxy_verified": false,
+      "fresh_clean_base_install_verified": false
+    },
+    {
+      "attempt": "t043-agentcad-002",
+      "private_record": ".local-run/process-interfaces-083/t043-agentcad-002/qualification.json",
+      "record_sha256": "ab3f2f2a4e680ede5cc9ac20da896e4a9e0af41eb8f6f21aeafe8dc0d9c6aa41",
+      "facts": {
+        "status": "passed",
+        "scope": "selected Windows host prerequisite; separate actual tiny CAD, no campaign execution; controlled catalog with actual GatewayService, not Hermes-facing gateway qualification",
+        "feature": "083-process-working-interfaces",
+        "provider_source": "https://github.com/AgentCAD/agentcad",
+        "provider_version": "0.6.0",
+        "command": [
+          "D:\\Caches\\uv\\archive-v0\\vMyD6Qja1SzoWoZq\\Scripts\\python.exe",
+          "-B",
+          "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-002\\sources\\agentcad-bootstrap-f4335c71c3990a8f\\bootstrap.py"
+        ],
+        "tool_count": 11,
+        "schema_sha256": "0c38dbf2b4aa70abfc51bac38455d5497cf51ce926b2093123a70d9086f5c7ca",
+        "native_status": "success",
+        "native_call_seconds": 0.25735540001187474,
+        "base_image_changed": false,
+        "public_catalog_changed": false,
+        "engineering_assignment_executed": false,
+        "files": [
+          {
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-002\\private-project\\tiny.py",
+            "bytes": 54,
+            "sha256": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47"
+          },
+          {
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-002\\private-project\\build\\v1_tiny\\script.py",
+            "bytes": 54,
+            "sha256": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47"
+          },
+          {
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-002\\private-project\\build\\v1_tiny\\output.step",
+            "bytes": 15378,
+            "sha256": "3a7be5a548874b2409a73caa7102b8ac0aa888ddd10677ad198677ca739f97ce"
+          },
+          {
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-002\\private-project\\build\\v1_tiny\\meta.json",
+            "bytes": 4408,
+            "sha256": "5e2372c09933f2d548282aa168f14163c26c6734821b422378933cb6b2d7a0b9"
+          }
+        ],
+        "cleanup": "stdio owner stopped",
+        "bootstrap_sha256": "f4335c71c3990a8fa10d2a5ab9e77081afb41f9039c6eb4d15c936ae53a254e6",
+        "snapshot": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-002\\sources\\agentcad-bootstrap-f4335c71c3990a8f\\bootstrap.py",
+        "continuous_open_stdin": true,
+        "registry_changed": false
+      },
+      "hermes_facing_proxy_verified": false,
+      "fresh_clean_base_install_verified": false
+    },
+    {
+      "attempt": "t043-blender-001",
+      "private_record": ".local-run/process-interfaces-083/t043-blender-001/qualification.json",
+      "record_sha256": "9ff5f93fb96eaeee6ac45e231b682e12f4f8a78263a42e11fa3edcaacb12a212",
+      "facts": {
+        "status": "passed",
+        "scope": "native selected-host Blender + actual MCP and GatewayService; controlled catalog, no Hermes-facing proxy claim",
+        "feature": "083-process-working-interfaces",
+        "source_url": "https://github.com/ahujasid/blender-mcp",
+        "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+        "command": [
+          "D:/Caches/uv/archive-v0/GC-KYRekjx03QCQ6/Scripts/python.exe",
+          "-m",
+          "blender_mcp.server"
+        ],
+        "tool_count": 28,
+        "gateway_tool_count": 28,
+        "schema_sha256": "2ac556bc9b56435e2e6763c7a44afe883a079f2793d7881ba7492c42c97df4f1",
+        "native_version": "4.5.10 LTS",
+        "addon_sha256": "e9eae227d94875d6b8ed208f11a9628101ef4f579bfc614ab31af296cb88afce",
+        "safe_mode": true,
+        "base_image_changed": false,
+        "catalog_changed": false,
+        "campaign_runs": 0,
+        "engineering_assignment_executed": false,
+        "files": [
+          {
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-blender-001\\tiny.stl",
+            "bytes": 684,
+            "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+          }
+        ],
+        "cleanup": {
+          "application_receipt": {
+            "exited": true,
+            "forced": false,
+            "quit_requested": true
+          },
+          "attempt": "t043-blender-001",
+          "case_id": "provider-qualification",
+          "cleanup_id": "provider-proof-cleanup",
+          "completed_at": "2026-10-02T00:05:32.590677+00:00",
+          "document_receipts": [
+            {
+              "attempt": "t043-blender-001",
+              "case_id": "provider-qualification",
+              "close_receipt": {
+                "closed": true
+              },
+              "closed": true,
+              "creation_evidence": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-blender-001\\document-creation.json",
+              "current_path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-blender-001\\native\\recovery.blend",
+              "dirty": false,
+              "native_id": "qualification-only",
+              "ownership": "owned",
+              "path": null,
+              "preexisted": false,
+              "recovery_path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-blender-001\\native\\recovery.blend",
+              "recovery_receipt": {
+                "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-blender-001\\native\\recovery.blend",
+                "saved": true,
+                "sha256": "ff51de60c4e11c07f9166a64c3e64534853ad35f8244683a84e11490ee52daf6"
+              }
+            }
+          ],
+          "identity": {
+            "creation_time": "2026-10-02T00:05:05.967305+00:00",
+            "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe",
+            "pid": 64180
+          },
+          "ownership": "owned",
+          "reason": "isolated_qualification_finished",
+          "session_id": "blender-c67deff098874afb88da8a49bbecce46",
+          "status": "completed",
+          "trace_id": "process-ui-083-blender-provider-probe"
+        }
+      },
+      "hermes_facing_proxy_verified": false,
+      "fresh_clean_base_install_verified": false
+    },
+    {
+      "attempt": "t043-oasis-001",
+      "private_record": ".local-run/process-interfaces-083/t043-oasis-001/qualification.json",
+      "record_sha256": "ccf8fa7e3b2080332b1b8084c9910acd42a1ef911714f72dc9396fa42126bdad",
+      "facts": {
+        "status": "passed",
+        "scope": "fresh retained selected-runtime container, actual 3D conduction and GatewayService; controlled catalog, not new clean-base installation or Hermes-facing proxy",
+        "command": [
+          "docker",
+          "exec",
+          "-i",
+          "-e",
+          "PYTHONPATH=",
+          "-e",
+          "PYVISTA_OFF_SCREEN=true",
+          "wright-083-oasis-t043-001",
+          "uv",
+          "run",
+          "--offline",
+          "--isolated",
+          "--python",
+          "3.12",
+          "--with",
+          "git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "--with",
+          "mcp[cli]==1.28.1",
+          "--with",
+          "scikit-fem==12.0.2",
+          "python",
+          "-m",
+          "server"
+        ],
+        "tool_count": 17,
+        "schema_sha256": "437961ca136ae94f251b9cf201d58140ac8c4a33a94903cc303786c67fcc3c86",
+        "campaign_runs": 0,
+        "cleanup": {
+          "container": "d03c5e496758acac3480dae870f3e35894998aab39ee58d99d8c69b8c1a32614",
+          "stopped": true,
+          "retained_for_diagnostics": true
+        },
+        "results": [
+          {
+            "route": "direct",
+            "result": {
+              "job_id": "2523af3a",
+              "solver": "skfem",
+              "status": "completed",
+              "work_dir": "/workspace/qualification/001/direct",
+              "elapsed": "0.74s",
+              "output_files": [
+                "qualification_fixed-coarse-temperature.vtu",
+                "qualification_fixed-fine-temperature.vtu",
+                "qualification_link-coarse-temperature.vtu",
+                "qualification_link-fine-temperature.vtu"
+              ],
+              "stdout_tail": "{\"status\": \"candidate_selected\", \"case_count\": 2, \"output_root\": \"/workspace/qualification/001/direct\"}\n",
+              "trustworthy_result": false,
+              "verification": "NOT VERIFIED \u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.",
+              "critic_review": "REQUIRED \u2014 mandatory critic not yet performed"
+            },
+            "files": [
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\direct\\qualification_link-fine-temperature.vtu",
+                "bytes": 29128,
+                "sha256": "970b180a715fbc391b0e8de48955773a8dd39908074b9bf76c6802d3c21565aa"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\direct\\qualification_link-fine-temperature.csv",
+                "bytes": 76526,
+                "sha256": "91636477da52406d2e9a2d2447a8b2803e77e1eebb08ce111f40dc9ebe3186a8"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\direct\\qualification_fixed-fine-temperature.vtu",
+                "bytes": 29028,
+                "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\direct\\qualification_fixed-fine-temperature.csv",
+                "bytes": 76526,
+                "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\direct\\heat-balance.json",
+                "bytes": 4201,
+                "sha256": "83594fe89731b30ac4050c11e253f6cf4aa9e653d0d97d2c1d8e8c44cda304a5"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\direct\\mesh-comparison.json",
+                "bytes": 99,
+                "sha256": "8b98cb7afbb2918684476e40d0c6e9ed9618351b6c4fb053401a4fd4f065514c"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\direct\\sizing-decision.json",
+                "bytes": 6570,
+                "sha256": "8d9cd9c68712ef3e87bfe0649bd97e37ce6d04cc29796428ca2efcaaa29d3f12"
+              }
+            ]
+          },
+          {
+            "route": "gateway",
+            "result": {
+              "job_id": "37d3dfe7",
+              "solver": "skfem",
+              "status": "completed",
+              "work_dir": "/workspace/qualification/001/gateway",
+              "elapsed": "0.63s",
+              "output_files": [
+                "qualification_fixed-coarse-temperature.vtu",
+                "qualification_fixed-fine-temperature.vtu",
+                "qualification_link-coarse-temperature.vtu",
+                "qualification_link-fine-temperature.vtu"
+              ],
+              "stdout_tail": "{\"status\": \"candidate_selected\", \"case_count\": 2, \"output_root\": \"/workspace/qualification/001/gateway\"}\n",
+              "trustworthy_result": false,
+              "verification": "NOT VERIFIED \u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.",
+              "critic_review": "REQUIRED \u2014 mandatory critic not yet performed"
+            },
+            "files": [
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\gateway\\qualification_link-fine-temperature.vtu",
+                "bytes": 29128,
+                "sha256": "970b180a715fbc391b0e8de48955773a8dd39908074b9bf76c6802d3c21565aa"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\gateway\\qualification_link-fine-temperature.csv",
+                "bytes": 76526,
+                "sha256": "91636477da52406d2e9a2d2447a8b2803e77e1eebb08ce111f40dc9ebe3186a8"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\gateway\\qualification_fixed-fine-temperature.vtu",
+                "bytes": 29028,
+                "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\gateway\\qualification_fixed-fine-temperature.csv",
+                "bytes": 76526,
+                "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\gateway\\heat-balance.json",
+                "bytes": 4209,
+                "sha256": "c1f5d623e959a6b0aca63a4796b16052da0ececb409f43b13bb0879cd2ef0950"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\gateway\\mesh-comparison.json",
+                "bytes": 99,
+                "sha256": "8b98cb7afbb2918684476e40d0c6e9ed9618351b6c4fb053401a4fd4f065514c"
+              },
+              {
+                "path": ".local-run\\process-interfaces-083\\t043-oasis-001\\workspace\\qualification\\001\\gateway\\sizing-decision.json",
+                "bytes": 6578,
+                "sha256": "9126c39bd55e504406b122c92e6622cc7431167af064cde778bc2b9d8acb4921"
+              }
+            ]
+          }
+        ],
+        "container_id": "d03c5e496758acac3480dae870f3e35894998aab39ee58d99d8c69b8c1a32614",
+        "container_name": "wright-083-oasis-t043-001",
+        "image": "sha256:49ad6b866d93cf85fa4c82c175241be5e0e7c17239773c658e550b50e0580f8d",
+        "container": "wright-083-oasis-t043-001",
+        "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+        "critic_approved": false,
+        "limitations": [
+          "Probe checks actual file presence only; numerical correctness remains unqualified.",
+          "Hermes-facing gateway MCP proxy is a separate outstanding qualification scope."
+        ],
+        "network_mode": "none",
+        "fresh_container": true
+      },
+      "hermes_facing_proxy_verified": false,
+      "fresh_clean_base_install_verified": false
+    },
+    {
+      "attempt": "t043-slicer-001",
+      "private_record": ".local-run/process-interfaces-083/t043-slicer-001/qualification.json",
+      "record_sha256": "4ceb9ded3d9375795b0a0ad0b222aa4e1db9a01fdfec0dc508d39aa21189d702",
+      "facts": {
+        "status": "passed",
+        "scope": "native offline external slicing MCP + GatewayService; controlled catalog, no printer or Hermes-facing proxy claim",
+        "feature": "083-process-working-interfaces",
+        "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+        "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+        "command": [
+          "D:/Caches/uv/archive-v0/v_DRfia7EBqPGJvT/Scripts/python.exe",
+          "-m",
+          "bambu_p1s_mcp"
+        ],
+        "tool_count": 11,
+        "schema_sha256": "700f5aa286d0179cc4ea6353d95b62ada67227edae51b9c57c20c5938db1e656",
+        "catalog_changed": false,
+        "campaign_runs": 0,
+        "engineering_assignment_executed": false,
+        "cleanup": "MCP stdio owner stopped; no printer session requested",
+        "profile_files": [
+          {
+            "role": "machine",
+            "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle.json",
+            "sha256": "df86ba7669bb9a41f1323fa2f649f8a5bb0127d24d882adb4f4969014fce426d"
+          },
+          {
+            "role": "process",
+            "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\0.20mm Standard @BBL X1C.json",
+            "sha256": "9cfd44e7378d6fed4b3507e6bd01d618662837bf1cce9a1a0bc30f8b89454512"
+          },
+          {
+            "role": "filament",
+            "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\Bambu PETG HF @BBL P1S 0.4 nozzle.json",
+            "sha256": "36fff6697391b35ee9ca16307c90034260c498816b16a052c35928661eff6ad9"
+          }
+        ],
+        "host_executable_sha256": "76b2193b0f2af958a2799bbbb98ebe5441f640a7cdfee582956d918e8a493d8f",
+        "source_stl_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+        "dotenv_loading_disabled": true,
+        "printer_address_is_loopback": true,
+        "printer_tools_called": [],
+        "results": [
+          {
+            "route": "direct",
+            "output": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-001\\direct.gcode.3mf",
+            "bytes": 35575,
+            "sha256": "1000755ddd7c023294f8e3edd927e0f1783c94d56a9adb533336bafb5f497cf5",
+            "gcode": [
+              {
+                "name": "Metadata/plate_1.gcode",
+                "bytes": 65373,
+                "sha256": "02fc79cb1c457165b71473adf87fdf486d8c53eb4edd1f0896d746dc517a68b3"
+              }
+            ],
+            "actual_argv": [
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\bambu-studio.exe",
+              "--slice",
+              "1",
+              "--debug",
+              "1",
+              "--export-3mf",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-001\\direct.gcode.3mf",
+              "--load-settings",
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle.json;D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\0.20mm Standard @BBL X1C.json",
+              "--load-filaments",
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\Bambu PETG HF @BBL P1S 0.4 nozzle.json",
+              "--arrange",
+              "1",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-001\\qualification-only.stl"
+            ]
+          },
+          {
+            "route": "gateway",
+            "output": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-001\\gateway.gcode.3mf",
+            "bytes": 35560,
+            "sha256": "8ecd4cce347c267123a3fe97cb917518dfc42f4eeba20dc8ffbc1255e5878a46",
+            "gcode": [
+              {
+                "name": "Metadata/plate_1.gcode",
+                "bytes": 65373,
+                "sha256": "02fc79cb1c457165b71473adf87fdf486d8c53eb4edd1f0896d746dc517a68b3"
+              }
+            ],
+            "actual_argv": [
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\bambu-studio.exe",
+              "--slice",
+              "1",
+              "--debug",
+              "1",
+              "--export-3mf",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-001\\gateway.gcode.3mf",
+              "--load-settings",
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle.json;D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\0.20mm Standard @BBL X1C.json",
+              "--load-filaments",
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\Bambu PETG HF @BBL P1S 0.4 nozzle.json",
+              "--arrange",
+              "1",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-001\\qualification-only.stl"
+            ]
+          }
+        ]
+      },
+      "hermes_facing_proxy_verified": false,
+      "fresh_clean_base_install_verified": false
+    },
+    {
+      "attempt": "t043-slicer-002",
+      "private_record": ".local-run/process-interfaces-083/t043-slicer-002/qualification.json",
+      "record_sha256": "dbf09d5d9684e1822c567d80587ccd5ac5e55585e220b70135c70b968ca58571",
+      "facts": {
+        "status": "failed",
+        "scope": "native offline external slicing MCP + GatewayService; controlled catalog, no printer or Hermes-facing proxy claim",
+        "feature": "083-process-working-interfaces",
+        "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+        "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+        "command": [
+          "D:/Caches/uv/archive-v0/v_DRfia7EBqPGJvT/Scripts/python.exe",
+          "-m",
+          "bambu_p1s_mcp"
+        ],
+        "catalog_changed": false,
+        "campaign_runs": 0,
+        "engineering_assignment_executed": false,
+        "cleanup": "MCP stdio owner stopped; no printer session requested",
+        "error_type": "RuntimeError",
+        "diagnostic": "MCP handshake failed within 45 seconds: Child MCP transport closed",
+        "profile_files": [
+          {
+            "role": "machine",
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-002\\configured-provider-presets\\machine-profile.json",
+            "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+          },
+          {
+            "role": "process",
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-002\\configured-provider-presets\\process-profile.json",
+            "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+          },
+          {
+            "role": "filament",
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-002\\configured-provider-presets\\filament-profile.json",
+            "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+          }
+        ],
+        "profile_origin": "read-only retained prerequisite flat JSON copied as provider configuration data; no resolver/wrapper imported",
+        "host_executable_sha256": "76b2193b0f2af958a2799bbbb98ebe5441f640a7cdfee582956d918e8a493d8f",
+        "source_stl_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+        "dotenv_loading_disabled": true,
+        "printer_address_is_loopback": true,
+        "printer_tools_called": [],
+        "results": []
+      },
+      "hermes_facing_proxy_verified": false,
+      "fresh_clean_base_install_verified": false
+    },
+    {
+      "attempt": "t043-slicer-003",
+      "private_record": ".local-run/process-interfaces-083/t043-slicer-003/qualification.json",
+      "record_sha256": "f36e873c25ab2df502aa9e0322782c1a2b36b63678eac9974e5fb9be1c5fe4cc",
+      "facts": {
+        "status": "passed",
+        "scope": "native offline external slicing MCP + GatewayService; controlled catalog, no printer or Hermes-facing proxy claim",
+        "feature": "083-process-working-interfaces",
+        "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+        "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+        "command": [
+          "D:/Caches/uv/archive-v0/v_DRfia7EBqPGJvT/Scripts/python.exe",
+          "-m",
+          "bambu_p1s_mcp"
+        ],
+        "tool_count": 11,
+        "schema_sha256": "700f5aa286d0179cc4ea6353d95b62ada67227edae51b9c57c20c5938db1e656",
+        "catalog_changed": false,
+        "campaign_runs": 0,
+        "engineering_assignment_executed": false,
+        "cleanup": "MCP stdio owner stopped; no printer session requested",
+        "profile_files": [
+          {
+            "role": "machine",
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\machine-profile.json",
+            "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+          },
+          {
+            "role": "process",
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\process-profile.json",
+            "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+          },
+          {
+            "role": "filament",
+            "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\filament-profile.json",
+            "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+          }
+        ],
+        "profile_origin": "read-only retained prerequisite flat JSON copied as provider configuration data; no resolver/wrapper imported",
+        "host_executable_sha256": "76b2193b0f2af958a2799bbbb98ebe5441f640a7cdfee582956d918e8a493d8f",
+        "source_stl_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+        "dotenv_loading_disabled": true,
+        "printer_address_is_loopback": true,
+        "printer_tools_called": [],
+        "results": [
+          {
+            "route": "direct",
+            "output": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\direct.gcode.3mf",
+            "bytes": 41988,
+            "sha256": "ba7f678d4cb6d8cf8b9a19c4f863b27732ba5e8f57cb8090e3ae7044d9ae5569",
+            "gcode": [
+              {
+                "name": "Metadata/plate_1.gcode",
+                "bytes": 103729,
+                "sha256": "705c2a65be866b3aa3b8af66bc7cb59e0148aacea6e9eaa1b1c4a5ea05f4e0c5"
+              }
+            ],
+            "actual_sliced_settings": {
+              "filament_type": "PETG",
+              "filament_density": "1.28",
+              "enable_support": "1",
+              "wall_loops": "4",
+              "sparse_infill_density": "35%",
+              "layer_height": "0.2",
+              "printer_model": "Bambu Lab P1S"
+            },
+            "actual_argv": [
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\bambu-studio.exe",
+              "--slice",
+              "1",
+              "--debug",
+              "1",
+              "--export-3mf",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\direct.gcode.3mf",
+              "--load-settings",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\machine-profile.json;D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\process-profile.json",
+              "--load-filaments",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\filament-profile.json",
+              "--arrange",
+              "1",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\qualification-only.stl"
+            ]
+          },
+          {
+            "route": "gateway",
+            "output": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\gateway.gcode.3mf",
+            "bytes": 42018,
+            "sha256": "93d1c766322cd06673743b3a5aa5b429fc621e15c7e4d0788379bb1fca712f68",
+            "gcode": [
+              {
+                "name": "Metadata/plate_1.gcode",
+                "bytes": 103729,
+                "sha256": "705c2a65be866b3aa3b8af66bc7cb59e0148aacea6e9eaa1b1c4a5ea05f4e0c5"
+              }
+            ],
+            "actual_sliced_settings": {
+              "filament_type": "PETG",
+              "filament_density": "1.28",
+              "enable_support": "1",
+              "wall_loops": "4",
+              "sparse_infill_density": "35%",
+              "layer_height": "0.2",
+              "printer_model": "Bambu Lab P1S"
+            },
+            "actual_argv": [
+              "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\bambu-studio.exe",
+              "--slice",
+              "1",
+              "--debug",
+              "1",
+              "--export-3mf",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\gateway.gcode.3mf",
+              "--load-settings",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\machine-profile.json;D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\process-profile.json",
+              "--load-filaments",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\filament-profile.json",
+              "--arrange",
+              "1",
+              "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\qualification-only.stl"
+            ]
+          }
+        ]
+      },
+      "hermes_facing_proxy_verified": false,
+      "fresh_clean_base_install_verified": false
+    }
+  ]
+}

@@ -101,7 +101,11 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
 interfaces use the same foundation, with honest engineering checks and limits.
 
 - [ ] T043 [US4] Freshly discover/qualify selected existing Blender/geometry/slicer and AgentCAD/OASiS provider bindings through the normal clean-container/host process; record actual schemas/options/artifact limits in `specs/083-process-working-interfaces/evidence/provider-qualification.md` without public promotion or new vendor implementation.
-- [ ] T044 [US4] Add bounded vendor-neutral STL/3MF/G-code toolpath and numerical result presentation/readers in `packages/ui_kit/` and `packages/workspace_service/src/workspace_service/process_interfaces/representations.py`, retaining parser provenance, true layers and unsupported classification fallback.
+- [x] T044 [US4] Add bounded vendor-neutral STL/3MF/G-code toolpath and numerical result presentation/readers in `packages/ui_kit/` and `packages/workspace_service/src/workspace_service/process_interfaces/representations.py`, retaining parser provenance, true layers and unsupported classification fallback.
+  Passive exact-subject readers and common/public-kit integration pass 110
+  backend/API checks and 157 component/client checks. Actual external slicer and
+  solver artifacts were read; full engineering/browser proof remains T047.
+  See `evidence/representation-readers.md` for limits and scope.
 - [ ] T045 [US4] Migrate printed-preparation saved workflow/bindings and entry to common/scoped interfaces in `examples/process-interfaces/printed-replacement-part/` and `apps/web/src/components/chat/WorkspacePanel.tsx`, retaining assignment/requirements and exact 082 gates.
 - [ ] T046 [US4] Provide heat-analysis saved workflow/bindings and comparison/evidence composition in `examples/process-interfaces/heat-spreader-sizing/`, retaining original stages/limits/critic status and actual STEP-to-analysis mapping.
 - [ ] T047 [US4] Execute both fresh isolated digital tool chains; generate/save/update/reuse each UI through Wright and inspect actual handoffs/common-tailored parity; retain evidence in `specs/083-process-working-interfaces/evidence/printed-proof.md` and `heat-proof.md` without touching campaign checkpoints.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 import hashlib
+import json
 from pathlib import PurePosixPath
 import re
 from uuid import uuid4
@@ -12,6 +13,7 @@ from uuid import uuid4
 from core.process_interactions import ArtifactRef, FileBinding
 from core.tracing import traced
 
+from ..errors import WorkspaceTimeoutError
 from ..workflow_references import image_media_type
 from ..workflow_execution_continuation import restore_result
 from ..workflow_run_record import read_workflow_run, WorkflowRunReadError
@@ -37,6 +39,7 @@ def _media_type(path, content):
         ".json": "application/json",
         ".csv": "text/csv",
         ".stl": "model/stl",
+        ".gcode": "text/x-gcode",
         ".3mf": "model/3mf",
         ".obj": "model/obj",
         ".step": "model/step",
@@ -54,6 +57,75 @@ class ProcessArtifactBytes:
 class ProcessArtifactAccess:
     def __init__(self, application):
         self.application = application
+
+    @traced("process.interface.representation.preview")
+    async def preview(
+        self,
+        scope,
+        process,
+        reference,
+        *,
+        run_id=None,
+        input_snapshot_id=None,
+        archive_entry=None,
+    ):
+        """Derive a passive view only after exact membership and byte authorization."""
+        from .representations import (
+            RepresentationUnavailable,
+            read_3mf_toolpaths,
+            read_gcode_toolpaths,
+        )
+
+        artifact = await self.read(
+            scope,
+            process,
+            reference,
+            run_id=run_id,
+            input_snapshot_id=input_snapshot_id,
+        )
+
+        def derive():
+            suffix = PurePosixPath(reference.artifact_ref).suffix.lower()
+            if suffix == ".3mf":
+                document = read_3mf_toolpaths(
+                    artifact.content,
+                    reference.sha256,
+                    entry=archive_entry,
+                )
+            elif suffix in {".gcode", ".txt"} and archive_entry is None:
+                document = read_gcode_toolpaths(artifact.content, reference.sha256)
+            else:
+                raise RepresentationUnavailable(
+                    "The exact artifact has no supported toolpath reader."
+                )
+            content = json.dumps(
+                document, separators=(",", ":"), allow_nan=False
+            ).encode("utf-8")
+            if len(content) > min(
+                self.application.limits.maximum_representation_bytes, 64 * 1024 * 1024
+            ):
+                raise RepresentationUnavailable(
+                    "The derived view exceeds its passive presentation bound."
+                )
+            return ProcessArtifactBytes(
+                reference, content, "application/vnd.wright.toolpaths+json"
+            )
+
+        try:
+            # Both parsing and serialization use the workspace's existing worker
+            # owner. A passive timeout never changes or replays process work.
+            return await self.application.workspace.executor.run(
+                "process.representation.preview",
+                derive,
+                timeout_seconds=self.application.limits.representation_timeout_seconds,
+            )
+        except (RepresentationUnavailable, WorkspaceTimeoutError) as error:
+            raise ProcessInterfaceError(
+                "CAPABILITY_UNAVAILABLE",
+                "A complete toolpath preview is unavailable for this recorded file.",
+                "Download the exact artifact and inspect it with a compatible engineering tool.",
+                details={"reader_diagnostic": str(error)},
+            ) from error
 
     @traced("process.interface.input.upload")
     async def upload(self, scope, process, input_id, name, content):

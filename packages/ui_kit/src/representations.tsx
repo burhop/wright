@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { JsonValue } from "@wright/process-client";
 import { ImageThumbnail } from "./inputs";
-import { ThreeDViewer } from "./geometry";
+import { ThreeDViewer, ToolpathViewer } from "./geometry";
+import { parseToolpaths, type ToolpathDocument } from "./toolpaths";
 
 export function DataTable({
   columns,
@@ -295,9 +296,14 @@ export function ScalarFieldPlot({
 export function RepresentationViewer({
   blob,
   title,
+  sourceSha256,
+  readToolpaths,
 }: {
   blob: Blob;
   title: string;
+  sourceSha256?: string;
+  /** Scoped read only; returns passive data from the exact same recorded artifact. */
+  readToolpaths?: (signal: AbortSignal) => Promise<Blob>;
 }) {
   const [data, setData] = useState<{
     blob: Blob;
@@ -310,7 +316,17 @@ export function RepresentationViewer({
     let active = true;
     setData(undefined);
     setError(undefined);
-    if (["image/png", "image/jpeg", "image/gif", "image/webp"].includes(type))
+    if (
+      [
+        "image/png",
+        "image/jpeg",
+        "image/gif",
+        "image/webp",
+        "model/3mf",
+        "text/x-gcode",
+        "application/vnd.wright.toolpaths+json",
+      ].includes(type)
+    )
       return;
     const maximum = [
       "model/stl",
@@ -351,6 +367,20 @@ export function RepresentationViewer({
   }, [blob, type]);
   if (["image/png", "image/jpeg", "image/gif", "image/webp"].includes(type))
     return <ImageThumbnail blob={blob} title={title} />;
+  if (
+    [
+      "model/3mf",
+      "text/x-gcode",
+      "application/vnd.wright.toolpaths+json",
+    ].includes(type)
+  )
+    return (
+      <RecordedToolpathPreview
+        blob={blob}
+        sourceSha256={sourceSha256}
+        readToolpaths={readToolpaths}
+      />
+    );
   if (error?.blob === blob) return <p role="status">{error.message}</p>;
   if (!data || data.blob !== blob)
     return <p role="status">Opening representation…</p>;
@@ -364,7 +394,7 @@ export function RepresentationViewer({
   if (data.text !== undefined && type === "text/csv") {
     try {
       const table = parseCsv(data.text);
-      return <DataTable {...table} />;
+      return <CsvNumericInspector {...table} />;
     } catch {
       return (
         <p role="status">
@@ -384,5 +414,159 @@ export function RepresentationViewer({
       This format has no supported preview. Open or download it with a suitable
       engineering tool.
     </p>
+  );
+}
+
+/** Keeps the raw artifact/download separate from its passive derived view. */
+export function RecordedToolpathPreview({
+  blob,
+  sourceSha256,
+  readToolpaths,
+}: {
+  blob: Blob;
+  sourceSha256?: string;
+  readToolpaths?: (signal: AbortSignal) => Promise<Blob>;
+}) {
+  const port = useRef(readToolpaths);
+  port.current = readToolpaths;
+  const available = Boolean(readToolpaths);
+  const [state, setState] = useState<{
+    blob: Blob;
+    document?: ToolpathDocument;
+    error?: string;
+  }>();
+  useEffect(() => {
+    const control = new AbortController();
+    let active = true;
+    setState(undefined);
+    const open = async () => {
+      if (!sourceSha256) throw new Error("Exact source identity missing");
+      const passive =
+        blob.type === "application/vnd.wright.toolpaths+json"
+          ? blob
+          : await port.current?.(control.signal);
+      if (
+        !passive ||
+        passive.type !== "application/vnd.wright.toolpaths+json" ||
+        passive.size > 64 * 1024 * 1024
+      )
+        throw new Error("Supported bounded passive reader unavailable");
+      const document = parseToolpaths(
+        JSON.parse(await passive.text()),
+        sourceSha256,
+      );
+      if (active) setState({ blob, document });
+    };
+    void open().catch(() => {
+      if (active)
+        setState({
+          blob,
+          error:
+            "A complete toolpath preview is unavailable. Download the exact package and inspect it with a compatible engineering tool.",
+        });
+    });
+    return () => {
+      active = false;
+      control.abort();
+    };
+  }, [blob, sourceSha256, available]);
+  if (!state || state.blob !== blob)
+    return <p role="status">Reading the exact layer paths…</p>;
+  if (state.error) return <p role="status">{state.error}</p>;
+  return state.document ? <ToolpathViewer document={state.document} /> : null;
+}
+
+/** Table first; visual axes are explicit view choices, never engineering input defaults. */
+export function CsvNumericInspector({
+  columns,
+  rows,
+}: {
+  columns: readonly string[];
+  rows: readonly (readonly string[])[];
+}) {
+  const [x, setX] = useState("");
+  const [y, setY] = useState("");
+  const [field, setField] = useState("");
+  const numeric =
+    columns.length <= 50 && rows.length <= 10_000
+      ? columns
+          .map((name, index) => ({ name, index }))
+          .filter(
+            ({ name, index }) =>
+              columns.filter((column) => column === name).length === 1 &&
+              rows.length > 0 &&
+              rows.every(
+                (row) =>
+                  row[index]?.trim() !== "" &&
+                  Number.isFinite(Number(row[index])),
+              ),
+          )
+      : [];
+  const selected = (name: string) =>
+    numeric.find((item) => item.name === name)?.index;
+  const xi = selected(x),
+    yi = selected(y),
+    vi = selected(field);
+  const canPlot =
+    xi !== undefined &&
+    yi !== undefined &&
+    vi !== undefined &&
+    x !== y &&
+    x !== field &&
+    y !== field;
+  return (
+    <>
+      <DataTable columns={columns} rows={rows} />
+      {numeric.length >= 3 && (
+        <details>
+          <summary>View numerical samples</summary>
+          <div className="wp-row">
+            {[
+              { title: "Horizontal column", value: x, change: setX },
+              { title: "Vertical column", value: y, change: setY },
+              { title: "Value column", value: field, change: setField },
+            ].map((item) => (
+              <label key={item.title}>
+                {item.title}
+                <select
+                  value={item.value}
+                  onChange={(event) => item.change(event.target.value)}
+                >
+                  <option value="">Choose a recorded column</option>
+                  {numeric.map(({ name }) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
+          {canPlot ? (
+            <ScalarFieldPlot
+              points={rows.map((row) => ({
+                x: Number(row[xi]),
+                y: Number(row[yi]),
+                value: Number(row[vi]),
+              }))}
+              xLabel={x}
+              yLabel={y}
+              valueLabel={field}
+              title="Recorded field samples"
+            />
+          ) : (
+            <p role="status">
+              Choose three distinct recorded numeric columns to view their
+              samples.
+            </p>
+          )}
+          <p className="wp-muted">
+            Samples are projected onto the selected axes. Other coordinates
+            remain in the exact table; no interpolated geometry or engineering
+            acceptance is implied.
+          </p>
+        </details>
+      )}
+    </>
   );
 }

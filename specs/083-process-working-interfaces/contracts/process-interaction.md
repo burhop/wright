@@ -110,6 +110,18 @@ from the presentation. Parent bearer tokens and printer credentials never appear
 in app JavaScript. SSE reconnect uses cursor replay; a lost/expired cursor obtains
 a full snapshot. Backend events are retained authority, browser state is cache.
 
+Representation reads accept optional `preview: "toolpaths"` and a confined
+`archive_entry` only in that mode. They retain the same process/results grant,
+exact run or preparation membership and original artifact SHA-256. The passive
+derived MIME is `application/vnd.wright.toolpaths+json`, with view format
+`wright.gcode.toolpaths.v1`; the SHA-256 response header identifies the original
+recorded artifact rather than claiming the JSON bytes are the artifact.
+Parser provenance separately identifies the actual G-code entry bytes and
+records true layers, comment-based feature categories, nominal arc approximation
+and excluded unlayered extrusion. Unknown labels stay unclassified. Multi-plate
+ambiguity, unsupported motion, bounds or deadline return inspection/download
+fallback; they never change process acceptance or dispatch any operation.
+
 ## Currentness, limits and errors
 
 Each mutation includes request_id, expected_source_digest and exact subject/input

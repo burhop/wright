@@ -266,12 +266,24 @@ async def read_process_representation(
         request, service, body.session_id, body.path, body.expected_storage_digest
     )
     try:
-        artifact = await application.artifacts.read(
+        if body.archive_entry is not None and body.preview is None:
+            raise ProcessInterfaceError(
+                "RESPONSE_INVALID",
+                "An archive entry is only supported for a passive toolpath preview.",
+                "Download the exact file or choose its supported preview.",
+            )
+        reader = (
+            application.artifacts.preview
+            if body.preview
+            else application.artifacts.read
+        )
+        artifact = await reader(
             scope,
             process,
             body.reference,
             run_id=body.run_id,
             input_snapshot_id=body.input_snapshot_id,
+            **({"archive_entry": body.archive_entry} if body.preview else {}),
         )
     except ProcessInterfaceError as error:
         raise _transport_error(error) from error
@@ -290,6 +302,11 @@ async def read_process_representation(
             "Content-Length": str(len(artifact.content)),
             "X-Content-Type-Options": "nosniff",
             "X-Wright-Artifact-SHA256": artifact.reference.sha256,
+            **(
+                {"X-Wright-View-Format": "wright.gcode.toolpaths.v1"}
+                if body.preview
+                else {}
+            ),
         },
     )
 

@@ -26,6 +26,8 @@ import {
   RepresentationViewer,
   FindingsPanel,
   ScalarFieldPlot,
+  CsvNumericInspector,
+  RecordedToolpathPreview,
   type ToolpathDocument,
 } from "@wright/ui-kit";
 import type {
@@ -495,6 +497,38 @@ describe("bounded neutral toolpath data", () => {
     const value: ToolpathDocument = parseToolpaths(document, hash);
     expect(value.classificationKnown).toBe(false);
   });
+  it("retains finite passive reader provenance without promoting acceptance", () => {
+    const provenance = {
+      reader: "wright.passive-representations/1",
+      source_sha256: hash,
+      archive_entry: null,
+      method: "Actual planar commands",
+      units: "mm",
+      segments: 1,
+      extruding_arcs: 0,
+      arc_maximum_chord_error_mm: 0.02,
+      unlayered_extrusion_commands_excluded: 2,
+      unclassified_features: ["custom"],
+      engineering_acceptance: false,
+    };
+    const parsed = parseToolpaths({ ...document, provenance }, hash);
+    expect(parsed.provenance?.sourceSha256).toBe(hash);
+    expect(parsed.provenance?.excludedUnlayeredCommands).toBe(2);
+    for (const change of [
+      { engineering_acceptance: true },
+      { segments: 2 },
+      { source_sha256: "b".repeat(64) },
+      { archive_entry: "../other.gcode" },
+      { arc_maximum_chord_error_mm: Infinity },
+    ]) {
+      expect(() =>
+        parseToolpaths(
+          { ...document, provenance: { ...provenance, ...change } },
+          hash,
+        ),
+      ).toThrow();
+    }
+  });
   it.each([NaN, Infinity, "10", undefined])(
     "rejects invalid path coordinate %s",
     (coordinate) => {
@@ -525,6 +559,151 @@ describe("bounded neutral toolpath data", () => {
 });
 
 describe("bounded representation views", () => {
+  it("reveals all true layers and the exact source evidence from a passive read", async () => {
+    const raw = new Blob(["exact package"], { type: "model/3mf" });
+    const data = {
+      format: "wright.gcode.toolpaths.v1",
+      package_sha256: hash,
+      classification_source: "gcode_feature_comments",
+      layers: Array.from({ length: 30 }, (_, i) => ({
+        index: i,
+        z: (i + 1) * 0.2,
+        model: [[0, 0, 10, 0]],
+        support: [],
+        unclassified: [],
+      })),
+      provenance: {
+        reader: "wright.passive-representations/1",
+        source_sha256: "b".repeat(64),
+        archive_entry: "Metadata/plate_1.gcode",
+        method: "Recorded planar commands",
+        units: "mm",
+        segments: 30,
+        extruding_arcs: 0,
+        arc_maximum_chord_error_mm: 0.02,
+        unlayered_extrusion_commands_excluded: 3,
+        unclassified_features: ["custom"],
+        engineering_acceptance: false,
+      },
+    };
+    const passive = new Blob([JSON.stringify(data)], {
+      type: "application/vnd.wright.toolpaths+json",
+    });
+    Object.defineProperty(passive, "text", {
+      value: async () => JSON.stringify(data),
+    });
+    const read = vi.fn(async () => passive);
+    render(
+      <RecordedToolpathPreview
+        blob={raw}
+        sourceSha256={hash}
+        readToolpaths={read}
+      />,
+    );
+    const slider = await screen.findByRole("slider");
+    expect(slider).toHaveAttribute("max", "30");
+    fireEvent.change(slider, { target: { value: "2" } });
+    expect(
+      screen.getByText(/Layers 1–2 of 30 · Z 0.40 mm/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Package entry: Metadata\/plate_1.gcode/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/3 extrusion commands outside recorded layers/),
+    ).toBeInTheDocument();
+    expect(read).toHaveBeenCalledTimes(1);
+  });
+  it("keeps numeric view axes as explicit choices over the exact table", () => {
+    render(
+      <CsvNumericInspector
+        columns={["x_m", "y_m", "z_m", "temperature_c"]}
+        rows={[
+          ["0", "0", "0", "20"],
+          ["0.05", "0.03", "0.002", "25.5"],
+        ]}
+      />,
+    );
+    expect(screen.getByRole("table")).toBeInTheDocument();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Horizontal column"), {
+      target: { value: "x_m" },
+    });
+    fireEvent.change(screen.getByLabelText("Vertical column"), {
+      target: { value: "y_m" },
+    });
+    fireEvent.change(screen.getByLabelText("Value column"), {
+      target: { value: "temperature_c" },
+    });
+    expect(screen.getByRole("img")).toHaveAccessibleName(
+      /samples from 20 to 25.5/,
+    );
+    expect(
+      screen.getByText(/Other coordinates remain in the exact table/),
+    ).toBeInTheDocument();
+  });
+  it("refuses missing exact package identity and preserves download fallback", async () => {
+    const read = vi.fn();
+    render(
+      <RecordedToolpathPreview
+        blob={new Blob(["package"], { type: "model/3mf" })}
+        readToolpaths={read}
+      />,
+    );
+    expect(
+      await screen.findByText(/complete toolpath preview is unavailable/),
+    ).toBeInTheDocument();
+    expect(read).not.toHaveBeenCalled();
+  });
+  it("aborts a passive read on close and ignores late results", async () => {
+    let signal: AbortSignal | undefined;
+    let complete!: (value: Blob) => void;
+    const read = vi.fn((input: AbortSignal) => {
+      signal = input;
+      return new Promise<Blob>((resolve) => {
+        complete = resolve;
+      });
+    });
+    const { unmount } = render(
+      <RecordedToolpathPreview
+        blob={new Blob(["package"], { type: "model/3mf" })}
+        sourceSha256={hash}
+        readToolpaths={read}
+      />,
+    );
+    await waitFor(() => expect(read).toHaveBeenCalledTimes(1));
+    unmount();
+    expect(signal?.aborted).toBe(true);
+    await act(async () =>
+      complete(
+        new Blob(["invalid"], {
+          type: "application/vnd.wright.toolpaths+json",
+        }),
+      ),
+    );
+    expect(screen.queryByRole("slider")).not.toBeInTheDocument();
+  });
+  it("does not restart a pending passive read because a host callback identity changes", async () => {
+    const blob = new Blob(["package"], { type: "model/3mf" });
+    const first = vi.fn(() => new Promise<Blob>(() => {}));
+    const next = vi.fn(() => new Promise<Blob>(() => {}));
+    const { rerender } = render(
+      <RecordedToolpathPreview
+        blob={blob}
+        sourceSha256={hash}
+        readToolpaths={first}
+      />,
+    );
+    await waitFor(() => expect(first).toHaveBeenCalledTimes(1));
+    rerender(
+      <RecordedToolpathPreview
+        blob={blob}
+        sourceSha256={hash}
+        readToolpaths={next}
+      />,
+    );
+    expect(next).not.toHaveBeenCalled();
+  });
   it("presents actionable findings without treating absent findings as approval", () => {
     const { rerender } = render(<FindingsPanel findings={[reason]} />);
     expect(screen.getByText(reason.correction)).toBeInTheDocument();
