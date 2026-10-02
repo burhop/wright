@@ -142,6 +142,21 @@ to both task forms. Opaque file bytes are not inlined into a document prompt.
 Pre-consumption failures record the exact consumer, while historical failures
 without that evidence fall back to run navigation.
 
+Fresh run `9e96b255a24b44fda968ec10a5b2ed73` is bound to a new accepted source,
+frozen inputs and exact test destination. Its first browser check exposed the
+editor's narrower file-dependency whitelist; that failure is retained. The
+editor now round-trips exact MCP and scoped AI MCP maps while rejecting plain AI
+and malformed maps. Sixty-four editor authoring/connection checks pass in
+`t045-ai-file-handoff-editor-003`; the repeated nine-check normal-workspace
+waiting/reload walkthrough passes with empty browser diagnostics.
+
+After one labelled synthetic review and HTTP-202 continuation, native source
+construction completed with a 61,094-triangle STL. The repair consumer then
+started with its verified binary dependency. The [handoff checkpoint](../../../artifacts/process-interfaces/083/20261002-wheel-ai-file-handoff/checked-scope.json)
+retains the actual source bytes, completed producer events and both browser
+outcomes. It establishes the corrected live handoff, not completed repair,
+slicing or engineering acceptance.
+
 `t045-ai-file-dependency-006` passes 192 checks covering binary handoffs, changed/
 missing/wrong-path rejection before consumer execution, exact failure navigation,
 source execution, AI file outputs, preparation, continuation, approval and 082

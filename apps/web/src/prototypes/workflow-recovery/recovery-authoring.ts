@@ -304,7 +304,7 @@ function isExpectedFilePortsObject(key: string, value: unknown): boolean {
   );
 }
 
-// Direct MCP calls can consume files separately from their JSON arguments.
+// Exact MCP calls and scoped AI MCP tasks can consume verified file references.
 // Keep the exact public map during editor round trips. The runtime still
 // verifies each connected workspace-file port, file identity and authority.
 function isMcpFileDependenciesObject(
@@ -315,7 +315,7 @@ function isMcpFileDependenciesObject(
 ): boolean {
   return (
     sectionKind === "task" &&
-    settings.authoring_template === "mcp-tool" &&
+    ["mcp-tool", "mcp-task"].includes(String(settings.authoring_template)) &&
     key === "mcp_file_dependencies" &&
     value !== null &&
     typeof value === "object" &&

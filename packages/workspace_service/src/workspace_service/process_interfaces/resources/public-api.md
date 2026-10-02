@@ -66,6 +66,23 @@ Unsupported motion, unreadable or excessive data keeps the exact download.
 CSV views retain the actual table; numerical axes are explicit display choices,
 without inferred units, interpolated geometry or compliance claims.
 
+For preparation, use InputEditor with declared definitions and draft bindings,
+uploadInput for an explicit file choice, setInputs to freeze the bindings, and
+checkReadiness for that exact InputSnapshot. Only an explicit, writable start
+control calls start with the frozen snapshot and one retained request identity.
+An input edit invalidates the local readiness display. The native host handles
+the accepted start receipt and rebinds the working presentation to its run.
+
+For declared interactions, CheckpointCard's response, review and execution props
+are public UI-kit callbacks, not additional AppProps. Match the currently enabled
+Action to both checkpoint_id and subject_digest. Use respond, decide or
+requestAction respectively, with one request identity recorded before mutation.
+Do not choose a first arbitrary action or dispatch on mount. On an uncertain
+response, disable new mutations and offer explicit read-only reconciliation;
+never replace the uncertain identity or automatically retry. Get current state
+from the client/host. The common working view remains available for canonical
+recovery; UI-local loading, form drafts and errors are not process status.
+
 For updates, preserve valid bindings and change the requested presentation.
 Layout/title changes do not invalidate engineering evidence. Changed required
 binding/schema needs compatibility checks and a common-view fallback. UI version,

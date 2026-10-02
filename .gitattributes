@@ -78,3 +78,4 @@ artifacts/engineering-workflow-datasets/retry-evidence/heat01-aluminum-scope-902
 artifacts/process-interfaces/083/20261002-wheel-preparation-review/** -text -whitespace
 artifacts/process-interfaces/083/20261002-wheel-native-capability-recovery/** -text -whitespace
 artifacts/process-interfaces/083/20261002-wheel-retained-native-export/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-ai-file-handoff/** -text -whitespace

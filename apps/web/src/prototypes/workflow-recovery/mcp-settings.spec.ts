@@ -151,7 +151,10 @@ it("converts compatible text connection types atomically and rejects non-JSON wh
   ).toThrow("matches");
 });
 
-function sourceWithFileDependencies(dependencies: unknown): string {
+function sourceWithFileDependencies(
+  dependencies: unknown,
+  template = "mcp-tool",
+): string {
   let state = { workflow: initialWorkflow, layout: initialLayout };
   const added = createAuthoringObject("mcp-tool", state.workflow, state.layout);
   state = apply(state, [added]);
@@ -165,6 +168,7 @@ function sourceWithFileDependencies(dependencies: unknown): string {
         prefix +
         JSON.stringify({
           ...settings,
+          authoring_template: template,
           mcp_file_dependencies: dependencies,
           expected_file_ports: { model: "process-proofs/case/plate.step" },
         })
@@ -173,26 +177,37 @@ function sourceWithFileDependencies(dependencies: unknown): string {
   );
 }
 
-it("cold-round-trips exact MCP file dependencies alongside produced file ports", () => {
-  const dependencies = {
-    authored_source: "process-proofs/case/plate-source.py",
-  };
-  const source = sourceWithFileDependencies(dependencies);
-  expect(source).toContain('"mcp_file_dependencies":');
-  const parsed = parseRecoveryAuthoringSource(source, initialWorkflow);
-  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
-  const formatted = formatRecoveryAuthoringSource(parsed.workflow!).text;
-  expect(formatted).toContain(
-    '"mcp_file_dependencies":{"authored_source":"process-proofs/case/plate-source.py"}',
+it.each(["mcp-tool", "mcp-task"])(
+  "cold-round-trips %s file dependencies alongside produced file ports",
+  (template) => {
+    const dependencies = {
+      authored_source: "process-proofs/case/plate-source.py",
+    };
+    const source = sourceWithFileDependencies(dependencies, template);
+    expect(source).toContain('"mcp_file_dependencies":');
+    const parsed = parseRecoveryAuthoringSource(source, initialWorkflow);
+    expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+    const formatted = formatRecoveryAuthoringSource(parsed.workflow!).text;
+    expect(formatted).toContain(
+      '"mcp_file_dependencies":{"authored_source":"process-proofs/case/plate-source.py"}',
+    );
+    expect(formatted).toContain(
+      '"expected_file_ports":{"model":"process-proofs/case/plate.step"}',
+    );
+    const reopened = parseRecoveryAuthoringSource(formatted, initialWorkflow);
+    expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
+    expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(
+      formatted,
+    );
+  },
+);
+
+it("rejects tool file dependencies on a plain AI task", () => {
+  const parsed = parseRecoveryAuthoringSource(
+    sourceWithFileDependencies({ source: "native.stl" }, "ai-prompt"),
+    initialWorkflow,
   );
-  expect(formatted).toContain(
-    '"expected_file_ports":{"model":"process-proofs/case/plate.step"}',
-  );
-  const reopened = parseRecoveryAuthoringSource(formatted, initialWorkflow);
-  expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
-  expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(
-    formatted,
-  );
+  expect(parsed.ok).toBe(false);
 });
 
 it.each([

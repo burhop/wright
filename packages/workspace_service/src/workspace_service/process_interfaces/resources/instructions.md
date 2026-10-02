@@ -14,7 +14,8 @@ no domain lifecycle is mandatory.
 
 Generate only `App.tsx`, optional `style.css`, and permitted local raster assets.
 Default-export a React component. Its host supplies a scoped client, current
-backend snapshot, read-only state and declared control callbacks. Build a useful
+backend snapshot and read-only state, exactly as `AppProps` documents. Compose
+control callbacks using the public client; no other host props exist. Build a useful
 job-specific layout with the public Wright kit. Preserve styling, labels,
 keyboard access, visible progress, uploaded thumbnails, honest errors, exact
 evidence and navigation to the process. Do not import private Wright app files.

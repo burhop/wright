@@ -1153,3 +1153,17 @@ used as assumed error owners. The 192-check focused regression suite passes;
 live repair/slicing and T045–T047 remain pending. Synthetic decision and uncertain
 acknowledgement were reconciled without replay; no engineering acceptance or
 physical dispatch is implied.
+
+The editor's corresponding map declaration is now aligned with runtime support.
+Sixty-four editor checks pass, and the fresh nine-check workspace waiting/reload
+walkthrough passes after preserving the earlier parser rejection. Digital run
+`9e96b255a24b44fda968ec10a5b2ed73` completed source construction and entered
+repair with its verified STL reference. Its completed producer/handoff evidence
+is retained separately from still-pending downstream preparation. Fifty
+authoring/build checks also pass after correcting the prepared role's inaccurate
+extra-host-props wording and documenting actual public control callbacks.
+The actual default-model heat control update ended with `UI_MODEL_TIMEOUT` before
+a preview/build was available. Its failed authoring job and stopping walkthrough
+are retained, with the prior saved comparison still selected. Full preparation/
+review behavior remains unqualified; the next change should reduce generated
+control boilerplate through shared Wright UI functionality.
