@@ -42,3 +42,28 @@ sixty-four previously recorded focused component checks; see
 Its two failed attempts remain retained. Those numbers are separate suites and
 are not added into a purported unique total. The original failed engineering run
 was neither replayed nor relabelled successful.
+
+## Supplied-artifact approval regressions
+
+The first file-list attempt named a nonexistent reference test module and ran no
+tests; it is not counted as verification. An initial expanded suite reported one
+failure in the existing rule preventing implicit supplied-file transfer. The fix
+requires explicit accepted-definition opt-in and preserves that regression.
+
+Latest command:
+
+```powershell
+.venv/Scripts/python.exe -m pytest -q -rs --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t047-retained-handoff-binary-006 packages/workspace_service/tests/test_workflow_binary_file_consumers.py packages/workspace_service/tests/test_process_preparation_service.py packages/workspace_service/tests/test_workflow_approval_execution.py packages/workspace_service/tests/test_workflow_execution_continuation.py packages/workspace_service/tests/test_workflow_approval_resume.py apps/api/tests/test_process_interface_actions.py apps/api/tests/test_process_interface_checkpoints.py --junitxml=.local-run/process-interfaces-083/t047-retained-handoff-binary-006.xml
+```
+
+Terminal completion: **94 passed, zero skips, 60.17 seconds**, with two existing
+dependency warnings. The preceding qualified
+group (`t047-retained-handoff-binary-005`) passed 94 tests in 39.31 seconds with
+two existing dependency warnings. These are overlapping suites, not additive
+counts. The tests exercise explicit boolean opt-in, denial of unrelated supplied
+files, binary/text/MCP consumer distinctions, exact source/artifact approval,
+file changes before and after decision, simulator receipts and same-run recovery.
+
+The separate normal API follow-up and unchanged-profile independent assessment
+are described in `printed-proof.md`; they are not a physical-effect test or
+completion of the original failed run's skipped gate.

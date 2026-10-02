@@ -6,14 +6,39 @@ import base64
 import hashlib
 
 
+def is_artifact_approval(step) -> bool:
+    action = getattr(step, "external_action", None) or {}
+    return action.get("action_kind") in {
+        "local_review",
+        "printer_transfer",
+        "supplier_upload_preview",
+        "cart_quote_handoff",
+    }
+
+
+def accepts_supplied_artifacts(step) -> bool:
+    if not is_artifact_approval(step):
+        return False
+    action = step.external_action
+    return action["action_kind"] == "local_review" or (
+        action.get("settings", {}).get("include_supplied_files") is True
+    )
+
+
 def allows_binary_file_reference(steps, addresses: set[str]) -> bool:
     """Opaque bytes need a declared file consumer and no document/argument consumer."""
     file_consumer = False
     for step in steps:
+        # Fixed approval operations seal referenced artifact identities. They do
+        # not interpret those bytes as prompt text or provider arguments. MCP
+        # submissions retain their separately declared file/argument contract.
+        artifact_approval = accepts_supplied_artifacts(step)
         if step.application_from in addresses:
             file_consumer = True
         for _, source in step.references:
-            if source in addresses and source in step.file_dependencies:
+            if source in addresses and (
+                source in step.file_dependencies or artifact_approval
+            ):
                 file_consumer = True
         if (
             step.prompt_from in addresses
@@ -22,7 +47,7 @@ def allows_binary_file_reference(steps, addresses: set[str]) -> bool:
             or any(
                 source in addresses
                 and (
-                    source not in step.file_dependencies
+                    (source not in step.file_dependencies and not artifact_approval)
                     or sum(src == source for _, src in step.references) != 1
                 )
                 for _, source in step.references

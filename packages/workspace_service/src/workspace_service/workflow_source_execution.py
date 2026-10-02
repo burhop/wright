@@ -2920,13 +2920,15 @@ async def execute_prompt_workflow(
             ),
             key=lambda item: item["path"],
         )
-        # A local requirements review may be the first task: its artifacts are
-        # the exact connected uploaded files, before any engineering output exists.
-        # This does not permit an external handoff without produced artifacts.
-        if pending_action.external_action["action_kind"] == "local_review":
-            from .workflow_execution_continuation import local_review_input_files
+        # A workflow may explicitly opt into handing off supplied files without
+        # regenerating them. Seal only connected frozen references; approval and
+        # continuation recheck their exact bytes and all existing effect authority.
+        from .workflow_references import is_artifact_approval
 
-            reviewed_inputs = local_review_input_files(pending_action, input_values)
+        if is_artifact_approval(pending_action):
+            from .workflow_execution_continuation import approval_input_files
+
+            reviewed_inputs = approval_input_files(pending_action, input_values)
             artifact_digests = sorted(
                 set(artifact_digests) | set(reviewed_inputs.values())
             )

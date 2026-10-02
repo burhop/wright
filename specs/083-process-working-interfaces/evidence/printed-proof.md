@@ -406,3 +406,47 @@ public local evidence. S09 was visually inspected: the embedded app renders its
 review, while surrounding workspace controls still have sparse styling. This
 is saved-reuse proof, not T052 design/accessibility acceptance or completion of
 T047's original gate/handoff and engineering chain obligations.
+
+## Exact retained-artifact simulator handoff, 2 October
+
+A separate one-step follow-up consumes the actual retained 3MF, unchanged PETG
+profiles and the corrected independent actual-model report. It does not regenerate
+geometry or slicing and does not rewrite either earlier run. Initial input
+preparation rejected the binary package; after that reader correction, attempt
+`fd63c394122a48fcbca3fdea67242cc0` failed before approval because the existing
+runtime required produced artifacts. Both refusals remain retained.
+
+The shared runtime now supports an explicit accepted-definition option,
+`approval_settings.include_supplied_files: true`, for fixed artifact approvals.
+Only connected frozen file references enter the sealed artifact set. Default
+behavior remains unchanged; unknown/MCP argument consumers remain strict. Same
+source/input/artifact checks apply before decision and continuation. Supplied
+artifacts retain their input provenance rather than becoming claimed engineering
+tool outputs. This is a general workflow capability, not a printer transport.
+
+Fresh follow-up `b513166fb7014f23a7187a34be6e7710` passes native input/readiness,
+really waits at its approval, receives one labelled exact-source synthetic test
+decision, and completes through the normal same-run process action. Its actual
+simulator receipt binds package SHA-256
+`c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3`,
+with `integration_test=true`, `simulated_handoff=true` and
+`network_dispatch=false`. No model or engineering-provider operation was replayed.
+
+Independent multi-producer assessment
+`assessment-2dbc4906081b42b1ae1d4dcab54531b8` uses all actual retained native
+subjects, the exact durable report and the exact durable simulator receipt.
+The original eighteen-check profile/baseline is unchanged: **17 pass, one blocked**
+(mandatory authenticated engineering review). Release eligibility remains false.
+Report and receipt are verified against actual durable result/file identities;
+their sources contain no validator and have no validator output registry entries.
+The original failed consumer's gate was not executed or rewritten. This assessment
+does not supply a human verdict or certify geometry, fit, strength or a print.
+
+Evidence: `artifacts/process-interfaces/083/20261002-retained-artifact-handoff/`.
+Original failed consumer/report records retain their hashes; both second-run
+reviews remain pending. The 94-check controlled suite includes binary preparation,
+default-behavior preservation, exact opt-in, changed files before/after decision,
+same-run continuation and native action/checkpoint regressions. A prior test
+attempt exposed the default-behavior regression and is retained privately.
+Full original source-gate/common-tailored parity and installed/migration obligations
+remain pending; T047 and the feature goal remain incomplete.

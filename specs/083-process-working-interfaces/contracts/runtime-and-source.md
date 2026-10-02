@@ -186,3 +186,22 @@ two checkpoint sequence; response schema failure; stale response; duplicate/lost
 acknowledgement; tab disconnect; backend reopening; old v2 checkpoint; uncertain
 action; cancellation actual outcome; finite async-operation policy; undeclared
 clarification. Preserve 082 validation subjects/revision budgets and 081 evidence.
+
+## Explicit supplied-artifact handoff
+
+Fixed artifact approvals can consume a frozen uploaded or retained file without
+regenerating it. Non-local-review approvals require the exact boolean
+`approval_settings.include_supplied_files: true` in the accepted definition.
+Absent, false, numeric or string values preserve the existing produced-artifact
+requirement. Local requirements review retains its existing upload support.
+
+Only explicitly connected `WorkflowReference` inputs join the approved artifact
+path/hash set. Unrelated workspace files and plain values do not. Prepared binary
+files remain opaque; document, mixed-use and MCP argument consumers remain
+strict. The immutable input snapshot, source digest, checkpoint artifact files,
+decision and continuation all retain their existing identity checks. Changed
+bytes before decision or after decision prevent dispatch. This declares artifact
+scope; it grants no new effect authority and does not classify supplied files as
+tool-produced engineering outputs. MCP-operation submissions continue to use
+their separately qualified argument/file contract. Test transport remains an
+explicitly enrolled, non-networked simulator.

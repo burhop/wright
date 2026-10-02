@@ -1,0 +1,21 @@
+{
+  "status": 202,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-handoff-001.workflow.wflow",
+      "source_digest": "3cc48d6fd830ee6db4bc5ef83edb27954a34023f8b56d4cd7a6cb2b286274d05",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "printed-retained-handoff-start-001",
+    "payload_digest": "e40d1e010483aaaec807893eb0c53afd8b9f0624ab3522cd97323d747ffb8c63",
+    "input_snapshot_id": "inputs-57ed49be2d5d455a84169a0f90702fef",
+    "input_digest": "1267a72308046b609653a9c0d61e88ff6d8bd17a56b0ed18a978ecb4a5a9106e",
+    "run_id": "fd63c394122a48fcbca3fdea67242cc0",
+    "run_log_path": "runs/printed-replacement-part-retained-handoff-001/fd63c394122a48fcbca3fdea67242cc0.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-02T16:28:45.833216+00:00"
+  }
+}

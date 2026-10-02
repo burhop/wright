@@ -1453,3 +1453,33 @@ process-app and editor guidance to identify implementation versus acceptance,
 and update the two-process migration comparison with later actual evidence.
 Services left stopped during the CPU pause remain stopped; these tests did not
 restart model/MCP work or answer either declared review. Full goal stays active.
+
+Service-state correction: the earlier Windows listener command returned no rows,
+but direct process/socket inspection confirmed owned API 009 and UI 5243 were
+still live. Do not infer shutdown from that command's empty result. Exact API 009
+then stopped gracefully with CAD/solver cleanup confirmed; API 010/011 loaded
+the scoped artifact input/approval changes without replaying existing runs.
+
+A separate simulator-only retained-package follow-up exposed binary input and
+produced-artifact approval restrictions. Add explicit include_supplied_files=true
+support for fixed artifact approvals, while preserving default behavior and MCP
+argument contracts. Same source/input/artifact checks apply before decision and
+continuation; changed files cannot dispatch. Initial refusal and failed run
+fd63c394122a48fcbca3fdea67242cc0 remain retained. Fresh follow-up
+b513166fb7014f23a7187a34be6e7710 genuinely waited, consumed one labelled synthetic
+test decision and completed with an actual non-network simulator receipt for the
+retained package. No geometry/slice/model work was repeated and no physical effect
+occurred. Independent unchanged-profile assessment 2dbc4906081b42b1ae1d4dcab54531b8
+records 17 passes and mandatory authenticated review blocked. Native/report/follow-up
+record hashes and both second reviews are preserved. Public local evidence is
+20261002-retained-artifact-handoff. The original failed gate remains unexecuted;
+T047, migration, installed proof and full feature acceptance remain pending.
+
+Final qualified handoff/input/continuation/native action group passes 94 tests,
+zero skips, in 60.17 seconds (t047-retained-handoff-binary-006). Ruff checks and
+formatting pass on all five owned Python files. Final input-classifier tightening
+requires exact opt-in during binary preparation too; that last guard is test
+verified and still needs loading in the served API. API 011's successful opt-in
+handoff path was already verified; no success claim is made for an unflagged
+supplied-file process. Protected campaign and unrelated mixed deltas remain
+unchanged. Goal stays active.

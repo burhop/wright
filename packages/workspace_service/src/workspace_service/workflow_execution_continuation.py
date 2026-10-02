@@ -9,7 +9,7 @@ from dataclasses import asdict
 import hashlib
 import json
 
-from .workflow_references import WorkflowReference
+from .workflow_references import WorkflowReference, accepts_supplied_artifacts
 from .workflow_results import EngineeringResult, Provenance, Representation
 
 
@@ -25,6 +25,13 @@ def input_identities(values):
 def local_review_input_files(step, input_values):
     """Only explicitly connected uploads can serve as initial local review artifacts."""
     if (step.external_action or {}).get("action_kind") != "local_review":
+        return {}
+    return approval_input_files(step, input_values)
+
+
+def approval_input_files(step, input_values):
+    """Bind only connected, frozen file references to fixed artifact approvals."""
+    if not accepts_supplied_artifacts(step):
         return {}
     return {
         value.path: value.sha256
@@ -370,8 +377,7 @@ async def _validate_continuation(
         }
     )
     artifact_digests = sorted(
-        set(artifact_digests)
-        | set(local_review_input_files(step, input_values).values())
+        set(artifact_digests) | set(approval_input_files(step, input_values).values())
     )
     if subject.get("artifact_digests") != artifact_digests:
         raise stale("The approved artifact identities do not match the continuation.")
