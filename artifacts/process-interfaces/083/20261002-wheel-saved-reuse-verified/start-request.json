@@ -1,0 +1,9 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+  "expected_storage_digest": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+  "input_snapshot_id": "inputs-c755f3fee880428e9fc1c1ff17b20110",
+  "expected_input_digest": "c5dde9f70d18b222e977a4bbfbdb4ccbdc7de4b746322ea89900f00dced03aa2",
+  "integration_policy_digest": "fbe1124dd41c310e503791e32648c76b8882c4260cffb8c51561c24fe73581e5",
+  "request_id": "printed-retained-consumer-saved-reuse-002"
+}

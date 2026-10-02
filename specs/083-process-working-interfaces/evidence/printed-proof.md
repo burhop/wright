@@ -380,3 +380,29 @@ also failed opening preparation after a managed startup error, while verifying
 the second run's common waiting view. No further blind UI retry is planned;
 inspect the actual managed runtime first. Source/build and authoring-record
 baselines were saved before reuse. Heat's second review remains untouched.
+
+## Saved-interface reuse continuation, 2 October
+
+After native diagnostic access was corrected, a controlled transport probe used
+the actual Windows Job Object adapter, safe environment, effective limits and
+HealthProber/HTTP transport. Readiness passed in 2.637 seconds; exact cleanup
+left no descendants or listeners. An earlier diagnostic-script error is retained
+separately and also cleaned up completely. A fresh normal API presentation of
+the saved revision then reached ready, and scoped runtime diagnostics returned
+its actual successful readiness with no captured errors. These observations do
+not establish the cause of the earlier timeouts or a fix for intermittent startup.
+
+A fresh labelled normal-workspace browser continuation passed eleven checks:
+existing Workflows/editor/file chooser, common view and exact second-run waiting
+review, saved preparation/readiness without Start, same saved interface attached
+to the second run, and reload of its same unconsumed review/result. Recorded
+authoring/revision payloads and all saved source/bundle hashes remain identical
+to the pre-reuse baseline. No model generation, rebuild, review response or
+engineering replay occurred. Run `00201b136bff4e4e91f097891d96e8e2` still waits.
+
+Evidence: `artifacts/process-interfaces/083/20261002-wheel-saved-reuse-verified/`.
+The walkthrough validator passes; credential values were scanned before saving
+public local evidence. S09 was visually inspected: the embedded app renders its
+review, while surrounding workspace controls still have sparse styling. This
+is saved-reuse proof, not T052 design/accessibility acceptance or completion of
+T047's original gate/handoff and engineering chain obligations.

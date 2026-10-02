@@ -1387,3 +1387,17 @@ presentation or establish the original timeout cause. Evidence remains private
 at `t047-runtime-diagnostics-003` pending broader managed-path proof. The fallback
 still needs loading in the served API. Existing second-run reviews remain
 unanswered; no generation, native engineering or physical action was replayed.
+
+Managed transport and saved wheel reuse now have fresh evidence. The actual
+Windows adapter/safe environment/limits/readiness probe passed in 2.637 seconds
+with complete child/listener cleanup. A fresh normal API presentation reached
+ready and scoped diagnostics read that actual instance. A labelled served
+workspace walkthrough then passed all eleven checks, including explicit
+preparation/readiness without Start, the same saved interface attached to the
+second run and reload of its unchanged waiting review. Baseline comparison
+proves authoring/revision records and all saved source/bundle files unchanged.
+Evidence `20261002-wheel-saved-reuse-verified` passes walkthrough validation and
+credential scanning. The original timeout cause remains unproved; do not claim
+an intermittent-startup fix. S09 visual inspection confirms sparse outer
+workspace styling still needs T052 work. T047 full original chain/gate/handoff,
+legacy migration and M5 remain pending. Goal stays active.
