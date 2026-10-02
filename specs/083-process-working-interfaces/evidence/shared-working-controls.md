@@ -125,3 +125,35 @@ The failed wheel run remains failed; it has not been replayed or reclassified.
 Loading this fix and qualifying a fresh digital chain remains pending. No slicer
 completion, full wheel assessment, physical dispatch or engineering acceptance
 is claimed by these tests.
+
+## Managed startup refusal and retained-preview recovery
+
+The final default-display update was generated and built through Wright, but
+opening its preview returned HTTP 503. Read-only state showed eight active
+managed runtimes, the configured owned-app limit, and three newer surfaces stuck
+in STARTING without a runtime or diagnostic. The manager's admission refusal
+happens before it creates an instance. The surface owner now commits FAILED and a
+safe diagnostic for that case, and the process boundary retains the runtime code
+without exposing raw host details. Capacity now has a specific correction:
+close an unused interface tab and reopen the saved interface. Neither runtime
+limits nor process/review authority changed.
+
+Focused verification: **18 owner/presentation tests** and **16 manager/runtime
+regressions** pass. The first test run's missing async marker is retained as a
+failed report; the fresh corrected report passes. Ruff passes. These controlled
+tests establish state/error behavior, not actual engineering acceptance.
+
+After the exact owned host's graceful shutdown/restart, existing built job
+`job-42fee0f45ef249adba4dd993e96dbde4` was opened without another model call,
+saved, and reopened with 18 actual heat results. **Three served recovery checks
+pass**; the walkthrough structure validator passes. The exact source/build is
+saved as `revision-9c8c8b164ea34a9ba65910567b41b170`. Earlier failed preview
+reports remain unchanged. Preparation and second-run reuse are separately pending.
+This is recovery after freeing owned host resources, not a claim of automatic
+garbage collection for abandoned browser sessions.
+
+The captured generated source, resolved role/build/revision, passing test reports,
+three-step walkthrough, screenshots and checked limits are retained locally in
+`artifacts/process-interfaces/083/20261002-managed-preview-recovery/`.
+Authentication context and raw browser trace are excluded; captured files were
+checked against the private API token and browser cookie before retention.

@@ -382,6 +382,22 @@ class LiveAppControlService:
                     manager=manager,
                     instance=error.instance,
                 )
+            else:
+                # Admission/manifest failures happen before a runtime exists.
+                # They must still settle the durable STARTING intent.
+                await self._surfaces.project_runtime(
+                    actor=actor,
+                    surface_id=descriptor.surface_id,
+                    target=SurfaceLifecycle.FAILED,
+                    expected_revision=descriptor.revision,
+                    instance=descriptor.instance,
+                    presentations=descriptor.presentations,
+                    diagnostic_summary={
+                        "code": error.code,
+                        "message": "Managed application startup was refused before launch.",
+                        "retryable": error.retryable,
+                    },
+                )
             raise LiveAppControlError(
                 error.code, str(error), retryable=error.retryable
             ) from error

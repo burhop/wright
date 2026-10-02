@@ -1,0 +1,75 @@
+{
+  "title": "Focused update of the saved heat comparison through Wright",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-02T12:43:50.519Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Heat-spreader comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved heat-spreader workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Continue exact test review",
+      "instruction": "Inspect the labelled synthetic test review. Check I reviewed this action and its evidence, then click Continue process."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Reopen existing built preview",
+      "summary": "Recover the exact already generated preview in the workspace.",
+      "purpose": "Recover the saved job without generation or model replay.",
+      "action": "Open the retained preview URL.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "Exact existing read-only preview connected with recorded heat results.",
+      "actual": "Existing preview connected; 18 result cards visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Save existing preview",
+      "summary": "Retain the exact previewed build with its binding and provenance.",
+      "purpose": "Complete the existing job without another model call.",
+      "action": "Click Save interface.",
+      "controls": [
+        "Save interface"
+      ],
+      "expected": "Exact existing revision saved.",
+      "actual": "Existing preview revision saved.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Open saved existing revision",
+      "summary": "The recovered built interface opens in a Wright workspace tab.",
+      "purpose": "Use the same saved compiled build.",
+      "action": "Click Open saved interface.",
+      "controls": [
+        "Open saved interface"
+      ],
+      "expected": "Saved interface connects to the same heat run.",
+      "actual": "Saved interface connected with 18 results and Wright styling.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    }
+  ]
+}

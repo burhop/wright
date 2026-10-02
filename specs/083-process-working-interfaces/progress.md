@@ -1222,3 +1222,23 @@ qualification is pending after connection/provider delays. See
 `evidence/shared-working-controls.md` and the local evidence under
 `artifacts/process-interfaces/083/20261002-preparation-and-nominal-view/`.
 The full implementation goal remains active; no engineering or physical acceptance.
+
+Resume, 2 October: wheel run `d5b7916386f8419b9e3031da9f3caf44` is now
+terminally failed after its bounded native construction attempts; no source STL
+was exported. Its uncertain continuation acknowledgement was reconciled against
+the existing durable action/events, never resubmitted. The earlier actual wheel
+geometry and sliced package remain retained separately for isolated rework.
+
+The built heat-interface preview encountered the existing eight-app workspace
+limit after prior walkthroughs left views open. A startup refusal before creating
+a runtime previously left its durable surface in STARTING with no diagnostic.
+That path now settles FAILED with a safe reason; the process-interface boundary
+exposes the runtime code and a specific close-unused-tab correction for capacity.
+Eighteen owner/presentation checks and sixteen manager/runtime regressions pass.
+The exact owned API/provider host stopped gracefully and restarted without
+process/model/review replay. Existing job
+`job-42fee0f45ef249adba4dd993e96dbde4` was recovered, previewed, saved as
+`revision-9c8c8b164ea34a9ba65910567b41b170`, and opened in a workspace tab
+with 18 actual heat results and Wright styling: three served recovery checks pass.
+Preparation and reuse on the second, still-undecided heat run remain pending.
+The full goal remains active; earlier failed previews and checks are retained.

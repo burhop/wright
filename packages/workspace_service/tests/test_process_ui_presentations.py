@@ -22,7 +22,10 @@ from workspace_service.process_interfaces.presentation import (
     ProcessInterfacePresentations,
 )
 from workspace_service.surfaces.grants import CapabilityGrantService, CapabilityPolicy
-from workspace_service.surfaces.live_app_service import LiveAppControlService
+from workspace_service.surfaces.live_app_service import (
+    LiveAppControlService,
+    LiveAppControlError,
+)
 from workspace_service.surfaces.presentation_service import PresentationService
 from workspace_service.surfaces.service import SurfaceActor, SurfaceService
 from packages.workspace_service.tests.surfaces.test_live_app_service import _instance
@@ -131,6 +134,29 @@ async def build(case):
     job = await case.author.wait(authorized(), case.process, job.job_id)
     assert job.state == "preview_ready"
     return job
+
+
+@pytest.mark.anyio
+async def test_open_reports_capacity_without_private_runtime_details(
+    tmp_path, monkeypatch
+):
+    case = native_case(tmp_path, monkeypatch)
+    case.owner._open = AsyncMock(
+        side_effect=LiveAppControlError(
+            "SURFACE_LIMIT_OWNED_APPS", "private host path", retryable=False
+        )
+    )
+    with pytest.raises(ProcessInterfaceError) as raised:
+        await case.owner.open(
+            case.scope, case.process, case.actor, "job", "open-capacity", read_only=True
+        )
+    assert "open interface limit" in raised.value.reason.message
+    assert "Close an unused interface tab" in raised.value.reason.correction
+    assert raised.value.diagnostic == {
+        "runtime_code": "SURFACE_LIMIT_OWNED_APPS",
+        "retryable": False,
+    }
+    assert "private host" not in str(raised.value)
 
 
 def retained_grants(case):

@@ -1,0 +1,174 @@
+{
+  "manifest": {
+    "schema_version": "wright.process-ui/1",
+    "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+    "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170",
+    "parent_revision": "revision-31324f212db34e57acb184b50467544f",
+    "title": "Heat-spreader candidate comparison",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+      "source_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "interaction_version": "wright.process-interaction/1",
+    "client_version": "1.0.0",
+    "kit_version": "1.0.0",
+    "bindings": [
+      {
+        "binding_id": "baseline-40-geometry",
+        "kind": "output",
+        "selector": "create_plate_geometry_live_default_model_002.baseline_40_geometry",
+        "block_id": "create_plate_geometry_live_default_model_002",
+        "port_id": "baseline_40_geometry",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The baseline geometry result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "revision-60-geometry",
+        "kind": "output",
+        "selector": "create_plate_geometry_live_default_model_002.revision_60_geometry",
+        "block_id": "create_plate_geometry_live_default_model_002",
+        "port_id": "revision_60_geometry",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The revision geometry result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "geometry-measurements",
+        "kind": "output",
+        "selector": "create_plate_geometry_live_default_model_002.geometry_measurements",
+        "block_id": "create_plate_geometry_live_default_model_002",
+        "port_id": "geometry_measurements",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "Geometry measurements are not available in the current snapshot."
+      },
+      {
+        "binding_id": "baseline-40-coarse",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.baseline_40_coarse",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "baseline_40_coarse",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The baseline coarse-field result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "baseline-40-fine",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.baseline_40_fine",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "baseline_40_fine",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The baseline fine-field result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "revision-60-coarse",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.revision_60_coarse",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "revision_60_coarse",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The revision coarse-field result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "revision-60-fine",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.revision_60_fine",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "revision_60_fine",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The revision fine-field result is not available in the current snapshot."
+      },
+      {
+        "binding_id": "comparison-decision",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.decision",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "decision",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The recorded comparison decision is not available in the current snapshot."
+      },
+      {
+        "binding_id": "candidate-correspondence",
+        "kind": "output",
+        "selector": "compute_fields_live_default_model_002.correspondence",
+        "block_id": "compute_fields_live_default_model_002",
+        "port_id": "correspondence",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "Candidate correspondence evidence is not available in the current snapshot."
+      },
+      {
+        "binding_id": "output-assessment",
+        "kind": "output",
+        "selector": "validate_outputs_live_default_model_002.assessment",
+        "block_id": "validate_outputs_live_default_model_002",
+        "port_id": "assessment",
+        "expected_schema": null,
+        "required": false,
+        "fallback": "The output assessment is not available in the current snapshot."
+      }
+    ],
+    "capabilities": [
+      "process.read",
+      "process.inputs",
+      "process.start",
+      "process.respond",
+      "process.review",
+      "process.action",
+      "process.cancel",
+      "process.results",
+      "process.navigate"
+    ],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "viewers": []
+  },
+  "source_digest": "dc26167470a851d7cecaa5a52b1cbba0b0de0ecddb6de3dff2257a8b32985ec4",
+  "build": {
+    "build_id": "build-3faa1544673948cf98497038a0b2696d",
+    "source_digest": "dc26167470a851d7cecaa5a52b1cbba0b0de0ecddb6de3dff2257a8b32985ec4",
+    "manifest_digest": "c8fbf749933e7c89efb749b8ea281376de13ef6f6127cc9aaa519234dd1645b9",
+    "toolchain_digest": "70dc340f2298792f09f966929e06fa69582c78f269e97134b7f922bc280b5a64",
+    "bundle_digest": "ebbd101345d5a652754984257a91c53a3bae6383e4a9998c0662fe7ad277c544",
+    "state": "built",
+    "created_at": "2026-10-02T12:17:22.925578+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 384417
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "421aec9c92fd15b3397e289c29168759fa5a4edbfc4372d3acc021d64e88ffe1",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "421aec9c92fd15b3397e289c29168759fa5a4edbfc4372d3acc021d64e88ffe1",
+    "capability_scope": []
+  },
+  "generation_request_digest": "7094e69524f0587a110a6e5eaee58b49b0edc9c8a42ffb0c2b6f5590b48d4864",
+  "created_at": "2026-10-02T12:17:22.925578+00:00",
+  "previewed_at": "2026-10-02T12:43:22.562852+00:00"
+}

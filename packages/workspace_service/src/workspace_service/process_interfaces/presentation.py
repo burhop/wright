@@ -243,7 +243,23 @@ class ProcessInterfacePresentations:
                 read_only=read_only,
                 run_id=run_id,
             )
-        except (LiveAppControlError, PresentationUnavailable, SurfaceError):
+        except LiveAppControlError as error:
+            capacity = error.code == "SURFACE_LIMIT_OWNED_APPS"
+            raise ProcessInterfaceError(
+                "CAPABILITY_UNAVAILABLE",
+                (
+                    "The workspace has reached its open interface limit."
+                    if capacity
+                    else "Wright could not open the managed process interface."
+                ),
+                (
+                    "Close an unused interface tab, then reopen this saved interface."
+                    if capacity
+                    else "Use the common view and inspect its managed runtime diagnostics before reopening."
+                ),
+                details={"runtime_code": error.code, "retryable": error.retryable},
+            ) from None
+        except (PresentationUnavailable, SurfaceError):
             raise ProcessInterfaceError(
                 "CAPABILITY_UNAVAILABLE",
                 "Wright could not open the managed process interface.",
