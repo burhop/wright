@@ -1,0 +1,15 @@
+{
+  "installed_owning_modules": [
+    "api.main",
+    "core",
+    "data_vault",
+    "agent_adapters",
+    "workspace_service",
+    "tool_registry",
+    "wright_engineering"
+  ],
+  "frontend_from_installed_wheel": true,
+  "compiler_available": false,
+  "provider_autostart": false,
+  "original_worktree_imports": false
+}

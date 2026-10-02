@@ -5,6 +5,9 @@ source supplies no launch command, endpoint, principal or grant authority.
 """
 
 import json
+import os
+from pathlib import PurePosixPath, PureWindowsPath
+import tempfile
 
 from core.process_validation import Identifier, canonical_digest
 from core.surfaces.live_app_manifest import parse_live_app_manifest
@@ -223,9 +226,52 @@ class ProcessInterfacePresentations:
                 or path.stat().st_size > 262144
             ):
                 raise ValueError("The fixed manifest is not a regular bounded file")
-            current = parse_live_app_manifest(json.loads(path.read_bytes()))
+            previous = path.read_bytes()
+            stored = json.loads(previous)
+            current = parse_live_app_manifest(stored)
             if current.canonical_hash != declaration.canonical_hash:
-                raise ValueError("The fixed managed manifest changed")
+                # These declarations are host-local derived data, not saved UI
+                # source. Relocation can change only the interpreter and vault
+                # paths. Never execute either stored path, or accept changes to
+                # commands, inventory, capabilities, isolation or other policy.
+                argv = stored["launch"].get("argv", [])
+                expected = value["launch"]["argv"]
+                if len(argv) != len(expected):
+                    raise ValueError("The fixed managed manifest changed")
+                suffix = tuple(PurePosixPath(expected[4].replace("\\", "/")).parts[-5:])
+                for index in (0, 4):
+                    old = argv[index]
+                    if not (
+                        PurePosixPath(old).is_absolute()
+                        or PureWindowsPath(old).is_absolute()
+                    ):
+                        raise ValueError("The managed runtime path is not absolute")
+                if (
+                    tuple(PurePosixPath(argv[4].replace("\\", "/")).parts[-5:])
+                    != suffix
+                ):
+                    raise ValueError("The managed vault identity changed")
+                argv[0], argv[4] = expected[0], expected[4]
+                if (
+                    parse_live_app_manifest(stored).canonical_hash
+                    != declaration.canonical_hash
+                ):
+                    raise ValueError("The fixed managed manifest changed")
+                temporary = None
+                try:
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", dir=path.parent, delete=False
+                    ) as stream:
+                        temporary = stream.name
+                        json.dump(value, stream, sort_keys=True)
+                    if path.read_bytes() != previous:
+                        raise ValueError(
+                            "The fixed managed manifest changed during relocation"
+                        )
+                    os.replace(temporary, path)
+                finally:
+                    if temporary and os.path.exists(temporary):
+                        os.unlink(temporary)
             return
         with path.open("x", encoding="utf-8") as stream:
             json.dump(value, stream, sort_keys=True)

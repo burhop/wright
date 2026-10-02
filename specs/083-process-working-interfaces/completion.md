@@ -11,6 +11,12 @@ and all 57 [tasks](tasks.md) retain their original authority.
 
 ## Functional requirements
 
+Latest bounded installed-native evidence:
+[saved-interface reuse](evidence/installed-native-reuse.md). Both jobs' common,
+saved and reload paths pass with compiler unavailable and unchanged durable
+reviews. Clean Docker, installed completed-output parity, complete editor checks,
+migration and full engineering/audit obligations remain open.
+
 The evidence column identifies retained records to inspect; a link alone is not
 proof. “Partial” means the broad requirement remains unproven even where narrower
 checks passed. No row grants an engineering review or external-effect authority.

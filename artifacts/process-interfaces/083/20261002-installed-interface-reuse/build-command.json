@@ -1,0 +1,9 @@
+[
+  "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+  "-m",
+  "build",
+  "--wheel",
+  "--no-isolation",
+  "--outdir",
+  "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t051-current-installed-008\\dist"
+]

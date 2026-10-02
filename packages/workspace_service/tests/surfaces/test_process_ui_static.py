@@ -2,6 +2,7 @@
 
 from http.client import HTTPConnection
 import json
+import copy
 from pathlib import Path
 from threading import Thread
 from typing import get_args
@@ -18,6 +19,9 @@ from core.surfaces.live_app_manifest import (
 )
 from data_vault.process_ui_artifacts import ImmutableFileSet
 from workspace_service.surfaces.process_ui_manifest import process_ui_manifest
+from workspace_service.process_interfaces.presentation import (
+    ProcessInterfacePresentations,
+)
 from workspace_service.surfaces.process_ui_static import (
     ProcessStaticAssets,
     STATIC_CSP,
@@ -89,6 +93,66 @@ def test_manifest_process_capabilities_are_exactly_the_public_closed_operations(
     value["capabilities"] = ["process.invokeTool"]
     with pytest.raises(ManifestError):
         parse_live_app_manifest(value)
+
+
+def test_host_local_declaration_rebinds_only_relocated_runtime_paths(tmp_path):
+    _, digest = stored(tmp_path)
+    value, parsed = process_ui_manifest(str(tmp_path), manifest(), digest)
+    relocated = copy.deepcopy(value)
+    relocated["launch"]["argv"][0] = "C:/old-runtime/python.exe"
+    relocated["launch"]["argv"][4] = (
+        "C:/old-workspace/.wright/process-uis/"
+        + manifest().ui_id
+        + "/revisions/"
+        + manifest().revision_id
+    )
+    ProcessInterfacePresentations._install_manifest(
+        str(tmp_path), relocated, parse_live_app_manifest(relocated)
+    )
+    ProcessInterfacePresentations._install_manifest(str(tmp_path), value, parsed)
+    path = tmp_path / ".wright/apps" / (parsed.manifest_id + ".surface.json")
+    assert json.loads(path.read_bytes()) == value
+    assert list(path.parent.iterdir()) == [path]
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        "command",
+        "inventory",
+        "environment",
+        "capabilities",
+        "isolation",
+        "vault",
+        "relative",
+    ],
+)
+def test_relocation_does_not_accept_changed_launch_or_authority(tmp_path, change):
+    _, digest = stored(tmp_path)
+    value, parsed = process_ui_manifest(str(tmp_path), manifest(), digest)
+    altered = copy.deepcopy(value)
+    if change == "command":
+        altered["launch"]["argv"][2] = "other.runtime"
+    elif change == "inventory":
+        altered["launch"]["argv"][6] = "f" * 64
+    elif change == "environment":
+        altered["launch"]["environment"] = {"OTHER_RUNTIME": "true"}
+    elif change == "capabilities":
+        altered["capabilities"] = ["wright.tool.call"]
+    elif change == "isolation":
+        altered["presentation"]["browser"] = True
+    elif change == "vault":
+        altered["launch"]["argv"][4] += "-other"
+    else:
+        altered["launch"]["argv"][0] = "relative-python"
+    ProcessInterfacePresentations._install_manifest(
+        str(tmp_path), altered, parse_live_app_manifest(altered)
+    )
+    path = tmp_path / ".wright/apps" / (parsed.manifest_id + ".surface.json")
+    before = path.read_bytes()
+    with pytest.raises(ValueError):
+        ProcessInterfacePresentations._install_manifest(str(tmp_path), value, parsed)
+    assert path.read_bytes() == before
 
 
 def test_manifest_rejects_wrong_inventory_unallocated_paths_and_missing_python(

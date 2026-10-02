@@ -1539,3 +1539,19 @@ t051-current-installed-002 contain build identity/command/output. Next use this
 candidate for actual installed native/clean-Docker workspace/common/saved-view
 mounting and compiler-free reuse; build success alone does not complete T050/T051.
 Full goal remains active. No proof services or engineering reviews were resumed.
+
+2 October installed-native continuation: preserved failed attempts 005–008,
+corrected production kit stylesheet retention and authoring label associations,
+and added narrowly validated host-local runtime declaration relocation. Fresh
+private wheel 008 (SHA 2a4ee17102c8518d818320bc56a0107225e44ee87154709e5cad761f452b674e)
+is genuinely installed with owning modules inside its dedicated venv. Owning
+native bootstrap now supplies workspace roots and same-site origin. Wheel and
+thermal-analysis common/saved/reload journeys each pass ten browser checks with
+compiler unavailable, no generation/build/start/response/action, unchanged
+UI/authoring/continuation hashes, and no browser errors. Both second reviews
+remain unanswered. Final component suite passes 79 tests; static/relocation/CSS
+suite passes 22; packaging suite passes three. See evidence/installed-native-reuse.md.
+The owned host 008 is live on 8032, provider autostart disabled. Full installed
+completed-output/editor/Docker qualification, engineering parity, migration and
+completion audit remain pending; no broad task is marked complete from these
+bounded proofs. Preserved unrelated dirty work and original campaign evidence.

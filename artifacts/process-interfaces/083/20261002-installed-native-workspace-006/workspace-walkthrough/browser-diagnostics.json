@@ -1,0 +1,15 @@
+{
+  "console": [],
+  "pageErrors": [],
+  "failedResponses": [],
+  "mutations": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    }
+  ]
+}

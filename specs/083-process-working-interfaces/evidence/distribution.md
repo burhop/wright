@@ -108,3 +108,9 @@ original packaged frontend has no worktree changes; protected/unrelated-work
 checks pass. T050/T051 remain incomplete: next verify actual installed workspace,
 common/saved interface mounting, authority and compiler/model-free reuse on native
 and clean Docker. The earlier static HTTP proof is not substituted for that work.
+# Installed native continuation
+
+See [installed-native reuse](installed-native-reuse.md) for the corrected private
+wheel and both ten-step served workspace/common/saved/reload journeys with the
+compiler unavailable. This strengthens native evidence but does not close the
+remaining clean Docker, full editor or engineering parity obligations.

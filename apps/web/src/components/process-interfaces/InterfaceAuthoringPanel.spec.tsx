@@ -29,6 +29,18 @@ function describeInterface() {
 const intent: InterfaceAuthoringIntent = {version: "1", process, request: {request_id: "retained-request", instruction: "Compare exact results", title: "Comparison"}};
 
 describe("native interface authoring controls", () => {
+  it("keeps exact field names independent of saved option text", async () => {
+    const f = fixture(), view = render(f.element);
+    await ready();
+    expect(screen.getByRole("textbox", {name: "Interface title"})).toBe(screen.getByLabelText("Interface title", {exact: true}));
+    expect(screen.getByRole("textbox", {name: "How should this interface help the user?"})).toBe(screen.getByLabelText("How should this interface help the user?", {exact: true}));
+    const select = screen.getByRole("combobox", {name: "Saved interface"});
+    expect(select).toBe(screen.getByLabelText("Saved interface", {exact: true}));
+    fireEvent.change(select, {target: {value: ui.ui_id}});
+    await waitFor(() => expect(screen.getByRole("combobox", {name: "Saved revision"})).toHaveValue(revision.manifest.revision_id));
+    expect(screen.getByLabelText("Saved interface", {exact: true})).toBe(select);
+    view.unmount();
+  });
   it("shows creation readiness while a separate saved-interface read is pending", async () => {
     const f = fixture();
     let resolveSaved!: (value: (typeof ui)[]) => void;

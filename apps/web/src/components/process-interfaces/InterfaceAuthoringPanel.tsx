@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { InterfaceRevision, ProcessUI, Reason } from "@wright/process-client";
 import { ProcessUI as ProcessTheme, ReasonNotice, Section } from "@wright/ui-kit";
 import {
@@ -33,6 +33,7 @@ const progress = {
 
 /** Native controls only. Generated source has no access to this authoring client. */
 export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStore, onOpenPreview, onOpenSaved, initialUiId, initialJobId}: InterfaceAuthoringPanelProps) {
+  const fieldId = useId();
   const store = useMemo(() => recoveryStore ?? createInterfaceAuthoringRecoveryStore(client.process, sessionId, viewId),
     [client, sessionId, viewId, recoveryStore]);
   const [capabilities, setCapabilities] = useState<InterfaceAuthoringCapabilities>();
@@ -161,11 +162,11 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
     {capabilities && !capabilities.available && <ReasonNotice reason={capabilities.compiler_reason ?? {
       code: "CAPABILITY_UNAVAILABLE", message: "Interface creation is unavailable with the current model or adapter.",
       correction: "Use a saved interface or the common working view while authoring is configured."}}/>}
-    <label className="wp-field">Interface title<input className="wp-input" value={title} maxLength={512}
-      disabled={busy || activeJob} onChange={event => setTitle(event.target.value)}/></label>
-    <label className="wp-field">How should this interface help the user?<textarea className="wp-input" value={instruction}
+    <div className="wp-field"><label htmlFor={`${fieldId}-title`}>Interface title</label><input id={`${fieldId}-title`} className="wp-input" value={title} maxLength={512}
+      disabled={busy || activeJob} onChange={event => setTitle(event.target.value)}/></div>
+    <div className="wp-field"><label htmlFor={`${fieldId}-instruction`}>How should this interface help the user?</label><textarea id={`${fieldId}-instruction`} className="wp-input" value={instruction}
       disabled={busy || activeJob} maxLength={16384} onChange={event => setInstruction(event.target.value)}
-      placeholder="For example, compare results, highlight findings and make pending decisions easy to review."/></label>
+      placeholder="For example, compare results, highlight findings and make pending decisions easy to review."/></div>
     <div className="wp-row">
       <button className="wp-button" type="button" disabled={busy || activeJob || !recoveryReady || !capabilities?.available || !instruction.trim() || !title.trim()}
         onClick={() => generate(false)}>Create interface</button>
@@ -198,15 +199,15 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
     </section>}
     {observerExpired && <p role="status">Progress observation stopped. The backend job keeps its own state.
       <button className="wp-button" type="button" onClick={() => setRefresh(value => value + 1)}>Refresh job status</button></p>}
-    <label className="wp-field">Saved interface<select className="wp-input" value={selectedUi} onChange={event => setSelectedUi(event.target.value)}>
+    <div className="wp-field"><label htmlFor={`${fieldId}-interface`}>Saved interface</label><select id={`${fieldId}-interface`} className="wp-input" value={selectedUi} onChange={event => setSelectedUi(event.target.value)}>
       <option value="">Choose an interface</option>{interfaces.filter(value => !!value.active_revision).map(value =>
         <option key={value.ui_id} value={value.ui_id}>{value.title}</option>)}
-    </select></label>
-    {!!selectedUi && <label className="wp-field">Saved revision<select className="wp-input" value={selectedRevision} onChange={event => setSelectedRevision(event.target.value)}>
+    </select></div>
+    {!!selectedUi && <div className="wp-field"><label htmlFor={`${fieldId}-revision`}>Saved revision</label><select id={`${fieldId}-revision`} className="wp-input" value={selectedRevision} onChange={event => setSelectedRevision(event.target.value)}>
       <option value="">Choose a revision</option>{revisions.map(value => <option key={value.manifest.revision_id} value={value.manifest.revision_id}>
         {value.manifest.revision_id === ui?.active_revision ? "Current · " : "Earlier · "}{value.manifest.title} · {value.created_at}
       </option>)}
-    </select></label>}
+    </select></div>}
     <div className="wp-row">
       <button className="wp-button" type="button" disabled={busy || !ui || !selected} onClick={() => void command(async () => {
         const compatibility = await client.compatibility(ui!.ui_id, selected!.manifest.revision_id);

@@ -1,0 +1,26 @@
+{
+  "console": [
+    "Failed to load resource: the server responded with a status of 409 (Conflict)"
+  ],
+  "pageErrors": [],
+  "failedResponses": [
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-1e7b6edb71e74b19a754b7fd2b88633a/present",
+      "status": 409
+    }
+  ],
+  "mutations": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-1e7b6edb71e74b19a754b7fd2b88633a/present",
+      "method": "POST"
+    }
+  ]
+}

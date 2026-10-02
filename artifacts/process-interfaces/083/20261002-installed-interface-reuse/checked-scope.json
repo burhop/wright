@@ -1,0 +1,37 @@
+{
+  "status": "bounded_native_browser_reuse_verified",
+  "branch": "codex/083-process-working-interfaces",
+  "wheel_sha256": "2a4ee17102c8518d818320bc56a0107225e44ee87154709e5cad761f452b674e",
+  "installed_runtime": "genuine private wheel installation; dependency-only cached site-packages without editable Wright .pth processing",
+  "bootstrap": "owning prepare_runtime_environment; browser wright.localhost:8032; loopback bind",
+  "compiler_available": false,
+  "model_generation": false,
+  "provider_autostart": false,
+  "physical_dispatch": false,
+  "review_responses": false,
+  "durable_ui_authoring_and_continuation_tables_changed": [],
+  "wheel_run": "00201b136bff4e4e91f097891d96e8e2",
+  "heat_run": "9cfe133164bd4e70b97be9a058d0feb8",
+  "browser_checks": {
+    "wheel": 10,
+    "thermal_analysis": 10
+  },
+  "component_tests": {
+    "files": 5,
+    "passed": 79,
+    "duration_seconds": 4.44
+  },
+  "python_tests": {
+    "passed": 22,
+    "duration_seconds": 4.41,
+    "scope": "static host, fixed declaration relocation/refusal, actual production stylesheet"
+  },
+  "limitations": "Copied isolated workspace and recorded waiting runs; no engineering re-execution or review response, no installed completed-result parity, clean Docker/browser qualification, full editor acceptance, release or human acceptance.",
+  "failed_attempts": [
+    "installed-native-workspace-005: protected checkout workspace",
+    "006: production CSS/field label",
+    "007: stale host-local declaration",
+    "008: browser arrived before serving"
+  ],
+  "live_host": "isolated native host 008, port 8032; no provider autostart; retained for subsequent qualification"
+}
