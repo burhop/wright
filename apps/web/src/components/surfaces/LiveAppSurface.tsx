@@ -283,6 +283,7 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode, managedPres
     <div
       ref={root}
       data-testid="live-app-surface"
+      className={managedPresentation ? "process-managed-surface" : undefined}
       style={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
       {!managedPresentation && <div data-focus-region="toolbar">
@@ -335,7 +336,7 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode, managedPres
           }}
         />
       </div>}
-      {managedPresentation && launches.panel && <div data-focus-region="toolbar">
+      {managedPresentation && launches.panel && <div className="process-surface-toolbar" role="group" aria-label="Interface view controls" data-focus-region="toolbar">
         <button type="button" data-testid="surface-focus" onClick={() => presenter.current?.focus()}>Focus interface</button>
         <button type="button" onClick={() => void close("panel")}>Close interface view</button>
       </div>}

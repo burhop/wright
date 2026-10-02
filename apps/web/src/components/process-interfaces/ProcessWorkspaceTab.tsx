@@ -14,6 +14,7 @@ import { CommonProcessView } from "./CommonProcessView";
 import { createInterfaceAuthoringClient } from "../../services/process-ui-authoring";
 import { InterfaceAuthoringPanel } from "./InterfaceAuthoringPanel";
 import { ProcessInterfaceView } from "./ProcessInterfaceView";
+import "./process-workspace.css";
 
 export interface ProcessWorkspaceTabProps {
   readonly tab: WorkingTab;
@@ -100,16 +101,17 @@ export function ProcessWorkspaceTab({
   return (
     <section
       data-testid="workspace-process-view"
+      className="process-workspace-view"
       data-process-path={process.source_path}
       data-run-id={tab.processView.run_id}
       aria-label={tab.name}
       style={{ width: "100%", minWidth: 0, minHeight: 0, overflow: "auto" }}
     >
       {onOpenDefinition && (
-        <div style={{ padding: "8px 16px" }}>
+        <div className="process-workspace-navigation">
           <button
             type="button"
-            className="recovery-button recovery-button--secondary"
+            className="process-workspace-button"
             data-testid="process-open-definition"
             onClick={() => onOpenDefinition(process)}
           >
@@ -117,11 +119,11 @@ export function ProcessWorkspaceTab({
           </button>
         </div>
       )}
-      {onOpenInterface && <div className="wp-row" style={{padding: "8px 16px"}}>
-        <button className="recovery-button recovery-button--secondary" type="button" onClick={() => setAuthoringShown(value => !value)}>
+      {onOpenInterface && <div className="process-workspace-navigation">
+        <button className="process-workspace-button" type="button" aria-expanded={authoringShown} onClick={() => setAuthoringShown(value => !value)}>
           {authoringShown ? "Hide interface controls" : "Create or choose interface"}
         </button>
-        {tab.processView.interface && showCommon && <button className="recovery-button recovery-button--secondary" type="button" onClick={() => setShowCommon(false)}>
+        {tab.processView.interface && showCommon && <button className="process-workspace-button" type="button" onClick={() => setShowCommon(false)}>
           Return to interface
         </button>}
       </div>}

@@ -244,7 +244,9 @@ describe("trusted process tab host", () => {
     render(<ProcessWorkspaceTab tab={tab} sessionId="session" onRunAttached={vi.fn()}
       onPrepareAnother={vi.fn()} onOpenInterface={onOpenInterface}/>);
     expect(screen.queryByTestId("authoring-host-fixture")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", {name: "Create or choose interface"})).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(screen.getByRole("button", {name: "Create or choose interface"}));
+    expect(screen.getByRole("button", {name: "Hide interface controls"})).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByTestId("authoring-host-fixture")).toBeInTheDocument();
     expect(onOpenInterface).not.toHaveBeenCalled();
     expect(mocks.createAuthoring).toHaveBeenCalledExactlyOnceWith(process, "session");

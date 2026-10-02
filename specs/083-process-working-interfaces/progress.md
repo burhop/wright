@@ -1401,3 +1401,16 @@ credential scanning. The original timeout cause remains unproved; do not claim
 an intermittent-startup fix. S09 visual inspection confirms sparse outer
 workspace styling still needs T052 work. T047 full original chain/gate/handoff,
 legacy migration and M5 remain pending. Goal stays active.
+
+T052 progress: process workspace controls now use local token-based styling
+instead of editor-only classes outside their scope. Managed process surfaces
+have spaced controls; ordinary provider surface behavior remains covered by
+existing tests. Authoring disclosure exposes expanded state and view controls
+form a named accessible group. All 22 focused host/interface/surface component
+tests pass. A fresh normal-workspace walkthrough verifies editor entry and
+actual saved-interface controls at 1440/1024/480 pixels, 44px button heights,
+visible 3px keyboard focus and no outer horizontal overflow. Five browser checks
+and report validation pass; S05 was visually inspected. Evidence is retained in
+`20261002-workspace-process-controls` and `evidence/workspace-acceptance.md`.
+Full T052 editor/zoom/accessibility/both-process acceptance is still pending;
+no start or review response occurred. Full goal remains active.

@@ -38,6 +38,7 @@ describe("existing presenter with native-owned process presentation", () => {
     expect(mocks.create).not.toHaveBeenCalled();
     expect(mocks.operate).not.toHaveBeenCalled();
     expect(screen.queryByTestId("generic-runtime-controls")).not.toBeInTheDocument();
+    expect(screen.getByRole("group", {name: "Interface view controls"})).toContainElement(screen.getByTestId("surface-focus"));
     view.unmount();
     act(() => vi.runOnlyPendingTimers());
     expect(close).toHaveBeenCalledTimes(1);
