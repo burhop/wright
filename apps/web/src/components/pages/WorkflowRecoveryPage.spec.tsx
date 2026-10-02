@@ -207,7 +207,7 @@ describe("workspace workflow page", () => {
   });
 
   it("preserves the historical result query as a read-only view and returns to its editor", async () => {
-    window.history.replaceState({}, "", "/?printDemoRun=runs%2Fmounting-bracket%2Fold.json");
+    window.history.replaceState({}, "", "/?workflowPath=workflows%2Fmounting-bracket.workflow.wflow&printDemoRun=runs%2Fmounting-bracket%2Fold.json");
     mocks.get.mockResolvedValue(document);renderPage();
     await screen.findByTestId("historical-result-fixture");
     expect(mocks.history.mock.calls.at(-1)![0]).toMatchObject({workflowPath: document.path, runLogPath: "runs/mounting-bracket/old.json"});
@@ -216,6 +216,14 @@ describe("workspace workflow page", () => {
     await screen.findByTestId("workflow-editor-fixture");
     expect(screen.getByRole("button", {name: "View saved result"})).toBeVisible();
     expect(mocks.update).not.toHaveBeenCalled();expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("does not attach another workflow's historical query to a restored tab", async () => {
+    window.history.replaceState({}, "", "/?workflowPath=workflows%2Fother.workflow.wflow&printDemoRun=runs%2Fother%2Fold.json");
+    mocks.get.mockResolvedValue(document);renderPage();
+    await screen.findByTestId("workflow-editor-fixture");
+    expect(mocks.history).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", {name: "View saved result"})).not.toBeInTheDocument();
   });
 
   it("opens the accepted saved process without saving, executing or opening another window", async () => {

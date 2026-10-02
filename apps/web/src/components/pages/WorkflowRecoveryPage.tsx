@@ -62,7 +62,9 @@ export function WorkflowRecoveryPage({
   const [fileActionError, setFileActionError] = useState("");
   const [fileActionPending, setFileActionPending] = useState(false);
   const [newWorkflowName, setNewWorkflowName] = useState("");
-  const initialPrintDemoRun = new URLSearchParams(window.location.search).get("printDemoRun");
+  const historicalQuery = new URLSearchParams(window.location.search);
+  const historicalWorkflow = historicalQuery.get("workflowPath")?.replace(/^\/+/, "");
+  const initialPrintDemoRun = historicalWorkflow === visiblePath ? historicalQuery.get("printDemoRun") : null;
   const [printDemoOpen, setPrintDemoOpen] = useState(Boolean(initialPrintDemoRun));
   useEffect(() => {
     if (initialPrintDemoRun) setPrintDemoOpen(true);

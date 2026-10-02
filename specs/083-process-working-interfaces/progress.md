@@ -1427,3 +1427,18 @@ corrected to create the retained source, preserving strict recorder checks.
 Ruff and protected/mixed-work preservation checks pass. Served legacy browser
 proof and loading the new API route remain pending. Vendor routes/startup/client
 methods and automation still need retirement; no T048/T049 completion claim.
+
+Served historical navigation now passes six checks on isolated retained wheel
+run a87d84b40a244bcaa035d9ed8308ac5a, preserving its failed state and eleven
+outputs. The first attempt exposed saved-tab restoration overriding the explicit
+workflow URL. WorkspacePanel now prioritizes the valid requested workflow, opens
+it without creating missing files, and the page attaches historical queries only
+to their named source. A second attempt opened the correct saved JSON but its
+test selector omitted the viewer's normalized leading slash; that failed report
+is retained separately. The corrected continuation passed, and source/run hashes
+are unchanged. Sixty-four focused component tests and all three walkthrough
+validators passed. Evidence is in 20261002-historical-result-navigation. API
+restart 009 loaded the read-only route without engineering replay; both second
+reviews remain unanswered. Original user workspace and installed historical
+navigation are untested, and active vendor code still requires retirement.
+T048/T049 and the full goal remain incomplete.

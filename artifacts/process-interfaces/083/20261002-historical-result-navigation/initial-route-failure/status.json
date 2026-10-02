@@ -1,0 +1,71 @@
+{
+  "title": "Historical wheel result through the workspace",
+  "summary": "Exact retained failed native run, saved outputs and file tabs; no active vendor panel or process replay.",
+  "overall": "blocked",
+  "updated": "2026-10-02T16:00:04.045Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the proof workspace and click Workflows."
+    },
+    {
+      "label": "History",
+      "instruction": "Open its saved workflow link with printDemoRun identifying the retained failed run."
+    },
+    {
+      "label": "Return",
+      "instruction": "Click Back to workflow, then View saved result."
+    },
+    {
+      "label": "Saved record",
+      "instruction": "Click Open saved run record and inspect its workspace file tab."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace entry",
+      "summary": "Normal workspace loads.",
+      "purpose": "Use normal workspace context.",
+      "action": "Open workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workflows visible.",
+      "actual": "Workflows visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Shared authoring entry",
+      "summary": "Established workflow editor remains; the active vendor demo entry is absent.",
+      "purpose": "Verify entry migration.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflow files"
+      ],
+      "expected": "Editor controls without active print demo.",
+      "actual": "Editor controls present; Print a part demo absent.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "History stopped",
+      "summary": "First unexpected historical result retained.",
+      "purpose": "Preserve failure evidence.",
+      "action": "Stop at unexpected state.",
+      "controls": [
+        "Historical result"
+      ],
+      "expected": "Exact saved history and workspace navigation.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Recorded run: a87d84b40a244bcaa035d9ed8308ac5a · failed', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('Recorded run: a87d84b40a244bcaa035d9ed8308ac5a · failed', { exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

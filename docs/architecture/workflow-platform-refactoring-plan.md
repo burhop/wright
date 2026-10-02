@@ -308,8 +308,15 @@ actions. Its native route is
 `GET /api/workspace/process-interfaces/historical-results` with `session_id`,
 `path` and `run_log_path`. It has no provider dependency or device monitoring.
 
-This is an implemented, focused-test-verified entry migration. Served historical
-browser verification remains pending. The original prototype files and existing
+This entry migration now has six passing served-workspace checks against an
+isolated retained native engineering run: exact source selection, eleven saved
+outputs, the original failure, editor return, history reopening and saved JSON
+navigation. An explicit workflow URL takes precedence over restored active tabs;
+other restored tabs cannot attach that workflow's history query. Both the initial
+route failure and a subsequent test-selector failure remain in
+`artifacts/process-interfaces/083/20261002-historical-result-navigation/`.
+The original user workspace and installed distributions were not tested here.
+The original prototype files and existing
 mixed worktree changes are preserved. Demo endpoint implementations, vendor
 startup restoration, client methods and repo-local automation remain retirement
 debt; they are not removed or made independent by this checkpoint. T048/T049

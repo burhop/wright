@@ -950,6 +950,18 @@ export function WorkspacePanel({
           setActiveTabPath(processLink.tab.path);
           return;
         }
+        if (
+          !hasProcessLink && canonicalWorkflowAvailable &&
+          workflowPathQuery !== null && requestedWorkflowPath &&
+          restoreSearch.current === search
+        ) {
+          // An explicit file link takes precedence over the last saved active
+          // tab. Reading history must not bootstrap a missing workflow.
+          openTransientTab({name: requestedWorkflowPath.split("/").at(-1)!,
+            path: requestedWorkflowPath, type: "workflow", createIfMissing: false});
+          setActiveTabPath(requestedWorkflowPath);
+          return;
+        }
         if (savedLayout.activeTabPath && !hasProcessLink) {
           const normalizedActiveTab = normalizeEditorTabPath(
             savedLayout.activeTabPath,
@@ -989,6 +1001,7 @@ export function WorkspacePanel({
     processLink,
     canonicalWorkflowAvailable,
     requestedWorkflowPath,
+    workflowPathQuery,
     workspaceFileSessionId,
     openTab,
     openTransientTab,
@@ -1752,7 +1765,7 @@ export function WorkspacePanel({
       name: requestedWorkflowPath.split("/").at(-1)!,
       path: requestedWorkflowPath,
       type: "workflow",
-      createIfMissing: true,
+      createIfMissing: workflowPathQuery === null,
     });
     if (surfaceLayout.mode === "narrow") {
       surfaceLayoutDispatch({
@@ -1767,6 +1780,7 @@ export function WorkspacePanel({
     surfaceLayoutDispatch,
     workspaceFileSessionId,
     requestedWorkflowPath,
+    workflowPathQuery,
   ]);
 
   const selectWorkspaceWorkflow = useCallback(

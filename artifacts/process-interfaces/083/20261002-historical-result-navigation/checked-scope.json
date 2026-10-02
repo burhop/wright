@@ -1,0 +1,15 @@
+{
+  "retained_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "recorded_state": "failed",
+  "retained_outputs": 11,
+  "legacy_query_shape_verified": true,
+  "read_only_history": true,
+  "source_and_failed_run_unchanged": true,
+  "original_user_workspace_tested": false,
+  "served_checks_passed": 6,
+  "failed_route_and_selector_attempts_retained": true,
+  "focused_tests_passed": 64,
+  "device_or_process_mutation": false,
+  "all_vendor_code_retired": false,
+  "full_feature_complete": false
+}
