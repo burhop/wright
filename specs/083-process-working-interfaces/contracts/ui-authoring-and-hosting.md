@@ -89,6 +89,19 @@ Routes relative to the existing workspace mount:
 | POST /process-interfaces/uis/{ui_id}/activate | Select compatible saved revision/rollback |
 | GET /process-interfaces/uis/{ui_id}/compatibility | Accepted process/current binding comparison |
 | POST /process-interfaces/uis/{ui_id}/present | Resolve saved artifact/grants and create workspace-tab presentation |
+| GET /process-interfaces/uis/{ui_id}/runtime-diagnostics | Read exact revision/surface runtime state and bounded existing logs under native process scope |
+
+Runtime diagnostics require `session_id`, `path`, `expected_storage_digest`,
+`revision_id` and `surface_id`. The native owner verifies the process/UI and
+immutable build provenance, then verifies the existing surface's principal,
+workspace, session, Wright ownership and exact revision manifest. Log requests
+accept `after_sequence >= 0` and `1 <= limit <= 100`; responses are `no-store`.
+This endpoint delegates to the existing runtime/log owners and performs no start,
+health probe, generation or process action. It does not change legacy generic
+surface principal fallbacks. If the captured buffer is unavailable, persisted
+runtime state remains readable with `logs: null` and
+`logs_unavailable: "SURFACE_LOGS_UNAVAILABLE"`; this is not evidence that the
+original process produced no logs.
 
 Preview is read-only against actual references or an explicitly labelled isolated
 fixture context. It cannot start work on mount. Saving activates presentation

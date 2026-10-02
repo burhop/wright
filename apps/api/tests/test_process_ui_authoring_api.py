@@ -164,6 +164,116 @@ def test_generation_status_events_idempotency_and_preview_are_native_scoped(case
     assert not (case.root / "first.txt").exists()
 
 
+@pytest.mark.parametrize("principal", ["user", None])
+def test_runtime_diagnostics_use_native_owner_without_starting_work(
+    case, monkeypatch, principal
+):
+    from workspace_service.surfaces.runtime_logs import RuntimeLogTail
+
+    case.state["principal"] = principal
+    value = generate(case)
+    view = preview(case, value)
+    manifest = value["preview"]["manifest"]
+    calls = []
+
+    def logs(instance_id, *, after_sequence, limit):
+        calls.append((instance_id, after_sequence, limit))
+        return RuntimeLogTail((), False, 0, after_sequence)
+
+    monkeypatch.setattr(case.manager, "logs", logs, raising=False)
+    starts_before = list(case.manager.calls)
+    response = case.client.get(
+        PREFIX + f"/uis/{manifest['ui_id']}/runtime-diagnostics",
+        params=case.query
+        | {
+            "revision_id": manifest["revision_id"],
+            "surface_id": view["descriptor"]["surfaceId"],
+            "after_sequence": 7,
+            "limit": 10,
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json()["revision_id"] == manifest["revision_id"]
+    assert response.json()["logs"]["next_sequence"] == 7
+    assert len(calls) == 1 and calls[0][1:] == (7, 10)
+    assert case.manager.calls == starts_before
+    assert len(case.author.engine.calls) == 1
+
+
+def test_runtime_diagnostics_deny_foreign_actor_and_interface(case, monkeypatch):
+    first = generate(case)
+    view = preview(case, first)
+    second = generate(case, "second-interface")
+    first_manifest = first["preview"]["manifest"]
+    second_manifest = second["preview"]["manifest"]
+
+    def forbidden_logs(*args, **kwargs):
+        pytest.fail("Foreign scope must not read runtime logs")
+
+    monkeypatch.setattr(case.manager, "logs", forbidden_logs, raising=False)
+    case.state["principal"] = "another-user"
+    foreign_actor = case.client.get(
+        PREFIX + f"/uis/{first_manifest['ui_id']}/runtime-diagnostics",
+        params=case.query
+        | {
+            "revision_id": first_manifest["revision_id"],
+            "surface_id": view["descriptor"]["surfaceId"],
+        },
+    )
+    assert foreign_actor.status_code == 403, foreign_actor.text
+    case.state["principal"] = "user"
+    foreign_interface = case.client.get(
+        PREFIX + f"/uis/{second_manifest['ui_id']}/runtime-diagnostics",
+        params=case.query
+        | {
+            "revision_id": second_manifest["revision_id"],
+            "surface_id": view["descriptor"]["surfaceId"],
+        },
+    )
+    assert foreign_interface.status_code == 403, foreign_interface.text
+
+
+@pytest.mark.parametrize("changes", [{"limit": 101}, {"after_sequence": -1}])
+def test_runtime_diagnostics_bound_log_requests(case, changes):
+    response = case.client.get(
+        PREFIX + "/uis/ui-example/runtime-diagnostics",
+        params=case.query
+        | {"revision_id": "revision-example", "surface_id": "surface-example"}
+        | changes,
+    )
+    assert response.status_code == 422
+
+
+def test_runtime_diagnostics_retain_state_when_captured_logs_are_unavailable(
+    case, monkeypatch
+):
+    from workspace_service.surfaces.live_app_manager import LiveAppManagerError
+
+    value = generate(case)
+    view = preview(case, value)
+    manifest = value["preview"]["manifest"]
+
+    def unavailable_logs(*args, **kwargs):
+        raise LiveAppManagerError(
+            "SURFACE_LOGS_UNAVAILABLE", "Captured buffer unavailable"
+        )
+
+    monkeypatch.setattr(case.manager, "logs", unavailable_logs, raising=False)
+    response = case.client.get(
+        PREFIX + f"/uis/{manifest['ui_id']}/runtime-diagnostics",
+        params=case.query
+        | {
+            "revision_id": manifest["revision_id"],
+            "surface_id": view["descriptor"]["surfaceId"],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["logs"] is None
+    assert response.json()["logs_unavailable"] == "SURFACE_LOGS_UNAVAILABLE"
+    assert response.json()["state"]
+
+
 def test_save_update_rollback_saved_open_and_close_use_exact_revisions(case):
     first = generate(case)
     first_view = preview(case, first)

@@ -2,7 +2,7 @@
 
 import asyncio
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Query, Request, Response
 from fastapi.responses import StreamingResponse
 
 from agent_adapters.base import AgentInvocationCapabilities
@@ -21,6 +21,9 @@ from api.schemas.process_interfaces import (
 from api.schemas.surfaces import SurfaceDescriptorResponse
 from core.process_validation import Digest, Identifier
 from core.process_interactions import Locator
+from core.surfaces.models import LiveAppSurfaceSource, LiveAppOwnership, SurfaceId
+from core.surfaces.errors import SurfaceError
+from workspace_service.surfaces.live_app_service import LiveAppControlError
 from workspace_service.process_interfaces.authoring import (
     NativeAuthoringScope,
     ProcessInterfaceAuthoring,
@@ -512,6 +515,106 @@ async def present_interface(
             run_id=body.run_id,
         )
         return _presentation_payload(value)
+    except (ProcessInterfaceError, KeyError, ValueError) as error:
+        raise _error(error) from error
+
+
+@router.get("/uis/{ui_id}/runtime-diagnostics")
+async def interface_runtime_diagnostics(
+    ui_id: Identifier,
+    request: Request,
+    response: Response,
+    session_id: Identifier,
+    path: Locator,
+    expected_storage_digest: Digest,
+    revision_id: Identifier,
+    surface_id: Identifier,
+    after_sequence: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=100),
+    service=Depends(get_workspace_service),
+    surfaces=Depends(get_process_ui_surfaces),
+):
+    """Read the existing runtime/log owners under exact native process/UI scope."""
+    response.headers["Cache-Control"] = "no-store"
+    application, author, process = _context(
+        request,
+        service,
+        ProcessSourceRequest(
+            session_id=session_id,
+            path=path,
+            expected_storage_digest=expected_storage_digest,
+        ),
+    )
+    try:
+        _ui(application, author.process_scope, process, ui_id)
+        job = application.interfaces.job_for_revision(
+            process.workspace_id, ui_id, revision_id
+        )
+        # Verify immutable provenance even for a built preview that never saved.
+        application.ui_revisions.preview_bundle(
+            author.process_scope, process, job.job_id
+        )
+        actor = _actor(request, author.process_scope, session_id)
+        descriptor = await surfaces.service.get(
+            actor=actor, surface_id=SurfaceId(surface_id)
+        )
+        if (
+            not isinstance(descriptor.source, LiveAppSurfaceSource)
+            or descriptor.source.ownership != LiveAppOwnership.WRIGHT_OWNED
+            or descriptor.source.manifest_id != f"process.{ui_id}.{revision_id}"
+        ):
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This runtime does not belong to the requested interface revision.",
+                "Inspect the exact interface in its owning process and workspace.",
+            )
+        runtime = await surfaces.live_apps.inspect(
+            actor=actor, surface_id=descriptor.surface_id
+        )
+        logs_unavailable = None
+        try:
+            logs = await surfaces.live_apps.logs(
+                actor=actor,
+                surface_id=descriptor.surface_id,
+                after_sequence=after_sequence,
+                limit=limit,
+            )
+        except LiveAppControlError as error:
+            if error.code != "SURFACE_LOGS_UNAVAILABLE":
+                raise
+            # Runtime state remains useful after restart, when the owner's
+            # bounded in-memory log buffer is no longer available.
+            logs = None
+            logs_unavailable = "SURFACE_LOGS_UNAVAILABLE"
+        return {
+            "process": process,
+            "ui_id": ui_id,
+            "revision_id": revision_id,
+            "surface_id": surface_id,
+            "state": runtime.state,
+            "generation": runtime.generation,
+            "failure": runtime.failure,
+            "last_health": runtime.last_health,
+            "logs": logs,
+            "logs_unavailable": logs_unavailable,
+        }
+    except SurfaceError:
+        raise _error(
+            ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This runtime is unavailable in the authorized interface scope.",
+                "Choose its exact saved interface in the owning workspace.",
+            )
+        ) from None
+    except LiveAppControlError as error:
+        raise _error(
+            ProcessInterfaceError(
+                "CAPABILITY_UNAVAILABLE",
+                "Wright could not read this managed interface's diagnostics.",
+                "Use the common working view and reconcile its managed runtime.",
+                details={"runtime_code": error.code},
+            )
+        ) from None
     except (ProcessInterfaceError, KeyError, ValueError) as error:
         raise _error(error) from error
 

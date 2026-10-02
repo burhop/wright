@@ -1359,3 +1359,17 @@ still waits with no native repair/slice. This proves preservation during the
 failed open, not successful reuse. Read-only managed-runtime inspection records
 failed startup instances; their generic surface-log route returned scope 404,
 so inspect the descriptor/instance mapping before claiming diagnostic readback.
+
+Resumed after the user's pause. Native process UI ownership uses
+`local-control-plane` for the authenticated local token, whereas the legacy
+generic surface route defaults to `local-user`. Preserve both ownership
+histories; add a read-only exact process/UI/revision runtime-diagnostics route
+delegating to existing owners. Thirteen focused API tests pass, including local
+fallback ownership, foreign actor/interface denial, bounded log requests and
+state retention when captured logs are unavailable. Ruff checks pass. This is
+controlled route verification, not live diagnostic readback or successful saved
+UI reuse. A separate fixed static-runtime import took 2.253 seconds; that single
+measurement does not explain the retained 30-second startup timeout. The current
+API still requires a scoped restart to load this route; old in-memory buffers
+are not persisted and may be unavailable afterward. No engineering replay,
+review response or physical action was issued. Full goal remains active.
