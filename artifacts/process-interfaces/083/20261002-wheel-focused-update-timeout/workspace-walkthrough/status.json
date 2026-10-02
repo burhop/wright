@@ -1,0 +1,220 @@
+{
+  "title": "Focused wheel interface correction and managed reload failure",
+  "summary": "Actual configured-model update fixes result grouping and saves. A stronger working reload check fails with a managed readiness timeout; completion is not claimed.",
+  "overall": "blocked",
+  "updated": "2026-10-02T14:57:58.067Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the isolated workspace, click Workflows, then open the retained wheel workflow."
+    },
+    {
+      "label": "Open run",
+      "instruction": "Click Use saved process and open the recorded failed-run link."
+    },
+    {
+      "label": "Preview update",
+      "instruction": "Open the recorded update preview-tab link, then click Create or choose interface and Open preview."
+    },
+    {
+      "label": "Check grouping",
+      "instruction": "Inspect four geometry results, two slicing results and five inspection results."
+    },
+    {
+      "label": "Save update",
+      "instruction": "Click Create or choose interface, then Save interface."
+    },
+    {
+      "label": "Stopping point",
+      "instruction": "Click Open saved interface and reload. Stop if the managed interface is unavailable; leave engineering actions untouched."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Focus-wheel comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the wheel workflow",
+      "summary": "The exact accepted wheel workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow"
+      ],
+      "expected": "The accepted wheel workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Heat workflow diagram",
+      "summary": "The original wheel assignment opens with its connected review, CAD and analysis stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted wheel workflow file.",
+      "controls": [
+        "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved heat source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual wheel run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded wheel run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing wheel run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Built wheel interface recovered",
+      "summary": "Wright restores the existing actual-model job and its built revision.",
+      "purpose": "Reconcile authoring without regenerating.",
+      "action": "Open the recorded preview tab and click Create or choose interface.",
+      "controls": [
+        "Create or choose interface",
+        "Open preview"
+      ],
+      "expected": "Existing preview ready.",
+      "actual": "Existing built preview restored.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Retained wheel evidence in preview",
+      "summary": "Generated preview reads actual retained engineering results in a Wright workspace tab.",
+      "purpose": "Prove actual results in the managed preview.",
+      "action": "Click Open preview.",
+      "controls": [
+        "Open preview"
+      ],
+      "expected": "Read-only preview with actual result cards.",
+      "actual": "Preview connected with actual result cards.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Wheel interface saved",
+      "summary": "Exact previewed build is saved as a reusable interface.",
+      "purpose": "Persist the actual model-authored asset.",
+      "action": "Click Save interface.",
+      "controls": [
+        "Save interface",
+        "Open saved interface"
+      ],
+      "expected": "Interface saved.",
+      "actual": "Exact revision saved.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Saved open requested; working state not yet proved",
+      "summary": "The saved-open control was clicked; connection alone did not distinguish the preceding preview from the new working presentation.",
+      "purpose": "Verify saved workspace presentation.",
+      "action": "Click Open saved interface.",
+      "controls": [
+        "Open saved interface"
+      ],
+      "expected": "Saved view connected.",
+      "actual": "Open requested; subsequent stronger reload verification failed.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Entry stopped",
+      "summary": "The normal workspace entry did not meet the expected state.",
+      "purpose": "Retain the first stopping point.",
+      "action": "Stop at the unexpected entry state.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workspace and established editor available.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByText('Connected to Wright.', { exact: true })\nExpected: visible\nTimeout: 120000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 120000ms\n  - waiting for locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByText('Connected to Wright.', { exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

@@ -1333,3 +1333,29 @@ Public local evidence `20261002-wheel-live-interface` includes unchanged raw and
 annotated screenshots plus a validated human-repeatable walkthrough. No native
 replay, new engineering run or review response was issued. Focused wheel update,
 second-run reuse, original gate/handoff and remaining M5 are still pending.
+
+Focused wheel update: actual Wright model job
+`job-97f5219a3d74414685cc3f30347a8345` saved revision
+`revision-415f9e4911f0447199dd6fbd4bbc46c0`, correcting output grouping to the
+public `step_id`. Preview checks prove four geometry, two slicing and five
+inspection cards. A stronger working/reload check failed with
+`SURFACE_READINESS_TIMEOUT`; the earlier connection-only saved-open check was
+too weak to prove a writable working presentation. Preserve failed evidence in
+`20261002-wheel-focused-update-timeout`. Native ErrorEnvelope Reasons now reach
+the UI correctly; all 23 targeted authoring-client checks pass. The public API
+instructions document actual output fields.
+
+New isolated run `00201b136bff4e4e91f097891d96e8e2` passed readiness and waits
+at its unanswered geometry-basis review, with no downstream native work. One
+labelled saved-build reuse continuation confirms the common waiting view but
+also fails opening preparation. Baseline saved files and authoring records are
+retained. Inspect managed startup before another UI attempt; do not claim saved
+reuse or goal completion. Full tasks, original gate/handoff and M5 remain pending.
+
+Reuse failure is also retained in `20261002-wheel-reuse-readiness-timeout` with
+a validated walkthrough. Actual post-browser comparison proves both authoring/
+revision records and saved source/bundle file hashes unchanged. The second run
+still waits with no native repair/slice. This proves preservation during the
+failed open, not successful reuse. Read-only managed-runtime inspection records
+failed startup instances; their generic surface-log route returned scope 404,
+so inspect the descriptor/instance mapping before claiming diagnostic readback.

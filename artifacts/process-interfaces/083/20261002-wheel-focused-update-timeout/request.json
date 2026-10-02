@@ -1,0 +1,10 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+  "expected_storage_digest": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+  "request_id": "083-wheel-tailored-ui-update-002",
+  "title": "Focus-wheel preparation review",
+  "instruction": "Make one focused correction to the saved wheel interface. Its result grouping incorrectly reads output.block_id via an unsafe unknown cast, causing all actual outputs to appear under Other process results while engineering stage sections claim no results. The public OutputRef contract exposes step_id, port_id, result_id, role, title, representations, assessments and supported_viewers. Use output.step_id directly for each existing GEOMETRY/SLICING/INSPECTION grouping. Remove the unknown/block_id cast entirely. Preserve other public controls, manifests, capabilities, bindings, all actual cards and honest engineering limitations. Retain WorkingControls and current snapshot/readOnly contract. Add no executor or hardcoded measurements. Keep App.tsx below 100 lines. Return required source/manifest JSON only.",
+  "ui_id": "ui-1e7b6edb71e74b19a754b7fd2b88633a",
+  "base_revision": "revision-2bf6d4d49c224290a0416503a627d0e7"
+}

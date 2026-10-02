@@ -38,6 +38,10 @@ digest. Never choose an arbitrary first action as dispatch authority.
 
 ResultCard displays exact outputs, representations and assessment currentness.
 Provider success, a valid file and a preview are separate from compliance.
+Each snapshot output is an `OutputRef`: use its `step_id` and `port_id` for
+stage grouping, plus `result_id`, `role`, `title`, `representations`,
+`assessments` and `supported_viewers` for presentation. It has no `block_id`
+field. Do not cast outputs to unknown shapes to bypass the public types.
 Use supported viewers only; show safe inspection/download fallback otherwise.
 ProgressPanel displays actual state/observations and reported freshness. Closing
 the app disposes observers, not the run. Abort pending reads when context changes

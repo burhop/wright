@@ -95,7 +95,10 @@ export function createInterfaceAuthoringClient(reference: ProcessRef, sessionId:
     let value: unknown;
     try { value = JSON.parse(raw); } catch { throw new TypeError("Interface response is not valid JSON"); }
     if (!response.ok) {
-      const detail = record(value).detail;
+      const envelope = record(value);
+      // Native API exception handlers publish ErrorEnvelope.details; direct
+      // FastAPI transports may still use detail. Both carry a checked Reason.
+      const detail = envelope.details ?? envelope.detail;
       if (detail && typeof detail === "object") {
         const reason = record(detail).reason;
         if (reason) throw new ProcessClientError(assertContract("Reason", reason));

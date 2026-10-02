@@ -36,6 +36,26 @@ const client = () => createInterfaceAuthoringClient(process, "owned-session");
 describe("native interface authoring client", () => {
   beforeEach(() => {vi.clearAllMocks(); host.validateIssuedPreviewUrl.mockImplementation(value => value);});
 
+  it.each(["details", "detail"])("preserves the backend actionable reason from %s", async key => {
+    const reason = {code: "CAPABILITY_UNAVAILABLE", message: "The managed interface is not ready.",
+      correction: "Open the common view and inspect managed runtime diagnostics."};
+    host.fetch.mockResolvedValue(json({error_code: reason.code, message: reason.message,
+      [key]: {reason, diagnostic: {runtime_code: "SURFACE_READINESS_TIMEOUT"}}}, 503));
+    try {
+      await client().getJob("job-one");
+      expect.fail("Unavailable job must reject");
+    } catch (error) {
+      expect(interfaceAuthoringReason(error)).toEqual(reason);
+      expect(interfaceAuthoringReason(error)).not.toHaveProperty("diagnostic");
+    }
+  });
+
+  it("does not trust malformed reasons or copy raw API diagnostics", async () => {
+    host.fetch.mockResolvedValue(json({details: {reason: {code: "SECRET", message: "PRIVATE"},
+      diagnostic: {secret: "PRIVATE"}}}, 503));
+    await expect(client().getJob("job-one")).rejects.toThrow();
+  });
+
   it("uses native host authentication and preserves one explicit generation request identity", async () => {
     host.fetch.mockImplementation(async () => json(job));
     const request = {request_id: "request-one", instruction: "Show useful findings", title: "Comparison"};

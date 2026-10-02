@@ -92,3 +92,5 @@ artifacts/process-interfaces/083/20261002-wheel-isolated-assessments/** -text -w
 # Retained model reports and independent assessment preserve exact evidence bytes.
 artifacts/process-interfaces/083/20261002-wheel-retained-reports/** -text
 artifacts/process-interfaces/083/20261002-wheel-live-interface/** -text
+artifacts/process-interfaces/083/20261002-wheel-focused-update-timeout/** -text
+artifacts/process-interfaces/083/20261002-wheel-reuse-readiness-timeout/** -text

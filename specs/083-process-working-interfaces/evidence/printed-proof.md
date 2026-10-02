@@ -348,3 +348,35 @@ corrected to the actual recovery/save journey while raw screenshots remain
 unchanged. The generated source and reusable asset are real, but focused update,
 second-run reuse and full original-gate/handoff proof remain pending. This does
 not make the failed native consumer successful or grant engineering acceptance.
+
+## Focused model update and stronger saved-open check
+
+The initial source grouped outputs by a nonexistent `block_id`. Actual outputs
+use `step_id`; cards were retained in a fallback group but stage composition was
+wrong. Wright job `job-97f5219a3d74414685cc3f30347a8345` generated and saved
+revision `revision-415f9e4911f0447199dd6fbd4bbc46c0` using the configured model.
+Its actual managed preview now groups four geometry, two slicing and five
+inspection results correctly. No generated source patch was injected locally.
+
+The stronger saved working/reload check failed with backend diagnostic
+`SURFACE_READINESS_TIMEOUT`. The preceding connection-only saved-open assertion
+could still observe the preview. The earlier eleven checks remain retained, but
+that assertion alone does not establish writable working state or reload.
+Preview rendering and explicit save are proved; complete working open/reuse is
+pending. Failed walkthrough, exact update source/build and bounded native error
+are in `artifacts/process-interfaces/083/20261002-wheel-focused-update-timeout/`.
+
+The UI client now reads strictly validated Reasons from native ErrorEnvelope
+`details` as well as direct FastAPI `detail`, preserving actionable messages
+without copying raw diagnostics. All 23 authoring-client checks pass using
+`node ../../node_modules/vitest/vitest.mjs run src/services/process-ui-authoring.spec.ts --reporter=dot`
+from `apps/web`. The public authoring docs describe OutputRef's real fields.
+Managed startup remains a separate issue.
+
+Second isolated run `00201b136bff4e4e91f097891d96e8e2` passed fresh readiness,
+produced its geometry basis and waits at the declared review. No response or
+downstream repair/slicing occurred. One labelled saved-build browser continuation
+also failed opening preparation after a managed startup error, while verifying
+the second run's common waiting view. No further blind UI retry is planned;
+inspect the actual managed runtime first. Source/build and authoring-record
+baselines were saved before reuse. Heat's second review remains untouched.
