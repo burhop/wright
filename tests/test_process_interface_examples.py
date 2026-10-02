@@ -351,6 +351,94 @@ def test_printed_missing_tool_never_stages_attempt(printed_configuration):
     assert not (workspace / "process-proofs").exists()
 
 
+def configured_geometry(bindings, root, module):
+    values = {
+        "basis": {
+            "proposed_geometry": {"body_diameter_mm": 38},
+            "engineering_acceptance": False,
+        },
+        "construction": {"code": "print('fixture construction only')"},
+        "repair": {"code": "print('fixture repair only')"},
+    }
+    bindings["geometry_operation_files"] = {}
+    for role, value in values.items():
+        path = root / (role + "-provider-input.json")
+        path.write_text(json.dumps(value), encoding="utf-8")
+        bindings["geometry_operation_files"][role] = {
+            "path": str(path),
+            "sha256": module.definition.sha(path.read_bytes()),
+        }
+
+
+def test_qualified_geometry_uses_existing_scoped_tasks_and_preserves_review_gate(
+    printed_configuration,
+):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    report = module.prepare(workspace, "qualified-inputs", tools, bindings)
+    source = (workspace / report["source_path"]).read_text(encoding="utf-8")
+    plan = compile_prompt_workflow(source)
+    assert len(plan.steps) == 11
+    for prefix in ("create_mesh", "repair_measure_orient"):
+        step = next(s for s in plan.steps if s.id.startswith(prefix))
+        assert step.server_id == "fixture-geometry" and step.agent_task is True
+        assert step.timeout_seconds == 360
+        assert step.max_tool_calls == 2
+        assert "Use the code argument in qualified_operation" in step.prompt
+        assert any("provider_arguments_json" in source for _, source in step.references)
+    basis = next(s for s in plan.steps if s.id.startswith("define_geometry_basis"))
+    assert "Retain its numeric construction choices exactly" in basis.prompt
+    assert source.count('"action_kind":"local_review"') == 2
+    validator = next(s for s in plan.steps if s.id.startswith("validate_outputs"))
+    profile = ValidatorConfiguration.model_validate(validator.validation).load(
+        str(workspace)
+    )
+    assert (
+        profile.id == "printed-replacement-part-01-full" and len(profile.checks) == 18
+    )
+    assert profile.checks[-1].constraint.operator == "review"
+    repair = next(s for s in plan.steps if s.id.startswith("repair_measure_orient"))
+    assert len(repair.file_dependencies) == 1
+    for role in ("basis", "construction", "repair"):
+        original = Path(bindings["geometry_operation_files"][role]["path"]).read_bytes()
+        assert any(
+            (workspace / item["path"]).read_bytes() == original
+            for item in report["input_files"]
+        )
+    assert not list((workspace / report["output_root"]).iterdir())
+
+
+@pytest.mark.parametrize("fault", ["missing", "hash", "accepted", "oversize"])
+def test_qualified_geometry_defects_block_before_staging(printed_configuration, fault):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    if fault == "missing":
+        del bindings["geometry_operation_files"]["repair"]
+    elif fault == "hash":
+        bindings["geometry_operation_files"]["construction"]["sha256"] = "f" * 64
+    else:
+        role = "basis" if fault == "accepted" else "repair"
+        reference = bindings["geometry_operation_files"][role]
+        path = Path(reference["path"])
+        path.write_text(
+            json.dumps(
+                {
+                    "proposed_geometry": {"body_diameter_mm": 38},
+                    "engineering_acceptance": True,
+                }
+            )
+            if fault == "accepted"
+            else "x" * 65537,
+            encoding="utf-8",
+        )
+        reference["sha256"] = module.definition.sha(path.read_bytes())
+    with pytest.raises(ValueError):
+        module.prepare(workspace, "invalid-geometry-input", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
 def test_printed_profile_hash_is_required_before_staging(printed_configuration):
     workspace, bindings, tools = printed_configuration
     bindings["profiles"]["process"]["sha256"] = "f" * 64

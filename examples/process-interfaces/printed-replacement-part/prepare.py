@@ -15,9 +15,16 @@ definition = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(definition)
 REPO = definition.REPO
 
+provider_spec = importlib.util.spec_from_file_location(
+    "printed_provider_inputs", Path(__file__).with_name("provider_inputs.py")
+)
+provider_inputs = importlib.util.module_from_spec(provider_spec)
+provider_spec.loader.exec_module(provider_inputs)
+
 
 def prepare(workspace, attempt, tools, bindings):
     workspace = Path(workspace).resolve(strict=True)
+    qualified_geometry = provider_inputs.qualified_geometry_inputs(bindings)
     destination = bindings["simulator_destination"]
     parsed = urlsplit(destination)
     if (
@@ -170,6 +177,18 @@ def prepare(workspace, attempt, tools, bindings):
         " Keep the entire response below 3000 characters. Return only one valid JSON object, with no markdown, comments or trailing commas. Use these keys: supplied_requirements (short object), proposed_geometry (numeric dimensions plus short construction descriptions for scallops, hub, dots, rounds, socket and orientation), basis_review (short list of proposed choices requiring this review), remaining_verification (short list), engineering_acceptance (false). Expressions must be JSON strings; do not put equations in numeric values. Do not repeat input documents or provide lengthy rationale.",
         "geometry-basis.json",
     )
+    if qualified_geometry:
+        raw, original = qualified_geometry["basis"]
+        retained_basis = flow.input_bytes(
+            "configured-geometry-basis.json", raw, original=original
+        )
+        flow.reference(retained_basis, basis, "supplied_geometry_basis")
+        basis["fields"]["prompt"] += (
+            " This run supplies an explicit prior proposed geometry basis. Retain its numeric "
+            "construction choices exactly instead of proposing replacements. It remains a "
+            "proposal for this run's declared review, not engineering acceptance. Actual "
+            "geometry and all original mandatory checks still follow."
+        )
     for name, reference in refs.items():
         flow.reference(
             reference,
@@ -198,6 +217,21 @@ def prepare(workspace, attempt, tools, bindings):
         calls=2,
         timeout=360,
     )
+    if qualified_geometry:
+        raw, original = qualified_geometry["construction"]
+        invocation = flow.input_bytes(
+            "construction-provider-arguments.json", raw, original=original
+        )
+        flow.reference(invocation, create, "qualified_operation")
+        create["fields"]["prompt"] += (
+            " Use the code argument in qualified_operation as the supplied native construction "
+            "recipe. Submit it unchanged to execute_blender_code; do not invent another "
+            "modelling algorithm or replace its dimensions. Its export path and owned names "
+            "are configured for this fresh run. Keep actual tool observations and failures. "
+            "This is reuse of a prior qualified operation, not new AI-authored geometry code "
+            "or proof of compliance. If its input design differs from reviewed_basis, stop "
+            "with a technical mismatch before executing it."
+        )
     flow.reference(basis_result, create, "reviewed_basis")
     flow.reference(requirements_ref, create, "requirements")
     flow.reference(guidance_ref, create, "qualified_application_guidance")
@@ -217,6 +251,20 @@ def prepare(workspace, attempt, tools, bindings):
         calls=2,
         timeout=360,
     )
+    if qualified_geometry:
+        raw, original = qualified_geometry["repair"]
+        invocation = flow.input_bytes(
+            "repair-provider-arguments.json", raw, original=original
+        )
+        flow.reference(invocation, repair, "qualified_operation")
+        repair["fields"]["prompt"] += (
+            " Use the code argument in qualified_operation as the supplied native inspection/repair "
+            "recipe. Submit it unchanged to execute_blender_code rather than generating another "
+            "algorithm. It consumes this run's actual source file and uses uniquely owned "
+            "objects and a separate preview scene. Retain the real measurements, exported "
+            "file verification and all unresolved feature/support/physical limits. A provider "
+            "error remains explicit; never claim an absent output."
+        )
     actual_source_port = flow.reference(
         create["id"] + ".source_mesh", repair, "actual_source", "workspace_file"
     )

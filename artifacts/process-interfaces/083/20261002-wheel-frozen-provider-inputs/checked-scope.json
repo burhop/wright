@@ -1,0 +1,40 @@
+{
+  "scope": "Optional pinned native-operation inputs over existing scoped AI tasks, before actual native execution proof",
+  "controlled_tests": 39,
+  "stage_count": 11,
+  "original_full_checks": 18,
+  "actual_provider_guard_passed_before_source_acceptance": true,
+  "original_source_and_failed_runs_preserved": true,
+  "recipe_adaptations_disclosed": true,
+  "actual_model_recipe_compliance_proved": false,
+  "native_outputs_proved": false,
+  "full_assessment_proved": false,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "files": {
+    "preparation-inspection-tests.xml": {
+      "sha256": "c42cdb27ba304c621ab541476b54e44eafb40e6a291354e39596a3142c68f020",
+      "bytes": 14102
+    },
+    "provider-guard-preflight.json": {
+      "sha256": "ee1d78581610e178edec6611a6e3c44bd46304c300626d1264a96dde7e47c536",
+      "bytes": 1038
+    },
+    "recipe-lineage.json": {
+      "sha256": "97df6c105ef54ffd44a4b09369b721106bba77ad189f55b91f691e04faea654d",
+      "bytes": 1004
+    },
+    "accepted-source.json": {
+      "sha256": "f799c0c66e84b6d6ac49bae6e5bbee177976ae848e658d9dd02aa266b781737d",
+      "bytes": 82554
+    },
+    "prepared.workflow.wflow": {
+      "sha256": "6dbcc00856e4edf8d055818faf607297d235bf81f8fabcfd26aa3965da912956",
+      "bytes": 77022
+    },
+    "failed-prior-preflight.json": {
+      "sha256": "24654a4cb7290283991f9dbbfba49911b976d3b19f6a30f76b73c73a6abffb55",
+      "bytes": 290
+    }
+  }
+}

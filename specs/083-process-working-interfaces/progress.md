@@ -1252,3 +1252,20 @@ and revision records and saved source/bundle bytes are unchanged. No Start or
 review response was submitted. T046 is complete for its saved-workflow/comparison
 scope; T047 and the full feature remain incomplete. Evidence:
 `artifacts/process-interfaces/083/20261002-heat-preparation-and-saved-reuse/`.
+
+Wheel preparation now optionally freezes hash-pinned provider operation inputs
+and a retained proposed design. It uses the existing scoped AI/MCP tasks and
+native file dependencies, not a new executor. All eleven stages, original
+assignment/profiles, two-call bounds, declared reviews and full eighteen-check
+gate remain. Thirty-nine preparation/inspection checks and Ruff pass; fixtures
+establish declaration/hash/failure behavior only. Actual submitted code still
+needs comparison against the frozen inputs and actual outputs in the live proof.
+
+The first private adaptation had a syntax defect caught by read-only provider
+validation while run `6619c16a00aa43ee8156b8b6c2d02f14` was still at its basis
+review; no native operation or decision was submitted. Its bytes remain intact.
+Fresh adaptation 014 passed the actual installed provider guard for both code
+inputs before source acceptance/start and requalified the exact owned native
+session. Run `685147075ac94ca3b69fe0d208548af9` has one accepted start identity;
+its normal workspace waiting/reload walkthrough is running. Native geometry,
+slicing, full assessment and generated wheel interface remain pending.

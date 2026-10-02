@@ -196,3 +196,25 @@ assessment, then prove common and actual-default-model generated interfaces,
 focused refinement and saved reuse. Full preparation/review controls, migration
 and installed workspace browser checks also remain pending. No printer/supplier
 dispatch, engineering acceptance or protected campaign change is claimed.
+
+### Frozen provider-operation inputs
+
+The last regenerated construction failed topology and then the provider guard;
+it remains failed, with no exported source STL. Repeating that same strategy
+does not qualify downstream preparation. The example now optionally freezes a
+prior proposed basis and hash-pinned construction/repair arguments. The normal
+scoped AI/MCP tasks receive them with explicit unchanged-submission instructions;
+this is not a deterministic executor or a new provider implementation. Retain
+and compare actual tool arguments and actual geometry in the live demonstration.
+
+Thirty-nine controlled preparation/inspection checks pass, with the original
+eleven stages, profiles, two-call bounds, deliberate reviews and all eighteen
+mandatory checks retained. Invalid/missing/unpinned/oversized inputs block before
+staging. The first private preview-scene adaptation contained an indentation
+error, caught by the actual provider guard before any native submission; its
+run remains at the basis review. Corrected fresh inputs passed that guard before
+source acceptance/start. The captured source, qualification, recipe lineage,
+test report and precise limits are under
+`artifacts/process-interfaces/083/20261002-wheel-frozen-provider-inputs/`.
+Native outputs, model compliance, final assessment and tailored wheel UI remain
+unproved by this preparation milestone. T045/T047 remain incomplete.

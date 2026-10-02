@@ -87,6 +87,29 @@ original complete-file parser remains strict. Wright has no vendor command table
 
 ## Intended working interface
 
+### Optional frozen native operation inputs
+
+For an isolated repeat of a previously inspected modelling approach, bindings
+may supply `geometry_operation_files`, with exactly `basis`, `construction` and
+`repair`. Each entry contains a file `path` and its `sha256`. The basis is a JSON
+proposal with `proposed_geometry` and `engineering_acceptance: false`; each
+operation is the selected geometry provider's JSON `{"code": "..."}` argument.
+Files must be bounded and pinned before preparation. Configure output paths and
+uniquely owned names for the fresh attempt before pinning them.
+
+The existing scoped AI tasks receive those frozen inputs and are instructed to
+use the supplied operations unchanged. They do not run locally in Wright's
+preparer. This does not make model compliance deterministic: retain and compare
+actual submitted tool arguments, outputs and measurements in the live proof.
+Keep provider qualification and any recipe adaptations explicit. The default
+AI modelling path remains available when these inputs are absent.
+
+The supplied basis still waits at this run's declared review; all original
+assignment, profiles, native file dependencies, two-call bounds and full 18-check
+validation remain. A recipe hash is not measured compliance or engineering
+acceptance. This mechanism supplies provider inputs; it adds no device protocol,
+local code executor or new process runner.
+
 Present the original image and requirements, preparation readiness and current
 tool operation. Let the user inspect actual source/repaired geometry, nominal
 layered toolpaths, material/profile correspondence, measured findings and declared

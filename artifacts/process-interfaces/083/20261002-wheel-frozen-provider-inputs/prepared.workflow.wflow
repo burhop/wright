@@ -1,0 +1,963 @@
+workflow live_default_model_014
+  name: "3D Printed Replacement Part"
+  purpose: "Create and verify a dimensioned printable replacement from an original image, then stop for exact printer-transfer authorization."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+input image_and_scale_live_default_model_014
+  name: "Provide original image and reference dimension"
+  purpose: "Bind the visual reference to an explicit physical scale and retain its rights record."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"replacement_image_out","name":"Original image","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Attributed source image with a declared scale reference."}]
+  instructions: "Provide the attributed source image, identify one measurable reference, and state its value in millimetres."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/concept.png","reference_dimension_mm":38.0,"units":"mm"}
+  tool: null
+  reusable_step: null
+end
+
+task create_mesh_live_default_model_014
+  name: "Create source mesh"
+  purpose: "Generate a mesh from the image without treating visual interpretation as dimensional proof."
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"mesh_source_image_in","name":"Scaled source image","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Image and scale reference used to generate this mesh."},{"key":"create_mesh_live_default_model_014_qualified_operation","name":"create mesh live default model 014 qualified operation","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_live_default_model_014_reviewed_basis","name":"create mesh live default model 014 reviewed basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_live_default_model_014_requirements","name":"create mesh live default model 014 requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_live_default_model_014_qualified_application_guidance","name":"create mesh live default model 014 qualified application guidance","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_live_default_model_014_original_reference","name":"create mesh live default model 014 original reference","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"create_mesh_live_default_model_014_result","name":"create mesh live default model 014 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"source_mesh","name":"source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/live-default-model-014/outputs/source-model-report.json","file_policy":"overwrite","authoring_template":"mcp-task","mcp_server":"proof-083-blender-wheel-001","max_tool_calls":2,"timeout_seconds":360,"expected_files":"process-proofs/printed-replacement-part/live-default-model-014/outputs/source_mesh.stl","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval.","expected_file_ports":{"source_mesh":"process-proofs/printed-replacement-part/live-default-model-014/outputs/source_mesh.stl"}}
+  tool: null
+  reusable_step: null
+  prompt: "Use the existing Blender execute_blender_code tool to construct the reviewed focus wheel from the actual supplied image and dimensions. Wright runs this stage only after consuming its declared exact-subject basis review. The reviewed_basis input remains the unchanged proposed design; use the design released by that order barrier rather than treating its earlier proposal status as a new runtime question. A labelled integration-test decision permits digital construction only and is not human engineering acceptance; retain final measured-feature/support/package review. Work only with uniquely named owned objects and actual geometry. Export binary STL in explicit millimetres at 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-live-005\\\\process-proofs\\\\printed-replacement-part\\\\live-default-model-014\\\\outputs\\\\source_mesh.stl'. Preserve the complete original feature requirements; do not substitute a cylinder/cube or infer verified fit. Keep <=80000 triangles. Return compact actual construction observations and unresolved physical limits; Wright retains the exact tool call. Do not request an undeclared review or missing construction choice. If the released design cannot be implemented within original limits, return an explicit blocked technical outcome instead of making up evidence. Use guarded bpy/bmesh/mathutils modelling and Blender STL export only: no open/pathlib/os/sys/hashlib/runpy/subprocess/network/handlers/timers/drivers/addon operations or raw filesystem calls. Do not overwrite unrelated objects. Geometry failure is explicit; no fabricated export or verdict. Use the code argument in qualified_operation as the supplied native construction recipe. Submit it unchanged to execute_blender_code; do not invent another modelling algorithm or replace its dimensions. Its export path and owned names are configured for this fresh run. Keep actual tool observations and failures. This is reuse of a prior qualified operation, not new AI-authored geometry code or proof of compliance. If its input design differs from reviewed_basis, stop with a technical mismatch before executing it."
+end
+
+task repair_measure_orient_live_default_model_014
+  name: "Repair, measure, and orient mesh"
+  purpose: "Produce a manifold, correctly scaled mesh that fits the P1S build volume."
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"repair_measure_orient_live_default_model_014_qualified_operation","name":"repair measure orient live default model 014 qualified operation","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repair_measure_orient_live_default_model_014_actual_source","name":"repair measure orient live default model 014 actual source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repair_measure_orient_live_default_model_014_construction_report","name":"repair measure orient live default model 014 construction report","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repair_measure_orient_live_default_model_014_requirements","name":"repair measure orient live default model 014 requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repair_measure_orient_live_default_model_014_qualified_application_guidance","name":"repair measure orient live default model 014 qualified application guidance","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"repair_measure_orient_live_default_model_014_result","name":"repair measure orient live default model 014 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repaired_mesh","name":"repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"mesh_preview","name":"mesh preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/live-default-model-014/outputs/mesh-repair-report.json","file_policy":"overwrite","authoring_template":"mcp-task","mcp_server":"proof-083-blender-wheel-001","max_tool_calls":2,"timeout_seconds":360,"expected_files":"process-proofs/printed-replacement-part/live-default-model-014/outputs/repaired_mesh.stl\nprocess-proofs/printed-replacement-part/live-default-model-014/outputs/mesh-preview.png","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval.","mcp_file_dependencies":{"repair_measure_orient_live_default_model_014_actual_source":"process-proofs/printed-replacement-part/live-default-model-014/outputs/source_mesh.stl"},"expected_file_ports":{"repaired_mesh":"process-proofs/printed-replacement-part/live-default-model-014/outputs/repaired_mesh.stl","mesh_preview":"process-proofs/printed-replacement-part/live-default-model-014/outputs/mesh-preview.png"}}
+  tool: null
+  reusable_step: null
+  prompt: "Consume the actual source STL at 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-live-005\\\\process-proofs\\\\printed-replacement-part\\\\live-default-model-014\\\\outputs\\\\source_mesh.stl' using Blender STL import into uniquely owned objects; preserve its bytes. Inspect actual bounds, topology, degenerate geometry, normals and mating features. Merge coincident vertices only with explicitly recorded small mm tolerance, repair normals/degeneracy and export a distinct binary STL at 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-live-005\\\\process-proofs\\\\printed-replacement-part\\\\live-default-model-014\\\\outputs\\\\repaired_mesh.stl', <=80000 triangles. Keep original dimensions/features. Compare socket-up orientation with the source orientation and describe actual support consequences, including the raised hub; never promise zero supports from appearance. Retain a real geometry-only preview at 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-live-005\\\\process-proofs\\\\printed-replacement-part\\\\live-default-model-014\\\\outputs\\\\mesh-preview.png'; it is not a support/toolpath preview. Measure post-transform bounds and topology. Use guarded bpy/bmesh/mathutils modelling, render, STL import/export only, with no raw filesystem/network/process APIs or unrelated object deletion. Return compact actual before/after measurements, applied repair/transform and remaining review limits. Fail if closed manifold geometry or intended features cannot be preserved. Use the code argument in qualified_operation as the supplied native inspection/repair recipe. Submit it unchanged to execute_blender_code rather than generating another algorithm. It consumes this run's actual source file and uses uniquely owned objects and a separate preview scene. Retain the real measurements, exported file verification and all unresolved feature/support/physical limits. A provider error remains explicit; never claim an absent output."
+end
+
+task supports_and_slice_live_default_model_014
+  name: "Generate supports and slice"
+  purpose: "Create support-bearing toolpaths and retain process, machine, and material profiles."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"supports_and_slice_live_default_model_014_exact_arguments","name":"supports and slice live default model 014 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_live_default_model_014_selected_geometry","name":"supports and slice live default model 014 selected geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_live_default_model_014_machine_configuration","name":"supports and slice live default model 014 machine configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_live_default_model_014_process_configuration","name":"supports and slice live default model 014 process configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_live_default_model_014_filament_configuration","name":"supports and slice live default model 014 filament configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"supports_and_slice_live_default_model_014_result","name":"supports and slice live default model 014 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"slice_package","name":"slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Slice for the selected P1S profile, preserve the support preview and final 3MF, and verify valid toolpaths and declared material compatibility."
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-slicer-wheel-001","mcp_tool":"proof-083-slicer-wheel-001__slice_model_file","mcp_schema_digest":"53bd2aebef4edebf76c41a565079a0a1419f47ececf834d6fe2dc996a370c460","mcp_arguments_source":"connection","mcp_arguments_input":"supports_and_slice_live_default_model_014_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slicer-execution.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice_package.gcode.3mf","mcp_file_dependencies":{"supports_and_slice_live_default_model_014_selected_geometry":"process-proofs/printed-replacement-part/live-default-model-014/outputs/repaired_mesh.stl","supports_and_slice_live_default_model_014_machine_configuration":"process-proofs/printed-replacement-part/live-default-model-014/inputs/machine-profile.json","supports_and_slice_live_default_model_014_process_configuration":"process-proofs/printed-replacement-part/live-default-model-014/inputs/process-profile.json","supports_and_slice_live_default_model_014_filament_configuration":"process-proofs/printed-replacement-part/live-default-model-014/inputs/filament-profile.json"},"expected_file_ports":{"slice_package":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice_package.gcode.3mf"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+task authorize_transfer_live_default_model_014
+  name: "Authorize exact package transfer"
+  purpose: "Pause before transfer and bind the engineer decision to the package, printer, material, and process profile."
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"authorize_transfer_live_default_model_014_exact_package","name":"authorize transfer live default model 014 exact package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_live_default_model_014_preparation_review","name":"authorize transfer live default model 014 preparation review","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_live_default_model_014_machine_profile","name":"authorize transfer live default model 014 machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_live_default_model_014_process_profile","name":"authorize transfer live default model 014 process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_live_default_model_014_filament_profile","name":"authorize transfer live default model 014 filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"receipt","name":"receipt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Review exact digests and destination identity. Transfer authorization does not claim that the physical print succeeded."
+  settings: {"authoring_template":"external-action-approval","action_kind":"printer_transfer","approval_binding":{"server":"wright","tool":"test_handoff","schema":"f46532036f28b3b052a279f083d505363af9805b95e836aff0092f6ae0fd459d"},"approval_destination":{"kind":"integration_test","id":"test://083-private-digital-wheel-014/printer/printed-replacement-part-01"},"approval_settings":{"material":"PETG","nozzle_mm":"0.4","package_path":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice_package.gcode.3mf","receipt_path":"process-proofs/printed-replacement-part/live-default-model-014/outputs/simulated-transfer-receipt.json","simulation":true},"approval_action":{"kind":"printer_transfer","mode":"transfer_only","simulation":true}}
+  tool: null
+  reusable_step: null
+end
+
+connection image_to_mesh_live_default_model_014
+  type: "item"
+  from: "image_and_scale_live_default_model_014.replacement_image_out"
+  to: "create_mesh_live_default_model_014.mesh_source_image_in"
+  label: "scaled source approved"
+  when: null
+end
+
+connection mesh_to_repair_live_default_model_014
+  type: "order"
+  from: "create_mesh_live_default_model_014"
+  to: "repair_measure_orient_live_default_model_014"
+  label: "source mesh retained"
+  when: null
+end
+
+connection repair_to_slice_live_default_model_014
+  type: "order"
+  from: "repair_measure_orient_live_default_model_014"
+  to: "supports_and_slice_live_default_model_014"
+  label: "geometry checks pass"
+  when: null
+end
+
+connection slice_to_transfer_live_default_model_014
+  type: "order"
+  from: "supports_and_slice_live_default_model_014"
+  to: "authorize_transfer_live_default_model_014"
+  label: "exact package ready"
+  when: null
+end
+
+input input_concept_png_live_default_model_014
+  name: "concept.png"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_png_live_default_model_014_out","name":"input concept png live default model 014 out","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/concept.png"}
+  tool: null
+  reusable_step: null
+end
+
+input input_concept_svg_live_default_model_014
+  name: "concept.svg"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_svg_live_default_model_014_out","name":"input concept svg live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/concept.svg"}
+  tool: null
+  reusable_step: null
+end
+
+input input_context_md_live_default_model_014
+  name: "context.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_context_md_live_default_model_014_out","name":"input context md live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/context.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_prompt_txt_live_default_model_014
+  name: "prompt.txt"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_prompt_txt_live_default_model_014_out","name":"input prompt txt live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/prompt.txt"}
+  tool: null
+  reusable_step: null
+end
+
+input input_scenario_json_live_default_model_014
+  name: "scenario.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_scenario_json_live_default_model_014_out","name":"input scenario json live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/scenario.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_user_profile_md_live_default_model_014
+  name: "user-profile.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_user_profile_md_live_default_model_014_out","name":"input user profile md live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/user-profile.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_requirements_md_live_default_model_014
+  name: "requirements.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_requirements_md_live_default_model_014_out","name":"input requirements md live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/requirements.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_geometry_capability_guidance_md_live_default_model_014
+  name: "geometry-capability-guidance.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_geometry_capability_guidance_md_live_default_model_014_out","name":"input geometry capability guidance md live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/geometry-capability-guidance.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_machine_profile_json_live_default_model_014
+  name: "machine-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_machine_profile_json_live_default_model_014_out","name":"input machine profile json live default model 014 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/machine-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_process_profile_json_live_default_model_014
+  name: "process-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_process_profile_json_live_default_model_014_out","name":"input process profile json live default model 014 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/process-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_filament_profile_json_live_default_model_014
+  name: "filament-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_filament_profile_json_live_default_model_014_out","name":"input filament profile json live default model 014 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/filament-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+task define_geometry_basis_live_default_model_014
+  name: "Interpret the original wheel and manufacturing requirements"
+  purpose: "Interpret the original wheel and manufacturing requirements"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"define_geometry_basis_live_default_model_014_supplied_geometry_basis","name":"define geometry basis live default model 014 supplied geometry basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_live_default_model_014_concept_png","name":"define geometry basis live default model 014 concept png","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_live_default_model_014_concept_svg","name":"define geometry basis live default model 014 concept svg","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_live_default_model_014_context_md","name":"define geometry basis live default model 014 context md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_live_default_model_014_prompt_txt","name":"define geometry basis live default model 014 prompt txt","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_live_default_model_014_scenario_json","name":"define geometry basis live default model 014 scenario json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_live_default_model_014_user_profile_md","name":"define geometry basis live default model 014 user profile md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_live_default_model_014_mandatory_requirements","name":"define geometry basis live default model 014 mandatory requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"define_geometry_basis_live_default_model_014_result","name":"define geometry basis live default model 014 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/live-default-model-014/outputs/geometry-basis.json","file_policy":"overwrite"}
+  tool: null
+  reusable_step: null
+  prompt: "Prepare a complete proposed digital geometry design for the next declared review, separating supplied requirements from your proposed construction choices. Preserve the 38 mm maximum diameter, 18 mm overall height including 2 mm front hub, six equally spaced shallow scallops, >=33 mm minimum grip, nominal 1 mm exposed rounds and subtle grip dots. The D socket uses the 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and flat clearance, 10 mm blind depth and >=3 mm material above it. No insert, set screw, taper or keyway. Preserve PETG/P1S 0.4/0.20 mm/four walls/35% profiles, proposed +/-0.25 mm non-mating tolerance and original human-review requirements. Propose explicit numeric scallop profile/depth/phase, hub diameter, dot count/dimensions/placement and exposed-edge treatment within the original limits; derive and record the D-boundary/flat construction and depth direction. These are design proposals, not additional requirements or verified fit. Distinguish decisions that must be resolved at this declared basis review from later inspection of actual geometry, supports and final package. Do not leave a predictable construction choice to a later unattended question. No geometry, fit, strength, standards or print-success claim yet. Do not ask runtime questions; output one complete proposal for the declared review. Keep the entire response below 3000 characters. Return only one valid JSON object, with no markdown, comments or trailing commas. Use these keys: supplied_requirements (short object), proposed_geometry (numeric dimensions plus short construction descriptions for scallops, hub, dots, rounds, socket and orientation), basis_review (short list of proposed choices requiring this review), remaining_verification (short list), engineering_acceptance (false). Expressions must be JSON strings; do not put equations in numeric values. Do not repeat input documents or provide lengthy rationale. This run supplies an explicit prior proposed geometry basis. Retain its numeric construction choices exactly instead of proposing replacements. It remains a proposal for this run's declared review, not engineering acceptance. Actual geometry and all original mandatory checks still follow."
+end
+
+input input_configured_geometry_basis_json_live_default_model_014
+  name: "configured-geometry-basis.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_configured_geometry_basis_json_live_default_model_014_out","name":"input configured geometry basis json live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/configured-geometry-basis.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_supplied_geometry_basis
+  type: "item"
+  from: "input_configured_geometry_basis_json_live_default_model_014.input_configured_geometry_basis_json_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_supplied_geometry_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_concept_png
+  type: "item"
+  from: "input_concept_png_live_default_model_014.input_concept_png_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_concept_png"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_concept_svg
+  type: "item"
+  from: "input_concept_svg_live_default_model_014.input_concept_svg_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_concept_svg"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_context_md
+  type: "item"
+  from: "input_context_md_live_default_model_014.input_context_md_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_context_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_prompt_txt
+  type: "item"
+  from: "input_prompt_txt_live_default_model_014.input_prompt_txt_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_prompt_txt"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_scenario_json
+  type: "item"
+  from: "input_scenario_json_live_default_model_014.input_scenario_json_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_scenario_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_user_profile_md
+  type: "item"
+  from: "input_user_profile_md_live_default_model_014.input_user_profile_md_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_user_profile_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_live_default_model_014_mandatory_requirements
+  type: "item"
+  from: "input_requirements_md_live_default_model_014.input_requirements_md_live_default_model_014_out"
+  to: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_mandatory_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task review_basis_live_default_model_014
+  name: "Review wheel dimensions, socket interpretation and original limits"
+  purpose: "Review wheel dimensions, socket interpretation and original limits"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_basis_live_default_model_014_basis","name":"review basis live default model 014 basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_basis_live_default_model_014"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success."
+end
+
+connection bind_review_basis_live_default_model_014_basis
+  type: "item"
+  from: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_result"
+  to: "review_basis_live_default_model_014.review_basis_live_default_model_014_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_construction_provider_arguments_json_live_default_model_014
+  name: "construction-provider-arguments.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_construction_provider_arguments_json_live_default_model_014_out","name":"input construction provider arguments json live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/construction-provider-arguments.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_create_mesh_live_default_model_014_qualified_operation
+  type: "item"
+  from: "input_construction_provider_arguments_json_live_default_model_014.input_construction_provider_arguments_json_live_default_model_014_out"
+  to: "create_mesh_live_default_model_014.create_mesh_live_default_model_014_qualified_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_live_default_model_014_reviewed_basis
+  type: "item"
+  from: "define_geometry_basis_live_default_model_014.define_geometry_basis_live_default_model_014_result"
+  to: "create_mesh_live_default_model_014.create_mesh_live_default_model_014_reviewed_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_live_default_model_014_requirements
+  type: "item"
+  from: "input_requirements_md_live_default_model_014.input_requirements_md_live_default_model_014_out"
+  to: "create_mesh_live_default_model_014.create_mesh_live_default_model_014_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_live_default_model_014_qualified_application_guidance
+  type: "item"
+  from: "input_geometry_capability_guidance_md_live_default_model_014.input_geometry_capability_guidance_md_live_default_model_014_out"
+  to: "create_mesh_live_default_model_014.create_mesh_live_default_model_014_qualified_application_guidance"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_live_default_model_014_original_reference
+  type: "item"
+  from: "input_concept_png_live_default_model_014.input_concept_png_live_default_model_014_out"
+  to: "create_mesh_live_default_model_014.create_mesh_live_default_model_014_original_reference"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_repair_provider_arguments_json_live_default_model_014
+  name: "repair-provider-arguments.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_repair_provider_arguments_json_live_default_model_014_out","name":"input repair provider arguments json live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/repair-provider-arguments.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_repair_measure_orient_live_default_model_014_qualified_operation
+  type: "item"
+  from: "input_repair_provider_arguments_json_live_default_model_014.input_repair_provider_arguments_json_live_default_model_014_out"
+  to: "repair_measure_orient_live_default_model_014.repair_measure_orient_live_default_model_014_qualified_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_repair_measure_orient_live_default_model_014_actual_source
+  type: "item"
+  from: "create_mesh_live_default_model_014.source_mesh"
+  to: "repair_measure_orient_live_default_model_014.repair_measure_orient_live_default_model_014_actual_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_repair_measure_orient_live_default_model_014_construction_report
+  type: "item"
+  from: "create_mesh_live_default_model_014.create_mesh_live_default_model_014_result"
+  to: "repair_measure_orient_live_default_model_014.repair_measure_orient_live_default_model_014_construction_report"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_repair_measure_orient_live_default_model_014_requirements
+  type: "item"
+  from: "input_requirements_md_live_default_model_014.input_requirements_md_live_default_model_014_out"
+  to: "repair_measure_orient_live_default_model_014.repair_measure_orient_live_default_model_014_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_repair_measure_orient_live_default_model_014_qualified_application_guidance
+  type: "item"
+  from: "input_geometry_capability_guidance_md_live_default_model_014.input_geometry_capability_guidance_md_live_default_model_014_out"
+  to: "repair_measure_orient_live_default_model_014.repair_measure_orient_live_default_model_014_qualified_application_guidance"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_slice_call_json_live_default_model_014
+  name: "slice-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_slice_call_json_live_default_model_014_out","name":"input slice call json live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/slice-call.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_supports_and_slice_live_default_model_014_exact_arguments
+  type: "item"
+  from: "input_slice_call_json_live_default_model_014.input_slice_call_json_live_default_model_014_out"
+  to: "supports_and_slice_live_default_model_014.supports_and_slice_live_default_model_014_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_live_default_model_014_selected_geometry
+  type: "item"
+  from: "repair_measure_orient_live_default_model_014.repaired_mesh"
+  to: "supports_and_slice_live_default_model_014.supports_and_slice_live_default_model_014_selected_geometry"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_live_default_model_014_machine_configuration
+  type: "item"
+  from: "input_machine_profile_json_live_default_model_014.input_machine_profile_json_live_default_model_014_out"
+  to: "supports_and_slice_live_default_model_014.supports_and_slice_live_default_model_014_machine_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_live_default_model_014_process_configuration
+  type: "item"
+  from: "input_process_profile_json_live_default_model_014.input_process_profile_json_live_default_model_014_out"
+  to: "supports_and_slice_live_default_model_014.supports_and_slice_live_default_model_014_process_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_live_default_model_014_filament_configuration
+  type: "item"
+  from: "input_filament_profile_json_live_default_model_014.input_filament_profile_json_live_default_model_014_out"
+  to: "supports_and_slice_live_default_model_014.supports_and_slice_live_default_model_014_filament_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task retain_slice_response_live_default_model_014
+  name: "Retain the actual slicer response for package inspection"
+  purpose: "Retain the actual slicer response for package inspection"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"retain_slice_response_live_default_model_014_actual_response","name":"retain slice response live default model 014 actual response","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"retain_slice_response_live_default_model_014_result","name":"retain slice response live default model 014 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"provider_response","name":"provider response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"wright-workspace-files","mcp_tool":"wright-workspace-files__write_text_document","mcp_schema_digest":"66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12","mcp_arguments_source":"fields","mcp_arguments_input":"retain_slice_response_live_default_model_014_actual_response","mcp_arguments":"{\"relativePath\": \"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice-provider-response.json\", \"mediaType\": \"application/json\", \"overwrite\": false}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/live-default-model-014/outputs/response-retention-receipt.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice-provider-response.json","mcp_argument_ports":"{\"retain_slice_response_live_default_model_014_actual_response\": \"content\"}","expected_file_ports":{"provider_response":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice-provider-response.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection bind_retain_slice_response_live_default_model_014_actual_response
+  type: "item"
+  from: "supports_and_slice_live_default_model_014.supports_and_slice_live_default_model_014_result"
+  to: "retain_slice_response_live_default_model_014.retain_slice_response_live_default_model_014_actual_response"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_passive_representations_py_live_default_model_014
+  name: "passive-representations.py"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_passive_representations_py_live_default_model_014_out","name":"input passive representations py live default model 014 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/passive-representations.py"}
+  tool: null
+  reusable_step: null
+end
+
+input input_inspect_manufacturing_package_py_live_default_model_014
+  name: "inspect_manufacturing_package.py"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_inspect_manufacturing_package_py_live_default_model_014_out","name":"input inspect manufacturing package py live default model 014 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/inspect_manufacturing_package.py"}
+  tool: null
+  reusable_step: null
+end
+
+task inspect_slice_handoff_live_default_model_014
+  name: "Inspect actual package, profile and nominal toolpath correspondence"
+  purpose: "Inspect actual package, profile and nominal toolpath correspondence"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"inspect_slice_handoff_live_default_model_014_exact_arguments","name":"inspect slice handoff live default model 014 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_slice_package","name":"inspect slice handoff live default model 014 slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_provider_response","name":"inspect slice handoff live default model 014 provider response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_slice_source","name":"inspect slice handoff live default model 014 slice source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_reader","name":"inspect slice handoff live default model 014 reader","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_operation","name":"inspect slice handoff live default model 014 operation","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_machine","name":"inspect slice handoff live default model 014 machine","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_process","name":"inspect slice handoff live default model 014 process","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_live_default_model_014_filament","name":"inspect slice handoff live default model 014 filament","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"inspect_slice_handoff_live_default_model_014_result","name":"inspect slice handoff live default model 014 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"slice_evidence","name":"slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"support_preview","name":"support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"machine_profile","name":"machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"process_profile","name":"process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"filament_profile","name":"filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-oasis","mcp_tool":"proof-083-oasis__run_simulation","mcp_schema_digest":"d00af216c4eccc4b64ad13c0aee9da9ced7260edc8347e4be471e0c8ead48646","mcp_arguments_source":"connection","mcp_arguments_input":"inspect_slice_handoff_live_default_model_014_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/live-default-model-014/outputs/package-inspection-result.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice-evidence.json\nprocess-proofs/printed-replacement-part/live-default-model-014/outputs/support-preview.json\nprocess-proofs/printed-replacement-part/live-default-model-014/outputs/machine-profile.json\nprocess-proofs/printed-replacement-part/live-default-model-014/outputs/process-profile.json\nprocess-proofs/printed-replacement-part/live-default-model-014/outputs/filament-profile.json","mcp_file_dependencies":{"inspect_slice_handoff_live_default_model_014_slice_package":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice_package.gcode.3mf","inspect_slice_handoff_live_default_model_014_provider_response":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice-provider-response.json","inspect_slice_handoff_live_default_model_014_slice_source":"process-proofs/printed-replacement-part/live-default-model-014/outputs/repaired_mesh.stl","inspect_slice_handoff_live_default_model_014_reader":"process-proofs/printed-replacement-part/live-default-model-014/inputs/passive-representations.py","inspect_slice_handoff_live_default_model_014_operation":"process-proofs/printed-replacement-part/live-default-model-014/inputs/inspect_manufacturing_package.py","inspect_slice_handoff_live_default_model_014_machine":"process-proofs/printed-replacement-part/live-default-model-014/inputs/machine-profile.json","inspect_slice_handoff_live_default_model_014_process":"process-proofs/printed-replacement-part/live-default-model-014/inputs/process-profile.json","inspect_slice_handoff_live_default_model_014_filament":"process-proofs/printed-replacement-part/live-default-model-014/inputs/filament-profile.json"},"expected_file_ports":{"slice_evidence":"process-proofs/printed-replacement-part/live-default-model-014/outputs/slice-evidence.json","support_preview":"process-proofs/printed-replacement-part/live-default-model-014/outputs/support-preview.json","machine_profile":"process-proofs/printed-replacement-part/live-default-model-014/outputs/machine-profile.json","process_profile":"process-proofs/printed-replacement-part/live-default-model-014/outputs/process-profile.json","filament_profile":"process-proofs/printed-replacement-part/live-default-model-014/outputs/filament-profile.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+input input_inspection_call_json_live_default_model_014
+  name: "inspection-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_inspection_call_json_live_default_model_014_out","name":"input inspection call json live default model 014 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/live-default-model-014/inputs/inspection-call.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_exact_arguments
+  type: "item"
+  from: "input_inspection_call_json_live_default_model_014.input_inspection_call_json_live_default_model_014_out"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_slice_package
+  type: "item"
+  from: "supports_and_slice_live_default_model_014.slice_package"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_slice_package"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_provider_response
+  type: "item"
+  from: "retain_slice_response_live_default_model_014.provider_response"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_provider_response"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_slice_source
+  type: "item"
+  from: "repair_measure_orient_live_default_model_014.repaired_mesh"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_slice_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_reader
+  type: "item"
+  from: "input_passive_representations_py_live_default_model_014.input_passive_representations_py_live_default_model_014_out"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_reader"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_operation
+  type: "item"
+  from: "input_inspect_manufacturing_package_py_live_default_model_014.input_inspect_manufacturing_package_py_live_default_model_014_out"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_machine
+  type: "item"
+  from: "input_machine_profile_json_live_default_model_014.input_machine_profile_json_live_default_model_014_out"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_machine"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_process
+  type: "item"
+  from: "input_process_profile_json_live_default_model_014.input_process_profile_json_live_default_model_014_out"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_process"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_live_default_model_014_filament
+  type: "item"
+  from: "input_filament_profile_json_live_default_model_014.input_filament_profile_json_live_default_model_014_out"
+  to: "inspect_slice_handoff_live_default_model_014.inspect_slice_handoff_live_default_model_014_filament"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task summarize_preparation_live_default_model_014
+  name: "Record measured preparation facts and outstanding engineering review"
+  purpose: "Record measured preparation facts and outstanding engineering review"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"summarize_preparation_live_default_model_014_construction","name":"summarize preparation live default model 014 construction","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_live_default_model_014_repair","name":"summarize preparation live default model 014 repair","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_live_default_model_014_slice_evidence","name":"summarize preparation live default model 014 slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_live_default_model_014_support_preview","name":"summarize preparation live default model 014 support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_live_default_model_014_requirements","name":"summarize preparation live default model 014 requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"summarize_preparation_live_default_model_014_result","name":"summarize preparation live default model 014 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/live-default-model-014/outputs/source-report.json","file_policy":"overwrite","authoring_template":"mcp-task","mcp_server":"wright-workspace-files","max_tool_calls":8,"timeout_seconds":180,"expected_files":"","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval."}
+  tool: null
+  reusable_step: null
+  prompt: "Use inspect_file to read the actual geometry reports, slice evidence and recorded package/mesh hashes. Summarize construction, socket interpretation, repair, orientation/support consequences, exact PETG settings and nominal toolpaths. Separate design values from measured dimensions and future physical fit. The preview is nominal toolpath data, not completed printing. Retain all original mandatory limits and unresolved review requirements. Do not invent measurements, successful printing, fit, strength or a critic/human verdict."
+end
+
+connection bind_summarize_preparation_live_default_model_014_construction
+  type: "item"
+  from: "create_mesh_live_default_model_014.create_mesh_live_default_model_014_result"
+  to: "summarize_preparation_live_default_model_014.summarize_preparation_live_default_model_014_construction"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_live_default_model_014_repair
+  type: "item"
+  from: "repair_measure_orient_live_default_model_014.repair_measure_orient_live_default_model_014_result"
+  to: "summarize_preparation_live_default_model_014.summarize_preparation_live_default_model_014_repair"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_live_default_model_014_slice_evidence
+  type: "item"
+  from: "inspect_slice_handoff_live_default_model_014.slice_evidence"
+  to: "summarize_preparation_live_default_model_014.summarize_preparation_live_default_model_014_slice_evidence"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_live_default_model_014_support_preview
+  type: "item"
+  from: "inspect_slice_handoff_live_default_model_014.support_preview"
+  to: "summarize_preparation_live_default_model_014.summarize_preparation_live_default_model_014_support_preview"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_live_default_model_014_requirements
+  type: "item"
+  from: "input_requirements_md_live_default_model_014.input_requirements_md_live_default_model_014_out"
+  to: "summarize_preparation_live_default_model_014.summarize_preparation_live_default_model_014_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_live_default_model_014_exact_package
+  type: "item"
+  from: "supports_and_slice_live_default_model_014.slice_package"
+  to: "authorize_transfer_live_default_model_014.authorize_transfer_live_default_model_014_exact_package"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_live_default_model_014_preparation_review
+  type: "item"
+  from: "summarize_preparation_live_default_model_014.summarize_preparation_live_default_model_014_result"
+  to: "authorize_transfer_live_default_model_014.authorize_transfer_live_default_model_014_preparation_review"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_live_default_model_014_machine_profile
+  type: "item"
+  from: "input_machine_profile_json_live_default_model_014.input_machine_profile_json_live_default_model_014_out"
+  to: "authorize_transfer_live_default_model_014.authorize_transfer_live_default_model_014_machine_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_live_default_model_014_process_profile
+  type: "item"
+  from: "input_process_profile_json_live_default_model_014.input_process_profile_json_live_default_model_014_out"
+  to: "authorize_transfer_live_default_model_014.authorize_transfer_live_default_model_014_process_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_live_default_model_014_filament_profile
+  type: "item"
+  from: "input_filament_profile_json_live_default_model_014.input_filament_profile_json_live_default_model_014_out"
+  to: "authorize_transfer_live_default_model_014.authorize_transfer_live_default_model_014_filament_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task validate_outputs_live_default_model_014
+  name: "Check exact current engineering outputs"
+  purpose: "Check exact current engineering outputs"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"validate_source_mesh","name":"validate source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_repaired_mesh","name":"validate repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_slice_package","name":"validate slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_slice_evidence","name":"validate slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_support_preview","name":"validate support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_machine_profile","name":"validate machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_process_profile","name":"validate process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_filament_profile","name":"validate filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_source_report","name":"validate source report","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_transfer_receipt","name":"validate transfer receipt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"assessment","name":"assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"packaged","name":"printed-replacement-part-01","reference":{"id":"printed-replacement-part-01-full","version":"1","sha256":"d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4"}},"baseline":{"id":"printed-replacement-part-01-basis","version":"1","sha256":"26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"},"subjects":{"source_mesh":"validate_source_mesh","repaired_mesh":"validate_repaired_mesh","slice_package":"validate_slice_package","slice_evidence":"validate_slice_evidence","support_preview":"validate_support_preview","machine_profile":"validate_machine_profile","process_profile":"validate_process_profile","filament_profile":"validate_filament_profile","source_report":"validate_source_report","transfer_receipt":"validate_transfer_receipt"}}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection validate_bind_source_mesh_live_default_model_014
+  type: "item"
+  from: "create_mesh_live_default_model_014.source_mesh"
+  to: "validate_outputs_live_default_model_014.validate_source_mesh"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_repaired_mesh_live_default_model_014
+  type: "item"
+  from: "repair_measure_orient_live_default_model_014.repaired_mesh"
+  to: "validate_outputs_live_default_model_014.validate_repaired_mesh"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_slice_package_live_default_model_014
+  type: "item"
+  from: "supports_and_slice_live_default_model_014.slice_package"
+  to: "validate_outputs_live_default_model_014.validate_slice_package"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_slice_evidence_live_default_model_014
+  type: "item"
+  from: "inspect_slice_handoff_live_default_model_014.slice_evidence"
+  to: "validate_outputs_live_default_model_014.validate_slice_evidence"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_support_preview_live_default_model_014
+  type: "item"
+  from: "inspect_slice_handoff_live_default_model_014.support_preview"
+  to: "validate_outputs_live_default_model_014.validate_support_preview"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_machine_profile_live_default_model_014
+  type: "item"
+  from: "inspect_slice_handoff_live_default_model_014.machine_profile"
+  to: "validate_outputs_live_default_model_014.validate_machine_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_process_profile_live_default_model_014
+  type: "item"
+  from: "inspect_slice_handoff_live_default_model_014.process_profile"
+  to: "validate_outputs_live_default_model_014.validate_process_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_filament_profile_live_default_model_014
+  type: "item"
+  from: "inspect_slice_handoff_live_default_model_014.filament_profile"
+  to: "validate_outputs_live_default_model_014.validate_filament_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_source_report_live_default_model_014
+  type: "item"
+  from: "summarize_preparation_live_default_model_014.summarize_preparation_live_default_model_014_result"
+  to: "validate_outputs_live_default_model_014.validate_source_report"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_transfer_receipt_live_default_model_014
+  type: "item"
+  from: "authorize_transfer_live_default_model_014.receipt"
+  to: "validate_outputs_live_default_model_014.validate_transfer_receipt"
+  label: "exact current validation subject"
+  when: null
+end
+
+task review_preparation_live_default_model_014
+  name: "Review final digital preparation and exact engineering findings"
+  purpose: "Review final digital preparation and exact engineering findings"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_preparation_live_default_model_014_assessment","name":"review preparation live default model 014 assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_preparation_live_default_model_014"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review the original socket, grip, orientation/support, tolerance and action-scope requirements against exact outputs. This process cannot certify fit, strength, accuracy or a physical print."
+end
+
+connection bind_review_preparation_live_default_model_014_assessment
+  type: "item"
+  from: "validate_outputs_live_default_model_014.assessment"
+  to: "review_preparation_live_default_model_014.review_preparation_live_default_model_014_assessment"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection sequence_review_basis_live_default_model_014
+  type: "order"
+  from: "define_geometry_basis_live_default_model_014"
+  to: "review_basis_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_create_mesh_live_default_model_014
+  type: "order"
+  from: "review_basis_live_default_model_014"
+  to: "create_mesh_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_retain_slice_response_live_default_model_014
+  type: "order"
+  from: "supports_and_slice_live_default_model_014"
+  to: "retain_slice_response_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_inspect_slice_handoff_live_default_model_014
+  type: "order"
+  from: "retain_slice_response_live_default_model_014"
+  to: "inspect_slice_handoff_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_summarize_preparation_live_default_model_014
+  type: "order"
+  from: "inspect_slice_handoff_live_default_model_014"
+  to: "summarize_preparation_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_authorize_transfer_live_default_model_014
+  type: "order"
+  from: "summarize_preparation_live_default_model_014"
+  to: "authorize_transfer_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_validate_outputs_live_default_model_014
+  type: "order"
+  from: "authorize_transfer_live_default_model_014"
+  to: "validate_outputs_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_review_preparation_live_default_model_014
+  type: "order"
+  from: "validate_outputs_live_default_model_014"
+  to: "review_preparation_live_default_model_014"
+  label: "accepted process order"
+  when: null
+end

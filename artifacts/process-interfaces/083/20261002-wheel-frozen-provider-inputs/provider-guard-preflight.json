@@ -1,0 +1,23 @@
+{
+  "provider_guard_sha256": "e9f2419372cf224317b3c99e3f425c82e1c25979e91f33f6c1493f68a2175623",
+  "construction_guard_passed": true,
+  "repair_guard_passed": true,
+  "code_executed": false,
+  "source_accepted": false,
+  "process_started": false,
+  "physical_dispatch": false,
+  "preparation_inputs": {
+    "construction": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-014\\construction-provider-arguments.json",
+      "sha256": "ae70ac7cd242084c97a3c4511dffea055c8c0262945fb74d99e0f282a02f101c"
+    },
+    "repair": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-014\\repair-provider-arguments.json",
+      "sha256": "1070f65c95c18e47254dd8aed7ba6a8a98cb3b3752495dd958fc346c46a1fd50"
+    },
+    "basis": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-014\\configured-geometry-basis.json",
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e"
+    }
+  }
+}

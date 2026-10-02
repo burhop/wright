@@ -1,0 +1,20 @@
+{
+  "original_run": "aee8d1771e1442babd28ff0fab3df0cf",
+  "original_source_digest": "a4d06fa25e6c5ad86ec37de35d23f6fe68da1e45e9d1f899d28f9475c2d27ebb",
+  "original_call_hashes": [
+    "ac9a63fbf57bb941cb851bc399849a952573e680ae9ae619d1f7a23058ed91e0",
+    "5d658681164d242d7099103aac9182ce63ddeeceb131aa441c6bf51bf42ebc90",
+    "66b78c1d32a349b4e45dec940e2b4c424d95c4096fbd98c53ffb3759770771cb"
+  ],
+  "adaptations": [
+    "Fresh export paths and owned names",
+    "Combine retained repair and independent exported-file verification",
+    "Guard missing render world and isolate preview scene with only owned render objects",
+    "Remove unintended indentation introduced in the preview-scene adaptation; fresh pinned inputs pass the actual installed provider guard before source acceptance"
+  ],
+  "original_limits_and_profiles_changed": false,
+  "original_failed_run_changed": false,
+  "new_outputs_created": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false
+}
