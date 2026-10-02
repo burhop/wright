@@ -615,8 +615,8 @@ export function WorkflowRecoveryPage({
               style={{ display: "block", width: "100%", margin: "8px 0 16px" }}
             />
             <p>
-              Starts with the editable engineering example. The Run panel states
-              which saved workflow capabilities are available.
+              Starts with a blank workflow. Add inputs and steps in the editor.
+              Check run readiness before starting work.
             </p>
             <button
               type="submit"

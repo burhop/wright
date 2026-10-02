@@ -66,3 +66,31 @@ remain private. Sixty-four focused component regressions pass.
 This proves read-only historical navigation in the served source checkout. It
 does not prove installed navigation, the original user workspace, removal of
 remaining vendor code, complete editor acceptance or physical operation.
+
+## New workflow instructions, installed checkpoint
+
+The normal installed workspace entry opens the preserved editor. The first
+authoring walkthrough then stopped before creating a file: the New workflow
+dialog said it starts with an editable engineering example, while the actual
+creation function and existing regression create an empty accepted definition.
+The screenshot and diagnostics are retained in
+`artifacts/process-interfaces/083/20261002-editor-native-001/workspace-walkthrough/`.
+The report structure validator passes. No process, review or verification
+workflow was started/created by this stopped attempt.
+
+Corrected the dialog to describe a blank workflow and adding inputs/steps, then
+checking readiness. This preserves the existing creation/editor behavior and
+does not introduce a required process structure. Its creation regression now
+asserts those instructions as well as the existing exclusive file creation and
+empty-source checks. Both workflow-page/reopen suites pass: 25 tests. This is
+component/source verification; the installed continuation and full editor
+manipulation still remain pending T052 work.
+
+The editor fixture explicitly disables Hermes default/candidate endpoint
+fallback, in addition to using local config/credential paths and an unavailable
+checked agent endpoint. The previous installed-history fixture's default
+fallback attempted ordinary read-only command/history requests at the default
+agent port. Those requests failed and submitted no model/tool work; its six
+history checks and exact unchanged hashes retain their recorded scope. They
+should not be described as proving every server-side fallback stayed on the
+configured unavailable endpoint.

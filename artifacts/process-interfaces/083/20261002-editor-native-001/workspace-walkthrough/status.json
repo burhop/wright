@@ -1,0 +1,54 @@
+{
+  "title": "New workflow authoring through the installed workspace",
+  "summary": "A fresh empty verification workflow, preserved editor authoring and no execution; stop at the first confusing or failing state.",
+  "overall": "blocked",
+  "updated": "2026-10-02T22:16:38.297Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Normal workspace editor entry",
+      "summary": "The existing editor opens in its workspace tab.",
+      "purpose": "Preserve authoring entry.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflow files"
+      ],
+      "expected": "Existing editor and workflow file menu.",
+      "actual": "Editor and workflow file menu visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "New-workflow authoring stopped",
+      "summary": "First confusing or failing state retained before creating a workflow.",
+      "purpose": "Preserve usability failure.",
+      "action": "Stop before creation.",
+      "controls": [
+        "New workflow",
+        "Workflow name",
+        "Create workflow"
+      ],
+      "expected": "Creation instructions match the actual blank workflow.",
+      "actual": "expect(locator).not.toContainText(expected) failed\n\nLocator: getByRole('dialog')\nExpected substring: not \"Starts with the editable engineering example\"\nReceived string: \"New workflowStored in Heat-spreader comparison proof/workflows. Existing files are never replaced.Workflow nameStarts with the editable engineering example. The Run panel states which saved workflow capabilities are available.Create workflowCancel\"\nTimeout: 5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByRole('dialog')\n    14 × locator resolved to <dialog open=\"\" aria-labelledby=\"_r_0_-title\">…</dialog>\n       - unexpected value \"New workflowStored in Heat-spreader comparison proof/workflows. Existing files are never replaced.Workflow nameStarts with the editable engineering example. The Run panel states which saved workflow capabilities are available.Create workflowCancel\"\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

@@ -372,6 +372,10 @@ describe("workspace workflow page", () => {
     await screen.findByTestId("fixture-save");
     await userEvent.click(screen.getByTestId("workflow-file-menu"));
     await userEvent.click(screen.getByRole("button", { name: "New workflow" }));
+    expect(screen.getByText(/Starts with a blank workflow/)).toBeVisible();
+    expect(
+      screen.queryByText(/editable engineering example/),
+    ).not.toBeInTheDocument();
     await userEvent.type(
       screen.getByLabelText("Workflow name"),
       "Inspection checks",

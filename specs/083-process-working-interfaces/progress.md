@@ -1632,3 +1632,25 @@ autostart. Source/prototype preservation still verifies. T048/T049 remain open f
 actual original prototype formats, transitive slicing and full replacement proof.
 See evidence/installed-history-retirement.md. No review response or engineering
 operation occurred; the full goal remains active.
+
+T052 editor continuation: inspected the current authoring harness and creation
+implementation. A fresh installed fixture with local configuration and explicitly
+disabled Hermes endpoint fallback opens the normal workspace editor, then stops
+at misleading New workflow instructions before creating a file. Retained the
+original screenshot/report/diagnostics; the report validator passes. Corrected
+the dialog to describe its actual blank-workflow behavior and added assertions
+to the existing exclusive/empty creation regression. Workflow page/reopen suites
+pass 25 tests. A preliminary private fixture setup had a quoting error; its exact
+owned host was stopped before correction, with no browser actions. Earlier
+installed-history fixture read-only default agent fallback is now disclosed;
+no model/tool work or review occurred. Fresh served correction and full editor,
+connections, persistence, conflicts, zoom/accessibility and both working/preview
+journeys remain open. The complete goal is not achieved.
+
+Paused at the user's request on 2026-10-02 for the token reset. Current dialog
+copy correction and its 25 passing component tests are saved in the working tree,
+with the stopped installed-browser evidence retained; these changes are not yet
+committed. Resume by committing the scoped checkpoint, building a fresh installed
+candidate containing the copy correction, then continuing T052 through the real
+workspace editor. The currently installed candidate still contains the old copy.
+No engineering review or external action was submitted during this checkpoint.
