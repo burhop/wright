@@ -101,6 +101,41 @@ class Compiler:
         return {"controlled": True}
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "code,expected",
+    [
+        ("SCOPED_MODEL_TIMEOUT", "UI_MODEL_TIMEOUT"),
+        ("SCOPED_MODEL_AUTH_REQUIRED", "UI_MODEL_AUTH_REQUIRED"),
+        ("SCOPED_MODEL_RATE_LIMITED", "UI_MODEL_RATE_LIMITED"),
+    ],
+)
+async def test_safe_provider_failure_is_actionable_and_not_replayed(
+    tmp_path, code, expected
+):
+    class FailingEngine(Engine):
+        async def stream_chat(self, request):
+            self.calls.append(request)
+            yield AgentStreamEvent(
+                "error", {"code": code, "message": "SECRET SDK token"}
+            )
+
+    engine = FailingEngine()
+    service, reference = prepared(tmp_path, engine)
+    job = await service.submit(
+        authorized(), reference, "provider-failure", "Show results"
+    )
+    final = await service.wait(authorized(), reference, job.job_id)
+    assert final.state == "failed" and final.repair_attempt == 0
+    assert final.diagnostics[0].code == expected
+    assert "SECRET" not in final.model_dump_json()
+    retained = await service.submit(
+        authorized(), reference, "provider-failure", "Show results"
+    )
+    assert retained.job_id == job.job_id and len(engine.calls) == 1
+    await service.close()
+
+
 async def fake_build(**values):
     root = values["builds_root"] / "controlled-build"
     # Each invocation is assigned a distinct draft, as the actual builder does.

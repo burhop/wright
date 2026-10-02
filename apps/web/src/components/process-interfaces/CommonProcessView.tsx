@@ -783,7 +783,9 @@ function CommonProcessController({
       (element) =>
         target.kind === "run" ||
         (target.kind === "assessment"
-          ? element.dataset.assessmentId === target.assessment_id
+          ? element.dataset.assessmentId === target.assessment_id &&
+            element.closest<HTMLElement>("[data-result-id]")?.dataset.resultId ===
+              target.result_id
           : element.dataset.resultId === target.result_id),
     );
     destination?.focus();

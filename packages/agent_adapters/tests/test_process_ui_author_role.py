@@ -255,3 +255,34 @@ async def test_changed_default_model_is_rejected_before_generation(monkeypatch):
     ]
     assert events[0].type == "error"
     transport.generate.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("transport_timeout", [False, True])
+async def test_confined_provider_failure_keeps_only_its_fixed_category(
+    monkeypatch, transport_timeout
+):
+    from agent_adapters.hermes_role import HermesRoleInvocationError
+
+    class Transport:
+        async def probe(self):
+            return {
+                "model_reference": "configured-default",
+                "configuration_digest": "a" * 64,
+            }
+
+        async def generate(self, *args):
+            if transport_timeout:
+                raise TimeoutError("SECRET transport details")
+            raise HermesRoleInvocationError("SCOPED_MODEL_TIMEOUT")
+
+    monkeypatch.setattr(HermesRoleTransport, "from_host", lambda: Transport())
+    events = [
+        e
+        async for e in HermesAdapter("http://unused.invalid", "SECRET").stream_chat(
+            AgentChatRequest("role-job", "Generate", invocation_context=context())
+        )
+    ]
+    assert len(events) == 1 and events[0].type == "error"
+    assert events[0].data["code"] == "SCOPED_MODEL_TIMEOUT"
+    assert "SECRET" not in str(events)

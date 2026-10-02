@@ -996,3 +996,31 @@ normal workspace report passes walkthrough structure validation. Protected proto
 match the saved baseline. No engineering acceptance or physical action occurred.
 See [heat-proof.md](evidence/heat-proof.md). Full tailored UI, native tool-chain,
 printed proof, migration and final distribution tasks remain open.
+
+### 2026-10-02 UTC — Resumed heat results and evidence checkpoint
+
+The fresh original heat workflow completed actual model source authoring,
+independent AgentCAD STEP creation/read-back and OASiS coarse/refined conduction.
+The 40/60 mm candidates reached approximately 50/41.67 °C. Unchanged full 082
+checks recorded 25 passes and one authenticated-human-review block; synthetic
+test review remains separately labelled and release eligibility remains false.
+Actual STEP/CSV/VTU, measured correspondence, selection and full assessment are
+retained in `artifacts/process-interfaces/083/20261002-live-heat-analysis/`.
+
+Fixed stale earlier-segment result readback, exact-result assessment focus and the
+bounded JSON preview needed to inspect this real assessment. The actual normal
+workspace now exposes 18 outputs, numerical table/all 765 projected samples and
+exact assessment evidence; a fresh twelve-check browser journey passes. Earlier
+failed reports and private authenticated traces are preserved.
+
+Actual tailored heat UI authoring still times out before preview/build. Its third
+bounded Wright request now reports UI_MODEL_TIMEOUT with useful guidance; fixed
+SDK timeout/auth/rate-limit categories never expose exception text or credentials.
+The model, role scope, global configuration and engineering thresholds are unchanged.
+Continuing independent work; no missing live UI proof is marked complete.
+
+Resume checks: 124 readback/continuation/082 tests, 131 authoring/API/contracts,
+35 overlapping focused adapter tests and 96 frontend tests pass. TypeScript/Ruff
+pass; explicit-config app ESLint passes, with the kit outside its configured base.
+Protected prototype/campaign/context hashes match the saved baseline. See
+[heat-proof.md](evidence/heat-proof.md) for exact identities, scope and limitations.

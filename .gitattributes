@@ -18,6 +18,10 @@ specs/082-output-content-validation/contracts/schemas/*.json text eol=lf
 # Store and check out every evidence file exactly as hashed by the runner.
 artifacts/process-validation/** -text -whitespace
 
+# Exact native CAD/solver outputs and their recorded hashes are proof evidence.
+# Preserve original bytes, including the native STEP writer's whitespace.
+artifacts/process-interfaces/083/20261002-live-heat-analysis/** -text -whitespace
+
 # Process-definition contracts are byte-hashed and installed byte-for-byte.
 specs/078-process-definition-view/contracts/*.json text eol=lf
 src/wright_engineering/static/process-definitions/*.json text eol=lf

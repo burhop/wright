@@ -336,7 +336,9 @@ export function RepresentationViewer({
       ? 32 * 1024 * 1024
       : type === "text/csv"
         ? 2 * 1024 * 1024
-        : 65536;
+        : type === "application/json"
+          ? 1024 * 1024
+          : 65536;
     if (blob.size > maximum) {
       setError({
         blob,

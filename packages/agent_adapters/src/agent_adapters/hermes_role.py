@@ -12,6 +12,22 @@ import tempfile
 from .base import AgentInvocationContext
 
 
+class HermesRoleInvocationError(ValueError):
+    def __init__(self, code):
+        self.code = (
+            code
+            if isinstance(code, str)
+            and code
+            in {
+                "SCOPED_MODEL_TIMEOUT",
+                "SCOPED_MODEL_AUTH_REQUIRED",
+                "SCOPED_MODEL_RATE_LIMITED",
+            }
+            else "SCOPED_INVOCATION_UNAVAILABLE"
+        )
+        super().__init__("The confined model invocation is unavailable")
+
+
 @dataclass(frozen=True)
 class HermesRoleTransport:
     python: Path
@@ -85,7 +101,9 @@ class HermesRoleTransport:
                     or not isinstance(result, dict)
                     or result.get("ok") is not True
                 ):
-                    raise ValueError("The confined model invocation is unavailable")
+                    raise HermesRoleInvocationError(
+                        result.get("code") if isinstance(result, dict) else None
+                    )
                 return result
             finally:
                 if child is not None and child.returncode is None:

@@ -19,6 +19,21 @@ _MAX_RUN_RECORD_BYTES = 16 * 1024 * 1024
 _logger = logging.getLogger(__name__)
 
 
+def _recorded_result_rows(record):
+    """Use current checkpoint facts when a later segment has no final result.
+
+    A declared wait leaves the previous segment's result in the record. Running
+    or failed continuation facts must not be replaced by that earlier result.
+    An explicitly empty current map also preserves rework invalidation.
+    """
+    result = record.get("result") or {}
+    if record.get("status") != "completed" and "partial_results" in record:
+        return list(record["partial_results"].values())
+    if isinstance(result.get("results"), list):
+        return result["results"]
+    return list(record.get("partial_results", {}).values())
+
+
 def _execution_snapshot(record, state):
     """Fold durable events, never infer execution from graph position or elapsed time.
 
@@ -276,15 +291,15 @@ def _execution_snapshot(record, state):
             progress = fields(event, event_fields)
 
     result = record.get("result") or {}
-    if isinstance(result.get("results"), list):
+    if "partial_results" in record or isinstance(result.get("results"), list):
         current_results = {
             r["id"]: r
-            for r in result["results"]
+            for r in _recorded_result_rows(record)
             if isinstance(r, dict) and isinstance(r.get("id"), str)
         }
-    elif not events:
-        current_results = record.get("partial_results", {})
-    if isinstance(result.get("outputs"), list):
+    if isinstance(result.get("outputs"), list) and (
+        record.get("status") == "completed" or not events
+    ):
         outputs = {
             o["output_path"]: fields(o, output_fields)
             for o in result["outputs"]
@@ -1120,8 +1135,7 @@ def _run_summary(record, relative, *, current_digest=None, compact=False):
         "error": record.get("error"),
         "code": record.get("code"),
         "correction": record.get("correction"),
-        "results": result.get("results")
-        or list(record.get("partial_results", {}).values()),
+        "results": _recorded_result_rows(record),
         "last_event": events[-1] if events else None,
         "approval": result.get("approval") or record.get("approval"),
         "verification": result.get("verification"),

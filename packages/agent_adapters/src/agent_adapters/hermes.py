@@ -852,11 +852,22 @@ class HermesAdapter(BaseAgentEngine):
                 )
                 yield AgentStreamEvent(type="token", data={"text": result["text"]})
                 yield AgentStreamEvent(type="stream_end", data={})
-            except (OSError, ValueError, TimeoutError, KeyError):
+            except (OSError, ValueError, TimeoutError, KeyError) as error:
                 yield AgentStreamEvent(
                     type="error",
                     data={
-                        "code": "SCOPED_INVOCATION_UNAVAILABLE",
+                        "code": "SCOPED_MODEL_TIMEOUT"
+                        if isinstance(error, TimeoutError)
+                        else (
+                            error.code
+                            if getattr(error, "code", None)
+                            in {
+                                "SCOPED_MODEL_TIMEOUT",
+                                "SCOPED_MODEL_AUTH_REQUIRED",
+                                "SCOPED_MODEL_RATE_LIMITED",
+                            }
+                            else "SCOPED_INVOCATION_UNAVAILABLE"
+                        ),
                         "message": "Confined default-model authoring is unavailable. Check the qualified Hermes SDK runtime and configured model; the common view remains available.",
                     },
                 )

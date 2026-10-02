@@ -12,6 +12,15 @@ from workspace_service import workflow_run_record as recorder
 SOURCE = "workflows/example.workflow.wflow"
 
 
+def result_row(task):
+    from workspace_service.workflow_results import Provenance, file_result
+
+    return file_result(
+        {"output_path": task + ".csv", "output_format": "csv", "output_bytes": 8},
+        Provenance("run-1", task, "result"),
+    ).to_dict()
+
+
 def saved(
     root, run_id="run-1", *, name="20260930T120000Z-aaaaaaaaaaaa.json", **changes
 ):
@@ -52,6 +61,61 @@ def test_initial_record_identifies_run_before_any_result(tmp_path):
     assert view["source_matches_current"] is True
     assert view["results"] == []
     assert path.read_bytes() == original
+
+
+@pytest.mark.parametrize(
+    "status", ["running", "failed", "awaiting_approval", "cancelled"]
+)
+def test_current_continuation_results_survive_a_stale_earlier_segment(tmp_path, status):
+    basis, numerical = result_row("basis"), result_row("numerical")
+    events = [
+        {"kind": "output_saved", "task_id": task, "output_path": task + ".csv"}
+        for task in ("basis", "numerical")
+    ]
+    path, _ = saved(
+        tmp_path,
+        status=status,
+        events=events,
+        partial_results={row["id"]: row for row in (basis, numerical)},
+        result={"run_id": "run-1", "results": [basis], "outputs": [events[0]]},
+    )
+    original = path.read_bytes()
+    view = recorder.read_workflow_run(tmp_path, SOURCE, "run-1")
+    assert {row["id"] for row in view["results"]} == {basis["id"], numerical["id"]}
+    assert {row["output_path"] for row in view["execution"]["outputs"]} == {
+        "basis.csv",
+        "numerical.csv",
+    }
+    history = recorder.recent_workflow_runs(tmp_path, SOURCE, latest_only=False)
+    assert {row["id"] for row in history[0]["results"]} == {
+        basis["id"],
+        numerical["id"],
+    }
+    assert path.read_bytes() == original
+
+
+def test_empty_current_results_preserve_invalidation_after_a_prior_wait(tmp_path):
+    basis = result_row("basis")
+    saved(
+        tmp_path,
+        status="failed",
+        partial_results={},
+        result={"run_id": "run-1", "results": [basis]},
+    )
+    assert recorder.read_workflow_run(tmp_path, SOURCE, "run-1")["results"] == []
+    assert recorder.recent_workflow_runs(tmp_path, SOURCE)[0]["results"] == []
+
+
+def test_completed_segment_uses_its_final_result_authority(tmp_path):
+    earlier, final = result_row("earlier"), result_row("final")
+    saved(
+        tmp_path,
+        status="completed",
+        partial_results={earlier["id"]: earlier},
+        result={"run_id": "run-1", "results": [final]},
+    )
+    view = recorder.read_workflow_run(tmp_path, SOURCE, "run-1")
+    assert [row["id"] for row in view["results"]] == [final["id"]]
 
 
 def test_attachment_finds_requested_run_instead_of_latest(tmp_path):

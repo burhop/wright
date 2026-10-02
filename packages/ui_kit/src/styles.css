@@ -228,6 +228,12 @@
 .wp-table {
   overflow: auto;
 }
+.wp-text {
+  max-height: 32rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .wp-table table {
   width: 100%;
   border-collapse: collapse;

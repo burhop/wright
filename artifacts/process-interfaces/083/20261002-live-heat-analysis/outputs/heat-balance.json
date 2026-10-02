@@ -1,0 +1,122 @@
+{
+  "baseline_40": [
+    {
+      "mesh": "coarse",
+      "divisions": [
+        8,
+        4,
+        2
+      ],
+      "nodes": 135,
+      "elements": 384,
+      "maximum_temperature_c": 49.99999999999844,
+      "minimum_temperature_c": 25.0,
+      "heat_input_w": 4.0,
+      "heat_removed_w": 3.9999999999983977,
+      "relative_heat_imbalance": 4.005684672847565e-13,
+      "analytical_hot_end_c": 50.0,
+      "relative_analytical_rise_error": 6.252776074688882e-14,
+      "cold_boundary": "Dirichlet",
+      "interface_coefficient_w_m2k": null,
+      "field": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-coarse-temperature.vtu",
+        "sha256": "c02be52b9e78e6a06234e3f560984934f546da0754c9bb28a15d1c353b6fd2e6",
+        "bytes": 4383
+      },
+      "field_csv": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-coarse-temperature.csv",
+        "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+        "bytes": 13526
+      }
+    },
+    {
+      "mesh": "fine",
+      "divisions": [
+        16,
+        8,
+        4
+      ],
+      "nodes": 765,
+      "elements": 3072,
+      "maximum_temperature_c": 49.99999999991165,
+      "minimum_temperature_c": 25.0,
+      "heat_input_w": 3.999999999999999,
+      "heat_removed_w": 3.9999999999732925,
+      "relative_heat_imbalance": 6.676659225490766e-12,
+      "analytical_hot_end_c": 50.0,
+      "relative_analytical_rise_error": 3.5339553505764344e-12,
+      "cold_boundary": "Dirichlet",
+      "interface_coefficient_w_m2k": null,
+      "field": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-fine-temperature.vtu",
+        "sha256": "a65a7e08a01f96e86a9ed1274ee396e510d832bcddb79cf84b9ebc186c670797",
+        "bytes": 29200
+      },
+      "field_csv": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-fine-temperature.csv",
+        "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+        "bytes": 76526
+      }
+    }
+  ],
+  "revision_60": [
+    {
+      "mesh": "coarse",
+      "divisions": [
+        8,
+        4,
+        2
+      ],
+      "nodes": 135,
+      "elements": 384,
+      "maximum_temperature_c": 41.66666666666441,
+      "minimum_temperature_c": 25.0,
+      "heat_input_w": 4.0,
+      "heat_removed_w": 3.999999999999411,
+      "relative_heat_imbalance": 1.4721557306529576e-13,
+      "analytical_hot_end_c": 41.66666666666667,
+      "relative_analytical_rise_error": 1.3557155398302708e-13,
+      "cold_boundary": "Dirichlet",
+      "interface_coefficient_w_m2k": null,
+      "field": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-coarse-temperature.vtu",
+        "sha256": "c127479729f46f66ca5b1f9ace7412535f4e86ab01fb024f42281258524d6fea",
+        "bytes": 4427
+      },
+      "field_csv": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-coarse-temperature.csv",
+        "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+        "bytes": 13526
+      }
+    },
+    {
+      "mesh": "fine",
+      "divisions": [
+        16,
+        8,
+        4
+      ],
+      "nodes": 765,
+      "elements": 3072,
+      "maximum_temperature_c": 41.6666666665829,
+      "minimum_temperature_c": 25.0,
+      "heat_input_w": 4.0,
+      "heat_removed_w": 3.9999999999753264,
+      "relative_heat_imbalance": 6.16839912481737e-12,
+      "analytical_hot_end_c": 41.66666666666667,
+      "relative_analytical_rise_error": 5.026379312766947e-12,
+      "cold_boundary": "Dirichlet",
+      "interface_coefficient_w_m2k": null,
+      "field": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-fine-temperature.vtu",
+        "sha256": "4674660d7ccf117959521c2ab5fc59e61dc4f8edfecbc1b326247ca144813d07",
+        "bytes": 29260
+      },
+      "field_csv": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-fine-temperature.csv",
+        "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+        "bytes": 76526
+      }
+    }
+  ]
+}

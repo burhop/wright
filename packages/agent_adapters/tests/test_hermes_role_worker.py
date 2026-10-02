@@ -6,7 +6,27 @@ from types import ModuleType, SimpleNamespace
 
 import pytest
 
-from agent_adapters.hermes_role_worker import invoke
+from agent_adapters.hermes_role_worker import failure_code, invoke
+
+
+@pytest.mark.parametrize(
+    "name,code",
+    [
+        ("APITimeoutError", "SCOPED_MODEL_TIMEOUT"),
+        ("AuthenticationError", "SCOPED_MODEL_AUTH_REQUIRED"),
+        ("PermissionDeniedError", "SCOPED_MODEL_AUTH_REQUIRED"),
+        ("RateLimitError", "SCOPED_MODEL_RATE_LIMITED"),
+        ("UnknownProviderError", "SCOPED_INVOCATION_UNAVAILABLE"),
+    ],
+)
+def test_worker_failure_category_never_includes_sdk_exception_text(name, code):
+    error = type(name, (Exception,), {})("SECRET token and provider URL")
+    assert failure_code(error) == code
+    assert "SECRET" not in failure_code(error)
+
+
+def test_standard_deadline_has_the_fixed_timeout_category():
+    assert failure_code(TimeoutError("SECRET transport")) == "SCOPED_MODEL_TIMEOUT"
 
 
 @pytest.fixture

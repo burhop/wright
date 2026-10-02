@@ -789,6 +789,33 @@ describe("bounded representation views", () => {
     expect(await screen.findByText(/no supported preview/)).toBeInTheDocument();
     expect(document.querySelector("script, iframe, object, embed")).toBeNull();
   });
+  it("shows exact assessment-sized JSON as inert text without the smaller prose limit", async () => {
+    const text = JSON.stringify({
+      schema_version: "wright.process-validation/1",
+      summary: { counts: { pass: 25, blocked: 1 } },
+      evidence: "x".repeat(80_000),
+      note: "<script>window.bad=true</script>",
+    });
+    const view = render(
+      <RepresentationViewer
+        blob={new Blob([text], { type: "application/json" })}
+        title="Exact assessment"
+      />,
+    );
+    await waitFor(() => expect(view.container.querySelector("pre")?.textContent).toBe(text));
+    expect(view.container.querySelector("script, iframe, object, embed")).toBeNull();
+    expect(screen.queryByText(/exceeds the supported preview size/)).not.toBeInTheDocument();
+  });
+  it.each([
+    ["application/json", 1024 * 1024 + 1],
+    ["text/plain", 65_537],
+  ])("rejects oversized %s before reading bytes", async (type, size) => {
+    const blob = new Blob(["x".repeat(size)], { type });
+    const read = vi.spyOn(blob, "text");
+    render(<RepresentationViewer blob={blob} title="Bounded evidence" />);
+    expect(await screen.findByText(/exceeds the supported preview size/)).toBeInTheDocument();
+    expect(read).not.toHaveBeenCalled();
+  });
   it("releases thumbnails and never reuses a bitmap for a different blob", () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:old-image");
     const revoke = vi

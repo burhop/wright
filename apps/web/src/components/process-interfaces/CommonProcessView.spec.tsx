@@ -1514,7 +1514,7 @@ describe("common process request recovery and observer lifetime", () => {
     expect(client.cancel).not.toHaveBeenCalled();
     expect(client.start).not.toHaveBeenCalled();
   });
-  it("focuses an exact assessment and reads its separate recorded evidence only once", async () => {
+  it.each([false, true])("focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: %s)", async (sharedAssessment) => {
     const { client, store } = fixture();
     const output = {
       result_id: "subject-result",
@@ -1534,7 +1534,9 @@ describe("common process request recovery and observer lifetime", () => {
     const completed: InteractionSnapshot = {
       ...running,
       state: "completed",
-      outputs: [output],
+      outputs: sharedAssessment
+        ? [{ ...output, result_id: "earlier-result", title: "Earlier checked part" }, output]
+        : [output],
     };
     vi.mocked(client.getSnapshot).mockResolvedValue(completed);
     vi.mocked(client.follow).mockImplementation(async function* () {
@@ -1571,6 +1573,10 @@ describe("common process request recovery and observer lifetime", () => {
     expect(document.activeElement).toHaveAttribute(
       "data-assessment-id",
       "assessment-one",
+    );
+    expect(document.activeElement?.closest("[data-result-id]")).toHaveAttribute(
+      "data-result-id",
+      "subject-result",
     );
     expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(
       reference,

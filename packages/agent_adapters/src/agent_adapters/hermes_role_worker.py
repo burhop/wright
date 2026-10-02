@@ -134,6 +134,21 @@ def invoke(request: dict, runtime_root: Path) -> dict:
             close()
 
 
+def failure_code(error):
+    """Fixed categories only; SDK exception text can contain credentials."""
+    name = type(error).__name__
+    if isinstance(error, TimeoutError) or name in {
+        "APITimeoutError",
+        "TimeoutException",
+    }:
+        return "SCOPED_MODEL_TIMEOUT"
+    if name in {"AuthenticationError", "PermissionDeniedError"}:
+        return "SCOPED_MODEL_AUTH_REQUIRED"
+    if name == "RateLimitError":
+        return "SCOPED_MODEL_RATE_LIMITED"
+    return "SCOPED_INVOCATION_UNAVAILABLE"
+
+
 def main():
     root = Path(sys.argv[1]).resolve()
     sys.path.insert(0, str(root))
@@ -147,10 +162,11 @@ def main():
         # Upstream SDK logging does not enter the structured result channel.
         with contextlib.redirect_stdout(sys.stderr):
             result = invoke(request, root)
-    except Exception:
+    except Exception as error:
         # Auth/SDK exceptions can contain transport secrets; never forward them.
         result = {
             "ok": False,
+            "code": failure_code(error),
             "reason": "The confined Hermes model invocation failed. Check its local provider credentials, default model and qualified SDK installation.",
         }
     sys.stdout.write(json.dumps(result))

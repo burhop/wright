@@ -1,0 +1,20 @@
+{
+  "cases": {
+    "baseline_40": {
+      "dimensions_mm": {
+        "x": 100.0,
+        "y": 40.0,
+        "z": 2.0
+      },
+      "step_sha256": "2a2219ba7bf16ef4b8e3cf5f8d1a2e853d159b66b5887e3da3301ad1b1cb5027"
+    },
+    "revision_60": {
+      "dimensions_mm": {
+        "x": 100.0,
+        "y": 60.0,
+        "z": 2.0
+      },
+      "step_sha256": "4fa45fb7466d3f873176e090f9cf1bdb912cca7e92e94007865ba8bad96d50cb"
+    }
+  }
+}

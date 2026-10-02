@@ -1,7 +1,7 @@
 # Heat-spreader proof progress
 
-**Status:** live basis, declared waiting and normal-workspace continuation proved;
-complete CAD/solver and tailored-interface proof pending.
+**Status:** actual CAD/solver chain, original validation and common-workspace
+result inspection proved; complete tailored-interface proof pending.
 **Checkpoint:** 2 October 2026 UTC.
 
 The new example at `examples/process-interfaces/heat-spreader-sizing/` prepares a
@@ -109,3 +109,81 @@ documents normal source-service acceptance and exact digest read-back; writing a
 proposal alone does not establish accepted revision history. The original
 assignment, full validation profile, engineering thresholds and protected campaign
 records remain unchanged.
+
+## Actual CAD, numerical analysis and current assessment
+
+Fresh run `67abaa021ee44972a94e3c9cbaa3dbbe` used accepted source
+`workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow`, digest
+`e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9`.
+Normal source/input/start services recorded immutable inputs. A real declared
+basis wait and labelled synthetic decision preceded its one-shot continuation.
+The policy actor was `integration_test:083-private-digital-heat-005-rerun-002`;
+this is not human engineering acceptance. An initial extra request field was
+rejected before action claim; the corrected request returned 202. No consumed
+action or uncertain native operation was replayed.
+
+The actual configured model authored the plate source. Independent AgentCAD
+created native STEP exports, reopened them and measured the two rectangles:
+100 × 40 × 2 mm and 100 × 60 × 2 mm. Separate read-back retained the provider's
+creation-response limitation instead of relabelling its receipt. Independent
+OASiS/scikit-fem consumed exact STEP hashes and measured dimensions and generated
+actual coarse/fine tetrahedral conduction fields, CSV/VTU, balances and selection
+evidence. Coarse meshes used 135 nodes/384 elements; fine meshes used
+765 nodes/3,072 elements. This is the declared rectangular idealization, not
+arbitrary STEP-topology import or physical qualification.
+
+The actual fine-grid hot-end results were approximately **50 °C** for the 40 mm
+candidate and **41.67 °C** for the 60 mm candidate. The first exceeds the original
+45 °C limit. Analytical agreement, refinement and balance thresholds were
+preserved; `critic_approved=false` remains explicit. The unchanged full 082
+profile recorded **25 passing checks and one blocked review**, assessment
+`assessment-c1cc56ecf12341938996ff0fa1c07b4e`. Its terminal diagnostic was
+`PROCESS_VALIDATION_NEEDS_INPUT`; the synthetic basis decision does not satisfy
+the profile's authenticated human review. Release eligibility remains false.
+
+Actual outputs, exact assessment and checked scope are retained in
+[the digital analysis artifacts](../../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/checked-scope.json).
+Assessment semantic digest and serialized-file SHA-256 are separate identities.
+
+## Common working view and remaining model limitation
+
+The recorder read-side previously replaced current continuation results with the
+earlier wait's final result. It now reads current partial results for noncompleted
+runs, including an explicitly empty map after invalidation, while preserving
+completed final-result authority. No execution record or history is rewritten.
+The normal isolated API was restarted on the same database without replaying
+engineering work; its interaction now exposes all **18** recorded results.
+
+A fresh real-workspace walkthrough passed **12 checks**: normal Workflows and
+named accepted-file entry, common tab, same-run attachment, all outputs, exact
+fine-grid CSV table, all 765 projected samples, full assessment evidence and
+exact-result focus. One assessment checking several outputs now focuses the
+requested result as well as its assessment. JSON evidence has a 1 MiB inert,
+scrollable preview bound; prose retains 64 KiB, with download fallback above the
+limits. Earlier incorrect harness selectors and the assessment-size stopping
+report remain retained. See the
+[workspace report](../../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/workspace-walkthrough/report.html).
+Raw authenticated traces remain private.
+
+Three actual heat-interface generation attempts failed before a preview/build.
+The latest bounded request through Wright identifies **UI_MODEL_TIMEOUT** for
+the unchanged configured `gpt-5.6-sol`/Hermes model-only role. No broad tools,
+global model change or automatic replay was used. Fixed timeout/auth/rate-limit
+categories provide actionable messages without forwarding SDK exception text.
+The failed job and
+[safe timeout evidence](../../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/ui-authoring-timeout.json)
+are retained. The common results view remains usable; successful earlier generic
+authoring smoke does not establish this tailored heat interface.
+
+Checks after resume: **124** result/continuation/082 tests, **131** role/authoring/
+API/contract tests, **35** focused adapter tests and **96** frontend tests passed.
+The focused adapter suite overlaps the 131-test group. TypeScript and Ruff passed;
+app ESLint passed with explicit config, while the external kit file is outside
+that config's base path and was not lint-qualified by it. The new shared-assessment
+focus regression first reproduced the wrong earlier-result focus, then passed.
+Browser console/page/network error lists are empty in the successful report.
+
+T046/T047 remain incomplete until tailored generation/preview/save/update/reuse
+and the second engineering workflow are proved. Provider clean-container checks,
+migration and final installed distribution also remain open. No protected
+campaign subject, physical action, human acceptance, push or release was changed.

@@ -463,6 +463,28 @@ class ProcessInterfaceAuthoring:
                     }
                 elif event.type == "stream_end":
                     ended = True
+                elif event.type == "error":
+                    code = event.data.get("code")
+                    messages = {
+                        "SCOPED_MODEL_TIMEOUT": (
+                            "UI_MODEL_TIMEOUT",
+                            "The configured model did not finish this interface within the time limit.",
+                            "Try a smaller interface request explicitly. The failed job is retained; the common view remains available.",
+                        ),
+                        "SCOPED_MODEL_AUTH_REQUIRED": (
+                            "UI_MODEL_AUTH_REQUIRED",
+                            "The configured model needs its provider connection restored.",
+                            "Restore the configured model connection before starting a new interface job. Saved interfaces and the common view remain available.",
+                        ),
+                        "SCOPED_MODEL_RATE_LIMITED": (
+                            "UI_MODEL_RATE_LIMITED",
+                            "The configured model is temporarily limiting requests.",
+                            "Wait before explicitly starting a new interface job. This failed job will not be replayed automatically.",
+                        ),
+                    }
+                    if code in messages:
+                        raise ProcessInterfaceError(*messages[code])
+                    raise ValueError("The confined role did not finish its invocation")
                 elif event.type not in {"progress"}:
                     raise ValueError(
                         "The confined role returned an error or tool request"
@@ -617,6 +639,10 @@ class ProcessInterfaceAuthoring:
             if current.state not in {"saved", "failed", "cancelled"}:
                 self._transition(current, "cancelled")
             raise
+        except ProcessInterfaceError as error:
+            current = self.repository.get_job(job.process.workspace_id, job.job_id)
+            if current.state not in {"saved", "failed", "cancelled"}:
+                self._transition(current, "failed", diagnostics=(error.reason,))
         except Exception:
             # Do not retain raw adapter/build exceptions: SDK errors can contain
             # credentials. Exact structured diagnostics are retained above.

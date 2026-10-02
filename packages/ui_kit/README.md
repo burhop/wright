@@ -130,8 +130,9 @@ support adequacy, machine compatibility or engineering compliance.
 
 CSV views are bounded to 2 MiB, 10,000 data rows, 50 columns and 8 KiB fields;
 quoted commas/newlines/quotes and CRLF/BOM are supported. Tables paginate rather
-than silently pretending that initial rows are complete. Text/JSON previews are
-limited to 64 KiB. HTML/SVG is never embedded as executable document content.
+than silently pretending that initial rows are complete. Text previews are
+limited to 64 KiB; exact JSON evidence is bounded to 1 MiB and displayed as inert
+text in a scrollable pane. HTML/SVG is never embedded as executable document content.
 Larger/unsupported representations retain exact open/download fallback.
 Numeric plots display supplied values with finite extents, at most 10,000
 samples; scalar fields do not invent interpolated geometry.
