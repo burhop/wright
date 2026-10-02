@@ -335,6 +335,35 @@ async def test_concurrent_duplicate_requests_do_not_probe_or_generate_twice(tmp_
 
 
 @pytest.mark.asyncio
+async def test_optional_binding_repair_explains_fallback_without_private_input(
+    tmp_path,
+):
+    def missing_fallback(output):
+        output["manifest"]["bindings"] = [
+            {
+                "binding_id": "optional-result",
+                "kind": "output",
+                "selector": "SECRET-PRIVATE-SELECTOR",
+                "required": False,
+            }
+        ]
+        return output
+
+    engine = Engine([missing_fallback])
+    service, reference = prepared(tmp_path, engine)
+    job = await service.submit(
+        authorized(), reference, "optional-binding", "Show results"
+    )
+    complete = await service.wait(authorized(), reference, job.job_id)
+    assert complete.state == "preview_ready" and complete.repair_attempt == 1
+    correction = json.loads(engine.calls[1].message)["correction"][0]
+    assert "required=false" in correction["correction"]
+    assert "fallback" in correction["correction"]
+    assert "SECRET-PRIVATE-SELECTOR" not in canonical_json(correction)
+    await service.close()
+
+
+@pytest.mark.asyncio
 async def test_two_exact_diagnostic_repairs_preserve_role_and_default_model(tmp_path):
     def wrong_identity(output):
         output["manifest"]["process"]["source_digest"] = "f" * 64

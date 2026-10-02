@@ -625,17 +625,31 @@ class ProcessInterfaceAuthoring:
                 except ValidationError as error:
                     # Locations and error categories are useful; Pydantic input
                     # values/exception contexts may contain private source data.
+                    errors = error.errors(include_input=False, include_context=False)
                     locations = [
                         ".".join(str(part) for part in e["loc"]) + ": " + e["type"]
-                        for e in error.errors(
-                            include_input=False, include_context=False
-                        )[:16]
+                        for e in errors[:16]
                     ]
+                    correction_text = "Return only the exact structured output schema supplied by Wright."
+                    # Explain this known contract invariant without exposing
+                    # arbitrary exception messages or private input values.
+                    if any(
+                        e["loc"][:2] == ("manifest", "bindings")
+                        and e["type"] == "value_error"
+                        and e["msg"]
+                        == "Value error, Optional binding requires an explicit fallback"
+                        for e in errors
+                    ):
+                        correction_text += (
+                            " Every binding with required=false must include a nonempty "
+                            "fallback explaining what the user sees when it is unavailable. "
+                            "Keep required=true for bindings that must resolve."
+                        )
                     diagnostics = (
                         _reason(
                             "The structured interface source is invalid: "
                             + "; ".join(locations)[:1600],
-                            "Return only the exact structured output schema supplied by Wright.",
+                            correction_text,
                         ),
                     )
                 except ProcessInterfaceError as error:

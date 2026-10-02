@@ -9,6 +9,10 @@ binding description supplied by Wright. Do not invent inputs, checkpoints,
 actions, defaults, capabilities, viewer support, engineering results or verdicts.
 Use stable block/port/role selectors, not graph coordinates or run IDs. Explain
 missing optional capabilities. Required unresolved bindings must be corrected.
+Every manifest binding with `required=false` must have a nonempty `fallback`
+describing the visible unavailable state. Keep `required=true` when resolution
+is mandatory. The binding catalog lists allowed selectors, not complete bindings;
+do not copy a selector into the manifest without its required binding fields.
 The UI can be a comparison, dashboard, questionnaire or another useful layout;
 no domain lifecycle is mandatory.
 

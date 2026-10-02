@@ -1316,3 +1316,11 @@ Original failed logs remain unchanged. Evidence is in
 `20261002-wheel-retained-reports`. Fresh Wright interface authoring job
 `job-57569905755f41f4bee61da253c03204` is accepted for the retained consumer;
 preview/save/update/reuse remain unproved. All task scope and M5 remain active.
+
+The wheel authoring job reached `preview_ready` after its configured correction:
+revision `revision-2bf6d4d49c224290a0416503a627d0e7`. Its first response omitted
+required fallbacks on optional bindings. Author instructions now explain that
+invariant and the known schema failure receives bounded actionable correction
+without arbitrary exception messages/private input values. All 26 controlled
+authoring tests pass, including a missing-fallback repair and no private selector
+disclosure. Build success is separate from the ongoing served preview check.
