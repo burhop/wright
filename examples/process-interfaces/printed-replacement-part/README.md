@@ -47,6 +47,9 @@ Open the accepted workflow in the workspace and use its common working view to
 prepare immutable inputs and check readiness. Generate and refine a tailored
 interface through Wright's UI authoring control. Native/provider readiness and
 predictable choices belong before execution; reviews are declared in the process.
+Construction and repair each have a bounded 360-second task allowance with at
+most two geometry calls. A timeout retains completed native operations and
+partial files; their existence does not complete the step or authorize a retry.
 
 ## Engineering handoffs
 

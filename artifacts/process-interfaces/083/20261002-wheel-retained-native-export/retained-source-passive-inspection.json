@@ -1,0 +1,34 @@
+{
+  "run_id": "b3302d597ce344c2be288233f106aeb8",
+  "source_path": "process-proofs/printed-replacement-part/live-default-model-008/outputs/source_mesh.stl",
+  "source_sha256": "8554b2e9f0bd1cff7398abd02d360079ac55c0c503f46a7274601f65f2b74833",
+  "bytes": 3052284,
+  "triangles": 61044,
+  "bounds_in_native_export_coordinates": {
+    "minimum": [
+      -18.998096466064453,
+      -17.41132354736328,
+      -0.000235584462643601
+    ],
+    "maximum": [
+      18.998096466064453,
+      17.41132354736328,
+      18.00006675720215
+    ],
+    "extent": [
+      37.996192932128906,
+      34.82264709472656,
+      18.000302341664792
+    ]
+  },
+  "coordinate_units": "Native construction/export declared mm; units are not encoded by STL.",
+  "coincident_vertex_decimal_places": 6,
+  "edge_incidence_counts": {
+    "2": 91566
+  },
+  "repeated_quantized_vertex_triangles": 0,
+  "limits": "Passive binary/finite/bounds/edge-incidence inspection only; no vertex-link manifold, socket, round, tolerance, fit, strength, support or full 082 assessment.",
+  "producer_run_state": "failed/TASK_TIMEOUT after native export; not an accepted completed step",
+  "engineering_acceptance": false,
+  "physical_dispatch": false
+}

@@ -260,6 +260,14 @@ def test_printed_proposal_preserves_assignment_and_full_gate(printed_configurati
     } <= {step.id for step in plan.steps}
     assert report["step_count"] == 11
     create = next(step for step in plan.steps if step.id == "create_mesh_source_test")
+    assert create.timeout_seconds == 360 and create.max_tool_calls == 2
+    repair = next(
+        step for step in plan.steps if step.id == "repair_measure_orient_source_test"
+    )
+    assert repair.timeout_seconds == 360 and repair.max_tool_calls == 2
+    assert list(repair.file_dependencies.values()) == [
+        "process-proofs/printed-replacement-part/source-test/outputs/source_mesh.stl"
+    ]
     assert any(
         source
         == "define_geometry_basis_source_test.define_geometry_basis_source_test_result"

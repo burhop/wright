@@ -196,6 +196,7 @@ def prepare(workspace, attempt, tools, bindings):
         server=geometry,
         expected=("source_mesh.stl",),
         calls=2,
+        timeout=360,
     )
     flow.reference(basis_result, create, "reviewed_basis")
     flow.reference(requirements_ref, create, "requirements")
@@ -214,10 +215,14 @@ def prepare(workspace, attempt, tools, bindings):
         server=geometry,
         expected=("repaired_mesh.stl", "mesh-preview.png"),
         calls=2,
+        timeout=360,
     )
-    flow.reference(
+    actual_source_port = flow.reference(
         create["id"] + ".source_mesh", repair, "actual_source", "workspace_file"
     )
+    repair["fields"]["settings"]["mcp_file_dependencies"] = {
+        actual_source_port: flow.output + "/source_mesh.stl"
+    }
     flow.reference(source_result, repair, "construction_report")
     flow.reference(requirements_ref, repair, "requirements")
     flow.reference(guidance_ref, repair, "qualified_application_guidance")

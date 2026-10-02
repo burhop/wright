@@ -1127,3 +1127,29 @@ query confirms actual 4.5.10 import/export parameters. Qualified geometry guidan
 is now a bounded frozen example input, with 78 focused checks passing. A fresh
 digital run uses the proven export recipe. Live geometry/slicing remains pending;
 no transport-success response is described as a successful engineering operation.
+
+Native correction then produced a retained 61,044-triangle binary STL. Independent
+passive inspection confirms its bytes, finite coordinates, bounds and edge
+incidence; feature compliance remains unverified. The enclosing task still timed
+out while finalizing its model response, so it remains failed. The example now
+provides 360 seconds for each of the two-call construction/repair tasks; MCP
+limits and engineering gates are unchanged. A fresh run reached its declared
+basis review. Seventy-eight focused checks pass, and the actual partial export
+plus failed-run provenance are retained in `20261002-wheel-retained-native-export`.
+
+The active migration audit now records the actual prototype entry in
+`WorkflowRecoveryPage` and its startup/API/UI/script/campaign callers in
+[generality-and-migration.md](evidence/generality-and-migration.md). No vendor
+caller has been retired yet; T048/T049 remain pending replacement proof and
+read-only historical compatibility.
+
+Resume checkpoint: the 360-second native construction completed in run
+`fb51d623ce244949a9251cf5e5eea1eb`, publishing a 68,856-triangle source STL.
+The next step failed before execution because the runtime treated the binary as
+document text. Shared explicit file dependencies now support scoped AI MCP tasks,
+with the original confined locator/hash/size checks and capability boundaries.
+Consumer failures emit exact diagnostics; old completed producers are no longer
+used as assumed error owners. The 192-check focused regression suite passes;
+live repair/slicing and T045–T047 remain pending. Synthetic decision and uncertain
+acknowledgement were reconciled without replay; no engineering acceptance or
+physical dispatch is implied.

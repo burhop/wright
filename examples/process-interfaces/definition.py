@@ -182,6 +182,7 @@ class Definition:
         expected=(),
         calls=8,
         format="json",
+        timeout=180,
     ):
         fields = step["fields"]
         fields.update(
@@ -202,7 +203,7 @@ class Definition:
                 authoring_template="mcp-task",
                 mcp_server=server,
                 max_tool_calls=calls,
-                timeout_seconds=180,
+                timeout_seconds=timeout,
                 expected_files="\n".join(self.output + "/" + item for item in expected),
                 task_guidance="Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval.",
             )

@@ -893,6 +893,30 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 )
         arguments, argument_sources, arguments_from = {}, {}, None
         file_dependencies = {}
+        raw_dependencies = settings.get("mcp_file_dependencies", {})
+        if not isinstance(raw_dependencies, dict) or any(
+            not isinstance(port, str) or not isinstance(path, str)
+            for port, path in raw_dependencies.items()
+        ):
+            raise _invalid(
+                f"{title}: file dependencies must map input ports to workspace files."
+            )
+        if raw_dependencies and not (is_mcp or agent_task):
+            raise _invalid(
+                f"{title}: file dependencies require a configured tool or AI MCP task."
+            )
+        for port, path in raw_dependencies.items():
+            endpoint = f"{block_id}.{port}"
+            connected = incoming.get(endpoint, [])
+            if (
+                endpoint not in ports
+                or ports[endpoint][1] != "inputs"
+                or ports[endpoint][2].get("kind") != "workspace_file"
+                or len(connected) != 1
+                or ports[connected[0]][2].get("kind") != "workspace_file"
+            ):
+                raise _invalid(f"{title}: connect one named workspace file to {port}.")
+            file_dependencies[connected[0]] = _safe_path(path)
         if is_mcp:
             try:
                 arguments = json.loads(settings.get("mcp_arguments", "{}"))
@@ -932,28 +956,6 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                         raise _invalid(f"{title}: connect one response to {name}.")
                     if connected:
                         argument_sources[name] = connected[0]
-            raw_dependencies = settings.get("mcp_file_dependencies", {})
-            if not isinstance(raw_dependencies, dict) or any(
-                not isinstance(port, str) or not isinstance(path, str)
-                for port, path in raw_dependencies.items()
-            ):
-                raise _invalid(
-                    f"{title}: file dependencies must map input ports to workspace files."
-                )
-            for port, path in raw_dependencies.items():
-                endpoint = f"{block_id}.{port}"
-                connected = incoming.get(endpoint, [])
-                if (
-                    endpoint not in ports
-                    or ports[endpoint][1] != "inputs"
-                    or ports[endpoint][2].get("kind") != "workspace_file"
-                    or len(connected) != 1
-                    or ports[connected[0]][2].get("kind") != "workspace_file"
-                ):
-                    raise _invalid(
-                        f"{title}: connect one named workspace file to {port}."
-                    )
-                file_dependencies[connected[0]] = _safe_path(path)
             handled = (
                 set(argument_sources.values())
                 | set(file_dependencies)
@@ -1809,6 +1811,32 @@ async def execute_prompt_workflow(
             )
         return value
 
+    async def task_reference(step, source_id):
+        try:
+            return await document_value(source_id, step.title)
+        except WorkflowSourceExecutionError as error:
+            await reference_failure(step, error)
+            raise
+
+    async def task_file_dependencies(step):
+        from .workflow_references import verified_file_dependencies
+
+        try:
+            return verified_file_dependencies(step, responses, workspace_dir)
+        except WorkflowSourceExecutionError as error:
+            await reference_failure(step, error)
+            raise
+
+    async def reference_failure(step, error):
+        await emit(
+            "step_diagnostic",
+            task_id=step.id,
+            task_title=step.title,
+            code=error.code,
+            message=str(error),
+            correction=error.correction,
+        )
+
     for key, fields in plan.inputs.items():
         for port in fields.get("outputs", []):
             responses[f"{key}.{port['key']}"] = input_values[key]
@@ -2040,49 +2068,7 @@ async def execute_prompt_workflow(
         elif step.tool_name:
             if tool_runtime is None:
                 raise _invalid(f"{step.title}: MCP execution is unavailable.")
-            file_dependency_records = []
-            for source_id, expected_path in step.file_dependencies.items():
-                value = responses.get(source_id)
-                if not isinstance(value, EngineeringResult):
-                    raise _invalid(
-                        f"{step.title}: its connected file was not produced."
-                    )
-                representations = [
-                    rep for rep in value.representations if rep.kind == "workspace_file"
-                ]
-                if (
-                    len(representations) != 1
-                    or representations[0].location != expected_path
-                ):
-                    raise _invalid(
-                        f"{step.title}: its connected file differs from the declared input."
-                    )
-                rep = representations[0]
-                from .workspace_path import WorkspacePath
-
-                try:
-                    target = WorkspacePath(workspace_dir).resolve(
-                        expected_path, must_exist=True
-                    )
-                    with target.open("rb") as stream:
-                        actual_hash = hashlib.file_digest(stream, "sha256").hexdigest()
-                    actual_size = target.stat().st_size
-                except (OSError, ValueError) as error:
-                    raise _invalid(
-                        f"{step.title}: its connected file is unavailable."
-                    ) from error
-                if actual_hash != rep.sha256 or actual_size != rep.size_bytes:
-                    raise _invalid(
-                        f"{step.title}: its connected file changed after the previous stage."
-                    )
-                file_dependency_records.append(
-                    {
-                        "path": expected_path,
-                        "sha256": actual_hash,
-                        "kind": "workspace_file",
-                        "source_port": source_id,
-                    }
-                )
+            file_dependency_records = await task_file_dependencies(step)
             tool_values = {
                 key: value.text
                 if isinstance(value, WorkflowReference) and not value.image_url
@@ -2099,7 +2085,7 @@ async def execute_prompt_workflow(
                 if source_id == step.arguments_from or isinstance(
                     value, EngineeringResult
                 ):
-                    value = await document_value(source_id, step.title)
+                    value = await task_reference(step, source_id)
                 if isinstance(value, WorkflowReference):
                     if value.image_url or value.file_only:
                         raise _invalid(
@@ -2184,9 +2170,13 @@ async def execute_prompt_workflow(
                     )
                     artifacts_by_output[f"{step.id}.{key}"] = produced_files
         else:
-            images, reference_records = [], []
+            images = []
+            reference_records = await task_file_dependencies(step)
+            file_context = {
+                record["source_port"]: record for record in reference_records
+            }
             prompt = (
-                await document_value(step.prompt_from, step.title)
+                await task_reference(step, step.prompt_from)
                 if step.prompt_from
                 else step.prompt
             )
@@ -2210,7 +2200,13 @@ async def execute_prompt_workflow(
 
                 prompt = canonical_json(prompt)
             for name, source_id in step.references:
-                reference = await document_value(source_id, step.title)
+                if source_id in file_context:
+                    prompt += (
+                        f"\n\nVerified tool file dependency — {name} (contents are not inlined):\n"
+                        + json.dumps(file_context[source_id])
+                    )
+                    continue
+                reference = await task_reference(step, source_id)
                 if isinstance(reference, WorkflowReference):
                     if reference.file_only:
                         raise _invalid(

@@ -205,6 +205,7 @@ async def test_run_projection_reads_real_082_assessment_and_supersession(tmp_pat
     path = tmp_path / case.result["run_log_path"]
     record = json.loads(path.read_bytes())
     record["result"]["results"].append(asdict(native))
+    record["partial_results"][native.id] = asdict(native)
     path.write_text(json.dumps(record), encoding="utf-8")
     view = await app.get_snapshot(scope(), process, run_id=run_id)
     output = next(item for item in view.outputs if item.result_id == native.id)
@@ -243,7 +244,41 @@ async def test_wrong_run_review_pointer_cannot_expose_another_review(tmp_path):
     record["run_id"] = record["result"]["run_id"] = "another-run"
     record["events"] = []
     record["result"]["results"] = []
+    record["partial_results"] = {}
     path.write_text(json.dumps(record), encoding="utf-8")
     with pytest.raises(ProcessInterfaceError) as error:
         await app.get_snapshot(scope(), process, run_id="another-run")
     assert error.value.reason.code == "SCOPE_DENIED"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("exact_failure", [True, False])
+async def test_failure_navigation_uses_exact_diagnostic_not_completed_producer(
+    tmp_path, exact_failure
+):
+    case = await setup_case(tmp_path)
+    app = application(case.services, tmp_path)
+    path = tmp_path / case.result["run_log_path"]
+    record = json.loads(path.read_bytes())
+    record.update(status="failed", code="WORKFLOW_NOT_READY", error="File unavailable")
+    record["events"].append({"kind": "step_completed", "task_id": "package"})
+    if exact_failure:
+        record["events"].append(
+            {
+                "kind": "step_diagnostic",
+                "task_id": "after",
+                "message": "File unavailable",
+            }
+        )
+    path.write_text(json.dumps(record), encoding="utf-8")
+    original = path.read_bytes()
+    calls = list(case.calls)
+    view = await app.get_snapshot(
+        scope(),
+        reference(tmp_path, case.checkpoint.workflow_id),
+        run_id=case.result["run_id"],
+    )
+    reason = view.diagnostics[0]
+    assert reason.step_id == ("after" if exact_failure else None)
+    assert reason.navigation.kind == ("block" if exact_failure else "run")
+    assert case.calls == calls and path.read_bytes() == original

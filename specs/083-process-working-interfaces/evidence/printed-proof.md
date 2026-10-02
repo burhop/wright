@@ -103,6 +103,53 @@ pass in `t045-printed-proposal-015`. Fresh run
 recipe and unique attempt object prefix. It remains an in-progress digital proof;
 original requirements, profile and final review remain unchanged.
 
+That run subsequently exported an actual source STL during its second native
+call: 3,052,284 bytes, 61,044 triangles, SHA-256
+`8554b2e9f0bd1cff7398abd02d360079ac55c0c503f46a7274601f65f2b74833`.
+The provider recorded an exterior 0.08 mm voxel union followed by a separately
+cut analytic D socket and reported zero non-manifold edges. Independent passive
+binary inspection confirms finite coordinates, exact binary length, extents
+approximately 37.9962 × 34.8226 × 18.0003 in declared mm coordinates, and
+two-facet incidence on all 91,566 quantized edges. That check does not inspect
+vertex links, socket dimensions, rounds, tolerance, fit, strength or supports.
+The [retained artifact scope](../../../artifacts/process-interfaces/083/20261002-wheel-retained-native-export/checked-scope.json)
+links its failed-run provenance and original bytes.
+
+The enclosing task still expired while the model finalized its response; no
+completed-step/result receipt or assessment is manufactured from the partial
+export. The example's construction and repair allowances are now bounded at
+360 seconds, with the original two-call limit and individual MCP limits intact.
+Seventy-eight checks pass in `t045-printed-proposal-017`, including explicit
+allowance/call-limit assertions. Fresh run `fb51d623ce244949a9251cf5e5eea1eb`
+reached its declared basis review under the revised example allowance.
+
+That run consumed its exact synthetic decision once. Its continuation's HTTP 503
+acknowledgement was reconciled against the durable consumed/delivered record;
+it was not retried. The actual model/native construction then completed and
+published its source STL result: 3,442,884 bytes and 68,856 triangles. The provider
+reported bounds 34.7916 × 37.96 × 17.96 mm and zero non-manifold edges. These
+remain provider measurements, not verified socket/feature/fit compliance.
+
+Before the repair step could start, Wright attempted to read that binary STL as
+document contents. The run ended `WORKFLOW_NOT_READY`; no repair or slicer call
+was made. Its two current outputs are the basis and actual source STL. The
+diagnostic also incorrectly linked to the preceding completed construction step.
+This exposed a shared handoff defect: the compiler only honoured explicit file
+dependency declarations on exact MCP calls, despite the repair being a scoped AI
+MCP task. The example now explicitly declares the source STL dependency, and
+the shared compiler/runtime apply the same confined path/hash/size verification
+to both task forms. Opaque file bytes are not inlined into a document prompt.
+Pre-consumption failures record the exact consumer, while historical failures
+without that evidence fall back to run navigation.
+
+`t045-ai-file-dependency-006` passes 192 checks covering binary handoffs, changed/
+missing/wrong-path rejection before consumer execution, exact failure navigation,
+source execution, AI file outputs, preparation, continuation, approval and 082
+validation. Two older owner fixtures were updated to use current authoritative
+partial results rather than stale prior-segment results. These are controlled
+runtime checks, not proof that live repair or slicing now succeeds. A new private
+run is required after loading the fix; failed historical runs remain unchanged.
+
 ## Remaining evidence
 
 T045–T047 remain incomplete. Run the original assignment through freshly bound

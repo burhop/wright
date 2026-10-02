@@ -1,0 +1,59 @@
+# Generality and prototype migration — partial evidence
+
+## Shared mechanisms observed
+
+The heat analysis and original focus-wheel preparation use accepted `.wflow`
+sources, immutable input snapshots, the same durable source runtime, declared
+review checkpoints, exact-subject synthetic test policies, common working tabs
+and existing engineering MCP providers. Neither definition contains another
+executor. Engineering requirements and full 082 profiles remain separate from
+interface composition and transport success.
+
+| Engineering job | Actual useful tools and handoffs | Current proof limit |
+| --- | --- | --- |
+| Heat-spreader sizing | Actual model basis → AgentCAD native STEP construction/reopen/measurement → OASiS coarse/fine 3D conduction → exact files and full assessment. | Analysis completed with 25 checks passing and original mandatory review held. Actual model-created tailored UI was saved, refined, navigated and reused; complete preparation/review controls remain pending. |
+| Printed replacement focus wheel | Actual model design proposal → declared review → existing Blender MCP construction/correction → actual binary source STL. Independent offline slicer and passive package-inspection stages are connected in the accepted definition. | Native export occurred in a failed task whose deadline expired before model completion. Slicer handoff, full assessment and tailored wheel UI remain unproved. |
+
+Observed failures improved the declaration and provider guidance: required solver
+configuration, matching file kinds, unique order links, complete proposed
+construction choices before review, valid compact JSON, actual installed export
+parameters and a bounded task allowance. Those corrections belong in the example
+or existing shared declarations. No printer protocol, provider-specific error
+text parser or custom dispatch service was added to Wright.
+
+Wright records exact native failures even when the provider returns a successful
+MCP transport envelope. A native file can also exist when its enclosing task fails
+while the model finalizes its response. Neither observation promotes the step,
+certifies its geometry or permits a blind retry. Retain partial artifacts and
+reported limitations; exact inspections and original gates remain required.
+
+## Actual active caller inventory
+
+Read-only source audit on 2 October 2026 found these production connections:
+
+| Caller | Current connection | Replacement boundary |
+| --- | --- | --- |
+| `apps/web/src/components/pages/WorkflowRecoveryPage.tsx` | Imports/renders `PrintPartDemoPage`, owns `printDemoRun` restoration and the prototype entry control. | Common/saved working interfaces in workspace tabs; preserve historical result links through a read-only adapter. This is the actual active page entry; changing only `WorkspacePanel` would miss it. |
+| `apps/web/src/components/pages/PrintPartDemoPage.tsx` | Vendor preparation, slot selection, dispatch/retry/cancel and camera, plus duplicated viewers/progress. | Remove active operational UI after shared replacement; reuse public format viewers and exact result navigation. |
+| `apps/web/src/services/workspace-service.ts` | `preparePrintPartDemo`, status/capability/print/dispatch/retry/cancel calls under `/print-demo`. Image upload also uses existing workspace file handling. | Shared process-client operations and ordinary upload; retain only necessary read-only historical access. |
+| `apps/api/src/api/routers/workspace.py` | Eight prototype prepare/capabilities/status/print/dispatch/retry/cancel/camera endpoints call demo services. | Retire mutations and vendor mediation; normal process routes own new work. Historical readers use existing workspace/source/run ownership. |
+| `apps/api/src/api/main.py` | Restores one Studio configuration during startup. | Remove vendor restoration; generic installed binding reconciliation remains the catalog owner's responsibility. |
+| `packages/workspace_service/src/workspace_service/print_part_demo.py` | Looks up a source checkout and copies the repo-local slicing operation into each prototype request. | Saved example/binding data and independent qualified providers; no installed package dependence on demo scripts. |
+| `packages/workspace_service/src/workspace_service/print_part_demo_printer.py` | Vendor status/control/Studio/camera and package checks. | Remove after callers migrate; keep neutral evidence/action behaviour in existing owners. |
+| `scripts/configure_print_demo_*`, `scripts/print_demo_p1s_*`, `scripts/print_demo_studio.py`, Studio Windows helpers | Repo-local setup, device transport and desktop automation; reverse imports from demo service. | Retire active vendor scripts after replacement. Preserve experimental evidence and unrelated dirty bytes. |
+| `scripts/engineering_dataset_slice*`, `scripts/engineering_jig_slice_mcp.py` | Operational vendor slicing also referenced by campaign preparation and binding probes. | Inventory/protect those callers before retirement. Historical campaign artifacts and counters stay immutable; do not substitute a new generation campaign. |
+
+The audit used searches of actual `apps`, `packages` and `scripts` sources,
+excluding tests to identify production callers. It is not an assertion that all
+transitive/data/configuration callers have been migrated.
+
+## Pending work
+
+T048/T049 remain incomplete. Prove the replacement engineering/UI journey,
+inspect saved prototype sources/run formats and all transitive references,
+implement bounded read-only history restoration, migrate callers, retire the
+embedded vendor operations and verify old links plus the new served workspace
+entry. Preserve pre-existing dirty prototype work as recorded evidence and stage
+only owned migration changes. Catalog/example/history metadata may continue to
+name providers. No physical dispatch, upstream publication or user acceptance is
+claimed here.

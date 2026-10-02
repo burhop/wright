@@ -495,7 +495,11 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
     progress = execution.get("last_progress") or {}
     diagnostics = ()
     if view.get("error"):
-        step_id = progress.get("task_id")
+        step_id = (
+            progress.get("task_id")
+            if progress.get("kind") != "step_completed"
+            else None
+        )
         # A reason is a read projection, never a new checkpoint or permission.
         # Only navigate to a step belonging to this exact accepted definition.
         if not isinstance(step_id, str) or step_id not in {

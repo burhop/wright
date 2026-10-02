@@ -104,6 +104,51 @@ class WorkflowReference:
         return cls(path, identity, text=text, size_bytes=len(data))
 
 
+def verified_file_dependencies(step, responses, workspace_dir):
+    """Pin connected tool files without interpreting binary bytes as model text."""
+    from .workflow_results import EngineeringResult
+    from .workflow_source_execution import _invalid
+    from .workspace_path import WorkspacePath
+
+    records = []
+    for source_id, expected_path in step.file_dependencies.items():
+        value = responses.get(source_id)
+        if not isinstance(value, EngineeringResult):
+            raise _invalid(f"{step.title}: its connected file was not produced.")
+        representations = [
+            rep for rep in value.representations if rep.kind == "workspace_file"
+        ]
+        if len(representations) != 1 or representations[0].location != expected_path:
+            raise _invalid(
+                f"{step.title}: its connected file differs from the declared input."
+            )
+        rep = representations[0]
+        try:
+            target = WorkspacePath(workspace_dir).resolve(
+                expected_path, must_exist=True
+            )
+            with target.open("rb") as stream:
+                actual_hash = hashlib.file_digest(stream, "sha256").hexdigest()
+            actual_size = target.stat().st_size
+        except (OSError, ValueError) as error:
+            raise _invalid(
+                f"{step.title}: its connected file is unavailable."
+            ) from error
+        if actual_hash != rep.sha256 or actual_size != rep.size_bytes:
+            raise _invalid(
+                f"{step.title}: its connected file changed after the previous stage."
+            )
+        records.append(
+            {
+                "path": expected_path,
+                "sha256": actual_hash,
+                "kind": "workspace_file",
+                "source_port": source_id,
+            }
+        )
+    return records
+
+
 async def reference_from_result(result, *, service, workspace_dir, task_title):
     """Read an explicitly connected file representation, preserving its identity."""
     from .workflow_source_execution import _invalid

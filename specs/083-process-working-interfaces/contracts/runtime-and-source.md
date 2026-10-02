@@ -166,6 +166,16 @@ dispatch needs separate authorization and qualification.
 
 ## Required checks at implementation
 
+Explicit `mcp_file_dependencies` are supported on both exact MCP calls and scoped
+AI MCP tasks. Each connected `workspace_file` must match its producer's retained
+path, byte count and SHA-256 immediately before consumption. The AI receives
+verified locator metadata; binary contents are not loaded as prompt documents.
+This declaration does not add tools or widen an agent's capability scope. Plain
+AI tasks cannot declare application file imports. Missing, changed or mismatched
+files fail before the consumer's first tool/model call and emit an exact consumer
+`step_diagnostic`. A historical error after a completed producer, without an exact
+failure event, links to the run rather than attributing failure to that producer.
+
 Snapshot/source mismatch; file changed during preparation; producer unavailable;
 unsupported graph/schema; required later input missing; declared upstream output;
 two checkpoint sequence; response schema failure; stale response; duplicate/lost
