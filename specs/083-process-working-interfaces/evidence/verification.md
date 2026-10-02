@@ -67,3 +67,29 @@ file changes before and after decision, simulator receipts and same-run recovery
 The separate normal API follow-up and unchanged-profile independent assessment
 are described in `printed-proof.md`; they are not a physical-effect test or
 completion of the original failed run's skipped gate.
+
+## Resumed runtime, continuation and validator regression group
+
+Code checkpoint: `d44b9dcb`, after the operator documentation/example commit.
+All 37 module paths were confirmed to exist before execution. The exact argument
+array is retained in
+[command.json](../../../artifacts/process-interfaces/083/20261002-runtime-regressions/command.json);
+the suite uses the repository venv, `-q -rs --tb=short -p no:cacheprovider`,
+a fresh private `--basetemp` and JUnit output. Terminal exit code is zero:
+**659 passed, zero skips, 131.09 seconds**. Two existing Starlette/AnyIO
+deprecation warnings remain; no dependency upgrade was introduced.
+
+[Checked scope](../../../artifacts/process-interfaces/083/20261002-runtime-regressions/checked-scope.json),
+raw terminal output and JUnit results are retained together. This suite exercises
+the existing unattended/response-timeout contracts; neutral MCP actions and
+gateway restrictions; failed-tool evidence; source design checks; run supervision;
+declared input and approval continuation/restart; exact snapshot overlays/readiness;
+observations/cancellation; source execution; 082 validation/rework/result identity
+and correction feedback; migrations; native lifecycle and checkpoint APIs.
+
+These are controlled runtime/service/API regressions, not fresh model/provider,
+browser, installed or engineering acceptance. They overlap earlier suites and
+must not be added into a purported unique total. The preservation check passes
+after the run. No retained engineering process was resumed or review answered.
+T053 remains unchecked for its remaining component/browser/security/package-boundary
+and full affected acceptance scope. T056's new completion ledger remains open.

@@ -1,0 +1,13 @@
+{
+  "exit_code": 0,
+  "modules": 37,
+  "real_provider_execution": false,
+  "tests": 659,
+  "skips": 0,
+  "actual_model": false,
+  "live_engineering_providers": false,
+  "browser": false,
+  "installed_distribution": false,
+  "physical_dispatch": false,
+  "full_feature_complete": false
+}
