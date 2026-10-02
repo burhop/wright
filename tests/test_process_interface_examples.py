@@ -351,6 +351,41 @@ def test_printed_missing_tool_never_stages_attempt(printed_configuration):
     assert not (workspace / "process-proofs").exists()
 
 
+def test_printed_explicit_reader_budget_retains_original_criteria(
+    printed_configuration,
+):
+    workspace, bindings, tools = printed_configuration
+    bindings["validation_resource_budget"] = {"max_entities": 1_000_000}
+    module = printed_preparer()
+    report = module.prepare(workspace, "reader-budget", tools, bindings)
+    plan = compile_prompt_workflow((workspace / report["source_path"]).read_text())
+    step = next(s for s in plan.steps if s.validation)
+    config = ValidatorConfiguration.model_validate(step.validation)
+    assert config.budget.max_entities == 1_000_000
+    assert config.budget.max_bytes == 16 * 1024 * 1024
+    assert config.budget.timeout_seconds == 120
+    profile = config.load(str(workspace))
+    assert profile.id == "printed-replacement-part-01-full"
+    assert (
+        len(profile.checks) == 18 and profile.checks[-1].constraint.operator == "review"
+    )
+    assert step.max_revisions == 0
+
+
+@pytest.mark.parametrize(
+    "budget",
+    [{"max_entities": 2_000_001}, {"max_entities": 0}, {"max_entities": "1000000"}],
+)
+def test_printed_invalid_reader_budget_blocks_before_staging(
+    printed_configuration, budget
+):
+    workspace, bindings, tools = printed_configuration
+    bindings["validation_resource_budget"] = budget
+    with pytest.raises(ValueError):
+        printed_preparer().prepare(workspace, "invalid-budget", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
 def configured_geometry(bindings, root, module):
     values = {
         "basis": {

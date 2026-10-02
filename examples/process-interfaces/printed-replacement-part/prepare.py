@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from core.process_validation import ResourceBudget
+
 spec = importlib.util.spec_from_file_location(
     "process_example_definition", Path(__file__).resolve().parents[1] / "definition.py"
 )
@@ -32,6 +34,11 @@ def prepare(workspace, attempt, tools, bindings):
     workspace = Path(workspace).resolve(strict=True)
     qualified_geometry = provider_inputs.qualified_geometry_inputs(bindings)
     retained = retained_source.qualify(bindings)
+    validation_budget = (
+        ResourceBudget.model_validate(bindings["validation_resource_budget"])
+        if "validation_resource_budget" in bindings
+        else None
+    )
     destination = bindings["simulator_destination"]
     parsed = urlsplit(destination)
     if (
@@ -570,7 +577,11 @@ def prepare(workspace, attempt, tools, bindings):
         **report_roles,
         "transfer_receipt": (transfer, "receipt", "workspace_file"),
     }
-    validator = flow.validator("printed-replacement-part-01", sources)
+    validator = flow.validator(
+        "printed-replacement-part-01",
+        sources,
+        budget=validation_budget.model_dump(mode="json") if validation_budget else None,
+    )
     final_review = flow.stage(
         "review_preparation",
         "Review final digital preparation and exact engineering findings",

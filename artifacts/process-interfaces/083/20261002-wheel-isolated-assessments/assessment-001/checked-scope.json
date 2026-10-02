@@ -1,0 +1,33 @@
+{
+  "assessment_id": "assessment-4a774927921c4983b67ba39fb88f1012",
+  "producer_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "isolated_direct_assessment_not_original_gate_execution": true,
+  "original_profile_checks": 18,
+  "registered_subjects": 8,
+  "missing_subjects": [
+    "source_report",
+    "transfer_receipt"
+  ],
+  "summary": {
+    "content_verified": null,
+    "requirements_compliant": null,
+    "evaluation_complete": false,
+    "release_eligible": false,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 4,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 14
+    }
+  },
+  "canonical_registered_producer_bindings_verified": true,
+  "failed_run_log_unchanged": true,
+  "recovery_read_existing_assessment_without_reevaluation": true,
+  "report_generation_completed": false,
+  "transfer_completed": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false
+}

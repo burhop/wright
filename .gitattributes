@@ -88,3 +88,4 @@ artifacts/process-interfaces/083/20261002-heat-preparation-and-saved-reuse/** -t
 artifacts/process-interfaces/083/20261002-wheel-frozen-provider-inputs/** -text -whitespace
 artifacts/process-interfaces/083/20261002-wheel-retained-consumer-preparation/** -text -whitespace
 artifacts/process-interfaces/083/20261002-wheel-retained-native-chain/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-isolated-assessments/** -text -whitespace

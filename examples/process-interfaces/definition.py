@@ -255,7 +255,7 @@ class Definition:
             settings=settings,
         )
 
-    def validator(self, profile_resource, sources):
+    def validator(self, profile_resource, sources, *, budget=None):
         path = (
             REPO
             / "packages/workspace_service/src/workspace_service/process_validation/profiles"
@@ -289,6 +289,8 @@ class Definition:
                 },
             },
         )
+        if budget is not None:
+            step["fields"]["settings"]["validation"]["budget"] = budget
         for role, (producer, key, _) in sources.items():
             self.sections.append(
                 dict(

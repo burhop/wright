@@ -268,3 +268,35 @@ The former retains the actual producer, accepted consumer, guard qualification,
 waiting-browser proof and the before-fix refusal; the latter retains actual
 native responses/artifacts, exact test actor, terminal report-size diagnostic and
 post-fix checks. Credential values and authenticated traces are excluded.
+
+## Isolated full-profile inspection of retained outputs
+
+The existing validation application assessed the failed consumer's actual
+registered outputs independently, without executing its skipped gate or changing
+its run log. All eight supplied subjects resolve to current canonical producer
+records with their exact original identifiers/hashes. The original eighteen-check
+profile and baseline are unchanged. Missing report and transfer subjects remain
+missing; no result or receipt was manufactured to fill them.
+
+Assessment `assessment-4a774927921c4983b67ba39fb88f1012` records fourteen passes
+and four blocks. Its support-preview presence check reaches the default
+100,000-entity reader limit: the actual full view contains 348,376 structured
+nodes. This capability limit is distinct from invalid geometry or failed
+engineering criteria. The missing report, missing simulated transfer receipt
+and required authenticated engineering review remain separately blocked.
+
+A second isolated assessment, `assessment-160d465039de49739996079a6a53a31d`,
+explicitly uses the existing bounded ResourceBudget with 1,000,000 entities,
+16 MiB, 120 seconds and 512 MiB. It evaluates exactly the same artifacts and
+unchanged profile/baseline: fifteen passes and three blocks. The full preview is
+actually read and hash-bound; it is not replaced by its summary. Both assessments
+and the original failed run remain retained. The example preparer now accepts
+this optional strictly validated operational budget before staging; absence
+keeps the original default. All 125 focused checks pass, plus 89 checks including
+canonical process-validator regressions in the earlier narrower suite.
+
+This proves direct isolated assessment and shared reports, not completion of
+the failed process's original gate or production release. Native operations,
+model generation, review decisions and transfer are not replayed. The source
+report, simulated handoff and final mandatory review still need their appropriate
+independent process/authority. Tailored wheel UI and M5 remain incomplete.

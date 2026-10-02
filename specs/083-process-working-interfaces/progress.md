@@ -1289,3 +1289,17 @@ production. Full assessment, tailored wheel UI and remaining M5 work remain
 pending. No physical dispatch or human engineering acceptance. Evidence is in
 `20261002-wheel-retained-consumer-preparation` and
 `20261002-wheel-retained-native-chain` under `artifacts/process-interfaces/083/`.
+
+Continued isolated inspection: the existing validation owner assessed all eighteen
+original checks against eight actual registered consumer outputs, without editing
+its failed run or fabricating the absent report/receipt. Default-budget assessment
+records fourteen passes and four blocks. The full nominal preview has 348,376
+structured nodes, exceeding the original 100,000-entity reader capacity. A new
+explicit bounded 1,000,000-entity assessment retains identical artifacts and
+engineering criteria, producing fifteen passes and three blocks. Both reports
+remain retained; source report, simulated handoff and authenticated engineering
+review are still missing. The example preparer accepts a strictly validated
+optional computational budget before staging. All 125 focused checks pass; the
+earlier canonical-validator-inclusive suite passed 89. No native/model/review/
+action replay, no physical effects, no original-gate completion claim. The full
+goal remains active.

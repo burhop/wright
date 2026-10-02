@@ -80,6 +80,16 @@ classification counts, package identity, reader provenance and the full preview'
 path/hash. The report consumes that summary, leaving the large layered path data
 for the viewer and exact validation. It does not replace or truncate the preview.
 
+For a large full preview, explicitly qualify the validator's computational
+budget before preparing a new source. Optional `validation_resource_budget`
+uses the existing `ResourceBudget` contract, for example
+`{"max_entities": 1000000}`. Other defaults remain 16 MiB, 120 seconds and
+512 MiB; the contract caps entity count at two million. Count actual structured
+preview nodes when qualifying the setting. This is a bounded reader capacity,
+not an engineering tolerance or acceptance threshold. With no declaration the
+original 100,000-entity default remains. Never truncate the full preview or
+replace its mandatory subject with the report summary to get a passing check.
+
 If the qualified slicer emits separate startup, layer and shutdown sections,
 private bindings may declare `nominal_layer_section` with exact `start_marker`
 and `end_marker` comment lines. Inspect those markers in the actual package
