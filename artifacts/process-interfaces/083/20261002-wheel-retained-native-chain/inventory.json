@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "path": "121-focused-checks.xml",
+      "bytes": 27898,
+      "sha256": "1ca320b6d3804eb35e84a4614272b99d22501f10adb9cb27200afe73e78479b5"
+    },
+    {
+      "path": "checked-scope.json",
+      "bytes": 2988,
+      "sha256": "305b56329167a13da8d70f93eefa35d327164d1533d94ad4358b7c5aa44f1fd1"
+    },
+    {
+      "path": "filament-profile.json",
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "machine-profile.json",
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "mesh-preview.png",
+      "bytes": 266946,
+      "sha256": "0b10fac533a07affbd13680d4f515f90ab6e339cca6ade87aa38f374d0be5af2"
+    },
+    {
+      "path": "native-task-evidence.json",
+      "bytes": 42989,
+      "sha256": "0c75668ec79db281e7659c14b57c824df63afa46acba34a0e526220bdd3e6c99"
+    },
+    {
+      "path": "process-profile.json",
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "repaired_mesh.stl",
+      "bytes": 540484,
+      "sha256": "1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8"
+    },
+    {
+      "path": "slice-evidence.json",
+      "bytes": 1234,
+      "sha256": "4b71500a6c83d0f5d728f0a3bb2d2e3ee188d1b7862187c8e7f698df60f89594"
+    },
+    {
+      "path": "slice-provider-response.json",
+      "bytes": 1995,
+      "sha256": "86d053d45ff7a2c2c2a3cde8b6ed11ea3e28f15d1b3b802e3c75c95e3f337923"
+    },
+    {
+      "path": "slice_package.gcode.3mf",
+      "bytes": 361113,
+      "sha256": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3"
+    },
+    {
+      "path": "source_mesh.stl",
+      "bytes": 541284,
+      "sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18"
+    },
+    {
+      "path": "support-preview.json",
+      "bytes": 4493731,
+      "sha256": "890ec8d8c551443f87f0e24d123041ec38611fb5d6efd1ee571e172adbef8399"
+    },
+    {
+      "path": "synthetic-basis-review.json",
+      "bytes": 441,
+      "sha256": "9ce67747de9be98f53b208f14c82bbabb7e38fbce84f16e9faf24dbcbfb4032c"
+    }
+  ],
+  "credential_values_checked_and_absent": true,
+  "transport_traces_excluded": true
+}

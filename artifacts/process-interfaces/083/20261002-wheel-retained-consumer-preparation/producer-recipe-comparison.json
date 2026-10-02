@@ -1,0 +1,12 @@
+{
+  "run_state": "failed",
+  "comparisons": [
+    {
+      "role": "construction",
+      "submitted_code_matches_frozen_input": true,
+      "expected_sha256": "fa588184b92d0ba239d469fe0ad562136304471de7366e067d222f8392b5b161",
+      "actual_sha256": "fa588184b92d0ba239d469fe0ad562136304471de7366e067d222f8392b5b161"
+    }
+  ],
+  "scope": "Read-only tool-argument identity; it does not alone establish engineering compliance"
+}

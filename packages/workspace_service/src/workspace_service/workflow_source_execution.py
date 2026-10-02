@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from core.workflow_step_outcomes import InvalidStepOutcomeError
 
 from .workflow_sources import WorkflowSourceStorageError
-from .workflow_references import WorkflowReference
+from .workflow_references import WorkflowReference, allows_binary_file_reference
 
 
 class WorkflowSourceExecutionError(RuntimeError):
@@ -1467,23 +1467,11 @@ async def prepare_prompt_workflow(
                 addresses = {
                     f"{key}.{port['key']}" for port in fields.get("outputs", [])
                 }
-                # Only an explicitly declared file import can consume opaque bytes.
-                # Mixed prompt/file consumers must still have readable document text.
-                file_import = any(
-                    step.application_from in addresses for step in plan.steps
-                )
-                text_consumer = any(
-                    step.prompt_from in addresses
-                    or any(src in addresses for _, src in step.references)
-                    or any(src in addresses for src in step.argument_sources.values())
-                    or step.arguments_from in addresses
-                    for step in plan.steps
-                )
                 value = WorkflowReference.from_bytes(
                     path,
                     data,
                     image=image,
-                    allow_binary=file_import and not text_consumer,
+                    allow_binary=allows_binary_file_reference(plan.steps, addresses),
                 )
             except (OSError, UnicodeError, ValueError) as error:
                 raise _invalid(

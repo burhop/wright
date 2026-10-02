@@ -75,6 +75,11 @@ code or engineering approval. Unsupported package/motion semantics fail explicit
 Source geometry, slicer success, nominal preview, measured compliance and physical
 acceptance remain separate claims.
 
+Inspection also emits `toolpath-summary.json`: at most 64 KiB of actual layer/
+classification counts, package identity, reader provenance and the full preview's
+path/hash. The report consumes that summary, leaving the large layered path data
+for the viewer and exact validation. It does not replace or truncate the preview.
+
 If the qualified slicer emits separate startup, layer and shutdown sections,
 private bindings may declare `nominal_layer_section` with exact `start_marker`
 and `end_marker` comment lines. Inspect those markers in the actual package
@@ -109,6 +114,45 @@ assignment, profiles, native file dependencies, two-call bounds and full 18-chec
 validation remain. A recipe hash is not measured compliance or engineering
 acceptance. This mechanism supplies provider inputs; it adds no device protocol,
 local code executor or new process runner.
+
+### Separate consumer of retained geometry
+
+If a producer created useful geometry before a later technical failure, do not
+replay that producer or rewrite its terminal record. An explicitly prepared new
+consumer may supply `retained_geometry_source` with exactly `mesh`, `observations`
+and `origin`, each pinned by `path` and `sha256`. The mesh must be an actual binary
+STL with at most 80,000 triangles; observations are a bounded JSON object containing
+the actual native construction response. Origin must contain:
+
+```json
+{
+  "producer_run_id": "the-original-durable-run",
+  "producer_source_path": "workflows/original.workflow.wflow",
+  "producer_source_sha256": "64 lowercase hex characters",
+  "producer_status": "failed",
+  "mesh_sha256": "64 lowercase hex characters",
+  "observations_sha256": "64 lowercase hex characters",
+  "engineering_acceptance": false
+}
+```
+
+These are supplied lineage records, not authenticated engineering acceptance.
+Use a fresh attempt and configure/pin the repair operation for that attempt. It
+must import `inputs/retained-source.stl`, export unchanged imported geometry to
+`outputs/source_mesh.stl` before repair, then actually produce
+`outputs/repaired_mesh.stl` and `outputs/mesh-preview.png`. The first export is
+derived native geometry; byte identity with the retained input is not implied.
+Inspect the actual provider response and original/derived measurements.
+
+This mode omits fresh construction and invokes the explicit repair operation
+through the existing configured MCP operation, rather than asking AI to repeat
+a supplied recipe. It still reviews the supplied proposed basis, slices through
+the existing provider, preserves original profiles and the full eighteen-check
+gate, and retains final mandatory engineering review. Required outputs must
+actually be updated by their producing task. The supplied origin and observations
+remain inputs to the final report. Preparation, source acceptance, readiness and
+starting the new consumer are separate operations; preparation itself executes
+no code and grants no physical authority.
 
 Present the original image and requirements, preparation readiness and current
 tool operation. Let the user inspect actual source/repaired geometry, nominal

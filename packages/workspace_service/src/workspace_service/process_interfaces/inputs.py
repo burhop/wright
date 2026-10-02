@@ -29,7 +29,7 @@ from core.process_interactions import (
 )
 from core.process_validation import Contract, Identifier, canonical_json
 
-from ..workflow_references import WorkflowReference
+from ..workflow_references import WorkflowReference, allows_binary_file_reference
 from ..workflow_source_execution import (
     PromptWorkflow,
     WorkflowSourceExecutionError,
@@ -204,16 +204,11 @@ def input_file_reference(plan, fields, input_id, path, data):
     image = any(
         port.get("kind") == "reference_images" for port in fields.get("outputs", [])
     )
-    file_import = any(step.application_from in addresses for step in plan.steps)
-    text_consumer = any(
-        step.prompt_from in addresses
-        or step.arguments_from in addresses
-        or addresses.intersection(step.argument_sources.values())
-        or any(src in addresses for _, src in step.references)
-        for step in plan.steps
-    )
     return WorkflowReference.from_bytes(
-        path, data, image=image, allow_binary=file_import and not text_consumer
+        path,
+        data,
+        image=image,
+        allow_binary=allows_binary_file_reference(plan.steps, addresses),
     )
 
 

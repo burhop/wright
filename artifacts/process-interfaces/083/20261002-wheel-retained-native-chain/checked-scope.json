@@ -1,0 +1,75 @@
+{
+  "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "state": "failed",
+  "code": "WORKFLOW_NOT_READY",
+  "terminal_diagnostic": {
+    "kind": "step_diagnostic",
+    "at": "2026-10-02T13:51:50.379675+00:00",
+    "task_id": "summarize_preparation_retained_consumer_001",
+    "task_title": "Record measured preparation facts and outstanding engineering review",
+    "code": "WORKFLOW_NOT_READY",
+    "message": "Record measured preparation facts and outstanding engineering review: the exported workspace file could not be read.",
+    "correction": "Choose a reference smaller than 4 MiB."
+  },
+  "producer_run_id": "685147075ac94ca3b69fe0d208548af9",
+  "producer_terminal_record_unchanged": true,
+  "configured_repair_arguments_identical_to_pinned_input": true,
+  "actual_native_repair_geometry_preview_slice_and_inspection": true,
+  "source_export_sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18",
+  "source_export_matches_retained_input_bytes_in_this_observation": true,
+  "layer_count": 90,
+  "path_segments": {
+    "model": 46800,
+    "support": 22388,
+    "unclassified": 371
+  },
+  "toolpath_provenance": {
+    "reader": "wright.passive-representations/1",
+    "source_sha256": "4ff390fb983243763aec081bcaa7f6671324dae4b681c46582c8839e25c96512",
+    "archive_entry": "Metadata/plate_1.gcode",
+    "method": "recorded planar extrusion commands and explicit layer/feature comments",
+    "units": "mm",
+    "segments": 69559,
+    "extruding_arcs": 10862,
+    "arc_maximum_chord_error_mm": 0.02,
+    "unlayered_extrusion_commands_excluded": 0,
+    "recognized_features": [
+      "bottom surface",
+      "bridge",
+      "inner wall",
+      "internal solid infill",
+      "outer wall",
+      "overhang wall",
+      "sparse infill",
+      "support",
+      "support interface",
+      "top surface"
+    ],
+    "unclassified_features": [
+      "custom",
+      "floating vertical shell",
+      "gap infill"
+    ],
+    "limits": "Nominal paths; firmware commands are not executed, and machine/material acceptance is not established.",
+    "engineering_acceptance": false,
+    "selected_section": {
+      "start_marker": "; MACHINE_START_GCODE_END",
+      "end_marker": "; MACHINE_END_GCODE_START",
+      "first_line": 857,
+      "last_line": 44233,
+      "excluded_prefix_lines": 856,
+      "excluded_suffix_lines": 57,
+      "selected_text_sha256": "c510e4768e548f308f4acbebd986563ae670fb2787805817d53beabba145c051",
+      "scope": "Selected nominal layer section only; excluded startup/shutdown commands are unverified."
+    }
+  },
+  "report_completed": false,
+  "full_original_assessment_completed": false,
+  "transfer_receipt_created": false,
+  "tailored_wheel_interface_completed": false,
+  "summary_handoff_fix_verified_with_fixtures_only": true,
+  "focused_checks_after_fix": 121,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "full_feature_complete": false
+}

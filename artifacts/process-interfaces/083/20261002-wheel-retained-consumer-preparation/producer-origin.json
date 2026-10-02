@@ -1,0 +1,9 @@
+{
+  "producer_run_id": "685147075ac94ca3b69fe0d208548af9",
+  "producer_source_path": "workflows/printed-replacement-part-live-default-model-014.workflow.wflow",
+  "producer_source_sha256": "6dbcc00856e4edf8d055818faf607297d235bf81f8fabcfd26aa3965da912956",
+  "producer_status": "failed",
+  "mesh_sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18",
+  "observations_sha256": "719bd43690de663da28fd54b04f5f3e84f55b721974c44781bb2188bc5157e3d",
+  "engineering_acceptance": false
+}

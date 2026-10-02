@@ -1,0 +1,12 @@
+{
+  "provider_guard_sha256": "e9f2419372cf224317b3c99e3f425c82e1c25979e91f33f6c1493f68a2175623",
+  "repair_guard_passed": true,
+  "native_operation_executed": false,
+  "producer_state_unchanged": true,
+  "derived_export_is_not_byte_identity": true,
+  "adaptations": [
+    "Fresh source/output paths and uniquely owned names",
+    "Actual export of unchanged imported geometry before repair"
+  ],
+  "physical_dispatch": false
+}

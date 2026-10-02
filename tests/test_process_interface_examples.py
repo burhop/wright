@@ -370,6 +370,124 @@ def configured_geometry(bindings, root, module):
         }
 
 
+def configured_retained_source(bindings, root, module):
+    import struct
+
+    values = {
+        "mesh": b"fixture only".ljust(80, b"\0") + struct.pack("<I", 1) + bytes(50),
+        "observations": json.dumps(
+            {"fixture": True, "native_execution": False}
+        ).encode(),
+    }
+    values["origin"] = json.dumps(
+        {
+            "producer_run_id": "fixture-failed-producer",
+            "producer_source_path": "workflows/fixture.workflow.wflow",
+            "producer_source_sha256": "b" * 64,
+            "producer_status": "failed",
+            "mesh_sha256": module.definition.sha(values["mesh"]),
+            "observations_sha256": module.definition.sha(values["observations"]),
+            "engineering_acceptance": False,
+        }
+    ).encode()
+    bindings["retained_geometry_source"] = {}
+    for role, raw in values.items():
+        path = root / ("retained-" + role)
+        path.write_bytes(raw)
+        bindings["retained_geometry_source"][role] = {
+            "path": str(path),
+            "sha256": module.definition.sha(raw),
+        }
+
+
+def test_retained_consumer_uses_exact_repair_and_original_full_gate(
+    printed_configuration,
+):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    configured_retained_source(bindings, workspace, module)
+    report = module.prepare(workspace, "retained-consumer", tools, bindings)
+    source = (workspace / report["source_path"]).read_text(encoding="utf-8")
+    plan = compile_prompt_workflow(source)
+    assert len(plan.steps) == 10
+    assert not any(s.id.startswith("create_mesh") for s in plan.steps)
+    repair = next(s for s in plan.steps if s.id.startswith("repair_measure_orient"))
+    assert repair.agent_task is False
+    assert repair.server_id == "fixture-geometry"
+    assert repair.tool_name == "fixture-geometry__execute_blender_code"
+    assert repair.timeout_seconds == 360
+    assert len(repair.references) == 2
+    from workspace_service.process_interfaces.inputs import input_file_reference
+
+    binary_id = next(key for key in plan.inputs if "retained_source_stl" in key)
+    input_file_reference(
+        plan,
+        plan.inputs[binary_id],
+        binary_id,
+        "inputs/retained-source.stl",
+        Path(bindings["retained_geometry_source"]["mesh"]["path"]).read_bytes(),
+    )
+    assert list(repair.file_dependencies.values()) == [
+        "process-proofs/printed-replacement-part/retained-consumer/inputs/retained-source.stl"
+    ]
+    validator = next(s for s in plan.steps if s.id.startswith("validate_outputs"))
+    profile = ValidatorConfiguration.model_validate(validator.validation).load(
+        str(workspace)
+    )
+    assert len(profile.checks) == 18
+    assert profile.id == "printed-replacement-part-01-full"
+    assert profile.checks[-1].constraint.operator == "review"
+    assert source.count('"action_kind":"local_review"') == 2
+    summarizer = next(s for s in plan.steps if s.id.startswith("summarize_preparation"))
+    assert any("toolpath_summary" in address for _, address in summarizer.references)
+    assert not any(
+        address.endswith(".support_preview") for _, address in summarizer.references
+    )
+    assert "retained geometry consumer" in source
+    assert "without claiming the failed producer completed" in source
+    assert "retained_source_stl" in source
+    assert not list((workspace / report["output_root"]).iterdir())
+    for reference in bindings["retained_geometry_source"].values():
+        assert any(
+            (workspace / item["path"]).read_bytes()
+            == Path(reference["path"]).read_bytes()
+            for item in report["input_files"]
+        )
+    assert report["source_acceptance_required"] is True
+    assert report["physical_dispatch"] is False
+
+
+@pytest.mark.parametrize(
+    "fault", ["hash", "truncated", "accepted", "wrong_origin", "no_recipe"]
+)
+def test_retained_consumer_defects_block_before_staging(printed_configuration, fault):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    configured_retained_source(bindings, workspace, module)
+    selected = bindings["retained_geometry_source"]
+    if fault == "hash":
+        selected["mesh"]["sha256"] = "f" * 64
+    elif fault == "no_recipe":
+        del bindings["geometry_operation_files"]
+    else:
+        role = "mesh" if fault == "truncated" else "origin"
+        path = Path(selected[role]["path"])
+        if fault == "truncated":
+            path.write_bytes(path.read_bytes()[:-1])
+        else:
+            value = json.loads(path.read_bytes())
+            value[
+                "engineering_acceptance" if fault == "accepted" else "mesh_sha256"
+            ] = True if fault == "accepted" else "f" * 64
+            path.write_text(json.dumps(value), encoding="utf-8")
+        selected[role]["sha256"] = module.definition.sha(path.read_bytes())
+    with pytest.raises(ValueError):
+        module.prepare(workspace, "invalid-retained", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
 def test_qualified_geometry_uses_existing_scoped_tasks_and_preserves_review_gate(
     printed_configuration,
 ):

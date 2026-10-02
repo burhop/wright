@@ -218,3 +218,53 @@ test report and precise limits are under
 `artifacts/process-interfaces/083/20261002-wheel-frozen-provider-inputs/`.
 Native outputs, model compliance, final assessment and tailored wheel UI remain
 unproved by this preparation milestone. T045/T047 remain incomplete.
+
+## Retained producer and separate native consumer, 2 October
+
+Run `685147075ac94ca3b69fe0d208548af9` completed actual construction with
+10,824 triangles and zero nonmanifold edges. Its submitted code equals its
+frozen recipe. It then failed with MODEL_UNAVAILABLE/upstream_timeout while
+planning repair, before a repair tool call. Its failure is retained, not resumed
+or reclassified. Nine served waiting/reload checks completed for that run.
+
+New consumer `a87d84b40a244bcaa035d9ed8308ac5a` takes hash-pinned actual
+STL/observations and explicit original run/source/status lineage. It omits fresh
+construction and uses the existing exact MCP/file-dependency operation for the
+qualified repair. The original proposal review, PETG profiles, eighteen-check
+gate and final mandatory engineering review remain. The native operation really
+exports imported source geometry before repair; its bytes happen to equal the
+retained STL in this observation, without making that a general guarantee.
+
+Preparation initially refused binary STL because shared input handling counted
+explicit MCP file dependencies as text. Both immutable preparation and source
+execution now use the same conservative consumer classification: declared file
+imports/dependencies allow opaque bytes, while document/prompt/argument/mixed
+consumers stay strict. The live input snapshot and readiness pass after the exact
+owned API restart. No source/process/review replay occurred. Nine additional
+served workspace checks show the new consumer's declared wait and reload. A
+labelled exact-subject integration-test decision then continued it once; this
+does not establish human engineering acceptance.
+
+The consumer completed real native repair/geometry preview, slicing and package
+inspection: actual source/repaired STL, PNG, 3MF, profile correspondence and
+nominal view with 90 layers, 46,800 model, 22,388 support and 371 unclassified
+segments. Actual submitted repair arguments equal the pinned operation. It then
+failed at report input loading because the full 4,493,731-byte toolpath JSON
+exceeds the 4 MiB document-reference bound. No report, transfer receipt or full
+assessment completed. Preserve these native outputs for a separate report/
+validation follow-up; do not regenerate the geometry or slice to hide this failure.
+
+The inspection now emits an additional at-most-64-KiB hash-linked layer/count/
+provenance summary for report input. The full preview remains unchanged for
+viewing and its original validation subject. This fix has fixture coverage only;
+it has not been applied retroactively to the failed consumer. All 121 focused
+preparation, reference/input, inspection, source and MCP regressions pass. T045,
+T047 and the full feature remain incomplete.
+
+Local evidence:
+`artifacts/process-interfaces/083/20261002-wheel-retained-consumer-preparation/`
+and `artifacts/process-interfaces/083/20261002-wheel-retained-native-chain/`.
+The former retains the actual producer, accepted consumer, guard qualification,
+waiting-browser proof and the before-fix refusal; the latter retains actual
+native responses/artifacts, exact test actor, terminal report-size diagnostic and
+post-fix checks. Credential values and authenticated traces are excluded.

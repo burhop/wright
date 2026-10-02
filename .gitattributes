@@ -86,3 +86,5 @@ artifacts/process-interfaces/083/20261002-wheel-actual-slice/** -text -whitespac
 artifacts/process-interfaces/083/20261002-managed-preview-recovery/** -text -whitespace
 artifacts/process-interfaces/083/20261002-heat-preparation-and-saved-reuse/** -text -whitespace
 artifacts/process-interfaces/083/20261002-wheel-frozen-provider-inputs/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-retained-consumer-preparation/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-retained-native-chain/** -text -whitespace

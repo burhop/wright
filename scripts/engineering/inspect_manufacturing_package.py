@@ -82,14 +82,14 @@ def run(config, read_toolpaths):
     if not output.is_relative_to(workspace) or not output.is_dir():
         raise ValueError("Inspection output must remain inside its declared workspace")
 
-    def publish(filename, value):
+    def publish(filename, value, *, maximum_bytes=64 * 1024 * 1024):
         raw = (
             json.dumps(
                 value, ensure_ascii=False, separators=(",", ":"), allow_nan=False
             )
             + "\n"
         ).encode()
-        if len(raw) > 64 * 1024 * 1024:
+        if len(raw) > maximum_bytes:
             raise ValueError("Derived inspection exceeds its output bound")
         with (output / filename).open("xb") as stream:
             stream.write(raw)
@@ -108,6 +108,7 @@ def run(config, read_toolpaths):
     destinations = [
         "slice-evidence.json",
         "support-preview.json",
+        "toolpath-summary.json",
         *[role + "-profile.json" for role in profile_bytes],
     ]
     if any((output / name).exists() for name in destinations):
@@ -134,9 +135,25 @@ def run(config, read_toolpaths):
         "profiles": retained_profiles,
         "engineering_acceptance": False,
     }
+    preview = publish("support-preview.json", view)
+    summary = {
+        "format": "wright.gcode.toolpath-summary.v1",
+        "source_view": preview,
+        "package_sha256": package_digest,
+        "layer_count": len(view["layers"]),
+        "path_segments": {
+            kind: sum(len(layer[kind]) for layer in view["layers"])
+            for kind in ("model", "support", "unclassified")
+        },
+        "provenance": view["provenance"],
+        "engineering_acceptance": False,
+    }
     return {
         "method": "Passive recorded-package inspection; no slicer or machine command executed",
         "slice_evidence": publish("slice-evidence.json", evidence),
-        "support_preview": publish("support-preview.json", view),
+        "support_preview": preview,
+        "toolpath_summary": publish(
+            "toolpath-summary.json", summary, maximum_bytes=65536
+        ),
         "engineering_acceptance": False,
     }

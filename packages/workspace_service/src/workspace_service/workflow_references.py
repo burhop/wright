@@ -6,6 +6,32 @@ import base64
 import hashlib
 
 
+def allows_binary_file_reference(steps, addresses: set[str]) -> bool:
+    """Opaque bytes need a declared file consumer and no document/argument consumer."""
+    file_consumer = False
+    for step in steps:
+        if step.application_from in addresses:
+            file_consumer = True
+        for _, source in step.references:
+            if source in addresses and source in step.file_dependencies:
+                file_consumer = True
+        if (
+            step.prompt_from in addresses
+            or step.arguments_from in addresses
+            or addresses.intersection(step.argument_sources.values())
+            or any(
+                source in addresses
+                and (
+                    source not in step.file_dependencies
+                    or sum(src == source for _, src in step.references) != 1
+                )
+                for _, source in step.references
+            )
+        ):
+            return False
+    return file_consumer
+
+
 def snapshot_task_files(workspace_dir: str, paths: tuple[str, ...]) -> dict:
     from .workspace_path import WorkspacePath
 

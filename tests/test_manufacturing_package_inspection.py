@@ -89,6 +89,19 @@ def test_actual_recorded_paths_and_hashes_are_retained(handoff, enveloped):
         )
     assert evidence["exit_code_basis"] == config["success_contract"]
     view = json.loads((root / result["support_preview"]["path"]).read_bytes())
+    summary_raw = (root / result["toolpath_summary"]["path"]).read_bytes()
+    summary = json.loads(summary_raw)
+    assert len(summary_raw) < 65536
+    assert summary["source_view"] == result["support_preview"]
+    assert summary["package_sha256"] == evidence["package_sha256"]
+    assert summary["layer_count"] == len(view["layers"])
+    assert summary["path_segments"] == {
+        kind: sum(len(layer[kind]) for layer in view["layers"])
+        for kind in ("model", "support", "unclassified")
+    }
+    assert "layers" not in summary
+    assert summary["engineering_acceptance"] is False
+    assert summary["provenance"] == view["provenance"]
     assert len(view["layers"]) == 1
     assert view["package_sha256"] == evidence["package_sha256"]
     with zipfile.ZipFile(root / config["slice_package"]) as archive:
@@ -148,13 +161,14 @@ def test_mcp_error_is_not_treated_as_success(handoff):
         operation.run(config, read_3mf_toolpaths)
 
 
-def test_existing_output_is_preserved_without_partial_profile_writes(handoff):
+@pytest.mark.parametrize("filename", ["support-preview.json", "toolpath-summary.json"])
+def test_existing_output_is_preserved_without_partial_profile_writes(handoff, filename):
     root, config, _ = handoff
-    (root / "outputs/support-preview.json").write_bytes(b"prior-evidence")
+    (root / "outputs" / filename).write_bytes(b"prior-evidence")
     with pytest.raises(ValueError, match="fresh inspection output"):
         operation.run(config, read_3mf_toolpaths)
     assert {path.name: path.read_bytes() for path in (root / "outputs").iterdir()} == {
-        "support-preview.json": b"prior-evidence"
+        filename: b"prior-evidence"
     }
 
 

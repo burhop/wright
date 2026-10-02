@@ -1269,3 +1269,23 @@ inputs before source acceptance/start and requalified the exact owned native
 session. Run `685147075ac94ca3b69fe0d208548af9` has one accepted start identity;
 its normal workspace waiting/reload walkthrough is running. Native geometry,
 slicing, full assessment and generated wheel interface remain pending.
+
+Resume checkpoint, 2 October: run `685147075ac94ca3b69fe0d208548af9` created
+actual geometry with exact frozen-code identity, then failed on an upstream AI
+timeout before repair. A separately accepted consumer of its pinned actual STL,
+observations and original lineage now uses an exact configured repair operation.
+The binary input preflight exposed and fixed shared file-consumer classification;
+live snapshot/readiness pass after owned API restart 007, with no replay.
+
+Consumer `a87d84b40a244bcaa035d9ed8308ac5a` passed nine served waiting/reload
+checks and one labelled synthetic review/continuation, then completed actual
+native repair/preview, slice and package inspection. Its 90-layer nominal view
+retains model/support/unclassified paths and provenance. It failed before report
+completion because the full toolpath document exceeds 4 MiB. A bounded summary
+handoff is now implemented and covered by 121 passing checks, leaving the full
+preview and eighteen-check gate intact. Preserve both failed records and native
+outputs; next isolate report/validation continuation without repeating native
+production. Full assessment, tailored wheel UI and remaining M5 work remain
+pending. No physical dispatch or human engineering acceptance. Evidence is in
+`20261002-wheel-retained-consumer-preparation` and
+`20261002-wheel-retained-native-chain` under `artifacts/process-interfaces/083/`.

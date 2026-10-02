@@ -21,10 +21,17 @@ provider_spec = importlib.util.spec_from_file_location(
 provider_inputs = importlib.util.module_from_spec(provider_spec)
 provider_spec.loader.exec_module(provider_inputs)
 
+retained_spec = importlib.util.spec_from_file_location(
+    "printed_retained_source", Path(__file__).with_name("retained_source.py")
+)
+retained_source = importlib.util.module_from_spec(retained_spec)
+retained_spec.loader.exec_module(retained_source)
+
 
 def prepare(workspace, attempt, tools, bindings):
     workspace = Path(workspace).resolve(strict=True)
     qualified_geometry = provider_inputs.qualified_geometry_inputs(bindings)
+    retained = retained_source.qualify(bindings)
     destination = bindings["simulator_destination"]
     parsed = urlsplit(destination)
     if (
@@ -437,6 +444,7 @@ def prepare(workspace, attempt, tools, bindings):
         (
             "slice-evidence.json",
             "support-preview.json",
+            "toolpath-summary.json",
             "machine-profile.json",
             "process-profile.json",
             "filament-profile.json",
@@ -485,6 +493,9 @@ def prepare(workspace, attempt, tools, bindings):
             },
         },
     )
+    flow.file_outputs(
+        inspect_step, {"toolpath_summary": flow.output + "/toolpath-summary.json"}
+    )
     report = flow.stage(
         "summarize_preparation",
         "Record measured preparation facts and outstanding engineering review",
@@ -500,14 +511,14 @@ def prepare(workspace, attempt, tools, bindings):
         (source_result, "construction"),
         (repair_result, "repair"),
         (inspect_step["id"] + ".slice_evidence", "slice_evidence"),
-        (inspect_step["id"] + ".support_preview", "support_preview"),
+        (inspect_step["id"] + ".toolpath_summary", "toolpath_summary"),
     ]:
         flow.reference(
             reference,
             report,
             key,
             "workspace_file"
-            if key in ("slice_evidence", "support_preview")
+            if key in ("slice_evidence", "toolpath_summary")
             else "engineering_document",
         )
     flow.reference(requirements_ref, report, "requirements")
@@ -547,6 +558,10 @@ def prepare(workspace, attempt, tools, bindings):
     flow.reference(report_result, transfer, "preparation_review")
     for role, reference in profiles.items():
         flow.reference(reference, transfer, role + "_profile", "workspace_file")
+    if retained:
+        source_roles = retained_source.configure(
+            flow, retained, qualified_geometry, create, repair, report
+        )
     sources = {
         **source_roles,
         "repaired_mesh": repaired_roles["repaired_mesh"],
@@ -569,7 +584,7 @@ def prepare(workspace, attempt, tools, bindings):
         [
             basis,
             basis_review,
-            create,
+            *([] if retained else [create]),
             repair,
             slice_step,
             response_step,
