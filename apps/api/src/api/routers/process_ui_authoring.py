@@ -568,9 +568,29 @@ async def interface_runtime_diagnostics(
                 "This runtime does not belong to the requested interface revision.",
                 "Inspect the exact interface in its owning process and workspace.",
             )
-        runtime = await surfaces.live_apps.inspect(
-            actor=actor, surface_id=descriptor.surface_id
-        )
+        try:
+            runtime = await surfaces.live_apps.inspect(
+                actor=actor, surface_id=descriptor.surface_id
+            )
+        except LiveAppControlError as error:
+            if error.code != "SURFACE_INSTANCE_NOT_FOUND":
+                raise
+            # Startup reconciliation revokes old runtime authority. Its scoped
+            # descriptor is evidence of that reconciliation, not a live probe
+            # or a reconstruction of the original startup failure.
+            return {
+                "process": process,
+                "ui_id": ui_id,
+                "revision_id": revision_id,
+                "surface_id": surface_id,
+                "state": descriptor.lifecycle,
+                "state_source": "surface-reconciliation",
+                "generation": None,
+                "failure": descriptor.diagnostic_summary,
+                "last_health": None,
+                "logs": None,
+                "logs_unavailable": "SURFACE_INSTANCE_NOT_FOUND",
+            }
         logs_unavailable = None
         try:
             logs = await surfaces.live_apps.logs(
@@ -592,6 +612,7 @@ async def interface_runtime_diagnostics(
             "revision_id": revision_id,
             "surface_id": surface_id,
             "state": runtime.state,
+            "state_source": "runtime-owner",
             "generation": runtime.generation,
             "failure": runtime.failure,
             "last_health": runtime.last_health,

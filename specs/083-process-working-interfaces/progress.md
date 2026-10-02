@@ -1373,3 +1373,17 @@ measurement does not explain the retained 30-second startup timeout. The current
 API still requires a scoped restart to load this route; old in-memory buffers
 are not persisted and may be unavailable afterward. No engineering replay,
 review response or physical action was issued. Full goal remains active.
+
+Live readback after owned API restart 008 reached the corrected native owner,
+but both old failed surfaces returned `SURFACE_INSTANCE_NOT_FOUND`: startup
+reconciliation intentionally revoked their in-memory authority. Add an explicit
+scoped descriptor fallback labelled `surface-reconciliation`, never a fabricated
+live generation/health observation. Fourteen focused API tests pass. One bounded
+transport-only probe launched the exact fixed saved wheel static module and
+inventory from the workspace directory: health became ready in 4.964 seconds;
+stderr was empty and the exact child was stopped. This rules out an unconditional
+failure of that saved bundle/module on this host; it does not prove the managed
+presentation or establish the original timeout cause. Evidence remains private
+at `t047-runtime-diagnostics-003` pending broader managed-path proof. The fallback
+still needs loading in the served API. Existing second-run reviews remain
+unanswered; no generation, native engineering or physical action was replayed.

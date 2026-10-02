@@ -274,6 +274,34 @@ def test_runtime_diagnostics_retain_state_when_captured_logs_are_unavailable(
     assert response.json()["state"]
 
 
+def test_runtime_diagnostics_label_reconciled_descriptor_without_live_instance(
+    case, monkeypatch
+):
+    from workspace_service.surfaces.live_app_manager import LiveAppManagerError
+
+    value = generate(case)
+    view = preview(case, value)
+    manifest = value["preview"]["manifest"]
+
+    def missing_instance(*args, **kwargs):
+        raise LiveAppManagerError("SURFACE_INSTANCE_NOT_FOUND", "Revoked after restart")
+
+    monkeypatch.setattr(case.manager, "get", missing_instance)
+    response = case.client.get(
+        PREFIX + f"/uis/{manifest['ui_id']}/runtime-diagnostics",
+        params=case.query
+        | {
+            "revision_id": manifest["revision_id"],
+            "surface_id": view["descriptor"]["surfaceId"],
+        },
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["state_source"] == "surface-reconciliation"
+    assert body["generation"] is None and body["last_health"] is None
+    assert body["logs_unavailable"] == "SURFACE_INSTANCE_NOT_FOUND"
+
+
 def test_save_update_rollback_saved_open_and_close_use_exact_revisions(case):
     first = generate(case)
     first_view = preview(case, first)

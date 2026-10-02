@@ -102,6 +102,12 @@ surface principal fallbacks. If the captured buffer is unavailable, persisted
 runtime state remains readable with `logs: null` and
 `logs_unavailable: "SURFACE_LOGS_UNAVAILABLE"`; this is not evidence that the
 original process produced no logs.
+After restart, the manager may have no live instance because startup
+reconciliation revoked its authority. An exact scoped descriptor remains
+readable as `state_source: "surface-reconciliation"`, with `generation` and
+`last_health` null and `logs_unavailable: "SURFACE_INSTANCE_NOT_FOUND"`.
+Its diagnostic summary describes reconciliation, not the original failure or
+a new health observation. Live instances use `state_source: "runtime-owner"`.
 
 Preview is read-only against actual references or an explicitly labelled isolated
 fixture context. It cannot start work on mount. Saving activates presentation
