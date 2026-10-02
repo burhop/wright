@@ -80,3 +80,18 @@ entry. Preserve pre-existing dirty prototype work as recorded evidence and stage
 only owned migration changes. Catalog/example/history metadata may continue to
 name providers. No physical dispatch, upstream publication or user acceptance is
 claimed here.
+
+## Device and Studio source retirement
+
+After the operational callers were removed, the audited device/Studio dependency
+set was retired: both prototype workspace modules, setup scripts, device transport
+helpers, Studio automation and their obsolete vendor test. Original mixed edits
+and untracked experiments remain byte-preserved privately. The workspace owner
+no longer imports these implementations; newly built aggregate/private/rebuilt
+wheels exclude them. Shared action/observation/history authority passes 62 checks;
+three installed-resource checks also pass. The retained initial failure was
+temporary-fixture access. See [retirement details](prototype-caller-retirement.md).
+
+Vendor slicing wrappers and their campaign/proof dependencies remain unresolved.
+Installed history and complete engineering replacement are not proved by source
+removal or package-resource tests. T048/T049 stay open.

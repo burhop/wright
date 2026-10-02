@@ -345,3 +345,20 @@ See [caller retirement evidence](../../specs/083-process-working-interfaces/evid
 Service modules, vendor scripts, transitive slicing bindings and fresh installed
 history verification remain open T048/T049 work. Source retirement alone does
 not establish their removal or the full migration.
+
+### Device/Studio retirement checkpoint, 2 October 2026
+
+Both prototype workspace-service modules and unused device/Studio setup,
+transport and desktop automation scripts are removed after application caller
+retirement. Their vendor-only test is retired with them; shared action/observation/
+history authority is verified separately. Eighteen original files, including
+mixed edits and untracked experiments, remain privately byte-preserved. No
+configured provider or user run was mutated. The workspace owner no longer
+imports or ships these two modules; aggregate/private/rebuilt-wheel checks pass.
+Commands referring to removed scripts need qualified independent bindings;
+their effects are not replayed or silently substituted.
+
+This supersedes the historical inventory's two `print_part_demo` service rows
+and device/Studio script rows. Dataset/jig slicing still has campaign/proof
+dependencies. T048/T049 remain open for those dispositions, full replacement
+proof and fresh installed history. See the [retirement evidence](../../specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).

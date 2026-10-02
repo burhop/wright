@@ -1,0 +1,17 @@
+{
+  "retired_paths": [
+    "packages/workspace_service/src/workspace_service/print_part_demo.py",
+    "packages/workspace_service/src/workspace_service/print_part_demo_printer.py",
+    "scripts/configure_print_demo_offline.py",
+    "scripts/configure_print_demo_studio.py",
+    "scripts/print_demo_p1s_mcp.py",
+    "scripts/print_demo_p1s_session.py",
+    "scripts/print_demo_p1s_transfer.py",
+    "scripts/print_demo_studio.py",
+    "scripts/windows/inspect-bambu-studio.ps1",
+    "scripts/windows/studio-desktop.ps1",
+    "tests/test_print_demo_dispatch.py"
+  ],
+  "archived_extra_files": 3,
+  "effects": "Source removal only; no provider calls or saved data mutation"
+}

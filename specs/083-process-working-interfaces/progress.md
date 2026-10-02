@@ -1599,3 +1599,18 @@ script/transitive provider retirement and fresh installed history verification.
 See evidence/prototype-caller-retirement.md. Use t048-check-preservation-001.py
 for this deliberate active-location migration; the prior checker expects removed
 locations. Neither second-run review was answered and no provider action occurred.
+
+Device/Studio retirement continuation: audited the dependency set, preserved three
+additional tracked helper/test sources, and removed eleven unused operational
+source files. All 18 archived files, protected campaign hashes and approved
+context pointers verify unchanged. The first removal was filesystem-denied
+before source mutation; the authorized retry rechecked exact paths/hashes.
+Initial tests had 39 passes and 23 temporary-folder setup errors; fresh workspace
+fixtures pass 62 checks with two existing dependency warnings. Shared action,
+observation and read-only history remain separate from retired vendor tests.
+Three package-owner checks reject the removed modules/imports. Three resource
+tests pass in 53.72 seconds, including absence of retired modules in aggregate,
+private and source-archive-rebuilt wheels. T048/T049 remain open for transitive
+slicing/campaign dependencies, independent provider proof and installed history.
+No protected review, provider command or saved user configuration changed.
+See evidence/prototype-caller-retirement.md.

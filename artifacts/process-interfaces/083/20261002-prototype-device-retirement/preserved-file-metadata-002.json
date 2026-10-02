@@ -1,0 +1,20 @@
+{
+  "scope": "Private exact-byte preservation of unused vendor helper and historical test sources, not an installed integration",
+  "files": [
+    {
+      "path": "scripts/print_demo_p1s_session.py",
+      "sha256": "9a9fd0c6d633e03384bd1837663fede6a8d7ef903389918e656408fb0fe3fefb",
+      "bytes": 3510
+    },
+    {
+      "path": "scripts/print_demo_p1s_transfer.py",
+      "sha256": "24798ceacaf42304c7964eb9a20005be3b1022e771afe58c3a74df2f9d2d3250",
+      "bytes": 1269
+    },
+    {
+      "path": "tests/test_print_demo_dispatch.py",
+      "sha256": "feef135cf70b3c1e6341ba36fddf274c5abdc4a5d31b6e134f7c9dcb28cc2fd5",
+      "bytes": 10134
+    }
+  ]
+}

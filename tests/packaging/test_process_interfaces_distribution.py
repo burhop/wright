@@ -52,6 +52,8 @@ def unpack_wheel(output, installed):
                     == (ROOT / f"packages/{name}/{member}").read_bytes()
                 )
         assert "workspace_service/surfaces/process_ui_static.py" in members
+        for module in ("print_part_demo", "print_part_demo_printer"):
+            assert f"workspace_service/{module}.py" not in members
         assert not any(
             name.startswith(("tests/", "scripts/", "artifacts/")) for name in members
         )

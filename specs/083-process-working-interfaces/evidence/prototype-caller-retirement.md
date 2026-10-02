@@ -58,3 +58,51 @@ disposition and provider-boundary verification. The live installed hosts still
 use the previous candidate; a fresh installed history/retirement walkthrough is
 required before closing T048/T049. Both engineering second-run reviews remain
 unanswered. Full Feature 083 completion, release and human acceptance are unproven.
+
+## Device and Studio source retirement checkpoint
+
+The subsequent dependency audit found no application or shared-owner caller of
+the two prototype service modules. Their remaining dependencies were confined to
+the prototype set and its vendor-specific test. Removed eleven source files:
+
+- `workspace_service/print_part_demo.py` and `print_part_demo_printer.py`.
+- `configure_print_demo_offline.py` and `configure_print_demo_studio.py`.
+- `print_demo_p1s_mcp.py`, `print_demo_p1s_session.py`, and `print_demo_p1s_transfer.py`.
+- `print_demo_studio.py` and both Windows Studio inspection/automation helpers.
+- `tests/test_print_demo_dispatch.py`, which tested the removed vendor code.
+
+This removes repository-specific template setup, vendor status interpretation,
+device transfer/control/camera and Studio automation. Shared execution, action
+authority, observations, validation and read-only history retain existing owners.
+It does not create another vendor adapter.
+
+All eleven files were verified against private exact-byte snapshots before
+removal. Eight were already in snapshot 001; three additional session/transfer/
+test sources are in `t048-retirement-preserved-002`. The current checker verifies
+all 18 archived files and permits these deliberate active-source removals. Seven
+removed files were tracked; four automation experiments were untracked and remain
+available in the archive. The untracked Studio documentation remains unchanged.
+No user workspace, provider configuration, review, campaign counter or artifact
+was modified. The first removal was filesystem-denied before any source removal;
+the authorized retry checked exact paths and hashes again before completion.
+
+Previously configured commands referencing deleted scripts need independently
+qualified bindings before reuse. No saved command was silently replaced or
+re-executed. Existing historical data remains available read-only.
+
+Initial regression results were 39 passes and 23 setup errors: pytest's default
+temporary directory was outside the writable workspace. The report is retained
+as `temp-fixture-failure-001.xml`. A fresh workspace-local fixture passed all 62
+checks: inert retired endpoints, exact read-only history, shared action execution,
+async observations, scoped action authority and three package-owner isolation
+checks. Two existing dependency warnings remain. Ruff and preservation checks
+pass. These tests do not validate removed vendor implementations.
+
+Three installed-resource tests also pass in 53.72 seconds. Newly built aggregate,
+private-service and source-archive-rebuilt wheels retain public client/kit/static
+resources and exclude both retired service modules. This is package-resource
+proof, separate from installed browser acceptance.
+
+Dataset/jig slicing wrappers still have campaign/proof dependencies. Independent
+provider qualification, their disposition, the complete engineering replacement
+and fresh installed historical navigation remain pending. T048/T049 stay open.
