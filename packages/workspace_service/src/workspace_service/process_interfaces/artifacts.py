@@ -405,6 +405,34 @@ class ProcessInterfaceRevisions:
     def preview_bundle(self, scope, process, job_id):
         return self._load_built(scope, process, job_id)
 
+    def presentation_bundle(self, scope, process, job_id):
+        """Load an immutable origin build for a saved UI in the same source family.
+
+        This permits presentation reuse only. The caller checks current bindings;
+        backend operations and grants still name the exact current ProcessRef.
+        Unsaved drafts, generation and save remain pinned to their origin revision.
+        """
+        scope.require(process, "process.read")
+        job = self.repository.get_job(process.workspace_id, job_id)
+        if job.process == process:
+            return self._load_built(scope, process, job_id)
+        if (
+            job.state != "saved"
+            or job.process.workspace_id != process.workspace_id
+            or job.process.source_path != process.source_path
+        ):
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This build is not a saved interface from the current process.",
+                "Choose a saved revision from this process or update the interface.",
+            )
+        built = self._load_built(scope, job.process, job_id)
+        revision = self.repository.get_revision(
+            process.workspace_id, built[1].ui_id, built[1].revision_id
+        )
+        self.saved_source(scope, job.process, revision)
+        return built
+
     def observe_preview(
         self, scope, process, job_id, observation: ProcessUIPreviewObservation
     ):
@@ -548,7 +576,7 @@ class ProcessInterfaceRevisions:
             process.workspace_id, ui_id, revision_id
         )
         job = self.repository.job_for_revision(process.workspace_id, ui_id, revision_id)
-        self._load_built(author_scope.process_scope, process, job.job_id)
+        self.presentation_bundle(author_scope.process_scope, process, job.job_id)
         compatibility = await check_interface_compatibility(
             self.application, author_scope.process_scope, process, revision
         )

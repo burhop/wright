@@ -76,6 +76,61 @@ def test_interface_requires_explicit_process_read_capability():
         validate_manifest_bindings(manifest(capabilities=()), reference(), [])
 
 
+def test_revision_compatibility_is_opt_in_and_never_crosses_process_family():
+    current = reference().model_copy(update={"source_digest": "b" * 64})
+    with pytest.raises(ProcessInterfaceError):
+        validate_manifest_bindings(manifest(), current, [])
+    assert (
+        validate_manifest_bindings(manifest(), current, [], allow_process_revision=True)
+        == ()
+    )
+    for foreign in (
+        current.model_copy(update={"workspace_id": "another-workspace"}),
+        current.model_copy(update={"source_path": "workflows/another.wflow"}),
+    ):
+        with pytest.raises(ProcessInterfaceError):
+            validate_manifest_bindings(
+                manifest(), foreign, [], allow_process_revision=True
+            )
+
+
+def test_revision_compatibility_preserves_optional_absence_and_required_schema_checks():
+    binding = InterfaceBinding(
+        binding_id="result",
+        kind="output",
+        selector="result",
+        block_id="producer",
+        port_id="output",
+        expected_schema={"type": "string"},
+        required=False,
+        fallback="Use the common result list",
+    )
+    current = reference().model_copy(update={"source_digest": "b" * 64})
+    optional = validate_manifest_bindings(
+        manifest(bindings=(binding,)), current, [], allow_process_revision=True
+    )
+    assert len(optional) == 1 and optional[0].binding_id == "result"
+    assert optional[0].correction == "Use the common result list"
+    required = binding.model_copy(update={"required": True})
+    catalog = [
+        {
+            "kind": "output",
+            "selector": "result",
+            "block_id": "producer",
+            "port_id": "output",
+            "expected_schema": {"type": "number"},
+        }
+    ]
+    with pytest.raises(ProcessInterfaceError) as error:
+        validate_manifest_bindings(
+            manifest(bindings=(required,)),
+            current,
+            catalog,
+            allow_process_revision=True,
+        )
+    assert error.value.reason.code == "UI_INCOMPATIBLE"
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -114,8 +169,14 @@ def test_toolchain_versions_match_current_lockfile():
         "packages"
     ]
     for name in (
-        "typescript", "vite", "react", "react-dom", "three",
-        "@types/react", "@types/react-dom", "@types/three",
+        "typescript",
+        "vite",
+        "react",
+        "react-dom",
+        "three",
+        "@types/react",
+        "@types/react-dom",
+        "@types/three",
     ):
         assert declared[name]["version"] == lock[f"node_modules/{name}"]["version"]
 

@@ -328,10 +328,13 @@ class ProcessInterfacePresentations:
             )
         resolved = await self.application.resolve_process(scope, process)
         job, manifest, report, _source, _bundle = (
-            self.application.ui_revisions.preview_bundle(scope, process, job_id)
+            self.application.ui_revisions.presentation_bundle(scope, process, job_id)
         )
         validate_manifest_bindings(
-            manifest, process, accepted_binding_catalog(resolved.document)
+            manifest,
+            process,
+            accepted_binding_catalog(resolved.document),
+            allow_process_revision=True,
         )
         if not set(manifest.capabilities) <= scope.capabilities:
             raise ProcessInterfaceError(
@@ -343,7 +346,9 @@ class ProcessInterfacePresentations:
             revision = self.application.interfaces.get_revision(
                 process.workspace_id, manifest.ui_id, manifest.revision_id
             )
-            self.application.ui_revisions.saved_source(scope, process, revision)
+            self.application.ui_revisions.saved_source(
+                scope, manifest.process, revision
+            )
         if run_id is not None:
             bound = ProcessScope(
                 scope.principal_id,

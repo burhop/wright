@@ -103,10 +103,18 @@ class BuildToolchain:
 
 
 def validate_manifest_bindings(
-    manifest: InterfaceManifest, process: ProcessRef, catalog: list[dict]
+    manifest: InterfaceManifest,
+    process: ProcessRef,
+    catalog: list[dict],
+    *,
+    allow_process_revision: bool = False,
 ) -> tuple[Reason, ...]:
     """Compare against a server-derived catalog, including schema and exact ports."""
-    if manifest.process != process:
+    same_family = (
+        manifest.process.workspace_id == process.workspace_id
+        and manifest.process.source_path == process.source_path
+    )
+    if manifest.process != process and not (allow_process_revision and same_family):
         raise ProcessInterfaceError(
             "SCOPE_DENIED",
             "This interface names another accepted process.",

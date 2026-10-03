@@ -113,12 +113,12 @@ async def _dispatch(path, request, response, service, route, context):
             ProcessUIPreviewObservation,
         )
 
-        _, _, report, _, _ = application.ui_revisions.preview_bundle(
+        _, manifest, report, _, _ = application.ui_revisions.presentation_bundle(
             context.scope, binding.process, context.job_id
         )
         application.ui_revisions.observe_preview(
             context.scope,
-            binding.process,
+            manifest.process,
             context.job_id,
             ProcessUIPreviewObservation(
                 presentation_id=route.presentation_id,

@@ -211,7 +211,7 @@ class ProcessSurfaceBridge:
                 route.workspace_id,
                 frozenset({"process.read", "process.results", "process.navigate"}),
             )
-            _, manifest, _, _, _ = self.application.ui_revisions.preview_bundle(
+            _, manifest, _, _, _ = self.application.ui_revisions.presentation_bundle(
                 preliminary, binding.process, job.job_id
             )
             record = self.application.interfaces.get_authoring_record(

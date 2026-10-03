@@ -551,7 +551,7 @@ async def interface_runtime_diagnostics(
             process.workspace_id, ui_id, revision_id
         )
         # Verify immutable provenance even for a built preview that never saved.
-        application.ui_revisions.preview_bundle(
+        application.ui_revisions.presentation_bundle(
             author.process_scope, process, job.job_id
         )
         actor = _actor(request, author.process_scope, session_id)

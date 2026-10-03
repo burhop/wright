@@ -52,6 +52,18 @@ provider contracts. It grants only configured permitted scopes. Changing a requi
 binding/schema invalidates compatibility; unresolved optional bindings disclose
 fallback. Titles/layout changes do not invalidate engineering output/review.
 
+A saved manifest and build retain their original accepted ProcessRef and hashes.
+For a later accepted revision of the same workspace/source path, compare its
+declared bindings against the current server-derived catalog. Matching bindings
+may reuse that immutable saved bundle without model/compiler work. The native
+presentation and its grants name the exact current ProcessRef; the bridge supplies
+that current context. This does not transfer old run, result, review or action
+authority. Different workspace/source families and unsaved drafts cannot use this
+reuse path. Generation, draft preview and save remain pinned to their original
+authoring revision; updates produce a new revision with current bindings and
+preserve parent/source/build provenance. Required binding/schema changes deny
+presentation/activation until updated; optional absences retain their fallback.
+
 ## Fixed build and installed resources
 
 Public packages: `packages/process_client` (`@wright/process-client`) and

@@ -204,6 +204,130 @@ def test_context_and_snapshot_use_exact_owner_without_native_token(case):
     assert not (case.root / "first.txt").exists()
 
 
+def test_saved_origin_bundle_uses_current_grant_context_without_transferring_old_scope(
+    case, request
+):
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.workflow_sources import WorkspaceWorkflowSourceUseCases
+
+    executor = BoundedExecutor(max_workers=1)
+    request.addfinalizer(lambda: case.client.portal.call(executor.close))
+    assert (
+        case.client.post(
+            PREFIX + "/loaded",
+            json={"schema_version": "wright.process-presentation-loaded/1"},
+            headers={"Origin": ORIGIN},
+        ).status_code
+        == 200
+    )
+
+    async def save_and_change():
+        source = await case.owner.workspace.workflow_sources.read(
+            case.root, case.reference.source_path
+        )
+        case.owner.workspace.workflow_sources = WorkspaceWorkflowSourceUseCases(
+            executor
+        )
+        case.owner.workspace.ensure_workspace_path_safe = lambda path: path
+        created = await case.owner.workspace.workflow_sources.create(
+            str(case.root), case.reference.source_path, source.source
+        )
+        built = case.owner.interfaces.get_authoring_record(
+            "workspace", case.job.job_id, "built"
+        )["build"]
+        revision = await case.owner.ui_revisions.save(
+            authorized(),
+            case.reference,
+            case.job.job_id,
+            expected_source_digest=built["source_digest"],
+            expected_manifest_digest=built["manifest_digest"],
+            expected_bundle_digest=built["bundle_digest"],
+            expected_active_revision=None,
+        )
+        changed = await case.owner.workspace.workflow_sources.update(
+            str(case.root),
+            case.reference.source_path,
+            source=source.source + "\n",
+            expected_storage_revision=created.storage_revision,
+            expected_storage_digest=created.storage_digest,
+            semantic_change_validated=True,
+        )
+        return revision, case.reference.model_copy(
+            update={"source_digest": changed.storage_digest}
+        )
+
+    revision, current = case.client.portal.call(save_and_change)
+    original_revision = revision.model_dump_json()
+    preview_before = case.owner.interfaces.get_authoring_record(
+        "workspace", case.job.job_id, "preview"
+    )
+    # Native reopening creates a distinct isolated presentation/runtime. It
+    # does not transplant current-process authority into an existing old view.
+    current_route = replace(
+        case.route,
+        presentation_id="presentation-current",
+        instance_id="instance-current",
+    )
+    case.authority.current = current_route
+    for record in case.records:
+        case.grants.revoke(actor=case.actor, grant_id=record.grant_id)
+        case.grants.decide(
+            actor=case.actor,
+            request=CapabilityRequest(
+                source_id=case.route.source_id,
+                source_version=case.route.source_version,
+                instance_id=current_route.instance_id,
+                capability=record.capability,
+                operation=record.capability,
+                constraints=case.binding.model_copy(
+                    update={
+                        "process": current,
+                        "presentation_id": current_route.presentation_id,
+                    }
+                ).model_dump(mode="json"),
+                risk_tier="low",
+                persistence="instance",
+                duration_seconds=600,
+                declared=True,
+                decision="allow",
+                reason="Exact test current process presentation",
+            ),
+        )
+    context = case.client.get(PREFIX + "/context")
+    assert context.status_code == 200 and context.json()[
+        "process"
+    ] == current.model_dump(mode="json")
+    current_query = case.query | {"expected_storage_digest": current.source_digest}
+    snapshot = case.client.get(PREFIX + "/interaction", params=current_query)
+    assert snapshot.status_code == 200 and snapshot.json()["context"][
+        "process"
+    ] == current.model_dump(mode="json")
+    assert (
+        case.client.get(PREFIX + "/interaction", params=case.query).status_code == 403
+    )
+    assert (
+        case.client.post(
+            PREFIX + "/loaded",
+            json={"schema_version": "wright.process-presentation-loaded/1"},
+            headers={"Origin": ORIGIN},
+        ).status_code
+        == 200
+    )
+    assert (
+        case.owner.interfaces.get_authoring_record(
+            "workspace", case.job.job_id, "preview"
+        )
+        == preview_before
+    )
+    assert (
+        case.owner.interfaces.get_revision(
+            "workspace", revision.manifest.ui_id, revision.manifest.revision_id
+        ).model_dump_json()
+        == original_revision
+    )
+    assert not (case.root / "first.txt").exists()
+
+
 def test_preview_loaded_record_is_derived_from_exact_route_and_verified_bundle(case):
     with pytest.raises(KeyError):
         case.owner.interfaces.get_authoring_record(

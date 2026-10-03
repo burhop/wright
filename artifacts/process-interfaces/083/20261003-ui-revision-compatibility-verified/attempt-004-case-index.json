@@ -1,0 +1,1202 @@
+[
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_revision_compatibility",
+    "name": "test_compatible_source_revision_reuses_exact_saved_build_and_current_grants",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_revision_compatibility",
+    "name": "test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_safe_provider_failure_is_actionable_and_not_replayed[SCOPED_MODEL_TIMEOUT-UI_MODEL_TIMEOUT]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_safe_provider_failure_is_actionable_and_not_replayed[SCOPED_MODEL_AUTH_REQUIRED-UI_MODEL_AUTH_REQUIRED]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_safe_provider_failure_is_actionable_and_not_replayed[SCOPED_MODEL_RATE_LIMITED-UI_MODEL_RATE_LIMITED]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_model_cannot_request_capabilities_outside_native_authoring_scope",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_generation_retains_scope_build_provenance_and_survives_reopen",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_actual_fixed_compiler_builds_controlled_model_output",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_concurrent_duplicate_requests_do_not_probe_or_generate_twice",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_optional_binding_repair_explains_fallback_without_private_input",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_two_exact_diagnostic_repairs_preserve_role_and_default_model",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_exhausted_repairs_are_durable_and_not_replayed",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_tool_or_unattested_model_response_fails_closed[options0]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_tool_or_unattested_model_response_fails_closed[options1]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_observer_disconnect_does_not_cancel_owned_generation",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_explicit_cancel_and_shutdown_stop_owned_model_work",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_permission_source_and_capacity_fail_before_generation",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_missing_model_and_compiler_are_explicit_without_job_allocation",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_dead_owner_job_becomes_interrupted_without_generation_replay",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_changed_bundle_is_not_published",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_authoring_records_are_immutable_bounded_and_scoped",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_immutable_files_survive_reopen_and_reject_corruption_or_overwrite",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_immutable_files_reject_invalid_envelopes[content0]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_immutable_files_reject_invalid_envelopes[content1]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_immutable_files_reject_invalid_envelopes[content2]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_save_update_rollback_and_saved_source_reuse_without_model_or_compile",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_save_requires_exact_preview_hashes_permissions_and_current_source",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_authoring",
+    "name": "test_corrupt_saved_bundle_falls_back_without_regeneration_or_recompilation",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_installed_role_resources_are_versioned_and_closed",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_interface_requires_explicit_process_read_capability",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_revision_compatibility_is_opt_in_and_never_crosses_process_family",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_revision_compatibility_preserves_optional_absence_and_required_schema_checks",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_administrative_build_limits_are_bounded[changes0]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_administrative_build_limits_are_bounded[changes1]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_administrative_build_limits_are_bounded[changes2]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_administrative_build_limits_are_bounded[changes3]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_missing_compiler_is_actionable",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_model_repair_diagnostic_omits_private_host_locations",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_toolchain_versions_match_current_lockfile",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_exact_catalog_binding_and_optional_absence",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_wrong_process_or_versions_rejected",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_reference_compiles_with_public_packages_and_no_generated_scripts",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import x from 'node:fs'; export default function App(){return null}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import * as THREE from 'three'; export default function App(){return null}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import x from 'three/addons/controls/OrbitControls.js'; export default function App(){return null}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import x from '../../apps/web/private'; export default function App(){return null}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){import('react');return null}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){fetch('/admin');return null}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){return <a href='https://example.invalid'>Link</a>}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){return new Function('return 1')()}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[const value: number = 'wrong type'; export default function App(){return null}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_css_cannot_fetch_or_execute[@import 'remote.css';]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_css_cannot_fetch_or_execute[p {background:url(https://example.invalid/a.png)}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_css_cannot_fetch_or_execute[p {width:expression(alert(1))}]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_builder_bounds_and_disposes_its_owned_child[timeout]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_builder_bounds_and_disposes_its_owned_child[overflow]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_build",
+    "name": "test_builder_bounds_and_disposes_its_owned_child[cancel]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_presentations",
+    "name": "test_open_reports_capacity_without_private_runtime_details[asyncio]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_presentations",
+    "name": "test_preview_uses_fixed_existing_owner_and_exact_read_only_grants",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_presentations",
+    "name": "test_saved_reuse_requires_no_model_or_compiler_and_close_does_not_cancel",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_presentations",
+    "name": "test_unsaved_working_mode_and_foreign_context_are_denied",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_presentations",
+    "name": "test_native_open_cannot_renew_revoked_grants_or_rebind_preview_mode",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_presentations",
+    "name": "test_policy_denial_contains_view_and_corrupt_manifest_cannot_launch",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_presentations",
+    "name": "test_bound_saved_views_reuse_two_durable_runs_and_close_leaves_work_running",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_start_association",
+    "name": "test_exact_association_reads_existing_receipt_without_replaying_work",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_start_association",
+    "name": "test_unknown_request_cannot_be_replaced_and_foreign_signal_cannot_attach",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_start_association",
+    "name": "test_preview_run_bound_closed_and_revoked_views_cannot_adopt_a_start",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_source_read_uses_existing_owner_and_accepted_digest",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_scope_mismatch_rejects_before_reading_any_source",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_changed_source_requires_repreparation_not_silent_rebinding",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_unknown_source_contract_is_explicitly_unsupported",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_scope_has_closed_capabilities_and_no_empty_principal",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_diagnostics_are_redacted_and_bounded",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_limits_are_owned_by_wright_and_reject_invalid_bounds",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_service_repositories_are_lazy_and_share_existing_database",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_is_scoped_durable_and_does_not_dispatch[False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_is_scoped_durable_and_does_not_dispatch[True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[actor-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[actor-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[request_id-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[request_id-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[decision-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[decision-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[reason-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_review_request_identity_cannot_be_replaced[reason-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[artifact-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[artifact-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[source-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[source-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[subject-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[subject-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[scope-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[scope-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[blank_reason-False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_invalid_or_changed_review_does_not_record_decision[blank_reason-True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_lost_run_projection_can_be_reconciled_without_another_decision[False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_lost_run_projection_can_be_reconciled_without_another_decision[True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_review_decisions",
+    "name": "test_declared_input_cannot_be_decided_as_an_approval",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_initial_record_identifies_run_before_any_result",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_current_continuation_results_survive_a_stale_earlier_segment[running]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_current_continuation_results_survive_a_stale_earlier_segment[failed]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_current_continuation_results_survive_a_stale_earlier_segment[awaiting_approval]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_current_continuation_results_survive_a_stale_earlier_segment[cancelled]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_empty_current_results_preserve_invalidation_after_a_prior_wait",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_completed_segment_uses_its_final_result_authority",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_attachment_finds_requested_run_instead_of_latest",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_attachment_reuses_lease_observation[True-running]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_attachment_reuses_lease_observation[False-interrupted]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_attachment_reuses_lease_observation[None-unknown]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_foreign_or_unreadable_owner_does_not_prove_interruption",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_source_change_preserves_original_run_identity",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_compact_view_omits_native_payload_and_exposes_only_owner_references",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_legacy_run_without_top_identity_is_restored_from_result",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_bad_or_other_source_record_cannot_attach[changes0]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_bad_or_other_source_record_cannot_attach[changes1]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_bad_or_other_source_record_cannot_attach[changes2]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_bad_or_other_source_record_cannot_attach[changes3]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_bad_or_other_source_record_cannot_attach[changes4]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_bad_or_other_source_record_cannot_attach[changes5]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_duplicate_run_identity_is_explicit_not_random_file_selection",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_log_hint_is_confined_to_exact_source_run_folder[../outside.json]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_log_hint_is_confined_to_exact_source_run_folder[C:/outside.json]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_log_hint_is_confined_to_exact_source_run_folder[runs/other/file.json]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_log_hint_is_confined_to_exact_source_run_folder[workflows/example.workflow.wflow]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_hint_still_requires_exact_run_and_source",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_exhausted_fallback_is_unresolved_until_server_owned_locator_available",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_oversized_record_is_not_read_as_partial_truth",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_rework_removes_invalidated_output_from_attachment",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_recorded_run_read",
+    "name": "test_missing_run_does_not_create_files",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_context_and_snapshot_use_exact_owner_without_native_token",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_preview_loaded_record_is_derived_from_exact_route_and_verified_bundle",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_malformed_duplicate_large_or_extra_json_does_not_reach_input_owner[False]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[source_id-vendor.server.resource]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[source_version-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[presentation_id-other-presentation]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[generation-2]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[instance_id-other-instance]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[principal_id-other-user]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[workspace_id-other-workspace]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[http_declared-False]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_stopped_revoked_or_replaced_presentation_denies_reads[authority]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_stopped_revoked_or_replaced_presentation_denies_reads[target]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_revoked_process_read_grant_denies_context",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_passive_toolpath_preview_keeps_exact_managed_results_grant",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[inputs-body0]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[runs-body1]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[runs/other-run/cancel-body2]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[actions/continue-other-body3]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[interactions/other/response-body4]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[interactions/other/decision-body5]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_working_presentation_uses_native_input_owner_and_exact_selectors[False]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_post_requires_exact_origin_even_with_cookie[None-False]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_post_requires_exact_origin_even_with_cookie[https://wright.example.test-False]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_post_requires_exact_origin_even_with_cookie[null-False]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_foreign_run_and_ambiguous_selectors_are_rejected",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_no_generic_tool_or_authoring_authority_or_native_cookie_equivalence",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_run_binding_is_enforced_by_common_receipt_snapshot_and_artifact_owners",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_live_stream_grants_are_revalidated_without_rereading_static_bundle",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_expired_and_changed_stream_context_are_rejected",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_bound_receipt_must_match_exact_source_digest",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_corrupted_built_asset_never_receives_bridge_authority",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target0]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target1]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target2]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target3]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target4]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target0]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target1]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target2]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target3]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target4]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_generation_status_events_idempotency_and_preview_are_native_scoped",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_runtime_diagnostics_use_native_owner_without_starting_work[user]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_runtime_diagnostics_use_native_owner_without_starting_work[None]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_runtime_diagnostics_deny_foreign_actor_and_interface",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_runtime_diagnostics_bound_log_requests[changes0]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_runtime_diagnostics_bound_log_requests[changes1]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_runtime_diagnostics_retain_state_when_captured_logs_are_unavailable",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_runtime_diagnostics_label_reconciled_descriptor_without_live_instance",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_save_update_rollback_saved_open_and_close_use_exact_revisions",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_save_requires_preview_and_hash_cas_authority",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_role_source_and_presentation_principal_authority",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_unavailable_model_can_read_saved_status_but_cannot_generate",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_cancel_and_bounded_event_observer_do_not_replay_generation",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_ui_authoring_api",
+    "name": "test_native_start_receipt_checks_exact_owned_preparation_view",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_legacy_run_denies_viewer_before_resolving_workspace",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_start_returns_before_work_finishes_and_retry_reattaches",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_changed_source_reopens_exact_historical_run_without_permission",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_actual_sse_disconnect_leaves_backend_running",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_explicit_cancel_and_terminal_event_replay_are_durable",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_run_scope_input_identity_and_request_conflicts",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_reopened_api_reconciles_interruption_without_restarting",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_missing_log_returns_unknown_without_repeating_work",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_legacy_json_retry_uses_same_durable_run",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_legacy_actual_ndjson_disconnect_detaches_observer",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_legacy_failure_replays_recorded_diagnostic_without_retrying_model[False]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_legacy_failure_replays_recorded_diagnostic_without_retrying_model[True]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_derives_identity_and_continues_the_same_run[local-review]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_derives_identity_and_continues_the_same_run[digital-operation]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[local-review-principal_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[local-review-actor]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[local-review-run_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[local-review-destination]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[local-review-settings]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[local-review-auto]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[local-review-integration_test]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[digital-operation-principal_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[digital-operation-actor]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[digital-operation-run_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[digital-operation-destination]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[digital-operation-settings]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[digital-operation-auto]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_actions",
+    "name": "test_action_route_rejects_client_supplied_authority[digital-operation-integration_test]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_route_derives_actor_and_run_and_duplicate_is_read_only[action-review]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_route_derives_actor_and_run_and_duplicate_is_read_only[artifact-review]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[action-review-actor]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[action-review-run_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[action-review-auto]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[action-review-destination]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[action-review-integration_test]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[artifact-review-actor]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[artifact-review-run_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[artifact-review-auto]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[artifact-review-destination]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_review_transport_rejects_forged_authority[artifact-review-integration_test]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_changed_review_request_conflicts_and_invalid_reason_is_rejected[action-review]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_reviews",
+    "name": "test_changed_review_request_conflicts_and_invalid_reason_is_rejected[artifact-review]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_upload_prepare_and_read_exact_bytes_without_execution",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_passive_preview_keeps_original_download_and_exact_run_authority[workflow test\\n  name: \"Test\"\\n  purpose: \"Prepared input fixture\"\\n  discipline: \"engineering\"\\n  reviewed_ai_suggestions: false\\nend\\ninput brief\\n  name: \"Brief\"\\n  purpose: \"Prepared input\"\\n  group: null\\n  provided_by: \"engineer\"\\n  step_type: \"work\"\\n  tool: null\\n  reusable_step: null\\n  instructions: \"Use exact input\"\\n  inputs: []\\n  outputs: [{\"key\": \"brief_out\", \"name\": \"brief_out\", \"kind\": \"engineering_document\", \"item\": null, \"required\": false, \"quantity\": \"one\", \"description\": \"Document\"}]\\n  settings: {\"input_text\": \"Prepared passive view\"}\\nend\\ntask first\\n  name: \"First\"\\n  purpose: \"Use exact input\"\\n  group: null\\n  step_type: \"work\"\\n  performed_by: \"ai_assisted\"\\n  inputs: [{\"key\": \"first_in\", \"name\": \"first_in\", \"kind\": \"engineering_document\", \"item\": null, \"required\": true, \"quantity\": \"one\", \"description\": \"Document\"}]\\n  outputs: [{\"key\": \"first_out\", \"name\": \"first_out\", \"kind\": \"engineering_document\", \"item\": null, \"required\": false, \"quantity\": \"one\", \"description\": \"Document\"}]\\n  prompt: \"Prepare a result\"\\n  tool: null\\n  reusable_step: null\\n  settings: {\"output_format\": \"text\", \"save_output\": true, \"output_filename\": \"first.txt\"}\\nend\\nconnection supplied\\n  type: \"item\"\\n  from: \"brief.brief_out\"\\n  to: \"first.first_in\"\\n  label: \"Input\"\\n  when: null\\nend\\n]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_uploaded_html_is_inert_download_even_with_caller_mime",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_upload_rejects_caller_authority_without_echo_or_publication[workspace_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_upload_rejects_caller_authority_without_echo_or_publication[principal_id]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_upload_rejects_caller_authority_without_echo_or_publication[capabilities]",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_duplicate_input_field_rejects_before_publication",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_upload_scope_and_size_are_checked_before_saving",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_representation_needs_exact_preparation_and_immutable_bytes",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_auth_and_origin_cover_upload_and_download",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_artifact_routes_deny_viewer_before_resolving_workspace",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_bounded_request_replay_retains_the_actual_connection_lifetime",
+    "passed": true
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_artifacts",
+    "name": "test_native_navigation_resolves_source_and_rejects_foreign_intents",
+    "passed": true
+  }
+]

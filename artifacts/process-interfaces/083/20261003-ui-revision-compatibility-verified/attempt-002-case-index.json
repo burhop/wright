@@ -1,0 +1,12 @@
+[
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_revision_compatibility",
+    "name": "test_compatible_source_revision_reuses_exact_saved_build_and_current_grants",
+    "passed": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_ui_revision_compatibility",
+    "name": "test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source",
+    "passed": false
+  }
+]

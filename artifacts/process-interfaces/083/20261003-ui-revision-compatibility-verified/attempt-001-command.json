@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "packages/workspace_service/tests/test_process_ui_revision_compatibility.py",
+    "--basetemp=D:\\repos\\wright\\.pytest-tmp\\t056-ui-revision-audit-001",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-ui-revision-audit-001\\results.xml"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "modules": [
+    "packages/workspace_service/tests/test_process_ui_revision_compatibility.py"
+  ],
+  "source_sha256": {
+    "packages/workspace_service/tests/test_process_ui_revision_compatibility.py": "41fe7ed050eb78ca511a04444a1f2ae098820222d439070f615e2fb0065fe10c",
+    "packages/workspace_service/src/workspace_service/process_interfaces/compatibility.py": "82174096a37e9e138599307f73ce5c53ef9dccec947a05c5af02cea5cd0fcb62",
+    "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py": "3c46c7b95f3c5ed43cfbc41e0ffa3453d1e79a6b1df57dd1b306bb7f5a22917d",
+    "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py": "2c701d3710e90e48c893cf1b08cca73a883c380f1cbebcd518ebc66f59ed4381",
+    "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py": "9943a01928009484e7900d19893d5c0288406b08e834894bb0d928adab40b738",
+    "packages/workspace_service/src/workspace_service/process_interfaces/build.py": "f26447349ebcd6b37a9186673c8a2524a2af5038ada83c63927d6d9cc5ccc29e"
+  },
+  "live_opt_ins_removed": true
+}

@@ -1,5 +1,25 @@
 # Feature 083 completion audit — incomplete
 
+## Saved interface source-revision compatibility — 3 October 2026
+
+The [scoped compatibility correction](../../artifacts/process-interfaces/083/20261003-ui-revision-compatibility-verified/README.md)
+passes242 owning/affected cases across14 modules. Valid source CAS with matching
+declared bindings can reuse immutable saved origin bytes under exact current
+presentation grants. Required schema changes deny opening/activation; a focused
+update preserves prior source/manifest and saves a new current revision.
+Unsaved drafts and foreign source families cannot use the reuse path. Generation,
+run/result/review/action checks remain strict. Actual HTTP bridge checks reject
+old source queries and preserve origin preview/revision records.
+
+The original update-after-source-change path already worked; the initial suspicion
+is corrected. First fixture line-ending and guessed-metadata failures are retained.
+This is controlled owner/API proof, not new installed-browser/live-model/MCP or
+engineering acceptance. Rebuild and prove the current normal-workspace saved
+reuse/update/common fallback journey next. Earlier installed evidence retains
+its original build scope. Cumulative semantic dispositions stay36/146 of182;
+55 tasks remain checked and T056/T057 remain open. Owned prior hosts90330/46681
+were revalidated running; no new persistent service or external action occurred.
+
 **Branch:** `codex/083-process-working-interfaces`.
 **Current ledger:** **55 checked / 2 open**: T056 and T057.
 Task counts are not a percentage of completion.

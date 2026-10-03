@@ -13,7 +13,10 @@ async def check_interface_compatibility(application, scope, process, revision):
     try:
         resolved = await application.resolve_process(scope, process)
         optional = validate_manifest_bindings(
-            manifest, process, accepted_binding_catalog(resolved.document)
+            manifest,
+            process,
+            accepted_binding_catalog(resolved.document),
+            allow_process_revision=True,
         )
         missing = set(manifest.capabilities) - scope.capabilities
         if missing:
