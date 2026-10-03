@@ -2,8 +2,28 @@
 
 **Index checkpoint:** `5323a6d6`, with one documented route-parameter correction.
 **Earlier runtime correction:** `910bd53b`; recovery checkpoint `f55c1eac`.
-**Current readiness batch:** two bounded owner corrections; full signoff pending.
+**Current primary batch:** lifecycle review adds 21 dispositions; 28 cumulative,
+154 awaiting review. Full signoff pending.
 **Scope:** T056 in progress. No complete-goal or human acceptance claim.
+
+## Latest primary lifecycle checkpoint
+
+The [lifecycle audit](../../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/README.md)
+and its [cumulative semantic ledger](../../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/semantic-ledger.json)
+retain all 182 original obligations and the seven readiness dispositions. Manual
+review adds 21 lifecycle/input/recovery dispositions: 28 proved at their recorded
+scope, 154 awaiting review. The frozen preliminary index remains unchanged.
+
+248 fresh controlled cases pass with zero failures, errors or skips. Actual v2
+persisted checkpoint readback through a recreated owner leaves payloads and run
+identity unchanged. Reused component/client assertions are byte-scoped to their
+earlier 178-case run; totals overlap. No business runtime changes, live provider/
+model operations, protected decisions or hardware/supplier actions occur. Owner
+recreation is not an OS power-loss proof. The 550 retained engineering/UI files
+and protected history match; engineering acceptance remains held.
+
+Next review FR-013/014, SC-005, US2-AC3, NEG-09/10 and EDGE-02/03 against exact
+validation/action owners and their primary assertions. T056/T057 remain open.
 
 The current [182-obligation index](../../../artifacts/process-interfaces/083/20261003-requirement-evidence-index/README.md)
 derives the approved scope directly from source requirements and retains exact

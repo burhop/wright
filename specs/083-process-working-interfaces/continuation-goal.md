@@ -33,6 +33,26 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest primary audit — lifecycle review, 28 cumulative dispositions
+
+Read `artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/`
+and `evidence/requirements-audit.md`. The cumulative semantic ledger preserves all
+182 obligations, including the seven earlier readiness dispositions: 28 proved at
+their recorded scope, 154 awaiting review. T056/T057 remain open (55 checked).
+
+248 fresh controlled runtime/storage/recovery/API checks pass without skips,
+errors or failures. Actual persisted v2 checkpoint readback through a recreated
+owner retains the same run and unchanged payloads. Reused common-view/client
+checks are verified against exact source bytes. Counts overlap earlier runs;
+owner recreation is not OS power-loss durability, and accelerated observation is
+not physical multi-hour execution. No business runtime changes, live model/MCP
+calls, protected decisions or hardware/supplier actions occur in this batch.
+550 retained engineering/UI files and protected history remain unchanged.
+
+Next review FR-013/014, SC-005, US2-AC3, NEG-09/10 and EDGE-02/03 against exact
+validation/action owners and primary assertions. Preserve previous checkpoints
+as history, their original build identities and held engineering reviews.
+
 ### Latest primary audit — seven readiness obligations reviewed
 
 Read the current primary audit at

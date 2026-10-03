@@ -4,6 +4,19 @@
 **Current ledger:** **55 checked / 2 open**: T056 and T057.
 Task counts are not a percentage of completion.
 
+The latest [primary lifecycle audit](../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/README.md)
+adds 21 reviewed dispositions to the earlier seven readiness dispositions.
+Its [cumulative ledger](../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/semantic-ledger.json)
+retains all 182 obligations: 28 proved at their recorded scope, 154 awaiting
+review. 248 fresh controlled lifecycle/runtime/storage/recovery/API cases pass
+with no skips or failures; actual v2 checkpoint readback preserves run and payload
+identity. No product code changes or live engineering/provider/hardware actions
+occur in this batch. Earlier evidence retains its build scope and mandatory human
+reviews remain held. Next review exact validation/action authority and invalidation:
+FR-013/014, SC-005, US2-AC3, NEG-09/10 and EDGE-02/03. T056/T057 remain open.
+
+The following earlier checkpoint records are retained as history.
+
 T056's [primary readiness audit](../../artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/README.md)
 now reviews FR-003/004, SC-002, US1-AC1/AC2 and NEG-01/02 against inspected
 behaviors. Its semantic ledger preserves all 182 obligations: seven proved in

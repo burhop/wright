@@ -1,5 +1,32 @@
 # Feature 083 progress
 
+## Primary lifecycle audit — 28 cumulative obligations reviewed, 3 October 2026
+
+The [lifecycle primary audit](../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/README.md)
+adds 21 inspected dispositions to the seven readiness dispositions committed in
+`584f5efe`. Its cumulative [semantic ledger](../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/semantic-ledger.json)
+preserves all 182 original obligations: 28 proved at their recorded scope,
+154 awaiting review. T056/T057 remain open (55 tasks checked).
+
+248 fresh controlled source/runtime/storage/recovery/API cases pass without
+failures, errors or skips. Two actual persisted version-2 approval checkpoints
+are read through a recreated current owner, retaining the same run and unchanged
+payloads. Primary assertions cover backend ownership, observer detachment,
+declared interactions, same-run continuation, unknown-outcome refusal and the
+distinction between a cancellation request and confirmed cancellation. Reused
+178-case component/client evidence is checked against exact current source bytes;
+counts overlap earlier runs and must not be summed.
+
+No product code changes or live model/provider/engineering/hardware actions occur
+in this batch. Owner recreation does not establish OS power-loss durability;
+accelerated observation checks do not establish a physical multi-hour operation.
+550 retained engineering/UI files and protected history match. Actual engineering
+reviews remain held and older evidence retains its original run/build identity.
+
+Continue primary review of exact validation/action authority and invalidation:
+FR-013/014, SC-005, US2-AC3, NEG-09/10 and EDGE-02/03. Do not infer their full
+scope from the lifecycle or readiness checks.
+
 ## Primary readiness audit — seven obligations reviewed, 3 October 2026
 
 Manual review of the exact readiness/input/storage owners and primary assertions

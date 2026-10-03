@@ -1,0 +1,13 @@
+{
+  "exit_code": 0,
+  "modules": 15,
+  "counts": {
+    "tests": 248,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "passed": 248
+  },
+  "scope": "Actual source/run/storage/recovery/API owners; controlled model/provider responses and nonphysical test decisions.",
+  "live_model_mcp_engineering_hardware_or_user_acceptance": false
+}

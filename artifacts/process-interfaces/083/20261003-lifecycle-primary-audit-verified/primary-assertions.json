@@ -1,0 +1,205 @@
+{
+  "manual_owner_and_body_review": true,
+  "inspected_functions": [
+    {
+      "file": "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "function": "test_start_allocates_before_model_finishes_and_lost_ack_retry_does_not_replay",
+      "line": 105,
+      "end_line": 133,
+      "function_sha256": "b9da6dfffe5f2d929e81aa0df59cc49f57bfa47d5ac6edffb2f9d8285a16cb83"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "function": "test_disconnected_observer_does_not_cancel_backend_work",
+      "line": 137,
+      "end_line": 162,
+      "function_sha256": "bdcfd118065deb1273c5d90a7b0a91b04978bc6504d23d6c3a4fb08e8cb4b252"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "function": "test_reopened_supervisor_reattaches_terminal_run_without_model_work",
+      "line": 166,
+      "end_line": 195,
+      "function_sha256": "eb2c4f55c98a02cafd6e60d34c29176681027cf24dd1fb0edcc137fab4e81e2d"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "function": "test_runtime_shutdown_is_interrupted_and_cannot_restart_from_receipt",
+      "line": 259,
+      "end_line": 289,
+      "function_sha256": "70d34ed64f2b751cb0d55b28e1d93c625fd8c84d6f3e3d381e7a0128afc5af25"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "function": "test_concurrent_duplicate_start_allocates_only_one_task",
+      "line": 293,
+      "end_line": 317,
+      "function_sha256": "38d4b25a01195b3768722afabaab922aa9bd76ceea45cc790e0630e7759f9f79"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "function": "test_lost_start_observer_during_publication_keeps_allocated_run",
+      "line": 650,
+      "end_line": 687,
+      "function_sha256": "c7cc4d385de22b5b2504743d04423f812a95f1e1db79b67c372454b0f82e0218"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "function": "test_explicit_local_cancel_keeps_completed_earlier_output",
+      "line": 221,
+      "end_line": 255,
+      "function_sha256": "c8b28dc9b1b1edd31e70e7f1c4dec6607f643ab8829cd86c03c085cfcd5bd2db"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_projection_is_a_declared_form_and_reads_never_execute_or_respond",
+      "line": 96,
+      "end_line": 135,
+      "function_sha256": "b64e13ffeb29b3eb959424ca29f87b15dfc6edd51a8b6870bb5bbf8999da8316"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_response_owns_task_returns_before_model_and_retries_never_repeat",
+      "line": 139,
+      "end_line": 181,
+      "function_sha256": "8fc598e1e499762f5330b5c3e6396b44f339ee1914a14377c7204fa9bb883a60"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_changed_subject_has_disabled_projection_and_cannot_accept_answer",
+      "line": 186,
+      "end_line": 235,
+      "function_sha256": "7a97d935371700cb0cfeab7fc0c631c828c66c728274b50de8a2de95fed529bd"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_bad_value_scope_and_checkpoint_never_consume",
+      "line": 239,
+      "end_line": 273,
+      "function_sha256": "5356371ecd37e6227ae842e78039e1d0d34e00883403f6ec4980552010e931b9"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_recreated_owner_resumes_pending_checkpoint_with_original_run",
+      "line": 277,
+      "end_line": 299,
+      "function_sha256": "a21750ca9e25b68f82c2d429928af318990e201ecc2d45cc644ca2c2ff58b62d"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_unfinished_saved_claim_is_unknown_and_is_never_replayed",
+      "line": 303,
+      "end_line": 337,
+      "function_sha256": "b77eabaad45e64395d32a8a8e2192e6e72fe0287be0d1ec7a9b6f98cef101b6c"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_two_supervised_checkpoints_survive_reopen_and_duplicate_submissions",
+      "line": 341,
+      "end_line": 386,
+      "function_sha256": "ad0a886c2ecfa234cca42468c739a5ae106ef42e80693938817be19ecf7edf4d"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_interface_continuation.py",
+      "function": "test_v3_approval_after_input_restores_frozen_overlay_through_existing_dispatcher",
+      "line": 684,
+      "end_line": 835,
+      "function_sha256": "fe8e00d01da40317efd6d7b8b1051d8fd35b2012e91b0b9dc098e00b49dfb914"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_execution_continuation.py",
+      "function": "test_two_sequential_checkpoints_resume_same_run_and_execute_true_final_step",
+      "line": 85,
+      "end_line": 165,
+      "function_sha256": "f36e4e63ddf3ef03abf86eda6d325caf2030957d81b44069f3152909d4ddab86"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+      "function": "test_plain_step_question_fails_before_formatting_outputs_or_downstream",
+      "line": 48,
+      "end_line": 94,
+      "function_sha256": "1754a419360744cca0e4f4a707dbd6ad8bd191a837c60c32a059206c8e9a16aa"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+      "function": "test_mcp_question_has_no_new_form_default_retry_or_tool_dispatch",
+      "line": 99,
+      "end_line": 150,
+      "function_sha256": "c2af9f8463fd7a08f3222860307896ddc9190434d0a0465f9ffc014ff05d8cc7"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+      "function": "test_document_questions_and_json_status_are_not_classified_as_interactions",
+      "line": 182,
+      "end_line": 199,
+      "function_sha256": "e38ea92135114fe32b55796735b9298e7f78786e79c5a9f148d1a1b04fdf30f3"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+      "function": "test_supervised_failure_survives_reattach_without_invented_input",
+      "line": 222,
+      "end_line": 259,
+      "function_sha256": "075f684e28142a0fb378789dccd63b928213c9cb0263a5dc3f75d7e1f9824629"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_interaction_projection.py",
+      "function": "test_run_states_have_distinct_honest_meanings",
+      "line": 130,
+      "end_line": 131,
+      "function_sha256": "cbc8b252207369cf3b9e3974232d6197c8010035ebceb905fa99c0fa64d8e2aa"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "function": "test_concurrent_resume_requests_share_one_dispatch_and_continuation",
+      "line": 645,
+      "end_line": 663,
+      "function_sha256": "7ccf8bea1c3ea83fb984b6db9a17d961e3b549fb797596245a16831878698118"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "function": "test_uncertain_handoff_is_never_dispatched_again",
+      "line": 580,
+      "end_line": 610,
+      "function_sha256": "0c69709341cbd5704f9bc5fd29116ac72e4ae695e142c1747a862b54274a2ef8"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_operation_cancel.py",
+      "function": "test_provider_cancel_is_durable_once_and_observed_outcome_is_separate",
+      "line": 27,
+      "end_line": 179,
+      "function_sha256": "05f118921b4fc52165c3b8bd6e03f51e7966c665969342b2e2877b487a9c3ce9"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_operation_cancel.py",
+      "function": "test_uncertain_cancellation_publication_blocks_following_work_without_remote_mutation",
+      "line": 183,
+      "end_line": 191,
+      "function_sha256": "be47080ca8b352e01093bc53929bb0bd0881d568e617d6c5f2d707163ac1acd1"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_async_operations.py",
+      "function": "test_interrupting_monitor_does_not_send_a_remote_cancellation",
+      "line": 459,
+      "end_line": 475,
+      "function_sha256": "425f1222f4bfcdc3790c8a497f6f639840482d4b9d5f205280cbbddefe61a715"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_async_operations.py",
+      "function": "test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission",
+      "line": 479,
+      "end_line": 505,
+      "function_sha256": "b849dd258f1a63293c72504c507d3272ec4b525c678d764aec67952e5a135728"
+    }
+  ],
+  "scope": "Backend/storage/API behaviors with controlled model/provider responses. No real reviewer decision, physical machine or supplier effect.",
+  "reused_component_evidence": "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/frontend/case-index.json",
+  "component_bodies_reviewed": [
+    "retains the same start request through lost acknowledgement, close and explicit recovery",
+    "does not replay a start on double click or StrictMode attachment",
+    "persists an accepted receipt after closing while start is in flight",
+    "releases only the observer on close and reopens the exact existing run",
+    "shows cancellation as a request and preserves its identity on a repeat",
+    "renders only the declared form, submits its exact subject and follows the same run"
+  ],
+  "component_source_hashes_match": true
+}
