@@ -78,13 +78,26 @@ and saved view. No generation, save or engineering decision was repeated.
 Credential-scanned evidence is under
 `artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/`.
 
-**Next concrete action:** finish focused exact assessment/evidence/producing-block
-navigation from the saved revision, then current-revision second-run reuse and
-the latest Heat completed-output parity. Reuse already-qualified harnesses and
-only fresh isolated subjects for required starts. Preserve the first failures;
-close only this UI's owned presentations through the normal owner API if its
-resource limit prevents the next view. Finish publishing/auditing the current
-checkpoint and commit only owned paths before the next migration/editor slice.
+Exact wheel assessment/selected-producer navigation now passes three checks after
+a shared workspace routing correction. The latest Heat revision now matches all
+eighteen completed CAD/solver outputs in common and tailored views, opens 765
+field samples and its exact held assessment, selects the computation block and
+survives working reload. Five final checks pass. Saved Heat bundle files and
+authoring/revision records are unchanged; both retained run files stayed unchanged
+during normal cleanup of accumulated owned proof views. Evidence is under
+`artifacts/process-interfaces/083/20261003-two-process-exact-navigation/`.
+
+**Next concrete action:** finish current-revision printed second-run reuse and
+the remaining engineering/provider/migration obligations, then host/editor/audit
+work. Preserve the routing failure and premature Heat-load assertion, plus its
+separate capacity stop. The fixed workspace now selects an exact common evidence
+tab rather than a tailored or preview tab; 106 affected tests and the full app
+typecheck pass. Browser-unload presentation lifetime remains a broader host-audit
+subject, not silently solved by proof cleanup. Reuse qualified harnesses and only
+fresh isolated subjects for required starts. Verify output path isolation before
+starting another run; never overwrite the retained first-run engineering files.
+Close only owned isolated proof presentations through the normal owner API when
+needed. Commit only owned paths and keep the full remaining scope active.
 
 Run `bebf24bcdec44058a46371fa05d7cd83` remains failed/needs-input after its original
 18-check gate: 17 pass and one mandatory authenticated review blocked; there are

@@ -1,0 +1,91 @@
+{
+  "workspace_id": "083-heat-live-005",
+  "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+  "before_run_sha256": "7abc4025bd840e9fb308753fc57524797cb3462337de3ad5b9b0643a85cb8b16",
+  "selected_presentations": [
+    [
+      "7c8e21a0-9d16-4e35-8cf6-0ab862d49c26",
+      "53e22b15-2ac4-4538-8e49-f28d31332466",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "cf04e886-c652-4d48-9737-ae9c57d00a47",
+      "9b8678b8-9447-4ec2-97a5-26c0a3826a25",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "563671e0-a2ff-4bfb-97ca-345f8f698ebe",
+      "a4b9c2bb-f7fb-4ae6-82ec-f2d5b481b6c2",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "11da990d-c88a-4b67-b02a-6103153be310",
+      "af40834a-1f2f-4627-80ff-f6592001608d",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "3c8b1b03-5bee-4326-9833-c049ccecb201",
+      "b8d942f2-6859-4808-b778-14a880e50b4e",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "7a33601b-09ae-4829-bb85-b5578ba945d6",
+      "bbc9da64-ea77-48c9-a5f9-6aaf4cea7192",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ]
+  ],
+  "closures": [
+    {
+      "presentation_id": "7c8e21a0-9d16-4e35-8cf6-0ab862d49c26",
+      "surface_id": "53e22b15-2ac4-4538-8e49-f28d31332466",
+      "status": 204
+    },
+    {
+      "presentation_id": "cf04e886-c652-4d48-9737-ae9c57d00a47",
+      "surface_id": "9b8678b8-9447-4ec2-97a5-26c0a3826a25",
+      "status": 204
+    },
+    {
+      "presentation_id": "563671e0-a2ff-4bfb-97ca-345f8f698ebe",
+      "surface_id": "a4b9c2bb-f7fb-4ae6-82ec-f2d5b481b6c2",
+      "status": 204
+    },
+    {
+      "presentation_id": "11da990d-c88a-4b67-b02a-6103153be310",
+      "surface_id": "af40834a-1f2f-4627-80ff-f6592001608d",
+      "status": 204
+    },
+    {
+      "presentation_id": "3c8b1b03-5bee-4326-9833-c049ccecb201",
+      "surface_id": "b8d942f2-6859-4808-b778-14a880e50b4e",
+      "status": 204
+    },
+    {
+      "presentation_id": "7a33601b-09ae-4829-bb85-b5578ba945d6",
+      "surface_id": "bbc9da64-ea77-48c9-a5f9-6aaf4cea7192",
+      "status": 204
+    }
+  ],
+  "engineering_operation_or_decision": false,
+  "after_run_sha256": "7abc4025bd840e9fb308753fc57524797cb3462337de3ad5b9b0643a85cb8b16",
+  "remaining_exact_ui_presentations": 0,
+  "run_bytes_unchanged": true
+}

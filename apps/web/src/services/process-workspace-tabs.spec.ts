@@ -4,6 +4,7 @@ import {
   checkedProcessWorkspaceTab,
   checkedProcessWorkspaceView,
   createProcessWorkspaceTab,
+  findCommonProcessWorkspaceTab,
   isProcessWorkspaceTabPath,
   processWorkspaceQuery,
   processWorkspaceTabFromQuery,
@@ -20,6 +21,38 @@ const tab = createProcessWorkspaceTab(process, {
 });
 
 describe("workspace process locators", () => {
+  it("routes exact evidence to the common tab even when tailored tabs precede it", () => {
+    const working = createProcessWorkspaceTab(process, {
+      viewId: "working-view", runId: "run-one",
+      interface: { kind: "working", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32) },
+    });
+    const preview = createProcessWorkspaceTab(process, {
+      viewId: "preview-view", runId: "run-one",
+      interface: { kind: "preview", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), job_id: "job-one" },
+    });
+    expect(findCommonProcessWorkspaceTab([working, preview, tab], process, "run-one")).toEqual(tab);
+    expect(findCommonProcessWorkspaceTab([working, preview], process, "run-one")).toBeUndefined();
+    expect(working.processView.interface?.kind).toBe("working");
+    expect(preview.processView.interface?.kind).toBe("preview");
+  });
+
+  it.each([
+    { process: { ...process, workspace_id: "other-workspace" }, runId: "run-one" },
+    { process: { ...process, source_path: "workflows/other.workflow.wflow" }, runId: "run-one" },
+    { process: { ...process, source_digest: "b".repeat(64) }, runId: "run-one" },
+    { process, runId: "other-run" },
+    { process, runId: undefined },
+  ])("does not reuse a common tab for a different subject %j", (subject) => {
+    expect(findCommonProcessWorkspaceTab([tab], subject.process, subject.runId)).toBeUndefined();
+  });
+
+  it("keeps prepared common views separate from recorded-run evidence", () => {
+    const prepared = createProcessWorkspaceTab(process, { viewId: "prepared-view" });
+    expect(findCommonProcessWorkspaceTab([prepared, tab], process, "run-one")).toEqual(tab);
+    expect(findCommonProcessWorkspaceTab([tab, prepared], process, undefined)).toEqual(prepared);
+    expect(new URLSearchParams(processWorkspaceQuery("?processUIKind=working&processUIJob=job-one", tab)).has("processUIKind")).toBe(false);
+  });
+
   it("creates a typed tab with no user input, credentials or browser run state", () => {
     expect(tab).toEqual({
       type: "process",

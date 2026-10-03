@@ -1,0 +1,54 @@
+{
+  "title": "Exact assessment and producing-step navigation from the saved wheel view",
+  "summary": "A focused continuation of the verified normal-workspace journey on the same actual isolated run. No engineering decisions or physical actions.",
+  "overall": "blocked",
+  "updated": "2026-10-03T03:08:40.633Z",
+  "manualSteps": [
+    {
+      "label": "Open saved view",
+      "instruction": "Open the saved wheel working-interface link."
+    },
+    {
+      "label": "Inspect assessment",
+      "instruction": "On repaired_mesh.stl, click Open assessment. Inspect the held assessment in the common view."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Reopen the saved interface link. On repaired_mesh.stl, click Open producing step. Inspect the selected repair block."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Saved exact wheel working view",
+      "summary": "The saved interface reads the original results and held assessment.",
+      "purpose": "Use the verified saved working URL, not the preview.",
+      "action": "Open the saved wheel working-interface link.",
+      "controls": [
+        "Open assessment",
+        "Open producing step"
+      ],
+      "expected": "Nineteen results and exact repaired-mesh navigation in a working context.",
+      "actual": "Actual working context and both scoped navigation controls available.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Exact navigation stopped",
+      "summary": "The assessment or producing block did not meet its recorded subject.",
+      "purpose": "Preserve the first failure.",
+      "action": "Stop at the unexpected navigation state.",
+      "controls": [
+        "Open assessment",
+        "Open producing step"
+      ],
+      "expected": "Exact held assessment and selected producer.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: getByTestId('common-process-view').filter({ visible: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for getByTestId('common-process-view').filter({ visible: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

@@ -64,6 +64,7 @@ import {
 import {
   checkedProcessWorkspaceTab,
   createProcessWorkspaceTab,
+  findCommonProcessWorkspaceTab,
   type ProcessInterfaceLocator,
   isProcessWorkspaceTabPath,
   processWorkspaceQuery,
@@ -1879,12 +1880,10 @@ export function WorkspacePanel({
         openProcessDefinition(process);
         return;
       }
-      const existing = openTabsRef.current.find(
-        (candidate) =>
-          candidate.type === "process" &&
-          candidate.processView &&
-          sameProcessReference(candidate.processView.process, process) &&
-          candidate.processView.run_id === target.run_id,
+      const existing = findCommonProcessWorkspaceTab(
+        openTabsRef.current,
+        process,
+        target.run_id ?? undefined,
       );
       const tab = existing
         ? checkedProcessWorkspaceTab(existing, _workspaceId)

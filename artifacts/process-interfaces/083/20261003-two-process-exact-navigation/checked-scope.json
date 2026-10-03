@@ -1,0 +1,42 @@
+{
+  "shared_correction": "Workspace evidence navigation selects a common view with the exact workspace/source/digest/run. Preview and tailored tabs cannot intercept evidence focus; a common tab is reused or created without starting work.",
+  "retained_wheel_failure": "The navigation owner resolved the assessment successfully, but the workspace selected the only tailored tab, leaving the evidence unread. No failed HTTP response or engineering effect occurred.",
+  "retained_heat_failure": "The first latest-UI harness compared common results before the asynchronous snapshot loaded. A fresh continuation waits for all eighteen results; no product workaround was introduced.",
+  "retained_heat_capacity_stop": "The next proof reached output, field, assessment and selected producer, then hit the open-interface limit. Five exact owned proof views were closed through the normal owner API; both retained Heat runs stayed byte-identical. Limits were not increased. Browser-unload presentation lifecycle remains part of the broader host audit.",
+  "wheel": {
+    "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+    "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687",
+    "browser_checks": 3,
+    "assessment_id": "assessment-46f892fa42ae4a21950679d986815e55",
+    "gate_counts": {
+      "pass": 17,
+      "blocked": 1
+    },
+    "exact_result_focus_and_selected_producer": true,
+    "run_bytes_unchanged": true
+  },
+  "heat": {
+    "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+    "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+    "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170",
+    "browser_checks": 5,
+    "result_parity_count": 18,
+    "field_samples": 765,
+    "assessment_id": "assessment-c1cc56ecf12341938996ff0fa1c07b4e",
+    "gate_counts": {
+      "pass": 25,
+      "blocked": 1
+    },
+    "exact_result_focus_and_selected_producer": true,
+    "latest_working_context_and_reload": true,
+    "ui_authoring_and_revision_records_unchanged": true,
+    "saved_source_and_bundle_files_unchanged": true
+  },
+  "affected_tests": 106,
+  "app_typecheck_exit_code": 0,
+  "ui_generation_or_builds": 0,
+  "process_start_or_review_response": false,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "full_feature_complete": false
+}

@@ -1,8 +1,9 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Audit checkpoint:** resumed goal after editor/report commits `e01f7eb5`,
-`6bff2ff8` and `89c04058`; fresh consumer 003 source gate observed.
+**Audit checkpoint:** shared recorded-layer viewer and exact artifact proxy
+checkpoint `573eb0b8`; fresh consumer 003 source gate and genuine saved working
+reload observed. The later navigation correction is being verified separately.
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
 be verified against current source, actual runtime and its required proof scope.
@@ -37,7 +38,7 @@ checks passed. No row grants an engineering review or external-effect authority.
 | FR-009 Server-derived scopes and isolation | [Surface bridge](evidence/surface-bridge.md), [verification](evidence/verification.md): 149 controlled boundary regressions; distinct existing surface grants preserved. | Full T053 affected scope suite; installed presentation authority. |
 | FR-010 Replaceable coding role through Wright/default model | [Native authoring](evidence/native-ui-authoring.md), [actual authoring](evidence/live-ui-authoring.md), both job-specific proofs. | Full T029/T037/T041 coverage/provenance audit; do not claim unqualified agent platforms. |
 | FR-011 Fixed bounded build and immutable preview/save | [Actual authoring](evidence/live-ui-authoring.md), [verification](evidence/verification.md). | Full installed/UI acceptance; no model-defined build/launch authority. |
-| FR-012 Saved reuse/update/rollback/compatibility/fallback | Actual-model reuse for both jobs: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). | T041/T047 complete parity/recovery plus T051 installed open/reuse without compiler/model. |
+| FR-012 Saved reuse/update/rollback/compatibility/fallback | Actual-model reuse for both jobs: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). Current wheel viewer revision has genuine working-context same-run reload proof; earlier preview-only overclaim is corrected. | T041/T047 current-revision second-run parity/recovery; retain completed T051's scoped installed compiler/model-free reuse evidence. |
 | FR-013 Exact engineering subjects and 082 authority | Partial: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md), [verification](evidence/verification.md). Fresh consumer 003 executed its original gate: 17 pass, 1 mandatory human-review block. | Preserve earlier failed consumers and their skipped gates. Complete current common/tailored exact-subject parity without granting human acceptance. |
 | FR-014 Permitted neutral MCP actions/consume/reconciliation | [MCP operations](evidence/mcp-operations.md), [action controls](evidence/action-controls.md); separate simulator receipt recorded. | Current full action/recovery tests and common/tailored exact subject parity. No hardware qualification. |
 | FR-015 Independent providers and vendor retirement | **Incomplete:** [migration](evidence/generality-and-migration.md), [provider qualification](evidence/provider-qualification.md), [caller retirement](evidence/prototype-caller-retirement.md). Active operational endpoints/startup/client and device/Studio modules/scripts are retired; inert 410 URLs and installed canonical history are verified. Transitive slicing/campaign dependencies, original prototype formats and full replacement remain open. | Finish T043/T048/T049; preserve unrelated dirty changes and historical campaign bindings. |
@@ -50,13 +51,13 @@ checks passed. No row grants an engineering review or external-effect authority.
 
 | Criterion | Open audit finding |
 | --- | --- |
-| SC-001 Both normal workspace common/tailored journeys | Partial source-served proof; full parity and installed journeys pending. |
+| SC-001 Both normal workspace common/tailored journeys | Source-served and native/clean-Docker reuse journeys have scoped evidence. Complete current engineering-output parity, navigation and editor acceptance audit remain pending. |
 | SC-002 All missing choices caught; upstream/declared response usable | Narrow service/preparation cases exist; current combined regressions and full journey audit pending. |
 | SC-003 Successive checkpoints/duplicates/disconnect/restart | Retained controlled evidence exists; current combined suite and exact same-run audit pending. |
 | SC-004 Actual-model generate/preview/save/update/second reuse for each | Both retained job-specific records exist; inspect exact source/UI/build/run identities and final T041/T047 coverage. |
 | SC-005 Matching evidence/stale/binding denials in both views | Controlled boundary coverage exists; complete common/tailored parity pending. |
 | SC-006 Tab/lost acknowledgement cannot duplicate dispatch | Runtime/client checks exist; full served/installed negative journey pending. |
-| SC-007 Tools, real handoffs, outcomes/checks/limits | Actual CAD/solver and geometry/slicer artifacts retained; original wheel gate and overall proof remain incomplete. No fixture substitutes. |
+| SC-007 Tools, real handoffs, outcomes/checks/limits | Actual CAD/solver and geometry/slicer artifacts retained. Fresh wheel consumer 003 executed its original gate with 17 passes/1 required-review hold; earlier failed consumers retain their skipped gates. Full two-process proof remains incomplete. No fixture substitutes. |
 | SC-008 Editor and native/Docker installed checks/reopen | **Partial:** native/Docker mounted working-view/reload checks pass. Installed editor creation/configuration, Undo/Redo, typed keyboard connections/rejection, saved positions, zoom/compact scale and actual save conflict are now checked. Pointer sockets, pan, broader accessibility and current-build working/preview journeys remain pending. |
 | SC-009 No active vendor control in migrated path/history preserved | **Incomplete:** operational API/startup/client and device/Studio source retirement are verified, including installed canonical read-only history. Remaining slicing wrappers/dependencies and original prototype formats still require disposition/proof. |
 
@@ -87,14 +88,17 @@ T056 remains unchecked until this ledger is resolved requirement by requirement,
 including every task, acceptance case, required artifact and verification command.
 The goal remains active.
 
-Latest printed-source continuation: consumer 002 emitted twelve artifacts, then
+Retained earlier printed-source failure: consumer 002 emitted twelve artifacts, then
 failed at its report with `TASK_TIMEOUT`; its report, simulator and original
-source gate remain skipped. A bounded two-read report correction passes all 34
-example-preparation tests and is started in fresh exact-enrolled consumer 003.
-That live outcome and common/tailored parity are still pending. See
-[printed evidence](evidence/printed-proof.md); no requirement is closed by this
-correction's controlled tests or initial readiness alone. The complete resumed
-goal is available in [continuation-goal.md](continuation-goal.md).
+source gate remain skipped. The bounded two-read report correction subsequently
+executed in fresh exact-enrolled consumer 003, including its original held gate.
+Its nineteen result identities and held assessment match in the common view,
+actual-model preview and genuinely saved/reloaded working interface. The current
+recorded nominal-layer viewer has browser proof; excluded machine semantics,
+current-revision second-run reuse and the complete two-process audit remain
+separate obligations. See [printed evidence](evidence/printed-proof.md). Earlier
+preview-only reload claims are preserved with an explicit correction. The full
+resumed goal remains [continuation-goal.md](continuation-goal.md).
 
 ### Resumed runtime evidence
 

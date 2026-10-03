@@ -1,0 +1,142 @@
+{
+  "console": [
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+  ],
+  "pageErrors": [],
+  "failedResponses": [
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-8858f2ec2bc24bc588ce5042626503ab/present",
+      "status": 503
+    }
+  ],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-8858f2ec2bc24bc588ce5042626503ab/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-6009468a-70b2-45ee-9ea6-8e5c2c905937.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-6009468a-70b2-45ee-9ea6-8e5c2c905937.localhost%3A8030/__wright/process/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/representations/read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-8858f2ec2bc24bc588ce5042626503ab/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-cac8414e-b645-4996-bfbf-183076e5028d.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-cac8414e-b645-4996-bfbf-183076e5028d.localhost%3A8030/__wright/process/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/representations/read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-8858f2ec2bc24bc588ce5042626503ab/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-0381daeb-6469-4f9e-96d8-4c8dcf547791.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-0381daeb-6469-4f9e-96d8-4c8dcf547791.localhost%3A8030/__wright/process/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-8858f2ec2bc24bc588ce5042626503ab/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-bd52f005-c1d0-4313-85d0-7898a6819ad3.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-8858f2ec2bc24bc588ce5042626503ab/present"
+    }
+  ],
+  "representationHeaders": [
+    {
+      "status": 200,
+      "bytes": "76526",
+      "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "nosniff": "nosniff"
+    },
+    {
+      "status": 200,
+      "bytes": "97952",
+      "sha256": "60ce2fbe08492f4a729f286f99b720b0cb60d197f694ffce57027a17381c509e",
+      "nosniff": "nosniff"
+    }
+  ],
+  "contexts": [
+    {
+      "read_only": false,
+      "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+      "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+      "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170"
+    },
+    {
+      "read_only": false,
+      "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+      "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+      "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170"
+    },
+    {
+      "read_only": false,
+      "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+      "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+      "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170"
+    },
+    {
+      "read_only": false,
+      "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+      "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+      "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "title": "Latest saved heat interface: exact outputs, field evidence and source navigation",
+  "summary": "A focused continuation of the verified normal-workspace journey using actual completed CAD/solver outputs. No process decision or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-03T03:20:05.083Z",
+  "manualSteps": [
+    {
+      "label": "Open saved comparison",
+      "instruction": "Open the latest saved heat working-interface link for the completed analysis run."
+    },
+    {
+      "label": "Inspect field",
+      "instruction": "On revision_60_fine, click Open representation. Expand View numerical samples and select x_m, y_m and temperature_c."
+    },
+    {
+      "label": "Inspect assessment",
+      "instruction": "Reopen the saved interface. On revision_60_fine, click Open assessment."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Reopen the saved interface. On revision_60_fine, click Open producing step. Inspect the selected computation block."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reopen the saved comparison and reload. Leave all reviews unchanged."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Latest comparison matches completed engineering outputs",
+      "summary": "The saved shared-controls interface reads all eighteen actual CAD/solver results.",
+      "purpose": "Prove current saved UI against completed outputs rather than only a waiting basis result.",
+      "action": "Open the latest saved heat comparison for the completed run.",
+      "controls": [
+        "Run inputs",
+        "Open representation",
+        "Open assessment"
+      ],
+      "expected": "Exact eighteen-result parity and original held assessment in a working context.",
+      "actual": "All eighteen identities match; exact working context and shared controls are present.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Actual fine-field evidence and common parity",
+      "summary": "The latest interface opens all 765 supplied solver samples in the common evidence view.",
+      "purpose": "Prove shared exact navigation and actual numerical data.",
+      "action": "Open revision_60_fine, expand View numerical samples and select x_m, y_m, temperature_c.",
+      "controls": [
+        "Open representation",
+        "View numerical samples",
+        "Horizontal column",
+        "Vertical column",
+        "Value column"
+      ],
+      "expected": "Exact common result parity and all 765 real supplied samples.",
+      "actual": "Eighteen exact common results and all fine-grid samples rendered; no interpolation or engineering approval.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Exact full heat assessment remains held",
+      "summary": "The interface opens the original assessment with twenty-five passes and one required-review hold.",
+      "purpose": "Retain engineering verification and exact result focus.",
+      "action": "Reopen the comparison and click Open assessment on revision_60_fine.",
+      "controls": [
+        "Open assessment",
+        "Representation"
+      ],
+      "expected": "Original held assessment and exact fine-result focus.",
+      "actual": "Twenty-five passes, one blocked review and exact fine-result focus retained.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Exact computation block selected",
+      "summary": "The comparison returns to its actual computation producer and inspector.",
+      "purpose": "Verify the shared navigation correction on a substantially different engineering process.",
+      "action": "Reopen the comparison and click Open producing step on revision_60_fine.",
+      "controls": [
+        "Open producing step",
+        "Inspector"
+      ],
+      "expected": "The exact accepted computation block selected.",
+      "actual": "Exact computation block and inspector selected; no stale-source warning.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Latest saved completed-output reload",
+      "summary": "Reload restores the same saved revision and all actual completed outputs.",
+      "purpose": "Verify saved reuse/reconciliation without generation or engineering replay.",
+      "action": "Reopen the saved comparison and reload.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Same exact saved UI and eighteen engineering results.",
+      "actual": "Current saved working revision and all exact results restored; review remains held.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    }
+  ]
+}

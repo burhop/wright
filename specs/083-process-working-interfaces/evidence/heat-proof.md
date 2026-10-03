@@ -326,3 +326,36 @@ This completes T046's saved-workflow/comparison scope. The original analysis gat
 remains honestly held, and long provider-qualified loading times remain usability
 debt. This does not certify thermal performance or human acceptance, complete
 the printed workflow/migration/distribution proof, or close the full feature goal.
+
+## Latest saved interface on the completed CAD/solver run
+
+The latest shared-controls revision `revision-9c8c8b164ea34a9ba65910567b41b170`
+now has completed-output proof on original run
+`67abaa021ee44972a94e3c9cbaa3dbbe`, complementing its already-recorded second-run
+waiting/reuse checks. Fresh continuation 012 passes five browser checks with
+zero console/page/failed-response diagnostics. Its actual backend context is
+working (`read_only=false`), all eighteen result identities match in common and
+tailored views, and reload restores the same saved revision and exact outputs.
+
+The interface opens all **765** actual fine-field samples with explicit axes,
+the original full **25 pass / 1 required-review block** assessment with exact
+result focus, and the selected computation block and inspector in the accepted
+editor. This independently verifies the shared evidence-tab routing correction
+on a substantially different engineering process. No CAD/solver rerun, UI model
+generation/build or review response occurred. All saved vault hashes and UI
+authoring/revision records are unchanged before/after viewing.
+
+The first attempt 010 compared results before their async load; its premature
+harness assertion remains preserved. Attempt 011 reached field, assessment and
+producer checks, then stopped at the configured open-interface limit. Five exact
+owned proof views were closed through the normal owner API; both original and
+retained second-run files stayed byte-identical. Limits were not increased.
+Browser-unload presentation lifetime remains a broader host-audit subject.
+Fresh 012 then completed without that capacity stop.
+
+Evidence, screenshots, tests, exact parity and retained stops are in the
+[two-process navigation record](../../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/checked-scope.json)
+and its [latest Heat walkthrough](../../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/heat-results-and-navigation/report.html).
+All five copied report structures pass; authenticated traces stay private and
+actual credential-value scans pass. Full engineering/user acceptance, migration,
+broader lifecycle/editor and final requirement audits remain separate work.

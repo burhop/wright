@@ -646,3 +646,22 @@ remains 17 pass/1 mandatory authenticated review blocked, and no decision or
 engineering action was replayed. This checkpoint proves same-run saved reload;
 actual navigation activation, current-revision second-run reuse and the full
 two-process completion audit remain open.
+
+### Saved exact assessment and producing-block navigation
+
+Fresh navigation 012 exposed a real shared workspace routing defect: the exact
+assessment request resolved, but when only a tailored tab existed the host
+selected that same tab, which had no common evidence-focus handler. No failed
+HTTP or engineering effect occurred. The workspace now selects a common tab
+with the exact workspace/source/digest/run or creates that read-only evidence
+view; tailored and preview tabs cannot intercept the requested evidence.
+
+The correction passes **106** affected locator/common/workspace tests and the
+full app typecheck. Fresh continuation 013 passes three real browser checks:
+working saved view, the original full held assessment focused on the exact
+repaired-mesh result, and the selected repair block with its inspector. The
+original run bytes remain unchanged. The
+[two-process navigation record](../../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/checked-scope.json)
+retains the first failure, correction tests and both engineering-job continuations.
+This closes this current-revision navigation observation, not second-run reuse
+or the full T047 requirement.

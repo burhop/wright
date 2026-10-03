@@ -131,3 +131,20 @@ sandbox launch stop has no page/screenshot and its image-interaction structural
 check is explicitly unavailable. Exact inventories and actual credential scans
 retain public evidence; traces remain private. Existing engineering and human
 review limitations are unchanged. This does not close T053's broader audit.
+
+### Exact common evidence-tab routing on two live digital processes
+
+The shared host now chooses an exact common workspace tab for evidence focus,
+never an arbitrary saved/preview interface. 106 affected locator, common-view and
+workspace-tab checks pass (8.57 seconds), including seven new scope/selection
+cases. Full app TypeScript exits 0. Actual saved-wheel navigation passes three
+checks with full held assessment/result focus and exact selected producer. Latest
+saved-Heat completed-output proof passes five checks: eighteen-result parity,
+765 supplied samples, full held assessment, exact selected producer and genuine
+working reload. Both final browsers have no console/page/failed-response errors.
+Five copied report structures pass; exact public inventories and credential-value
+scans are retained in 20261003-two-process-exact-navigation. Test counts overlap
+prior suites. No generation/build, engineering start/review or physical operation
+occurs. Earlier wheel routing failure, premature Heat loading assertion and
+separate open-view capacity stop remain preserved. This strengthens T047/T053
+within recorded scope; neither broad task is marked complete.

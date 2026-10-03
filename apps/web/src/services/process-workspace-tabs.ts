@@ -4,6 +4,7 @@ import {
   type ProcessRef,
 } from "@wright/process-client";
 import type { EditorTab } from "../store/viewer";
+import { sameProcessReference } from "./process-navigation";
 
 /** Presentation locators only. No inputs, permissions or execution state live here. */
 export interface ProcessWorkspaceView {
@@ -158,6 +159,24 @@ export function checkedProcessWorkspaceTab(
     isDirty: false,
     processView,
   };
+}
+
+/** Evidence navigation needs the common reader, not an arbitrary tailored tab. */
+export function findCommonProcessWorkspaceTab(
+  tabs: readonly EditorTab[],
+  process: ProcessRef,
+  runId: string | undefined,
+): ProcessWorkspaceTab | undefined {
+  const candidate = tabs.find((tab) =>
+    tab.type === "process" &&
+    tab.processView &&
+    !tab.processView.interface &&
+    sameProcessReference(tab.processView.process, process) &&
+    tab.processView.run_id === runId,
+  );
+  return candidate
+    ? checkedProcessWorkspaceTab(candidate, process.workspace_id)
+    : undefined;
 }
 
 /** Preserve the other workspace/file/editor query parameters. */

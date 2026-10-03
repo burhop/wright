@@ -1895,3 +1895,36 @@ simulator retry occurred. Current-revision navigation activation, second-run
 reuse, final Heat completed-output parity, migration/editor/regression and full
 completion audit remain open. Work is being saved as a focused local checkpoint;
 the full goal stays active.
+
+## Exact navigation correction proved on both engineering processes
+
+Local checkpoint 573eb0b8 saves the shared recorded-layer/result reader, exact
+artifact proxy integrity, packaging and genuine working reload proof. Subsequent
+wheel navigation 012 found a real shared workspace bug: the exact assessment
+resolved but the host chose the only tailored tab, leaving the common evidence
+reader unopened. The host now selects a common tab for the exact workspace/
+source/digest/run, ignoring preview and tailored candidates. Seven added locator
+cases plus the affected suites pass 106 tests; full app TypeScript exits 0.
+Fresh wheel continuation 013 passes exact held assessment/result focus and actual
+selected repair block/inspector, not only that some editor became visible.
+
+The latest saved Heat revision 9c8c8b... now has completed-output proof on original
+run 67abaa...: 18 exact common/tailored results, all 765 actual fine-field samples,
+full 25-pass/1-review-held assessment, exact selected computation block and
+working reload. Final continuation 012 passes five checks with empty browser
+error lists. Saved source/bundle hashes and authoring/revision records remain
+unchanged; no model/build/start/review request occurs. The initial premature
+common-result count assertion remains preserved, as does the later capacity stop.
+Five exact owned Heat proof views were closed through the normal owner API;
+both retained Heat run files remained byte-identical. No limits were raised.
+Browser-unload presentation lifetime remains a broader host-audit subject.
+
+Credential-scanned evidence and exact inventories are published under
+20261003-two-process-exact-navigation; all five copied report structures pass.
+The first wheel run remains byte-identical and protected archive/campaign/context
+checks pass. Task counts stay 44 checked/13 open: this checkpoint strengthens
+T047 evidence without declaring full second-run/provider/migration acceptance.
+Next finish printed current-revision reuse with safe output isolation, selected
+provider and active slicing dispositions, host/editor/accessibility/regressions
+and final requirement audit. No physical effect, supplier action, push, merge or
+release is authorized or performed.
