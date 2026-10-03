@@ -1,9 +1,10 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Audit checkpoint:** shared recorded-layer viewer and exact artifact proxy
-checkpoint `573eb0b8`; fresh consumer 003 source gate and genuine saved working
-reload observed. The later navigation correction is being verified separately.
+**Audit checkpoint:** source `dcebc661`, following verified exact navigation and
+saved-view departure cleanup. Fresh consumer 003 source gate, common/tailored
+exact outputs/navigation and genuine working reload are recorded. The installed
+generic host task T034 is now closed by its scoped source/wheel/evidence audit.
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
 be verified against current source, actual runtime and its required proof scope.
@@ -27,7 +28,7 @@ checks passed. No row grants an engineering review or external-effect authority.
 
 | Requirement | Current evidence and limits | Next completion check |
 | --- | --- | --- |
-| FR-001 Authoring plus workspace working/preview tabs | Partial: [workspace acceptance](evidence/workspace-acceptance.md), [authoring controls](evidence/workspace-authoring-controls.md). Source workspace entry and selected working journeys checked; complete editor/preview acceptance pending. | T021/T034/T037/T041/T052, preserved editor manipulation and installed journeys. |
+| FR-001 Authoring plus workspace working/preview tabs | Partial: [workspace acceptance](evidence/workspace-acceptance.md), [authoring controls](evidence/workspace-authoring-controls.md). Source workspace entry and selected working journeys checked; complete editor/preview acceptance pending. | T021/T037/T041/T052, preserved editor manipulation and installed journeys. T034 fixed-host scope is complete; see [hosting audit](evidence/hosting-audit.md). |
 | FR-002 Versioned interaction description | Local contracts/projection: [foundation](evidence/foundation.md), [projection](evidence/projection.md). | Recheck owning schema/client fixtures and broader negative/served coverage in T053. |
 | FR-003 Immutable run input snapshots | Local input contracts/service checks: [inputs](evidence/inputs.md), [input inspector](evidence/input-inspector.md). | Current combined readiness/continuation/API regressions; exact source remains separate from values. |
 | FR-004 Required supported-path readiness | [Inputs](evidence/inputs.md), [shared controls](evidence/shared-working-controls.md); both retained second runs have preparation checks. | Full omitted-choice/upstream/declared-input regression and common/tailored parity. |

@@ -1981,3 +1981,23 @@ Continue provider/migration/host/editor/audit obligations. Task counts remain
 44 checked / 13 open; a focused cleanup correction does not establish all hosting
 or feature acceptance. No engineering start/review, physical effect, push, merge
 or release occurred.
+
+## Installed generic host task audited and closed
+
+The previous continuation saved `dcebc661` and is classified as progress.
+Read the original submitted objective before continuing. Audited T034 against
+the current fixed runtime/manifest/presentation owner, actual local wheel bytes,
+four final native/Docker mounted-interface reports and the twelve-check current
+departure proof. Both installed Python modules are byte-identical to current
+source. Current hosting JUnit has 73 passes and no failures/errors/skips. The
+report statuses and exact artifact hashes are pinned in
+20261003-installed-host-audit/audit.json; evidence/hosting-audit.md maps every
+task obligation to its inspected owner and tested scope.
+
+T034 is checked. Counts are now 45 checked / 12 open; full Feature 083 remains
+incomplete. No newer frontend behavior is attributed to the older wheel. T037
+theme/handshake, T041/T052 UI/editor/accessibility, provider/migration and final
+requirements retain their own obligations. No service availability, generation,
+engineering start/review, physical action or external publication is newly
+claimed by this read-only audit. Continue current-revision reuse with safe
+output isolation, theme/handshake and the remaining approved tasks.

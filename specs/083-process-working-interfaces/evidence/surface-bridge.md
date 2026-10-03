@@ -100,3 +100,9 @@ walkthrough structure validator passes. These checks cover healthy opened views;
 abrupt browser/OS termination is unqualified, and back-forward-cache/late-reply
 behavior has component evidence only. Full T034/T037 acceptance remains subject
 to the final hosting/handshake and installed-scope audit, not this correction alone.
+
+The subsequent [installed-host audit](hosting-audit.md) closes T034's exact
+static-runtime/internal-manifest scope. Its current two modules match the actual
+retained native/Docker qualification wheel byte for byte; the current tests and
+browser evidence are inspected separately. T037's remaining theme/handshake
+audit, newer installed frontend acceptance and the complete feature remain open.

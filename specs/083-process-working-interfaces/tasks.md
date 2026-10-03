@@ -74,7 +74,7 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
   actual managed browser authority and preview/save/update proof remain T034–T042.
   T032's packaged public client/kit sources and installed fixed compiler now pass
   native wheel/source-archive checks; see `evidence/live-ui-authoring.md`.
-- [ ] T034 [US3] Add installed generic static asset runtime and internal manifest generation in `packages/workspace_service/src/workspace_service/surfaces/`, using existing isolated origins/bootstrap/limits and no model-selected process launch.
+- [x] T034 [US3] Add installed generic static asset runtime and internal manifest generation in `packages/workspace_service/src/workspace_service/surfaces/`, using existing isolated origins/bootstrap/limits and no model-selected process launch.
 - [x] T035 [US3] Extend closed managed capability/grant contracts in `packages/core/src/core/surfaces/live_app_manifest.py` and existing surface grant services for bounded process operations, preserving MCP App same-server grants.
 - [x] T036 [US3] Implement reserved presentation-bound `/__wright/process` bridge in `apps/api/src/api/routers/surface_preview.py` and `apps/api/src/api/surface_route_authority.py`; derive process/UI/run/workspace scope on server and delegate owning services.
   Exact immutable artifact/grant/native-owner API checks pass; see

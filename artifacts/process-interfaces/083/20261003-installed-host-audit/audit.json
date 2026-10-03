@@ -1,0 +1,52 @@
+{
+  "task": "T034",
+  "source_checkpoint": "dcebc661",
+  "wheel_sha256": "88f3afa844dd8f2d5de1956a194b94922ad68c64a00bde9c173e639d5ab34820",
+  "modules": {
+    "workspace_service/surfaces/process_ui_static.py": {
+      "bytes": 11651,
+      "installed_and_current_sha256": "469096a2a194ca17dd715502eed579e175de4b9e5b5b6a2b24a77d71eceb11b9",
+      "exact_equal": true
+    },
+    "workspace_service/surfaces/process_ui_manifest.py": {
+      "bytes": 3355,
+      "installed_and_current_sha256": "43b6046db0632e777835a5dbb7faf62c3e5fda83b82947be2282e0b24b42156f",
+      "exact_equal": true
+    }
+  },
+  "report_status_checks": {
+    "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/status.json": {
+      "sha256": "553b675ddbaf2218fcd7adc792a38b4c05bcba91eddb377786552fcf253a9642",
+      "steps": 10,
+      "overall": "pass"
+    },
+    "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/status.json": {
+      "sha256": "a15b88ce6d919c9695d2e374d52d5c6e287d8f22a9a1eee06dd548ac74b16f72",
+      "steps": 10,
+      "overall": "pass"
+    },
+    "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/status.json": {
+      "sha256": "34a92bd90cf6356e6388d6a14ea258a2d231e91af2900475cdb0efbacf0e88ef",
+      "steps": 10,
+      "overall": "pass"
+    },
+    "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/status.json": {
+      "sha256": "71e9ae3e6bb1513b6ab8497277ba9835d23d542e093174781e5c0f8643aab319",
+      "steps": 10,
+      "overall": "pass"
+    },
+    "artifacts/process-interfaces/083/20261003-presentation-departure-verified/workspace-walkthrough/status.json": {
+      "sha256": "1599343f11ec3ffae308a286a938167cfb85c111ba149dc1fef7ab50b801ceab",
+      "steps": 12,
+      "overall": "pass"
+    }
+  },
+  "hosting_test_junit": {
+    "path": "artifacts/process-interfaces/083/20261003-presentation-departure-verified/authority-tests.xml",
+    "sha256": "c3cb4358dc0a295a9a994a7c1f34bcc6e47a250ce441a16b1aac353e793ea1df",
+    "tests": 73
+  },
+  "scope": "Installed generic static runtime and fixed manifest; not newer installed frontend or complete feature acceptance.",
+  "new_process_starts": 0,
+  "new_review_responses": 0
+}

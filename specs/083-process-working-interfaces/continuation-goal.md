@@ -33,13 +33,17 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
-Reviewed against local records after the saved handoff. The ledger has **44 checked
-and 13 open tasks**: T021, T034, T037, T041, T043, T045, T047, T048, T049, T052,
-T053, T056 and T057. Local checkpoints `573eb0b8` and `1d759201` now save the
+Reviewed against local records after the saved handoff. The ledger has **45 checked
+and 12 open tasks**: T021, T037, T041, T043, T045, T047, T048, T049, T052,
+T053, T056 and T057. Local checkpoints `573eb0b8`, `1d759201` and `dcebc661` save the
 shared viewer/proxy and exact navigation corrections with their tests and evidence.
 The staged navigation inventory was checked against all 73 recorded files;
 credential scans and protected archive/campaign/context checks passed before
 commit. Preserve unrelated untracked work; do not stage all dirty files.
+T034 is complete after the installed-host audit: the current fixed runtime and
+manifest modules exactly match the actual native/Docker qualification wheel, with
+current host tests and two-process reload/departure evidence. See evidence/hosting-audit.md.
+T037 theme/handshake and broader editor/UI acceptance remain open.
 T050 now has three passing packaging checks (57.84 seconds), including
 exact public resources and installed compilation of the shared result viewer.
 Earlier distribution paragraphs remain historical; reconcile their stale status
