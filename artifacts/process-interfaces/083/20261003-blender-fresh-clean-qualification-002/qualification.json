@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "platform": "linux/amd64",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "source_reused_at_exact_clean_pin": true,
+  "fresh_selected_install": false,
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "selected_image": "sha256:c30619ec27605afb31347ee191a6b43820a58edc3f6b40b030a12e0ea4375c26",
+  "installation_evidence_sha256": "12e055d01cb928a0966b1299b37a3ab5596499254c149e60c3cf201b481a6624",
+  "fresh_install_proved_by_first_attempt": true,
+  "native_version": "Blender 4.3.2",
+  "original_base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "correction": "Only qualification input export syntax changed for observed Blender 4.3.2; no provider code patched or unknown action replayed",
+  "runtime_container": "c17e43b2068e556ec11d7ef6ca109f0d81fb059bef7b84098c0cb8b578f3d782",
+  "runtime_network": "none",
+  "native_listener_ready": true,
+  "direct_protocol": {
+    "initialized": true,
+    "tools_listed": 28
+  },
+  "direct_owner_stopped": true,
+  "gateway_return_code": 0,
+  "native_output": {
+    "bytes": 684,
+    "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+  },
+  "runtime_container_stopped": true
+}

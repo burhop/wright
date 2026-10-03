@@ -1,5 +1,39 @@
 # Feature 083 progress
 
+## Latest evidence — fresh clean Blender and exact local retirement commit
+
+The preceding goal turn supplied status/a prompt and was no progress. This turn
+updated the verified retirement handoff and committed 47 owned paths as 24976669,
+checking all 34 artifact blobs and preserved unrelated/protected bytes. The first
+two commit helpers failed on Git rename presentation/already-staged deletion
+assumptions; the corrected exact full-index check retained all intended deletions
+and archives without resetting or staging unrelated work.
+
+Fresh Blender selected installation from a neutral Linux/amd64 Wright image now
+has actual backend and production api.gateway_stdio proof. Upstream/addon pins,
+Blender 4.3.2, Python 3.12.12, MCP 1.28.1 and complete installed dependencies are
+recorded. 28 direct/prefixed input schemas match exactly. One successful guarded
+call exports actual STL; byte inspection measures 12 triangles, 10/8/6 model
+units and volume 480. STL is unitless. No engineering/physical acceptance follows.
+
+The initial qualification code used an obsolete export operator and failed after
+creating a cube. Its response is preserved. A fresh isolated session corrected
+only the export syntax for the observed host, reusing the selected installation.
+The first publisher stopped before writing because it counted started/succeeded
+audit events as separate calls. Corrected publication repeats no native operation.
+All three exact labeled containers are revalidated stopped; metadata/logs pass
+shared redaction and actual credential-value scanning.
+
+22 public files are in
+`artifacts/process-interfaces/083/20261003-blender-fresh-clean-qualification-002/`.
+Launch/install/commands, both responses, exact geometry and schema hashes,
+cleanup/limitations and byte inventory remain reproducible there. Gateway runs
+on the current Windows source host; backend is clean selected Linux, network none,
+one mount and virtual display. Wider installed/UI acceptance is not implied.
+Local receipt: `.local-run/process-interfaces-083/blender-clean-qualification-002-local-commit.json`.
+All new helpers/handles are terminal. No old API/frontend availability claim.
+Continue all eight open tasks; 49 checked / 8 open. No push, merge or release.
+
 ## Latest checkpoint — independent slice diagnostic and embedded retirement
 
 After the preceding handoff-only review, documentation now records the verified

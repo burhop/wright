@@ -33,6 +33,34 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest implementation — clean selected Blender installation and gateway proof
+
+The slicing retirement checkpoint is now committed as 24976669: 47 exact owned
+paths and all 34 staged evidence files were verified. Its initial commit helpers
+stopped on rename presentation and already-staged deletion assumptions; no
+unrelated files were staged or reset. The successful receipt is
+`.local-run/process-interfaces-083/external-slice-retirement-001-local-commit.json`.
+
+A fresh selected Linux/amd64 Blender installation from the neutral Wright image
+now has direct protocol and actual production gateway proof. Blender 4.3.2,
+Python 3.12.12 and MCP 1.28.1 are recorded. All 28 input schemas match; one
+successful guarded geometry/export call produces an actual 12-triangle STL,
+numerical dimensions 10/8/6 and volume 480. The initial obsolete export syntax
+failure remains; a new isolated session corrected only the qualification input.
+The selected installation was reused, not repeated. All three labeled containers
+are revalidated stopped. Source Windows gateway and Linux backend scopes remain
+separate; unitless STL is not physical acceptance.
+
+Evidence: `artifacts/process-interfaces/083/20261003-blender-fresh-clean-qualification-002/`.
+The once-only installer, continuation and publication helpers are terminal; do
+not rerun them. Continue fresh slicer qualification, canonical-runtime proof of
+new preparer bindings, mesh-repair/other coupling disposition and full current
+authoring/editor/installed/accessibility/regression/requirement acceptance.
+Ledger remains 49 checked / 8 open. Reconcile the planned local receipt
+`.local-run/process-interfaces-083/blender-clean-qualification-002-local-commit.json`
+and Git HEAD before repeating staging. No service availability is newly claimed;
+API/frontend/other old owners need current handle checks before reuse.
+
 ### Latest implementation — independent diagnostic and embedded slicing retirement
 
 The last user-facing status/prompt review was a no-progress goal turn. The next

@@ -1,0 +1,35 @@
+{
+  "server_id": "qualification-083-blender-clean-002",
+  "schemas": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-blender-clean-continuation-002\\tools.json",
+  "schemas_file_sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "command": [
+    "docker",
+    "exec",
+    "-i",
+    "-e",
+    "PYTHONPATH=",
+    "-e",
+    "BLENDER_HOST=127.0.0.1",
+    "-e",
+    "BLENDER_PORT=19988",
+    "-e",
+    "BLENDER_MCP_SAFE_MODE=true",
+    "-e",
+    "BLENDER_MCP_DISABLE_TELEMETRY=true",
+    "c17e43b2068e556ec11d7ef6ca109f0d81fb059bef7b84098c0cb8b578f3d782",
+    "/selected/venv/bin/python",
+    "-m",
+    "blender_mcp.server"
+  ],
+  "safe_tool": "execute_blender_code",
+  "arguments": {
+    "code": "import bpy\nbpy.ops.mesh.primitive_cube_add(size=1)\nobj=bpy.context.object\nobj.name='IsolatedQualificationCube'\nobj.dimensions=(10,8,6)\nbpy.ops.object.transform_apply(location=False,rotation=False,scale=True)\nbpy.ops.wm.stl_export(filepath='/workspace/gateway/tiny.stl',export_selected_objects=True)\nprint('Owned qualification geometry exported: 10 x 8 x 6')\n",
+    "user_prompt": "resume"
+  },
+  "expected_text_prefix": "Code executed successfully:",
+  "required_output_files": [
+    "tiny.stl"
+  ]
+}

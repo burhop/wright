@@ -1,0 +1,546 @@
+{
+  "status": "passed",
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "definition_sha256": "6b6aefdb7044ffa2d7deac6ba9c5a2b295c92b4144027c86fe4a852f5924d5a2",
+  "schema_file_sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89",
+  "production_gateway_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "api.gateway_stdio",
+    "--session-id",
+    "session-083-qualification",
+    "--workspace-id",
+    "workspace-083-qualification",
+    "--principal-id",
+    "private-provider-probe"
+  ],
+  "server_id": "qualification-083-blender-clean-002",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "selected_tool_count": 28,
+  "tool": "qualification-083-blender-clean-002__execute_blender_code",
+  "response_sha256": "5142d13d2bf2108ded2f9d5d34a709e23ce8eb9bad8e9acf5e4c3b10338d4396",
+  "audit": [
+    {
+      "operation": "tool.list",
+      "target": "disable_telemetry",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_polyhaven_asset",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_polypizza_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_sketchfab_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "execute_blender_code",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hunyuan3d_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hyper3d_model_via_images",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hyper3d_model_via_text",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_addon_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_hunyuan3d_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_hyper3d_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_object_info",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polyhaven_categories",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polyhaven_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polypizza_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_scene_info",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_sketchfab_model_preview",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_sketchfab_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_viewport_screenshot",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "import_generated_asset",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "import_generated_asset_hunyuan",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "poll_hunyuan_job_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "poll_rodin_job_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "record_trajectory_feedback",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_polyhaven_assets",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_polypizza_models",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_sketchfab_models",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "set_texture",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "disable_telemetry",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_polyhaven_asset",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_polypizza_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_sketchfab_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "execute_blender_code",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hunyuan3d_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hyper3d_model_via_images",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hyper3d_model_via_text",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_addon_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_hunyuan3d_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_hyper3d_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_object_info",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polyhaven_categories",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polyhaven_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polypizza_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_scene_info",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_sketchfab_model_preview",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_sketchfab_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_viewport_screenshot",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "import_generated_asset",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "import_generated_asset_hunyuan",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "poll_hunyuan_job_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "poll_rodin_job_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "record_trajectory_feedback",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_polyhaven_assets",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_polypizza_models",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_sketchfab_models",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "set_texture",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "disable_telemetry",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_polyhaven_asset",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_polypizza_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "download_sketchfab_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "execute_blender_code",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hunyuan3d_model",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hyper3d_model_via_images",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_hyper3d_model_via_text",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_addon_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_hunyuan3d_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_hyper3d_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_object_info",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polyhaven_categories",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polyhaven_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_polypizza_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_scene_info",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_sketchfab_model_preview",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_sketchfab_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "get_viewport_screenshot",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "import_generated_asset",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "import_generated_asset_hunyuan",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "poll_hunyuan_job_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "poll_rodin_job_status",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "record_trajectory_feedback",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_polyhaven_assets",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_polypizza_models",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "search_sketchfab_models",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "set_texture",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.call",
+      "target": "execute_blender_code",
+      "outcome": "started",
+      "reason": "policy_allowed"
+    },
+    {
+      "operation": "tool.call",
+      "target": "execute_blender_code",
+      "outcome": "succeeded",
+      "reason": "policy_allowed"
+    }
+  ],
+  "cleanup": {
+    "gateway_runner_stopped": true
+  }
+}

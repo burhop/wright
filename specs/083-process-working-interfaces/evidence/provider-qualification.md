@@ -3,6 +3,45 @@
 **Date:** 1 October 2026. **Status:** partial; remaining qualification and full
 engineering runs are pending. No public catalog entry is promoted.
 
+## Latest fresh clean Blender qualification — 3 October 2026
+
+A neutral Linux/amd64 Wright image was verified without Blender or its MCP.
+Only selected independent provider dependencies, the exact pinned addon and
+Blender 4.3.2 with a virtual display were installed in a separate selected image.
+The original base image is unchanged. The clean upstream source revision is
+5f8ddaf6e987c4aa0c3467fcc548838b28f64477; fresh Python 3.12.12 resolves MCP
+1.28.1. Complete installed dependency versions and source/archive hashes remain.
+
+Official initialize/tools/list discovers 28 tools whose input schemas exactly
+match the prefixed production gateway projection. One successful guarded
+execute_blender_code invocation exports actual binary STL. Independent byte
+inspection measures 10 x 8 x 6 model units, 12 triangles and volume 480. STL is
+unitless; this small backend case proves neither physical units/fit nor either
+original engineering assignment. Other listed tools and external asset services
+were not exercised.
+
+The first qualification input used the obsolete export_mesh.stl operator after
+creating a cube, then failed export on the observed 4.3.2 host. Exact error/native
+logs remain. After the old session was stopped, a fresh isolated session used
+wm.stl_export. Only qualification input changed; no provider source was patched,
+no installation was repeated and no uncertain mutation was replayed. The first
+publisher miscounted started/succeeded audit events as separate invocations and
+stopped before writing; corrected publication performs only read-only checks.
+
+Both backend sessions use network-disabled containers with one isolated mount.
+The actual api.gateway_stdio runs in the current Windows source environment;
+this is not in-container API installation qualification. All three exact labeled
+installer/runtime containers were revalidated stopped. Original Windows 4.5.10
+engineering evidence retains its separate version/scope.
+
+See [checked scope](../../../artifacts/process-interfaces/083/20261003-blender-fresh-clean-qualification-002/checked-scope.json)
+and [reproducible evidence](../../../artifacts/process-interfaces/083/20261003-blender-fresh-clean-qualification-002/README.md).
+22 retained files include the installation, both actual responses, schemas,
+bootstrap, geometry, cleanup and hashed inventory, with shared redaction and
+actual credential-value scan. T043 remains open for slicer clean/host/gateway
+and migrated binding obligations plus the recorded AgentCAD creation boundary.
+No catalog promotion, physical dispatch or engineering acceptance is claimed.
+
 Fresh isolated probes exercised existing independent providers through actual
 stdio and native `GatewayService`, using controlled catalog/workspace ports.
 These are backend probes, not the Hermes-facing `wrightgateway` proxy or complete

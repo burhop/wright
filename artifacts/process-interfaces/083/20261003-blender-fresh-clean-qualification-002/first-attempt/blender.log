@@ -1,0 +1,23 @@
+Server thread started
+BlenderMCP server started on localhost:9876
+BlenderMCP addon registered
+Server thread started
+BlenderMCP server started on 127.0.0.1:19988
+OWNED_BLENDER_READY
+Traceback (most recent call last):
+  File "/selected/provider-source/addon.py", line 1377, in execute_code
+    exec(code, namespace)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "<string>", line 7, in <module>
+  File "/usr/share/blender/scripts/modules/bpy/ops.py", line 109, in __call__
+    ret = _op_call(self.idname_py(), kw)
+AttributeError: Calling operator "bpy.ops.export_mesh.stl" error, could not be found
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/selected/provider-source/addon.py", line 829, in _execute_command_internal
+    result = handler(**params)
+  File "/selected/provider-source/addon.py", line 1382, in execute_code
+    raise Exception(f"Code execution error: {str(e)}")
+Exception: Code execution error: Calling operator "bpy.ops.export_mesh.stl" error, could not be found

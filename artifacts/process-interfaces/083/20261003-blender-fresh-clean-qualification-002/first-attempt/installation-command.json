@@ -1,0 +1,14 @@
+[
+  "docker",
+  "exec",
+  "--user",
+  "root",
+  "-e",
+  "UV_CACHE_DIR=/selected/uv-cache",
+  "-e",
+  "UV_PYTHON_INSTALL_DIR=/selected/python",
+  "c6be5a1e643d3417221838717555357f18ba90977b1f0d8a0aa65cd9b1a1fff0",
+  "sh",
+  "-c",
+  "set -eu\napt-get update\napt-get install -y --no-install-recommends blender xvfb xauth python3-requests\nmkdir -p /selected/provider-source\ntar -xf /tmp/selected-upstream.tar -C /selected/provider-source\nuv venv --python 3.12 /selected/venv\nuv pip install --python /selected/venv/bin/python /selected/provider-source mcp==1.28.1\nchmod -R a+rX /selected\n"
+]

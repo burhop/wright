@@ -4,6 +4,14 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
+Fresh selected Blender Linux installation/protocol and one actual source-host
+production-gateway geometry/export call now have exact schema/artifact/cleanup
+evidence. The first native export failure is retained and corrected only in a
+fresh isolated session. See [provider qualification](evidence/provider-qualification.md#latest-fresh-clean-blender-qualification--3-october-2026).
+This resolves the recorded narrow Blender clean-install/backend/gateway gap,
+not migrated canonical-runtime binding proof or T043 overall. Slicer and AgentCAD
+boundaries, migration and full current UI/regression/audit scope remain open.
+
 Latest additional progress: the diagnostic uses an independent MCP, and all
 three embedded slicing implementations plus their wrapper-only test are removed
 with exact retained archives. One fresh offline native diagnostic produced a real

@@ -1,0 +1,157 @@
+{
+  "status": "failed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "platform": "linux/amd64",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "source_reused_at_exact_clean_pin": true,
+  "fresh_selected_install": true,
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "source_archive_sha256": "7948d59724c2b0b6cd131775099f9fd81c9435cc63b1e00202363ea327d0f62d",
+  "addon_sha256": "e9eae227d94875d6b8ed208f11a9628101ef4f579bfc614ab31af296cb88afce",
+  "install_container": "c6be5a1e643d3417221838717555357f18ba90977b1f0d8a0aa65cd9b1a1fff0",
+  "clean_base_preflight": {
+    "provider": false,
+    "host": null,
+    "gateway": true
+  },
+  "installation_exit_code": 0,
+  "native_version": "Blender 4.3.2",
+  "resolved_packages": [
+    {
+      "name": "annotated-types",
+      "version": "0.8.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1"
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0"
+    },
+    {
+      "name": "blender-mcp",
+      "version": "1.9.1"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1"
+    },
+    {
+      "name": "click",
+      "version": "8.5.0"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1"
+    },
+    {
+      "name": "httpx-sse",
+      "version": "0.4.3"
+    },
+    {
+      "name": "idna",
+      "version": "3.20"
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0"
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1"
+    },
+    {
+      "name": "mcp",
+      "version": "1.28.1"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.5"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.46.5"
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.15.0"
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.15.1"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.4"
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32"
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0"
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.6.3"
+    },
+    {
+      "name": "sse-starlette",
+      "version": "3.5.0"
+    },
+    {
+      "name": "starlette",
+      "version": "1.7.0"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0"
+    }
+  ],
+  "selected_image": "sha256:c30619ec27605afb31347ee191a6b43820a58edc3f6b40b030a12e0ea4375c26",
+  "install_container_stopped": true,
+  "runtime_container": "cb502d9ac8aec6d657a7cb5beae1259110c05b9fd92b3224488464ef05dfebbe",
+  "runtime_network": "none",
+  "native_listener_ready": true,
+  "direct_protocol": {
+    "initialized": true,
+    "tools_listed": 28
+  },
+  "direct_owner_stopped": true,
+  "gateway_return_code": 2,
+  "error_type": "AssertionError",
+  "diagnostic": "Actual production gateway proof failed",
+  "runtime_container_stopped": true
+}
