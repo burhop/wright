@@ -1,5 +1,30 @@
 # Feature 083 progress
 
+## Primary validation/action audit — 35 cumulative dispositions, 3 October 2026
+
+The [authority primary audit](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/README.md)
+adds seven reviewed obligations: FR-013/014, US2-AC3, EDGE-02/03 and NEG-09/10.
+Its [cumulative ledger](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/semantic-ledger.json)
+retains all 182 original obligations: 35 proved at their recorded scope,
+147 awaiting review. T056/T057 remain open (55 tasks checked).
+
+193 fresh validation/action/preparation cases, 45 evidence/compatibility checks
+and 72 transport/bridge authority cases pass with no failures, errors or skips.
+Counts overlap earlier runs. Actual 082 assessment identities/currentness,
+canonical gates and bounded rework remain authority. Missing mandatory evidence
+holds consumers; changed source/files/profile/settings/subject/decision identity
+cannot transfer old permission. Unsupported dispatch remains unavailable after
+approval. The tailored bridge reuses native owners and exact live grants rather
+than supplying another executor or caller-selected authority.
+
+No product code changes or live model/provider/engineering/hardware actions.
+The 550 retained engineering/UI files and protected history match; original
+17/25 passes retain mandatory human-review holds and original build/run scope.
+One audit-helper setup used a nonexistent owner filename, corrected before tests
+without changing product code. SC-005 remains open: isolated compatibility and
+transport checks do not substitute for its combined common/tailored negative UI
+journey. Continue that journey, authoring/hosting, compatibility and distribution.
+
 ## Primary lifecycle audit — 28 cumulative obligations reviewed, 3 October 2026
 
 The [lifecycle primary audit](../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/README.md)

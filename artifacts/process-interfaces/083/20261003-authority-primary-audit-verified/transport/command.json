@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "apps/api/tests/test_process_ui_surface_authority.py",
+    "apps/api/tests/test_process_interface_actions.py",
+    "apps/api/tests/test_process_interface_reviews.py",
+    "--basetemp=D:\\repos\\wright\\.pytest-tmp\\t056-authority-transport-001",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-authority-transport-001\\results.xml"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "modules": [
+    "apps/api/tests/test_process_ui_surface_authority.py",
+    "apps/api/tests/test_process_interface_actions.py",
+    "apps/api/tests/test_process_interface_reviews.py"
+  ],
+  "source_sha256": {
+    "apps/api/tests/test_process_ui_surface_authority.py": "982a9f27cd85e35b1bd2a2a38b42c4ffa848359dc62a61316a293ed28f6f034f",
+    "apps/api/tests/test_process_interface_actions.py": "1897c93bff4f3d2d82d52f8a7c3ba32dbf715b528c876080547807057d2603e7",
+    "apps/api/tests/test_process_interface_reviews.py": "b0d365fe15ca2ecb791bfd6d1d7d9b6f64663c8ac5d9c8203b5657ef984390bb",
+    "apps/api/src/api/routers/process_surface.py": "0b380c4629cf570665a509330dde73c793cda2fd16d70a55cee9a73a125fae31",
+    "apps/api/src/api/routers/process_interfaces.py": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+  },
+  "live_opt_ins_removed": true
+}

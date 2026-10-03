@@ -33,6 +33,26 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest primary audit — validation/action authority, 35 cumulative dispositions
+
+Read `artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/`
+and `evidence/requirements-audit.md`. Its cumulative ledger preserves all 182
+obligations: seven new dispositions (FR-013/014, US2-AC3, EDGE-02/03, NEG-09/10),
+35 proved at their recorded scope and 147 awaiting review. T056/T057 remain open.
+
+193 fresh validation/action/preparation cases, 45 evidence/compatibility checks
+and 72 transport/bridge cases pass without failures, errors or skips; counts
+overlap. Actual 082 validation, canonical gates, exact reviews, stale-evidence
+refusal and qualified consume/dispatch machinery remain authority. No product
+code changes or live model/MCP/engineering/hardware effects occur. 550 retained
+engineering/UI files and protected history match; older build identities and
+mandatory human engineering reviews remain unchanged.
+
+SC-005 remains open for its combined common/tailored negative UI journey. Do not
+count isolated manifest/shared-transport checks as that complete acceptance.
+Continue that journey, FR-008/009/010/011/012/018/019 and the remaining authoring,
+hosting, compatibility/fallback, installed-resource, task and contract obligations.
+
 ### Latest primary audit — lifecycle review, 28 cumulative dispositions
 
 Read `artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/`

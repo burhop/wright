@@ -4,6 +4,18 @@
 **Current ledger:** **55 checked / 2 open**: T056 and T057.
 Task counts are not a percentage of completion.
 
+The latest [authority primary audit](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/README.md)
+adds seven dispositions: FR-013/014, US2-AC3, EDGE-02/03 and NEG-09/10. Its
+[cumulative ledger](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/semantic-ledger.json)
+retains all 182 obligations: 35 proved at their recorded scope, 147 awaiting
+review. Fresh groups of 193, 45 and 72 controlled cases pass without failures,
+errors or skips; counts overlap other proofs. No product code changes or live
+model/provider/engineering/hardware effects occur. Original validation, rework,
+review identity and dispatch owners remain authority; 550 engineering/UI files
+and protected history match. Mandatory human reviews remain held.
+SC-005 still needs its combined common/tailored negative UI journey. T056/T057
+remain open; continue authoring/hosting, compatibility/fallback and distribution.
+
 The latest [primary lifecycle audit](../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/README.md)
 adds 21 reviewed dispositions to the earlier seven readiness dispositions.
 Its [cumulative ledger](../../artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/semantic-ledger.json)

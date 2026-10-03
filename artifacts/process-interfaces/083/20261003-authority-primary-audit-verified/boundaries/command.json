@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "packages/workspace_service/tests/test_process_approval_inspection.py",
+    "packages/workspace_service/tests/test_process_artifact_access.py",
+    "packages/workspace_service/tests/test_process_ui_build.py::test_exact_catalog_binding_and_optional_absence",
+    "packages/workspace_service/tests/test_process_ui_build.py::test_wrong_process_or_versions_rejected",
+    "packages/workspace_service/tests/test_process_operation_observations.py",
+    "--basetemp=D:\\repos\\wright\\.pytest-tmp\\t056-authority-boundaries-001",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-authority-boundaries-001\\results.xml"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "modules": [
+    "packages/workspace_service/tests/test_process_approval_inspection.py",
+    "packages/workspace_service/tests/test_process_artifact_access.py",
+    "packages/workspace_service/tests/test_process_ui_build.py::test_exact_catalog_binding_and_optional_absence",
+    "packages/workspace_service/tests/test_process_ui_build.py::test_wrong_process_or_versions_rejected",
+    "packages/workspace_service/tests/test_process_operation_observations.py"
+  ],
+  "source_sha256": {
+    "packages/workspace_service/tests/test_process_approval_inspection.py": "41accf609906d363c9a91334b8408bef99840a883c39b6ecef85ce0166547609",
+    "packages/workspace_service/tests/test_process_artifact_access.py": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+    "packages/workspace_service/tests/test_process_ui_build.py": "bc0fa0772768f0348bcddbea516bf2ded473bee84bfeca8a16487923fb4b4b3d",
+    "packages/workspace_service/tests/test_process_operation_observations.py": "f01d7df5dfd2925b9aaddba0e13037dade40110f765a5071560cf4e280b9ec81",
+    "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py": "9943a01928009484e7900d19893d5c0288406b08e834894bb0d928adab40b738",
+    "packages/workspace_service/src/workspace_service/process_interfaces/compatibility.py": "82174096a37e9e138599307f73ce5c53ef9dccec947a05c5af02cea5cd0fcb62",
+    "packages/workspace_service/src/workspace_service/process_interfaces/build.py": "f26447349ebcd6b37a9186673c8a2524a2af5038ada83c63927d6d9cc5ccc29e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py": "3c46c7b95f3c5ed43cfbc41e0ffa3453d1e79a6b1df57dd1b306bb7f5a22917d",
+    "packages/workspace_service/src/workspace_service/process_interfaces/owners.py": "18c3e857dca549e2739cf6017c349a3312fe9dffd8efd01d9193fd1e32b534a3",
+    "packages/workspace_service/src/workspace_service/process_interfaces/representations.py": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+  },
+  "live_opt_ins_removed": true
+}

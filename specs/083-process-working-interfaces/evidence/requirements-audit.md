@@ -2,9 +2,30 @@
 
 **Index checkpoint:** `5323a6d6`, with one documented route-parameter correction.
 **Earlier runtime correction:** `910bd53b`; recovery checkpoint `f55c1eac`.
-**Current primary batch:** lifecycle review adds 21 dispositions; 28 cumulative,
-154 awaiting review. Full signoff pending.
+**Current primary batch:** validation/action review adds seven dispositions;
+35 cumulative, 147 awaiting review. Full signoff pending.
 **Scope:** T056 in progress. No complete-goal or human acceptance claim.
+
+## Latest primary validation/action checkpoint
+
+The [authority audit](../../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/README.md)
+and [cumulative ledger](../../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/semantic-ledger.json)
+retain all 182 obligations and 28 earlier dispositions. Seven new dispositions
+cover FR-013/014, US2-AC3, EDGE-02/03 and NEG-09/10: 35 proved at their recorded
+scope, 147 awaiting review. The frozen preliminary index remains unchanged.
+
+193 fresh validation/action/preparation, 45 bounded evidence/compatibility and
+72 transport/bridge cases pass without skips, failures or errors. Counts overlap.
+Primary assertions and exact existing owners preserve 082 validation identities,
+canonical gates, review/action separation, stale-evidence refusal and qualified
+dispatch. No product code changes or live model/provider/engineering/hardware
+effects occur. All 550 retained engineering/UI files and protected history match;
+mandatory engineering reviews and older build identities remain unchanged.
+
+SC-005 remains unproved here: isolated shared-owner/manifest checks do not replace
+its combined common/tailored negative UI journey. Continue that journey and
+FR-008/009/010/011/012/018/019 through authoring, hosting, compatibility/fallback
+and distribution evidence. T056/T057 remain open.
 
 ## Latest primary lifecycle checkpoint
 
