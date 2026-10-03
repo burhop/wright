@@ -1,5 +1,50 @@
 # Workspace acceptance evidence
 
+## Current installed006 acceptance — 3 October 2026
+
+T052's named served-workspace acceptance is verified. Fresh installed006 includes
+the two backend corrections at `b9ce9a14`; its wheel SHA-256 is
+`9f0fcaae7666513e6adb541e20f79b10cc1b9fe044a2a7b4c78a08046c08751b`.
+All953 installed entries are byte-verified against current backend/public sources,
+fresh compiled frontend and build metadata. The frontend manifest is
+`44317815b2bf8bdfcb7620db0b3f2582984e6e1029ca9d0274d51330e730924e`,
+identical to installed005. Seven owning runtime modules and the served frontend
+come from this genuine wheel, with no checkout imports, authoring compiler,
+available model or provider autostart.
+
+| Obligation | Current authoritative evidence |
+|---|---|
+| Normal workspace and refined authoring | editor010: twelve checks through Workflows, blank instructions, direct input, Undo/Redo, individual AI steps, typed keyboard and actual pointer connections, pan, save/reopen, invalid draft containment and zero scoped WCAG A/AA violations. |
+| Both saved/common/read-only interfaces | heat019 and printed019: five checks each; exact18/20 result identities, compact editor return,432/432px common width at480px, keyboard focus and backend read-only binding. |
+| Actual engineering evidence navigation | printed012: exact full held source assessment, actual90 nominal toolpath layers in the shared viewer and exact producing block. heat018: unchanged765 field samples/eighteen results and exact read-only preview/reopening identities. |
+| Native200% browser zoom | printed024 and heat025: nine checks each using real `chrome.tabs.setZoom/getZoom`;1440px becomes720px CSS layout, pixel ratio2, pinch scale1. Preview/saved/common/editor results and source remain exact;672/672px common width/scroll width and zero scoped WCAG A/AA violations. Final raw screenshots capture the device viewport and are visually inspected. |
+| Prior detailed editor and layout obligations | Retained earlier rejection, saved layout/canvas zoom, CAS conflict and compact preference/backdrop checks below remain at their exact original scopes. Current editor010 rechecks active authoring and current native-zoom proofs check its actual workspace integration; unchanged frontend identity is recorded rather than relabelling old reports. |
+
+See [current scope, all reports and artifact inventory](../../../artifacts/process-interfaces/083/20261003-current-package-workspace-verified/README.md).
+48 primary checks pass. Fifteen passing/stopped report structures validate.
+290 original files, original/copied five protected tables in each fixture,
+protected campaign/context files and550 retained engineering/UI artifacts are
+unchanged. All proof presentations are closed. One separate scratch workflow
+was edited for authoring; neither engineering run nor a held review was replayed.
+
+The first zoom failures are retained. A transient connection banner legitimately
+changes after observation connects; the final proof checks the persistent shared
+read-only notice and exact backend binding. Axe requires standard CSS rather than
+Playwright's `:visible`.023 measured behavior passes but its full-page images
+crop native zoom;024/025 provide usable device-viewport images. Heat024 retains
+a real retryable `SURFACE_READINESS_TIMEOUT` with failed runtime; fresh025 opens
+a new presentation on unchanged source/configuration and succeeds, with no
+engineering replay. Earlier zoom harnesses reused a private trace/DOM filename:
+per-attempt public screenshots/status/diagnostics remain, but distinct original
+private traces were not retained.025 fixes those filenames. Private bootstrap
+geometry/authentication is excluded from public evidence.
+
+This closes T052 only. T043 provider qualification, T053 full affected regression,
+and T056/T057 final requirement/commit audits remain open. No human product or
+engineering acceptance, physical execution, provider defect resolution or full
+feature completion is implied. Historical pending statements below are superseded
+only for the named current workspace scope.
+
 ## Compact shared presentation correction — 3 October 2026
 
 The recorded compact-content defect now has a shared correction. Non-adaptive

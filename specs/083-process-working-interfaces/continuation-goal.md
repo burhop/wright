@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile current HEAD and the remaining five-task ledger: T043, T052, T053, T056 and T057. T048 caller migration and T049 shared-code/error audits are checked; the latter corrects implicit slice-provider configuration and a vendor-named missing-tool message.372 current controlled checks and156 frontend checks pass. Preserve the explicit prior-feature integration-debt dispositions and older installed build identities. Reuse completed proofs, then advance remaining qualification, current installed/workspace/regression and requirement audits.
+1. Reconcile current HEAD and the remaining four-task ledger: T043, T053, T056 and T057. T048 caller migration and T049 shared-code/error audits are checked; the latter corrects implicit slice-provider configuration and a vendor-named missing-tool message.372 current controlled checks and156 frontend checks pass. Preserve the explicit prior-feature integration-debt dispositions and older installed build identities. Reuse completed proofs, then advance remaining qualification, full affected regression and requirement audits. T052 current installed006 workspace/native-zoom acceptance is checked; reuse its exact evidence.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 300-pass selected frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
@@ -32,6 +32,26 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### T052 current installed/workspace acceptance verified — four tasks remain
+
+Fresh installed006 from b9ce9a14 contains the latest backend corrections and953
+byte-verified entries.48 primary checks pass across seven reports: normal refined
+editor, both actual retained saved/common/read-only interfaces, exact assessment/
+toolpath/producer navigation, preview reopen, keyboard/accessibility and native
+200% browser zoom.015 printed024 and014 heat025 final zoom screenshots capture
+the actual device viewport. Fifteen report structures validate.290 original files,
+protected original/copied records and550 retained engineering/UI artifacts remain
+unchanged; all proof presentations close. No engineering run/review/provider/model
+was dispatched. The retryable heat024 managed-start failure, first harness failures
+and reused private-trace filename limitation remain recorded.
+
+Ledger53 checked/four open: T043,T053,T056,T057. Next audit selected-provider
+qualification against its actual scope, finish affected regression/package/security
+coverage and the complete FR/SC/acceptance ledger. Reuse current installed006 and
+existing real engineering proofs; do not rerun held reviews. Revalidate exact owned
+services014/015 before reuse. See `evidence/workspace-acceptance.md` and
+`artifacts/process-interfaces/083/20261003-current-package-workspace-verified/`.
 
 ### T049 verified — five broader tasks remain
 

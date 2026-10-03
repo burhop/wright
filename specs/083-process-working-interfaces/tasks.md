@@ -193,7 +193,12 @@ interfaces use the same foundation, with honest engineering checks and limits.
   See `evidence/installed-native-reuse.md` and
   `evidence/installed-docker-reuse.md`. Full editor, completed engineering-output
   parity and migration are separate open tasks.
-- [ ] T052 Run served normal-workspace walkthrough preserving refined editor controls and both working/preview journeys at realistic viewport/zoom/accessibility; retain screenshots/build/flags/report in `artifacts/process-interfaces/083/` and `specs/083-process-working-interfaces/evidence/workspace-acceptance.md`.
+- [x] T052 Run served normal-workspace walkthrough preserving refined editor controls and both working/preview journeys at realistic viewport/zoom/accessibility; retain screenshots/build/flags/report in `artifacts/process-interfaces/083/` and `specs/083-process-working-interfaces/evidence/workspace-acceptance.md`.
+  Current installed006 passes48 primary checks on both actual retained jobs,
+  normal workspace/editor and true200% browser zoom;953 installed entries,290
+  original files and550 retained engineering/UI artifacts are byte-verified.
+  Fifteen report structures validate; failed attempts and trace-retention limits
+  remain explicit. All proof views close. See `evidence/workspace-acceptance.md`.
 - [ ] T053 Run targeted unit/API/component/mocked/browser/security/package-boundary and prior affected continuation/082/editor regression checks; record commands/results/limits in `specs/083-process-working-interfaces/evidence/verification.md`, fixing failures within this feature.
 - [x] T054 Add runnable neutral authoring/reference examples and operator/developer/API/role-provider documentation in `examples/process-interfaces/`, `docs/workflows/process-working-interfaces.md` and `docs/architecture/agent-adapters.md`, using actual verified routes/commands/URLs.
   Seventeen controlled read-only utility tests, the packaged reference read,

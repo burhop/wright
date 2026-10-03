@@ -1,8 +1,17 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Current ledger:** **52 checked / 5 open**: T043, T052,
-T053, T056 and T057. Task counts are not a percentage of completion.
+**Current ledger:** **53 checked / 4 open**: T043, T053, T056 and T057.
+Task counts are not a percentage of completion.
+
+T052 current installed/workspace acceptance is verified: fresh installed006 from
+`b9ce9a14`,953 byte-verified entries,48 passing primary checks, both actual retained
+engineering interfaces and native200% browser zoom. All original/copied protected
+records and550 retained engineering/UI artifacts remain unchanged. First stopped
+attempts, one retryable managed-view startup timeout and prior private-trace
+retention limits are disclosed. All proof presentations close. No model/provider/
+process/review or physical action ran. See [workspace acceptance](evidence/workspace-acceptance.md).
+Full provider/regression/requirement and final commit audits remain open.
 
 T049's shared-code/error audit now passes with two concrete corrections: explicit
 slice-operation configuration replaces the vendor default, and missing task tools

@@ -3075,3 +3075,25 @@ and`evidence/shared-platform-audit.md`. T049 checked; ledger52 checked/five open
 T043,T052,T053,T056,T057. Installed005 keeps its older reader/runtime bytes; a fresh
 current-backend package is needed for remaining installed/workspace acceptance.
 No new owned service started and no push/merge/release occurred.
+
+
+## 3 October — T052 current installed workspace and native zoom verified
+
+Fresh installed006 from b9ce9a14 includes the latest backend corrections, with953
+byte-verified entries and freshly rebuilt unchanged frontend identity. Seven normal
+workspace reports pass48 primary checks: refined authoring including pointer/pan,
+both actual saved/common/read-only jobs, exact evidence/navigation, preview reopen,
+keyboard/accessibility and native browser200% zoom. Final device-viewport images
+are visually inspected. Fifteen report structures validate; first failed assumptions,
+cropped023 images and heat024 retryable managed-runtime readiness timeout remain.
+Fresh heat025 succeeds after the prior runtime is authoritatively failed. No
+engineering replay, model/provider work or review response occurred. Earlier zoom
+private trace/DOM filename reuse is disclosed;025 uses distinct names.
+
+290 original files, both original/copied protected-table sets, protected campaign/
+context and550 retained engineering/UI artifacts are unchanged. All proof views
+close. Current owned installed services014/015 remain for reuse; liveness must be
+checked before use. T052 checked; ledger53 checked/four open: T043,T053,T056,T057.
+Evidence: `artifacts/process-interfaces/083/20261003-current-package-workspace-verified/`
+and `evidence/workspace-acceptance.md`. Continue remaining qualification, full
+regression and exact requirement audits; no push/merge/release or physical action.

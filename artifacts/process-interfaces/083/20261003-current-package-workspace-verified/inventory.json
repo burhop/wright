@@ -1,0 +1,1554 @@
+{
+  "files": {
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/build-command.json": {
+      "bytes": 222,
+      "sha256": "17fd0eca4e704e331d4964331a8cdc374cc3a927ef185cc6a5fe240061f8eb4c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/build-output.txt": {
+      "bytes": 126,
+      "sha256": "f139a8f42e3d1cf00c612ab0028132a9af7186b2f53c2eb7090b58b7d2cf7315"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/build-record.json": {
+      "bytes": 486,
+      "sha256": "8f95076094abbdefe25a0fcd62adc97e74cfec33a8752daf08f029bf55b8c9a1"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/checked-scope.json": {
+      "bytes": 9742,
+      "sha256": "66a7af557da5887dab3e79d02209f8a958d1789e3bbc88c7677bbdac1d278e59"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/heat-host-identity.json": {
+      "bytes": 502,
+      "sha256": "f040077c7c67231c6a4013712b32f0a85e7c011829cbb0eafe4abda0344d708e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/heat-isolation-record.json": {
+      "bytes": 408,
+      "sha256": "4bf4ee9f16d4d7266c549e7dac202d0b6ad29f3c6bdb9503fc8f08695c5e81c0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/heat-native-zoom-heat-025.json": {
+      "bytes": 3168,
+      "sha256": "8501e8ab6818e8bf1d2f3fdb1416ed4f3a847643e13c192630e8dc5bde910d45"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/printed-host-identity.json": {
+      "bytes": 502,
+      "sha256": "f040077c7c67231c6a4013712b32f0a85e7c011829cbb0eafe4abda0344d708e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/printed-isolation-record.json": {
+      "bytes": 408,
+      "sha256": "cce96e67bb91afdd0425ba32c17d4f92464963c7c937c15f2c7a251b81c62a6c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/printed-native-zoom-printed-024.json": {
+      "bytes": 2937,
+      "sha256": "84c6d1848c6ac8788c370d8a421ebfb9692f700835768621d8b860e87c1566e3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/README.md": {
+      "bytes": 4231,
+      "sha256": "b0bd967115b9780df1e0334c4d33ce8486be45d08d7e159d47ba409dc46c7a84"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/source-and-installation-audit.json": {
+      "bytes": 255163,
+      "sha256": "80c89db48266e4b5c4147a324796bb76fb5d8d4b0874ba3bf4d84ca3d4c4c29a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/source-checkpoint.json": {
+      "bytes": 380,
+      "sha256": "370f07b07ab5a9f4d02467a413428b502872b3fe1657c6f89f880854f956b658"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-audit-current-package-006.py": {
+      "bytes": 4045,
+      "sha256": "776f9f481931b42a3bd80e30976843e5decc3f832a2849d91791306a10737621"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-build-current-wheel-006.py": {
+      "bytes": 2343,
+      "sha256": "82803c749bbe6d883c0f51497cda45940fc0a8961ed9b5badc5455079a62d2ce"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-build-installed-web-006.mjs": {
+      "bytes": 720,
+      "sha256": "185cc8371c8bc0e7597a5c9057db2a099b6866da1bf0d4c181ffa2b24a771631"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-publish-current-acceptance-006.py": {
+      "bytes": 14111,
+      "sha256": "4d1d338e8d620cecb15c282e94f59da2a31ac5bb6922b7bf05a152c6ffe69192"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-current-package-006.py": {
+      "bytes": 2185,
+      "sha256": "9b74c0e689f1d72b747386a23987f4cac0f7ea6b9558b4af08665f65a7892482"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-current-workspace-019.py": {
+      "bytes": 3931,
+      "sha256": "3d8fce56a7b53ffaafba2ca33887b35354e90a7b886896987eafed8b9834a37d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-native-zoom-020.py": {
+      "bytes": 8422,
+      "sha256": "18683ff860a77599c9799cb7d36d934857e9ca7799c6a22a967385d1556288d8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-native-zoom-021.py": {
+      "bytes": 1739,
+      "sha256": "ca6edec79899d3082f7ab729b51e49a9fecb2c1231078af9da5f6b1f978e1cac"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-native-zoom-022.py": {
+      "bytes": 940,
+      "sha256": "f9851e9dbe402d45e002adceea96ac223aeb8b1646163dd03bee7a89933152ec"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-native-zoom-023.py": {
+      "bytes": 812,
+      "sha256": "8a15bfd2345dcce8847241f8bcf5e87af7474fd4c8963415472cec91ab521676"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-native-zoom-024.py": {
+      "bytes": 910,
+      "sha256": "f8d9366598e7daced489d1d581a38b218a527d39beb10d65b917c1c39dc2ee1e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/t052-stage-native-zoom-025.py": {
+      "bytes": 680,
+      "sha256": "109a4817dfe8bb10aaeb56d3843b1529f5aea312d5511ab500c6a517115a0536"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/axe-editor.json": {
+      "bytes": 536839,
+      "sha256": "f38fa77e448fcde8cfc1a75d341bbe690816646eef64fbae4e8763f06446dd37"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 673,
+      "sha256": "3dd447e1298d1a27f66e46dfc25d3b6860f678e3638c56f24a30b57dc69e99ed"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 19615,
+      "sha256": "3ad5b9a75f9f0cca94d3f0a96a68780682beeb200ac14a9662ee5cf57adbf928"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/progress.md": {
+      "bytes": 6571,
+      "sha256": "0e0c94f27014e123e86173e28e620abef8771508f028f1d6fa9f6532b5a38332"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/report.html": {
+      "bytes": 13107,
+      "sha256": "1465922cce19c0f8c435873ccc5fbc4b2996888d82d1bf1cacf14f307873217f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 352803,
+      "sha256": "018cb4c4bc51cf945e00ae95667e9829d77ba5f4410acd3faf656ba374e5dcf7"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 326752,
+      "sha256": "338252ced528c9942f7f85866e86de423e1f951d03cbc3237254dab557fc0e11"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S03.png": {
+      "bytes": 74512,
+      "sha256": "a1b9e2f084ba2af17b515cb1c653688572ca9de87181e8187ac3419742b491ba"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S04.png": {
+      "bytes": 258427,
+      "sha256": "5e6eb775fe1a0e9f45647b3e757fc1e0c49aa2c230130f888debacbf04f36bce"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S05.png": {
+      "bytes": 256696,
+      "sha256": "8cbecc04ee1b4a36cbf89a2e0089047c65009c3f6f9ebebdaba7733be666a407"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S06.png": {
+      "bytes": 275625,
+      "sha256": "4e229290c81e4cdd1d1cf809b02352ef41fc733086aa02d7bb83c5126e7a5ceb"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S07.png": {
+      "bytes": 150504,
+      "sha256": "e908d8955e4170ccb1d12f0bbdd2ec1cea5c5c4d489f0ed38e235878e8adce77"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S07a-before.png": {
+      "bytes": 263813,
+      "sha256": "50ab9d464a9e8f734dcd2827cb78092529677a7107fd13dc764b341b736baaa5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S07a.png": {
+      "bytes": 114315,
+      "sha256": "2cf1836d14040d51d6b95a63b21defe4851d03ee91a149ca8e9ae8a90a899c57"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S07b-before.png": {
+      "bytes": 272429,
+      "sha256": "698847f2a77f811785b19e9ab5d59fcc86e2c6659794effe11f88a98e971d599"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S07b.png": {
+      "bytes": 271322,
+      "sha256": "0464ca4801f47b7013cd55dbe62c0aa52a01eb10c1231dea11415726fda4360e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S07c.png": {
+      "bytes": 271319,
+      "sha256": "d6d7135a786a9efc8db31203a6eb1c235dd4206868bb2372993fd896aa88a364"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 115975,
+      "sha256": "6d62220e96f83f6ad3f0cb7372f5cabb0b1ed3014073c15e01c249c7ae662512"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 94657,
+      "sha256": "1fd1c9dd6824f37049e48d2ef10039d246485546a3f145e0b16a2ca6077ceb9a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 325510,
+      "sha256": "962d8debbd964aa454f7e9c7b823e01e7cab3ca08d9d6f212c90ee745730b7d5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 296510,
+      "sha256": "cc5746596f45410c080f010d5000aa510aa71aa8c762438911fa3d57971525b2"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S03.png": {
+      "bytes": 54635,
+      "sha256": "828bf97693b893ba95ff9a9b9cfbe7455ed5423a5ce075634925fb36a16aca34"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S04.png": {
+      "bytes": 226445,
+      "sha256": "40aa3bcdc7658a1f3a778b2f02e6827a04195e1f33b16a426b8e3ca447518c64"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S05.png": {
+      "bytes": 224616,
+      "sha256": "d418d1b6cdf40de3fa8a5591c71d44761741b3a06816e4c3586468201e3c2108"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S06.png": {
+      "bytes": 242397,
+      "sha256": "fecaf0ab47a9328c2228a7748deb69919753b901e20c100909f3e828941df433"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S07.png": {
+      "bytes": 123509,
+      "sha256": "2c033f008ff23bf78bb16476068e32a2cd5e09a8ba7d66e38e3840a785a331cd"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S07a-before.png": {
+      "bytes": 237102,
+      "sha256": "4a027a7db286d4b4306ac727a32145fc02a548c956c1da9247fa79f2458b5530"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S07a.png": {
+      "bytes": 94998,
+      "sha256": "802152174d54237f0b314a86542236ba0f28e05a7711829b59a2b257053e6702"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S07b-before.png": {
+      "bytes": 245922,
+      "sha256": "83ef5e0eac2c008fb925e1bafd34c2705647037cf80dd536ca1c34d3562d02ba"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S07b.png": {
+      "bytes": 244566,
+      "sha256": "9f9abce3aa3d86c8f3a36752cd6b68e95ed0c2c131ddbe068d52a51eda8ee181"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S07c.png": {
+      "bytes": 244588,
+      "sha256": "c9f4bde46a6624d354501f4d5671866b8665f7be8c3d84661f3e1f5af0f1f0a6"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 96118,
+      "sha256": "0df25b2006d21c2f152974c70ce35aa15d4f4f096f2e4c1abcbcf1caeda390e5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 73620,
+      "sha256": "148fb4cbc5d488b5507e47e57eff34fa2dc6c167d67d63c3662ee57d91a2b1d4"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/status.json": {
+      "bytes": 9023,
+      "sha256": "7e20192a7f5f6cc53f8367c79ead3bb095d4daaf8e683531fd117cdfaafedf71"
+    },
+    "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 1883,
+      "sha256": "dd9f9d5156a08fc32cc22b1f4b34bd5cc8ca2c3efe9652f09d8bcf9d990fc2de"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 20718,
+      "sha256": "d51d2907ec92952dbbe15b09ae1a1597d58078c94d1c4cefddad77e06afdc25c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 3157,
+      "sha256": "fdfc7969120fcea6e3bf2bd87809e637c9efa150ba9bd624a77ec8dc55350e46"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/progress.md": {
+      "bytes": 4197,
+      "sha256": "7d4979466f8341187366270be907cda6ad74408bc9ca13ef771f1ca1819e3435"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/report.html": {
+      "bytes": 5879,
+      "sha256": "dcd66e4fa097882c0dae8822d3202d3e84da8685204d151172849126cbc5d5ab"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48137,
+      "sha256": "ed00ecf6b2aac326d85f3ad7a150099dd85a762a81d1a41a023e5d7fe815b579"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 87722,
+      "sha256": "6323039f364c6fb9491f83cdf4e3dd91963b5430d17a359d88cd7af35da145e7"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 173000,
+      "sha256": "723d71ef46d27ba213ad7ed78ad4954da483bf4d8b68475a518518fa2272c03a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 74455,
+      "sha256": "857d54f4867707fe8b019169dd952bf0234cb0e5fefef59f9cc4ab7dcc0582ec"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 78843,
+      "sha256": "62ffea88495161d8a7bb8e16340bb766538b91073e6936239e16ee7114c6cd6d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42584,
+      "sha256": "328caf505704a8d57e2a9fa4f8fbc5c8f5ca20f5227ea8cb652a2071b3233535"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76189,
+      "sha256": "d795416bcc586e5da4ea9b7430103f52b2b28dd19d5e8b1e30b4de0336774645"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 152782,
+      "sha256": "dbe324caf21f129dda045a6be8147840e3dfd62e1ca499c701906a6aa271b69e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 58818,
+      "sha256": "453d37d2c10c3850b6897c91a3b641210633fb65b655c80e64c31301a2b70bbe"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 58905,
+      "sha256": "de7646bf08fab03c2c6b33688f0eefeac920e6d27d0ec891604715c7366a97bb"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/status.json": {
+      "bytes": 4720,
+      "sha256": "e445f2ab0d14f1040c39442968d9ee107949944730ce60ba8d7e6355da98ad8a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 1883,
+      "sha256": "d6112371e5c6b213de47db4df7f96f46ab137a2f3c541572d0bf6eb3ed5c12e8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 20718,
+      "sha256": "d51d2907ec92952dbbe15b09ae1a1597d58078c94d1c4cefddad77e06afdc25c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 3107,
+      "sha256": "c40d68292e9971d04502d3bfcda0336a09442fc738227ed96b8433605e2d2bee"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/progress.md": {
+      "bytes": 4249,
+      "sha256": "f0eae19a9a70a434a3f6f5da18bfd26b94c53c5c3d069629f33fd67db50fc2cf"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/report.html": {
+      "bytes": 5885,
+      "sha256": "e16efb8a68da0d6e6c36af728d0342523b4aa5d8b49625a38b97341a63736909"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48341,
+      "sha256": "b465299072e1c2117a4ef9c6e377f752c239acbb60ffae5e0542dfbf96deacb3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 89346,
+      "sha256": "eae144c95650f60bed30b00e74542b87dcfa0e370852aa09cd510727f6a9fd55"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 165657,
+      "sha256": "29fc51ef4b8ff06d04a8c0ee8e5a469fbc656859ec14182ef5a5732a35b84633"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75342,
+      "sha256": "5ec54aa274c6b650a74c6a0cbe8fc604b719dd88e2d6cd35521f267b844969f8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 78268,
+      "sha256": "8883fc08364b6ecbb4f15a07a1e4c919966954328c9809e22f7bd1a554a861d5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42724,
+      "sha256": "aa4c79059bddbb8c0be37022daee6c97b37dc44547a10a15fde242aa5ea90570"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76403,
+      "sha256": "26856aa060820bee2ce30e27c240eab8aadc3a29adb1dd65b427c76761f61152"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 146344,
+      "sha256": "d887e607af82e9634254336d8ff6130f25613cd02db6c54a87d9a67a1b452742"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59359,
+      "sha256": "5a2ed7b3b24029cf169e889e61b82bed5d7af473b3c0febc00bdb19d9b69bcaf"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 58218,
+      "sha256": "6721926a7b20564f0f4f4ed7c04d9cb954253d717f3b90e6cc152653fa462a57"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/status.json": {
+      "bytes": 4723,
+      "sha256": "ebe76f34f7006acee285d7302849befe9177d2d08ed452752582aa0952204a98"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 1278,
+      "sha256": "59b2fdaf6fa6cd6599a7c953093e285f982e1ab7f73e7decc846b4f4cfa67048"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 17693,
+      "sha256": "08f1c44c7aada1608c66a9a05c8b8ff5b9bbc1b094093cf615a2909d05a6a7bc"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 2847,
+      "sha256": "e7b710ad329b9b8debca48455a280cb884ce8c9f1c54de6c4d89065256da7b42"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/progress.md": {
+      "bytes": 3657,
+      "sha256": "0e1b0886aa6acdb27d41a674b03a330499c894342e076e507242a561c078b783"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/report.html": {
+      "bytes": 5290,
+      "sha256": "7b815654bc862a9773d6f3dead279720cdf8a4c5d2932e7c732a5c7be2284a9c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48198,
+      "sha256": "e6de21beb6dc747f6bc1c6b58d5778cc81aeb246f07280b11ebb3f326ba79f9d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 88175,
+      "sha256": "e56979983e01bcdc829654dcadaf28794d142f6a7be0c20000c164930b946d18"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/annotated/S15.png": {
+      "bytes": 93564,
+      "sha256": "19bd046bb9eaa5f91c79a64805d34e42ece4129418109e375f8405e23c35c077"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/annotated/S20.png": {
+      "bytes": 94001,
+      "sha256": "61d5b3eb6f27c96df39595f9d00f27862d9811dca38be5206d3dab4a453e5514"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42689,
+      "sha256": "a36214836e3e9eabaed6b61ddfded0cd6d6ef356d4e0fa3083591bbeb4b46fd1"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76643,
+      "sha256": "a7244bc2b1e9fb159c0342e9c9781a632c09d3964b422f8aa13b0ed4449ec5a6"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/raw/S15.png": {
+      "bytes": 79728,
+      "sha256": "09df92699da330e248c76ba3f86c0584ac166cc02e143fd3635f610a1afef705"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/screenshots/raw/S20.png": {
+      "bytes": 80097,
+      "sha256": "04741ef561e69bbafb0c1941bd13211516d515b0c7fa7bc78bbfa28b77f986a5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/status.json": {
+      "bytes": 3955,
+      "sha256": "4903759792954e05580933c5c6b44bb3b1c54a40eb3358cd51a3faf58d3be7d0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 1883,
+      "sha256": "d6112371e5c6b213de47db4df7f96f46ab137a2f3c541572d0bf6eb3ed5c12e8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 20280,
+      "sha256": "0b2fb6397eb39d79528ce93cefb60a655c07e226b85495fadbb68ad8ac27f733"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/progress.md": {
+      "bytes": 2987,
+      "sha256": "f386ca05882249e61d7638944f5ff68e54223986bf6d80daaba9c000a3c72f83"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/report.html": {
+      "bytes": 5075,
+      "sha256": "34b9a68c7180d98a243004083690bc6215f6961d1890b1489018cc56aa6e9a3f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48260,
+      "sha256": "b3e277b471d7b3d8283bd1c1ae0ce1b5f2d2a4029d59b664dcfd9ff7fcda5515"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/annotated/S10A.png": {
+      "bytes": 97979,
+      "sha256": "ceb7ce03252f6ac7d13898012633bbe560651873dcdfe2c3f76a8813945e0f7b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/annotated/S10T.png": {
+      "bytes": 103248,
+      "sha256": "0249e0d34760d4cc7fb565d34b84a9110cb68f6138a26687718d983999537095"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 487893,
+      "sha256": "6ba721e28f2dcbf8e7e1cd32a4cf828047bdb7c2ebfaf018a21fc3169bb5896d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42738,
+      "sha256": "aa00796c1bdcf205f9999752b692fc4f461436618611399e965e6cb0ddbd25b3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/raw/S10A.png": {
+      "bytes": 83319,
+      "sha256": "340a113ba6b8fea21e0455ee9b98afad04a266304f2405fe6c7d410bbc7b0466"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/raw/S10T.png": {
+      "bytes": 88886,
+      "sha256": "a28c59f1dd4d8ffe116dcdc92d2ee93f457dfbe8f4ce71004025bd7071cf577f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 451552,
+      "sha256": "9fef3b3589d031b382058d4ed7ebb58286264a8cb20b7a9019de748693cd6d98"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/status.json": {
+      "bytes": 3905,
+      "sha256": "7695c5e6f550e031b9983413dbf25882220489fac2c3ac22d5ab749960c5481a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/axe-common-native-zoom.json": {
+      "bytes": 193202,
+      "sha256": "cd09cc6a4b9c4cc45b136c92298d18f7026bc55f0d41d6d7bef96fb39527ad14"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 3093,
+      "sha256": "64a9d3aae742f001c570c2f13f3454c4c8503be8ec269743935453b28e5b0748"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28927,
+      "sha256": "cb24b5d9fd5ffb38f5c0f0b9ef7a6dc597e3a0b8b0290628ff7bbec5322d0d74"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 4119,
+      "sha256": "8fa7900c4d7384d0b5e6aa03c5eb0f6ea6b50c7d4c0b5f161bb32120cd137627"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/progress.md": {
+      "bytes": 7810,
+      "sha256": "d18c7afcefe1096bb9bf6f51af2be9c8685bb895b1bbb884e79de67e36eac822"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/report.html": {
+      "bytes": 10103,
+      "sha256": "31f7384f5de97bc7668783d378c117914e231c263f2b9f0915446fb1d824966b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 49191,
+      "sha256": "a90e5e1dff7f1b13a08de29436296aa11c026175016f4216bd2f36b084cbbc2b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 88292,
+      "sha256": "1410db88c72e9665bbd62f780817fce2cb7c6db08967340e6ab4af86ee707db3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 168967,
+      "sha256": "7fc0d9d7e4807f6d2160466dbaffd8b31cf8a41945a10b98e72bcc87c891471b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75246,
+      "sha256": "0e5d11012d47a5f42f8977e83d5952fa6f9e361e5f983fc28ed23788f623f33b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 79357,
+      "sha256": "6db6378303bd7da301ccb6aaa3675ffe4c9f1c6cd6eb7143e419a83ead5d8659"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 95594,
+      "sha256": "342e41af5150a2af380afe63419e17f258ee501e2f5e4f321a8a594e250c104a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 192704,
+      "sha256": "bba27cfe323fd12d27e23deb784c16c6ba5a10c7972cd7e24c2df5f301243cc0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S12.png": {
+      "bytes": 172635,
+      "sha256": "d6bf05b81e7ceaed7f1bce29c0aefe58632fa1114c38448237e2f59c2e82479d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S13.png": {
+      "bytes": 176413,
+      "sha256": "546f84f70de339ad15637d669204456fd97e29ef6e9d0905a61eb0c126ed31d7"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/annotated/S14.png": {
+      "bytes": 355413,
+      "sha256": "294a2f4e116b8c157fb5db41b83005b68d702f75453abde7c4267c4111bcb1e5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 43606,
+      "sha256": "a43c19bdf5abc7d0ff3d6503d1fd83e07d9b5117784c8f0ac77ec4644c570493"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76860,
+      "sha256": "ee3e92507efcaa591c5cac20a03b331c32d10d152786d81d130cb0ca43ccf431"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 146363,
+      "sha256": "8a80321fb66403a656f66629c0c1985f816062c3c8ac921589d44cbe059dd0ae"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59144,
+      "sha256": "03b57cb83ebf455f690c7c79bb8d4e36998aabd27fb78808686ebb60524d5c61"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 59246,
+      "sha256": "382cbb5c4c1cf003aabe30f14832eac5ada0c7bc0d2710baa1467075d4f2d88d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 75833,
+      "sha256": "db2c593019dd3b75d5866cf560c00e2ae1bb1a17f794e5fb76b36838858b5483"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 134200,
+      "sha256": "0fbe76a82b5d432df8d670337148dc069a6daa304f2c705ee78936400a187e6e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S12.png": {
+      "bytes": 107198,
+      "sha256": "8e047a564674d59903cebd3f2a40a1dbd819f82a7f6dd1091b54d6954d9e5a32"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S13.png": {
+      "bytes": 115118,
+      "sha256": "0833198c821b8cb81d6061c7b88776f568918ec61492ceae07f7b286496c8a30"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/screenshots/raw/S14.png": {
+      "bytes": 256705,
+      "sha256": "97465b2987b4cc88591ab6c49636dd9335ee11a009204aef61021eafaed09bc7"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/status.json": {
+      "bytes": 8613,
+      "sha256": "525cf3bed52dae36ec5f6448b721e0e16da385780934bd82a85c20c7b089b81b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/axe-common-native-zoom.json": {
+      "bytes": 203081,
+      "sha256": "1594300a8b0ab71d928ed6237cd9c080bb6353e7f0f4b86ac70440600c2b6449"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 2488,
+      "sha256": "0c1af8b556c1d6d0e4a260dd215795fc6f63fed86aff9653f0b3cf5a13af234e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28915,
+      "sha256": "5508137d816fab95dfc77c825bb36a7d7af6956a38b9ef5c4066898cab4b57ba"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 5078,
+      "sha256": "054963a81a32cbe60ffc174a587295b08873cff71f6eae08c94ae008eab42878"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/progress.md": {
+      "bytes": 7911,
+      "sha256": "698d46b96481c3b5d333f5fe7b80eb8d377ef618fe91b6b2442c63eddc8e66b3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/report.html": {
+      "bytes": 10109,
+      "sha256": "7ef85842adbefb614ff2e4f528ee180c2092014e549a4fa0b0b156bc8972c08f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 49603,
+      "sha256": "6b9cf6e24518fc86f921dcaacc9df6e18b4241fa246f7b93920c41070d9eea3b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 89376,
+      "sha256": "43391dbe41452f325bf86cca03a016c625dbd3d584fe5cc85a73763ffd7ad750"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 161576,
+      "sha256": "057fedefdd01d8fa999f256989563da942ef0894766401fccbf3d663e70f90b9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75357,
+      "sha256": "b112275c4eb87cbe2b10a4f0dc8628fa51d5367764b38a233abac56c85fdc10f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 78086,
+      "sha256": "8fae77d415da5f9bbdad9f7112e41c4c057292c5e1636665fe3a560e6902e3b7"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 93970,
+      "sha256": "9863399e1104c66337caa1c1311c70b356fb50a550ab24f6af50cda74217c0fa"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 199196,
+      "sha256": "68ea7f46d174e85a60c379f6391d647167ec63da834b2502c41b1ab980371726"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S12.png": {
+      "bytes": 173270,
+      "sha256": "a61d44bccac1688fe4d336caffbe5ae61448f5a3efc42809e14c9f0afde80359"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S13.png": {
+      "bytes": 180593,
+      "sha256": "54909414027d2383003e6ec03c40a79822002ee8a2c295ca167e52ffe9626ade"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S14.png": {
+      "bytes": 359406,
+      "sha256": "a6e2dd59cc34661b1a7e9767711a5ae6850595e0e7a1ac6533d874309f696f15"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42985,
+      "sha256": "0e3105270caccd58b3ae0801d099d7528346522893b2b83ee9fc15eaac657139"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76678,
+      "sha256": "11b78fd83126848a7672e2d0b1a6124573750ade1c2bea8ed57e6e1202122be6"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 139453,
+      "sha256": "273e52e7ed79be8144619c08414acbf4a18666c94d2005e6cc389af8ed820ed1"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59262,
+      "sha256": "f3c52e7ec82faf716f6002ef57a1128e77d94d6e0e10a3aeea064482bf9c6300"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 57638,
+      "sha256": "1bd0f817b8eb046ad207a2fa50b6f447da27aa8e487bb711a5c3e9cceb90ccbd"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 74192,
+      "sha256": "4b8635f35e07b92fe517c63a10d84a146d829bd092ef6ad93870da6a91d3c316"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 138017,
+      "sha256": "59a3260d1d32b389912b1b45bf2d89955a86685246da198935c7abf1c9b024b3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S12.png": {
+      "bytes": 102653,
+      "sha256": "776fea64e863ec3b137e8b724041943440de2fc8da3bfb0d1d0c6e2e9716db95"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S13.png": {
+      "bytes": 121241,
+      "sha256": "516a17ab4789872313771688e9778d6abdd154d5cb3a9dbbb4ff22b77ed5532d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/screenshots/raw/S14.png": {
+      "bytes": 268018,
+      "sha256": "251eaa7fd3b6e4c492ea6ecf02744d088a39d029aff4a06a71865ceda3f25b6a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/status.json": {
+      "bytes": 8616,
+      "sha256": "3400dfe02f5f4221f025e438bcb44538174fbfd567893c3b032205a63335bab3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 1883,
+      "sha256": "dd9f9d5156a08fc32cc22b1f4b34bd5cc8ca2c3efe9652f09d8bcf9d990fc2de"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 27901,
+      "sha256": "7e83ad65abed78dc3d228c03a5608f5ace93b1f99c08094c53d6f94e343000d0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 3553,
+      "sha256": "69f0db9e65661cd7d8a6adc2d58026810907514201e9f43a74d32b64d3db96bf"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/progress.md": {
+      "bytes": 5633,
+      "sha256": "8897cd34bac49fbdf8feccb0735f18ef5979fcdee385361aaa2b094ce344e54a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/report.html": {
+      "bytes": 7320,
+      "sha256": "0122b95dced9efc7dbb0aede3d002cae5a5b11b778e70a95225031ac3cf08ed3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48583,
+      "sha256": "c732955916a73b6544c07dfdded49857c67afb1e7c4f767e8e064cbf58b8ba66"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 88368,
+      "sha256": "6962af38721aef8e4c45af6d6dbdf5cf373622459e9ec81e08fc66d8207cf6c8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 168589,
+      "sha256": "d96bebf26ed49b2f77952539352a3dd106ddca6068410d80728b305e80cc60d1"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75267,
+      "sha256": "e1095975279ba0c8a07cce81484ec90018fccc495831774f5c10fae1f7a9e6ba"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 79336,
+      "sha256": "31adcdd70fcfa72c1be33ebb839926db8dd0f02ba091888295548c5d8069814a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 96059,
+      "sha256": "9a4eab0a27e049531e675b401b4d8b93364a89159379df9908b34ecc1038d240"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/annotated/STOP.png": {
+      "bytes": 36252,
+      "sha256": "96f67cff637ee3a2fad0075b5bbf0b4d65a4ff807e361d71890f50a5a043c17e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42883,
+      "sha256": "abc8ad46c60f8abca29d28552e0e5fbb52c5394ecd8d3a00358eacff7eea16d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76757,
+      "sha256": "2d7366d1c5c7d67f24a9a8727776fffec25d54850b28b0d55d929e4bd99aac76"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 146411,
+      "sha256": "c59236d0474a80deaf77476c4fcce41e3cbbbc75a91a194aed591fad03fc57ce"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59318,
+      "sha256": "55fecdd1a8447b6206dd3263628b2caca2a7125240283ef589c3368526041d17"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 59099,
+      "sha256": "2a5a49429d16e92e8728fbee54b07fea2908fa5abd4bf65b52494628dc6ed20b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 76405,
+      "sha256": "007315b845f81d97f77692ff47c244df0fe7bc21d82de4961297b6379a7338e1"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/screenshots/raw/STOP.png": {
+      "bytes": 33063,
+      "sha256": "75fba5a48098cddc12900539b768f58f93b7c844473fc815234dc5f77260178f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/status.json": {
+      "bytes": 5822,
+      "sha256": "88ed84202ba27a3867cd3374b298f3835a667bdc7d63a6fcb0a7a0f0aac0c37a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 1883,
+      "sha256": "d6112371e5c6b213de47db4df7f96f46ab137a2f3c541572d0bf6eb3ed5c12e8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 27901,
+      "sha256": "7e83ad65abed78dc3d228c03a5608f5ace93b1f99c08094c53d6f94e343000d0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 3590,
+      "sha256": "a1a1aa7b786b8380673d6f2ce8b077122c24ba25b37a8f712e8d3240e715a324"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/progress.md": {
+      "bytes": 5699,
+      "sha256": "87a13d269c89c1763f43bbf49245f92d254985036e55641383327631102c0e77"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/report.html": {
+      "bytes": 7326,
+      "sha256": "1a0a920467fdea82a7dd501edc75e583f5f9c3b4f7e4b4f70136742070e2382f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48691,
+      "sha256": "dc40f4bf27db1ad6a89cb7dec443e44060a11a8cd815edbbbd5a004be792ba85"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 89864,
+      "sha256": "70fb2aae0ce71b93068fd03a4bb0b74463cd92dfc3773554a74349a508bebb66"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 162883,
+      "sha256": "80651a60d1820a3fb7fe9fa7926fac962b285731cd653e97ea157f078d0d4abf"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 76031,
+      "sha256": "cd74ffadffb76b61e8cd5f86ff77b17f95704576f52c3d6dbd78408635d54a8b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 78405,
+      "sha256": "e4c5e8bcf0b83e20bd318b2f0a3b0f88396ab477913a0e18a70482ff3825a5ea"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 94261,
+      "sha256": "19ad615e4a7cf2789b286689fde08c8206bdb938dbb9d915108dcaeb2b07e685"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/annotated/STOP.png": {
+      "bytes": 36128,
+      "sha256": "51d81670a1528bc7ff3b086e46484507c01c40847f97d0438f9c71fca365b538"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42974,
+      "sha256": "19074eeb364e066e729ce88ccd030fb2edcd0801025b5f870b595b139e6e2ca4"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76917,
+      "sha256": "7762632227f2676acba1675651bde7bc3a3c9d82358a340e8fef7f445771e538"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 139617,
+      "sha256": "6d4e8c3f1863c59bd280f8ecb62ec319e9dbeca6e75bdde20d9abb4d5a16fcca"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59763,
+      "sha256": "b8d4adb102d686339c7b0b6189c437697f732d3fc3e0b0d44bc2b086e9f2ecb8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 57907,
+      "sha256": "97484391649c84d99ca0345e6c84d6d9cbf1e7e9152bf80779a4e4e7ad099b2a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 74777,
+      "sha256": "0f9880694c8fc3507eeb49a2f3e45c4b719027e2231389e2853f1d6aa74a0e31"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/screenshots/raw/STOP.png": {
+      "bytes": 32988,
+      "sha256": "e454f0f46557659dba1d07d2c38f8a2fd39bbd9277862c2a9630626f5361b6ec"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/status.json": {
+      "bytes": 5825,
+      "sha256": "9c32382d100d7c0496c833e338ea1d1f0b1dea9007039f9ef8ff8a230bfe3b6b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 2488,
+      "sha256": "a9d68a731137e73f1a135d11e52fef22049efaf66958a68c475d30fcb58062ef"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28769,
+      "sha256": "4e326f507009882f012f721046e7ac8ee2a651dd59ae5a51460294cb835f3ddf"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 4556,
+      "sha256": "5c62b49fc98d3164ffca7b83c00765177517eb32d4f7f8b3a731d5162a2c1317"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/progress.md": {
+      "bytes": 7749,
+      "sha256": "5b4056a5a6261594db100cdf6a525201c434c214b00e159c8e972d9dc246d81a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/report.html": {
+      "bytes": 9400,
+      "sha256": "0ede1c800f7b2a308af1b862f08682898180bfcadefddafe007dfc0261ee2e46"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48562,
+      "sha256": "21f4efb3b81fdefbb82bf757d864f90e6bb9439ff3d894e32727b3c0f7e47b84"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 88403,
+      "sha256": "f9774720c64d843f4b0f9e2ea2e627d7c8cdf3e8a40a73be79d3ab7fdeae0659"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 168814,
+      "sha256": "bd8ea52b121935898bb8c7e13886e5eef17cd483c6ee4349b404622fb3234e73"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75645,
+      "sha256": "98c609258dd630a5dda3a4f08f86d77814c1c8b8804626f71bc511e1001b89eb"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 78847,
+      "sha256": "91eeb86baab37678c7031680d8cb1aea8d5deac60b24e2190ddf2d94ce246c42"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 95943,
+      "sha256": "1815586b03446a3340a44cd00acb49542cb66feed66f4e7718dbb989072605e5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 39371,
+      "sha256": "0679cb2ed9f7f69a61d9cd7ecb89439684f925172297e465beeb98c8d89c2d59"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S12.png": {
+      "bytes": 39017,
+      "sha256": "1359772504528d194723276f7309cbad96b03bbbdd0564e919e498ff5ab5a8f2"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/annotated/STOP.png": {
+      "bytes": 41902,
+      "sha256": "e8e5196c98306c362f6c5a75cdeb7a22302f267104692fe6f6f3db7049d5560a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42815,
+      "sha256": "d4762328f7df82dffb90d084709db114e5e713885860d870a5032dab5f030522"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76853,
+      "sha256": "dfb198552bca7711cf8885581ae7f78be6472da21708bafeab7ffe74c58c0a4e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 147049,
+      "sha256": "55d60ff74c8ddb96627f4861b2a605061875ab025f1c27fb412f4067562865ab"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59484,
+      "sha256": "40308967e2a33ad5967f881209f1b95a774d10c9e8816646899399aa802b697d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 58625,
+      "sha256": "98341cde7573e9c1a27b5a5ff831e45ed9fd9e6b86c1d6baf271d589ad6b8d1f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 76015,
+      "sha256": "72099e63563600b728a7f9f0c2904768d7ed1b00119766600e9934e05bf6d85d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 36445,
+      "sha256": "ae95644e2e983f234ad0c34b5f10018349594e376f4ab27b9b52993ddbff2167"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/S12.png": {
+      "bytes": 35582,
+      "sha256": "08ba61e2bf6954b8fa7d7d26b1e86a2900a91733ef68bfac57beb7d215c0deba"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/screenshots/raw/STOP.png": {
+      "bytes": 38637,
+      "sha256": "d366f2c14dafda553e42509dcdf427c8958a352066bf2083415388603aa9dd21"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/status.json": {
+      "bytes": 7617,
+      "sha256": "2cc5e3e3d7399776c75a8c472da372743fd886688471f3e2b44bfd1dc404ca2a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 2488,
+      "sha256": "0c1af8b556c1d6d0e4a260dd215795fc6f63fed86aff9653f0b3cf5a13af234e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28769,
+      "sha256": "4e326f507009882f012f721046e7ac8ee2a651dd59ae5a51460294cb835f3ddf"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 4903,
+      "sha256": "619b4299a6d2641b944a732dd1f0fe57243b7424495519c56617fcd5be2996a5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/progress.md": {
+      "bytes": 7843,
+      "sha256": "778001aafef3d7eb206ed7e6a7c20861a6d22d6ba5cfc1e8f3f4e7e800e2e73f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/report.html": {
+      "bytes": 9406,
+      "sha256": "bc89c85b391496e9cc047e8b88c5f949667aa1540646adea6d547581d3be0811"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48651,
+      "sha256": "672fb7c9e66890ad8a40717dcd0f26c14f163133a6d6e090d75ac5d4d58e8cf0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 89627,
+      "sha256": "743e4f7e976c94befc97158ede49d96419f87e2442ef33031219c342ebb3b960"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 161521,
+      "sha256": "fd143c09a36fb06e5560260c5e24771874fedfa1650bf1763fbf0c7fbd36984a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 76428,
+      "sha256": "cce8fbca4f08e37176efb98479d39080c53da9dbd3072b1f70dfb406eead9da8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 78257,
+      "sha256": "a2065bbb5c1b57a825f2e0d645b714079e46ffd1d393dafa8bf6805c9a57867a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 93748,
+      "sha256": "ba381b5d76d3d6d1944f0fe4067b8d9d7d8919aa15a1063e0eb7abc95baa3d6c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 36907,
+      "sha256": "c123d0b216bff8691c5e6ef769e80f515e66d128a8f4eb094eb54992119d3f1d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/S12.png": {
+      "bytes": 38725,
+      "sha256": "1cd0db552de90595923689e35efe5fabc41460a4d7bc62de34fca059bc660673"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/annotated/STOP.png": {
+      "bytes": 40378,
+      "sha256": "a9f38ed3943dadbc6e5358241e60040aed44e03a8746c181f841e93609429930"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42944,
+      "sha256": "b6d841ec0afb2853bf85434322697efb9dc40f2fab4b9f4a7fdedd8313d2deea"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76750,
+      "sha256": "894c601508b46aa2c19475b174a6ddb79ce62559352b529628c555a5b843e196"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 139500,
+      "sha256": "cce512012541f6da799e6ae7666c9c6fce2bf91ad8ea8e89cb7fe0886c52a883"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 60128,
+      "sha256": "3002dbe971591b15e719f0579ca0e095dd47ad85338796a2d175818c04878936"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 57847,
+      "sha256": "4ad338b7b3f325043f9116511932c9549aa1a3b7246a64ce5efe02c0d78ffb95"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 74191,
+      "sha256": "afbe8e1162b06726d2d396081d28d4ca06d26688073f18d4d79a67ba58a8f228"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 36380,
+      "sha256": "15d0f4e64d77bd629a46df274b4c8a8de4f9ba38516902377a141254aa228f5a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/S12.png": {
+      "bytes": 35356,
+      "sha256": "a775588782ea66571a15bbadf79d99a8b762df8f9bf3978a7cf313e8731e7520"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/screenshots/raw/STOP.png": {
+      "bytes": 37185,
+      "sha256": "82af4c024bf945e3ffd35046490af78984b8d313a2c38ddf700d3aad1faa5e13"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/status.json": {
+      "bytes": 7620,
+      "sha256": "65c4284de40cac31b951a9f8b219e3eb7f7a3f7ebf38f43445f68bca644b7e78"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/axe-common-native-zoom.json": {
+      "bytes": 193202,
+      "sha256": "2310d468936057425f854fcf03c5d5208d6f0d7772486b06027dbb261cf45daf"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 2488,
+      "sha256": "a9d68a731137e73f1a135d11e52fef22049efaf66958a68c475d30fcb58062ef"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28831,
+      "sha256": "e0a823a82085bfe5067d52b5085e784ef6b42f33ad144d6c99371324d3b5c049"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 4825,
+      "sha256": "6fa43b42ba8b06e2d4d2ead3cead8ea8c67860b0e1de2f30d526fb07ebc278fc"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/progress.md": {
+      "bytes": 7810,
+      "sha256": "3367d5a2a61193abbe0bd127577bb8076c64a132a62b312bb6c18c6263602820"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/report.html": {
+      "bytes": 9800,
+      "sha256": "18c3fc2e0013a18cf10a5510f41679e976cf11b73bf7b03fe3bff6821de20de0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48667,
+      "sha256": "9aa7d69ce6a2e914779900e26fde692c401681d972cd31dde3b98483fa39dad2"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 88053,
+      "sha256": "20211fd655e4e4486fb1b6bc5fc99b3b73a5fd8f724285a5ef43763e0e20487e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 169372,
+      "sha256": "4dd674df558fe2c6e6dab463e30a3c796020f7fc15f3ccb626a83786ec116eb4"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75306,
+      "sha256": "5479326fa3bf5e311f92d4f397ae58cfb324455b20f5e775b07cdd2922481ebe"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 79253,
+      "sha256": "5d6b97c86ebbbf5a27c4ae8afe300d17958f26e1ccd3e6132e8b7785a4a92c0c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 96113,
+      "sha256": "7bf82a91e424b8214c9523b36d202b9b6ddd50f584892f2deeab74ca8dab653a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 39371,
+      "sha256": "0679cb2ed9f7f69a61d9cd7ecb89439684f925172297e465beeb98c8d89c2d59"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S12.png": {
+      "bytes": 39017,
+      "sha256": "1359772504528d194723276f7309cbad96b03bbbdd0564e919e498ff5ab5a8f2"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S13.png": {
+      "bytes": 41902,
+      "sha256": "e8e5196c98306c362f6c5a75cdeb7a22302f267104692fe6f6f3db7049d5560a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S14.png": {
+      "bytes": 58610,
+      "sha256": "39ceb59142d6ba405b1fbb2b61e827724b4074f1ccf3fb606bb5ca73660a6a3c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 43022,
+      "sha256": "4b672f76ca082ca6b6570dc059d136d783dec0dcedb77efbbc29b5cbe682aa43"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76354,
+      "sha256": "d39d5d7626dbd36030d4ca1051af4a2ff484ae2dda37d9fdb7085cff00bbbe0f"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 146733,
+      "sha256": "7a26150eecd769ac4921d379dee96a6db736001e7c64a4741edda77ef1a4df76"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59192,
+      "sha256": "5ba4a5965283621dd53cbff6eb94b25923d757da2c2efdf87ef8217bb876a9a8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 58511,
+      "sha256": "41d5212c6324e809bdc68c6d910a2253d68463d2aa7c4210d0772ead9219aa99"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 76334,
+      "sha256": "314b810aac971d2d885c54e6dd07b47db16018f28b6c6a2bf254b29c13ad1ff8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 36445,
+      "sha256": "ae95644e2e983f234ad0c34b5f10018349594e376f4ab27b9b52993ddbff2167"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S12.png": {
+      "bytes": 35582,
+      "sha256": "08ba61e2bf6954b8fa7d7d26b1e86a2900a91733ef68bfac57beb7d215c0deba"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S13.png": {
+      "bytes": 38637,
+      "sha256": "d366f2c14dafda553e42509dcdf427c8958a352066bf2083415388603aa9dd21"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/screenshots/raw/S14.png": {
+      "bytes": 54625,
+      "sha256": "7be88df0b51e2796eaff280b602c2227df1d315c4214cfe18193f07c084d63c4"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/status.json": {
+      "bytes": 7926,
+      "sha256": "908a1db5ef8c74e4562720b1ca849341b82db0d031feb67e736336fff91d5cf5"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/axe-common-native-zoom.json": {
+      "bytes": 203081,
+      "sha256": "ccca32cb9c13866cde723c6c8c21ce0e8c46b041193741eafcda141c721e5313"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 2488,
+      "sha256": "0c1af8b556c1d6d0e4a260dd215795fc6f63fed86aff9653f0b3cf5a13af234e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28831,
+      "sha256": "e0a823a82085bfe5067d52b5085e784ef6b42f33ad144d6c99371324d3b5c049"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 4774,
+      "sha256": "7e5dce219a223052697ba4cffff6035c41e4633452c8563e580ee3afca61de1c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/progress.md": {
+      "bytes": 7911,
+      "sha256": "a7d7ff7f708ad5ea3bd0af82c2c060aff3b1785130bfceafeb5ca18ee33886be"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/report.html": {
+      "bytes": 9806,
+      "sha256": "28c2826f5bdf6725ea52b01dfa4199b990dea6eb7363a4ed67d9bd3be5442b15"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48681,
+      "sha256": "bd4ca43b8e4ac0d91f8022d40fc6c28b8113f0c4cf33a9008455ff6939b6d5d2"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 89463,
+      "sha256": "cc70bcccfcbc01e2357489a7fdc01996f38d8100d101b52dcd0e4334aedf1b64"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 162083,
+      "sha256": "5c65157a44e3a8b3f9f5c28bc74f26267a159663c0910170af610f68aa759584"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 76021,
+      "sha256": "3346897453a2dcfbf247ee8bb4791daead5b0615f8b34e8b817bbea4bcd1c5a0"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 78604,
+      "sha256": "d2c936fb168ae46437accb108a25176a3648e52cc98b11ba41f531267a88a5a9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 94216,
+      "sha256": "de99966e37164b695cbbb0e013b9fb4c9474e0e0c9bbf01d8d18d193ac06115d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 39258,
+      "sha256": "39ed47fa1a1eef8c55e6e62dd6f5234461137f3b574ef1f1d296f4b6d1eafe28"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S12.png": {
+      "bytes": 38725,
+      "sha256": "1cd0db552de90595923689e35efe5fabc41460a4d7bc62de34fca059bc660673"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S13.png": {
+      "bytes": 40378,
+      "sha256": "a9f38ed3943dadbc6e5358241e60040aed44e03a8746c181f841e93609429930"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/annotated/S14.png": {
+      "bytes": 60193,
+      "sha256": "fbe5628414226c1f0742f050a629a6ca30fb271e18e76f6dcdcd394c0d14a700"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42939,
+      "sha256": "c64a76317d7346e5a1833e62fb608983bfcda347c8a06f0162b27151b9e7af71"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76394,
+      "sha256": "517d56310296f1638bebfd39622c666eb106aaa5d316274545a62b090f592c56"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 139936,
+      "sha256": "77f8e36cf49b7f4bd5b931b089f417626b7381f41628f2f22a4332d3ad298388"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59638,
+      "sha256": "44c78cc282d71ae099df3c73e8e80e2e8a65f57e3ed4fd13d2016043279519af"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 58126,
+      "sha256": "b834423d7410e956f652a46e84771d5de413eb6d9d0ee09154b637e9f04222aa"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 74742,
+      "sha256": "ef8e5499db1790c6d7232bb27579fae2490dd0a2092b5e15d2cbaca21db663c9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 36380,
+      "sha256": "15d0f4e64d77bd629a46df274b4c8a8de4f9ba38516902377a141254aa228f5a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S12.png": {
+      "bytes": 35356,
+      "sha256": "a775588782ea66571a15bbadf79d99a8b762df8f9bf3978a7cf313e8731e7520"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S13.png": {
+      "bytes": 37185,
+      "sha256": "82af4c024bf945e3ffd35046490af78984b8d313a2c38ddf700d3aad1faa5e13"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/screenshots/raw/S14.png": {
+      "bytes": 56289,
+      "sha256": "bdbc6bb45477319338340996991b66c2d02ad83e8493e8b4f696da4ab007b16b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/status.json": {
+      "bytes": 7929,
+      "sha256": "f9a3f39bca0e4fd2fdd58161aa9fc481a4923b9042d93c98b4e03210a2874150"
+    },
+    "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 1883,
+      "sha256": "dd9f9d5156a08fc32cc22b1f4b34bd5cc8ca2c3efe9652f09d8bcf9d990fc2de"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28736,
+      "sha256": "a504b25fda67576b81b92c2dfc321abe986956b82836fb46448d05f6429b6514"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 3550,
+      "sha256": "98441ac740b9eca0a4d9924bd0a66fc51d1795439dd941b014f3f91fefa08663"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/progress.md": {
+      "bytes": 5633,
+      "sha256": "cda658b2d83a14d7519c40ba2a90cc4ee8c9c7646847310ea7dde4d584010c3c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/report.html": {
+      "bytes": 7320,
+      "sha256": "0122b95dced9efc7dbb0aede3d002cae5a5b11b778e70a95225031ac3cf08ed3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48590,
+      "sha256": "647d0a5b5b3bc62e18981d0d060fbfbdb97d10c41531817497eff6b04b550afc"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 88024,
+      "sha256": "d6dcdfcc6f1ca9802d8f952e66413acbd21f24d149cc7991e6c087f2c4d51880"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 168623,
+      "sha256": "8ab7a07db44416586d59a04226f9506eb5a1696c2138476bea7993f69566416b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75178,
+      "sha256": "419faeda961d1147ed5b2054b0c70fe5cb2262487a4feb5c4dd78df9c06a3389"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 79319,
+      "sha256": "0a95aa438d9ef17022128b62e96381ce5ebf7b71569c0bd87db5faaabb5cf067"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 95499,
+      "sha256": "d974d1b502a80bfa0b74831317fa82a1a5daa106e75d25e5131e28fd08ee629b"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/annotated/STOP.png": {
+      "bytes": 37030,
+      "sha256": "a81fd6919426c9ba698c3494bc5b8c1547d40dbf571d6439242ce2ade0a57149"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42900,
+      "sha256": "2954fced76a4345956010cd2cb86a2c361dac0a3bcecf6c88e12532cb263a448"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76385,
+      "sha256": "8d928408a14fd6dbc9c90f5526e5107dcab8192d91aa6002e26e1a8f7fc2cbf8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 146122,
+      "sha256": "a7aabd6debe350138ed06b767cfc4a0b6da59b7f44ce5f46665eb3eec0139f47"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59197,
+      "sha256": "7e33076f9fb0cd5ead6ddcca65324b6a88bc21675106eba525b7ce0d1cdedc09"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 59073,
+      "sha256": "29afe4af213c540d4269db12048e662d6043aca09f2df45e56afcfc6dc042897"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 76392,
+      "sha256": "1fe4be2654c4a3ed9933f93a78648f4776687e015c77c704141dddea3d0836f1"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/screenshots/raw/STOP.png": {
+      "bytes": 34126,
+      "sha256": "918ad9979378051e2e0314ba5fc94d9fcc8076c1d58a3386b2bb60a83b3a7444"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/status.json": {
+      "bytes": 5822,
+      "sha256": "876afaa5d7b7e050776b9f7aa3d44f3b12d733be50543363f97e9746e3466a25"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 2716,
+      "sha256": "4c448bdcfce062101eff8ad1abeb208a1199b7ef5a4582a6ed9a3741431f8b06"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 28915,
+      "sha256": "5508137d816fab95dfc77c825bb36a7d7af6956a38b9ef5c4066898cab4b57ba"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 4215,
+      "sha256": "e900bc7c3148038820c773d39fe1a6e4e4c03f6a902f9fa472d2e82e48e9f0bb"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/progress.md": {
+      "bytes": 6595,
+      "sha256": "8b7617e60fb272dbfebde13e1ac9a645173442f567674b2d80dad5c22b9c4146"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/report.html": {
+      "bytes": 8286,
+      "sha256": "10efe3cb699471aa5ea9faf41484155b4a4c690a6fd1147af10561b151a78b14"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 49296,
+      "sha256": "01f3e9676744a219484f0740b1ad158aaab727e5625061196fbeb346e14a4dd4"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 88033,
+      "sha256": "4004127bb488a1bc6eb2d38c858b5429165a3b4a6071ce002ea72ac2defc934d"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 169646,
+      "sha256": "405aa35959f2b5b91ffc8ed3d9c10de95521b62bc45f6f36c8bf97b3548f3284"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 75681,
+      "sha256": "6d08fc62920083bf4c30d7088f8bf1101b91c571432a3fa407aedc8a60413428"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 79593,
+      "sha256": "94c7162649fa10065d9d649004c8aa34350bb5585b39ccb3eeb4c29e5b33aa2c"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S11-before.png": {
+      "bytes": 95598,
+      "sha256": "0310e77534e05feb2294134f6952683791fb8f2a315463d868ae91c676fb2431"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 193168,
+      "sha256": "b7607486d71bfbb147168e706585af56d7df7775659d7d101679ef9e9607b38a"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/annotated/STOP.png": {
+      "bytes": 159405,
+      "sha256": "6ec118fe7e4f9bdac86484429a4c59eab3e19c1f5b3e570a1be5bcc3546c7fc8"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 43683,
+      "sha256": "9b755b919e171a716cf1b44081f6e30d96eb670c7f29e953307e16024c8d1eff"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 76479,
+      "sha256": "782429568b3c60570443b2164e2a9a86b9f395b8e5720445bd4b241105a5d3ad"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 146862,
+      "sha256": "5d8e40758e597b73651f3b6ddca1ca532bfe9f0fd2e38355c029f8d5d400d2cc"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 59577,
+      "sha256": "c5bdb38573ff6753caf3a8ba0be7f403c97ee22b91206b6ec9d036243541516e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 59352,
+      "sha256": "327581b72411c129a8f787e3eb65d9b7babbaa0835627a371fb07b54f9af2175"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/S11-before.png": {
+      "bytes": 75959,
+      "sha256": "3f7d06779e07ce9e686b2210c8dc5b270ee94bee1259adcf89b311ae137cf3a7"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 134283,
+      "sha256": "98f5107970cbdf9cb414bfc9f35e0e3571ff4091e6568db48d8e35a3f2e6d99e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/screenshots/raw/STOP.png": {
+      "bytes": 95832,
+      "sha256": "3b77ed0bdee493be7cc37f1d1f81c3ec104acc55a18c0f21cbc08d4451238c6e"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/status.json": {
+      "bytes": 6690,
+      "sha256": "a0507037b4e429f1fff0403b28649af55710b03ae64e95660bd3cee33c1d38d3"
+    },
+    "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/trace/README.md": {
+      "bytes": 176,
+      "sha256": "284f3e798a4dad87dcf82cdbed0c4faa12f4b708b35b7f08b3ce9432e83040d9"
+    }
+  },
+  "credential_value_scan": "passed",
+  "authenticated_traces_published": false
+}

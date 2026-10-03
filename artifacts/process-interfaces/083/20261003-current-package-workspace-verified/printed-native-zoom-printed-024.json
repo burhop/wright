@@ -1,0 +1,50 @@
+{
+  "method": "chrome.tabs.setZoom/getZoom via isolated test-only extension; no application script, CSS zoom or CDP page-scale emulation",
+  "beforeMetrics": {
+    "innerWidth": 1440,
+    "devicePixelRatio": 1,
+    "pageScale": 1
+  },
+  "afterMetrics": {
+    "innerWidth": 720,
+    "devicePixelRatio": 2,
+    "pageScale": 1
+  },
+  "zoom": {
+    "factor": 2,
+    "settings": {
+      "defaultZoomFactor": 1,
+      "mode": "automatic",
+      "scope": "per-origin"
+    }
+  },
+  "afterZoom": 2,
+  "zoomCommonSize": {
+    "width": 672,
+    "scrollWidth": 672
+  },
+  "result_ids": [
+    "5c3a84a335854e88aa8bbe48a591ce0d:authorize_transfer_configured_default_016:receipt",
+    "5c3a84a335854e88aa8bbe48a591ce0d:create_mesh_configured_default_016:create_mesh_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:create_mesh_configured_default_016:source_mesh",
+    "5c3a84a335854e88aa8bbe48a591ce0d:define_geometry_basis_configured_default_016:define_geometry_basis_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:filament_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:inspect_slice_handoff_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:machine_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:process_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:slice_evidence",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:support_preview",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:toolpath_summary",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:mesh_preview",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:repair_measure_orient_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:repaired_mesh",
+    "5c3a84a335854e88aa8bbe48a591ce0d:retain_slice_response_configured_default_016:provider_response",
+    "5c3a84a335854e88aa8bbe48a591ce0d:retain_slice_response_configured_default_016:retain_slice_response_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:summarize_preparation_configured_default_016:summarize_preparation_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:supports_and_slice_configured_default_016:slice_package",
+    "5c3a84a335854e88aa8bbe48a591ce0d:supports_and_slice_configured_default_016:supports_and_slice_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:validate_outputs_configured_default_016:diagnostic:validation/assessment-5f34914203794f148d653c47e99f98d4.json"
+  ],
+  "run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+  "model_or_process_or_review_requests": []
+}
