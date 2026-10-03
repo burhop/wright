@@ -1,0 +1,27 @@
+{
+  "before": {
+    "revision": 12,
+    "digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+    "default": "Synthetic review requirements"
+  },
+  "after": {
+    "revision": 13,
+    "digest": "89333f9b1df725ad192265a0c3d2b8e00814829db4bbd2f09f51dc2496a2ae5e",
+    "default": "Updated requirements for the current accepted process"
+  },
+  "conditional": true,
+  "compatibility": {
+    "ui_id": "ui-f1ca33c61df74d2ea8a96a3f284f2692",
+    "revision_id": "revision-619a6260b1e64c51807c7fb2ed823879",
+    "current_process": {
+      "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+      "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+      "source_digest": "89333f9b1df725ad192265a0c3d2b8e00814829db4bbd2f09f51dc2496a2ae5e",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "state": "compatible",
+    "reasons": [],
+    "optional_absences": []
+  }
+}

@@ -1,5 +1,26 @@
 # Feature 083 completion audit — incomplete
 
+## Installed source compatibility and unavailable authoring — 3 October 2026
+
+The [installed revision audit](../../artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md)
+reviews US3-AC4/AC5, EDGE-05 and NEG-12. Its cumulative ledger preserves all182
+obligations:40 proved,142 awaiting review. Three current installed reports pass
+12+3+3 steps: normal workspace entry, exact saved reuse/reopen with current scope,
+meaningful accepted-default agreement, incompatible required binding containment,
+complete unavailable authoring form and visibly usable common fallback. No old
+run/evidence/review authority transfers. The242-case owner/API evidence retains
+its controlled update/save/rollback scope; no new live-model generation is claimed.
+
+Wheel3d80a075de99d39e250837a55367f1aab3843f91bfc880a2dc2e7b26e9ef547f
+uses the unchanged qualified installed frontend. All three report structures pass;
+raw screenshots are inspected. UTF-8 helper failures, expanded-panel capture and
+fresh continuations remain explicit. Original source/document/run/immutable UI
+bytes restore or remain unchanged; copied reviews stay pending. All new views
+close and hosts26054/27734/96544 stop normally. Older owned hosts90330/46681 stay
+running at their original scope.550 engineering/UI files and unrelated work remain
+preserved.55 tasks remain checked; T056/T057 remain open. Continue broader shared
+style/accessibility, role/authoring/hosting and full contract/task semantic review.
+
 ## Saved interface source-revision compatibility — 3 October 2026
 
 The [scoped compatibility correction](../../artifacts/process-interfaces/083/20261003-ui-revision-compatibility-verified/README.md)
