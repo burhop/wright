@@ -1,0 +1,62 @@
+[
+  {
+    "report": "artifacts/ui-walkthrough/process-common-reference/20261003-008/report.html",
+    "overall": "blocked",
+    "steps": 6,
+    "browser_cases": {
+      "startTime": "2026-10-03T22:53:15.952Z",
+      "duration": 14347.082999999999,
+      "expected": 0,
+      "skipped": 3,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "cleanup": {
+      "pid": 50092,
+      "exit_code": 0,
+      "owned_host_terminal": true
+    },
+    "structure_validation": "Walkthrough artifact structure is valid.",
+    "scope": "Actual served frontend; controlled HTTP contracts, unavailable real-backend sink."
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-common-reference/20261003-009/report.html",
+    "overall": "pass",
+    "steps": 9,
+    "browser_cases": {
+      "startTime": "2026-10-03T22:58:16.314Z",
+      "duration": 29466.113,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "cleanup": {
+      "pid": 84260,
+      "exit_code": 0,
+      "owned_host_terminal": true
+    },
+    "structure_validation": "Walkthrough artifact structure is valid.",
+    "scope": "Actual served frontend; controlled HTTP contracts, unavailable real-backend sink."
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-common-reference/20261003-010/report.html",
+    "overall": "pass",
+    "steps": 9,
+    "browser_cases": {
+      "startTime": "2026-10-03T23:00:48.420Z",
+      "duration": 11956.392,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "cleanup": {
+      "pid": 50456,
+      "exit_code": 0,
+      "owned_host_terminal": true
+    },
+    "structure_validation": "Walkthrough artifact structure is valid.",
+    "scope": "Actual served frontend; controlled HTTP contracts, unavailable real-backend sink."
+  }
+]

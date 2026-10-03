@@ -1,5 +1,29 @@
 # Feature 083 progress
 
+## Shared UI/result/workspace primary audit — 3 October 2026
+
+The [shared UI primary review](../../artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/README.md)
+disposes 22 whole requirements/acceptance/task obligations. The cumulative ledger
+preserves all 182 identities/texts: **89 proved / 93 awaiting review**. 37 selected
+owners/tests are compared to retained regression source; changed tests use current
+93 backend and recorded 160 frontend checks. Current schema generation and strict
+browser-fixture TypeScript pass. Counts overlap prior evidence.
+
+Fresh controlled HTTP browser proof enters through Workflows/Use saved process,
+decodes a complete uploaded bitmap, blocks preparation during transfer, freezes
+the exact scoped digest, shows actual activity/progress and reopens the same run
+without replay. Four affected cases and a final nine-step visual continuation
+pass; scoped automated WCAG A/AA scans find zero violations. Initial fixture
+locator/read-contract/type errors stay retained and are corrected without changing
+production or engineering authority. All three owned temporary hosts stop normally.
+
+Actual retained installed editor/theme/200% zoom and both engineering saved views
+keep their original wheel/model/provider scopes. No new engineering execution or
+protected decision occurs. **55 tasks checked; T056/T057 and the goal remain open.**
+Continue the remaining engineering/migration/contract review and final packaging,
+documentation and preservation checkpoint; no complete feature/user acceptance.
+
+
 ## Current authoring trace correction — 3 October 2026
 
 The [trace diagnostics correction](../../artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/README.md)

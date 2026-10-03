@@ -477,7 +477,7 @@ export async function mockRecoveryWorkspace(
         typeof body.semantic_change_validated !== "boolean" ||
         (body.layout !== undefined &&
           body.expected_layout_revision !== document.layout_revision);
-      if (rejectNextUpdate || stale) {
+      if (rejectNextUpdate || stale || document === null) {
         rejectNextUpdate = false;
         return route.fulfill({ status: 409, json: conflictEnvelope(document) });
       }

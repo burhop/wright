@@ -83,6 +83,8 @@ export async function mockCommonProcessWorkspace(
     source?: string;
     loseStartAcknowledgement?: boolean;
     disconnectEvents?: boolean;
+    includeImage?: boolean;
+    holdImageUpload?: boolean;
   } = {},
 ) {
   const editor = await mockRecoveryWorkspace(page, {
@@ -100,11 +102,14 @@ export async function mockCommonProcessWorkspace(
   let starts = 0,
     eventReads = 0,
     cancelled = 0;
+  const uploads: ArtifactRef[] = [];
+  let releaseUpload!: () => void;
+  const uploadReady = new Promise<void>((resolve) => { releaseUpload = resolve; });
   const requests: string[] = [];
   const navigations: NavigationTarget[] = [];
   const reads: ArtifactRef[] = [];
   const readiness = (): Readiness => {
-    const supplied = input?.bindings.some(
+    const supplied = input?.bindings?.some(
       (binding) =>
         binding.kind === "value" &&
         binding.input_id === "brief" &&
@@ -158,8 +163,14 @@ export async function mockCommonProcessWorkspace(
           title: "Design request",
           value_schema: { type: "string" },
           required: true,
-          current_value: input?.bindings[0],
+          current_value: input?.bindings?.find((value) => value.input_id === "brief"),
         },
+        ...(options.includeImage ? [{
+          input_id: "reference", block_id: "reference", port_id: "reference_out",
+          title: "Reference image", required: false, binding_kind: "file" as const,
+          value_schema: {type: "string"},
+          current_value: input?.bindings?.find((value) => value.input_id === "reference"),
+        }] : []),
       ],
       readiness: checked,
       diagnostics:
@@ -265,10 +276,40 @@ export async function mockCommonProcessWorkspace(
         : [],
     };
   };
+  await page.route("**/api/settings", async (route) => {
+    expect(route.request().method()).toBe("GET");
+    return route.fulfill({json:{theme:"dark", llm_provider:"hermes"}});
+  });
+  await page.route(/\/api\/agent\/chat\/stream\/status(?:\?|$)/, async (route) => {
+    expect(new URL(route.request().url()).searchParams.get("session_id")).toBe(session);
+    return route.fulfill({json:{active:false, session_id:session}});
+  });
   await page.route(`**${prefix}/**`, async (route) => {
     const request = route.request();
     const url = new URL(request.url());
     const suffix = url.pathname.slice(prefix.length);
+    if (suffix === "/inputs/upload") {
+      expect(options.includeImage).toBe(true);
+      const form = await new Request(request.url(), {
+        method: "POST", headers: {"content-type": request.headers()["content-type"]},
+        body: new Uint8Array(request.postDataBuffer()!).buffer,
+      }).formData();
+      expect(form.get("session_id")).toBe(session);
+      expect(form.get("path")).toBe(process.source_path);
+      expect(form.get("expected_storage_digest")).toBe(process.source_digest);
+      expect(form.get("input_id")).toBe("reference");
+      const file = form.get("file");
+      expect(file).toBeInstanceOf(File);
+      const bytes = Buffer.from(await (file as File).arrayBuffer());
+      const reference: ArtifactRef = {
+        artifact_ref: `.wright/process-inputs/${process.source_digest}/${digest(bytes).slice(0,32)}.png`,
+        sha256: digest(bytes), media_type: (file as File).type,
+      };
+      uploads.push(reference);
+      // Explicit fixture release permits an observed pending transfer without a timing race.
+      if (options.holdImageUpload) await uploadReady;
+      return route.fulfill({json: reference});
+    }
     const body =
       request.method() === "GET"
         ? Object.fromEntries(url.searchParams)
@@ -401,6 +442,9 @@ export async function mockCommonProcessWorkspace(
     cancellations: () => cancelled,
     navigations: () => navigations,
     representations: () => reads,
+    uploads: () => uploads,
+    preparedInput: () => input,
+    releaseImageUpload: () => releaseUpload(),
     complete: () => {
       completed = true;
     },
