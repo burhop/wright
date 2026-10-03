@@ -1,0 +1,348 @@
+{
+  "status": "passed",
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "definition_sha256": "adfbe2e51277cf56cb063ecd584c010a8aa9e4b0ecf3304ba62fb2e25043b810",
+  "schema_file_sha256": "f6d2119e3f4c6085f5a84b9e14f893601c3b904159008593759b229d937262b4",
+  "production_gateway_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "api.gateway_stdio",
+    "--session-id",
+    "session-083-qualification",
+    "--workspace-id",
+    "workspace-083-qualification",
+    "--principal-id",
+    "private-provider-probe"
+  ],
+  "server_id": "qualification-083-oasis-clean-003",
+  "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+  "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "selected_tool_count": 17,
+  "tool": "qualification-083-oasis-clean-003__run_simulation",
+  "response_sha256": "98f337baef4b45455eb9dace822d1248e60b51314397f066daaac511a3d1679a",
+  "audit": [
+    {
+      "operation": "tool.list",
+      "target": "couple",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "couple_precice",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "coupled_solve",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "developer",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "discover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "examples",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_mesh",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "knowledge",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "prepare_simulation",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "rediscover_backends",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "reload_catalog",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run_simulation",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run_with_generator",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "session_insights",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "setup_backend",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "transfer_field",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "visualize",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "couple",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "couple_precice",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "coupled_solve",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "developer",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "discover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "examples",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_mesh",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "knowledge",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "prepare_simulation",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "rediscover_backends",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "reload_catalog",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run_simulation",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run_with_generator",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "session_insights",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "setup_backend",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "transfer_field",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "visualize",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "couple",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "couple_precice",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "coupled_solve",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "developer",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "discover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "examples",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "generate_mesh",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "knowledge",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "prepare_simulation",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "rediscover_backends",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "reload_catalog",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run_simulation",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run_with_generator",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "session_insights",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "setup_backend",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "transfer_field",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "visualize",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.call",
+      "target": "run_simulation",
+      "outcome": "started",
+      "reason": "policy_allowed"
+    },
+    {
+      "operation": "tool.call",
+      "target": "run_simulation",
+      "outcome": "succeeded",
+      "reason": "policy_allowed"
+    }
+  ],
+  "cleanup": {
+    "gateway_runner_stopped": true
+  }
+}

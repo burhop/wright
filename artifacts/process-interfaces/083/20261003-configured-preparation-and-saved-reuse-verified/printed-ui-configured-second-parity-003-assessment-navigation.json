@@ -1,0 +1,24 @@
+{
+  "process": {
+    "workspace_id": "083-printed-repeat-015",
+    "source_path": "workflows/printed-replacement-part-configured-default-016.workflow.wflow",
+    "source_digest": "1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "target": {
+    "kind": "assessment",
+    "block_id": "repair_measure_orient_configured_default_016",
+    "run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+    "result_id": "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:repaired_mesh",
+    "assessment_id": "assessment-5f34914203794f148d653c47e99f98d4",
+    "artifact_ref": null
+  },
+  "representation": {
+    "artifact_ref": "validation/assessment-5f34914203794f148d653c47e99f98d4.json",
+    "sha256": "6334d47afb6442a5028171d1ba706d6c5c9d89bbb8f9c46ae77ea2d8a93a3042",
+    "media_type": null,
+    "result_id": "5c3a84a335854e88aa8bbe48a591ce0d:validate_outputs_configured_default_016:diagnostic:validation/assessment-5f34914203794f148d653c47e99f98d4.json",
+    "representation_id": null
+  }
+}

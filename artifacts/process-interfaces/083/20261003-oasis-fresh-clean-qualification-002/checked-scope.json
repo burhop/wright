@@ -1,0 +1,138 @@
+{
+  "status": "passed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "selected_image": "sha256:e15942085d86f637c65da60c50804fa31500a43d2a45b3bd69bb19c82311760f",
+  "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+  "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "fresh_install": true,
+  "platform": "linux/amd64",
+  "protocol_tools": 17,
+  "gateway_schemas_exactly_equal": true,
+  "actual_backend_calls": 1,
+  "tool": "qualification-083-oasis-clean-003__run_simulation",
+  "solver": "skfem",
+  "critic_approved": false,
+  "trustworthy_result": false,
+  "gateway_host": "current source Windows native environment",
+  "backend_host": "fresh selected-provider Linux container, network none, one private workspace mount",
+  "cleanup_revalidated": [
+    {
+      "container_id": "1aaf22edbda8d29a0533f93b20c954ab19f4a90a706137eb0d796c7e66149e6a",
+      "owned_proof": "oasis-clean-base-003",
+      "running": false,
+      "status": "exited",
+      "network_mode": "bridge",
+      "mount_destinations": []
+    },
+    {
+      "container_id": "71d09de984a1a8902cf9518e044bd595ee414707a71d1c968b556be2bf0c5ebd",
+      "owned_proof": "oasis-clean-base-003",
+      "running": false,
+      "status": "exited",
+      "network_mode": "none",
+      "mount_destinations": [
+        "/workspace"
+      ]
+    },
+    {
+      "container_id": "492e39f096ce35a8ac7ae170adb7c83930b5f8a2799179feba234c25d388e30b",
+      "owned_proof": "oasis-clean-base-002",
+      "running": false,
+      "status": "exited",
+      "network_mode": "bridge",
+      "mount_destinations": []
+    }
+  ],
+  "original_source_hashes": {
+    "qualification.json": {
+      "original_bytes": 1443,
+      "original_sha256": "900dc9bc5f2b25369d9b5464212b4100c9e12e756c78a9f7ed438b6837a47c37"
+    },
+    "installation.log": {
+      "original_bytes": 24971,
+      "original_sha256": "9091a637ec2bea63dfc5b0d63c4a7fa180740832214e3807b56184a065226788"
+    },
+    "installation-command.json": {
+      "original_bytes": 642,
+      "original_sha256": "ee48c0d3605c8429a654b50656891aafa84f5bb799b046619598178bbf166834"
+    },
+    "tools.json": {
+      "original_bytes": 38743,
+      "original_sha256": "f6d2119e3f4c6085f5a84b9e14f893601c3b904159008593759b229d937262b4"
+    },
+    "gateway-definition.json": {
+      "original_bytes": 12743,
+      "original_sha256": "adfbe2e51277cf56cb063ecd584c010a8aa9e4b0ecf3304ba62fb2e25043b810"
+    },
+    "gateway/qualification.json": {
+      "original_bytes": 9084,
+      "original_sha256": "326950ed5153fea9ac69e2250bb223c07a3ca37d4662a3667c0e308171866872"
+    },
+    "gateway/result.json": {
+      "original_bytes": 2085,
+      "original_sha256": "f70d141ccbbc7d75da1589706039670b79399b09bc69dc95bf433647899d6573"
+    },
+    "gateway/gateway-tools.json": {
+      "original_bytes": 52218,
+      "original_sha256": "cdd8b5bcb4cdc15a393afcd19688c38cd1d625248302b097cb9580be45f3c02d"
+    },
+    "first-installer-failure/qualification.json": {
+      "original_bytes": 1023,
+      "original_sha256": "0433421142934f0d62d4910a5d6b601accb46c35d13d38cc2c5c689e3c687180"
+    },
+    "first-installer-failure/installation.log": {
+      "original_bytes": 116,
+      "original_sha256": "fbe0bdffe2c9ea14f4aa1e7ff31f4847e9f514d1f44dbe8b7288cd6250b327d3"
+    },
+    "actual-solver/geometry-analysis-correspondence.json": {
+      "original_bytes": 1772,
+      "original_sha256": "b248d63795287d5f7ac0f733099919b8e3fa1ee24d155638d51fd9bfdb313623"
+    },
+    "actual-solver/heat-balance.json": {
+      "original_bytes": 2019,
+      "original_sha256": "2879bf370f454f572f883ccc680118dc24173ce144c8ddcd6266ac0e78372657"
+    },
+    "actual-solver/mesh-comparison.json": {
+      "original_bytes": 51,
+      "original_sha256": "234ab0540a9e69e94fa1169da9420bc369e2399e65b7e64ee6815295c9a054ef"
+    },
+    "actual-solver/qualification_fixed-coarse-temperature.csv": {
+      "original_bytes": 13526,
+      "original_sha256": "0f843bb9aa086b96f2dddba4d988e52a0e399ab585712591ad84531efb41b3c2"
+    },
+    "actual-solver/qualification_fixed-coarse-temperature.vtu": {
+      "original_bytes": 4399,
+      "original_sha256": "d45a74f13bc53a94e55ed541855aa10828399ca364bb535e176c1825d91cc196"
+    },
+    "actual-solver/qualification_fixed-fine-temperature.csv": {
+      "original_bytes": 76526,
+      "original_sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+    },
+    "actual-solver/qualification_fixed-fine-temperature.vtu": {
+      "original_bytes": 29028,
+      "original_sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3"
+    },
+    "actual-solver/sizing-decision.json": {
+      "original_bytes": 3415,
+      "original_sha256": "3240cf1b9fcb146b8e49994352c08deb4bc55b4b5a04059097fc15e59e271f03"
+    },
+    "actual-solver/stderr.log": {
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual-solver/stdout.log": {
+      "original_bytes": 93,
+      "original_sha256": "fa6764b198955e7917f66bf0b0d2e4e93dcdf325fb5a51196d7a59f7f18c3669"
+    }
+  },
+  "first_failure": "Installer used non-root default user; apt exited 100. New isolated attempt used root only for selected prerequisite installation, then restored selected-cache runtime ownership.",
+  "publication_failure": "The original publication helper passed a log string to the mapping-only redactor and stopped. A fresh publication uses shared text redaction; no provider installation or solver operation was repeated.",
+  "limits": [
+    "Only the selected skfem backend was exercised; listing other tools is not qualification of their hosts.",
+    "The actual production gateway ran on the host; no clean-base in-container API gateway claim.",
+    "This is a small backend qualification case, not either original engineering assignment or independent critic approval.",
+    "Remaining selected Blender/slicer/AgentCAD fresh qualification keeps T043 open."
+  ],
+  "physical_dispatch": false,
+  "public_catalog_promotion": false
+}

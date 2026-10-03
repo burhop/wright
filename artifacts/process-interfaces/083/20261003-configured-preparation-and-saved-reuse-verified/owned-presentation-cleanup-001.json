@@ -1,0 +1,46 @@
+{
+  "ui_id": "ui-0a09766ccdd94bfdb3dab1f5519d1628",
+  "closed": [
+    {
+      "presentation_id": "5c23a348-850a-476c-8c39-8e1098b5fc66",
+      "surface_id": "cf9e5dd1-1549-443c-8565-7db35c53b084",
+      "status": 204
+    },
+    {
+      "presentation_id": "7ebecf2b-f6a7-4ca7-9a94-2d0cb33a08b2",
+      "surface_id": "8d2f29e8-0811-4d45-8985-12b64fd2c74f",
+      "status": 204
+    },
+    {
+      "presentation_id": "c76a5ab4-5ecd-488d-9804-4c9bacfa8504",
+      "surface_id": "7f8eb436-8236-4796-b604-aace118819fb",
+      "status": 204
+    },
+    {
+      "presentation_id": "9900cfdb-cc1d-486e-8703-8a7ee61606bd",
+      "surface_id": "2b82e886-810a-4390-9e07-f546f7a648cf",
+      "status": 204
+    },
+    {
+      "presentation_id": "4dd40633-64a7-429f-8547-7ce113f2244c",
+      "surface_id": "a4091d31-b85e-4052-bf2b-af9c4fe9af41",
+      "status": 204
+    },
+    {
+      "presentation_id": "ff0d88d4-017d-4b89-ba22-bdbbb675070b",
+      "surface_id": "1e12f1ab-b1cf-4203-b328-0d460c0ae8ba",
+      "status": 204
+    }
+  ],
+  "before_run_sha256": {
+    "40a732fd2ccb46c2af8a0f466febee00.json": "d7381373916f67270a0bb3def71322b21243650576f507b7e54182895332a66b",
+    "5c3a84a335854e88aa8bbe48a591ce0d.json": "9db2ea5d2cf0867123afca5ac228d782e4ce6763a6bbd4e36e754edd470f3bde"
+  },
+  "after_run_sha256": {
+    "40a732fd2ccb46c2af8a0f466febee00.json": "d7381373916f67270a0bb3def71322b21243650576f507b7e54182895332a66b",
+    "5c3a84a335854e88aa8bbe48a591ce0d.json": "9db2ea5d2cf0867123afca5ac228d782e4ce6763a6bbd4e36e754edd470f3bde"
+  },
+  "run_bytes_unchanged": true,
+  "engineering_review_or_action": false,
+  "other_ui_presentations_touched": false
+}

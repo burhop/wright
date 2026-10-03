@@ -1,0 +1,42 @@
+{
+  "kind": "design_check",
+  "at": "2026-10-03T07:40:38.219450+00:00",
+  "task_id": "validate_outputs_configured_default_016",
+  "task_title": "Check exact current engineering outputs",
+  "report": {
+    "schema_version": "wright.process-validation/1",
+    "assessment_id": "assessment-5f34914203794f148d653c47e99f98d4",
+    "assessment_digest": "6cbec678cb34e005ee784f4fe719e82040fc1749a069449645462ad95b52a039",
+    "attempt_id": "933f495aa7c04443bc4571863081755b",
+    "workspace_id": "083-printed-repeat-015",
+    "is_current": true,
+    "release_eligible": false,
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 17
+      }
+    },
+    "finding_count": 1,
+    "verdict": "needs_input",
+    "assessment_path": "validation/assessment-5f34914203794f148d653c47e99f98d4.json",
+    "corrections": [
+      "An authenticated human review is required for this requirement."
+    ]
+  },
+  "revision": 0,
+  "status": "needs_input",
+  "message": "Validation is holding downstream work; inspect the saved findings.",
+  "assessment_id": "assessment-5f34914203794f148d653c47e99f98d4",
+  "assessment_path": "validation/assessment-5f34914203794f148d653c47e99f98d4.json",
+  "release_eligible": false
+}

@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "platform": "linux/amd64",
+  "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+  "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "fresh_selected_install": true,
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "install_container": "1aaf22edbda8d29a0533f93b20c954ab19f4a90a706137eb0d796c7e66149e6a",
+  "clean_base_preflight": {
+    "packages": {
+      "tool_registry": true,
+      "mcp": true,
+      "skfem": false,
+      "gmsh": false,
+      "pyvista": false,
+      "blender_mcp": false
+    },
+    "hosts": {
+      "blender": null,
+      "FreeCAD": null,
+      "openscad": null
+    }
+  },
+  "installation_seconds": 65.77164550000452,
+  "installation_exit_code": 0,
+  "selected_cache_runtime_owner": {
+    "uid": "1000",
+    "gid": "1000"
+  },
+  "selected_image": "sha256:e15942085d86f637c65da60c50804fa31500a43d2a45b3bd69bb19c82311760f",
+  "install_container_stopped": true,
+  "runtime_container": "71d09de984a1a8902cf9518e044bd595ee414707a71d1c968b556be2bf0c5ebd",
+  "runtime_network": "none",
+  "direct_protocol": {
+    "initialized": true,
+    "tools_listed": 17
+  },
+  "gateway_return_code": 0,
+  "solver_input_code_sha256": "b71d692da20dfd729703f05922b571aa36920726ca7bd885e511ba3452d09a87",
+  "runtime_container_stopped": true
+}

@@ -1,0 +1,97 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "actual-solver/geometry-analysis-correspondence.json": {
+      "bytes": 1820,
+      "sha256": "c0c7540bae5acd720b5ca3a5b0424d01584dc1bd1e5a9e6312e0715e3f9a17e0"
+    },
+    "actual-solver/heat-balance.json": {
+      "bytes": 2081,
+      "sha256": "cd2a682e615924f60e89ed1ae50d3125dfaa770c50a4f9a8b96f6b3afeb99a6f"
+    },
+    "actual-solver/mesh-comparison.json": {
+      "bytes": 54,
+      "sha256": "1309e70b4ae92028b1592e0af9c713c3eff93d46d4f6f0448f230f0d63caa4a2"
+    },
+    "actual-solver/qualification_fixed-coarse-temperature.csv": {
+      "bytes": 13526,
+      "sha256": "0f843bb9aa086b96f2dddba4d988e52a0e399ab585712591ad84531efb41b3c2"
+    },
+    "actual-solver/qualification_fixed-coarse-temperature.vtu": {
+      "bytes": 4399,
+      "sha256": "d45a74f13bc53a94e55ed541855aa10828399ca364bb535e176c1825d91cc196"
+    },
+    "actual-solver/qualification_fixed-fine-temperature.csv": {
+      "bytes": 76526,
+      "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+    },
+    "actual-solver/qualification_fixed-fine-temperature.vtu": {
+      "bytes": 29028,
+      "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3"
+    },
+    "actual-solver/sizing-decision.json": {
+      "bytes": 3511,
+      "sha256": "fd999831acafec832144b2f555091faae06f8ab4e5d7079582bb8c55c98f5582"
+    },
+    "actual-solver/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual-solver/stdout.log": {
+      "bytes": 94,
+      "sha256": "355d0bc7840ed65513b3ad25a7a2c689f0d647be101741b9b852feaa9bde5076"
+    },
+    "checked-scope.json": {
+      "bytes": 6188,
+      "sha256": "f400a126da020c9b8098b9849a8893caaf0d59aad8152c3ee64f1cf2cea204b2"
+    },
+    "first-installer-failure/installation.log": {
+      "bytes": 118,
+      "sha256": "863998501992edafa81f8dae5dbd3c34d736d99804a13e070c6a56c7ca6ae2d7"
+    },
+    "first-installer-failure/qualification.json": {
+      "bytes": 1023,
+      "sha256": "0433421142934f0d62d4910a5d6b601accb46c35d13d38cc2c5c689e3c687180"
+    },
+    "gateway/gateway-tools.json": {
+      "bytes": 52218,
+      "sha256": "cdd8b5bcb4cdc15a393afcd19688c38cd1d625248302b097cb9580be45f3c02d"
+    },
+    "gateway/qualification.json": {
+      "bytes": 9084,
+      "sha256": "326950ed5153fea9ac69e2250bb223c07a3ca37d4662a3667c0e308171866872"
+    },
+    "gateway/result.json": {
+      "bytes": 2085,
+      "sha256": "f70d141ccbbc7d75da1589706039670b79399b09bc69dc95bf433647899d6573"
+    },
+    "gateway-definition.json": {
+      "bytes": 12743,
+      "sha256": "adfbe2e51277cf56cb063ecd584c010a8aa9e4b0ecf3304ba62fb2e25043b810"
+    },
+    "installation-command.json": {
+      "bytes": 644,
+      "sha256": "c793e4be0f87efe2c73a94e527d2b51e38d5a36eaaf9ee93b974c12e068d25b8"
+    },
+    "installation.log": {
+      "bytes": 25353,
+      "sha256": "9d004171b80c7aa28fc55884b11365d99673aa2470aed683383a92757c8a1bb5"
+    },
+    "qualification.json": {
+      "bytes": 1443,
+      "sha256": "900dc9bc5f2b25369d9b5464212b4100c9e12e756c78a9f7ed438b6837a47c37"
+    },
+    "README.md": {
+      "bytes": 1795,
+      "sha256": "80c49713829768880e81920e1484cd4a6e75abb914f4685f46dbb55b9cc9f699"
+    },
+    "tools.json": {
+      "bytes": 38743,
+      "sha256": "f6d2119e3f4c6085f5a84b9e14f893601c3b904159008593759b229d937262b4"
+    }
+  },
+  "credential_value_scan": "passed"
+}

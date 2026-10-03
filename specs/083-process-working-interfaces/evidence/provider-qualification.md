@@ -91,3 +91,37 @@ they must not mask the response or blindly recreate geometry.
 T043 remains pending overall qualification and selected creation-binding checks.
 These small backend probes do not execute either original engineering assignment,
 promote the public catalog, establish human acceptance, or authorize physical work.
+
+## Fresh clean OASiS selected installation — 3 October 2026
+
+Attempt003 starts from neutral Linux/amd64 Wright image
+`512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73`.
+Preflight confirms selected OASiS/skfem/gmsh/pyvista/Blender packages and native
+CAD hosts absent. Only free selected prerequisites and pinned OASiS revision
+`7c184d5b7ca5cda6086f3912d1c7923c58307780`, MCP 1.28.1 and scikit-fem 12.0.2
+are freshly installed with new selected Python/cache directories; the base image
+is unchanged. Attempt002's unprivileged apt failure remains. Fresh attempt003
+uses root for prerequisites, then restores default-user selected-cache ownership.
+
+Official initialization/listing succeeds with seventeen tools; their input
+schemas exactly match the production gateway projection. One actual
+`run_simulation(solver=skfem, critic_approved=false)` call through current
+`api.gateway_stdio` solves a 1 W, 50 x 30 x 2 mm conduction case and emits nonempty
+CSV/VTU plus balance/refinement records. The provider explicitly reports
+`trustworthy_result=false` without independent critic review. Listing other tools
+does not qualify their backends.
+
+The selected backend runs with network disabled and one isolated workspace mount.
+The production gateway uses the current Windows source environment; no clean-base
+in-container API gateway is claimed. Both successful containers and the failed
+installer are revalidated stopped by exact labels/IDs. Publication repeats no
+solver or installation. The first publisher passed a string to a mapping-only
+redactor and stopped; the fresh publisher uses existing text/mapping redactors
+and passes an actual credential-value scan.
+
+[Scope/provenance/cleanup](../../../artifacts/process-interfaces/083/20261003-oasis-fresh-clean-qualification-002/checked-scope.json)
+and [qualification record](../../../artifacts/process-interfaces/083/20261003-oasis-fresh-clean-qualification-002/README.md)
+retain launch/configuration, schemas, installation logs, actual response/outputs,
+source hashes and first failures. Databases, contexts and traces are excluded.
+T043 remains open for other selected Blender/slicer/AgentCAD fresh install/host
+and creation-binding obligations. No public catalog/setup metadata is promoted.

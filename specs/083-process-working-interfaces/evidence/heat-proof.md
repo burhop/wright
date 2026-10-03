@@ -415,9 +415,26 @@ credential-scanned inventory. Authentication contexts/traces and native run logs
 remain private. Serial reuse does not establish native project concurrency.
 Cached provider installations do not satisfy fresh clean qualification T043.
 This is source-served digital/browser evidence, not current installed-editor,
-thermal-performance, physical or human engineering acceptance. Printed preparation,
-migration and remaining full-feature obligations stay open; T047 remains incomplete.
+thermal-performance, physical or human engineering acceptance. Migration,
+qualification and remaining full-feature obligations stay open. The later
+configured016 printed proof completes T047's other engineering chain.
 All nine walkthrough structure checks pass. Screenshot inspection establishes
 the displayed table controls, assessment result focus and producer inspector;
 sample counts and full assessment contents are verified by browser assertions.
 The captures are not a claim of full chart/assessment visibility in one viewport.
+
+## Two-process obligation closure — 3 October 2026
+
+The [read-only obligation audit](../../../artifacts/process-interfaces/083/20261003-two-process-obligation-audit-002/audit.json)
+checks both retained inventories, all sixteen walkthrough structures and complete
+original validation-profile equality in actual assessments. Heat's mandatory held
+check is `basis-review`; printed preparation uses `engineering-review`. The first
+audit incorrectly assumed the same ID; its failure is preserved. No assessment,
+profile or review authority was changed.
+
+Together the two substantially different actual tool chains satisfy T047: real
+handoffs/checks, Wright actual-default-model generation/preview/save/focused update,
+unchanged saved second-run reuse and exact common/tailored evidence/navigation.
+T043 qualification, T041/T052 full platform/installed UI, active migration and final
+regression/requirement audits remain separate. Human engineering and independent
+critic acceptance remain ungranted.

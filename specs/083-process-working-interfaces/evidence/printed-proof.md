@@ -1,5 +1,66 @@
 # Printed replacement-part proof
 
+## Current configured016 source gates and reusable interface — verified
+
+The original focus-wheel assignment completes actual construction,
+repair/orientation, external offline slicing, package/profile/toolpath inspection,
+AI report and an exactly enrolled digital simulator handoff in two runs of one
+accepted process. Its digest is
+`1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7`;
+immutable inputs are `inputs-73d468d414dc47309c0d72203ef1afad`. Runs
+`40a732fd2ccb46c2af8a0f466febee00` and `5c3a84a335854e88aa8bbe48a591ce0d`
+each produce twenty outputs in distinct directories. Actual construction/repair
+arguments equal the pinned recipes after backend run-ID resolution. Each native
+stage executes once; earlier failed runs and consumed decisions remain intact.
+
+Both runs execute the original eighteen-check source gate, with distinct
+assessments `assessment-da4a53f1a99f4c0b95358956e3dce7cf` and
+`assessment-5f34914203794f148d653c47e99f98d4`: seventeen passes, mandatory
+authenticated human review blocked, zero failures/errors. The audit compares
+the entire assessment profile with the pinned original, including every
+requirement, unresolved decision and check. Release remains ineligible; the
+durable diagnostic is `PROCESS_VALIDATION_NEEDS_INPUT`. Attributed synthetic
+basis/simulator decisions do not satisfy human review. No physical action occurred.
+
+Actual Blender geometry retains the six-scallop wheel, blind D socket and grip
+features. Source/repaired meshes have 10,824/10,808 triangles and no non-manifold
+edges; bounds are 36.721066 x 38 x 18 mm. Repair/orientation preserves source
+bytes and records 180-degree X rotation with socket-up. The raised hub can
+require underside supports; zero-support, torque/fit and physical rounds are
+not certified. Actual slicer settings retain PETG, 0.4 mm nozzle, 0.20 mm layers,
+four walls and 35% infill. Passive preview has 90 nominal layers, 69,559 segments
+and 10,862 arcs; startup/shutdown and firmware execution remain unverified.
+The PNG is geometry-only.
+
+Wright's inherited default `gpt-5.6-sol`/Hermes coding role creates and updates UI
+`ui-0a09766ccdd94bfdb3dab1f5519d1628`, saved updated revision
+`revision-d38d8f51a4674fe7816f9b00ca43ad73`. Generation and focused update each
+pass thirteen workspace checks, waiting second-run reuse ten, and complete first
+and second common/tailored parity fifteen each. Both views retain the exact twenty
+result IDs, actual geometry and nominal layers/support controls, held assessment,
+exact producer and saved reload. Assessment ID/file hash and canonical assessment
+digest remain distinct.
+
+Both 42-file run freezes, six saved UI assets and four jobs/twenty authoring
+records remain unchanged during reuse. Earlier failed runs' 44 files, saved assets
+and rows are preserved. Viewing sends no generation, compilation, start, decision
+or action mutation. Second-run continuation acknowledgements were
+`OUTCOME_UNKNOWN`; durable reconciliation confirmed each execution once. Original
+helper assumptions and capacity/self-digest stops are retained without replay.
+
+The [completed walkthrough](../../../artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/second-run-exact-output-parity/report.html),
+[checked scope](../../../artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/checked-scope.json)
+and [two-process audit](../../../artifacts/process-interfaces/083/20261003-two-process-obligation-audit-002/audit.json)
+retain actual outputs/provenance, all seven validated report structures and
+inspected geometry/toolpath/editor screenshots. Credentials/traces remain private.
+The first audit assumed both profiles used the same review ID; its failure is
+preserved and the corrected audit checks each complete original profile.
+
+This satisfies T045 and the printed half of T047. Configured geometry is a
+supplied qualified recipe, not arbitrary prompt modelling. Fresh qualification,
+active slicing retirement and final installed/editor/accessibility acceptance
+remain separate obligations. Older pending statements below are historical.
+
 ## Repeated partial runs, saved UI and explicit operations — 3 October 2026
 
 Same accepted source `9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82`

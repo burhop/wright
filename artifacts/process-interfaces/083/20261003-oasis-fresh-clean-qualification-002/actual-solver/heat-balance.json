@@ -1,0 +1,62 @@
+{
+  "qualification_fixed": [
+    {
+      "mesh": "coarse",
+      "divisions": [
+        8,
+        4,
+        2
+      ],
+      "nodes": 135,
+      "elements": 384,
+      "maximum_temperature_c": 25.55555555556174,
+      "minimum_temperature_c": 20.0,
+      "heat_input_w": 1.0,
+      "heat_removed_w": 1.0000000000015459,
+      "relative_heat_imbalance": 1.545874539488068e-12,
+      "analytical_hot_end_c": 25.555555555555557,
+      "relative_analytical_rise_error": 1.1127099242003166e-12,
+      "cold_boundary": "Dirichlet",
+      "interface_coefficient_w_m2k": null,
+      "field": {
+        "path": "/workspace/gateway/solve/qualification_fixed-coarse-temperature.vtu",
+        "sha256": "d45a74f13bc53a94e55ed541855aa10828399ca364bb535e176c1825d91cc196",
+        "bytes": 4399
+      },
+      "field_csv": {
+        "path": "/workspace/gateway/solve/qualification_fixed-coarse-temperature.csv",
+        "sha256": "0f843bb9aa086b96f2dddba4d988e52a0e399ab585712591ad84531efb41b3c2",
+        "bytes": 13526
+      }
+    },
+    {
+      "mesh": "fine",
+      "divisions": [
+        16,
+        8,
+        4
+      ],
+      "nodes": 765,
+      "elements": 3072,
+      "maximum_temperature_c": 25.55555555558066,
+      "minimum_temperature_c": 20.0,
+      "heat_input_w": 1.0,
+      "heat_removed_w": 1.0000000000079639,
+      "relative_heat_imbalance": 7.963851800241173e-12,
+      "analytical_hot_end_c": 25.555555555555557,
+      "relative_analytical_rise_error": 4.51862547379278e-12,
+      "cold_boundary": "Dirichlet",
+      "interface_coefficient_w_m2k": null,
+      "field": {
+        "path": "/workspace/gateway/solve/qualification_fixed-fine-temperature.vtu",
+        "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3",
+        "bytes": 29028
+      },
+      "field_csv": {
+        "path": "/workspace/gateway/solve/qualification_fixed-fine-temperature.csv",
+        "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b",
+        "bytes": 76526
+      }
+    }
+  ]
+}

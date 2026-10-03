@@ -1,0 +1,182 @@
+{
+  "title": "Saved focus-wheel preparation interface on a second isolated run",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-03T07:35:24.852Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved focus-wheel workflow and click Use saved process."
+    },
+    {
+      "label": "Attach second run",
+      "instruction": "Open its recorded run link and inspect the basis result and waiting review."
+    },
+    {
+      "label": "Reuse",
+      "instruction": "Click Create or choose interface, select Focus-wheel configured preparation and click Open saved interface. Leave Approve untouched."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working interface and inspect the same second-run basis and declared review."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Repeated focus-wheel preparation proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the focus-wheel workflow",
+      "summary": "The exact accepted focus-wheel workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-configured-default-016.workflow.wflow"
+      ],
+      "expected": "The accepted focus-wheel workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Focus-wheel workflow diagram",
+      "summary": "The original focus-wheel assignment opens with its connected review, geometry and slicing stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted focus-wheel workflow file.",
+      "controls": [
+        "workflows/printed-replacement-part-configured-default-016.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved focus-wheel source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual focus-wheel run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded focus-wheel run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing focus-wheel run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Second run waits at its declared review",
+      "summary": "The common view shows only the second run basis and exact waiting review.",
+      "purpose": "Compare the backend contract before opening the saved UI.",
+      "action": "Inspect the common view; leave its review unanswered.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "One second-run result and the declared review.",
+      "actual": "Second-run waiting state and exact basis result are visible.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Saved comparison reused",
+      "summary": "The same built revision follows the second run with its distinct basis result and waiting review.",
+      "purpose": "Prove reuse of existing built assets without another authoring job.",
+      "action": "Select the saved focus-wheel preparation interface and click Open saved interface.",
+      "controls": [
+        "Saved interface",
+        "Open saved interface",
+        "Review the next action"
+      ],
+      "expected": "The same saved revision displays only second-run state.",
+      "actual": "Saved comparison displays the second-run basis and declared review.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Reload reconciles the same second run",
+      "summary": "Reload restores the same built UI and pending second-run review.",
+      "purpose": "Separate view lifetime from backend work.",
+      "action": "Reload the saved working interface; leave Approve untouched.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "No start, model generation, save or review dispatch.",
+      "actual": "Same second-run evidence restored with no authoring/execution mutation.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    }
+  ]
+}

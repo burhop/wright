@@ -18,8 +18,8 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Read the latest correction below before any new execution. Both printed repeat015 runs are terminal MODEL_UNAVAILABLE at repair; preserve their actual source meshes and consumed basis decisions. Its focused UI update, waiting-state saved reuse and exact partial-result/3D/producer navigation now pass, with frozen runs/assets/authoring records unchanged. Explicit qualified operations can now prepare through the existing configured-tool binding; 202 affected tests pass. Fresh live construction-to-source-gate proof of that option is not yet established. Use a new proposal/source, exact isolated test enrollment and compatible UI bindings for the new configuration. Preserve the original engineering assignment, supplied operations, provider safeguards and full gate. Do not replay the two failed subjects or repeat unchanged AI-copy attempts. Reuse verified Heat evidence without rerunning its CAD/solver or authoring chain. Then finish qualification/migration and the remaining platform obligations.
-2. Complete common/tailored output, assessment, block/evidence navigation, compatibility, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
+1. Preserve the audited completed two-process digital proof. T045/T047 are checked after exact inventories, original profiles, sixteen report structures and screenshot inspection. Finish remaining selected Blender/slicer/AgentCAD qualification and active slicing/transitive caller migration, then final current UI/editor/installed/accessibility/regression and requirement audits. Fresh OASiS qualification003 is published with stopped owned containers and retained failures. Do not replay completed engineering runs, consumed synthetic decisions or reconciled unknown actions merely to produce another report.
+2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
 5. Audit every requirement, success criterion, acceptance case and task against authoritative evidence. Update completion.md, the evidence index, runnable guidance, progress and task checkboxes. Finish focused local commits. Mark complete only when the full required scope is proved; checked task counts are not percentage completion.
@@ -32,6 +32,147 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Current continuation — two-process obligations audited
+
+The preceding goal turn supplied a status review/prompt only; classify it as no
+implementation progress. This continuation verifies both retained inventories,
+all sixteen walkthrough structures and complete original profile equality,
+and inspects the repaired geometry, 90-layer toolpaths/controls and exact producer
+screenshots. The first audit's incorrect shared review-ID assumption is retained;
+the fresh audit checks printed engineering-review and Heat basis-review against
+their respective original profiles, without changing engineering authority.
+
+T045/T047 are checked. The ledger is **49 checked / 8 open**: T041, T043, T048,
+T049, T052, T053, T056 and T057. See
+`artifacts/process-interfaces/083/20261003-two-process-obligation-audit-002/`.
+Printed source gates, model generation/update, saved reuse and full parity are
+verified at their scope. Human reviews remain held and physical validation is
+not assessed. Older pending statements below are historical.
+
+Fresh OASiS selected-install/protocol/production-gateway qualification is published
+under `artifacts/process-interfaces/083/20261003-oasis-fresh-clean-qualification-002/`.
+Direct and gateway schemas match; one skfem execution emits actual fields with
+critic_approved=false. Three exact owned containers are revalidated stopped.
+The first publisher's redactor type error remains; corrected publication runs no
+new installation or solver call. Actual credential-value scan passes. Remaining
+selected provider/native host/creation-binding scope keeps T043 open.
+
+Current dirty documentation and the new exact evidence roots need a focused local
+commit after staged byte/preservation verification. Services for either full
+engineering proof have not been revalidated by this read-only evidence audit;
+check ownership/liveness before reuse. Continue substantive qualification and
+active migration, preserving other examples' neutral helper imports and all
+protected campaign/history identities. No physical action or push/merge/release.
+
+### Latest checkpoint — both configured016 source gates and saved reuse recorded
+
+Read-only status review on 3 October 2026; HEAD remains `1d529f0e`. This
+review runs no tests, engineering operations, decisions or continuations. The
+authoritative task ledger still has **47 checked / 10 open**: T041, T043, T045,
+T047, T048, T049, T052, T053, T056 and T057. New evidence has not yet been fully
+mapped to task closure; these counts are not a completion percentage.
+
+The completed engineering continuation supersedes the older waiting checkpoint
+below. Configured016 runs `40a732fd2ccb46c2af8a0f466febee00` and
+`5c3a84a335854e88aa8bbe48a591ce0d` use the same accepted source and immutable
+inputs. Each has twenty outputs and an actual original-source assessment with
+17 passes, one mandatory human-review hold, zero failures and zero errors.
+The recorded terminal diagnostic is `PROCESS_VALIDATION_NEEDS_INPUT`, release
+is ineligible, and physical validation is not assessed. This is a legitimate
+engineering review hold, not permission to approve it unattended.
+
+The new evidence root is
+`artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/`.
+Its inventory covers 283 files including the inventory itself. Seven walkthroughs
+retain five passing continuations and two earlier stops: interface capacity and a
+harness self-digest assumption. Actual-model generation and focused update each
+record thirteen passes; waiting saved reuse records ten; first and second complete
+common/tailored parity each record fifteen. Geometry, ninety nominal toolpath
+layers, exact assessment/result/producer navigation and reload are recorded.
+Each run's 42-file freeze, six saved UI files and four jobs/twenty authoring records
+remain unchanged during reuse; earlier failed runs and their assets remain intact.
+The public package has passed its actual credential-value scan. Finish report
+structure/visual inspection and authoritative evidence/task mapping before
+promoting this into completed acceptance obligations or committing the package.
+
+Both second-run continuation requests received `OUTCOME_UNKNOWN` acknowledgements
+and were subsequently reconciled with durable execution and the source gate.
+The first helpers stopped on their acknowledgement assumptions; their receipts
+are retained. Do not submit either action again. All four exact enrolled synthetic
+basis/simulator responses have already been consumed. They establish digital test
+flow only; no human engineering acceptance or physical dispatch occurred.
+
+Fresh clean OASiS qualification attempt003 records successful selected installation
+from the neutral Wright image, seventeen protocol tools and one actual skfem
+solver call through the production gateway in a network-disabled container.
+Its install/runtime containers were stopped. Evidence remains private under
+`.local-run/process-interfaces-083/t043-oasis-clean-base-003/`; publish sanitized
+scope/provenance/output/cleanup evidence with the retained attempt002 installer
+permission failure. This does not qualify the other OASiS backends, or complete
+selected Blender/slicer/AgentCAD qualification. T043 remains open.
+
+Uncommitted owned work includes the new evidence root, the historical demo guide
+correction, and checkpoint documentation. Preserve unrelated untracked files.
+Revalidate ownership/liveness of API8040, frontend5245 and provider hosts before
+reuse; this status review does not establish current service availability.
+Preserve the completed Heat proof and installed original-history compatibility.
+Audit transitive imports before retiring slicing/campaign helpers: several other
+examples depend on their neutral functions. Keep the original thirty assignments,
+protected campaigns and existing validator thresholds unchanged.
+
+### Latest read-only reconciliation — configured run016 and saved interface
+
+Historical checkpoint, superseded by the completed continuation above.
+
+Status review on 3 October 2026; HEAD `1d529f0e`, following implementation
+`496a83f3`. No tracked implementation changes, new tests, starts, decisions or
+continuations were performed in this review. The ledger remains **47 checked /
+10 open**: T041, T043, T045, T047, T048, T049, T052, T053, T056 and T057.
+Preserve all existing untracked evidence and unrelated documentation.
+
+Private receipts and helper ownership:
+`.local-run/process-interfaces-083/t047-printed-configured-016/`.
+This uses the existing isolated workspace `083-printed-repeat-015` and its
+database/owned provider hosts; the new accepted source is
+`workflows/printed-replacement-part-configured-default-016.workflow.wflow`,
+digest `1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7`.
+Inputs are `inputs-73d468d414dc47309c0d72203ef1afad`.
+First run is `40a732fd2ccb46c2af8a0f466febee00`. Its previously enrolled synthetic
+basis response and continuation have already been submitted once. Do not rerun
+prepare/start/review/continue helpers or approve unrelated subjects.
+
+The durable recorder ends its current segment at `awaiting_approval`; normal
+read-only interaction observation returns HTTP200, `waiting_human`, eighteen
+outputs, no diagnostics, and waiting checkpoint
+`checkpoint-b3a1a7c7af8ce1b56aad1de3` at `authorize_transfer_configured_default_016`.
+Actual configured construction/repair, external offline slicing, OASiS package
+inspection and model-written preparation report are present. This review has
+not evaluated their engineering correctness, verified submitted argument parity,
+or established the exact source validator's result. A waiting action and a
+model-written report must not be promoted into an engineering pass. Reconcile
+the existing exact gate through its owning services without approving a mandatory
+human requirement, relaxing measurements or dispatching hardware.
+
+Actual-default-model authoring job `job-44b4334d008542c29d6bb5b3e6baee8b` is
+already saved: UI `ui-0a09766ccdd94bfdb3dab1f5519d1628`, revision
+`revision-1c498bcb93884514bb6f2c838ed48fb4`. Provenance records inherited default
+`gpt-5.6-sol`, Hermes, and versioned `process-ui-author` instructions. The normal
+workspace generation/preview/save/open walkthrough records thirteen passes and
+empty console/page/failed-response diagnostics:
+`artifacts/ui-walkthrough/process-interfaces-083-printed-configured/20261003T072052Z-printed-configured-authoring-001/report.html`.
+This is recorded browser evidence, not a fresh rerun or complete output/assessment
+parity proof. Do not regenerate this job simply because its original receipt says
+queued. Focused update, same-source second run, frozen artifact preservation and
+common/tailored exact assessment/navigation proof remain.
+
+API8040 is reachable. Frontend5245 and native/container process handles still
+require current ownership/liveness checks before reuse or restart. Private
+contexts/presentations/traces contain credentials and must not be published.
+Continue independent provider qualification, migration, installed editor/UI,
+accessibility, regressions and requirement audit while a real review waits.
+This supersedes older pending-generation and running-summary statements; it
+closes no task and claims no physical or human engineering acceptance.
 
 ### Latest correction — partial-run navigation complete; configured mode needs live proof
 

@@ -1,45 +1,27 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Latest correction:** current printed repeat015 runs both failed at the repair
-model timeout; their source meshes and consumed decisions remain preserved.
-Actual-model interface update, second-run waiting reuse and exact partial-result/
-3D/producer navigation pass with unchanged saved assets and authoring records.
-The explicit configured-operation option has 202 affected controlled test passes;
-its fresh live construction-to-source-gate proof remains required. See
-[printed evidence](evidence/printed-proof.md#repeated-partial-runs-saved-ui-and-explicit-operations--3-october-2026).
-This supersedes older unproven-parity statements only for the recorded partial
-results. It closes no task and does not establish a complete printed package,
-current installed acceptance, fresh qualification or human engineering acceptance.
+**Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
+T053, T056 and T057. Task counts are not a percentage of completion.
 
-**Audit checkpoint:** source `dcebc661`, following verified exact navigation and
-saved-view departure cleanup. Fresh consumer 003 source gate, common/tailored
-exact outputs/navigation and genuine working reload are recorded. The installed
-generic host task T034 is now closed by its scoped source/wheel/evidence audit.
-T037 is subsequently closed by the current scoped transport/theme/navigation
-audit, eight two-process browser checks and fresh fixed-runtime packaging.
-T021 is subsequently closed by 57 common/recovery component checks and the
-19-case served mocked common/editor/composer/082 continuation. The ledger is
-47 checked / 10 open; broader editor, authoring and engineering acceptance remain
-incomplete.
-Subsequent shared run-path preparation/continuation changes have controlled
-237-pass/one-host-privilege-skip evidence, including distinct outputs, immutable
-templates and same-run review continuation. Heat subsequently proves actual
-same-source CAD/solver/validator execution, distinct native versions and unchanged
-saved updated-interface reuse; see its
-[repeat proof](evidence/heat-proof.md#same-accepted-source-repeated-native-execution-and-saved-updated-interface).
-Printed example adoption, fresh provider qualification and broader acceptance
-remain open. See the preceding controlled runtime
-[scoped proof](../../artifacts/process-interfaces/083/20261003-run-path-binding-verified/README.md).
-This correction does not close an additional task or establish live-provider
-qualification.
+T045 and T047 are now checked by the exact two-process obligation audit002.
+Two configured printed016 runs each produce twenty outputs and execute their
+original source gate: 17 passes and mandatory human review held. Heat's actual
+same-source repeat has eighteen outputs, 765 fine-field samples and its original
+25-pass/one-review-held assessment. Both complete original profiles are unchanged.
+Actual-model generation/focused update and saved second-run reuse/common-tailored
+evidence/assessment/producer/reload parity are recorded for both chains. All
+sixteen walkthrough structures and both artifact inventories pass the read-only
+audit. Earlier failures, frozen files and protected campaigns are preserved.
+See [printed proof](evidence/printed-proof.md), [Heat proof](evidence/heat-proof.md)
+and [obligation audit](../../artifacts/process-interfaces/083/20261003-two-process-obligation-audit-002/audit.json).
 
-Printed run-path adoption and run-owned receipt binding now have controlled
-implementation evidence: 278 affected regressions and preserved eighteen-check
-profile/opaque inputs; see the [receipt/preparation proof](../../artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/README.md).
-This supersedes the preceding unimplemented-adoption claim only for declarative
-preparation. Actual printed same-source repeat execution, current saved-interface
-parity and fresh qualification remain unproven. No additional task is closed.
+Fresh clean OASiS installation/protocol and one production-gateway skfem call are
+qualified at their recorded scope; other selected-provider obligations remain
+T043. Active slicing/caller migration, current-build complete authoring/editor/
+accessibility/installed journeys and final regression/requirement audits remain.
+No physical, critic or human engineering acceptance is implied. See the latest
+[checkpoint](continuation-goal.md#current-continuation--two-process-obligations-audited).
 
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
@@ -80,11 +62,11 @@ checks passed. No row grants an engineering review or external-effect authority.
 | FR-009 Server-derived scopes and isolation | [Surface bridge](evidence/surface-bridge.md), [verification](evidence/verification.md): 149 controlled boundary regressions; distinct existing surface grants preserved. | Full T053 affected scope suite; installed presentation authority. |
 | FR-010 Replaceable coding role through Wright/default model | [Native authoring](evidence/native-ui-authoring.md), [actual authoring](evidence/live-ui-authoring.md), both job-specific proofs. | Full T029/T037/T041 coverage/provenance audit; do not claim unqualified agent platforms. |
 | FR-011 Fixed bounded build and immutable preview/save | [Actual authoring](evidence/live-ui-authoring.md), [verification](evidence/verification.md). | Full installed/UI acceptance; no model-defined build/launch authority. |
-| FR-012 Saved reuse/update/rollback/compatibility/fallback | Actual-model reuse for both jobs: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). Heat now has actual same-source repeat execution and unchanged saved updated-interface parity/reload. Current wheel viewer has working-context same-run reload proof; earlier preview-only overclaim is corrected. | Finish printed current-revision second-run parity/recovery and T041; retain completed T051's scoped installed compiler/model-free reuse evidence. |
+| FR-012 Saved reuse/update/rollback/compatibility/fallback | Both actual-model chains now have generation/update and unchanged saved second-run parity/reload: [Heat](evidence/heat-proof.md), [printed](evidence/printed-proof.md). | Complete T041 negative/authoring scope; retain T051 installed compiler/model-free reuse evidence and finish current T052 journeys. |
 | FR-013 Exact engineering subjects and 082 authority | Partial: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md), [verification](evidence/verification.md). Fresh consumer 003 executed its original gate: 17 pass, 1 mandatory human-review block. | Preserve earlier failed consumers and their skipped gates. Complete current common/tailored exact-subject parity without granting human acceptance. |
 | FR-014 Permitted neutral MCP actions/consume/reconciliation | [MCP operations](evidence/mcp-operations.md), [action controls](evidence/action-controls.md); separate simulator receipt recorded. | Current full action/recovery tests and common/tailored exact subject parity. No hardware qualification. |
-| FR-015 Independent providers and vendor retirement | **Incomplete:** [migration](evidence/generality-and-migration.md), [provider qualification](evidence/provider-qualification.md), [caller retirement](evidence/prototype-caller-retirement.md). Active operational endpoints/startup/client and device/Studio modules/scripts are retired; inert 410 URLs and installed canonical history are verified. Transitive slicing/campaign dependencies, original prototype formats and full replacement remain open. | Finish T043/T048/T049; preserve unrelated dirty changes and historical campaign bindings. |
-| FR-016 Two actual engineering/UI chains | **Partial:** [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). Actual tools/files/model UIs exist; fresh wheel source gate executed; full parity remains incomplete. | T045/T047 full engineering/common-tailored proof, keeping failed runs and genuine review barriers. |
+| FR-015 Independent providers and vendor retirement | **Incomplete:** device/Studio operational paths are retired and three original historical formats have installed read-only compatibility. [Fresh OASiS](evidence/provider-qualification.md) has scoped qualification. | Finish T043/T048/T049: other selected qualification and active slicing/transitive callers. Preserve original historical/campaign bindings. |
+| FR-016 Two actual engineering/UI chains | **Verified at T045/T047 scope:** [Heat](evidence/heat-proof.md), [printed](evidence/printed-proof.md), full profile/inventory/report audit002. Actual handoffs, original source gates, model-created UIs and exact common/tailored parity are retained. | Human reviews remain held; qualification and final platform/installed acceptance retain separate obligations. |
 | FR-017 Protected evidence/history/reporting ownership | [Baseline](evidence/pre-implementation-baseline.json), [legacy adapter](evidence/legacy-run-adapter.md), [installed history](evidence/installed-history-retirement.md); original snapshots/protected hashes, six source-served and six installed canonical history checks. | Finish original prototype-format coverage, migration and final protected/unrelated byte verification. |
 | FR-018 Installed resources and compiler-free saved UI | [Distribution](evidence/distribution.md): current root/private-service wheel and source-archive exact resources, isolated reference/shared-result-reader compilation and both native/clean Linux mounted common/saved/reload journeys checked; T050/T051 complete in their recorded scope. | Retain authoring capability limits; finish newest engineering/editor and final acceptance audits. |
 | FR-019 Useful progress/previews/failures/diagnostics | [Shared controls](evidence/shared-working-controls.md), [readers](evidence/representation-readers.md), [workspace acceptance](evidence/workspace-acceptance.md). | Complete served loading/error/freshness/accessibility/trace and two-process acceptance. |
@@ -93,15 +75,15 @@ checks passed. No row grants an engineering review or external-effect authority.
 
 | Criterion | Open audit finding |
 | --- | --- |
-| SC-001 Both normal workspace common/tailored journeys | Source-served and native/clean-Docker reuse journeys have scoped evidence. Complete current engineering-output parity, navigation and editor acceptance audit remain pending. |
+| SC-001 Both normal workspace common/tailored journeys | Both actual engineering chains now have exact source-served output/assessment/producer/reload parity; existing native/clean-Docker reuse evidence remains. Full current editor/preview acceptance remains T052. |
 | SC-002 All missing choices caught; upstream/declared response usable | Narrow service/preparation cases exist; current combined regressions and full journey audit pending. |
 | SC-003 Successive checkpoints/duplicates/disconnect/restart | Retained controlled evidence exists; current combined suite and exact same-run audit pending. |
-| SC-004 Actual-model generate/preview/save/update/second reuse for each | Heat current same-source generation/update/repeat reuse now has exact run/UI/build/asset preservation proof. Printed current second-run parity and final T041/T047 coverage remain open. |
-| SC-005 Matching evidence/stale/binding denials in both views | Controlled boundary coverage exists; complete common/tailored parity pending. |
+| SC-004 Actual-model generate/preview/save/update/second reuse for each | Both actual chains have exact run/UI/build/asset preservation proofs through Wright. T047 is checked. T041 broader authoring/error/accessibility regression scope remains separate. |
+| SC-005 Matching evidence/stale/binding denials in both views | Exact engineering output/assessment parity is now verified for both chains. Complete current affected negative/currentness/binding-denial audit remains T053/T056. |
 | SC-006 Tab/lost acknowledgement cannot duplicate dispatch | Runtime/client checks exist; full served/installed negative journey pending. |
-| SC-007 Tools, real handoffs, outcomes/checks/limits | Actual CAD/solver and geometry/slicer artifacts retained. Fresh wheel consumer 003 executed its original gate with 17 passes/1 required-review hold; earlier failed consumers retain their skipped gates. Full two-process proof remains incomplete. No fixture substitutes. |
+| SC-007 Tools, real handoffs, outcomes/checks/limits | Two actual substantive tool chains and original source gates are verified: printed 17 passes/mandatory review hold, Heat 25 passes/mandatory review hold. Digital/test-decision/physical/human limits are retained. |
 | SC-008 Editor and native/Docker installed checks/reopen | **Partial:** native/Docker mounted working-view/reload checks pass. Installed editor creation/configuration, Undo/Redo, typed keyboard connections/rejection, saved positions, zoom/compact scale and actual save conflict are now checked. Pointer sockets, pan, broader accessibility and current-build working/preview journeys remain pending. |
-| SC-009 No active vendor control in migrated path/history preserved | **Incomplete:** operational API/startup/client and device/Studio source retirement are verified, including installed canonical read-only history. Remaining slicing wrappers/dependencies and original prototype formats still require disposition/proof. |
+| SC-009 No active vendor control in migrated path/history preserved | **Incomplete:** retired operational paths and current installed original-history compatibility are verified. Remaining slicing wrappers and transitive caller bindings need deliberate migration under T048/T049. |
 
 ## Evidence index and authority
 
@@ -121,7 +103,8 @@ checks passed. No row grants an engineering review or external-effect authority.
   [guide](../../docs/workflows/process-working-interfaces.md).
 
 Synthetic integration-test decisions are labelled test authority, never human
-engineering acceptance. Both retained second-run reviews remain unanswered.
+engineering acceptance. Protected and un-enrolled reviews remain unanswered;
+only exactly enrolled private proof basis/simulator decisions were consumed.
 No physical dispatch, supplier action, push, merge, release or public promotion
 is authorized or claimed. Service availability must be checked using current
 owned process handles; recorded localhost links are not an availability promise.
@@ -137,8 +120,9 @@ executed in fresh exact-enrolled consumer 003, including its original held gate.
 Its nineteen result identities and held assessment match in the common view,
 actual-model preview and genuinely saved/reloaded working interface. The current
 recorded nominal-layer viewer has browser proof; excluded machine semantics,
-current-revision second-run reuse and the complete two-process audit remain
-separate obligations. See [printed evidence](evidence/printed-proof.md). Earlier
+current-revision second-run reuse and the complete two-process audit were pending
+at that checkpoint and are now satisfied by configured016/audit002. See
+[printed evidence](evidence/printed-proof.md). Earlier
 preview-only reload claims are preserved with an explicit correction. The full
 resumed goal remains [continuation-goal.md](continuation-goal.md).
 
@@ -160,5 +144,6 @@ affected frontend, 94 client, 71 backend and three packaging cases, plus app
 TypeScript/Ruff. Eight actual saved-interface theme/reconnect checks retain exact
 18/19 results and all 57 baseline files. Failures remain separately labelled.
 Older installed browser builds do not establish the new runtime's browser behavior.
-The ledger now has 46 checked / 11 open tasks; complete feature acceptance remains
-unproved. T021/T041/T043/T045/T047/T048/T049/T052/T053/T056/T057 remain open.
+That checkpoint recorded 46 checked / 11 open. Subsequent common-view and
+two-process audits close T021/T045/T047; the current ledger at the top has
+49 checked / 8 open. Full feature acceptance remains unproved.

@@ -1,11 +1,11 @@
 # Printed replacement-part working-interface example
 
-**Status:** actual native geometry, retained mesh repair/slicing/inspection and
-actual-model interface preview/save/update/reuse have evidence. A separate exact
-retained-package simulator handoff completed; independent unchanged-profile
-assessment records 17 passes and mandatory review blocked. The original failed
-consumer's skipped gate was not rewritten. Full source-gate parity, migration and
-installed acceptance remain pending. See the
+**Status:** two runs of one configured saved process complete actual native
+construction/repair, external slicing, inspection and the original source gate.
+Each has twenty outputs, seventeen passes and mandatory review blocked.
+Actual-model generation/preview/save/update and unchanged second-run reuse/parity
+are verified. Earlier failed consumers and skipped gates remain intact. Fresh
+qualification, migration and final installed acceptance have remaining scope. See the
 [proof record](../../../specs/083-process-working-interfaces/evidence/printed-proof.md).
 
 This retains the original focus-wheel assignment, image, dimensions, materials
@@ -160,8 +160,9 @@ This is for replaying an explicitly configured and qualified modelling approach,
 not for converting an arbitrary new prompt into geometry without AI. Qualify the
 recipe against its proposed design and application before selecting this mode;
 the final engineering gate still measures the actual output. Current evidence
-proves preparation/compilation/run-path binding; live construction-to-gate
-verification of the new mode remains pending.
+proves preparation/compilation/run-path binding and actual configured016
+construction-to-source-gate execution in two isolated runs. Each uses its own
+output paths and assessment; original mandatory human review remains held.
 
 The supplied basis still waits at this run's declared review; all original
 assignment, profiles, native file dependencies and full 18-check validation

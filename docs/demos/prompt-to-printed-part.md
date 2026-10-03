@@ -1,4 +1,32 @@
-# Prompt to printed part demo
+# Prompt to printed part — historical prototype
+
+## Current entry point
+
+The custom **Print a part demo** page and its embedded device/Studio transport
+are retired by Feature 083. The old preparation, status, dispatch, retry, cancel
+and camera API routes are inert compatibility responses. The setup commands,
+environment switches and button instructions below describe the retained
+prototype; they are not current installation or operating instructions.
+
+For current work, use [process working interfaces](../workflows/process-working-interfaces.md)
+and the [printed replacement-part example](../../examples/process-interfaces/printed-replacement-part/README.md).
+Open the accepted workflow file through the workspace's **Workflows** control,
+then choose **Use saved process**. The common working view provides inputs,
+readiness, results and declared decisions. Create or choose a tailored interface
+through Wright and save it for reuse on later runs. Both views use the same
+accepted process and durable backend run.
+
+Existing independent MCP providers own geometry, slicing and any device-specific
+operations. Their supported options and operating requirements must be qualified
+for the chosen process. A digital package or passing automatic checks do not
+establish physical fit, strength, printer compatibility or human acceptance.
+The current isolated preparation proofs retain the original engineering-review
+holds and do not dispatch a physical printer. Migration of remaining campaign
+slicing bindings and full Feature 083 acceptance remain incomplete; see the
+[task and evidence ledger](../../specs/083-process-working-interfaces/completion.md).
+
+Historical result links remain read-only and retain their exact source, run and
+artifact identities. Opening one must not rerun or dispatch the old process.
 
 ## Architecture direction and refactoring status
 
@@ -13,9 +41,8 @@ maps the embedded Bambu code, shared review/evidence behaviour, saved workflow,
 and UI to their intended owners. It replaces further expansion of this embedded
 demo as the product plan. It prioritises the shared process interaction contract,
 UI kit/client, and workspace experience. Existing MCP providers are preferred;
-creating a new Bambu MCP is outside this plan. Migration remains proposed;
-the implementation details below remain a record of the current prototype, not
-a pattern for adding production vendor code to Wright.
+creating a new Bambu MCP is outside this plan. Migration is under implementation;
+the implementation details below remain a record of the retired prototype.
 
 ## Pumpkin input for a quick UI run
 

@@ -2479,3 +2479,78 @@ accepted-source/UI compatibility or saved-interface reuse. Next use fresh
 isolated providers/subjects for those proofs and deliberately adopt printed
 configuration recipes. Counts remain 47 checked / 10 open; no protected reviews
 or physical/external effects occurred and live services remain unverified here.
+# Overnight continuation status review — configured016 artifacts and saved UI
+
+Read the submitted goal and authoritative feature/vision/task records, checked
+HEAD `1d529f0e` and preserved the existing untracked work. Normal read-only
+observation of configured run `40a732fd2ccb46c2af8a0f466febee00` returns HTTP200,
+waiting_human, eighteen outputs and no diagnostics. The durable segment ends at
+awaiting_approval for the declared transfer checkpoint. Actual meshes, sliced
+package, inspection/profile/toolpath artifacts and source report are recorded;
+their exact engineering gate and submitted argument parity remain unverified by
+this review. No start, response, continuation, physical action or test was run.
+
+Existing actual-model authoring evidence records thirteen browser passes, clean
+diagnostics and saved UI `ui-0a09766ccdd94bfdb3dab1f5519d1628`, revision
+`revision-1c498bcb93884514bb6f2c838ed48fb4`. These records were inspected, not
+rerun. Generation used the inherited default model and replaceable coding role.
+Updated continuation-goal.md captures the exact private receipt ownership and
+next work, avoiding replay of its already consumed basis or completed authoring
+job. API8040 responds; other owned services require liveness checks before use.
+
+The ledger remains 47 checked / ten open. This is status reconciliation and
+documentation, not new implementation progress or full engineering acceptance.
+Continue the exact gate/output and same-source reuse proofs plus qualification,
+migration, installed UI/editor/accessibility, affected regressions and audit.
+
+## Overnight continuation review — completed configured016 evidence
+
+The user requested a current status review and a long-running continuation prompt.
+Read the original goal, current worktree, task ledger, architecture guidance and
+actual checked-scope/qualification records. HEAD remains `1d529f0e`; the ledger
+remains 47 checked / 10 open. This review changes documentation only and runs no
+tests or engineering actions. It is status reconciliation, not new implementation
+progress. Existing owned and unrelated dirty files remain preserved.
+
+The preceding implementation continuation now records two configured016 runs,
+twenty outputs each, original-source assessments with 17 passes/one mandatory
+human-review hold, unchanged run freezes, and actual-model generation/update/
+saved-reuse/common-tailored geometry/toolpath/assessment/navigation evidence.
+Both unknown continuation acknowledgements were reconciled, never replayed.
+The new public evidence package has 283 files and seven retained walkthroughs;
+report structure/visual checks and authoritative T045/T047 mapping remain pending.
+Fresh clean OASiS attempt003 records selected installation, seventeen protocol
+tools and one successful production-gateway solver call; sanitized publication
+and the remaining selected-provider qualifications are still required.
+
+Updated continuation-goal.md supersedes the old waiting checkpoint and prioritizes
+evidence closure, remaining qualification/migration, current UI/editor/installed
+acceptance and full requirement audit. No genuine review, protected campaign or
+physical effect was authorized or executed by this review. Services were not
+revalidated here. The existing unlimited goal remains active.
+
+## Two-process obligations audited and fresh OASiS evidence published
+
+Previous status/prompt turn made no implementation progress. This continuation
+read the submitted objective and current records before the next safe action.
+Read-only audits verify both actual proof inventories, sixteen walkthrough
+structures, unchanged full original profiles and source assessments. Relevant
+screenshots show actual repaired geometry, 90 nominal layers/support controls
+and exact selected producer. T045/T047 are checked: **49 checked / 8 open**.
+First audit assumed the printed human-review ID applied to Heat; its failure is
+preserved, then corrected against the unchanged original review definitions.
+
+Fresh OASiS qualification003 is published with selected-install logs, direct/
+production-gateway schema equality, one actual skfem response/field outputs,
+critic_approved=false, exact source hashes and stopped-container revalidation.
+The first publisher passed a string to mapping-only redaction and stopped;
+the corrected fresh publication uses existing redactors and actual credential
+scanning. Publication repeats no installation, solver or engineering action.
+T043 remains open for other selected providers and creation-binding obligations.
+
+Completion/checkpoint/example/operator evidence now distinguish verified digital
+chains from qualification, active migration and final platform/installed/a11y/
+regression/audit scopes. Human review and physical acceptance remain held or
+unassessed. Owned qualification containers are stopped; original engineering
+services need liveness checks before use. Focused local commit and substantive
+remaining work follow; no protected review or push/merge/release occurred.

@@ -118,7 +118,13 @@ interfaces use the same foundation, with honest engineering checks and limits.
   backend/API checks and 157 component/client checks. Actual external slicer and
   solver artifacts were read; full engineering/browser proof remains T047.
   See `evidence/representation-readers.md` for limits and scope.
-- [ ] T045 [US4] Migrate printed-preparation saved workflow/bindings and entry to common/scoped interfaces in `examples/process-interfaces/printed-replacement-part/` and `apps/web/src/components/chat/WorkspacePanel.tsx`, retaining assignment/requirements and exact 082 gates.
+- [x] T045 [US4] Migrate printed-preparation saved workflow/bindings and entry to common/scoped interfaces in `examples/process-interfaces/printed-replacement-part/` and `apps/web/src/components/chat/WorkspacePanel.tsx`, retaining assignment/requirements and exact 082 gates.
+  The normal workspace opens the saved process/common or tailored interface.
+  Configured016 actual repeated geometry/repair/slice/inspection runs retain the
+  original assignment and complete original eighteen-check profile. Each reaches
+  its own source gate (17 pass / one mandatory human-review hold). See
+  `evidence/printed-proof.md` and the two-process obligation audit002.
+  Broader active caller retirement remains T048/T049.
 - [x] T046 [US4] Provide heat-analysis saved workflow/bindings and comparison/evidence composition in `examples/process-interfaces/heat-spreader-sizing/`, retaining original stages/limits/critic status and actual STEP-to-analysis mapping.
   Declarative preparation now preserves the original three stages, full profile,
   fresh provider schemas, explicit CAD/solver calls and actual-file dependencies.
@@ -132,8 +138,16 @@ interfaces use the same foundation, with honest engineering checks and limits.
   denied before readiness, permitted afterward), the second run's exact pending
   review and saved-bundle reuse/reload. Source/build and authoring records are
   unchanged, and no Start/review response is submitted. See `evidence/heat-proof.md`.
-  The second run remains undecided; T047 still retains the complete two-process proof.
-- [ ] T047 [US4] Execute both fresh isolated digital tool chains; generate/save/update/reuse each UI through Wright and inspect actual handoffs/common-tailored parity; retain evidence in `specs/083-process-working-interfaces/evidence/printed-proof.md` and `heat-proof.md` without touching campaign checkpoints.
+  The earlier second-run failure/review remains preserved. A fresh same-source
+  third run now completes CAD/solver/source-gate and full saved-interface parity.
+- [x] T047 [US4] Execute both fresh isolated digital tool chains; generate/save/update/reuse each UI through Wright and inspect actual handoffs/common-tailored parity; retain evidence in `specs/083-process-working-interfaces/evidence/printed-proof.md` and `heat-proof.md` without touching campaign checkpoints.
+  Actual-model generation/update/save/reuse and exact common/tailored outputs,
+  geometry/toolpaths or analysis fields, assessments, producer navigation and
+  reload are recorded for both chains. Audit002 verifies both inventories,
+  sixteen report structures and complete original profile equality. Printed has
+  twenty outputs per run and 90 nominal layers; Heat has eighteen outputs and
+  765 fine-field samples. Reviews remain held; T043/T041/T052 retain separate
+  qualification and full platform/installed/accessibility scopes.
 - [ ] T048 [US4] Migrate all active demo callers/startup/API/UI operations, remove embedded vendor protocols/Studio automation after migration, and preserve old URLs through a read-only historical adapter in `packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py`; update the inventory in `docs/architecture/workflow-platform-refactoring-plan.md` with each disposition.
 - [ ] T049 [US4] Audit shared packages for provider/process coupling and stale/missing/effect errors; record two-process comparison and active-code retirement evidence in `specs/083-process-working-interfaces/evidence/generality-and-migration.md`, preserving immutable historical catalog/campaign data.
 

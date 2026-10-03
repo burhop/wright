@@ -1,0 +1,55 @@
+{
+  "scope": "Explicit private recipe export-path configuration, not product vendor implementation",
+  "native_execution": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "provider_guard_sha256": "e9f2419372cf224317b3c99e3f425c82e1c25979e91f33f6c1493f68a2175623",
+  "roles": {
+    "construction": {
+      "original_sha256": "6c631d5e0f18a5876fc802ebf5a0ae7d12207a0c1db2668be1bc46f18ecf362d",
+      "configured_sha256": "4169e15fee90024db2939be866791af6da839f27c583ab7fe6281e104d0af087",
+      "changes": [
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\repeatable-default-015\\outputs\\{{wright.run_id}}\\source_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\configured-default-016\\outputs\\{{wright.run_id}}\\source_mesh.stl"
+        }
+      ],
+      "algorithm_and_numeric_literals_unchanged": true,
+      "guarded_syntax_passed": true,
+      "original_ast_sha256": "9c5a984efd157792c2e17ad986c2c23a1c6dbb96edbe2c21d184454ddf2bd336"
+    },
+    "repair": {
+      "original_sha256": "a282cccd6458499172b4f1100a18371115a1926a35718c8accc06d8aa50e4081",
+      "configured_sha256": "f93276cf42d4de699ebd4fdc232f3396796af347a843a65f5b48e9c23fcb53df",
+      "changes": [
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\repeatable-default-015\\outputs\\{{wright.run_id}}\\source_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\configured-default-016\\outputs\\{{wright.run_id}}\\source_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\repeatable-default-015\\outputs\\{{wright.run_id}}\\repaired_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\configured-default-016\\outputs\\{{wright.run_id}}\\repaired_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\repeatable-default-015\\outputs\\{{wright.run_id}}\\mesh-preview.png",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\configured-default-016\\outputs\\{{wright.run_id}}\\mesh-preview.png"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\repeatable-default-015\\outputs\\{{wright.run_id}}\\source_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\configured-default-016\\outputs\\{{wright.run_id}}\\source_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\repeatable-default-015\\outputs\\{{wright.run_id}}\\repaired_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\configured-default-016\\outputs\\{{wright.run_id}}\\repaired_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\repeatable-default-015\\outputs\\{{wright.run_id}}\\mesh-preview.png",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-printed-repeat-015\\process-proofs\\printed-replacement-part\\configured-default-016\\outputs\\{{wright.run_id}}\\mesh-preview.png"
+        }
+      ],
+      "algorithm_and_numeric_literals_unchanged": true,
+      "guarded_syntax_passed": true,
+      "original_ast_sha256": "2134671b395b88881a3831eea647efd12df195365046c8b63968ac98c686e571"
+    }
+  }
+}
