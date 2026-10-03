@@ -1,0 +1,3 @@
+
+Using CPython 3.13.15 interpreter at: /opt/hermes/.venv/bin/python3
+error: failed to create directory `/selected/test-deps`: Permission denied (os error 13)

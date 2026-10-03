@@ -1,0 +1,19 @@
+{
+  "status": "failed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "physical_dispatch": false,
+  "provider_execution": false,
+  "scope": "Four current-source shared authority test modules on selected isolated Linux test environment",
+  "source_files": 757,
+  "installer_runtime": {
+    "pip": false,
+    "uv": "/usr/local/bin/uv"
+  },
+  "error": "Traceback (most recent call last):\n  File \"D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-linux-symlink-security-002.py\", line 84, in <module>\n    docker('exec', installer, *install, timeout=300, name='installation')\n    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-linux-symlink-security-002.py\", line 31, in docker\n    return run(['docker', *args], **kw)\n  File \"D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-linux-symlink-security-002.py\", line 27, in run\n    raise RuntimeError(f'{name or args[0]} exit {result.returncode}: ' + result.stderr[-1800:])\nRuntimeError: installation exit 2: Using CPython 3.13.15 interpreter at: /opt/hermes/.venv/bin/python3\nerror: failed to create directory `/selected/test-deps`: Permission denied (os error 13)\n\n",
+  "owned_containers": [
+    {
+      "id": "09f3acc799c24d885daba44e067a1e1225a3f470114d323d98337646fb8840a9",
+      "running": false
+    }
+  ]
+}

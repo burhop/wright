@@ -1,0 +1,13 @@
+
+Using CPython 3.13.15 interpreter at: /opt/hermes/.venv/bin/python3
+Resolved 6 packages in 144ms
+Downloading pygments (1.2MiB)
+ Downloaded pygments
+Prepared 6 packages in 302ms
+Installed 6 packages in 12ms
+ + iniconfig==2.3.0
+ + packaging==26.3
+ + pluggy==1.6.0
+ + pygments==2.21.0
+ + pytest==9.0.3
+ + pytest-asyncio==1.4.0

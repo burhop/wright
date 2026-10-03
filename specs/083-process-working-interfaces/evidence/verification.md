@@ -1,5 +1,27 @@
 # Verification record — partial feature acceptance
 
+## Linux file-boundary security — 3 October 2026
+
+[Exact scope, source hashes, commands, XML and retained failures](../../../artifacts/process-interfaces/083/20261003-linux-file-authority-verified/README.md)
+verify the three symlink cases skipped by the Windows suite. All three run and
+pass with actual Linux symlinks: document write, file read and file copy reject
+paths outside the enrolled attempt and preserve external bytes.
+
+Four owning modules pass **95 checks / one Windows-only skip** on Linux. The
+exact skipped case passed in the retained 746-pass Windows suite. Coverage
+overlaps; do not add the counts as distinct tests. An initial dependency-directory
+permission failure and a later missing snapshot-fixture failure are retained.
+Fresh004 corrects only the test setup and reuses selected pinned pytest9.0.3 /
+pytest-asyncio1.4.0 dependencies. No product guard or test is weakened.
+
+The offline runtime has one read-only current-source snapshot; all 852 staged
+file hashes match the checkout before/after testing and imported shared packages
+resolve to that snapshot. The immutable base image is unchanged. Five exact
+owned containers are stopped and revalidated. This closes the three host-skipped
+security-case coverage gaps. It does not prove a fresh product installation,
+current browser/UI behavior, provider qualification or full T053. No provider,
+model, engineering review, physical action or publication/release occurred.
+
 ## Predictable tool authority and current affected runtime — 3 October 2026
 
 [Scope, actual observation and commands](../../../artifacts/process-interfaces/083/20261003-tool-authority-readiness-verified/checked-scope.json)

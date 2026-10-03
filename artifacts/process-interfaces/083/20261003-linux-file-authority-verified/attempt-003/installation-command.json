@@ -1,0 +1,11 @@
+[
+  "/usr/local/bin/uv",
+  "pip",
+  "install",
+  "--python",
+  "python3",
+  "--target",
+  "/tmp/selected/test-deps",
+  "pytest==9.0.3",
+  "pytest-asyncio==1.4.0"
+]

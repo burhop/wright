@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Preserve the audited completed two-process digital proof. T045/T047 are checked after exact inventories, original profiles, sixteen report structures and screenshot inspection. Finish remaining selected Blender/slicer/AgentCAD qualification and active slicing/transitive caller migration, then final current UI/editor/installed/accessibility/regression and requirement audits. Fresh OASiS qualification003 is published with stopped owned containers and retained failures. Do not replay completed engineering runs, consumed synthetic decisions or reconciled unknown actions merely to produce another report.
+1. Preserve the audited completed two-process digital proof, fresh Blender/OASiS qualification and now-verified Linux symlink security cases. T045/T047 are checked after exact inventories, original profiles, sixteen report structures and screenshot inspection. Finish remaining slicer/AgentCAD qualification and active mesh-repair/transitive caller migration, followed by current UI/editor/installed/accessibility/regression and requirement audits. AgentCAD's retained creation-response defect remains an external dependency; continue independent work. Do not replay completed engineering runs, consumed synthetic decisions or reconciled unknown actions merely to produce another report.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
@@ -32,6 +32,72 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Latest progress — Linux file authority verified
+
+The preceding status/prompt turn made no implementation progress. This
+continuation takes the next safe action: actual Linux verification of the three
+Windows-skipped symlink security cases. Fresh004 passes all three and the four
+owning modules: **95 passes / one Windows-only skip**. That exact Windows case
+passed in the retained 746-pass Windows suite. Counts overlap.
+
+Attempt002 failed before testing on a non-writable dependency directory. Fresh003
+uses writable storage and passes the three required cases, but a broader gateway
+test lacks its neighboring fixture in the snapshot. Fresh004 adds that existing
+fixture and reuses the selected pinned test environment. Both failures remain
+retained; no product guard or test was weakened. All five exact owned containers
+are stopped and revalidated. All 852 snapshot files match current source hashes;
+shared imports resolve to the read-only snapshot. The base image is unchanged.
+
+Public evidence has 26 credential-scanned files under
+`artifacts/process-interfaces/083/20261003-linux-file-authority-verified/`.
+Private drivers are `t053-linux-symlink-security-002.py` through004; publisher
+`t053-publish-linux-symlink-004.py` is terminal. Do not rerun once-only drivers.
+HEAD before this checkpoint is f1bdc248. Reconcile the planned local receipt
+`.local-run/process-interfaces-083/linux-file-authority-004-local-commit.json`
+with actual Git HEAD before repeating staging. Ledger remains 49 checked / eight
+open. Full T053 and Feature083 remain incomplete. This proves selected Linux
+source tests, not a fresh installed product, browser or provider qualification.
+
+Next finish active mesh-repair/provider coupling migration through existing
+independent capabilities, remaining selected-provider qualification, current
+workspace/editor/working/preview/accessibility checks and the full evidence audit.
+Preserve original engineering requirements, frozen qualification/history and
+held human reviews. No provider/model/engineering/physical action ran here;
+old API/frontend owners still need liveness checks before reuse.
+
+### Bedtime status and continuation review — latest HEAD `f1bdc248`
+
+Read the submitted goal, current Git state, task ledger, implementation authority,
+vision and checkpoint records. Current branch is
+`codex/083-process-working-interfaces`; HEAD is
+`f1bdc24829c69e438ab8883b48faec9304607a54`. At the start of this review the
+tracked worktree was clean; this review updates continuation-goal.md and
+progress.md only. Existing untracked evidence and unrelated documentation remain
+preserved.
+The ledger is **49 checked / 8 open**: T041, T043, T048, T049, T052, T053,
+T056 and T057. Counts do not measure percentage completion.
+
+The predictable-authority correction is committed, not merely planned. Its
+receipt is `.local-run/process-interfaces-083/tool-authority-readiness-001-local-commit.json`.
+The current affected suite has 746 passes and three Windows symlink permission
+skips. A separate Linux metadata preflight is terminal and its exact owned
+container is stopped. It confirms Python 3.13.15 but no pytest, pytest-asyncio or
+workspace_service installation; **no Linux security test has run yet**.
+Its receipt is
+`.local-run/process-interfaces-083/t053-linux-symlink-preflight-001/preflight.json`.
+Do not rerun that once-only metadata driver or interpret its passed status as
+security-test verification. Prepare a fresh selected test environment, preserve
+the immutable base image, stage only necessary source without credentials and
+verify the actual three skipped cases with source parity and owned cleanup.
+
+Then finish the remaining active mesh-repair coupling migration through existing
+independent providers, outstanding qualification, current workspace/editor and
+working/preview/accessibility acceptance, affected regressions and complete
+FR/SC/acceptance audit. Reuse completed evidence with its stated limits. Genuine
+human engineering reviews remain held; no physical action is authorized.
+This status review runs no tests or engineering work and does not establish live
+service availability. The existing unlimited goal remains active.
 
 ### Latest implementation — predictable tool authority at preparation
 

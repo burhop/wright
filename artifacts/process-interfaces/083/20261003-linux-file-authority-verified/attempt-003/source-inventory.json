@@ -1,0 +1,3787 @@
+[
+  {
+    "path": "packages/core/src/core/__init__.py",
+    "bytes": 4577,
+    "sha256": "86d79a9cb1a678f96e08ff865846ab0a5ea76031570d205ecd9a5f34090a723c"
+  },
+  {
+    "path": "packages/core/src/core/canonical_json.py",
+    "bytes": 3477,
+    "sha256": "1ebd1d0d00dfd9b2c2e6b99f9ec5ce159436fd75a5f09a8dc20cd474a27f344a"
+  },
+  {
+    "path": "packages/core/src/core/canonical_workflow_runs.py",
+    "bytes": 12149,
+    "sha256": "7e992fbd37e525a8b4b77a93755363d77dc4d491347cd9917ca3c220268b4303"
+  },
+  {
+    "path": "packages/core/src/core/engineering_scenarios.py",
+    "bytes": 12740,
+    "sha256": "ea406add7adecd8417ac1711d0002df0c25482124a96c6cac11a1d407543e7cc"
+  },
+  {
+    "path": "packages/core/src/core/engineering_workflow_templates.py",
+    "bytes": 6039,
+    "sha256": "57a0408a1c7e505fd52fe120641aec1813c4ec098997b6a64e772784e3253297"
+  },
+  {
+    "path": "packages/core/src/core/errors.py",
+    "bytes": 938,
+    "sha256": "f3d96af702064bb3e10b89642a03dd70dbbfc11a36e4dbc8fefc5c3808246ea7"
+  },
+  {
+    "path": "packages/core/src/core/identifiers.py",
+    "bytes": 1100,
+    "sha256": "0a179f02b7a25caf061f0412126d8bfd76ecf1812def52b4749bc86e30edb3c4"
+  },
+  {
+    "path": "packages/core/src/core/logging.py",
+    "bytes": 167,
+    "sha256": "c488c241a204c05e1cd7048aad76089530b5fe8c132e7a7c3f33781832a0c1ca"
+  },
+  {
+    "path": "packages/core/src/core/model_observability.py",
+    "bytes": 4051,
+    "sha256": "c354f110504c00e5f5e15f305b2e9e104e66038a21643960b3f5c0fce540078f"
+  },
+  {
+    "path": "packages/core/src/core/native_application.py",
+    "bytes": 1269,
+    "sha256": "6bc1bd1e2cff04aa647f96041ff628baa48db73b4e07fb0f1cac0b5b0c67bd05"
+  },
+  {
+    "path": "packages/core/src/core/native_process.py",
+    "bytes": 19392,
+    "sha256": "2ce89f07ede4b7b86ea78584369e8dea3c3576489aabafb260721cc6c1c473ec"
+  },
+  {
+    "path": "packages/core/src/core/native_process_contract/definition.schema.json",
+    "bytes": 18840,
+    "sha256": "a0ee35a6f1e410496300efafa0a7a1040b1861b3215d2f93b2ae2c5bd8a80583"
+  },
+  {
+    "path": "packages/core/src/core/native_quantities.py",
+    "bytes": 4771,
+    "sha256": "440515983f62fb203e70cbc012c2d88b3195d3364e62948c4444a0b8152cb44e"
+  },
+  {
+    "path": "packages/core/src/core/native_runtime_json.py",
+    "bytes": 2345,
+    "sha256": "fea6ce38a3d8865322b2a2104647323b5fe93e8f277a7f09eac8c279fdb9ba30"
+  },
+  {
+    "path": "packages/core/src/core/native_tracing.py",
+    "bytes": 1978,
+    "sha256": "ad980be770d3bee087e22eefbf3b6c44d1a14b864156b3792f074a26b1543ff1"
+  },
+  {
+    "path": "packages/core/src/core/ports.py",
+    "bytes": 647,
+    "sha256": "8f6ae76a18f7294660ac3141d85e99db4c2fab757c2de9046b169b3f9ba05a03"
+  },
+  {
+    "path": "packages/core/src/core/process_interactions.py",
+    "bytes": 23133,
+    "sha256": "609750acee7acb117c9864d179b1fd6b205f5881382f22e89e46a1d3bdbdd831"
+  },
+  {
+    "path": "packages/core/src/core/process_interfaces.py",
+    "bytes": 10354,
+    "sha256": "b74fe4c44ebd7beff6fdb1e89189ae668feeac5188c6862af49e482ba12bbbd0"
+  },
+  {
+    "path": "packages/core/src/core/process_schemas/contracts-v1.json",
+    "bytes": 117798,
+    "sha256": "7fd6e29220f8fb528ceea9ad71bcea836a6e09963924710de4b4f9d1b8b957b1"
+  },
+  {
+    "path": "packages/core/src/core/process_validation.py",
+    "bytes": 29963,
+    "sha256": "6fc4edc0800f3afb2500d0ff87f5b64e295139352d988077421a57f225ba00f1"
+  },
+  {
+    "path": "packages/core/src/core/redaction.py",
+    "bytes": 2635,
+    "sha256": "e5438d12cfdd2969e11f55680979b4171a44ced9aad6c7d19967dd8e4ad316b9"
+  },
+  {
+    "path": "packages/core/src/core/rivet_mcp.py",
+    "bytes": 29520,
+    "sha256": "ff43cf572b272aa2e62adfd4bec3d7465386ecdcc69743f28e407caf02c9e91d"
+  },
+  {
+    "path": "packages/core/src/core/secrets.py",
+    "bytes": 2326,
+    "sha256": "453f16ebb44533cc8083a17eb5bfe8b32b16f6da34a50721d3aae6602a1d88f7"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/__init__.py",
+    "bytes": 1366,
+    "sha256": "4eac38a8a7a8d83ab0182c47d8ab8e91b4c30c031fe30a742b9bd34ea9510c9d"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/errors.py",
+    "bytes": 1742,
+    "sha256": "bb529c02d5bd6c3276cf6eb12a77c10fc00a34bf6a67cb176736e84c21280846"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/live_app_manifest.py",
+    "bytes": 27665,
+    "sha256": "9339e7eccfdf19d8104914a9e80f3f20cba2c995bd9ff1bbf80d351eb4f39633"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/models.py",
+    "bytes": 23196,
+    "sha256": "9cd5cc782b6b3a9d174850a293354e6415f7dce98c85bfd3805f56e18723e9be"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/network_values.py",
+    "bytes": 5254,
+    "sha256": "fc645fff071807dbe0f258d36f84f0dba9009b5d8955680dc2eb163fcd95a652"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/schemas/contract-set.json",
+    "bytes": 517,
+    "sha256": "7332fe76e823f3999e5bd0c7e3613cfdab0e290563210a6430fc94ab003c8d51"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/schemas/v1/display-envelope.schema.json",
+    "bytes": 4219,
+    "sha256": "7184987bb040cd24ea2b9749b08b50bdcaf368f9c7df7aafbd30780e4ae930bc"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/schemas/v1/live-app-manifest.schema.json",
+    "bytes": 13268,
+    "sha256": "01d22fe74726c54119e6159c6ca8be1f79452e558d72e5d1a8c772b00e187f64"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/schemas/v1/surface-message.schema.json",
+    "bytes": 2762,
+    "sha256": "7aab04be66de3fe4bd3a20678fe700ed4ad87aebd4bd9cbaec1542604805f67b"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/schemas/v1/workspace-surfaces.openapi.yaml",
+    "bytes": 23058,
+    "sha256": "84a21cbfb0a2a5ca7358e0c34a213a7bd008a0542cefd63c5376c245271e141a"
+  },
+  {
+    "path": "packages/core/src/core/surfaces/telemetry.py",
+    "bytes": 4337,
+    "sha256": "1cd359188295dd73c9a8853b15fa05fae33dca2da5b6b1232117a2da7eb01030"
+  },
+  {
+    "path": "packages/core/src/core/telemetry.py",
+    "bytes": 1538,
+    "sha256": "d4ff87f28bbcb4270e26bf342de4b19fad4f171d538888a4121f2642eb9bbc48"
+  },
+  {
+    "path": "packages/core/src/core/tools.py",
+    "bytes": 2999,
+    "sha256": "c4435eafeae93171c4b2bb7621b4cc57dd5b63a1d559fde37e174c19dc9f364b"
+  },
+  {
+    "path": "packages/core/src/core/tracing.py",
+    "bytes": 3828,
+    "sha256": "d91064094cc3ef26d744ac3bf144dbd4b99a6e57e096980a0ef6e87c18704339"
+  },
+  {
+    "path": "packages/core/src/core/workflow_definitions.py",
+    "bytes": 41412,
+    "sha256": "c4770f678b61b63959586726bec7f29964cba5cd0b01360eddd0b9f9564d5cfd"
+  },
+  {
+    "path": "packages/core/src/core/workflow_draft_validation.py",
+    "bytes": 16162,
+    "sha256": "816d094f7edf760d105908cd52eaab46db65d7b8ecaa359bca854de9859f5b7c"
+  },
+  {
+    "path": "packages/core/src/core/workflow_drafts.py",
+    "bytes": 5277,
+    "sha256": "9acd5988b8cf2644ed165fd739e99cfbb5d584e3bd4a5e78d3eb4e575fcb9b27"
+  },
+  {
+    "path": "packages/core/src/core/workflow_editor.py",
+    "bytes": 957,
+    "sha256": "e23d0668f3c766cd0cc0bdb267ca09a7d56911e6789b6c8920e7a33db87e9888"
+  },
+  {
+    "path": "packages/core/src/core/workflow_layouts.py",
+    "bytes": 9057,
+    "sha256": "d031a8de7bb5e7c6ee78c0a40319a2739800487fbdff15fdd773a6e51b8ab88f"
+  },
+  {
+    "path": "packages/core/src/core/workflow_runs.py",
+    "bytes": 2063,
+    "sha256": "efaecf3310533428282f89cc8ea20aa4093888356169596b65091dfb928575d2"
+  },
+  {
+    "path": "packages/core/src/core/workflow_step_outcomes.py",
+    "bytes": 1788,
+    "sha256": "f93cc1f0a7959293c7f9ca4bd2e75630b7952f73bf12cd642642216a3fc180b8"
+  },
+  {
+    "path": "packages/core/src/core/workflows.py",
+    "bytes": 686,
+    "sha256": "aaf0ce883dc178d20eabb8b6c85ace5c4c8aecce5d2fc7c25c56efe5fb40ab5e"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/__init__.py",
+    "bytes": 5913,
+    "sha256": "519d21aed916f2bae531fd56d5c61960db564f16e2b83361d9065186158f27b7"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/atomic_secret_store.py",
+    "bytes": 5562,
+    "sha256": "92000e1b389d941b4c34f74a7f73383430d0d70a23d5c7da95a606fcb3e104e2"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/backup.py",
+    "bytes": 12507,
+    "sha256": "276d488ee0288291cdf4e74dc3c410d3480ea88faff9ee3dd44197fbd4f268b0"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/cli.py",
+    "bytes": 2973,
+    "sha256": "3906b3afdb3627b2ce4aee15c23ab5764807b0964942390842e4c7fdac857869"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/engineering_scenario_repository.py",
+    "bytes": 7512,
+    "sha256": "4b622400312a650fa4a3174b41bfde8b9811f6c890bef790fe0b6f0b1cf09d7d"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/file_vault.py",
+    "bytes": 3787,
+    "sha256": "ede7e9883c0454d15f54b362886007a8be1de4d57fc797226de5c6c6f2b087e0"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/gateway_repository.py",
+    "bytes": 5704,
+    "sha256": "6d66cba167edc70a3c8f43867184607ccdb0b561b900655984d710bc9d99b1c7"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/lifecycle_lock.py",
+    "bytes": 2406,
+    "sha256": "d1a9c81c6f9c9f76a95f15c8af9f79b94341c4f54e0338b8b5bb19ef61c6c869"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/migrations.py",
+    "bytes": 73855,
+    "sha256": "72b35d8687be9f96ac4e23c1ac2033b3d2faf4a33ab755a9fbc8728ce0b773d2"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/model_artifact_store.py",
+    "bytes": 15935,
+    "sha256": "f607586f44611115a77ad3338fa85221c883f410e7f31f36ff53ff4030bf06e6"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/model_repository.py",
+    "bytes": 40476,
+    "sha256": "b4cf59bd871204f9ab1e06056f8c78fd3c461f982acfc4059e9098833db256fb"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/models.py",
+    "bytes": 2930,
+    "sha256": "3e9093de0733ef6857ff8dab29f7d6b60b0177e0fac2f0929718ec58865717a5"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/native_application_repository.py",
+    "bytes": 14977,
+    "sha256": "c99fcd290594a16f4c850b89130e096cd4dcc518f388ca3d72432424075267fb"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/native_process_artifacts.py",
+    "bytes": 7044,
+    "sha256": "a2d0ecb4b9b351df6d03032879f7db0759b8b6994b8da7a87b849eefbaa96df4"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/native_process_repository.py",
+    "bytes": 10216,
+    "sha256": "c225a6c0ac59d78863158e9c29c3305e0cfc41899b5f4b8922c360836911a900"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/native_process_runs.py",
+    "bytes": 28150,
+    "sha256": "8533b269795d6d149419042b738f9505bf31d62c438711592a5080ccfc9529a5"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/process_input_repository.py",
+    "bytes": 10467,
+    "sha256": "c4a71836c5de22c5419cbfafe9f15ff2bc3b80a7a485db236c290546d5bb2a72"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/process_interface_repository.py",
+    "bytes": 19711,
+    "sha256": "ea7c769799abc0b2dd674b9348c15a6782435242edaaca43b5482a510d3d1bfd"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/process_ui_artifacts.py",
+    "bytes": 4939,
+    "sha256": "c15bc11133ce03cd49c948f580434c12a2f0080362197f2c540c23d00e54a6fa"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/process_validation_repository.py",
+    "bytes": 22527,
+    "sha256": "7a9a141df7a959603d5b10a92dcf98113f64d3b302c67ef6efece03bef9f6205"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/rivet_mcp_repository.py",
+    "bytes": 20552,
+    "sha256": "79feba9bbc4579422a3b3062fbbc67aa6ee1b356ca0f08ff92ea13d93e8be16b"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/secret_provider.py",
+    "bytes": 4098,
+    "sha256": "73d0e86265470fec080b5dbf0f8d425c156c977169139b8ba8f1606e6b6b0b77"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/state_store.py",
+    "bytes": 1237,
+    "sha256": "2843821005b503417c2d19d0abb64186b44e32df2c5345a62ba923ed077db7d3"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/surface_grants.py",
+    "bytes": 4738,
+    "sha256": "32327201e2426380710a158fe1f737177c9a97e310b411d2324363d26b7c45cb"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/surface_preferences.py",
+    "bytes": 484,
+    "sha256": "da9cb4c7deef801b224fd45d1b428187fb542ee87b1019af2cd08149bb500768"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/surface_presentations.py",
+    "bytes": 13030,
+    "sha256": "f0fcb8fce8effa05935272be10340eb7e8b41e44cb404fd7682eac85b7b6db3a"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/surface_repository.py",
+    "bytes": 40690,
+    "sha256": "f91bf8f53afe382a26716f80b5a6ed0b0cd8a366796d1dde67ff2d22d766529d"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/surface_vault.py",
+    "bytes": 3178,
+    "sha256": "0321a5c745598f058f71bcaa66d33eb827056de4e024b54dd71870ce78f7a370"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_artifact_review_repository.py",
+    "bytes": 3940,
+    "sha256": "1e0686e095cbe06bfb2c2df9c2a41109cc309b8d0b2266d78a97c583ea3f0095"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_continuation_repository.py",
+    "bytes": 14393,
+    "sha256": "b3d3d3f0482ef878b5a43128de428c9383e7030a9169bfd9a46dd4029c5e428d"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_definition_repository.py",
+    "bytes": 21633,
+    "sha256": "2528eef867c69ffd5662736c3a0a344efc1d288bd469d07d570ff71794242589"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_draft_repository.py",
+    "bytes": 9904,
+    "sha256": "2441fa69f126ce679430434066ecbde9d9328997f44d32c518eea806a9236dae"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_execution_repository.py",
+    "bytes": 38677,
+    "sha256": "dd05bd4e55f87e2702f8398665f8ed91a869cbf63334dae8f9eeb1977c455bb2"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_integration_repository.py",
+    "bytes": 2898,
+    "sha256": "db93b79147531d0d57542eda3351f99f5a27d5bd479b5a1159546a24825a80be"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_layout_repository.py",
+    "bytes": 21236,
+    "sha256": "08a31f2cad111abb6c398275d1d35252e8ed887532f95e6ba28bf66019e7ddbe"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_repository.py",
+    "bytes": 3671,
+    "sha256": "7dcfc1c077e6c95d583907ccd7fc5fc15eb287b0e20e1812aee385a3fbff8a00"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_review_repository.py",
+    "bytes": 5794,
+    "sha256": "8689ef3c0200d2e92b8f6ecf67da75c91c09142b513e991804e5cc9d13255c71"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workflow_runs.py",
+    "bytes": 11213,
+    "sha256": "0c871935020aacfd212dedd7d9991b0793e5872cfa90a77d4d4ce382f857e376"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workspace_artifacts.py",
+    "bytes": 8989,
+    "sha256": "a874617af576ecd5c75b668cbf9208bd81c59ffc6a88b165f35ddef92b663189"
+  },
+  {
+    "path": "packages/data_vault/src/data_vault/workspace_repository.py",
+    "bytes": 14902,
+    "sha256": "5d242ae6abcaba5c13b51df459f70eb1d5e245d2645b39c10ff63b5f73760fa6"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/__init__.py",
+    "bytes": 2432,
+    "sha256": "bbb1675da9760ea21c601c4dcbbf0c34c8eeb70d266fea5cbdaffe4320416385"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/canonical_catalog.py",
+    "bytes": 10675,
+    "sha256": "594d8a40e4235f5c62741fa6b97fd2fdaaca58b6e8ab03ca020732504aa02ea5"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/capability_errors.py",
+    "bytes": 1520,
+    "sha256": "6f6a6f86629d1a21d4ce9f0bb72fa5a5c9fb878f505e2805516347e84ea50cdd"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/capability_models.py",
+    "bytes": 18116,
+    "sha256": "e4026af9fc0b3efede3e2a9a0ef77d9fcc984b2e675bfeaf99558b505d391ece"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/capability_services.py",
+    "bytes": 1504,
+    "sha256": "8d8dee9726e91034f04d93c47d08efcbbdecb4db5e47912fd96a5678052592f3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/capability_views.py",
+    "bytes": 19702,
+    "sha256": "e9ff0c6d1e8900f9a7a92dad8f560042fc60e63620c29bf0e1b6fc3b9723bd1c"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/__init__.py",
+    "bytes": 57,
+    "sha256": "88c93cce7a838772194c9e382cf593128a83d6c62d631bf8a65bf000ffaa3b71"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/catalog-snapshot-envelope.schema.json",
+    "bytes": 1515,
+    "sha256": "04123adb6dad71a93e078d3a968aa377c95588b88cc7cbb422cbc926bcb8dcc5"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml",
+    "bytes": 336866,
+    "sha256": "4e3c35755ad3a47fe3557b6f2ca291aef5a97fda8bafb0d6aee999bd5bb6d57a"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/import-preview.schema.json",
+    "bytes": 3245,
+    "sha256": "5193ba0141e90371415a7d82a0aa04c5b719d147997129c94db6574f5634d019"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/install-plan.schema.json",
+    "bytes": 4821,
+    "sha256": "124b5e8ca5509887b5febe6f7cde3011b76c6e8597d8cd2d60b14100b26d502b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/schema.json",
+    "bytes": 23580,
+    "sha256": "5b2a502cd50f5277f329a50cbdb91c38a6f4b5cbb572826dfa9ffe3485d0f1f6"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/trust-root.json",
+    "bytes": 46,
+    "sha256": "52283e410bcd1f7e99c35537209fc1c201ad97e3591b0f99d5901c30958902bd"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/windows-qualification-evidence.schema.json",
+    "bytes": 5407,
+    "sha256": "d48f74a76f2a5d738b23be299e79ac90d489459a2376821d711e5c9357c0c8f3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/windows-qualification-recipe.schema.json",
+    "bytes": 4821,
+    "sha256": "669320de14d7b00d7b1cd1922a0e64b9546f2e5b0bc5b513f1a0fc822427838f"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog/windows-qualification-recipes.yaml",
+    "bytes": 16351,
+    "sha256": "73f96e036eb147d84a78f6c374b28340fdc56bafe75ffd2b01049659ac782aa9"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_bundle.py",
+    "bytes": 3652,
+    "sha256": "ef21d00e765beaf695948c8933c9630abb6f8e9c1ffc45d8732b4fbb5595fd95"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_curation.py",
+    "bytes": 16879,
+    "sha256": "c8a459c5281a288fd344584359a626c589390526a1f68f11fada2124d6aa6547"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_evidence.py",
+    "bytes": 1841,
+    "sha256": "2f1957875fe3d64f7a4f8fa5dfd34fcda2d794e608402fa13259cde3dec89f0b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_loader.py",
+    "bytes": 3905,
+    "sha256": "c4195bf2e7b3e7d190ee92afb16beb10ba39d7fdd4a15ceea4d4abf6dcce95a6"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_models.py",
+    "bytes": 9821,
+    "sha256": "7f6478ab6b0dd168c083c3678690bf88595fbfb1b617d7e1f47a29ba4ec422ee"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_platforms.py",
+    "bytes": 3843,
+    "sha256": "3fea04d53f66e88875fd39266390a67d13fe58679031a59f5267adec46402506"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_reconcile.py",
+    "bytes": 24128,
+    "sha256": "c9828c2767e83a5aed9f4366036fdec3d7ca6dd8e78122e91a4fec30730b89b6"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_signing.py",
+    "bytes": 10222,
+    "sha256": "a8e91029d7961c0350e599664b73307ac8a9f19f226cf50b6df38c642e48c2b6"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_snapshots.py",
+    "bytes": 13966,
+    "sha256": "a3fdf65433d318945185cfdb0d7464d5f1065e1997542b48bbfe3671c0533263"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/catalog_updates.py",
+    "bytes": 23970,
+    "sha256": "0ca89f31164d13e07163a6f72718b96993d8ca1d24adb4b41f664e8ff81e710e"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/compatibility.py",
+    "bytes": 15763,
+    "sha256": "c73e386211ab13f42c65182a07379a2488d1d6a07b257e44670d1a940a8f78cd"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/config_import.py",
+    "bytes": 13166,
+    "sha256": "7b452c07b8eb09bc7d92aae1cb3d64eb78d2b740df4e630ba9ee4457b36f8b17"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/curation_models.py",
+    "bytes": 7081,
+    "sha256": "0a6e030cd2f006167c79ef00c3639e36342282736e70bb3728f001be3de8fb3f"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/db.py",
+    "bytes": 14839,
+    "sha256": "dbf0d8a239d13669686e01524c8872a69ac219aefaf94a2689228298f74f8b60"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/development_metrics.py",
+    "bytes": 8311,
+    "sha256": "14918d269a8df8ad8ead12f9974a134a0596901a80b8d2e24e55b4713d2be7c4"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/engineering_catalog.py",
+    "bytes": 190,
+    "sha256": "d8a624b84503e69cc159aabb11e6347493c829903a1ea62caea860516241d8fe"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway.py",
+    "bytes": 558,
+    "sha256": "05ec15692d7f59315e31dec4dd4c940d9e4fc66fdfe3adeace3324c2d98986e3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_adapters.py",
+    "bytes": 8821,
+    "sha256": "5c60fdd07cc226be7f9c229a69b6ba14e589ddba8f10244fc144fed453937bc8"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_management.py",
+    "bytes": 4006,
+    "sha256": "a7bdeabb0e867ec65cec99379c9d69e70183d27cf5c413eed0e206cfbb673b5e"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_models.py",
+    "bytes": 11796,
+    "sha256": "d70ffdfad03ce7800d3756b19ee0ff3bb8ea6e1e1dbec4600c574739d7bc9a9b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_notifications.py",
+    "bytes": 976,
+    "sha256": "82a1d2e35ab1e1908a180f00a82d4cd9a03ec968deedfab29f06e6b6946c6b7c"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_policy.py",
+    "bytes": 1988,
+    "sha256": "32eb2417c9bd04ef4f2347cced82d47a6894638b52fe6b3b1b32dd29ce23d8c3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_ports.py",
+    "bytes": 2573,
+    "sha256": "297a25fa3eb2dff64c614420e71d74a4698f16bca658c77a5f6cd156dde7ffab"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_resources.py",
+    "bytes": 3693,
+    "sha256": "778673b92e44bb2a6469add263f262a9717ea398e7e78d8435c54dc7db6038f5"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/gateway_service.py",
+    "bytes": 49350,
+    "sha256": "a82ed152215d09f9bed0b0be53d8e4ac10c740e8c52d0904185dabaaf1f4da7c"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/install_plans.py",
+    "bytes": 22432,
+    "sha256": "f840e4088d1b48cc81706cdbc65ff3d45156bcd31bab386090b856d222098624"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/installers/__init__.py",
+    "bytes": 360,
+    "sha256": "560822fd2d1af13fc415c5ac8b0320ab57012ee75a510dbfcabd6476ad7cdce2"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/installers/host_bridge.py",
+    "bytes": 3160,
+    "sha256": "34bced0f448ebefd404654ef70438f4226e11060bafd1eae0c85e95073a2259b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/installers/local.py",
+    "bytes": 2754,
+    "sha256": "45aa4d0a86957135fce0aa9b0081fecc5e8349b553f955bc740ee21f4ae323ba"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/installers/remote.py",
+    "bytes": 2300,
+    "sha256": "d7e01f6c867d32e1fd4f37b2e4dcdcacf52ebd340a5cf940f72c05627248e127"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/launch_templates.py",
+    "bytes": 3019,
+    "sha256": "5dc996cf61f290891b7422819d861bd48d09cc02f2f539a52147d6e16e07aaa5"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/lifecycle.py",
+    "bytes": 22236,
+    "sha256": "fe469ecd060016fb3f2f8ae776f9285b061285ab6332d6a7921850e0f5e5bb82"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/lifecycle_adapters.py",
+    "bytes": 10041,
+    "sha256": "633f9753bbf64509efeb77e767b6b7f437b1f5b89b58327ca8d03dee601027ff"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/manager.py",
+    "bytes": 20495,
+    "sha256": "4b4ac4938eedc6d70753863dec7e65e9e71ab96540965701f175690e53aa51ba"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/mcp_catalog.py",
+    "bytes": 1473,
+    "sha256": "a00894df2d21f032ab08c8f16a3412b9f5668447f0a2ff823eaa2926f7c2ac93"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/mcp_followups.py",
+    "bytes": 2032,
+    "sha256": "552396f20acfc7dcc7a942bf3c9f326481929125ffdf65fe2db883b207e2be22"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/mcp_server.py",
+    "bytes": 8053,
+    "sha256": "dc317a03e8964b7dfd5eeb3ef95db84eda445a0a4199b456d6a281c527b52de5"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/mcp_stdio.py",
+    "bytes": 1583,
+    "sha256": "bdc8804ae26aca689196b5968947a4f0074af5ad4cb0339d5e6b6a02ffc64421"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/mcp_validation.py",
+    "bytes": 4096,
+    "sha256": "95bafe3a72902036d55e63ae4cea301a25aa5958be15b3d1b13eb34e38ca3b5b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/milestone_status.py",
+    "bytes": 13935,
+    "sha256": "44c0ac10ddf12c50df1dbd275cb93c5fbffb1059a0555fa9e95f81f325e54bdf"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/missing_reports.py",
+    "bytes": 10885,
+    "sha256": "dbb9974e4fef5259067290595bff77189ea34f3a5d0cdfa20607f7e07ce7cb1b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/model_library_port.py",
+    "bytes": 4920,
+    "sha256": "4bd50cf59fd620ab92afd5cc04351e1eaf4001a8358205f6b250f93dd126786e"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/models.py",
+    "bytes": 9201,
+    "sha256": "cd36c26e6ed769822e6586ddbc8362f04c6611eeec08ac033e980b92c4a65c43"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/native_application_blender.py",
+    "bytes": 18479,
+    "sha256": "904cd3d7af94e5635046a28dff11fe122fa6acd8ba899ef3ae4cbb0471a897a5"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/native_application_blender_host.py",
+    "bytes": 13015,
+    "sha256": "4c4e20b65d0a4c0c049d11b9c21b0b4672afdd2dba6a990b25e9fe6e3c1496b7"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/native_application_lifecycle.py",
+    "bytes": 25424,
+    "sha256": "01707dc7b0fb22236121fb21190bbfe45e4f732c95d5b3120b278c27670d8e69"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/native_application_solid_edge.py",
+    "bytes": 13836,
+    "sha256": "35570a934d73eb565436dcdd5d0a1414074f480fa7ec3feb00a19546413fb3b6"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/native_application_solid_edge_host.py",
+    "bytes": 9824,
+    "sha256": "0c3b4bf19856d6f81febeda7fdeaca937e623ed567cb554d82bac2b0cb6af09b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/onboarding.py",
+    "bytes": 8628,
+    "sha256": "3b4fb23d4dace44842c3c583d85309c0f5fb4e4b95a342388c2071b76d440ff4"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/process_definition.py",
+    "bytes": 16098,
+    "sha256": "f9bcd46545af8c0a5611eee644a6a82644dcc0f673ec78d4e87a671c6a01e549"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/program_status.py",
+    "bytes": 43148,
+    "sha256": "f459cecae4fbb243af64a7ff008d568633ae4e4b1f6ac1bbb0a2e3dd0bf97120"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/registry_onboarding.py",
+    "bytes": 6601,
+    "sha256": "33e66523bc6b6bcb2a1a961c1b5456c6c63f0300c68bb48e3fd0649a17475170"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/runners/__init__.py",
+    "bytes": 210,
+    "sha256": "ec125fd6346228fee26ddb2d701e8cc58cc1cd707ffc3adff1762d51ff41f85c"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/runners/base.py",
+    "bytes": 2552,
+    "sha256": "a3af5e0ca6c38950b43e22b4fb0b78b83eabb24a08252fb8dacfadaaa624196c"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/runners/protocol.py",
+    "bytes": 2643,
+    "sha256": "df7bbcbf219359c945f6f2d8085a9ab96cfb8d4bc8afda14c9a6d024314af9b2"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/runners/sse.py",
+    "bytes": 31567,
+    "sha256": "4df0c06c36fd54cbbcb618d3fb1817b8fc8e1effae0ee654154e60d82ee31ee4"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/runners/stdio.py",
+    "bytes": 23270,
+    "sha256": "f74c1f0da1008c7fc23e7a5e46d7daa4f005ec14f89502694556c7fb182cfbd9"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/safety.py",
+    "bytes": 6207,
+    "sha256": "341356f1ccfaf45b28316f78f47f7762d2b81aa2ab46f74d5e0cf9e40ace147d"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/secrets.py",
+    "bytes": 2781,
+    "sha256": "2cfcf45fb1b535d236cbb0fc29b399d8b3886a25ac9e586f5cfed5cd0c16f52a"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/services.py",
+    "bytes": 13925,
+    "sha256": "4034cb7b991448f66e8f5b78e1801dd5eff0cd0462b3560185fd55580ada109e"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/ui/__init__.py",
+    "bytes": 292,
+    "sha256": "9e6c9c7a05b926865b53f23cc30d57e02d1da35cff29581c103ef7bd665b42e3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/ui/policy.py",
+    "bytes": 3869,
+    "sha256": "858203557791ac728153277795f3f0351f81fd2346a01664d57726696db85189"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/ui/resources.py",
+    "bytes": 10315,
+    "sha256": "71bd52a7cedd61903e69324cae47b65069abb635d0dca4c0ac5d1424bbcd305f"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/validation_cli.py",
+    "bytes": 2578,
+    "sha256": "3dd7b971a8d069f9111620716b358856c851f834cf8cc470a2c70f2808330ac3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/validation_evidence.py",
+    "bytes": 9935,
+    "sha256": "1184b85f9e37d302abece9402b8c179761066c2b29006f32b0c0c58c8c3500f3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/validation_executor.py",
+    "bytes": 15626,
+    "sha256": "1f3f754c1d54ed8596102b28597a5d13166926fd9a61bd05940ab9ee3e43de74"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/validation_plan.py",
+    "bytes": 4329,
+    "sha256": "acf63ad68335ef0cbddd79a3354d2877cc69bdd60054d6fa6f244e0d30b2bc7a"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/validation_runner.py",
+    "bytes": 9503,
+    "sha256": "048b8faf7117fead1fa96eee19b5cdba9555801f23d35fdb14ca8211f661122e"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/validation_writer.py",
+    "bytes": 2162,
+    "sha256": "fc1b8c6d144230c44c8269d36f69ddf344ee19e479f07e1ddb5f1d63cb6654d3"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/version_check.py",
+    "bytes": 14483,
+    "sha256": "4cc6f4e1a0fc247dc3c9d4148f2ccfdb3f1b59970ec63f7c0cc8145aebf6649b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/webmcp_router.py",
+    "bytes": 16848,
+    "sha256": "48de8416e2fee78fcbc9681282385975b35ece5a06debeda4c7800a49b9077dc"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/windows_qualification_cli.py",
+    "bytes": 6114,
+    "sha256": "a395bc2ba8b07a6e23fe5f7691314b7e3c59affdeff240fea6e846204894fd8b"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/windows_qualification_executor.py",
+    "bytes": 39822,
+    "sha256": "0f527a7ed382821400b768db2a8c6c76a2368b1db0ced8337aa30c1f09155b68"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/windows_qualification_models.py",
+    "bytes": 18458,
+    "sha256": "ffb445291cb94181dcb402422ed288d9b1de2e496828f472aa121bd611b23302"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/windows_qualification_recipes.py",
+    "bytes": 3555,
+    "sha256": "4ea277d9ce5bbe8c39ec6d8f93d1b884eefec82947082c60cd6a1c0e6f618c22"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/windows_qualification_service.py",
+    "bytes": 10984,
+    "sha256": "b4b02d36422d0aed45e5087346ca7a046692481fc66599db9b8262a8d7437765"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/windows_qualification_writer.py",
+    "bytes": 11761,
+    "sha256": "259ab6fd98089c654390f47076d9c46aaea2910662e159a83eb3f662d800f296"
+  },
+  {
+    "path": "packages/tool_registry/src/tool_registry/wright_managed_servers.py",
+    "bytes": 5953,
+    "sha256": "ceb7505666e247d2d122ece6870d915ba414d77e0e70bf5cb886e3e37dac8f2b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/__init__.py",
+    "bytes": 6832,
+    "sha256": "8d218d3f13491fb1ae74e206506b3d4fb712d17dac3b110f2441796e42dcdd54"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/_rivet/contracts/capability-binding-v2.schema.json",
+    "bytes": 9784,
+    "sha256": "94fe189b2e98ae8436ca02371286b70080d636b7bd179a6a83fed1731136700a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/_rivet/contracts/capability-binding.schema.json",
+    "bytes": 3153,
+    "sha256": "33c56e2bb14d2ea60d0f78e3c3b3af456c87cf5c1e8817386c2f006e37d18a20"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/_rivet/contracts/run-manifest-v2.schema.json",
+    "bytes": 14658,
+    "sha256": "2b2d2605bf281954d5f8404b1ff4a57cd01e1f002f4173e6034277049cd9cd6d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/_rivet/contracts/run-manifest.schema.json",
+    "bytes": 5541,
+    "sha256": "4e8f5482fed07c818af89382ef617e8e3d220a914ff1a4bc52cb62e6e99d5954"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/adapters/__init__.py",
+    "bytes": 202,
+    "sha256": "9ea354a0a92b8725e4893b578527a98e0a9ceeacc907dbe91ff3aa79609f36e7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/adapters/filesystem.py",
+    "bytes": 4366,
+    "sha256": "54a1f4104d4042d8291c80718b473ad7a2f4bcf169c906d2f3cf51e368533ecc"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/adapters/git.py",
+    "bytes": 2620,
+    "sha256": "16ad8ddf4cab3ade43c09fb917d4fd08be0d3d03396ff53964e535a720182bff"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/adapters/process.py",
+    "bytes": 787,
+    "sha256": "825cbcc9fd17a43db04301caab5b2d3c71ea6905101243876b9fae623d3acc17"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/adapters/runtime.py",
+    "bytes": 68564,
+    "sha256": "8ba466cc9ad3cf1a6e6dbaca4de5f2be9ebeed4d2d17e7fa626d3a46cc838db1"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/agent_sync.py",
+    "bytes": 5640,
+    "sha256": "11086f28881ec311453a1a64f94ffc61807480d6a34eeed729a6dbcfb8b66b40"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/brep_panel.py",
+    "bytes": 5904,
+    "sha256": "7b563a50c158911c76dfe17d13d3d2e685574189876f860f2841853d54f594be"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/composition.py",
+    "bytes": 6402,
+    "sha256": "58d406b95af829cc133d626f6afea42127f8d938a6cfa319257812a6297b6c70"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/config.py",
+    "bytes": 10115,
+    "sha256": "dd31d26b2639f5e56d016fe5ad4bcbdc02c3291f32b9e9cab04487fffc3a7017"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_model_service.py",
+    "bytes": 82140,
+    "sha256": "1ca5901cf174128d9a94726a9b5f5e7053c69611e015ec3bc2bb7b4122a76843"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_artifacts.py",
+    "bytes": 13417,
+    "sha256": "56f0b281d0f790dc5280e9362116ca7e0d52e180db88d0ee62ff8266c62640c8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_assertions.py",
+    "bytes": 25165,
+    "sha256": "d5b0fcca10ac6b6fcc4b418bd4b240fa4184487ea82c6cb91a4217ece7e142ee"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/__init__.py",
+    "bytes": 62,
+    "sha256": "210ac273ac57e7d79bd2459809a30563f7e6b933015f1e7a277952fa078f9750"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/catalog.yaml",
+    "bytes": 421,
+    "sha256": "a188fad1b3d30d43b47a62c8dc34a89b5834cdea383f0cc9f9e518d033614f6e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/contracts/artifact-envelope.schema.json",
+    "bytes": 2267,
+    "sha256": "ff264123608e8d5f30ef438300b5d23360d4456fc08198d2af1580a78d22c54a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/contracts/assertion-result.schema.json",
+    "bytes": 1743,
+    "sha256": "7b7c62dd989324a95dfcd62d9a2325987e4f6de11b9379ae7135f8f399853924"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/contracts/scenario-manifest-1.1.schema.json",
+    "bytes": 669,
+    "sha256": "82e9f9c1359c8de7ef2f81a7bd03d9e14bf9c5f5d615bfe294f0a72ecdcc6378"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/contracts/scenario-manifest.schema.json",
+    "bytes": 5306,
+    "sha256": "b1552991a2053b1715ce5bdaa8fba49f4d35e62aa980f5d835a160643b991a85"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/fixtures/chatter-candidate-review.json",
+    "bytes": 10265,
+    "sha256": "111b31f820f501bbd3b7c052d533c215177d6477589513b17456775e209f658c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/fixtures/electronics-enclosure-cooling.json",
+    "bytes": 3366,
+    "sha256": "844db7725a7fd978b44558a23aa779f5a58dcd05db1549d7d2c5cf09d450e0c8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/fixtures/parametric-manufacturing.json",
+    "bytes": 3863,
+    "sha256": "48090e73b41328a9df2b66cc6d6a152f2fedc88a2dbbddf8e2418a09dcaaeeb7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/fixtures/structural-bracket.json",
+    "bytes": 2409,
+    "sha256": "df5270273c1b8a287c6336458f6d4d4e3d1f30a988a571a498d96cfe5323c966"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/NOTICE.md",
+    "bytes": 584,
+    "sha256": "5691368db441a7fe291b10fa859a02bab6836cbf12d8217de3a6151cda7f746f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/scenarios/chatter-candidate-review.yaml",
+    "bytes": 2741,
+    "sha256": "19872fed30f6722254d3150949801b6619b15d0a7ca46b1b881ef7b715f02b84"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/scenarios/electronics-enclosure-cooling.yaml",
+    "bytes": 3319,
+    "sha256": "a2aa24987acd5d1096299b31aea7dd71694e6477a67a96e62909757231a030a0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/scenarios/parametric-manufacturing.yaml",
+    "bytes": 3482,
+    "sha256": "d1f839cb933c5d80e7215076461647f15b1117b0f82a7cc7f8c406c8de1019b6"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/scenarios/structural-bracket.yaml",
+    "bytes": 3007,
+    "sha256": "55365fab01c10d08bae4a5d4c1727bf1878a69cd6e4fbd8be2e21b51fc73927b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/workflows/chatter-candidate-review.rivet-project",
+    "bytes": 3758,
+    "sha256": "2f945b29257e1d4eea53f0b0538a2914f5deea0625288e5a2f244897f4cd4cb7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/workflows/electronics-enclosure-cooling.rivet-project",
+    "bytes": 3043,
+    "sha256": "bfd1e76f6bf97e9fbc669d8a24cae4c6427c16166e52367c9f70a7ef641a91d4"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/workflows/parametric-manufacturing.rivet-project",
+    "bytes": 3700,
+    "sha256": "359d14a3d8e66fc5d9e0343d2b5a38d3322846996b40b42554dedefae758daad"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog/workflows/structural-bracket.rivet-project",
+    "bytes": 2368,
+    "sha256": "71931cdc22f2b377daac42d2d8e3857fcfbe83cda1e0fde2cd3425e96f6bef8f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_catalog_service.py",
+    "bytes": 13988,
+    "sha256": "061a5575d1246488c81073b25a39e274759df46629938a2fab54acfb9a8a52d6"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_scenario_service.py",
+    "bytes": 40212,
+    "sha256": "b5cc657bf2a9dfb3f0d86ec71fce2763afb6296ba9e4fc0c26efe8fa71744e55"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_template_service.py",
+    "bytes": 7844,
+    "sha256": "93f0e1f124c2ba462c0c9ca061cee796334181e1e4e00233540f4f059049016f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/__init__.py",
+    "bytes": 14677,
+    "sha256": "eae9b3783e8aa7c946ffa864ecf1ed499028e5448a6511ccc84869df8a296cf5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/catalog.yaml",
+    "bytes": 16237,
+    "sha256": "06f8b47bb3d9089a7350b54332924875082e6c9f08bac031344bcf42e31cda38"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/inputs/printed-replacement-part/replacement-knob-source.svg",
+    "bytes": 522,
+    "sha256": "37ee63ba643859485d1cb56c7e79fdd657a9a7a456128f94c0b1bf48e62c3289"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/inputs/printed-replacement-part/rights.json",
+    "bytes": 351,
+    "sha256": "776cf9f9d656e2b642fd502d7f35cb451744ff29d4da07e64ce3bd09749358e8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/inputs/raspberry-pi-enclosure/reference.json",
+    "bytes": 548,
+    "sha256": "a1022b9f5f7c1b777f5b63a9120bb6df1bdc719f20e082e588cd24b6507d62f2"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/inputs/sheet-metal-supplier-handoff/bracket-intent.svg",
+    "bytes": 586,
+    "sha256": "95f10eee5fec0d155e19b0d46e61bffacf0a5717741895ec42d65fef54fab8f2"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/inputs/sheet-metal-supplier-handoff/design-intent.md",
+    "bytes": 705,
+    "sha256": "3009057a91cbc9c82fc19ac9571b1ffaa53f79e9843d0850ac03019aac14356f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/inputs/sheet-metal-supplier-handoff/rights.json",
+    "bytes": 234,
+    "sha256": "58cd72781f9e9fd0fcf18eecb34192c49c14c4b8de318dc89494f08ae609a55f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/heat-spreader-sizing.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/lightweight-equipment-bracket.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/parametric-drill-jig.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/printed-replacement-part.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/raspberry-pi-enclosure.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/robot-tracking-diagnosis.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/sensor-fan-harness.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/sensor-interface-pcb.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/sheet-metal-supplier-handoff.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/layouts/water-heater-sizing.json",
+    "bytes": 197,
+    "sha256": "f76dfe9a5d4d272c5e82c7d7ae68ccbdc993a67b8528286aa6a01eca18c888df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/heat-spreader-sizing.svg",
+    "bytes": 579,
+    "sha256": "dc82773576fd6d7226718d38e99c429c9459cf949b4c621c63ac91eff157daa6"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/lightweight-equipment-bracket.svg",
+    "bytes": 498,
+    "sha256": "84157a8f091a1aec17848f38047980302dc67ff96ad748be2f5ad4e8cf341e6f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/parametric-drill-jig.svg",
+    "bytes": 616,
+    "sha256": "d0d5bd301c64171614540bf6064a1fa8d61611ecf491437875390a657055d3d9"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/printed-replacement-part.svg",
+    "bytes": 677,
+    "sha256": "a401b375ba8b744af0b850f56b3609a6e613fed9dadefcebf09e46e2eb14dad2"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/raspberry-pi-enclosure.svg",
+    "bytes": 655,
+    "sha256": "1e5cfc5c53c778b28fd8f81a827bfd6828848653369390633561906094452856"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/robot-tracking-diagnosis.svg",
+    "bytes": 544,
+    "sha256": "a2da3dc781759c56aa19929cffae511cf082e0faafe3fd5f4ce0af80fd346195"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/sensor-fan-harness.svg",
+    "bytes": 615,
+    "sha256": "7269d235cc6090bca27ba33fee5496b4fc6b72c804ee966e4ce8cc2f671523ce"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/sensor-interface-pcb.svg",
+    "bytes": 612,
+    "sha256": "334a4e69b2ed26d94ce79fe9066aebcb840fe2e6551caf0699e2b8e3b811c10c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/sheet-metal-supplier-handoff.svg",
+    "bytes": 695,
+    "sha256": "753e4607bf1a2aae8db8522da89dbb057c99c9d5cafa8566cde91177fe07a3df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/previews/water-heater-sizing.svg",
+    "bytes": 575,
+    "sha256": "31bc82ae2d6454593c2a524df65e18eb13333d6e7edcceec06fb9f49a2ef92c3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/README.md",
+    "bytes": 1455,
+    "sha256": "6b7cb36d638703d9160d2e6899cc2bef36b9fb2585204bd7029c99b93f68fb65"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/heat-spreader-sizing.workflow.wflow",
+    "bytes": 2271,
+    "sha256": "37c00b2bf32ffa73142a73d796d7d0ba875b962766f66a50073b0c35c77c658c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/lightweight-equipment-bracket.workflow.wflow",
+    "bytes": 2116,
+    "sha256": "57b740d13651fd0a1eafaf8d165c908204c58831170a533844edc443d6f30265"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/parametric-drill-jig.workflow.wflow",
+    "bytes": 2037,
+    "sha256": "7b7fb0d263267450c84b0a936c9b124a3c1e50a1add5cc3954ea8c8376307271"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/printed-replacement-part.workflow.wflow",
+    "bytes": 4801,
+    "sha256": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/raspberry-pi-enclosure.workflow.wflow",
+    "bytes": 3320,
+    "sha256": "4650bb9129470f17a270fed53a546fa1a19843176ef9d81b0316135254e82690"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/robot-tracking-diagnosis.workflow.wflow",
+    "bytes": 2091,
+    "sha256": "092afc61bb4ab7a4ac8d8dba53370e14f82f91ddddaae0c69fed913b89bd5f9b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/sensor-fan-harness.workflow.wflow",
+    "bytes": 2201,
+    "sha256": "cecc682a5ab1c4a78d9f1b68c5fd735f635bc2baac0ab94fd6cf249f8cea86b5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/sensor-interface-pcb.workflow.wflow",
+    "bytes": 2082,
+    "sha256": "964532c5cc4465778c523336f1b839590e6c270e81ae55263b8ffdeb819f3c76"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/sheet-metal-supplier-handoff.workflow.wflow",
+    "bytes": 6101,
+    "sha256": "1a377a06f78e5d89fb59ceaa112a22208c9f5a7ef80af94d18899f61892ae2cb"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/water-heater-sizing.workflow.wflow",
+    "bytes": 2254,
+    "sha256": "8f0a67913e4db9ff100e44b793573f36a8eac14b1d30d04598a47e4e4658a3c6"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/errors.py",
+    "bytes": 2159,
+    "sha256": "4bf6bbf4df4f66bfc953f202fdd21e1f977a4235e5ca1b2605bdd9137142a226"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/executor.py",
+    "bytes": 3060,
+    "sha256": "b4f41da8be540e3968be83e3ce110efdc85705d5ffcd41e637109933b052cc7b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/models.py",
+    "bytes": 1240,
+    "sha256": "8bb8b0dd6306e49fa0f3aa495433d440eaadb6108e8ed84ce36b3f8f6f82a06b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/native_process_cli.py",
+    "bytes": 4912,
+    "sha256": "8498f8db8e071adc01039ed677af9fab2327b0dd4e407047f31a0d35df4d529b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/native_process_mcp.py",
+    "bytes": 20571,
+    "sha256": "bf5adce6724bf1c33a17d4ed9583485c698339c7c0b5aa109413c711bc9ffb77"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/native_process_runtime.py",
+    "bytes": 20079,
+    "sha256": "0a50056cdaddf32a2f80d14025d82b3b1ae7d638a8752fb7514a484700da54fa"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/native_process_service.py",
+    "bytes": 18011,
+    "sha256": "ac51a74e869f51b79b36c65012336f3fa0c55c40e924d28b388686f5b06df08f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/ports.py",
+    "bytes": 2095,
+    "sha256": "7351446b5443dec6e8895af7a1ad1fe70ffc7b3cee4736cdbfc4ce606214f4f5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/__init__.py",
+    "bytes": 196,
+    "sha256": "228622f1fbcc74398d10d8fa582a26f5c414b6004299e3d0595d452a2a9fc3a7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py",
+    "bytes": 24283,
+    "sha256": "3c46c7b95f3c5ed43cfbc41e0ffa3453d1e79a6b1df57dd1b306bb7f5a22917d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/authoring.py",
+    "bytes": 32794,
+    "sha256": "9219f86d18f066a77b533a9275f54e1e370d0aa86a74d5bb2d2d164af86ef087"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/build.py",
+    "bytes": 13618,
+    "sha256": "f26447349ebcd6b37a9186673c8a2524a2af5038ada83c63927d6d9cc5ccc29e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/compatibility.py",
+    "bytes": 2108,
+    "sha256": "82174096a37e9e138599307f73ce5c53ef9dccec947a05c5af02cea5cd0fcb62"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/decisions.py",
+    "bytes": 8198,
+    "sha256": "4a6bd6a616536a17566ba74e685450f99d39405c7a4999d61845cd956223db2a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/errors.py",
+    "bytes": 3711,
+    "sha256": "ab694ff7d8d0a7be433b03ef98497d2b94bf58347b2b4e1eec76a97b5788d073"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py",
+    "bytes": 19977,
+    "sha256": "208320dc9e9bec2a3973e8ac2cda344c73c4cadb0107bdd84ad2888396b528fa"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/interactions.py",
+    "bytes": 13617,
+    "sha256": "30419e26f900337df8a6193818f7eb1af532117220a2ca3e6da47ef85e239d2b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py",
+    "bytes": 2303,
+    "sha256": "171e399e4878e6f45146168ac7136317f19dab460ace59e7c396d62d975ba58d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/limits.py",
+    "bytes": 1612,
+    "sha256": "d1bdf9a0a2cbf339699e2c2b1a4644d59657140766746af616f4bea613c54916"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/navigation.py",
+    "bytes": 5596,
+    "sha256": "8335239dd161c0528fd787dcb23643dd1686e7680f0ac2779148c9bfaeb68120"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/options.py",
+    "bytes": 8266,
+    "sha256": "f1ab1a2b80e787b3cf5bc0abc6a5b43e1aeb73416f39d761f450bb28c7fc68f8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/owners.py",
+    "bytes": 22281,
+    "sha256": "18c3e857dca549e2739cf6017c349a3312fe9dffd8efd01d9193fd1e32b534a3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py",
+    "bytes": 24485,
+    "sha256": "2c701d3710e90e48c893cf1b08cca73a883c380f1cbebcd518ebc66f59ed4381"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/projection.py",
+    "bytes": 20999,
+    "sha256": "3acd0410f123f66367b2eaba2e05cfc7f2a71b7699e541d81cecde1a40e60c4b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/readiness.py",
+    "bytes": 4357,
+    "sha256": "d0746df74f4f072acb2753fb3d3d47d8998264c2e18b5d1deb5e97822906225e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/representations.py",
+    "bytes": 25554,
+    "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/resources/__init__.py",
+    "bytes": 1717,
+    "sha256": "f160cda97b2d0d841a8cd98fd49775c8c4e88ffad2c0041d62d3ee12229368a0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs",
+    "bytes": 8026,
+    "sha256": "9da67f5200e65878b8af4cf6e22a392e166f1ac43c1a8db5a74f1103529e9e83"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/resources/instructions.md",
+    "bytes": 2905,
+    "sha256": "558f0845b75297e2b861dc1f5c52af9f56b9f03737cf60a13b7f6387755ba0ef"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/resources/public-api.md",
+    "bytes": 9124,
+    "sha256": "1380ab0b46ce8622a31bf4da29463c268e88ace5d892b3f5f4c07ef46e04f4c5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/resources/reference.tsx",
+    "bytes": 1827,
+    "sha256": "4b36616bb51361db7dd0dd39ebb15c6c9e8abe5eed1b5ee6f52792fc436c56cf"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/resources/toolchain.json",
+    "bytes": 353,
+    "sha256": "5fbc509bea25c56a462bed8f77af855510a29db625d6e46183a3863f4a9122df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/runs.py",
+    "bytes": 51454,
+    "sha256": "3c71ed98e00624079b5f4a040b165f3110ca5bdd9b1f9c408fdfc3278b035d33"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/service.py",
+    "bytes": 13674,
+    "sha256": "025c6fdf339d23bb4a4ac7b97e3d3757bb728a5d528c6df4aca334028bd6585d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py",
+    "bytes": 11309,
+    "sha256": "9943a01928009484e7900d19893d5c0288406b08e834894bb0d928adab40b738"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/toolchain.py",
+    "bytes": 2023,
+    "sha256": "67e1e8926f0030be644c8b8241f549b27988035216b909233e7efe2da461fa60"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/__init__.py",
+    "bytes": 86,
+    "sha256": "017716d7243e710e011b9cbea839c87674561e10fb29b6617c0f77e7264a4d47"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/application.py",
+    "bytes": 3008,
+    "sha256": "f39e9ce6b825098ad089558489e09fc3f8533e428e6faf2739c993ba4d61798b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/definitions.json",
+    "bytes": 103333,
+    "sha256": "edb91763e4dc1f8f6f9efcc68ff7e1299d3c11687f7db54e3c55605a2e74be12"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/heat-spreader-sizing-01.json",
+    "bytes": 8637,
+    "sha256": "b93bb98eb5171527da60014dfd467e71b1fe4d92f14be78966f74e370e4fafd7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/heat-spreader-sizing-02.json",
+    "bytes": 8038,
+    "sha256": "ab5023c885ebfe3685195a9a7129c1f2fb15776984de4be805f8d8f3cdd784f3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/heat-spreader-sizing-03.json",
+    "bytes": 10178,
+    "sha256": "b6d7aa975bb1463a2067f7e08ed75f97860e9a201d604fa5321bfc9bcb4da2d9"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/lightweight-equipment-bracket-01.json",
+    "bytes": 6375,
+    "sha256": "1575a631049acd8c3642324f65cba8f2f43f36c8e74df4aacd8de3003b93a36c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/lightweight-equipment-bracket-02.json",
+    "bytes": 6093,
+    "sha256": "00c8c1fcef8233080a63105ff87778d842bee0e193e4a5c23ccc96437fa163b9"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/lightweight-equipment-bracket-03.json",
+    "bytes": 6591,
+    "sha256": "5caad1f44278d3b7ee8edd0625f9edec9d35370df124a6b0edd892e090d8cc44"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/parametric-drill-jig-01.json",
+    "bytes": 8632,
+    "sha256": "6f5910b7613b485fb8e5e39073c663c5cd755a7d1c3775ab4dfe75f739fb9008"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/parametric-drill-jig-02.json",
+    "bytes": 10426,
+    "sha256": "8628ff3fcc286ec1d35ef845d7df7ae141e29f78adf9da667357e016a7901c2c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/parametric-drill-jig-03.json",
+    "bytes": 10169,
+    "sha256": "3453e92b28e052acd3c88893c2a4877b1568376754271ae8a467c4a8d279fdea"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/printed-replacement-part-01.json",
+    "bytes": 6601,
+    "sha256": "2bc2c5811d863648493ea3e50f6917595d619a23f8b8879e5d365e5bda66dc92"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/printed-replacement-part-02.json",
+    "bytes": 6226,
+    "sha256": "628fa271378f5aa4912fb2e71e7a1d22cfca689dd4e54f5909a0f3f08484e2e8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/printed-replacement-part-03.json",
+    "bytes": 6439,
+    "sha256": "1d49bf26d89fce48cff3196ca2a9359887f078961a74c4db5e362a70a36c1ce5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/raspberry-pi-enclosure-01.json",
+    "bytes": 4580,
+    "sha256": "dc12b7175f8178576a261584e8f8257df4136422daec436d758f432290943ad9"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/raspberry-pi-enclosure-02.json",
+    "bytes": 5295,
+    "sha256": "d0fa9eb47ca1e074296da7e8927933c1a9110d49a52cf109f870354f4d32c51d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/raspberry-pi-enclosure-03.json",
+    "bytes": 5097,
+    "sha256": "56f5fa11f6fc06951f7696e729fe53442c456fe92177332b6cb33014af19608c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/robot-tracking-diagnosis-01.json",
+    "bytes": 6386,
+    "sha256": "f67b579df403cd5f5383c4916155bee153aaa10c44c4d62cfdba5a549f432471"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/robot-tracking-diagnosis-02.json",
+    "bytes": 6562,
+    "sha256": "01adc0a5f23720bdb0b509de6122a6b4b7c5de69c712bbbc887308d8b2d2cf37"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/robot-tracking-diagnosis-03.json",
+    "bytes": 7422,
+    "sha256": "9087abd16b0348d47b1b1314636629d70461e2b6e25849d413776538ff323d17"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sensor-fan-harness-01.json",
+    "bytes": 6883,
+    "sha256": "d4479e8555b6730c120d5c7c3c78026bf9b9cfe2f25589372ed8f30fb80b159c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sensor-fan-harness-02.json",
+    "bytes": 7089,
+    "sha256": "5db65838f6d19fc503fa2cfb074fca7acde70a30c6d238037733ec5c1d8d9b49"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sensor-fan-harness-03.json",
+    "bytes": 8079,
+    "sha256": "2bf64c96a03d431a80dec9a2775536ef1adc45039e0a5c9cf24fc3ca025aa8cd"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sensor-interface-pcb-01.json",
+    "bytes": 5838,
+    "sha256": "5edec1333586f55b43b60ef71c23c54837e8181e6d1777b04a583b96e3d11cc3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sensor-interface-pcb-02.json",
+    "bytes": 6365,
+    "sha256": "b5ef6b01d69b9d4fdbdbc087a6783844639ac2d7935021ca1528c8c09f0692c3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sensor-interface-pcb-03.json",
+    "bytes": 5809,
+    "sha256": "4873d7575f7d2d6bc183478cad70d6abaf89d45377096108b96e7f9e9852d76d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sheet-metal-supplier-handoff-01.json",
+    "bytes": 7313,
+    "sha256": "b465469213f9840ef2d846c794fd8d04c5584c8562d7b544d4e8083123aa5d04"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sheet-metal-supplier-handoff-02.json",
+    "bytes": 8145,
+    "sha256": "18b0cbaed905b6f08d77500579af963621d0f11aa32f5f3ec18abc2df03051d2"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/sheet-metal-supplier-handoff-03.json",
+    "bytes": 8271,
+    "sha256": "78ae7506223c595a57e49d787bfafa2f89d452e8488346915630d9b3c088aa40"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/water-heater-sizing-01.json",
+    "bytes": 8220,
+    "sha256": "67a01912eb1f93512228594eb54d217f3af4f319fa700523985f0793ae57cf24"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/water-heater-sizing-02.json",
+    "bytes": 8312,
+    "sha256": "20cf31a15c6fd63e05dd824110d784fd3af143758c27f52ef0402057d8e18c5b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines/water-heater-sizing-03.json",
+    "bytes": 8360,
+    "sha256": "3698fb0c6e5b950a870b2608273a87d1982e3a1a5d57d5831b1f0320209cae92"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/baselines.py",
+    "bytes": 1013,
+    "sha256": "7cbb9e3ff8756a4a23643da90b8bdc7d2c496ab0f2ef87f3c0e202aaa9ed8be2"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/configuration.py",
+    "bytes": 5295,
+    "sha256": "0acf36a22e6c83e203ed0f59fc7d95fbff795dff374117c4225caf5b03f3452c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/evaluation.py",
+    "bytes": 5818,
+    "sha256": "e769d1e0d7c5ec90d330366d62ffc1855c8ba072c720ed456c961b13dd68b2d0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/feedback.py",
+    "bytes": 5165,
+    "sha256": "00376220cc8676ae4bba2dd4fa0307d291ca67e8d2703e61800b5ea6e37433ca"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/gateway.py",
+    "bytes": 4741,
+    "sha256": "1715c4b4685c3d6f1b1fd5c31e6631b1e8b96087a50cef7b0de799047842ec01"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/process.py",
+    "bytes": 12036,
+    "sha256": "5ebb9f92292986cd5ced5f1f431dcb9d24806f6c1900e5b59a491a31149c8997"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json",
+    "bytes": 252691,
+    "sha256": "bf63646afca256deec22f79736519ce896f5fe004a741cc7fc179554c2a6453f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/heat-spreader-sizing-01-full.json",
+    "bytes": 24451,
+    "sha256": "33859475386debc00c574f54cb09d5ddc0a95933b8da2872104219c87ac35122"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/heat-spreader-sizing-01.json",
+    "bytes": 21694,
+    "sha256": "a7c4c7ca38219b92cd8a62e691ef98dc5ca906b07ae5f1746b46d83e07e6030e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/heat-spreader-sizing-02-full.json",
+    "bytes": 29992,
+    "sha256": "5bbc3548dfd4beddbd39ae95bc3517c7a3a3dab00f8c8c68111427872e6df628"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/heat-spreader-sizing-03-full.json",
+    "bytes": 32909,
+    "sha256": "d9eb140f4e690d5502eefcc09b1b283ac5e0227c32e24175f40a423cbf4a2dec"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/lightweight-equipment-bracket-01.json",
+    "bytes": 21953,
+    "sha256": "4d619322cb6eee2fc40e03d0cc88f405c705a4e6ebd07982d872bfa51c2e0b9e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/lightweight-equipment-bracket-02.json",
+    "bytes": 21664,
+    "sha256": "82de6c95012772bda422b38182fd322bf36c0f321239f3f466a4ac025f57e29e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/lightweight-equipment-bracket-03.json",
+    "bytes": 22161,
+    "sha256": "32caa2203adcf1cbca4abd7aae122a762c0706e41b63ead999b26fc55e9865fa"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-01-full.json",
+    "bytes": 16534,
+    "sha256": "99437f0c23f1d4523305a5683ce295f60c164936abc6e5512972888c1521941c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-01.json",
+    "bytes": 13588,
+    "sha256": "085e1e1ce9aa6452bb3be95b037f533f7729e635c7302b4c8f58a257d3ad6d00"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-02.json",
+    "bytes": 23401,
+    "sha256": "b1472174693e2bc4eb101552de33ff57cd597707628b286bff7d539d49ce32db"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-03.json",
+    "bytes": 28150,
+    "sha256": "b13a39d51833469e73167098b6c78b3fd81868efb65d49c26ca836b1d59ad518"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json",
+    "bytes": 15052,
+    "sha256": "3950b7e088a9eb9c3f3b51971db8b4a1813feece448f1c7517a7fa98f7d51d7a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-02.json",
+    "bytes": 14689,
+    "sha256": "60e164adeb1f41686ead462bd803ff7b194b679afab8a07f9210e17d0a482f3c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-03.json",
+    "bytes": 14907,
+    "sha256": "0564c7f15f4365b3dd8311b6a537985100fd1d08641b22343159c8344320e1ad"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/raspberry-pi-enclosure-01.json",
+    "bytes": 14738,
+    "sha256": "1daf9e8d4ff5a77d9203fe66ff3a816b22900e5ed3de50d8d19c98e78f92eba0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/raspberry-pi-enclosure-02.json",
+    "bytes": 13967,
+    "sha256": "be3086d105b1b0c90630831ff7a0f708a1467e1feea8269ab9c1fe8aff6771a3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/raspberry-pi-enclosure-03.json",
+    "bytes": 16352,
+    "sha256": "b15d7b838b4a545803a753accc8c77efc586df24eacd952812244e103433b21d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/robot-tracking-diagnosis-01.json",
+    "bytes": 23317,
+    "sha256": "337aa97c70558a6189f19b450a7495e093725c655a61f51b56f07d2017dcc208"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/robot-tracking-diagnosis-02.json",
+    "bytes": 23547,
+    "sha256": "308f5b05ecaaea376fbd8d4cca8a7180dc98458c793a7302c574903d77dd6717"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/robot-tracking-diagnosis-03.json",
+    "bytes": 24893,
+    "sha256": "55952339c57bb0bf56dc2b9e91428c5bf660cd5b56370e295c217ad3ab04c815"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sensor-fan-harness-01.json",
+    "bytes": 14299,
+    "sha256": "fbfc59b6627a3c597ec797d8202c1c58b32e88d754ba7f26f0ad2549327f986e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sensor-fan-harness-02.json",
+    "bytes": 14870,
+    "sha256": "b22d3911c01bded5c9176133eee329d346125bd004677b5ee2b2d8fcca6abcba"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sensor-fan-harness-03.json",
+    "bytes": 18688,
+    "sha256": "3efcc26dc583c5950ea69363bee4dd774a9fb4bc043b4aae1a33a3346bd90c08"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sensor-interface-pcb-01.json",
+    "bytes": 12578,
+    "sha256": "17f97227e87fb90385c84d8ebe3b418d97c498429fb635d2f3dadb23c0bf328f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sensor-interface-pcb-02.json",
+    "bytes": 14972,
+    "sha256": "ecfc30b2caa4bfb8d9c5c8d0f61a806d2af4f220c203ed5d97b60f2bdfc0f1ec"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sensor-interface-pcb-03.json",
+    "bytes": 15133,
+    "sha256": "be9e4bfe1f38d5ffc864618f2226be7ce85b312d4552aa4d98a6f3874dc2761e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sheet-metal-supplier-handoff-01.json",
+    "bytes": 15600,
+    "sha256": "59f1cbd8adf9527165443d0138062d244435f16f9f15497faccfe725fbabc43c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sheet-metal-supplier-handoff-02.json",
+    "bytes": 16549,
+    "sha256": "5f6becafb733c371071decaf6ef66e7a39a2e7e09f691bb415aa79ac50d3d3e7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/sheet-metal-supplier-handoff-03.json",
+    "bytes": 20146,
+    "sha256": "e54da776067aa71cd3a9016392fa23b922edbdd1adeda190503012f0a718d40a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/structured-demo-requirements.md",
+    "bytes": 985,
+    "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/structured-demo.json",
+    "bytes": 3997,
+    "sha256": "9567497885ff9741b2a05e86d65b633fa0f1de6c52256726a20d62b233c988bd"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/water-heater-sizing-01.json",
+    "bytes": 21083,
+    "sha256": "9696501b9484f1c3354d25e02fa5686ce06d3195280f4870cf42abd470539596"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/water-heater-sizing-02.json",
+    "bytes": 21220,
+    "sha256": "e2064bb00788537c93a213909ecc99454d72f267321179a12e4395eb6c322f46"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/water-heater-sizing-03.json",
+    "bytes": 21243,
+    "sha256": "b0354ade8bf124966306ff1da5731698821a4087395590bdb4ca23d47f2e13a5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/profiles.py",
+    "bytes": 1371,
+    "sha256": "3d19c38586938ce39c4eaca9ce0b6ce229c62c90d4e8cec862f1ffa193cc8e3c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/__init__.py",
+    "bytes": 80,
+    "sha256": "2900b8e0f9f516c6f6622b85c0b294c5c316fcb70b01f5a30f0570ae313ed81d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/base.py",
+    "bytes": 4837,
+    "sha256": "d10f30417d7d6e009df7e894d07198d36cfc3b89b9ef3cd831a00cec837b6f26"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/cfd.py",
+    "bytes": 27963,
+    "sha256": "9573eb5d7b744f6072aa37ad9c547986fdf6ee89e07155f6cd1cf85280b45267"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/geometry.py",
+    "bytes": 10819,
+    "sha256": "8a8e333d4b221f4b425762783bbb6d91fbbb9f8af85517b49f2c9f85d6eb4f5d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/harness.py",
+    "bytes": 10621,
+    "sha256": "ccd01b1699372ce722ae675264420a7abce3cb5f7c38bec07a652f6868fcf16d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/harness_interconnect.py",
+    "bytes": 8954,
+    "sha256": "cd2f841ed08c493e952fc9df3fed199a274a2bb71b37ba797efa00c69caa9685"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/kicad.py",
+    "bytes": 18413,
+    "sha256": "a68962cd4cb6be83487c94874049416cc85a942377e3799ae6d75178036759d0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/printing.py",
+    "bytes": 16669,
+    "sha256": "6f81d713ad51c1c9960b3de393e6364079c3a1268e8cd419ca31d10153a40562"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/sheet_metal.py",
+    "bytes": 15386,
+    "sha256": "580d5b743da6d9e8063ccd242a19a3673d8851002564cf0bf3d76cdfc11243df"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/step_box.py",
+    "bytes": 3606,
+    "sha256": "35f79b94c14bdfb06648e2bf70f723fc456aeed0ae2a75251d9c13dc7b22b5fd"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/structural.py",
+    "bytes": 18484,
+    "sha256": "e685bbab9fb9e739c75277b7cf9771a09e39d859429103af89b8cc16817fe7e3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/structured.py",
+    "bytes": 8974,
+    "sha256": "7081cd5995b30253d3fd23e126f3bd01dcf52258a9005e9c3d9e7518581f7013"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/thermal.py",
+    "bytes": 17178,
+    "sha256": "5a21e5af22d12bd3c1e097ff67cbc95374e1100ef52e2c87315fa2d1b4dbe89f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/tracking.py",
+    "bytes": 4840,
+    "sha256": "277c1c2b3ad1a03865641b6b09d9c583bf495a1d058e19748ba704364e274faa"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/readers/water_heater.py",
+    "bytes": 21235,
+    "sha256": "59339f59c50151d814acc406f998c747892ebca10ce9830000891dc03a2d3302"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/reporting.py",
+    "bytes": 11167,
+    "sha256": "f9510180b2de0328b0df59ac6a855074eb1e467ae7bb19945186782fdedfe87f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/service.py",
+    "bytes": 25828,
+    "sha256": "0d3cb35eb009e94f073e94660afa18cd1f6066374f64147a03c16448793bb33e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation/subjects.py",
+    "bytes": 4744,
+    "sha256": "069daa45f7f1fbed2a5da46c82cfbafe3ee72d3fa851f770c72dc9b69275a346"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation_cli.py",
+    "bytes": 5030,
+    "sha256": "ac3a29f7e93c3bfe374fe4f6ef5f7ceab035b50e0a29b0343e41f44133311e14"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_validation_tools.py",
+    "bytes": 5821,
+    "sha256": "8942296bee20e5ff615333a980edfbd21dadc453cecd25827beae6ec7ba29673"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_approvals.py",
+    "bytes": 8377,
+    "sha256": "40f37532791772d8a2a2b22279b4903a023b9fc34483a32557be21cfe6999423"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_authority.py",
+    "bytes": 7234,
+    "sha256": "ceedf4a9d3c4dbcf82ab5c210fbfb45ed366392870fe12bdc2a4dea037c4cc9c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_capabilities.py",
+    "bytes": 18222,
+    "sha256": "0d845785bcee6fef7080ccaf9c99f1496ead2ab9cf5de5cff8f4deafd9208476"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_evidence.py",
+    "bytes": 31810,
+    "sha256": "cae714129e067ebc9d2aa93b054965572a4b967584e6852c19836bd4ea519c21"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py",
+    "bytes": 18885,
+    "sha256": "d0aa9bcb0ef06b7c313fc482b877ef702491506664128d565d38cb2a6bba4efb"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_mcp.py",
+    "bytes": 24504,
+    "sha256": "21a5cd97cd9c01f4de35862feb4c575c13991a3f4865d1873f28eabc5b24032d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_project.py",
+    "bytes": 3993,
+    "sha256": "23e1516d1ebefbad8c579022f484855610638080bd0a096f7761529fdd91541e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_runtime_host.py",
+    "bytes": 22775,
+    "sha256": "94c71cd19f0e0bdcdfeedd2ebe5c0f1ba86729a06d6843d07323eeecf0401835"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_settings.py",
+    "bytes": 2405,
+    "sha256": "e1796bcc70dca33706ed2eec8aae3f9b8d72583a65a56565e94310861d7bcd6d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/rivet_validation.py",
+    "bytes": 29558,
+    "sha256": "de5ce9785905360392362b923041942dbaaa1a9c392b20a91ef255d5b9b63396"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/service.py",
+    "bytes": 39298,
+    "sha256": "430f3951c073e97089f158e1e37a9a7fb8a48508fbc5af862e90b489c5ca2aba"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/support_diagnostic_service.py",
+    "bytes": 25776,
+    "sha256": "da8e967b645a5c625a0d31c926ab832f21494af7c0abac3569e85eeb1aad47a9"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/support_diagnostics.py",
+    "bytes": 11764,
+    "sha256": "ae441299655192afeb442cd55939a10814db7d7d7d5ea7a6ce9fbb22f07a021f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/__init__.py",
+    "bytes": 479,
+    "sha256": "91778c9ec4e4e352d693a4349a8ecca225bb0c410e88e3618a130f1c278f692b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/browser_policy.py",
+    "bytes": 5141,
+    "sha256": "5d62680cad871da71c3cab6ee967a49b21245bed4321dcaa02ae99feefbe6ef5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/diagnostics.py",
+    "bytes": 2292,
+    "sha256": "7dae8e19d1e444ee193d02949ee2a68578bf8c19af59ce3a317a9640ff170a99"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/display_service.py",
+    "bytes": 38855,
+    "sha256": "e9227f195776e7d428a1f09701207a6e153b71561de328da1d4a61fb9a05db26"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/display_tokens.py",
+    "bytes": 3316,
+    "sha256": "9b84af5ca5f94d9d119ca71917819d6ee621e777c4f2daa9d09d3fc1e3c27441"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/endpoints.py",
+    "bytes": 7777,
+    "sha256": "7494906efabb0819b1fb9775b63c6f43554ba0239aafabc7600b2ef58bf0323a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/events.py",
+    "bytes": 2782,
+    "sha256": "5ae0d8dfd8eb4339b32b9dcf307419b63f4a522e7889056febe5b6df3c29c06e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/external_urls.py",
+    "bytes": 5534,
+    "sha256": "b39f772ffb9bf4a371bddd81da3992a34e4ba4cbf0411a35c661c54360c84853"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/grants.py",
+    "bytes": 9809,
+    "sha256": "a399cf12880afd105e01da771b774dff1636d717f52b042f6b2fa41c28fab554"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/health.py",
+    "bytes": 8593,
+    "sha256": "1fd643862559abf595f60cd958307c767ada1d4ecf46f0882d79144e0d3f4155"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/limits.py",
+    "bytes": 14268,
+    "sha256": "62b6ad116e4faa4b14c86c35baf8fec1fffde83e03bb21607c72f5c038a2e471"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/live_app_manager.py",
+    "bytes": 43047,
+    "sha256": "add6d9ec433396d628970529e1d01b7e4fe727815f6204511c100a8fe6e722c3"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/live_app_runtime.py",
+    "bytes": 19532,
+    "sha256": "8efc146d4f0be3b95508d4956b4f3ad6ba91f40c0f300ce43063b053c0ffed59"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/live_app_service.py",
+    "bytes": 25144,
+    "sha256": "638d22159df87ddca11230492eff28d1e2eee08202522200da82b474eb4d2dfa"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/manifests.py",
+    "bytes": 11472,
+    "sha256": "beebf35ec5d650d31556e1898ea625a466839c7b61e47d1d5906aa52b96907fc"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/mcp_ui_port.py",
+    "bytes": 980,
+    "sha256": "5bd905fe4c0a384277aeda1c1d336af3d5aba134de0a69f042cbe119d059ede8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/messages.py",
+    "bytes": 12060,
+    "sha256": "042ed4dcf3491d98af41dc510de8d572f7e09b33389f1698963d3d170cf83aae"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/ports.py",
+    "bytes": 3322,
+    "sha256": "77ffe23790f165abcf71f5651a77595a6b328a8379a485ee2c9a3870ca99f0bb"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/presentation_service.py",
+    "bytes": 17387,
+    "sha256": "7f53d12a6ccbc44b68685127a933c7fdf9cebdd088042e2f6754ee5f351676f6"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/presentation_tokens.py",
+    "bytes": 6542,
+    "sha256": "ef1146b37a1093e7b939670a8c03f1d741f7dd9187fb53aef62edbf00ce6f25a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/process_posix.py",
+    "bytes": 12080,
+    "sha256": "1f00442c7f9389ce2981f9e209fb94fe1515f8dd12e523ea2732d5bf67bacb29"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/process_remote.py",
+    "bytes": 4847,
+    "sha256": "1b6966c1bda81f89d3e2cd91e5f0a33a56368d8ea64eb70fb91f28d6170b4b36"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/process_supervisor.py",
+    "bytes": 14459,
+    "sha256": "f778ed42b87ba34d2cccc93c753f0d060ad20194857dd5e956e89003c5dfdf8e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/process_ui_manifest.py",
+    "bytes": 3355,
+    "sha256": "43b6046db0632e777835a5dbb7faf62c3e5fda83b82947be2282e0b24b42156f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py",
+    "bytes": 11745,
+    "sha256": "9b3ce94b1b06ba2f2907bc80302c491cafbfffc5669dd02ed9c9ce5bd775bd06"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/process_windows.py",
+    "bytes": 21350,
+    "sha256": "e0cebe18404ab4e2dec10e008ce18522ce8736fc91484ecb297e9e6db6dbf12f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/revocation.py",
+    "bytes": 3995,
+    "sha256": "28d4c6d2d7984c561663f8067f57c9822d9cb7f15c0d57a583c2afd64630eaa9"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/runtime_logs.py",
+    "bytes": 7050,
+    "sha256": "732717c9b5f3ed09056e3b5990081b04d01a7bda768370538c7f188ed0e0d72e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/runtime_reconciliation.py",
+    "bytes": 7063,
+    "sha256": "9fe99fb6701c44454feb2fb7dd47135a0f5960eeaeb2da0b537d8a42b8307d45"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/service.py",
+    "bytes": 9003,
+    "sha256": "dad1a026fbe24961ddfaa90d71638198afedd622ca5b5791b9edfbfc500f8754"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/target_pins.py",
+    "bytes": 4819,
+    "sha256": "5abeaaafe21ee38801f2800f83dff80baa91778f7211a2a003f8e9a73c3a7aa6"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/surfaces/target_policy.py",
+    "bytes": 8872,
+    "sha256": "bc93373302c9d735710f690e2c146670376e709bff1134081c776f49c8ff8141"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/__init__.py",
+    "bytes": 716,
+    "sha256": "9ff063c5628d86e96e3745a121ac1b51444f939782c10222439245f54922be93"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/context.py",
+    "bytes": 1255,
+    "sha256": "2f429406fb32c2fdb3eb9e9088fd4a024fa42cf52ce79a3bb8dbc7ccbd51a32c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/files.py",
+    "bytes": 8776,
+    "sha256": "afba4378e7fdc4c269fb20f9da9228566a6a5cfabd1714336914689cf451f098"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/git.py",
+    "bytes": 5604,
+    "sha256": "9f55ab57c25b8d22b9587e8869dcc03d843892185386c10870b4102171664e54"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/lifecycle.py",
+    "bytes": 707,
+    "sha256": "8b5418af7b9cbb05581495d7cac3d2fd42ada6fb7d9ea6f4281d9b2bb7a7701c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/run.py",
+    "bytes": 2218,
+    "sha256": "b6426f60a7dca4af1e4fe5b5b7191cb5de482963a843b0a81ba9f29a9beab922"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/tools.py",
+    "bytes": 8605,
+    "sha256": "fa6c6afcddbc550856eb2862687623c30173b5df55d450f0bcab0be5476f7b02"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/use_cases/workflows.py",
+    "bytes": 5378,
+    "sha256": "3ccc2fc1314e891c88cec6c69b7c60a7cc3474f88bad420a247d42411bca79b8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_additive_manufacturing.py",
+    "bytes": 2922,
+    "sha256": "d76f1b4354b91731c376c86e28a0ea89ee8cd86908fe6615e85e110208ff7f75"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_application_task.py",
+    "bytes": 31628,
+    "sha256": "bc4917a996ba5599c4abe2a21b4791ba45c86bf414820bec36be919425b10d05"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_approval_execution.py",
+    "bytes": 35115,
+    "sha256": "49a7832c6232710b6c8041364e07e58777f2f7408d6b0f08640b84f07a451079"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_artifact_review.py",
+    "bytes": 8977,
+    "sha256": "d2abdc1b513083c1d163cadaf1cc5143e9d7909f5950a34d1a554c0ba3e0e952"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_async_operations.py",
+    "bytes": 19622,
+    "sha256": "17bdcd6a7910e893f97ccd76cfa43d9593be68f38d8cf1c7ad6a731f69bb797c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_cad.py",
+    "bytes": 30730,
+    "sha256": "0569216e7eb540e3da677ff5d41129f4358757fe2a148f947a008740b7502457"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_campaign.py",
+    "bytes": 21631,
+    "sha256": "44e96fc953ba1c51e8f1e58823ec6b1eb969930f86141fe03a274cb32c7907f0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_campaign_fixtures.py",
+    "bytes": 4364,
+    "sha256": "d327ae2ceaec9b456dee2afbc91fc5d50a0e2a2a3855fbc7ee0c383d9ea7aaf8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_campaign_oracles.py",
+    "bytes": 9260,
+    "sha256": "4ef3f5819f1f43a5b718033072558f366acb19a34c358ccec9e1a8dfd47cb0ee"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_catalog/__init__.py",
+    "bytes": 7472,
+    "sha256": "140c827602ee49d75e572b87f122230517f2b4552d65012203f9324d72a64cad"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_catalog/catalog.yaml",
+    "bytes": 1796,
+    "sha256": "060cdbaf261c0d76b921c1bb50ee31c92ae0e234dfcd2909d9c12ecaf7310bce"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_catalog/examples/text-rpg.rivet-project",
+    "bytes": 13229,
+    "sha256": "3d151cc0f74f501125b2b34aa633d5739d1ba985e3d269b8493f785230ccd9ec"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_catalog/NOTICE.md",
+    "bytes": 1371,
+    "sha256": "93a2f42118337321982c15b6e77c95528c4e82f6e2c585388728fc8f4c48c05d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_catalog/templates/ai-agent.rivet-project",
+    "bytes": 17297,
+    "sha256": "24752c984e450fabc9364bbabe3edf129a292d7cafb85a5d7e23201ec49c515e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_catalog/templates/basic-flow.rivet-project",
+    "bytes": 3195,
+    "sha256": "977cc653543c9ce1934cd909ec81d93b7530fedf6b786b1cdf007d15d9ec4629"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_catalog/templates/mcp-agent.rivet-project",
+    "bytes": 15479,
+    "sha256": "ffdd38c77afd338b88fdce0088835e443b60b1c6e4a0d6593e8de71fa1934db7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_demo_capture.py",
+    "bytes": 12109,
+    "sha256": "dad0851ccf836aa7a711e0cc0748d8c5f5d6d9a4504fa8a49ee39471ea041d37"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_design_check.py",
+    "bytes": 15548,
+    "sha256": "2787ace64de5287f579411f424f8a573710ea6615ec83292110e1025ac130cb1"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_draft_service.py",
+    "bytes": 6816,
+    "sha256": "f4bd0f811bb9b66a77a80ddd66953ca0d7dc94c402ee65276f0f0dccb5d6fc9d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_dxf_verification.py",
+    "bytes": 38572,
+    "sha256": "165aec36717a8424e96edfb6a9bf5107a46eb4066e5294d0dad56a1f9283b6d5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_editor.py",
+    "bytes": 21564,
+    "sha256": "505a8a002d0e1a54cc4b32c301ab21bacbf691323045a6d6d5a6a14e897ff069"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_enclosure_cfd.py",
+    "bytes": 2906,
+    "sha256": "383f9109bf20690875d99b5521a042887ca196f01ac6027315128730f800212a"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_engineering_assertions.py",
+    "bytes": 1684,
+    "sha256": "ed1f704752bbe880a66840022bd77cbbfbdb21498724bcbbf89c37ff8eb8119f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py",
+    "bytes": 16301,
+    "sha256": "92eb7fb5db9ab85bdf449d62beb9b5ac90f764963afb9235c501ef4576160930"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_external_actions.py",
+    "bytes": 14660,
+    "sha256": "e5c68454deadc6707e92c08704319dc996cd53509c1e54540bbd993efaf1e8be"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_graph.py",
+    "bytes": 19824,
+    "sha256": "16a53e899e5776dcae44bc49f743e147e065c20d13d9817ef3bcc9cc6ac8a9d4"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_human_input.py",
+    "bytes": 4415,
+    "sha256": "eb948065e65059a060d2ce2ad703f555da3da50c294645e31e88342c1c55991c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_human_input_runtime.py",
+    "bytes": 5765,
+    "sha256": "f7e9d04a328dcbf2bec9c939316a09eecd964c52872ac2264070c1107e6c89c5"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_inspection.py",
+    "bytes": 30143,
+    "sha256": "744a8fc03ea8d5082c2a0cd313a38e4788a51d7b40d0a71889013ecb0e905910"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_integration_document_write.py",
+    "bytes": 8948,
+    "sha256": "a1f21cf0ee3c6520d2ef3d79c8c18a4b0421f835e17cdfa017208d7f5527c779"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_integration_file_copy.py",
+    "bytes": 8292,
+    "sha256": "6c997919132bf15d2cf4f75b635298bd0edeef94bc85c4604fb2cdbbc085258f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_integration_file_read.py",
+    "bytes": 4937,
+    "sha256": "c41dc4f91ad36987b2c4e0d19b9d0455f2a9c62dbd8c23576b42997f471c3a4e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_integration_policy.py",
+    "bytes": 18717,
+    "sha256": "4c4889339f14c88015e9e15cf28971eb7eada3e951591113509eda7edb0128e7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+    "bytes": 56581,
+    "sha256": "477c5b0b7335cf2cdca7bddec8cd990e67d0242008caa3bbfde0268fd855a7bc"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_mcp_images.py",
+    "bytes": 4625,
+    "sha256": "5152d3eb4dee91b4336b2ee295e19eedfffda4fe115fccbf4bfbab152aae1ce0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_mcp_operations.py",
+    "bytes": 18242,
+    "sha256": "64f9d49b385fadb0ab97f426acfc455f213750945516f251e962d9eb91ea7d50"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_mcp_source_contracts.py",
+    "bytes": 5921,
+    "sha256": "bec159a154df7613154ea1d4a4631057354655562cae2100b8c324e4b3a4cf5b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_operations.py",
+    "bytes": 33730,
+    "sha256": "9822003752cab3699df8840de620e8a3e21306b9c0a2d781d400a30c1fa4a0a7"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_references.py",
+    "bytes": 11286,
+    "sha256": "58574e22f29133c73a88cd61bc55045f71e58b5c523d15b6fbd9dab60adc319d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_resource_lease.py",
+    "bytes": 2894,
+    "sha256": "dcf8c51d8235dd222f7c26f35652e2c73b0aa8ff5069e9a0fd6439db358cdd7d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_results.py",
+    "bytes": 6841,
+    "sha256": "92d11b1cdeceb22c3d7255b892f2065c9b78a211993329b6a31ec2732a8fb942"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_run_paths.py",
+    "bytes": 8264,
+    "sha256": "79a1667f1e9f9927af31c0a56c1374c10dcd057026ddfb09284cec86902c092c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_run_preparation.py",
+    "bytes": 5419,
+    "sha256": "9d0d02613c9a721461b72edd45e83384835b03968d426e65ccab9da1e090ea26"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_run_record.py",
+    "bytes": 52704,
+    "sha256": "2e5870bdb56422802a0a650d23b5501292eb3d8a3d89d4522e6e88253bf86cc9"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_runner.py",
+    "bytes": 55745,
+    "sha256": "34a950bf9a5e2b36b750ddf8e3a39204ab3efab0c983a7ea309485d6183674ab"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
+    "bytes": 135408,
+    "sha256": "0e29734066a3bdf0dc7652d2aeb7b17eaf6d56aa438430f54236f532ddd03c7c"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_sources.py",
+    "bytes": 78453,
+    "sha256": "63d46de7048de6c77a7cdfdf10bc85f54b6841ede7e25656643858d4573ec92b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflow_supplier_handoff.py",
+    "bytes": 3158,
+    "sha256": "294551eeca2b529c1335be9fc69e211f8281898b3d0aa0fac36a7dcc533f09a0"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workflows.py",
+    "bytes": 8572,
+    "sha256": "243133908356b8a7265225ab4e59de44b29aba29761aa1a1398fb1ea72a58117"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workspace_document_artifacts.py",
+    "bytes": 15535,
+    "sha256": "0bdb37a3e6bcadee1684e4c4b35b7573b20a770d5a525ef8e6e2b689e1242bc8"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workspace_document_gateway.py",
+    "bytes": 7609,
+    "sha256": "dc2ea6f72c603c83e988a826bccd108b72eca47b2a7cfe871a56fd11b5cba08e"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workspace_file_copy.py",
+    "bytes": 14772,
+    "sha256": "654cb7f1a4524d84f100d894385bcb36ead82bba1f375b53dc7209996063b31d"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workspace_file_identity.py",
+    "bytes": 1800,
+    "sha256": "6ac694bc45d4f84a364ddcb99b6ff405aa2d3cdd8e46b06485540e1c197d2c06"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workspace_file_inspection.py",
+    "bytes": 9288,
+    "sha256": "d70506ab7bed03229aac5d51b762b65bf4e109bcba0a95b3fe17036d6056162f"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/workspace_path.py",
+    "bytes": 3696,
+    "sha256": "6436f86ceb00a8242fed2484cc8a319c27d1a32b639878bf682388d2b7da475a"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/__init__.py",
+    "bytes": 2145,
+    "sha256": "6f205e721318a21ef8f340705cfecdb279ca8a9ac3987ae75b97b69d4915c759"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/base.py",
+    "bytes": 9361,
+    "sha256": "8362f014e7aad8808ac60d0fa2d072b6c3327e97a76f06652111a58a26c13870"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/config_merge.py",
+    "bytes": 1940,
+    "sha256": "f62f61d58fab1542c8cdc1a605c7703f3288b74c4ac1d8200f5d83049d4531ae"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/context.py",
+    "bytes": 1422,
+    "sha256": "8fa46f8517f146e3d771d580d3bffdae2a700a3700403a6ad660df5d1ddbf3ca"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/gateway.py",
+    "bytes": 2213,
+    "sha256": "39a840700409ce4e5f1e8269a4526ca0ea776d021026caff5503c79870ddee43"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/health_probe.py",
+    "bytes": 13898,
+    "sha256": "88bfe1fa7268ed43181bae8b04d9cde78063f81349b72bd5a242802d463732d6"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/hermes-slash-commands.json",
+    "bytes": 40224,
+    "sha256": "e69797645304f9d60706cdd84446bc9f8435e19f1f8d64d235f7b3fb75fa8346"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/hermes.py",
+    "bytes": 50381,
+    "sha256": "bdc6eb8764e5dd61fa616f17590eae584620b29336b56f5ad9433b9421032042"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/hermes_config.py",
+    "bytes": 7261,
+    "sha256": "ed2c33aff2d144373221a3c690b34753710919a77261dc1d1fe92f42eace9263"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/hermes_gateway.py",
+    "bytes": 4318,
+    "sha256": "43fd8bc928dfb099e3648712cb15cb92970f6165604f771130c5f4dda944e2f7"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/hermes_openai_bridge.py",
+    "bytes": 56891,
+    "sha256": "fd5d6c19004161a8fbc41159580cbf5cecaee0ff4bdba318687e7992b2559745"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/hermes_role.py",
+    "bytes": 4547,
+    "sha256": "c046b9d38a3d0e4632bce1bf029c2399a04c7dd8bec2ce985d8e729a25ea1b78"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/hermes_role_worker.py",
+    "bytes": 6775,
+    "sha256": "e149d8aec38a937f0c4b3a77504ac0468ba87230dc5d4f70191232d0381847e1"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/llm_seed.py",
+    "bytes": 15470,
+    "sha256": "e9fd49920b044969c61a9e1766abccd1e390adff46cd114bd77b95d30902b9eb"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/openclaw.py",
+    "bytes": 2955,
+    "sha256": "f959061c83a1b996e9299d835375f3ca518af676939801e52968e44382ef236d"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/progress.py",
+    "bytes": 4496,
+    "sha256": "27bd34675001b0aabd4a5c26ee33b805f73110870a5afa05f688e5b7291106b1"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/registry.py",
+    "bytes": 6307,
+    "sha256": "91f9a4750232cb8997aa6a43c1d9715b6b0b01aab2a58b58af5a84d9b069accf"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/report_generation.py",
+    "bytes": 16438,
+    "sha256": "90c9788e18f752642cd25c446948c49b21d70121a0c0d8395f0f77cea8e9b0c6"
+  },
+  {
+    "path": "packages/agent_adapters/src/agent_adapters/workflow_observation_projection.py",
+    "bytes": 7937,
+    "sha256": "7b442100f7c1e6b2ed5634b054374186a07f5ecdf8f009512c9a74941bdf67a0"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/__init__.py",
+    "bytes": 3284,
+    "sha256": "95c03e536cbd74e942f816e5fbf8ab73595f5920fcc9f0880a90cd171e585035"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/affine_runtime.py",
+    "bytes": 7283,
+    "sha256": "0cb12256677d9361870c1380ee6c9b6fa0af27a40cc6ef9155206c68dccfd153"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/catalog/catalog.yaml",
+    "bytes": 12361,
+    "sha256": "9fa00d7db01e3620f7489e857f7c3854a84f3fa4128d93bfc6fc1e2879ce779b"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/catalog/generated-affine-package.json",
+    "bytes": 4746,
+    "sha256": "42ece9472e30989c31af774e193b4d4131626625f302973cfa47f6459b0bae28"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/catalog/generated-chatter-package.json",
+    "bytes": 26570,
+    "sha256": "c97a4c288ebc3a7c6a4d9e1ed2302f942fd6f393c4cce4306134a87cdd697621"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/catalog/neuralfoil-medium-package.json",
+    "bytes": 8742,
+    "sha256": "1c8aa1c3fe4bb38743f8251dbd7ccaa5f9a98a8b607f12a91a14acd988171f80"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/catalog.py",
+    "bytes": 22622,
+    "sha256": "1be6ca4d622355187206d0d04c428bfc1de19a760c195955e2224824cffa7c46"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/chatter_contracts.py",
+    "bytes": 8953,
+    "sha256": "7c88438b37717e5f038f13b6e75586b6b0da3b56620f633104ceb596e0e16259"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/chatter_runtime.py",
+    "bytes": 17626,
+    "sha256": "acce398eb1d8323d8025e30eb3d9b2321c14d5a1849d488519d6925e352203e5"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/conformance.py",
+    "bytes": 13240,
+    "sha256": "d02d5a653732d4826a2ed34be9d0847040ed36d7be6e1dd9f6e4130d6590fa7c"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/extensions.py",
+    "bytes": 6021,
+    "sha256": "31f982208400bff7131c8e7facce88dd3f5c907ce8802f12854e62b6d05158dd"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/gateway_provider.py",
+    "bytes": 11212,
+    "sha256": "c146851eab9b90dafe92faca2149a449772ce860948ffcd52ed49d7f66e2a556"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/generated.py",
+    "bytes": 20859,
+    "sha256": "9a8be5919f87644ead23132866942a4c41f42112f5fb16e500d299ff565e67de"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/http_source.py",
+    "bytes": 12123,
+    "sha256": "9a2415111e20b5a56ec73a0cfe69d4165eba5551870fbcdc661b966623464168"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/lifecycle.py",
+    "bytes": 32205,
+    "sha256": "1f0ff8ff9c5bd061d2a5dcb680242bfb369bdac66f8ea2d99515a6e81337a6a4"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/model_tool.py",
+    "bytes": 1443,
+    "sha256": "cfa93c24bae42df4989f4a4767ec27a35d9a35e79cb76891ecce774aff0629d0"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/models.py",
+    "bytes": 16181,
+    "sha256": "6fa3f8931630dce0c40b48d98b2be4308db5e9927c033ee553d2a6d7b8a8f65f"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/neuralfoil_runtime.py",
+    "bytes": 12561,
+    "sha256": "a02831e07783b91606a5873034da61b646b8cf32b4746636029b7f9cd2aa77dd"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/observability.py",
+    "bytes": 332,
+    "sha256": "3f10cc455b0372b00e91d24391338529326f1c776da397814f094907aab786f2"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/offline_source.py",
+    "bytes": 12317,
+    "sha256": "e2acee4a5e017617adb275aeee696d0ac90424dfc9d4634cf3bd6e5cc8fcfe2e"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/planning.py",
+    "bytes": 21103,
+    "sha256": "eba45d863a3c6932f48c2ab79a6905e354333d29f6ca874a92a9b6d2db6b2a37"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/policy.py",
+    "bytes": 10765,
+    "sha256": "4a637ab678e7554a08dad1ac90ec08f8b61903b015a0df6b643f2b977f4a0e46"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/runtime.py",
+    "bytes": 40296,
+    "sha256": "2c3f8ff9892ef61afae0c2025b80ee7a64d12cd9ef6952ea464d781e140081fb"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/__init__.py",
+    "bytes": 69,
+    "sha256": "af2068eb419682771d64ec07b7f3c75fc8fc6fd9914b0263f07459f031e5e8e5"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/chatter-candidate-batch.schema.json",
+    "bytes": 3078,
+    "sha256": "36c9cbe6142d26772fba7782046305edd63d0192362cd49f1b105ccf40d406d8"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/chatter-result-batch.schema.json",
+    "bytes": 3392,
+    "sha256": "c1094df59fd5262c9620b1a878e789412066245d2a6f8d2c9c0a36836b0e71bb"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/chatter-serving-metadata.schema.json",
+    "bytes": 6511,
+    "sha256": "3ea5238547261d396da9312b7ef3a90e8092bd48adb99b046f69cd106a1c7252"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/conversion-parity-evidence.schema.json",
+    "bytes": 4963,
+    "sha256": "0f3b77ccc4877804c835d9b734927c6eb162180f7c6eaaf42609023bacdbe4a8"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/model-install-plan.schema.json",
+    "bytes": 6151,
+    "sha256": "5a94e4286f54e474e4a49ad819cb6ef8544b38a791f23fbeb72475673fff2913"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/model-operation.schema.json",
+    "bytes": 2544,
+    "sha256": "5363a8b3c513b05cb0df2deef3d1fe079a6d46e4078ff2820049fe9df092bfe9"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/model-package.schema.json",
+    "bytes": 7793,
+    "sha256": "5c228c7ede41449dadc21c8e1f8986c9570fce34cc014e4ea9aa8f40314f6b2f"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/schemas/model-test-vector.schema.json",
+    "bytes": 3125,
+    "sha256": "48d1f9205d87da684df5fdeabca52eccbfb534c7d68d74e566b1ff76cd50ff7b"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/sources.py",
+    "bytes": 1591,
+    "sha256": "773c23b25611f983a54e8e7763fadbfac56ae3d6dd229f80d8088d50d596e4e4"
+  },
+  {
+    "path": "packages/model_registry/src/model_registry/testing.py",
+    "bytes": 10852,
+    "sha256": "00f1f5d6b7e00c3a303d5e9b37c94bd8eca2399536de6353b392ef8e6dca5eec"
+  },
+  {
+    "path": "packages/workspace_service/tests/__init__.py",
+    "bytes": 39,
+    "sha256": "e905e1c7eb52ec1b2a99e7faa1b4907c1b2fec8317f1bdf40bd6e6b71409f124"
+  },
+  {
+    "path": "packages/workspace_service/tests/conftest.py",
+    "bytes": 6957,
+    "sha256": "c882412c422e99c26400a3ef9924bfa190f898855d33c8c2c5de2b3c8d012db9"
+  },
+  {
+    "path": "packages/workspace_service/tests/engineering_workflow_template_fixtures.py",
+    "bytes": 924,
+    "sha256": "c6bc98040aed2f6a9e8414380a3ca03ce283eefa1fc5d87cedd28b96aca8dd1e"
+  },
+  {
+    "path": "packages/workspace_service/tests/fakes.py",
+    "bytes": 2664,
+    "sha256": "1f1f9bb2f1dd86521ef63974843c30749841125db147a629953944c5d88eef08"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/design-check-mixed-verdict-20260908.json",
+    "bytes": 9304,
+    "sha256": "9c67d3d87843145a5cbc1690fa9c0da5a11081ee92861250b2032ab8151f8936"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/engineering_scenarios/contract-invalid.json",
+    "bytes": 3278,
+    "sha256": "14e741c1eab99d34751aee4c85c663558bc0604ee8d67a1fd0f83aecd2e0c5a5"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/engineering_scenarios/contract-valid.json",
+    "bytes": 1121,
+    "sha256": "c453c2d58b461aeaaa839367babd426a13338ce9b85d9b72d8ac2f345f1f4484"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/engineering_scenarios/model-enabled-affine.yaml",
+    "bytes": 1992,
+    "sha256": "e72adf39641c6b0aff86cef55ff58e940da37519dbff877a928578795b42e9ac"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/native_restart_child.py",
+    "bytes": 3950,
+    "sha256": "e49c097e94b8678b23b07fd0a08dbfa5738e0651f2a2dc31eb999c05aeddc7d7"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/native_stdio_mcp.py",
+    "bytes": 2785,
+    "sha256": "91835cb194651a08b10bd051217a461956581d668bb2226afafc574a0109cb39"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/rivet_mcp_servers.py",
+    "bytes": 4071,
+    "sha256": "044ab497041f671db8caf61fcbfc19b6c610a457967fb79ed3308b1214f6fb27"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/rivet_run_inspection.py",
+    "bytes": 1634,
+    "sha256": "5cb36a3dbc8915c2e76ad7138850950eb8940d79df7ddfcf523802a3dc876ce1"
+  },
+  {
+    "path": "packages/workspace_service/tests/fixtures/run-progress-dispatch-20260908.json",
+    "bytes": 5338,
+    "sha256": "ab1d6e493a94d1cb4d8e4b1143e121cf00b4c164cf7c2c57524433b4fad276a8"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_app_health.py",
+    "bytes": 5570,
+    "sha256": "7ae164e4fec27d098beff85319def48989885dcdf174e814c296d359402e6116"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_browser_policy.py",
+    "bytes": 2343,
+    "sha256": "004d5ccb2fe832abcd0ad95fd4e25534b7a035e085593f3f0cf688cd34a0c957"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_capability_grants.py",
+    "bytes": 9925,
+    "sha256": "6b42dd4f87a4ef0220af850b68b4d1a0796a1dba0f591b2df058f687c218d935"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_diagnostics.py",
+    "bytes": 6274,
+    "sha256": "842f49b261d97adf7fdcab8c97404c9630b76fa1776bbf118b4eb7f537cc4f57"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_display_service.py",
+    "bytes": 9293,
+    "sha256": "a066fcb433e73b14322946283ebf724511f25c239a1df374448caaf337759ec7"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_endpoints.py",
+    "bytes": 4217,
+    "sha256": "425997a81f00fda065d0fd4ddf8b37ba6952d48e493bd3c70c3ba68bea2ea7ed"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_external_urls.py",
+    "bytes": 3572,
+    "sha256": "ed9c673993daf57f137599c41bbf085a2dd06784072eafd3599274d2ad1c6f16"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_live_app_manager.py",
+    "bytes": 19443,
+    "sha256": "e510ff507ac76fd6a663a891c86445a278ffc7bc14f724ee22d16b6d39b201a3"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_live_app_runtime.py",
+    "bytes": 11413,
+    "sha256": "e29524650deedceef684778f162412e35421cb2e10e03eecf419445add6dfc5f"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_live_app_service.py",
+    "bytes": 19333,
+    "sha256": "20103f001601fcbca8a87cc32dde221fdcbb9a89bb08fa2443a15847674d353c"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_manifests.py",
+    "bytes": 5857,
+    "sha256": "6c28239404bd5ff64fac4fa28ae04f771ae5456016a098bb09da7aeb40a9f9dc"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_presentation_service.py",
+    "bytes": 13122,
+    "sha256": "ebbf662bb2bbbbca975730fea156d4d4819106efad6902d8fda52832d77347aa"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_process_remote.py",
+    "bytes": 3841,
+    "sha256": "2e222e67389550912e06e8c370c750237f5519d551fe1c12ab1a2411e7a8f3e4"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_process_supervisor.py",
+    "bytes": 5631,
+    "sha256": "c1240159d8c9db3d6ae80a265339fcaf3ec77e5341326c617fc688dcf4a10219"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+    "bytes": 11711,
+    "sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_revocation.py",
+    "bytes": 6499,
+    "sha256": "76177fb0112e8fe23b6f23d108cd002dfc539889f029dad6773883d1ae31c86e"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_runtime_logs.py",
+    "bytes": 2943,
+    "sha256": "0ce89c9d8b1136275e4f58803db5b5cdad367aa7c0b0f8c16fe24279032fabe5"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_runtime_reconciliation.py",
+    "bytes": 6195,
+    "sha256": "170f6ba8fc5966eae153ecc5f5bf8d354206dd8ee896db71e162e8e52e921a3b"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_surface_composition.py",
+    "bytes": 3131,
+    "sha256": "0a2e1f177229edc1609b008d5d28a6ee8a8afd945bad5571bd2d13c105524bab"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_surface_events.py",
+    "bytes": 2561,
+    "sha256": "3c9dd0e6d705ce3faac4f0c790a3a55af97691dc718d2dab849f273772fc0361"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_surface_file_security.py",
+    "bytes": 2624,
+    "sha256": "749bbfeccdb16bfa225f5f9a3d91de90e1a3f03b8f5b8a4c57e50cd700b0cf1a"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_surface_messages.py",
+    "bytes": 5651,
+    "sha256": "4b9f0f9a51f8afafe8b2f484debd0e96882be4b0f53701de5a36377a1f53c34d"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_surface_service.py",
+    "bytes": 8634,
+    "sha256": "99f77331aaacc25e9929abe96bd9aa065fd85d25a049288643231dc477025200"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_target_pins.py",
+    "bytes": 2808,
+    "sha256": "737764292a225e552d60b8379cfbcf3eec0e6605526e0b429986fa3bd28b6fc1"
+  },
+  {
+    "path": "packages/workspace_service/tests/surfaces/test_target_policy.py",
+    "bytes": 6862,
+    "sha256": "a2a59d9c221b012020cda4eeea0a8b44432aec7e4060facb137fe3f94d144c39"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_active_rivet_workflow.py",
+    "bytes": 1328,
+    "sha256": "f4965f3896ab9b81b7b4b0142a312a125d49483d95810c78d0005072d5c18863"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_agent_sync.py",
+    "bytes": 6715,
+    "sha256": "ecf032df2e3877efec65fed7ec51199a7567c1064ed7694c6c5e487b02da9909"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_brep_panel.py",
+    "bytes": 2874,
+    "sha256": "767fa766aa6663acb19b8fe9e978d39b838bee410b1126458d8fd45f6bdea03a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_cad_file_observation_preparers.py",
+    "bytes": 18104,
+    "sha256": "a4c1169242859982c61e040c58fa5e3fcac20bedefb4acc6cbf0bee2dcedff72"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_campaign_input_encoding.py",
+    "bytes": 3250,
+    "sha256": "6e4100a6e585e9933207fcafb996fe1e2cb921e665185829ade48c206a42b5e3"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_concurrency.py",
+    "bytes": 1649,
+    "sha256": "8b18912109f89368fb636bb4f6d12e0b02bad29bedd9f67db0f9704fa52801dd"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_model_service.py",
+    "bytes": 14559,
+    "sha256": "5987ad72b8ba512f5fb463fc7ba0999141085b8e28abed4e36e416fe0cf07878"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_program_recovery.py",
+    "bytes": 5911,
+    "sha256": "59b3649ceaaddaf0aa58cd5df322ca139fa1b0f8146317389659bcfeb6e1344c"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_artifacts.py",
+    "bytes": 4334,
+    "sha256": "2494255d094923a49a3099bc05f5a06fcb3bb14a50b7b6240e77ea764568ca73"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_assertions.py",
+    "bytes": 8905,
+    "sha256": "7c8651220dd0b6e199a8cc8e3d2e5727d053a39e423bc1ffc9d9e27708968228"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_catalog.py",
+    "bytes": 3028,
+    "sha256": "4c3eae24cd8baddd2489d67d5d1412799d4910762e866dceaf1017c954f926bf"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_contracts.py",
+    "bytes": 6272,
+    "sha256": "2ca7a73cc31ce5a2b2db79a3f9007f9e4a9fdb0e115003980c8281111c3f8bb7"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_environment.py",
+    "bytes": 5166,
+    "sha256": "8db6b92dc5f6ca102cb38adeb4ae5406d2d8adfe9c35c465b1f9c4b9b639fa07"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_examples.py",
+    "bytes": 4390,
+    "sha256": "f124c466d29058cd66720472f9f4ad954b99b242dfbac51eb9379fa1b303420a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_extensions.py",
+    "bytes": 6658,
+    "sha256": "3bcfb21195cbc39d9a5388949f3b1cde863b6f9ec4a6155083d6822a9f86fdf6"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_failures.py",
+    "bytes": 3670,
+    "sha256": "8da3f85885fed37fc3022af25a2669aac15187d89edf4bca8fc871e30d225d5b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_performance.py",
+    "bytes": 5360,
+    "sha256": "001f055edc894525e865e480a008b1baadf8266a8ca694308414a535edeaac39"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_reports.py",
+    "bytes": 8293,
+    "sha256": "1c7167a0be91f673b850f45bc007b7dce59e1c3de3acf9cd0f10ce087cd02fe1"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_scenario_service.py",
+    "bytes": 10419,
+    "sha256": "b1c0ddb56401a186b2e8117d2cbd6d3cd5f77592c6bb749184381bc1c2d842ba"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_template_promotion.py",
+    "bytes": 1967,
+    "sha256": "7d1717101f1ca38077de1fdcb43e3b02a28a02cea5cacea2f7380b3583803e8d"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_workflow_template_instances.py",
+    "bytes": 6779,
+    "sha256": "0c080a1ce116f924b2abcf2b46ed0d78255ad3d4d536de3ae0a09c58cdfc3777"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_engineering_workflow_templates.py",
+    "bytes": 5442,
+    "sha256": "614f8772e345fca45a5945477c59fa9d17f012585d813a252ed0564f19c2397d"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_executor.py",
+    "bytes": 2180,
+    "sha256": "34ffca50f67a323c02dca2534fa988e35857f862e47b6a561594c971db8e204b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_files.py",
+    "bytes": 2940,
+    "sha256": "063d34e9dd2e2aac8d1bddbc985604495c8139555477725f7543840877000631"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_generated_file_sharing.py",
+    "bytes": 6275,
+    "sha256": "1aec03a370c5e1b4c53ad578129c2a3013d248e118d2a1635a6e001bbd915692"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_git.py",
+    "bytes": 4487,
+    "sha256": "28a1677e86ba101462545ff4e76a47fa7bc012ec59f11cb8fe580e8c1626cb53"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_harness_campaign_preparer.py",
+    "bytes": 5191,
+    "sha256": "9c4c780a1d887066f7dfd2c056e75a94025bb36ad9c5388b605fa2f3019a9895"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_harness_native_correspondence.py",
+    "bytes": 12430,
+    "sha256": "68037993226bf51692eb1389386f1c8946492a967009dca9325ef96b0595c01e"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_harness_operation_qualification.py",
+    "bytes": 3171,
+    "sha256": "8f8eebc3ea571c38666ed63271095b8efae94ba95e7e12e6358f74e1533af951"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_lifecycle_use_cases.py",
+    "bytes": 2813,
+    "sha256": "2cb037ca5462c42e18c8dcb178b3b32b78078967c5afc0fd9168361981af17b1"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_native_process_mcp.py",
+    "bytes": 16132,
+    "sha256": "3c79c66422bd3e2fbe95292d4492b13264cf611c8aae105673ec5817a4a9d516"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_native_process_mcp_protocol.py",
+    "bytes": 13587,
+    "sha256": "64896a5aae6965bba06d8eb90b926b98313f1defce7231d1db6758be00c2011a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_native_process_restart.py",
+    "bytes": 11872,
+    "sha256": "9d4ab83d8ebd2cb1e957f9240680583452863a2dd6c2fdade3228f546acb3b9e"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_native_process_runtime.py",
+    "bytes": 18518,
+    "sha256": "e2d54cd65f6e99ba488477fcc5e245fa7dd8345df48a7b5b8e877b7fa60057ff"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_non_hermes_activation.py",
+    "bytes": 2706,
+    "sha256": "1500304994ccb0e90e5fc86a13c8930dec6b7ab9297dc0e1be10626747d2cd70"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_pi_fixed_operations.py",
+    "bytes": 15096,
+    "sha256": "48eafd9078d0231ab2ba8005851b74d8042768b2e44aa5685d504b70c1698aed"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_pi_fixed_preparer.py",
+    "bytes": 3258,
+    "sha256": "9564b3e9a300a3c794d353a48f8fdd1cb5d6547d097ac46f11a49ce7fdec90fb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_pi_visual_preparer.py",
+    "bytes": 12577,
+    "sha256": "5f40e75948a97259dffe3d3d328c4d6704a19a344dd6abff3b7d2f4baba95276"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_pi_visual_reference.py",
+    "bytes": 3659,
+    "sha256": "71d56f113189bfb5956f9a8b550d97157bc65b2b20b3c4046d6d20ea280c6d58"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_action_supervision.py",
+    "bytes": 19943,
+    "sha256": "490fbeee0822c89717dbb466c11778b5c565f874ca0b2b4bfdb659ebf8d69ee7"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_approval_inspection.py",
+    "bytes": 3629,
+    "sha256": "41accf609906d363c9a91334b8408bef99840a883c39b6ecef85ce0166547609"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_artifact_access.py",
+    "bytes": 18160,
+    "sha256": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_human_input_source.py",
+    "bytes": 13290,
+    "sha256": "081a970091d8846773f50991a1f348869e55d6682a3fbafa1a90dc9f5adbce55"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_input_execution_overlay.py",
+    "bytes": 7142,
+    "sha256": "e4c53cb180ef072ee4ac25b92edd90bc1d48afb99862af2795b52b2c46187848"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_input_mcp_values.py",
+    "bytes": 2706,
+    "sha256": "1c3aafeb353d78ec5a7b7afe8645a2b36e864fed8686a631a93f636732d3b9c6"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_input_readiness.py",
+    "bytes": 15681,
+    "sha256": "038ef8b09c4e3b1a237dc7154c43830da62d16af4702f1d841306fa81cc07739"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_input_supervision.py",
+    "bytes": 16696,
+    "sha256": "61c622320a00263725ed91350f6171878d46e071dbbf90204f8d97701bed2b2e"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_interaction_owners.py",
+    "bytes": 11593,
+    "sha256": "088f32a864350019b5da1746f7c19169fbefb04a143400263476de6405198f8a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_interaction_pages.py",
+    "bytes": 3212,
+    "sha256": "a1ab100fdc68b83f3c0b10015f9c3427611c64911ecef5ca1a88f13a2206a2dc"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_interaction_projection.py",
+    "bytes": 12720,
+    "sha256": "5ba542b0efa5eab864ab08bd718b2b1f178a8708ab356216fc68fe1b00f7b818"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_interface_continuation.py",
+    "bytes": 29386,
+    "sha256": "777054285531ba767588e9affa6b79610705f3fd217fcb36343aeb694a8251c4"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_interface_service_boundaries.py",
+    "bytes": 4882,
+    "sha256": "a27210d14505bb3bdf95d03028a043b2298dc61245a072e5800303cf9d41276c"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_legacy_results.py",
+    "bytes": 4161,
+    "sha256": "725a44e2f329d4c62b7b85e1bf1b1244870a175bebdc06cc0c541239b0ef1166"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_navigation.py",
+    "bytes": 9998,
+    "sha256": "289548aee8268a5d2624a04a9fbc2f0e4467d419c9a103d9adcc2c68a3a00f5c"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_operation_cancel.py",
+    "bytes": 7042,
+    "sha256": "e62ff9dc2e4912e7bfd69eefbddcfad1a8ea9794fa16401f2860438072294c86"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_operation_observations.py",
+    "bytes": 7122,
+    "sha256": "f01d7df5dfd2925b9aaddba0e13037dade40110f765a5071560cf4e280b9ec81"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_preparation_service.py",
+    "bytes": 10125,
+    "sha256": "402267a565d804efe80a23c40d918d7371b8890854af7461be74db37b6ac52f5"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_recorded_run_read.py",
+    "bytes": 11152,
+    "sha256": "970844f2209755c507e672a4e436adb8c2193ee390e3f90a6ff84e87b2a3f933"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_representations.py",
+    "bytes": 11830,
+    "sha256": "8f8d47b8720bdaef6880ee0d0af735f45fb8ad5cdc86d248cc6d3c53629e60eb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_review_decisions.py",
+    "bytes": 13122,
+    "sha256": "305b0309a12499e44de7a546de5dceef6cf251ca5ce90f00dd2175215b946e50"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_run_supervisor.py",
+    "bytes": 23904,
+    "sha256": "21360d5b2305a7b7aacc1970ec76150fc4d94f49ea1d65a7af175ec6c82dfcce"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_ui_authoring.py",
+    "bytes": 30157,
+    "sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_ui_build.py",
+    "bytes": 11706,
+    "sha256": "b0d2fb3c82003d2bb9bebcfeb5d4337d7d152fedeca851c47ef00183cdaf77af"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_ui_presentations.py",
+    "bytes": 17658,
+    "sha256": "6089b6460a7cf315a0fae75061935c446f88f4df254e972177dcb6d3ac258519"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_ui_start_association.py",
+    "bytes": 5192,
+    "sha256": "af6fca16d79247d2bb471ff9e42f471ca88854b92ce673b928174329fef4bda8"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_ui_toolchain.py",
+    "bytes": 3747,
+    "sha256": "915e46b6ce2e5e61f59410c69ed48c11aefb5dc6511e8531751e9a3926240087"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation.py",
+    "bytes": 13206,
+    "sha256": "7e86f962129c53d57ccf44bef85c446c324a9716affa7f4f1fae86eae05c35b4"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation_baselines.py",
+    "bytes": 2755,
+    "sha256": "4ae6b57bdd847150b339be5959daacd92d315c70579be680702523adb32984b9"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation_coverage.py",
+    "bytes": 6293,
+    "sha256": "1c30299ef9bd29d5bcb8ad46794aedce860f27444172b165632b3a4050ed2acd"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation_feedback.py",
+    "bytes": 4138,
+    "sha256": "c56e55dab48405bfd443ab23e4c5fa03f2e3745f771495294efde4ed585cb29e"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation_reporting.py",
+    "bytes": 11035,
+    "sha256": "f98e2466f9b86224bc75b9642e5b0b3fa839eb2f93c869e4445a2d09c5a5e52e"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation_security.py",
+    "bytes": 9389,
+    "sha256": "92e669e1b8b5244845a19a70da68c58e18985e92e4868b7899d21aeaee239c59"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation_subjects.py",
+    "bytes": 7347,
+    "sha256": "36feb6fe62801bcfda41775986c8caaa1d845b3b2a4a12aa6ff2e988f5721a66"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_validation_tools.py",
+    "bytes": 12300,
+    "sha256": "60a488f60d00715f7843529ec28c6fc767dbee54f4967154df74f60a00a29cb3"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_authority.py",
+    "bytes": 2981,
+    "sha256": "bc19712b1838411b67ed3b103275f0e1b38c58145e1539e45c5fccb6ece85e40"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_brep_lifecycle.py",
+    "bytes": 4536,
+    "sha256": "22d252697631564a1cff02d1ed8c4b57933874d39f81554a7408a2f3ba48028a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_call_approvals.py",
+    "bytes": 3861,
+    "sha256": "02c9fd2f94865e80bbb30c2b2179c2a00b9b34ac604edd50e68be2027ea9f8dd"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_capabilities.py",
+    "bytes": 12200,
+    "sha256": "80c81c16ee214d7dfb2115d37000790bc71c37b42df6917f2b6547a369a15981"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_capability_discovery.py",
+    "bytes": 9568,
+    "sha256": "301ec7ea2eb25812e6daf1bf4cef91e24ee31b5ad237808020d87fc34e1cef9b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_editor_host.py",
+    "bytes": 17959,
+    "sha256": "d5e68fedce14a1a53108a1fd93f93fcec914904315a2bc85d041ca0e60ac4e72"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_evidence.py",
+    "bytes": 1532,
+    "sha256": "4ff7e100e01a3b8c87a476f93b12184a02abac7d7e23767b944fa41077214df8"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_execution_parity.py",
+    "bytes": 4555,
+    "sha256": "0e4cb1a15af73651a2325f1d21db07b766eb25dda5df193acdced370e31ac140"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_gateway_bridge.py",
+    "bytes": 14702,
+    "sha256": "537b28881d13b35a22c4dc5275e97c26ef58058e89578d47db9c3fb9536f05b7"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_host_bridge_lifecycle.py",
+    "bytes": 4497,
+    "sha256": "e72d226b2a351808167adda2bf3d614f819b3bf419ba357e8552d7b3747f703a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_mcp.py",
+    "bytes": 12171,
+    "sha256": "2833335f0ef816ebb88a9587e17d56fd633a817c8dbea3c4bc74ed9599bc01a8"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_mcp_cancellation.py",
+    "bytes": 10816,
+    "sha256": "61600eccf4e3b2ea7bd557332eadb843d4f08e4a81011f6f8bd58d33e4271d24"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_mcp_execution.py",
+    "bytes": 23095,
+    "sha256": "1c72cef7a5b84767f4a876653057f228b9e01d45ba38f71812efcd8fb8f26260"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_mcp_performance.py",
+    "bytes": 5384,
+    "sha256": "8ec663cfe35bd898c41702874ccc8539d933c8d5e9adc5e6a7b74d2a2d47261b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_mcp_security.py",
+    "bytes": 3543,
+    "sha256": "f85bafb8a0929299378f7450de8a1b13ab8b95dd442ab806ed4f520f30ec8652"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_run_evidence.py",
+    "bytes": 13605,
+    "sha256": "dcf39d26b4060c608bd80332c2158397f98a356922fc7678d484cd536d618926"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_runtime_host.py",
+    "bytes": 12298,
+    "sha256": "bf5dd6acc72318b31fe7c7792491cb1c267f13c433ff080bfded814c5f33ab95"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_rivet_validation.py",
+    "bytes": 8828,
+    "sha256": "10a9cdb4f191d54d453e7a35c35214fbd00b176099128f28f4d96041a7f4055c"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_robot_campaign_preparer.py",
+    "bytes": 9258,
+    "sha256": "d17e74098af5c33580ee3b14838fa8355b4214aa3ce209b014ea5a0f25cbdbba"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_robot_tracking_operations.py",
+    "bytes": 4365,
+    "sha256": "58f9a15f002a45be73f184b84c5dbc1b1e73990a41a2870bb84cd033988177d6"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_sheet_metal_campaign_preparer.py",
+    "bytes": 4960,
+    "sha256": "dca7760adbf16635f312e1c15e7a7bd573623c1eedf4ec94a60d583fffa513cc"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_support_diagnostic_service.py",
+    "bytes": 6812,
+    "sha256": "8403d4484dc3774e2c0c35bab2c7f1b8303c2380d5a8bcbad571e02a7ab1138c"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_support_diagnostics.py",
+    "bytes": 3921,
+    "sha256": "c417b6493ac119b240761578d9e5bc439631ec5156fa329f735bea616b705c65"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_support_diagnostics_performance.py",
+    "bytes": 1426,
+    "sha256": "18a85289161a5dc2ec1e0fc465134835e5669ff716cdeae73585e9da6dbf22e5"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_surface_config.py",
+    "bytes": 3752,
+    "sha256": "b3e466b5225c339f2bd8b8ec1ad9b3794381cb62b6a6a985f0654354ef41f135"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_upgrade_compatibility.py",
+    "bytes": 5076,
+    "sha256": "92211e2f5cc48bf82459bf96dff99a7bce59ba1296f9cc831d2032862fe2acf3"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_validation_result_identity.py",
+    "bytes": 3021,
+    "sha256": "03617101ba549fe6c64d42ba9b8fb703bebe45c55397ef91e2f564ee91534b93"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_water_package_numeric_validation.py",
+    "bytes": 7406,
+    "sha256": "defa5be76e3c5ee370ecf35c710d06418dde3b216245af7dba94ca84e448162f"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_ai_file_dependencies.py",
+    "bytes": 9382,
+    "sha256": "db8b3bbce1a13be6f49a2ece572272b7414674e7b2ef07903f6647ac885c1c66"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_ai_named_files.py",
+    "bytes": 7951,
+    "sha256": "a1a70d3de8c4fe5396ab6513866573df152c1a0d9600373700e1aef1467909c3"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_ai_task.py",
+    "bytes": 26126,
+    "sha256": "5e89ee9894de158a7c4db0c626b2b7fcf5ecfd9f3d34e9ac36d57b8b6b2597bd"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_application_exports.py",
+    "bytes": 11567,
+    "sha256": "659a5f04976557b56f549fa95226564f6dffbe489d3d66ed9da8b156385cfb29"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_application_task.py",
+    "bytes": 30381,
+    "sha256": "f4ae1c4846f2c3c313028a8c6b2ffdcc1cfeb35722f80ecf00be56763064dc22"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_approval_execution.py",
+    "bytes": 24526,
+    "sha256": "f780470cd23bce1493e90bc2326f2663a615b3665060fe4916396f80d5dac2ca"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_approval_resume.py",
+    "bytes": 7421,
+    "sha256": "60117a675fdc897217549cf3e7b45ea6200460ff435b1a642d6a7ef94e14a24b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_approval_review_settings.py",
+    "bytes": 4220,
+    "sha256": "4317fece1db6e147d36d3911d7af3209c4b19834252f45ca2ad964e13a673607"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_artifact_review.py",
+    "bytes": 13149,
+    "sha256": "0dfd763e498dd3e0943c47886dbd87a314aabd93bbb0df91fdf95254bc7de85d"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_async_operations.py",
+    "bytes": 13138,
+    "sha256": "3b53c576d467081c2a5cfced36fa35626361718a1cebb521933d15f7332d0bc2"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_authoring_preflight.py",
+    "bytes": 2675,
+    "sha256": "991f64ac65f48540cd8e2bdf52ad9f4afaf9d6b4ed5c2dd88a8b38394d6236d9"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_binary_file_consumers.py",
+    "bytes": 6237,
+    "sha256": "0af97344e8ed598e19f75f47c36fffa6d6107068b12ba343ab155eaa71316969"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_cad.py",
+    "bytes": 22376,
+    "sha256": "d00fc57f0a1c6a17f9b6a55eda497dd847a958d005b9a9cecfd34ef6bae69654"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_campaign.py",
+    "bytes": 5256,
+    "sha256": "8d44c9a916e8b249cfd356eddcb59197cdb18910897a0a86846c40fbaa3f9b3b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_campaign_fixtures.py",
+    "bytes": 2021,
+    "sha256": "4e13d995a85532cf34da641374d645dfb8959226bb4accfa243f06b0665bfcdd"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_campaign_oracles.py",
+    "bytes": 6528,
+    "sha256": "5122e4ab1fc6b4f9d04ad89394462382870ed68dc9e8b4d30f88c904e49174a6"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_campaign_review.py",
+    "bytes": 8541,
+    "sha256": "aed8bc16c44f59b32fd11419b3041ccf1a9fbdc75fa74e1271577c5f99f6e429"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_checkpoint_file_identity.py",
+    "bytes": 7069,
+    "sha256": "aa43f31c6837c0035bfe29f199c92eb148b5c9d2acae27265bfbbde6d7d91262"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_connectivity.py",
+    "bytes": 2806,
+    "sha256": "58964975d7491b31f248ad8bf75c6dbfaa345f94d182481c6fa7acc7970ac08b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_demo_capture.py",
+    "bytes": 5786,
+    "sha256": "8f7318ee953502b7f01caada082182675413240fb3391be47ab7bdc2341d4d74"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_design_check.py",
+    "bytes": 16417,
+    "sha256": "e2ff2e65ab23faac4442dc7ef2ea9c314770916e817853aa20cabb77a4b4f1b6"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_design_check_mixed_verdict.py",
+    "bytes": 5072,
+    "sha256": "339ee3975593ced89b488dd779c6844eec17cfc118ed64bbf91cb6409d8cdf7f"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_deterministic_files.py",
+    "bytes": 5732,
+    "sha256": "5fdc5490b5f238d77b4dedfa799a79370dbeba4e3be1e83f0d472886eff2628a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_draft_service.py",
+    "bytes": 4024,
+    "sha256": "87e00b34a2c8e437b6209b47bc8283c1417e5c15e145732de0cedcfa57c95d1a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_dxf_verification.py",
+    "bytes": 21622,
+    "sha256": "3bbc0b6ec072e41424078c570ecb9e52f8bbf1ae76bb6e60cdd325b8c5b92e4a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_editor.py",
+    "bytes": 14377,
+    "sha256": "dca3132fc8014bd34add4ab6fea3047ce7a3a4cd2104ec94f3f8f4050f8f8b43"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_engineering_assertions.py",
+    "bytes": 3925,
+    "sha256": "2d6cc98e64c670b57846724888416d71eca3bbf1269a59d36640570b37ea9171"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_execution_continuation.py",
+    "bytes": 14315,
+    "sha256": "b34beb885ffe8a3f5ce8048be44cd4dc4531349d40d02a8cd5542418da2331fa"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_execution_snapshot.py",
+    "bytes": 11506,
+    "sha256": "5a84c56b2edc173d73ff33cc33a203f6ffd7dd920609b37aed06c1ad061f7711"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_external_action_execution.py",
+    "bytes": 6133,
+    "sha256": "715ce7514cd8e519a2e3c302857ed580846e812757752d8683868d4db824e942"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_failed_tool_evidence.py",
+    "bytes": 10259,
+    "sha256": "88e6069de35544307616583fc17dc909c464fd051355c78b83a681aff4b4a088"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_graph.py",
+    "bytes": 7226,
+    "sha256": "1752dadea2a32551c244f90c10b33acc67b1bcc233ad3535ebd6999fb2216cd5"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_inspection.py",
+    "bytes": 17782,
+    "sha256": "9634cd4bfec4c8bd03ec1bcb0d6fabadfa8f1159e6219c75387d214ca3c2ea31"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_integration_document_write.py",
+    "bytes": 11325,
+    "sha256": "c1fb2cb9817a81d8ea6b9af3aebb0278279a1d939dfef57940739928a100c5a9"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_integration_file_copy.py",
+    "bytes": 27480,
+    "sha256": "8f547b8faa87a8dccfc7a6c75572b761d96b59d6b4606bc431f484577b3f0bad"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_integration_file_read.py",
+    "bytes": 16768,
+    "sha256": "d0a1b2255d30ef0c3521c7b3e2c3f6ecc77becbfc7239db738d45227a3c8b448"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_integration_policy.py",
+    "bytes": 15456,
+    "sha256": "05eef1fa3b6ad88ac83ccb08c1de94680cc7cb68d8f656a197ddd5af8cce05e5"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_mcp_execution.py",
+    "bytes": 9795,
+    "sha256": "01e36287df4c883fd44c13c3466ac2feae835699b2211767dc73fc6b34b5a38b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_mcp_image_observations.py",
+    "bytes": 8687,
+    "sha256": "015e27999a317fa9801c69bb6295e2950e721040de7cddcd414f6304bc3a0c13"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_mcp_integration_restriction.py",
+    "bytes": 6258,
+    "sha256": "ea0796f453f67b574a377808214319da0274af817ca3e1a5482cb05921efdd13"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+    "bytes": 43415,
+    "sha256": "69a1be1c0d83fb3cbe77e95e6eab1bb6c705c2581fc96b64cf02cf4d2454b19b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_mcp_source_contracts.py",
+    "bytes": 4618,
+    "sha256": "e5dfa832981acb92c526a2e03f91b776f66811428301914cbe4ae1d77b0a936a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_mcp_timeout_budget.py",
+    "bytes": 2878,
+    "sha256": "b9adde318a0fe416e8cb9389d7611e578e39f0b336724b9f954c9a630c10768a"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_operations.py",
+    "bytes": 7224,
+    "sha256": "eb46396bcf33a56257741af020333c23b0fead026326582ac831a9a87e91426b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_persistence.py",
+    "bytes": 3977,
+    "sha256": "99098af57213cda7ec8cdc6001de31b6a2765179f87e48267d9b95e4c0195e07"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_process_validation.py",
+    "bytes": 24621,
+    "sha256": "e46271adfe0068a188fb199d77da79f587690d6ac6753dd216f1747d61008fb5"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+    "bytes": 13462,
+    "sha256": "600429d364007012e14c39bdf0dc6f750905a4ea450099b2eb0e2135f270a437"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_resource_lease.py",
+    "bytes": 1915,
+    "sha256": "0251013cadd207181129fcef7b513aacc280fa967ab48f16daf2900d857e7cdb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_response_format_repair.py",
+    "bytes": 5614,
+    "sha256": "7fb600423f0298501eb34923f37f0b8adaae7bb9e21ca26467952b3b829ca2eb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_result_contents.py",
+    "bytes": 12335,
+    "sha256": "63045449718729b7688ad2833a5905e77cd70d87ec43c548d43ae71be8ec59cb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_results.py",
+    "bytes": 5294,
+    "sha256": "27fe61b8d5e63f6803b15d2a14d3cb53c259d99c824bf4d2218b30fff5939ffb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_run_cancellation_checkpoint.py",
+    "bytes": 3496,
+    "sha256": "03ef149c569af8731ca93e4c2933ccd29a7ef545502ede96afc38a2d90b99352"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_run_history.py",
+    "bytes": 2969,
+    "sha256": "b2a5101505add43e102b35a7dd6338d90567585d51e952f874cc3a2c60312ba6"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_run_paths.py",
+    "bytes": 19869,
+    "sha256": "171fbf921d2145f7c5495f8d7085f0fd4c60acf74fecf0309982b322904c8fe8"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_run_receipts.py",
+    "bytes": 12275,
+    "sha256": "e73a4b1755680bd620050df18535cd954555a6d51ae599416e551c35c9ae8732"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_run_resume_record.py",
+    "bytes": 5895,
+    "sha256": "1bda4acdad282face136ded52d84b9a48ad984e95a1568b8100ff0b6f9c34097"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_runner.py",
+    "bytes": 8207,
+    "sha256": "72c9260469d9d1ffd4ad1b38d40c19666965468874c3bf7a9391aa93df31dd08"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_runner_live.py",
+    "bytes": 1685,
+    "sha256": "48e0be18cc9476e182973f8b1d51b9c9325d48f794e1d18e797a800f6670d391"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_source_execution.py",
+    "bytes": 12727,
+    "sha256": "619d3ce3d5ed86c83c366bdde59c7b3a839a6da2201622482de0b42c05cbafd5"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_source_layouts.py",
+    "bytes": 13231,
+    "sha256": "38b4b04d17739e5707f5b6d47e42a03a71372a8f65dce1069a3887c1cae0ed3b"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_sources.py",
+    "bytes": 28169,
+    "sha256": "46c0be57392302d5406dcb440d74f90f46e2b86331b1493856c4b2c1855a4720"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_templates.py",
+    "bytes": 2620,
+    "sha256": "4ccd7292bda5d6096648c56b3480bfb3a02c68e626d0ac3c4d2b22301fdc24eb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+    "bytes": 10272,
+    "sha256": "45ff808a1f9ee732e2dd4bf68bd19954cfbd96f8696486ba33184dc927a3c679"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workspace_document_gateway.py",
+    "bytes": 8011,
+    "sha256": "a526e110a773a4ba303f44897d5188f9c91be4d777dcb6de98d849cb78c72c21"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workspace_path.py",
+    "bytes": 2078,
+    "sha256": "d56012824500a98acb79b35be2482b2649ffac273fc74a882b7b3fb806443cd1"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workspace_python_publication.py",
+    "bytes": 7411,
+    "sha256": "70115ab22e328aac34e1c0cfd6a79d67578d759240dd1082baf0bb4d8364765f"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workspace_service.py",
+    "bytes": 18026,
+    "sha256": "349d1e2673b6a909018099f25a6ca03027524dbdc449e31abdb244d699840806"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_workspace_use_cases.py",
+    "bytes": 2454,
+    "sha256": "a20651e9ab1582a31dfb9774d688879622073999ea438fc6069c3a6de3fb8552"
+  }
+]

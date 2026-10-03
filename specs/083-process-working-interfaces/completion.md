@@ -8,7 +8,11 @@ Known missing tool permissions now block shared readiness and run start before
 effects, with existing grant/dispatch authority preserved. An actual accepted-source
 metadata observation changes ordinary readiness from false-ready to blocked without
 calls or file changes. The current 40-module affected suite passes 746 tests;
-three Windows symlink-permission security cases remain skipped. This strengthens
+three Windows symlink-permission security cases were skipped there and now run
+and pass in a separate offline Linux proof. Four owning Linux modules pass 95
+checks with one Windows-only skip whose exact case passed on Windows. Counts
+overlap. See [Linux verification](evidence/verification.md#linux-file-boundary-security--3-october-2026).
+This strengthens
 preparation/runtime evidence without closing current browser/installed or full T053
 obligations. See [verification](evidence/verification.md#predictable-tool-authority-and-current-affected-runtime--3-october-2026).
 

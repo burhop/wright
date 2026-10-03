@@ -2744,3 +2744,61 @@ audit continue. Local commit receipt will be saved under
 .local-run/process-interfaces-083/external-slice-migration-001-local-commit.json;
 read its actual commit and Git HEAD before repeating any stage. Services were not
 restarted or revalidated in this turn. No push, merge or release is authorized.
+
+## Bedtime status review and refreshed continuation — HEAD f1bdc248
+
+The user requested a status review and long-running goal prompt. Read the
+submitted objective, current Git state, implementation authority, vision,
+refactoring plan, task ledger and retained checkpoints. Current branch is
+codex/083-process-working-interfaces, HEAD f1bdc248; the tracked worktree was
+clean at review start. Existing untracked work remains preserved. This review
+changes continuation-goal.md and this progress record only; no tests, provider
+calls, engineering decisions or physical actions were run.
+
+The ledger remains 49 checked / 8 open: T041, T043, T048, T049, T052, T053,
+T056 and T057. Both actual engineering/UI chains have audited T045/T047 proof;
+the latest runtime fixes preserve actual package producer ownership and block
+predictably missing tool authority before execution. The current affected suite
+records 746 passes and three Windows symlink permission skips. Linux metadata
+preflight is terminal with its exact owned container stopped, but has not run
+those security tests. Remaining qualification includes the retained external
+AgentCAD creation-response defect; independent work can continue.
+
+The refreshed continuation prioritizes those Linux checks, remaining active
+mesh-repair/provider coupling migration, current workspace/editor and working/
+preview/accessibility acceptance, affected regressions and the full requirements
+audit. It preserves completed evidence, real held reviews, backend authority,
+independent provider ownership and the prohibition on uncertain replay. The
+existing unlimited goal remains active; saving the prompt creates no new goal.
+Live service availability was not revalidated by this review.
+
+## Linux file-boundary verification after bedtime status
+
+Previous status/prompt turn made no implementation progress. This continuation
+read the submitted objective and current records, then verified the three
+Windows-skipped symlink security cases on an isolated Linux host. All three run
+and pass with actual symlinks. Four owning modules finish with 95 passes and one
+Windows-only skip; that exact case passed in the existing 746-pass Windows suite.
+Counts overlap and do not imply 841 distinct checks or full T053 completion.
+
+First attempt002 fails before tests because the neutral image's unprivileged
+user cannot write the selected dependency directory. Fresh003 installs pinned
+test dependencies in writable temporary storage; the three security cases pass,
+but one broader gateway test lacks its fixture in the staged snapshot. Fresh004
+adds the existing neighboring fixture and reuses the selected test image. Both
+failures, exact commands, logs, XML, source hashes and driver versions are retained.
+No product guard or test was weakened. Offline runtime source imports and all
+852 staged-file hashes match current checkout bytes before/after testing.
+The immutable base image is unchanged; all five exact owned containers are
+stopped and revalidated. No provider/model/engineering/physical action ran.
+
+26 credential-scanned public evidence files are under
+artifacts/process-interfaces/083/20261003-linux-file-authority-verified.
+Completion/verification/continuation records now distinguish the covered Linux
+cases from pending product/browser/qualification scope. Ledger remains 49 checked
+/ eight open. Next active mesh-repair/transitive coupling migration, remaining
+qualification, current workspace/editor/accessibility/installed acceptance and
+full requirements audit. Preserve unrelated dirty work and protected history.
+Local receipt is planned at
+.local-run/process-interfaces-083/linux-file-authority-004-local-commit.json;
+inspect its actual result before repeating staging. No push/merge/release.
