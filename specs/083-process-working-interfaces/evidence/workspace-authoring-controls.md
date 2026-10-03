@@ -6,6 +6,11 @@
 
 ## Implemented
 
+Latest T041 verification supersedes the historical pending statements only within
+its named authoring scope. See [the obligation audit](authoring-state-acceptance.md)
+for current71 checks, installed negative-readiness/reuse/accessibility and retained
+actual-model/theme evidence. Broader T052/T053/full acceptance remains open.
+
 The existing workspace process document offers Create/Update, visible generation
 progress, exact preview/save, saved revision selection, compatibility checks and
 rollback controls. Preview and working interfaces open through the current

@@ -100,7 +100,12 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
   checked. This is controlled boundary verification; broader served engineering,
   installed distribution and T053 acceptance remain separate obligations. See
   `evidence/verification.md`.
-- [ ] T041 [US3] Verify generation/preview/save/update/reuse/theme/accessibility/loading/error states in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx`, `apps/web/src/services/process-ui-authoring*.spec.ts` and the existing `tests/ui-integration/process-ui-authoring-live.spec.ts`.
+- [x] T041 [US3] Verify generation/preview/save/update/reuse/theme/accessibility/loading/error states in `apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx`, `apps/web/src/services/process-ui-authoring*.spec.ts` and the existing `tests/ui-integration/process-ui-authoring-live.spec.ts`.
+  [Authoring obligation audit](evidence/authoring-state-acceptance.md) maps every
+  named state to current71 component checks, installed negative-readiness/reuse/
+  keyboard/accessibility on both jobs, retained actual-model generation/update/
+  save/rollback and shared actual theme evidence. Test/live/build scopes remain
+  separate; broader T052/T053 and full Feature083 acceptance remain open.
 - [x] T042 [US3] Run an actual configured-model authoring smoke through Wright and retain prompts/role/model/build/preview/save/update evidence in `specs/083-process-working-interfaces/evidence/live-ui-authoring.md`; reference app alone cannot complete this task.
   Actual model/compiler/managed browser smoke passed with fresh generation,
   loaded preview/save, focused update, saved reopen, theme/reload and rollback.

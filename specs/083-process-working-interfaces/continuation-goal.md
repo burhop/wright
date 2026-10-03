@@ -33,6 +33,22 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### T041 verified — seven broader tasks remain
+
+The authoring obligation audit now completes T041: current71 component checks
+and TypeScript; both installed005 five-check unavailable-authoring/saved-reuse/
+keyboard/accessibility journeys; retained actual-model generation/update/save/
+rollback and shared actual theme proof. Each scope stays explicitly labelled.
+All four owned presentations close; exact18/20 outputs and ten protected-table
+snapshots remain unchanged. No new generation, process, decision or action ran.
+
+Current ledger:50 checked/seven open — T043, T048, T049, T052, T053, T056,
+T057. See `evidence/authoring-state-acceptance.md` and
+`artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/`.
+Next finish remaining provider/migration/generality and full workspace/regression/
+requirement audits. Reuse verified authoring scopes; do not regenerate both
+engineering runs to repeat them. Earlier pending T041 statements remain historical.
+
 ### Clean slicer scope verified — continue remaining qualification and audits
 
 Fresh selected Linux slicer installation now passes protocol discovery, exact

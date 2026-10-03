@@ -29,6 +29,87 @@ function describeInterface() {
 const intent: InterfaceAuthoringIntent = {version: "1", process, request: {request_id: "retained-request", instruction: "Compare exact results", title: "Comparison"}};
 
 describe("native interface authoring controls", () => {
+  it.each([
+    ["queued", "Waiting to create the interface"],
+    ["resolving", "Preparing Wright's interface instructions"],
+    ["generating", "Creating the interface"],
+    ["validating", "Checking interface bindings"],
+    ["building", "Building the preview"],
+    ["preview_ready", "Preview ready"],
+    ["saved", "Interface saved"],
+    ["failed", "Interface needs attention"],
+    ["cancelled", "Interface creation cancelled"],
+  ] as const)("presents backend %s progress without submitting or replaying work", async (state, label) => {
+    const f = fixture({...intent, job_id: job.job_id});
+    const hasPreview = state === "preview_ready" || state === "saved";
+    const diagnostics = state === "failed" ? [{code: "UI_INCOMPATIBLE", message: "Required result binding changed", correction: "Update the interface bindings"}] : [];
+    f.client.getJob.mockResolvedValue({...built, job: {...job, state, diagnostics}, preview: hasPreview ? built.preview : null} as never);
+    const view = render(f.element);
+    const region = await screen.findByRole("region", {name: "Interface creation progress"});
+    expect(region).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByRole("heading", {name: label})).toBeInTheDocument();
+    if (state === "failed") {
+      expect(screen.getByRole("alert")).toHaveTextContent("Required result binding changed");
+      expect(screen.getByRole("alert")).toHaveTextContent("Update the interface bindings");
+    }
+    if (!hasPreview) expect(screen.queryByRole("button", {name: "Open preview"})).not.toBeInTheDocument();
+    if (["saved", "failed", "cancelled"].includes(state)) {
+      expect(screen.queryByRole("button", {name: "Cancel interface creation"})).not.toBeInTheDocument();
+    } else {
+      expect(screen.getByRole("button", {name: "Cancel interface creation"})).toBeEnabled();
+      expect(screen.getByRole("button", {name: "Create interface"})).toBeDisabled();
+    }
+    expect(f.client.submit).not.toHaveBeenCalled();
+    expect(f.client.save).not.toHaveBeenCalled();
+    expect(f.client.cancel).not.toHaveBeenCalled();
+    view.unmount();
+    expect(f.client.cancel).not.toHaveBeenCalled();
+  });
+
+  it("keeps saved reuse available when declared creation capability is unavailable", async () => {
+    const f = fixture();
+    f.client.capabilities.mockResolvedValue({...capabilities, available: false, compiler_reason: {
+      code: "CAPABILITY_UNAVAILABLE", message: "Interface creation is unavailable", correction: "Use a saved interface or configure authoring",
+    }});
+    const view = render(f.element);
+    await ready(); describeInterface();
+    expect(screen.getByRole("alert")).toHaveTextContent("Use a saved interface or configure authoring");
+    expect(screen.getByRole("button", {name: "Create interface"})).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Saved interface"), {target: {value: ui.ui_id}});
+    await waitFor(() => expect(screen.getByRole("button", {name: "Open saved interface"})).toBeEnabled());
+    expect(screen.getByRole("button", {name: "Update selected interface"})).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", {name: "Open saved interface"}));
+    await waitFor(() => expect(f.onOpenSaved).toHaveBeenCalledExactlyOnceWith(ui, revision));
+    expect(f.client.submit).not.toHaveBeenCalled();
+    view.unmount();
+  });
+
+  it("refreshes a failed job observation without repeating generation", async () => {
+    const f = fixture({...intent, job_id: job.job_id});
+    f.client.getJob.mockRejectedValueOnce(new Error("Observer disconnected"));
+    const view = render(f.element);
+    await screen.findByRole("button", {name: "Refresh job status"});
+    expect(screen.getByText(/The backend job keeps its own state/)).toBeInTheDocument();
+    expect(f.client.submit).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", {name: "Refresh job status"}));
+    await screen.findByRole("heading", {name: "Preview ready"});
+    expect(f.client.getJob).toHaveBeenCalledTimes(2);
+    expect(f.client.submit).not.toHaveBeenCalled();
+    expect(f.client.cancel).not.toHaveBeenCalled();
+    view.unmount();
+  });
+
+  it("does not block available creation when the independent saved list fails", async () => {
+    const f = fixture();
+    f.client.interfaces.mockRejectedValue(new Error("Saved list unavailable"));
+    const view = render(f.element);
+    describeInterface();
+    await screen.findByRole("alert");
+    await waitFor(() => expect(screen.getByRole("button", {name: "Create interface"})).toBeEnabled());
+    expect(f.client.submit).not.toHaveBeenCalled();
+    view.unmount();
+  });
+
   it("keeps exact field names independent of saved option text", async () => {
     const f = fixture(), view = render(f.element);
     await ready();

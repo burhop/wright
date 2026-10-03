@@ -2998,3 +2998,31 @@ This resolves clean selected slicer scope, not all original scenarios or T043.
 AgentCAD's external creation-response defect and broader migration/UI/regression/
 full acceptance obligations remain. Ledger stays49 checked/eight open. No product
 source, catalog, engineering review, protected campaign or physical action changed.
+
+## T041 authoring verification — named scope complete
+
+Fresh installed005 walkthroughs pass five checks each on Heat and Printed:
+exact saved/common outputs, real compiler-unavailable correction, disabled Create/
+Update, usable exact saved selection, compact width432/432px, zero scoped automated
+WCAG A/AA violations, keyboard Tab/Enter reopen of the same UI/revision/run.
+Five protected UI/authoring/continuation tables in each fixture remain unchanged;
+four owned presentations close with HTTP204. No generation, process, review or
+external action is submitted. Both walkthrough structures validate.
+
+Twelve new component cases cover all backend authoring states, unavailable
+capability, failed status observation/refresh and independent saved-list failure.
+Current four-module group passes71 with zero failures/skips; TypeScript passes.
+The first test-only unsupported exact query option caused a type error after the
+first group passed; corrected query and fresh verification retain both records.
+Inherited report title/checklist metadata is corrected to actual actions with
+original metadata privately retained; screenshots/outcomes are unchanged.
+
+The obligation audit combines these current negative/loading/error/accessibility
+checks with retained actual-model generation/preview/save/update/rollback, both
+engineering saved-reuse proofs and actual shared-theme evidence. T041 is checked
+within that task's scope. Ledger is now50 checked/seven open: T043, T048, T049,
+T052, T053, T056 and T057. Full regression, workspace and requirement acceptance
+remain open; no earlier model run is relabelled current. Evidence:
+artifacts/process-interfaces/083/20261003-authoring-unavailable-verified and
+evidence/authoring-state-acceptance.md. Save a focused local checkpoint, then
+continue remaining qualification/migration and full acceptance audits.

@@ -1,8 +1,16 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
+**Current ledger:** **50 checked / 7 open**: T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
+
+T041's named authoring verification scope now passes its obligation audit:
+current71 component checks and TypeScript, installed unavailable-authoring/
+saved-reuse/keyboard/accessibility on both jobs, retained actual-model positive
+journeys and actual shared-theme evidence. Both new five-check walkthroughs
+preserve exact18/20 results and protected tables; four presentations close.
+No new model/process/review/action was submitted. Full T052/T053 and overall
+acceptance remain open. See [authoring state audit](evidence/authoring-state-acceptance.md).
 
 Fresh selected Linux slicer installation/protocol/backend/gateway qualification
 now passes: eleven schemas match exactly, one actual offline call produces a

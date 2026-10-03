@@ -1,0 +1,116 @@
+{
+  "title": "Installed heat authoring availability and saved reuse",
+  "summary": "Normal installed Wright workspace; compiler/model deliberately unavailable; actual saved engineering outputs. No mocked routes or generation/process/review/action submission.",
+  "overall": "pass",
+  "updated": "2026-10-03T12:35:03.062Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the proof workspace."
+    },
+    {
+      "label": "Common view",
+      "instruction": "Open the saved working-interface link, then click Use common working view."
+    },
+    {
+      "label": "Authoring readiness",
+      "instruction": "Click Create or choose interface and enter a description. Check the unavailable reason and disabled Create/Update controls."
+    },
+    {
+      "label": "Saved choice",
+      "instruction": "Check Saved interface and Saved revision identify the existing saved interface."
+    },
+    {
+      "label": "Keyboard reuse",
+      "instruction": "At compact width focus Saved interface, press Tab twice to Open saved interface, then press Enter. Check the same results return in the working tab."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Updated installed workspace",
+      "summary": "The updated package opens through the normal workspace.",
+      "purpose": "Verify the owning workspace, not a detached UI route.",
+      "action": "Open the isolated workspace.",
+      "controls": [
+        "Workflows",
+        "Workspace Files"
+      ],
+      "expected": "Existing workspace navigation visible.",
+      "actual": "Normal Workflows and Files controls are available.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Saved and common results retained",
+      "summary": "The saved and common views show the same outputs.",
+      "purpose": "Check existing evidence before opening authoring controls.",
+      "action": "Click Use common working view.",
+      "controls": [
+        "Use common working view",
+        "Create or choose interface"
+      ],
+      "expected": "Exact original outputs in both views.",
+      "actual": "18 exact results retained; run 63b639c7a8f446cd90a9285921ab9072.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Clear creation limit and usable saved interface",
+      "summary": "Creation is unavailable, with a visible reason; saved interfaces remain usable.",
+      "purpose": "Verify readiness fails before generation while saved reuse stays available.",
+      "action": "Open interface controls and enter a description.",
+      "controls": [
+        "Create or choose interface",
+        "How should this interface help the user?",
+        "Create interface",
+        "Update selected interface",
+        "Saved interface",
+        "Saved revision",
+        "Open saved interface"
+      ],
+      "expected": "Visible actionable reason; Create/Update disabled and exact saved interface enabled.",
+      "actual": "Reason: The qualified interface compiler is unavailable.\n\nConfigure the local qualified toolchain; existing saved interfaces and the common view still work.\n\nTechnical details. Exact saved interface and revision retained; no creation is submitted.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Compact authoring and keyboard access",
+      "summary": "Authoring controls remain usable at compact width and accessible by keyboard.",
+      "purpose": "Check real installed control layout and scoped automated accessibility.",
+      "action": "Resize to480px, focus Saved interface and press Tab twice.",
+      "controls": [
+        "Saved interface",
+        "Saved revision",
+        "Open saved interface"
+      ],
+      "expected": "No outer overflow, zero scoped automated violations, exact keyboard focus order.",
+      "actual": "Document 432px/432px; zero WCAG A/AA violations; keyboard reaches exact saved revision and Open saved interface.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Saved interface opens while creation is unavailable",
+      "summary": "Keyboard activation opens the exact saved interface in the same workspace.",
+      "purpose": "Verify real native saved reuse and unchanged engineering context.",
+      "action": "Press Enter on Open saved interface.",
+      "controls": [
+        "Open saved interface",
+        "Working tab"
+      ],
+      "expected": "Exact UI/revision/run with all original outputs and no generation.",
+      "actual": "Exact backend binding and 18 result identities verified; no creation, process start, review or action submitted.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    }
+  ]
+}
