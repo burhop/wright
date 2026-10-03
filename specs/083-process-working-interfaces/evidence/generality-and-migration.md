@@ -103,3 +103,13 @@ source/run/UI/continuation hashes stay unchanged. Initial launch/configuration
 failures are retained. See [installed history evidence](installed-history-retirement.md).
 Original user prototype formats, transitive slicing and complete replacement
 remain open; this checkpoint does not close T048/T049.
+
+### Remaining slicing Python caller inventory
+
+A fresh scoped Python-source search pins seven files: three embedded slicing
+implementations, two campaign preparers, the Blender/slicing diagnostic probe and
+their jig wrapper test. The [reference inventory](../../../artifacts/process-interfaces/083/20261003-repeat-path-audit-verified/active-slicing-references.json)
+records their current hashes. It excludes cache directories and is not a complete
+data/configuration reference audit. No caller, wrapper, frozen campaign source or
+assignment was changed or executed. Existing independent-provider proof does not
+by itself retire these remaining callers. T048/T049 remain incomplete.

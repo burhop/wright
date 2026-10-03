@@ -43,8 +43,9 @@ commit. Preserve unrelated untracked work; do not stage all dirty files.
 T034 is complete after the installed-host audit at source checkpoint dcebc661: the fixed runtime and
 manifest modules exactly match the actual native/Docker qualification wheel, with
 host tests and two-process reload/departure evidence. See evidence/hosting-audit.md.
-HEAD at the latest status review is `6728c238`. Subsequent runtime changes need
-fresh current packaging checks; the earlier wheel audit remains historical evidence.
+The pre-theme status checkpoint is `6728c238`; the current verified theme correction
+is committed as `e33ce3c4`. Its fresh packaging checks cover the changed runtime;
+the earlier wheel audit remains historical evidence.
 T037 theme/handshake is complete within its mapped task scope; broader editor/UI
 acceptance remains open. See evidence/theme-handshake.md for the current correction.
 T050 now has three passing packaging checks (57.84 seconds), including
@@ -177,3 +178,11 @@ runtime/manifest bytes; older installed browser builds retain their original sco
 See evidence/theme-handshake.md and
 `artifacts/process-interfaces/083/20261003-theme-handshake-verified/`.
 Continue the 11 remaining tasks; do not repeat this completed correction.
+
+The exact current printed-source path audit now records 17 colliding declared
+outputs and one pre-review overwrite (geometry-basis.json). The runner saves it
+before emitting the pending review, so do not start that same source over the
+retained files. See 20261003-repeat-path-audit-verified/audit.json and the printed
+proof record. Seven active slicing Python implementation/reference files are
+also pinned for the next migration action; data/configuration callers still need
+inspection. These audits made no engineering start, provider call or review.

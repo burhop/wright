@@ -1,0 +1,36 @@
+{
+  "files": {
+    "scripts/engineering_dataset_slice.py": {
+      "sha256": "27f281429a018b9dc2db969d8ce84209ceaa3cbf33955f417ba43a9cabdcaf45",
+      "kind": "embedded_slicing_implementation"
+    },
+    "scripts/engineering_dataset_slice_mcp.py": {
+      "sha256": "99852ba477a4495b255af8f2be2031e5810d2a49459effdf41003512d354e4da",
+      "kind": "embedded_slicing_implementation"
+    },
+    "scripts/engineering_jig_slice_mcp.py": {
+      "sha256": "9943053f566993263f6e93fc5563962dce9cc56e0e97eb5fae88bddc8e605f79",
+      "kind": "embedded_slicing_implementation"
+    },
+    "scripts/prepare-drill-jig-dataset-campaign.py": {
+      "sha256": "6365a0d6a5099279c46c3484ed15d52ca98326d1f29d8292bd03cd57b74e26c7",
+      "kind": "active_reference"
+    },
+    "scripts/prepare-printed-dataset-campaign.py": {
+      "sha256": "e1499b15ba14f1d29a1283520c2155088f034b408da45014b13e99ac31e13c29",
+      "kind": "active_reference"
+    },
+    "scripts/probe_printed_blender_binding.py": {
+      "sha256": "1ba1b41df2b47c894070071d7962449196d87e9443518817d5e36168aef67060",
+      "kind": "active_reference"
+    },
+    "tests/test_engineering_jig_slice_mcp.py": {
+      "sha256": "06c01febb978d4a71cc2787abb389da5d3716d7575cf3b8397c256b912a5588d",
+      "kind": "active_reference"
+    }
+  },
+  "search_scope": "Python sources in apps/packages/scripts/tests, excluding cache directories",
+  "not_a_complete_data_or_configuration_reference_audit": true,
+  "campaign_execution": false,
+  "source_changes": false
+}

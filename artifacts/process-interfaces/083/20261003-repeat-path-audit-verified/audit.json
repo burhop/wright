@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "source_path": "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow",
+  "source_digest": "8bb09ab66acc856bf1b9a8310606422a37a16882c6c2db3dec67645aafd00ca5",
+  "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+  "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687",
+  "first_checkpoint": {
+    "step_id": "review_basis_retained_consumer_003",
+    "title": "Review wheel dimensions, socket interpretation and original limits"
+  },
+  "colliding_declared_outputs": [
+    {
+      "step_id": "define_geometry_basis_retained_consumer_003",
+      "title": "Interpret the original wheel and manufacturing requirements",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/geometry-basis.json",
+      "kind": "saved_response",
+      "policy": "overwrite",
+      "before_first_checkpoint": true,
+      "existing_bytes": 3470,
+      "existing_sha256": "19ed1ebd9a0785618008da0ce7478c543a418a1820d77515b1ed3f21450b3b3a"
+    },
+    {
+      "step_id": "repair_measure_orient_retained_consumer_003",
+      "title": "Repair, measure, and orient mesh",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/mesh-repair-report.json",
+      "kind": "saved_response",
+      "policy": "overwrite",
+      "before_first_checkpoint": false,
+      "existing_bytes": 6040,
+      "existing_sha256": "8fed8956f65282a1efb5864d38bcec7495409c9bf12531e3f513bf8ac7d9ced1"
+    },
+    {
+      "step_id": "repair_measure_orient_retained_consumer_003",
+      "title": "Repair, measure, and orient mesh",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/source_mesh.stl",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 541284,
+      "existing_sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18"
+    },
+    {
+      "step_id": "repair_measure_orient_retained_consumer_003",
+      "title": "Repair, measure, and orient mesh",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/repaired_mesh.stl",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 540484,
+      "existing_sha256": "1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8"
+    },
+    {
+      "step_id": "repair_measure_orient_retained_consumer_003",
+      "title": "Repair, measure, and orient mesh",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/mesh-preview.png",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 266946,
+      "existing_sha256": "99ffca06e9712adad33d937e0d2d5606568729e9083b2989988fa59df2012cc1"
+    },
+    {
+      "step_id": "supports_and_slice_retained_consumer_003",
+      "title": "Generate supports and slice",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/slicer-execution.json",
+      "kind": "saved_response",
+      "policy": "overwrite",
+      "before_first_checkpoint": false,
+      "existing_bytes": 2040,
+      "existing_sha256": "d1b32a453556dcdd39e9d0b099c469909e001e34eeee8f97ae319fee1ea182a8"
+    },
+    {
+      "step_id": "supports_and_slice_retained_consumer_003",
+      "title": "Generate supports and slice",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice_package.gcode.3mf",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 361112,
+      "existing_sha256": "66e12946703ec667d173c19d063085572313c10a741d6308c68cc928d9e2b9e2"
+    },
+    {
+      "step_id": "retain_slice_response_retained_consumer_003",
+      "title": "Retain the actual slicer response for package inspection",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/response-retention-receipt.json",
+      "kind": "saved_response",
+      "policy": "overwrite",
+      "before_first_checkpoint": false,
+      "existing_bytes": 315,
+      "existing_sha256": "892773668e4afcb788280f58984ccdf20c87c58e1580d26d8a48c31ad6f2792d"
+    },
+    {
+      "step_id": "retain_slice_response_retained_consumer_003",
+      "title": "Retain the actual slicer response for package inspection",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-provider-response.json",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 2040,
+      "existing_sha256": "d1b32a453556dcdd39e9d0b099c469909e001e34eeee8f97ae319fee1ea182a8"
+    },
+    {
+      "step_id": "inspect_slice_handoff_retained_consumer_003",
+      "title": "Inspect actual package, profile and nominal toolpath correspondence",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/package-inspection-result.json",
+      "kind": "saved_response",
+      "policy": "overwrite",
+      "before_first_checkpoint": false,
+      "existing_bytes": 1744,
+      "existing_sha256": "4db2ccd8f8b652b66e6e5aeb8d09563e2cbb7d02969da87f875a970567c4f8e0"
+    },
+    {
+      "step_id": "inspect_slice_handoff_retained_consumer_003",
+      "title": "Inspect actual package, profile and nominal toolpath correspondence",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-evidence.json",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 1234,
+      "existing_sha256": "bc8b1e2eff16b33701a9062a106569d99784f8e98fc53a25db08638c426b2c43"
+    },
+    {
+      "step_id": "inspect_slice_handoff_retained_consumer_003",
+      "title": "Inspect actual package, profile and nominal toolpath correspondence",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/support-preview.json",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 4493731,
+      "existing_sha256": "c98e830b06c910c63b8ea3d25618b833039903e998933e9b0b43793dcc229a44"
+    },
+    {
+      "step_id": "inspect_slice_handoff_retained_consumer_003",
+      "title": "Inspect actual package, profile and nominal toolpath correspondence",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/toolpath-summary.json",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 1625,
+      "existing_sha256": "173bf6400d0bdfc410fe93446ba196fd69ef5853c9b1b307995b4d7a49f872c5"
+    },
+    {
+      "step_id": "inspect_slice_handoff_retained_consumer_003",
+      "title": "Inspect actual package, profile and nominal toolpath correspondence",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/machine-profile.json",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 20560,
+      "existing_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "step_id": "inspect_slice_handoff_retained_consumer_003",
+      "title": "Inspect actual package, profile and nominal toolpath correspondence",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/process-profile.json",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 8180,
+      "existing_sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "step_id": "inspect_slice_handoff_retained_consumer_003",
+      "title": "Inspect actual package, profile and nominal toolpath correspondence",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/filament-profile.json",
+      "kind": "expected_provider_output",
+      "policy": "provider_defined",
+      "before_first_checkpoint": false,
+      "existing_bytes": 7954,
+      "existing_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "step_id": "summarize_preparation_retained_consumer_003",
+      "title": "Record measured preparation facts and outstanding engineering review",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/source-report.json",
+      "kind": "saved_response",
+      "policy": "overwrite",
+      "before_first_checkpoint": false,
+      "existing_bytes": 6500,
+      "existing_sha256": "a8f740cf66c7b22b7a90c8fb742ea3f3cda0a868688d2b4b5cc5c44bf614fd7e"
+    }
+  ],
+  "before_review_overwrite_candidates": [
+    {
+      "step_id": "define_geometry_basis_retained_consumer_003",
+      "title": "Interpret the original wheel and manufacturing requirements",
+      "path": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/geometry-basis.json",
+      "kind": "saved_response",
+      "policy": "overwrite",
+      "before_first_checkpoint": true,
+      "existing_bytes": 3470,
+      "existing_sha256": "19ed1ebd9a0785618008da0ce7478c543a418a1820d77515b1ed3f21450b3b3a"
+    }
+  ],
+  "runtime_evidence": {
+    "path": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
+    "sha256": "e7984c335b6bf472a83565231f1a40ff2619c63f33d492f49db5db16d74f7217",
+    "behavior": "Completed prefix responses are saved before the pending-action checkpoint is emitted; overwrite replaces the target.",
+    "writer": "packages/workspace_service/src/workspace_service/adapters/filesystem.py",
+    "writer_sha256": "54a1f4104d4042d8291c80718b473ad7a2f4bcf169c906d2f3cf51e368533ecc"
+  },
+  "disposition": "Do not start the same fixed-path source over retained outputs. Finish explicit run-safe workflow bindings/configuration before reuse proof.",
+  "engineering_starts": 0,
+  "review_decisions": 0,
+  "files_written_under_engineering_workspace": 0,
+  "limitations": "Static declared outputs; provider code may have additional effects. No runtime start or provider call was made."
+}

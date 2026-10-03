@@ -665,3 +665,19 @@ original run bytes remain unchanged. The
 retains the first failure, correction tests and both engineering-job continuations.
 This closes this current-revision navigation observation, not second-run reuse
 or the full T047 requirement.
+
+### Current source repeat-run isolation audit
+
+Read-only compilation of the exact source bound to the latest saved UI finds
+17 declared output paths already holding retained files. Its geometry-basis
+response uses overwrite before the first declared review. The canonical runner
+saves completed prefix responses before emitting the pending-action checkpoint;
+the existing overwrite writer replaces its target. Merely starting and stopping
+at the basis review would therefore not preserve the first-run file.
+
+The [path audit](../../../artifacts/process-interfaces/083/20261003-repeat-path-audit-verified/audit.json)
+pins exact source/UI and runner/writer hashes. No engineering start, provider call
+or review was made. All 57 retained baseline files and authoring records remain
+unchanged. This is static declared-path analysis, not a complete provider-effect
+analysis. Finish explicit safe repeat-run bindings/configuration through the
+existing source/runtime/UI compatibility mechanisms; T047 remains open.

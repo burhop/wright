@@ -2033,3 +2033,19 @@ installed browser builds are not relabelled as current. Full feature acceptance
 remains incomplete. Continue substantive repeat-run isolation/provider/migration
 work and the remaining UI/editor/regression/audit obligations. Protected reviews
 remain unanswered and no physical action, push, merge or release occurred.
+
+The verified correction and its 66-file evidence inventory are saved in focused
+local commit `e33ce3c4`. All 80 staged files passed exact inventory/credential
+checks; unrelated work and protected archives/campaign/context remained intact.
+
+Further read-only inspection compiled the exact source bound to the current
+wheel UI: 17 declared output paths already exist, and geometry-basis.json would
+be replaced before the first review. The runner/writer behavior and source/UI
+hashes are pinned in 20261003-repeat-path-audit-verified. The same record pins
+seven remaining slicing Python implementations/callers; broader configuration
+references remain unaudited. All 57 baseline files and authoring records remain
+unchanged. No engineering run/provider call/review occurred, and no task count
+changed. A publisher's nested ripgrep process was denied by the Windows sandbox;
+the shell search supplied the same scoped inventory for a fresh publication.
+That partial first publication remains separate and is not successful evidence.
+Continue actual repeat-run configuration/isolation and provider/migration work.
