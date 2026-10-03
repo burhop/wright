@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BINDING=ROOT/"tests/datasets/engineering-workflows/bindings/sensor-fan-harness.json"
 TEMPLATE=ROOT/"packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/sensor-fan-harness.workflow.wflow"
 VALIDATION_COVERAGE=ROOT/"packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
-spec=importlib.util.spec_from_file_location("harness_prepare_helpers",ROOT/"scripts/prepare-printed-dataset-campaign.py")
+spec=importlib.util.spec_from_file_location("harness_prepare_helpers",ROOT/"scripts/engineering_campaign_binding_helpers.py")
 helpers=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
 renewal_spec=importlib.util.spec_from_file_location("campaign_example_renewal",ROOT/"scripts/campaign_example_renewal.py")

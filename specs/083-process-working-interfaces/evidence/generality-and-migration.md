@@ -127,3 +127,26 @@ unverified-original-format statements for these three cases only. See
 [original history compatibility](original-history-compatibility.md). Active
 slicing migration, full provider qualification and generality obligations retain
 T048/T049 as incomplete.
+
+## Neutral helper extraction before slicer retirement
+
+Eleven declaration/staging functions are extracted into
+`scripts/engineering_campaign_binding_helpers.py`. Eleven other preparers and the
+input-binding fixture now load that file, removing their printing-preparer
+dependency. The printed preparer loads the exact helper file too. All extracted
+function ASTs, printed prepare/main and other example function bodies remain
+unchanged. Existing AgentCAD entrypoint guidance is metadata; no protocol,
+slicer or executor moved into the helper.
+
+The direct-launch namespace defect is corrected and tested with an unrelated
+installed scripts package. Initial regression setup retained 5 passes/24 errors
+because the default temporary directory was outside the writable workspace.
+Fresh confined runs pass 35 helper/original-input checks and 39 affected
+Heat/jig/harness/pi/Modelica/PCB/robot/sheet checks, no skips. Three owning files
+pass Ruff; denied cache writes are warnings. Protected campaign/context/archive
+checks pass. No engineering process ran.
+
+[Scope and exact checks](../../../artifacts/process-interfaces/083/20261003-neutral-campaign-helper-extraction/checked-scope.json)
+pin code hashes, commands and AST equality. Actual slicing wrappers, printed/
+drill-jig operation bindings and the diagnostic caller still need replacement.
+This prepares retirement and closes neither T048 nor T049.

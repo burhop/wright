@@ -33,6 +33,36 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest continuation — clean AgentCAD and neutral helper extraction
+
+The audited two-process checkpoint is committed locally as f0ef1068 (325 exact
+owned paths/316 evidence blobs byte-verified). No push occurred.
+
+Fresh AgentCAD clean-base001 installs and lists eleven tools through standard
+Linux stdio; direct/gateway schemas match. One tiny creation commits STEP/meta
+but returns provider status=error. Read-only measurement succeeds on the same
+2 x 3 x 4 mm STEP; no creation retry. Both exact containers/gateway owners are
+stopped. Its published partial evidence/follow-up keep creation unqualified and
+T043 open; do not patch the provider formatter in Wright.
+
+Eleven neutral declaration/staging functions are extracted and eleven other
+preparers plus one fixture load the shared file. Extracted ASTs and other
+preparation bodies are unchanged. Direct launch is corrected for namespace
+collision. Fresh confined checks pass 35 + 39, no skips; three files pass Ruff.
+First launch/temp-folder failures and protected preservation checks are retained.
+No engineering process ran during extraction.
+
+Evidence roots: 20261003-agentcad-fresh-clean-partial and
+20261003-neutral-campaign-helper-extraction. Reconcile the exact local commit
+receipt `.local-run/process-interfaces-083/neutral-extraction-001-local-commit.json`
+and current Git HEAD before staging; never repeat an already committed checkpoint.
+Remaining Blender/slicer qualification and actual
+slicing/preparer/probe migration lead the eight open tasks, followed by complete
+current UI/editor/installed/a11y/regression and audit obligations. Do not retire
+the printed preparer until its actual vendor callers migrate; other examples'
+neutral helper dependency is now separated. Other recorded services require
+current liveness checks before reuse.
+
 ### Current continuation — two-process obligations audited
 
 The preceding goal turn supplied a status review/prompt only; classify it as no

@@ -125,3 +125,25 @@ retain launch/configuration, schemas, installation logs, actual response/outputs
 source hashes and first failures. Databases, contexts and traces are excluded.
 T043 remains open for other selected Blender/slicer/AgentCAD fresh install/host
 and creation-binding obligations. No public catalog/setup metadata is promoted.
+
+## Fresh clean AgentCAD — creation defect reproduced, readback verified
+
+AgentCAD 0.6.0/build123d 0.10.0/NumPy 2.5.2/MCP 1.28.1 now have a fresh
+selected Linux/amd64 install from the neutral Wright image, with no preinstalled
+AgentCAD/build123d/OCP. Official stdio lists eleven tools; direct schemas match
+both production-gateway projections. No Windows bootstrap was used.
+
+One gateway run call creates a valid 2 x 3 x 4 mm native STEP version but returns
+provider JSON status=error with progress mixed into CLI JSON. Strict creation
+qualification fails, reproducing the Windows defect on Linux. Exact completion
+is observed and creation is never retried. A separate read-only measure call
+succeeds on the same STEP bytes: dimensions 2/3/4 mm, volume 24 mm3, valid
+deliverable. Error, native success and readback remain separate evidence.
+
+Both exact owned containers are revalidated stopped; backend network is none
+with one private mount. Gateways use the current Windows source environment.
+[Partial scope](../../../artifacts/process-interfaces/083/20261003-agentcad-fresh-clean-partial/checked-scope.json)
+retains installation, initialization, schemas, responses, native files and hashes.
+The [provider follow-up](../../../docs/mcp-catalog/followups/agentcad-0-6-creation-response-format.md)
+records the unresolved boundary. T043 stays open. No formatter workaround,
+creation retry, public promotion or engineering acceptance is claimed.

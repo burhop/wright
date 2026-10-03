@@ -13,7 +13,7 @@ from workspace_service.workflow_integration_policy import LOCAL_REVIEW_BINDING, 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT/"packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/raspberry-pi-enclosure.workflow.wflow"
 BINDING = ROOT/"tests/datasets/engineering-workflows/bindings/raspberry-pi-enclosure-fixed.json"
-spec = importlib.util.spec_from_file_location("pi_fixed_draft_helpers", ROOT/"scripts/prepare-printed-dataset-campaign.py")
+spec = importlib.util.spec_from_file_location("pi_fixed_draft_helpers", ROOT/"scripts/engineering_campaign_binding_helpers.py")
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
 

@@ -26,7 +26,7 @@ MATERIAL_PAGES = {
     "sheet-metal-supplier-handoff-02": "https://sendcutsend.com/materials/mild-steel/",
     "sheet-metal-supplier-handoff-03": "https://sendcutsend.com/materials/5052-aluminum/",
 }
-_spec = importlib.util.spec_from_file_location("sheet_campaign_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
+_spec = importlib.util.spec_from_file_location("sheet_campaign_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py")
 helpers = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(helpers)
 _renewal_spec = importlib.util.spec_from_file_location(

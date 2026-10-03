@@ -1,7 +1,8 @@
 # Workflow platform refactoring plan
 
 **Date:** 30 September 2026.
-**Working branch:** `codex/prompt-to-3d-printed-part-demo`.
+**Prototype branch (historical):** `codex/prompt-to-3d-printed-part-demo`.
+**Implementation branch:** `codex/083-process-working-interfaces`.
 **Direction:** [Workflow platform vision](../design/workflow-platform-vision.md) and
 [process UI design](../design/process-apps.md).
 **Status:** Proposed staged implementation of the agreed user experience.
@@ -383,3 +384,19 @@ This qualifies those formats only. Active slicing wrappers and their transitive
 campaign/probe bindings still require deliberate migration to existing independent
 providers. T048/T049 remain open; historical campaign data and baseline bindings
 remain immutable.
+
+### Neutral example-helper extraction, 3 October 2026
+
+The printing preparer's shared declaration/staging functions now live in
+scripts/engineering_campaign_binding_helpers.py. Eleven other preparers and one
+fixture load that file directly. Original function ASTs/preparation bodies and
+campaign bindings remain unchanged; 74 focused/affected checks pass. The printed
+preparer loads the exact file without an installed namespace assumption. Existing
+AgentCAD guidance is metadata; no slicing/device implementation is relocated.
+See [migration evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#neutral-helper-extraction-before-slicer-retirement).
+
+This removes transitive helper coupling before actual vendor slicing retirement.
+The three slicing implementation rows, printed/drill-jig operation callers and
+diagnostic remain debt. Original two-process digital UI/handoff/source-gate proof
+now satisfies T045/T047; qualification, active retirement and final platform
+acceptance retain their separate obligations.

@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/lightweight-equipment-bracket.workflow.wflow"
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/lightweight-equipment-bracket.json"
 VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
-spec = importlib.util.spec_from_file_location("bracket_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
+spec = importlib.util.spec_from_file_location("bracket_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py")
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
 renewal_spec = importlib.util.spec_from_file_location(

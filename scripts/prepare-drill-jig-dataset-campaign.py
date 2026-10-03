@@ -24,7 +24,7 @@ CIRCLE_CENTER_GUIDANCE = (
     "Edge.center() defaults to position_at(0.5), a point on the curve, and must not be used as the hole/axis center. Apply the supplied datum transform to the actual arc_center coordinates. "
     "Do not move geometry, shift supplied hole coordinates, substitute bounding-box centers or loosen extraction/alignment tolerances to compensate for a center-query API mistake. "
 )
-_spec = importlib.util.spec_from_file_location("campaign_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
+_spec = importlib.util.spec_from_file_location("campaign_draft_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py")
 helpers = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(helpers)
 _renewal_spec = importlib.util.spec_from_file_location(

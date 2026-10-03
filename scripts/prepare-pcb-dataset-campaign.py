@@ -30,7 +30,7 @@ VALIDATION_COVERAGE = (
     / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 )
 spec = importlib.util.spec_from_file_location(
-    "pcb_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py"
+    "pcb_draft_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py"
 )
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)

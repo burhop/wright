@@ -46,7 +46,7 @@ PI_AGENTCAD_GUIDANCE = (
     "Compound.children: children is not the solid enumeration and can be empty."
 )
 spec = importlib.util.spec_from_file_location(
-    "pi_fixed_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py"
+    "pi_fixed_draft_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py"
 )
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)

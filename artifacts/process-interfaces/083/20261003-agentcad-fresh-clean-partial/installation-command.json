@@ -1,0 +1,14 @@
+[
+  "docker",
+  "exec",
+  "--user",
+  "root",
+  "-e",
+  "UV_CACHE_DIR=/selected/uv-cache",
+  "-e",
+  "UV_PYTHON_INSTALL_DIR=/selected/python",
+  "b67161dd2b3bde3c7c2c4515a6bbb622bdce11281ce21fcaa5313c4dce7cf48a",
+  "sh",
+  "-c",
+  "set -eu\napt-get update\napt-get install -y --no-install-recommends libgl1 libglu1-mesa libxrender1 libsm6\nuv run --isolated --python 3.12 --with \"agentcad[mcp]==0.6.0\" --with build123d==0.10.0 --with numpy==2.5.2 --with \"mcp[cli]==1.28.1\" python -c \"import agentcad,build123d,OCP;print('SELECTED_PROVIDER_IMPORT_OK')\"\nchmod -R a+rX /selected"
+]

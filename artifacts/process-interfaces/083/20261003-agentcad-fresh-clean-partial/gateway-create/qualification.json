@@ -1,0 +1,28 @@
+{
+  "status": "failed",
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "definition_sha256": "9cbafeb1c48431df2628d24f31ef347442ae340ccff72026d9f3e9c0e0f6ea36",
+  "schema_file_sha256": "4c2ca28fd5c6dff0544953c21bbf99a8b26601f3de225d29f78b4da984f7caea",
+  "production_gateway_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "api.gateway_stdio",
+    "--session-id",
+    "session-083-qualification",
+    "--workspace-id",
+    "workspace-083-qualification",
+    "--principal-id",
+    "private-provider-probe"
+  ],
+  "server_id": "qualification-083-agentcad-clean-001",
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "source_revision": "0.6.0",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "selected_tool_count": 11,
+  "error_type": "RuntimeError",
+  "diagnostic": "Backend result field mismatch: status",
+  "cleanup": {
+    "gateway_runner_stopped": true
+  }
+}

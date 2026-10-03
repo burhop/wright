@@ -1,0 +1,772 @@
+{
+  "tools": [
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__check_spec",
+      "description": "Check a STEP/BREP file against a JSON cylindrical-feature spec.\n\n    Returns the same structured result as `agentcad check-spec`, including\n    passed, matched_features, and missing_features.\n\n    Args:\n        file: Path to the STEP/STP/BREP file to check.\n        spec_file: Path to the JSON spec (cylindrical feature checklist).\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n    ",
+      "inputSchema": {
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string"
+          },
+          "spec_file": {
+            "title": "Spec File",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "file",
+          "spec_file",
+          "cwd"
+        ],
+        "title": "check_specArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "check_spec",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__context",
+      "description": "Show project state, including interrupted-version recovery candidates.\n\n    Args:\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Initialize this root first.\n    ",
+      "inputSchema": {
+        "properties": {
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "cwd"
+        ],
+        "title": "contextArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "context",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__diff",
+      "description": "Compare two versions by number or label.\n\n    Args:\n        ref1: First version reference (number or label).\n        ref2: Second version reference (number or label).\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n    ",
+      "inputSchema": {
+        "properties": {
+          "ref1": {
+            "title": "Ref1",
+            "type": "string"
+          },
+          "ref2": {
+            "title": "Ref2",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "ref1",
+          "ref2",
+          "cwd"
+        ],
+        "title": "diffArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "diff",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__docs",
+      "description": "Show build123d documentation, or explicit CadQuery compatibility docs.\n\n    Args:\n        section: Optional section name (quickstart, commands, helpers, patterns, etc).\n        runtime: Optional runtime override. Pass ``cadquery`` to retrieve the\n            same compatibility docs as ``agentcad docs --runtime cadquery``.\n        cwd: Optional source project directory for runtime-aware documentation.\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only.\n    ",
+      "inputSchema": {
+        "properties": {
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Section"
+          },
+          "runtime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Runtime"
+          },
+          "cwd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cwd"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "title": "docsArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "docs",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__export",
+      "description": "Export a STEP file to mesh formats (stl, glb, obj).\n\n    Args:\n        step_file: Path to the STEP file.\n        formats: Comma-separated formats (stl, glb, obj).\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n    ",
+      "inputSchema": {
+        "properties": {
+          "step_file": {
+            "title": "Step File",
+            "type": "string"
+          },
+          "formats": {
+            "title": "Formats",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "step_file",
+          "formats",
+          "cwd"
+        ],
+        "title": "exportArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "export",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__inspect",
+      "description": "Inspect topology of a STEP file (solids, shells, faces, edges, validity).\n\n    Args:\n        file: Path to the STEP file.\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n        ids: Include per-feature ID lists.\n        summary: Include compact face/edge clusters.\n        limit: Optional maximum records per ID list and IDs per summary cluster.\n        no_limit: Return complete ID lists. Can be very large.\n    ",
+      "inputSchema": {
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "ids": {
+            "default": false,
+            "title": "Ids",
+            "type": "boolean"
+          },
+          "summary": {
+            "default": false,
+            "title": "Summary",
+            "type": "boolean"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Limit"
+          },
+          "no_limit": {
+            "default": false,
+            "title": "No Limit",
+            "type": "boolean"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "file",
+          "cwd"
+        ],
+        "title": "inspectArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "inspect",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__measure",
+      "description": "Measure dimensions and feature sizes in a STEP/BREP file.\n\n    Args:\n        file: Path to the STEP/STP/BREP file.\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n        features: Include full per-solid, per-face, and per-edge measurement lists.\n        cylinders_only: Return only cylindrical feature buckets and core metrics.\n        diameter: Optional cylindrical feature diameter filter.\n        tolerance: Diameter tolerance used with diameter.\n        axis: Optional axis filter (+x, -x, +y, -y, +z, -z, other).\n        limit: Optional maximum records per feature list.\n        no_limit: Return complete feature lists. Can be very large.\n    ",
+      "inputSchema": {
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "features": {
+            "default": false,
+            "title": "Features",
+            "type": "boolean"
+          },
+          "cylinders_only": {
+            "default": false,
+            "title": "Cylinders Only",
+            "type": "boolean"
+          },
+          "diameter": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Diameter"
+          },
+          "tolerance": {
+            "default": 0.5,
+            "title": "Tolerance",
+            "type": "number"
+          },
+          "axis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Axis"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Limit"
+          },
+          "no_limit": {
+            "default": false,
+            "title": "No Limit",
+            "type": "boolean"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "file",
+          "cwd"
+        ],
+        "title": "measureArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "measure",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__recover",
+      "description": "Validate and reconcile an interrupted version directory safely.\n\n    Args:\n        version_dir: Direct version directory name reported by context.\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n        make_current: Explicitly make the recovered successful version current.\n    ",
+      "inputSchema": {
+        "properties": {
+          "version_dir": {
+            "title": "Version Dir",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "make_current": {
+            "default": false,
+            "title": "Make Current",
+            "type": "boolean"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "version_dir",
+          "cwd"
+        ],
+        "title": "recoverArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "recover",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__render",
+      "description": "Render PNG views of an existing STEP file.\n\n    Args:\n        step_file: Path to the STEP file.\n        view: View spec (front,right,iso,all or custom angle az:el).\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n        zoom: Zoom factor.\n        name: Output name label.\n        focus: Camera focus point as x,y,z.\n        no_fit: Skip FitAll (requires focus).\n    ",
+      "inputSchema": {
+        "properties": {
+          "step_file": {
+            "title": "Step File",
+            "type": "string"
+          },
+          "view": {
+            "title": "View",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "zoom": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zoom"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Name"
+          },
+          "focus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Focus"
+          },
+          "no_fit": {
+            "default": false,
+            "title": "No Fit",
+            "type": "boolean"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "step_file",
+          "view",
+          "cwd"
+        ],
+        "title": "renderArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "render",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__run",
+      "description": "Execute a build123d script and produce a versioned STEP file with metrics.\n\n    New projects use build123d. Existing CadQuery compatibility projects follow\n    the runtime pinned in their agentcad.json.\n\n    Args:\n        script: Path to the Python CAD script.\n        output: Label for this version.\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Initialize this root first.\n        render: Comma-separated views to render (front,right,top,iso,all).\n        export: Comma-separated mesh formats (stl, glb, obj).\n        preview: Render a quick 256x256 iso preview. Default True \u2014 pass False to suppress.\n        params: Parameter overrides as key=value,key=value.\n        dry_run: Compute metrics without creating a version.\n        diff: Compare automatically with the prior successful version. Pass\n            False to skip it; explicit diff remains available.\n        view: Open or reuse the live project viewer. Share project_viewer.url\n            with the human for automatic updates; viewer is a fixed snapshot.\n            Pass False with preview=False\n            and diff=False to also bypass viewer generation on the core-only\n            fast path.\n    ",
+      "inputSchema": {
+        "properties": {
+          "script": {
+            "title": "Script",
+            "type": "string"
+          },
+          "output": {
+            "title": "Output",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "render": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Render"
+          },
+          "export": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Export"
+          },
+          "preview": {
+            "default": true,
+            "title": "Preview",
+            "type": "boolean"
+          },
+          "params": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Params"
+          },
+          "dry_run": {
+            "default": false,
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "diff": {
+            "default": true,
+            "title": "Diff",
+            "type": "boolean"
+          },
+          "view": {
+            "default": true,
+            "title": "View",
+            "type": "boolean"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "script",
+          "output",
+          "cwd"
+        ],
+        "title": "runArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "run",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-agentcad-clean-measure-001__view",
+      "description": "Open a GLB or STEP file in the browser via three.js.\n\n    Args:\n        file: Path to GLB or STEP file.\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n    ",
+      "inputSchema": {
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string"
+          },
+          "cwd": {
+            "title": "Cwd",
+            "type": "string"
+          },
+          "build_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Build Dir"
+          }
+        },
+        "required": [
+          "file",
+          "cwd"
+        ],
+        "title": "viewArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-agentcad-clean-measure-001",
+        "wright/toolName": "view",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-agentcad-clean-measure-001",
+          "source_url": "https://github.com/jdilla1277/agentcad",
+          "installed_version": "0.6.0",
+          "server_revision": "config-138fc1fda648e39d609bb7ea0eab33a6b1845a4bf42ed4a4c061c7f2a7cf8c28",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-agentcad-clean-measure-001:1791014834:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    }
+  ]
+}

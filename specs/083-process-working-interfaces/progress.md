@@ -2554,3 +2554,29 @@ regression/audit scopes. Human review and physical acceptance remain held or
 unassessed. Owned qualification containers are stopped; original engineering
 services need liveness checks before use. Focused local commit and substantive
 remaining work follow; no protected review or push/merge/release occurred.
+
+## Fresh AgentCAD partial qualification and neutral helper extraction
+
+The prior obligation checkpoint is committed locally as f0ef1068: 325 exact owned
+paths, 316 staged evidence blobs byte-verified, actual credential-value scan
+passed and unrelated documentation preserved. No push occurred.
+
+Fresh clean AgentCAD installation/protocol passes with eleven direct/gateway
+schemas. One tiny creation commits actual STEP/meta but returns status=error;
+the strict qualification fails. Read-only measurement succeeds on the same
+2 x 3 x 4 mm STEP, with no creation retry. Both exact owned containers and
+gateway owners are stopped. Public partial evidence and upstream-owned follow-up
+retain the unresolved receipt defect. T043 remains open.
+
+Eleven neutral helpers are extracted from the printing preparer; eleven other
+preparers and their input-binding fixture load the new exact file. Original
+function ASTs/preparation bodies, assignment data and protected history remain
+unchanged. The first direct launch exposed a namespace-import bug; exact-path
+loading corrects it. Initial tests retain 5 passes/24 temp-directory setup errors;
+fresh confined runs pass 35 + 39 checks, no skips. Three files pass Ruff with
+cache warnings. New evidence records commands, hashes, AST checks and failures.
+No engineering process or protected review ran during extraction.
+
+Counts remain 49 checked / 8 open. Actual slicing/preparer/probe migration,
+remaining qualification and full UI/editor/installed/accessibility/regression/
+audit obligations continue. Current owned changes need focused local commit.

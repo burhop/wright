@@ -18,7 +18,7 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 ROOT = Path(__file__).resolve().parents[1]
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/raspberry-pi-enclosure.json"
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/raspberry-pi-enclosure.workflow.wflow"
-_spec = importlib.util.spec_from_file_location("campaign_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py")
+_spec = importlib.util.spec_from_file_location("campaign_draft_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py")
 helpers = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(helpers)
 

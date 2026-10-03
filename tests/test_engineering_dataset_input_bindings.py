@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 @pytest.fixture
 def mapping(tmp_path):
     spec = importlib.util.spec_from_file_location(
-        "binding_test_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py"
+        "binding_test_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py"
     )
     helpers = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(helpers)

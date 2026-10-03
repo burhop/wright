@@ -1,0 +1,76 @@
+"""Shared preparation helpers retain declarations without importing a vendor demo."""
+from __future__ import annotations
+
+import hashlib
+import importlib.util
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+SPEC = importlib.util.spec_from_file_location(
+    "neutral_campaign_binding_helpers_test",
+    ROOT / "scripts/engineering_campaign_binding_helpers.py",
+)
+helpers = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(helpers)
+
+
+def test_helpers_digest_and_write_preserve_exact_bytes(tmp_path):
+    payload = b"original engineering input\r\n"
+    path = helpers.confined(tmp_path, "inputs/requirements.md")
+    helpers.write_once(path, payload)
+    helpers.write_once(path, payload)
+    assert path.read_bytes() == payload
+    assert helpers.digest(payload) == hashlib.sha256(payload).hexdigest()
+    with pytest.raises(ValueError, match="different staged file"):
+        helpers.write_once(path, b"replacement")
+    assert path.read_bytes() == payload
+
+
+@pytest.mark.parametrize("relative", ["../outside.txt", "inputs/../../outside.txt"])
+def test_helpers_reject_escape(tmp_path, relative):
+    with pytest.raises(ValueError, match="escapes"):
+        helpers.confined(tmp_path, relative)
+
+
+def test_helpers_keep_exact_declared_input_connection():
+    sections = []
+    producer = helpers.add_file_input(sections, "proof", "requirements", "inputs/original.md")
+    target = {"id": "analyse", "fields": {"inputs": []}}
+    helpers.add_reference(sections, producer, target, "requirements")
+    rendered = helpers.render(sections)
+    assert '"inputs/original.md"' in rendered
+    assert '"campaign_requirements_proof.campaign_requirements_proof_document"' in rendered
+    assert '"analyse.analyse_requirements"' in rendered
+    assert target["fields"]["inputs"][0]["required"] is True
+
+
+def test_printed_preparer_launches_without_scripts_namespace(tmp_path):
+    collision = tmp_path / "scripts"
+    collision.mkdir()
+    (collision / "__init__.py").write_text("# unrelated installed namespace\n", encoding="utf-8")
+    environment = dict(os.environ)
+    environment["PYTHONPATH"] = str(tmp_path)
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/prepare-printed-dataset-campaign.py"), "--help"],
+        cwd=tmp_path,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "--instance-source" in result.stdout
+
+
+def test_other_examples_load_neutral_helper_file():
+    names = ["bracket", "drill-jig", "harness", "heat", "modelica", "pcb", "pi",
+             "pi-fixed", "pi-visual", "robot", "sheet-metal"]
+    for name in names:
+        source = (ROOT / f"scripts/prepare-{name}-dataset-campaign.py").read_text(encoding="utf-8")
+        assert "engineering_campaign_binding_helpers.py" in source
+        assert "prepare-printed-dataset-campaign.py" not in source
