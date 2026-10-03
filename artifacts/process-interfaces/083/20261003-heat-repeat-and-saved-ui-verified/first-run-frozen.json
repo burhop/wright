@@ -1,0 +1,155 @@
+{
+  "source_digest": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b",
+  "run_id": "503a32a91e454a219bcbe2f2da3b99b2",
+  "recorded_state": "failed",
+  "output_count": 18,
+  "validation_code": "PROCESS_VALIDATION_NEEDS_INPUT",
+  "files": {
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/alternatives.csv": {
+      "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+      "size": 196
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/cad-call.json": {
+      "sha256": "1c3b6374e185098cdc036ddb0712265aba4e3e5cdd7e3db8819a46299d9021d3",
+      "size": 507
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/concept.png": {
+      "sha256": "84bb3847254d05164c8dcb447cf3a001e9d9b859ad6c2a67c26260ac54aa5f57",
+      "size": 35929
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/concept.svg": {
+      "sha256": "445941494d109662f292fe33830693358dcab34132cc774fd09bf49a5ac10161",
+      "size": 1886
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/context.md": {
+      "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+      "size": 2455
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/heat_conduction_skfem.py": {
+      "sha256": "8f9f652291cdd6071a556480f5dd055f0098799e15f589dc8523c45166f869ce",
+      "size": 10392
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/prompt.txt": {
+      "sha256": "f08a8caa5bc41b282b5386578be028bf60312da099b5613c600db9b73635e5d1",
+      "size": 698
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/requirements.md": {
+      "sha256": "7a3b25f211b22ea20c7084529b31fa9a94174f5fa75f1578331f3646e8ce0fd8",
+      "size": 1817
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/scenario.json": {
+      "sha256": "3d5b739b3b74c1d6ccf03e560302b54544e40f3786c3ca293b5f025d25a74ee8",
+      "size": 1729
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/selected-cad-source-contract.txt": {
+      "sha256": "5146f53326c21555d139a07435fa2c21481dfc053f8c3d5aaff9ee361836e193",
+      "size": 6991
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/solver-call.json": {
+      "sha256": "e358f25a6df4b785d53a255153428ecb3aa35e6163eb3fd1cabe61d1e9fe3466",
+      "size": 12127
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/user-profile.md": {
+      "sha256": "857f534051126b05af7a9345ebd4cc02372a5ba395ced50f78b41815bf79f146",
+      "size": 442
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/baseline_40-coarse-temperature.csv": {
+      "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+      "size": 13526
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/baseline_40-coarse-temperature.vtu": {
+      "sha256": "c02be52b9e78e6a06234e3f560984934f546da0754c9bb28a15d1c353b6fd2e6",
+      "size": 4383
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/baseline_40-fine-temperature.csv": {
+      "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "size": 76526
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/baseline_40-fine-temperature.vtu": {
+      "sha256": "a65a7e08a01f96e86a9ed1274ee396e510d832bcddb79cf84b9ebc186c670797",
+      "size": 29200
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/baseline_40.step": {
+      "sha256": "a38cd07e6836c691cdf04bcb1d19ae85fe6d7bf43ee6dc16ea22e1e40b32d80b",
+      "size": 15340
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/geometry-analysis-correspondence.json": {
+      "sha256": "df99101904d5ea66bb530b005bb2952cdc62665121ed0910d5c4b71b77bb5e60",
+      "size": 4291
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/geometry-measurements.json": {
+      "sha256": "bdd90248a428ba4b0c0d8c435ff86dd9b2418b9115dcae7b110f0be42a8b3d94",
+      "size": 540
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/heat-balance.json": {
+      "sha256": "fe98488bdd8eae7e5d757e12170cf2d50984b60b8155f6153e15499baed69f2a",
+      "size": 4627
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/mesh-comparison.json": {
+      "sha256": "f16059631f50c9e72220eaa35f3b1fa218fa69ed195b307f680a73d21b694160",
+      "size": 84
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/plate-source.py": {
+      "sha256": "ac1d5c9c1d6a9b5dd3a71ca2eb7a8924091ab4165ae41eba7a799e78bca7290c",
+      "size": 2912
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/revision_60-coarse-temperature.csv": {
+      "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+      "size": 13526
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/revision_60-coarse-temperature.vtu": {
+      "sha256": "c127479729f46f66ca5b1f9ace7412535f4e86ab01fb024f42281258524d6fea",
+      "size": 4427
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/revision_60-fine-temperature.csv": {
+      "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "size": 76526
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/revision_60-fine-temperature.vtu": {
+      "sha256": "4674660d7ccf117959521c2ab5fc59e61dc4f8edfecbc1b326247ca144813d07",
+      "size": 29260
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/revision_60.step": {
+      "sha256": "4fe9e27a69f13f7df6c792c9528773ccf232f023116f48a3ea9963af46ed41ff",
+      "size": 15340
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/sizing-decision.json": {
+      "sha256": "ba7e7af5c3c924d1a79fabb3799a1d7f4fa29bf23c68e0b71859cc502ed9c605",
+      "size": 7451
+    },
+    "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/503a32a91e454a219bcbe2f2da3b99b2/thermal-basis.md": {
+      "sha256": "0c4ce5af6083d2f9601977a200a8d81a65e865f23ad2766d0cf38a7298da7e6d",
+      "size": 5067
+    },
+    "runs/heat-spreader-sizing-repeatable-default-013/503a32a91e454a219bcbe2f2da3b99b2.json": {
+      "sha256": "43a310052405d9d1d00a61bc0f7d1ad1b227681e8818da0fc9a497a9a36145be",
+      "size": 821343
+    },
+    "selected-cad-project/build/v1_plates_503a32a91e454a219bcbe2f2da3b99b2/meta.json": {
+      "sha256": "91fb2768c718adb4d9c5867a68c522a27d461714c319968d0288dcb3b38623eb",
+      "size": 5286
+    },
+    "selected-cad-project/build/v1_plates_503a32a91e454a219bcbe2f2da3b99b2/output.step": {
+      "sha256": "4cd2e6399830793419bd0e3e3b9de6234a54086b7ea5546702da765334add829",
+      "size": 32377
+    },
+    "selected-cad-project/build/v1_plates_503a32a91e454a219bcbe2f2da3b99b2/script.py": {
+      "sha256": "ac1d5c9c1d6a9b5dd3a71ca2eb7a8924091ab4165ae41eba7a799e78bca7290c",
+      "size": 2912
+    },
+    "validation/assessment-08cb0398e4ed441595df764bf0ebc17e.json": {
+      "sha256": "686504da6f7c3930ef44ed7ce42ab937b0165a7e78ef24137b86e1d0c96ecb6e",
+      "size": 99236
+    },
+    "workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow": {
+      "sha256": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b",
+      "size": 53678
+    }
+  },
+  "native_version": "selected-cad-project/build/v1_plates_503a32a91e454a219bcbe2f2da3b99b2",
+  "native_manifest_before": "8517b14bdbf998314ae1fcdb86fb78452eb5371eafb08a9b00d7749e844d2c2f",
+  "native_session_before": "9b05b6f71fbce8ff8641f07828e4f185e428f68cc64601a84edda3cadda2ec46",
+  "integration_test": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false
+}

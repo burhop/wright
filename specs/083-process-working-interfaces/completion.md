@@ -13,8 +13,12 @@ T021 is subsequently closed by 57 common/recovery component checks and the
 incomplete.
 Subsequent shared run-path preparation/continuation changes have controlled
 237-pass/one-host-privilege-skip evidence, including distinct outputs, immutable
-templates and same-run review continuation. Engineering-example adoption and
-actual saved-interface repeat-run acceptance remain open; see
+templates and same-run review continuation. Heat subsequently proves actual
+same-source CAD/solver/validator execution, distinct native versions and unchanged
+saved updated-interface reuse; see its
+[repeat proof](evidence/heat-proof.md#same-accepted-source-repeated-native-execution-and-saved-updated-interface).
+Printed example adoption, fresh provider qualification and broader acceptance
+remain open. See the preceding controlled runtime
 [scoped proof](../../artifacts/process-interfaces/083/20261003-run-path-binding-verified/README.md).
 This correction does not close an additional task or establish live-provider
 qualification.
@@ -58,7 +62,7 @@ checks passed. No row grants an engineering review or external-effect authority.
 | FR-009 Server-derived scopes and isolation | [Surface bridge](evidence/surface-bridge.md), [verification](evidence/verification.md): 149 controlled boundary regressions; distinct existing surface grants preserved. | Full T053 affected scope suite; installed presentation authority. |
 | FR-010 Replaceable coding role through Wright/default model | [Native authoring](evidence/native-ui-authoring.md), [actual authoring](evidence/live-ui-authoring.md), both job-specific proofs. | Full T029/T037/T041 coverage/provenance audit; do not claim unqualified agent platforms. |
 | FR-011 Fixed bounded build and immutable preview/save | [Actual authoring](evidence/live-ui-authoring.md), [verification](evidence/verification.md). | Full installed/UI acceptance; no model-defined build/launch authority. |
-| FR-012 Saved reuse/update/rollback/compatibility/fallback | Actual-model reuse for both jobs: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). Current wheel viewer revision has genuine working-context same-run reload proof; earlier preview-only overclaim is corrected. | T041/T047 current-revision second-run parity/recovery; retain completed T051's scoped installed compiler/model-free reuse evidence. |
+| FR-012 Saved reuse/update/rollback/compatibility/fallback | Actual-model reuse for both jobs: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). Heat now has actual same-source repeat execution and unchanged saved updated-interface parity/reload. Current wheel viewer has working-context same-run reload proof; earlier preview-only overclaim is corrected. | Finish printed current-revision second-run parity/recovery and T041; retain completed T051's scoped installed compiler/model-free reuse evidence. |
 | FR-013 Exact engineering subjects and 082 authority | Partial: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md), [verification](evidence/verification.md). Fresh consumer 003 executed its original gate: 17 pass, 1 mandatory human-review block. | Preserve earlier failed consumers and their skipped gates. Complete current common/tailored exact-subject parity without granting human acceptance. |
 | FR-014 Permitted neutral MCP actions/consume/reconciliation | [MCP operations](evidence/mcp-operations.md), [action controls](evidence/action-controls.md); separate simulator receipt recorded. | Current full action/recovery tests and common/tailored exact subject parity. No hardware qualification. |
 | FR-015 Independent providers and vendor retirement | **Incomplete:** [migration](evidence/generality-and-migration.md), [provider qualification](evidence/provider-qualification.md), [caller retirement](evidence/prototype-caller-retirement.md). Active operational endpoints/startup/client and device/Studio modules/scripts are retired; inert 410 URLs and installed canonical history are verified. Transitive slicing/campaign dependencies, original prototype formats and full replacement remain open. | Finish T043/T048/T049; preserve unrelated dirty changes and historical campaign bindings. |
@@ -74,7 +78,7 @@ checks passed. No row grants an engineering review or external-effect authority.
 | SC-001 Both normal workspace common/tailored journeys | Source-served and native/clean-Docker reuse journeys have scoped evidence. Complete current engineering-output parity, navigation and editor acceptance audit remain pending. |
 | SC-002 All missing choices caught; upstream/declared response usable | Narrow service/preparation cases exist; current combined regressions and full journey audit pending. |
 | SC-003 Successive checkpoints/duplicates/disconnect/restart | Retained controlled evidence exists; current combined suite and exact same-run audit pending. |
-| SC-004 Actual-model generate/preview/save/update/second reuse for each | Both retained job-specific records exist; inspect exact source/UI/build/run identities and final T041/T047 coverage. |
+| SC-004 Actual-model generate/preview/save/update/second reuse for each | Heat current same-source generation/update/repeat reuse now has exact run/UI/build/asset preservation proof. Printed current second-run parity and final T041/T047 coverage remain open. |
 | SC-005 Matching evidence/stale/binding denials in both views | Controlled boundary coverage exists; complete common/tailored parity pending. |
 | SC-006 Tab/lost acknowledgement cannot duplicate dispatch | Runtime/client checks exist; full served/installed negative journey pending. |
 | SC-007 Tools, real handoffs, outcomes/checks/limits | Actual CAD/solver and geometry/slicer artifacts retained. Fresh wheel consumer 003 executed its original gate with 17 passes/1 required-review hold; earlier failed consumers retain their skipped gates. Full two-process proof remains incomplete. No fixture substitutes. |

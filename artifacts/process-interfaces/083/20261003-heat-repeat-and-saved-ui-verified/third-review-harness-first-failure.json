@@ -1,0 +1,7 @@
+{
+  "command": "python t047-heat-repeat-review-third-013.py",
+  "interpreter": "D:/Users/markb/miniconda3/python.exe",
+  "error": "ModuleNotFoundError: No module named api",
+  "mutation_before_failure": false,
+  "correction": "Use the existing repository .venv interpreter; no product change or installation."
+}

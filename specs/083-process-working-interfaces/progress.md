@@ -2274,6 +2274,65 @@ compatibility and actual saved-interface repeat-run proofs. No protected review,
 uncertain simulator replay, physical effect, push, merge or release occurred.
 Previously recorded services require revalidation before use.
 
+## Actual same-source Heat repeat and saved updated-interface proof
+
+The preceding turn reviewed status and refreshed the prompt; classify it as no
+implementation progress. This continuation read the submitted objective and
+revalidated owned API13719/8039 and UI31043/5244. Third run
+`63b639c7a8f446cd90a9285921ab9072` waited at its declared basis. Its exact enrolled
+synthetic decision was attributed to the integration-test actor, followed by one
+normal API continuation on the same run. No final human engineering requirement
+or protected checkpoint was approved.
+
+Actual AgentCAD/OASiS execution produced eighteen results/native v3 and reached
+the source validator on corrected backend `5228d49c`. Distinct assessment records
+25 passes, one mandatory human-review hold and zero measured failures. Recorded
+terminal state is failed/PROCESS_VALIDATION_NEEDS_INPUT; release is ineligible
+and physical validation is not assessed. This is an actual process gate, not
+manual retained-artifact evaluation. All 35 first-run and 21 failed-second-run
+files remain unchanged; 23 third-run files are frozen independently.
+
+Fresh completed-repeat walkthrough 003 passes thirteen checks without console,
+page or failed-response diagnostics. Common/tailored eighteen result identities,
+765 real field samples in both readers, exact held assessment/result focus,
+canonical producer inspection and saved updated-interface reload are checked.
+Six saved assets and both authoring tables remain unchanged; no viewing action
+generates, compiles, saves, starts or decides process work. Actual prior generation,
+focused update and waiting reuse reports are retained. First viewer-location and
+editor-DOM assumptions are preserved and corrected only in fresh harnesses.
+
+Public scoped evidence contains 269 files including inventory and nine reports
+under 20261003-heat-repeat-and-saved-ui-verified; private contexts/traces stay private.
+Exact credential-value and protected archive/campaign/context checks pass. Browser
+handles 12472/94001/90500 are terminal. Cached providers do not constitute fresh
+clean qualification; serial project reuse is not concurrency proof. Counts remain
+47 checked / 10 open. Continue printed run-path/receipt ownership and migration,
+qualification, current UI/editor/regressions and the full requirement audit.
+
+## Overnight continuation prompt — corrected backend and current waiting run
+
+Reviewed the saved objective, actual branch/commit, task ledger and private
+receipts. HEAD is `5228d49c`; counts remain **47 checked / 10 open**. Shared
+run-path isolation, authority-field rejection and per-run validator identity are
+locally committed. Passing controlled regressions do not establish completion
+of the actual repeated-run gate.
+
+Cold readiness 003 records HTTP 200/ready with original provider authority and
+retained output/native-project bytes unchanged. A fresh normal API observation
+of third run `63b639c7a8f446cd90a9285921ab9072` returns HTTP 200,
+`waiting_human`, one output, no diagnostics, and waiting declared checkpoint
+`checkpoint-04d560b09bb1246a696fe630`. No start, response or continuation was
+submitted by this status review; no tests were run. API8039 is reachable;
+other service handles require revalidation before use.
+
+Updated continuation-goal.md with the latest checkpoint, preserving old failures
+and evidence. Next reconcile exact synthetic basis enrollment, continue this
+same run once, prove its actual gate and unchanged first/failed-second artifacts,
+and finish saved current-interface evidence. Then continue printed preparation,
+receipt ownership, migration, provider qualification, current UI/editor checks,
+affected regressions and the full requirement audit. The existing goal remains
+active. This review provides continuity and closes no implementation task.
+
 The shared runtime proof and contract are committed locally as `105f98fd`.
 All 23 staged files matched the eight-file evidence inventory and credential-value
 scan; no unrelated path was staged. A subsequent bounded configuration change

@@ -1,0 +1,11 @@
+{
+  "checkpoint_id": "checkpoint-04d560b09bb1246a696fe630",
+  "run_id": "63b639c7a8f446cd90a9285921ab9072",
+  "subject_digest": "b0c1982bbcbb15407908115f89167d6fe22ea05c7a783a40bef67ce30976843a",
+  "state": "approved",
+  "actor": "integration_test:083-private-digital-heat-repeat-013",
+  "integration_test": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "continuation_executed": false
+}

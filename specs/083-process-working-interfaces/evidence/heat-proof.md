@@ -373,3 +373,51 @@ and its [latest Heat walkthrough](../../../../artifacts/process-interfaces/083/2
 All five copied report structures pass; authenticated traces stay private and
 actual credential-value scans pass. Full engineering/user acceptance, migration,
 broader lifecycle/editor and final requirement audits remain separate work.
+
+## Same accepted source, repeated native execution and saved updated interface
+
+On corrected backend `5228d49c`, third isolated run
+`63b639c7a8f446cd90a9285921ab9072` uses the same accepted source and frozen inputs.
+Its exact enrolled synthetic basis review and normal continuation retain the
+same durable run. Actual AgentCAD/OASiS work produces eighteen outputs in its
+own directory/native v3 and reaches the process validator. Distinct assessment
+`assessment-bbf9456439054f0daf732974293e9c43` records **25 passes / one mandatory
+human-review block / no measured failures**. Release is ineligible and physical
+validation is not assessed. No manual assessment substitutes for the process gate.
+All 35 frozen first-run and 21 failed-second-run files remain byte-identical;
+the third run has a separate 23-file freeze. The second run's original validator
+conflict and native v2 are preserved, not replayed.
+
+Configured-default-model/Hermes authoring generates UI
+`ui-512d6109b37f4c0f89b86d86a34827b2`; focused update saves revision
+`revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0`. Thirteen generation, thirteen update
+and ten waiting-run reuse checks pass. Completed-repeat walkthrough 003 passes
+thirteen checks with no console/page/failed-response diagnostics. Common and
+tailored views match all eighteen result identities. Both shared readers render
+all **765 actual fine-field samples**. The held assessment opens with exact
+result focus; its producing solver block and inspector open through the editor's
+canonical identity. Reload retains the same run and saved UI. All six latest
+saved assets and both authoring tables are unchanged; viewing sends no authoring,
+start, save, review or action mutation.
+
+Preserved first stops include recovery-flag setup, model timeout, premature
+loading, assuming a common-tab viewer instead of the shared inline viewer, and
+confusing runtime step IDs with canonical editor DOM IDs. The latter two are
+harness assumptions, not product navigation failures. A review helper initially
+used Python without the API package; the existing repository environment corrected
+that setup. A freeze assertion now distinguishes exact diagnostic assessment
+storage from run-scoped engineering outputs without weakening byte checks.
+
+The [current repeat walkthrough](../../../artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/complete-repeat-reuse/report.html)
+and [checked scope](../../../artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/checked-scope.json)
+retain nine reports, actual third-run outputs, provenance, preservation and a
+credential-scanned inventory. Authentication contexts/traces and native run logs
+remain private. Serial reuse does not establish native project concurrency.
+Cached provider installations do not satisfy fresh clean qualification T043.
+This is source-served digital/browser evidence, not current installed-editor,
+thermal-performance, physical or human engineering acceptance. Printed preparation,
+migration and remaining full-feature obligations stay open; T047 remains incomplete.
+All nine walkthrough structure checks pass. Screenshot inspection establishes
+the displayed table controls, assessment result focus and producer inspector;
+sample counts and full assessment contents are verified by browser assertions.
+The captures are not a claim of full chart/assessment visibility in one viewport.

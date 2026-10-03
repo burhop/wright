@@ -110,3 +110,4 @@ artifacts/process-interfaces/083/20261003-run-path-binding-verified/** -text -wh
 artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-run-path-authority-fields-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-validator-run-identity-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/** -text -whitespace

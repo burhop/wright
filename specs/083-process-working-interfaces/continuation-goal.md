@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile the latest isolated Heat run and interface job below. Diagnose the actual UI_MODEL_TIMEOUT with bounded authoring attempts, preserve its failed job/report, and finish same-source repeat-run and saved-interface reuse evidence. Adopt the explicit run-path contract in printed preparation, including all provider-write boundaries, before another start. Preserve existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload, theme, navigation or original-history proofs merely to produce another status report.
+1. Reuse the now-verified third Heat run and saved updated-interface evidence below; do not rerun its CAD/solver chain, authoring or read-only navigation merely to produce another report. Next adopt explicit run-scoped configuration in printed preparation, including every provider-write and action-receipt boundary, through the existing owners before another start. Finish its current saved-interface second-run parity and remaining qualification/migration. Preserve existing files and protected unanswered reviews.
 2. Complete common/tailored output, assessment, block/evidence navigation, compatibility, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
@@ -32,6 +32,88 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Latest completed digital checkpoint — Heat repeat gate and saved UI verified
+
+This supersedes the waiting-run/cold-load instructions below. Third run
+`63b639c7a8f446cd90a9285921ab9072` is terminal, recorded `failed` with
+`PROCESS_VALIDATION_NEEDS_INPUT`: its actual validator records 25 passed checks,
+one mandatory human-review block, zero measured failures and release ineligible.
+Distinct assessment `assessment-bbf9456439054f0daf732974293e9c43` was produced by
+the process gate on corrected backend `5228d49c`, not manually substituted.
+The exact enrolled synthetic basis was approved once and normal continuation
+returned 202 on the same run. Never rerun its start/review/continuation helpers
+or answer the final human-review requirement with test authority.
+
+All 35 frozen first-run and 21 failed-second-run files remain byte-identical;
+`third-run-frozen.json` pins 23 third-run files, eighteen results and native v3.
+Latest saved updated UI `ui-512d6109b37f4c0f89b86d86a34827b2` /
+`revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0` passes thirteen completed-repeat
+browser checks: exact common/tailored results, 765 samples in both shared readers,
+held assessment/result focus, canonical producer/inspector and saved reload.
+No execution/authoring mutation occurred while viewing. Six latest saved assets
+and both authoring tables are unchanged. Viewer/DOM-selector assumptions are
+retained as failed attempts; product authority was not changed to satisfy them.
+
+Credential-scanned evidence, nine walkthroughs, actual outputs and original
+failure/preservation records are under
+`artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/`.
+Private contexts/traces remain private. API13719/8039 and UI31043/5244 were
+revalidated live this turn; revalidate before future reuse or cleanup. Browser
+handles 12472/94001/90500 are terminal. No physical effect, publication or
+protected decision occurred.
+
+Counts remain **47 checked / 10 open**, with the complete goal active. Fresh
+clean provider qualification, printed run-path/receipt ownership and migration,
+current installed editor/working/preview checks, remaining regressions and full
+requirement/evidence audit retain their scope. Serial native versions do not
+prove concurrent shared-project operation. Continue those obligations rather
+than repeating this Heat proof or narrowing completion to it.
+
+### Latest overnight checkpoint — corrected backend, third run at declared review
+
+This section supersedes older statements below about the live API not loading
+the validator correction, host 20756 being active, and the second run still
+running. HEAD is `5228d49c`, after `4209a847`, `a4cfc474` and `105f98fd`.
+Counts remain **47 checked / 10 open**: T041, T043, T045, T047, T048, T049,
+T052, T053, T056 and T057. A status review closes no task.
+
+The original isolated host 20756 and cold attempt 76037 are terminal. Current
+owned cold host 13719 serves API8039 from the corrected source, retaining the
+original database, accepted source, inputs, CAD project and exact provider
+connection authority. Cold readiness 003 returned 200/ready, with retained
+outputs and native project unchanged. An earlier cold attempt's changed provider
+connection was correctly rejected; preserve that evidence and the authority check.
+UI31043/5244 is recorded, but its liveness still requires revalidation before use.
+
+The third normal start returned 202 for run
+`63b639c7a8f446cd90a9285921ab9072`, request `heat-repeat-third-013`, using the same
+accepted source and frozen inputs. This overnight review made a fresh read-only
+normal API observation: **HTTP 200, waiting_human, one output, no diagnostics**,
+with declared checkpoint `checkpoint-04d560b09bb1246a696fe630` waiting. Do not
+restart or repeat its start. First reconcile the retained receipt and exact
+enrollment, then use the prepared `-third-013` review and continuation helpers
+once if their original authorized synthetic basis policy still matches.
+No review or continuation was submitted during this status review.
+
+Private receipts and observers remain in
+`.local-run/process-interfaces-083/t047-heat-repeat-013/`; helper scripts are
+alongside that directory. Recheck both `first-run-frozen.json` (35 files) and
+`failed-second-run-frozen.json` (21 files). The second run retains its actual
+validator conflict and 17 outputs; never replay it or manually substitute an
+assessment for execution of its failed process gate. The third actual gate has
+not yet been reached or verified. A legitimate final human-review hold is not
+permission to claim engineering acceptance.
+
+Actual configured-model generation, focused update and saved waiting-run reuse
+already have passing browser reports. Reuse UI
+`ui-512d6109b37f4c0f89b86d86a34827b2`, latest revision
+`revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0`; do not regenerate it. Finish current
+result/assessment/producer navigation and common/tailored parity, then publish
+scoped, credential-scanned evidence with failed attempts retained. Continue
+printed preparation/receipt ownership, selected provider qualification, active
+caller migration, current workspace/editor/accessibility checks and the complete
+requirement audit. Do not narrow completion to the heat demonstration.
 
 ### Latest finding — actual second-run validator conflict corrected in source
 

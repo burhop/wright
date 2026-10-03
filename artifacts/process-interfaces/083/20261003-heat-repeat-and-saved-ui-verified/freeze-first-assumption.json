@@ -1,0 +1,6 @@
+{
+  "failed_assertion": "All representations must live under the run output directory",
+  "actual": "Validator publishes its exact diagnostic under validation/<assessment-id>.json",
+  "correction": "Verify exact unique assessment identity and bytes separately; engineering outputs still require run scope.",
+  "product_modified": false
+}

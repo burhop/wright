@@ -231,3 +231,23 @@ This is controlled regression evidence. The old live API still contains the
 original adapter; an actual repeat gate on a fresh current backend remains
 required. Preserve the failed run and all completed outputs; neither T047 nor
 T053 is closed by this correction.
+
+### Actual corrected-backend repeat gate and saved comparison
+
+The old live API was cold-loaded from `5228d49c` with the original provider
+connection authority. Third run `63b639c7a8f446cd90a9285921ab9072` executes the
+actual same-source CAD/solver chain and its validator: eighteen outputs, distinct
+assessment, 25 passed checks and one mandatory human-review hold. All 56 frozen
+first/failed-second files are unchanged. Failed second-run evidence is retained.
+This supersedes the preceding statement that the live corrected gate is unproved.
+
+Thirteen fresh normal-workspace checks prove common/tailored result identity,
+765 actual samples in both shared readers, held assessment/result focus, exact
+producer inspection and saved updated-UI reload. Six saved assets and both
+authoring tables are unchanged; viewing dispatches no execution or authoring
+mutation. Actual generation/update/waiting reuse and first setup/model/harness
+failures are included in the
+[repeat evidence](../../../artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md).
+No additional regression suite was run in this proof; earlier controlled checks
+retain their scope. Fresh provider qualification, printed migration, installed
+current editor and remaining T047/T053/full-audit requirements stay open.

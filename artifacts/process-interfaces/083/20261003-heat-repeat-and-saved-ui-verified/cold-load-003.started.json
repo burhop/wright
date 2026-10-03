@@ -1,0 +1,7 @@
+{
+  "source_commit": "5228d49c",
+  "same_database": true,
+  "same_source_inputs_project": true,
+  "native_initialization_repeated": false,
+  "physical_dispatch": false
+}

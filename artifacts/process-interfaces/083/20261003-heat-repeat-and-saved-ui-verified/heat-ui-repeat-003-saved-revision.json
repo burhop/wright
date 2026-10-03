@@ -1,0 +1,64 @@
+{
+  "manifest": {
+    "schema_version": "wright.process-ui/1",
+    "ui_id": "ui-512d6109b37f4c0f89b86d86a34827b2",
+    "revision_id": "revision-1307d9f0c2ad4bc78d204efd64c4da91",
+    "parent_revision": null,
+    "title": "Heat-spreader candidate comparison",
+    "process": {
+      "workspace_id": "083-heat-repeat-013",
+      "source_path": "workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow",
+      "source_digest": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "interaction_version": "wright.process-interaction/1",
+    "client_version": "1.0.0",
+    "kit_version": "1.0.0",
+    "bindings": [],
+    "capabilities": [
+      "process.read",
+      "process.inputs",
+      "process.start",
+      "process.respond",
+      "process.review",
+      "process.action",
+      "process.cancel",
+      "process.results",
+      "process.navigate"
+    ],
+    "navigation": [],
+    "viewers": []
+  },
+  "source_digest": "041152775b64e890d3b908fc00f757a2869f2e0053dd894fe4275f34278bd9af",
+  "build": {
+    "build_id": "build-713d01b618804bfd8e4ee7ea1005e630",
+    "source_digest": "041152775b64e890d3b908fc00f757a2869f2e0053dd894fe4275f34278bd9af",
+    "manifest_digest": "3b318068374a7a71ee20156ed35831ff71629e163741fd0190b318b7dfcf4ccf",
+    "toolchain_digest": "d18cac667a3cd203d276bc2b2a965e12a7c7d418c20c86d3f4ad612857ec2ede",
+    "bundle_digest": "72c747a810a578fde8067cd94a0022b57e60e9972dd01043c9c69e00b50e1f04",
+    "state": "built",
+    "created_at": "2026-10-03T05:24:41.532948+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 1064233
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+    "capability_scope": []
+  },
+  "generation_request_digest": "519ad7c824831bc8bc83950857a21a578796cd1c521530173ba0b691b7bda055",
+  "created_at": "2026-10-03T05:24:41.532948+00:00",
+  "previewed_at": "2026-10-03T05:24:47.650317+00:00"
+}
