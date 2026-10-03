@@ -1,0 +1,10 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow",
+  "expected_storage_digest": "8bb09ab66acc856bf1b9a8310606422a37a16882c6c2db3dec67645aafd00ca5",
+  "request_id": "083-wheel-tailored-ui-update-006",
+  "title": "Focus-wheel preparation review",
+  "instruction": "Make a small focused presentation update of the saved interface, under 80 App.tsx lines. Add the new public @wright/ui-kit ResultRepresentation shared component. Use local selected state typed ArtifactRef | null, wire every ResultCard.onOpen to setSelected, and render <ResultRepresentation client={client} snapshot={snapshot} reference={selected} onClose={() => setSelected(null)} /> in a Section titled Selected evidence. It already handles exact scoped reads, aborts, loading/errors, 3D viewing and downloads; do not write fetch, getRepresentation, follow or parsing code in App.tsx. Keep all dynamic results, WorkingControls and existing exact navigation with visible errors. Keep manifest bindings/capabilities/navigation; declare the supplied supported geometry and toolpath viewers as needed for ResultRepresentation. No new run-status authority or engineering verdict. Explain briefly that recorded nominal layers exclude machine setup/shutdown, and validation and human review still determine readiness. Return the required source/manifest JSON.",
+  "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+  "base_revision": "revision-e699e31782df459986a1c795f9c2bf65"
+}

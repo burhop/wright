@@ -1,0 +1,4 @@
+{
+  "exit_code": 0,
+  "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false -p apps/web/tsconfig.node.json"
+}

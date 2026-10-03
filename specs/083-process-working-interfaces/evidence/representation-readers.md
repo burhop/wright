@@ -80,3 +80,63 @@ unsupported `G380` motion command, so its passive preview correctly refuses the
 entire view and retains the raw download. Its exact digest and diagnostic are
 also recorded in `reader-smoke.json`. Vendor command support was not invented to
 turn that fallback into a pass.
+
+## Separately recorded neutral layer evidence, 2 October continuation
+
+The assigned consumer 003's package-inspection operation already emits a neutral
+`wright.gcode.toolpaths.v1` result, not a vendor preview format. It uses the
+existing generic reader's explicitly declared nominal section: its modal state
+must be established before motion, and unsupported commands inside that section
+still refuse the view. The package remains byte-identical. No new vendor command
+handling, inference or machine interpreter was added to Wright.
+
+The shared `RepresentationViewer` now recognizes this recorded JSON evidence
+and uses the same finite toolpath parser. Its exact evidence-file hash stays
+distinct from its reported package hash. Reader provenance is required; declared
+section marker/line/count/hash data is bounded and validated. A visible notice
+discloses excluded, unverified machine setup and shutdown. Rendering does not
+verify package correspondence or supply engineering acceptance. The native whole
+package reader continues to refuse unknown motion and offer the exact download.
+
+JSON reads are bounded to 16 MiB for this neutral format. Ordinary JSON remains
+limited to a 1 MiB inert text preview; other existing bounds are retained. The
+first focused test invocation exposed an old before-read bound expectation;
+the corrected test checks the 16 MiB read ceiling and separately retains the
+ordinary-text limit and invalid/missing-provenance fallbacks. All **57** kit
+tests pass. The affected six-component group passes **156**, with overlapping
+coverage rather than additive unique totals. Component WebGL remains unavailable;
+those tests establish controls and fallback, not rendered pixels.
+
+The actual browser proof opens the exact assigned neutral result: **90 layers,
+69,559 segments**, with nominal extrusion arcs and explicit support/model/unknown
+classification. Its eleven checks verify a visible real canvas without WebGL
+alerts, pointer rotation, layer 2 selection, support visibility, all-layer restore
+and same-run result reconciliation. The source assessment remains 17 pass/1
+mandatory human-review block. Exact recorded files, checked scope, test outputs
+and screenshots are retained in
+`artifacts/process-interfaces/083/20261003-recorded-nominal-layers/`.
+The saved tailored UI needs its separately verified model-authored update; a
+passing common viewer does not imply an older compiled UI gained that code.
+
+### Shared recorded-result component and generated saved view
+
+`ResultRepresentation` now composes the shared viewer/download with host-supplied
+snapshot and exact scoped reads. Membership includes run, result, artifact,
+representation and digest identities. Stable snapshot refresh does not refetch;
+changed subjects abort reads and ignore late replies. Loading/errors and close
+remain presentation behavior. The component does not follow or execute a process.
+
+The **109** kit/result/common component checks pass. An overlapping **32**
+proxy/result group and **42** API authority tests check exact response integrity;
+app and node typechecks pass. Unit canvas limitations remain. The installed
+resource suite passes **3** checks including compilation of this public component
+from the packaged kit. Test counts are overlapping scopes, not additive totals.
+
+Actual configured-model revision `revision-5d5d6defda104980a2455c7ddc95e687` uses
+the component in a Wright-authored interface. Fifteen served-workspace checks
+now prove exact nineteen-result/held-assessment parity, real preview and working
+reload contexts, both visible nominal-layer canvases and useful layer/category
+controls. Exact artifact response bytes/headers are preserved by the corrected
+development proxy. This does not verify excluded machine semantics or establish
+human acceptance. See the
+[saved-view record](../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/checked-scope.json).

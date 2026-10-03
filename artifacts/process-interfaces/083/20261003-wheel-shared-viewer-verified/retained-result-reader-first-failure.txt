@@ -1,0 +1,184 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | src/components/common/ResultRepresentation.spec.tsx > shared exact result representation reader > uses the current run and abortable two-argument scoped read
+An error occurred in the <Fragment> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+stderr | src/components/common/ResultRepresentation.spec.tsx > shared exact result representation reader > does not reread for a refreshed snapshot when client and exact context are unchanged
+An error occurred in the <Fragment> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+stderr | src/components/common/ResultRepresentation.spec.tsx > shared exact result representation reader > aborts old reads and ignores their late replies after an exact run/result change
+An error occurred in the <Fragment> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+ ❯ src/components/common/ResultRepresentation.spec.tsx (6 tests | 3 failed) 3138ms
+     × uses the current run and abortable two-argument scoped read 1021ms
+     × does not reread for a refreshed snapshot when client and exact context are unchanged 1010ms
+     × aborts old reads and ignores their late replies after an exact run/result change 1024ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/common/ResultRepresentation.spec.tsx > shared exact result representation reader > uses the current run and abortable two-argument scoped read
+TestingLibraryElementError: Unable to find an element with the text: Exact current evidence. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper ../../node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/components/common/ResultRepresentation.spec.tsx:33:18
+     31|     const current = snapshot();
+     32|     const view = render(<ResultRepresentation client={{ getRepresentat…
+     33|     await screen.findByText("Exact current evidence");
+       |                  ^
+     34|     expect(read).toHaveBeenCalledWith(reference, { runId: "run-one", s…
+     35|     expect(screen.getByRole("link", { name: "Download exact file" })).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/components/common/ResultRepresentation.spec.tsx > shared exact result representation reader > does not reread for a refreshed snapshot when client and exact context are unchanged
+TestingLibraryElementError: Unable to find an element with the text: Exact evidence. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper ../../node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/components/common/ResultRepresentation.spec.tsx:45:18
+     43|     const current = snapshot();
+     44|     const view = render(<ResultRepresentation client={client} snapshot…
+     45|     await screen.findByText("Exact evidence");
+       |                  ^
+     46|     view.rerender(<ResultRepresentation client={client} snapshot={{ ..…
+     47|     expect(read).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/components/common/ResultRepresentation.spec.tsx > shared exact result representation reader > aborts old reads and ignores their late replies after an exact run/result change
+TestingLibraryElementError: Unable to find an element with the text: New exact evidence. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper ../../node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/components/common/ResultRepresentation.spec.tsx:60:18
+     58|     const next = { ...reference, result_id: "result-two", sha256: "b".…
+     59|     view.rerender(<ResultRepresentation client={client} snapshot={snap…
+     60|     await screen.findByText("New exact evidence");
+       |                  ^
+     61|     expect(firstSignal.aborted).toBe(true);
+     62|     await act(async () => resolveOld(textBlob("Old untrusted late evid…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 3 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `ResultRepresentation`.
+ ❯ createFiberFromTypeAndProps ../../node_modules/react-dom/cjs/react-dom-client.development.js:5021:28
+ ❯ createFiberFromElement ../../node_modules/react-dom/cjs/react-dom-client.development.js:5035:14
+ ❯ createChild ../../node_modules/react-dom/cjs/react-dom-client.development.js:6338:26
+ ❯ reconcileChildrenArray ../../node_modules/react-dom/cjs/react-dom-client.development.js:6670:25
+ ❯ reconcileChildFibersImpl ../../node_modules/react-dom/cjs/react-dom-client.development.js:6993:30
+ ❯ ../../node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+ ❯ reconcileChildren ../../node_modules/react-dom/cjs/react-dom-client.development.js:9701:13
+ ❯ beginWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:12126:13
+ ❯ runWithFiberInDEV ../../node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+
+This error originated in "src/components/common/ResultRepresentation.spec.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "uses the current run and abortable two-argument scoped read". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `ResultRepresentation`.
+ ❯ createFiberFromTypeAndProps ../../node_modules/react-dom/cjs/react-dom-client.development.js:5021:28
+ ❯ createFiberFromElement ../../node_modules/react-dom/cjs/react-dom-client.development.js:5035:14
+ ❯ createChild ../../node_modules/react-dom/cjs/react-dom-client.development.js:6338:26
+ ❯ reconcileChildrenArray ../../node_modules/react-dom/cjs/react-dom-client.development.js:6670:25
+ ❯ reconcileChildFibersImpl ../../node_modules/react-dom/cjs/react-dom-client.development.js:6993:30
+ ❯ ../../node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+ ❯ reconcileChildren ../../node_modules/react-dom/cjs/react-dom-client.development.js:9701:13
+ ❯ beginWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:12126:13
+ ❯ runWithFiberInDEV ../../node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+
+This error originated in "src/components/common/ResultRepresentation.spec.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "does not reread for a refreshed snapshot when client and exact context are unchanged". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `ResultRepresentation`.
+ ❯ createFiberFromTypeAndProps ../../node_modules/react-dom/cjs/react-dom-client.development.js:5021:28
+ ❯ createFiberFromElement ../../node_modules/react-dom/cjs/react-dom-client.development.js:5035:14
+ ❯ createChild ../../node_modules/react-dom/cjs/react-dom-client.development.js:6338:26
+ ❯ reconcileChildrenArray ../../node_modules/react-dom/cjs/react-dom-client.development.js:6670:25
+ ❯ reconcileChildFibersImpl ../../node_modules/react-dom/cjs/react-dom-client.development.js:6993:30
+ ❯ ../../node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+ ❯ reconcileChildren ../../node_modules/react-dom/cjs/react-dom-client.development.js:9701:13
+ ❯ beginWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:12126:13
+ ❯ runWithFiberInDEV ../../node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+
+This error originated in "src/components/common/ResultRepresentation.spec.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "aborts old reads and ignores their late replies after an exact run/result change". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  3 failed | 60 passed (63)
+     Errors  3 errors
+   Start at  22:28:40
+   Duration  6.92s (transform 225ms, setup 211ms, import 528ms, tests 3.74s, environment 2.03s)
+

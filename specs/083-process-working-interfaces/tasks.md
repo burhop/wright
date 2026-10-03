@@ -133,7 +133,16 @@ interfaces use the same foundation, with honest engineering checks and limits.
 
 ## Phase 7 — Polish and cross-cutting completion / M5
 
-- [ ] T050 Package public kit/client/instructions/template/asset runtime and offline resources through existing wheel/native/Docker build paths in `pyproject.toml` and `packages/workspace_service/pyproject.toml`; add installed-resource tests in `tests/test_process_interface_installed_resources.py`.
+- [x] T050 Package public kit/client/instructions/template/asset runtime and offline resources through existing wheel/native/Docker build paths in `pyproject.toml` and `packages/workspace_service/pyproject.toml`; reuse installed-resource tests in `tests/packaging/test_process_interfaces_distribution.py`.
+  The existing packaging suite is the owning test location, replacing the
+  initially proposed duplicate test path. Its current three tests pass for root
+  wheel, direct private-service wheel and source-archive rebuild, checking exact
+  public source/resource bytes and isolated imports. Installed compilation checks
+  both the reference and new shared ResultRepresentation; saved static serving
+  explicitly rejects compiler/model launches and external connections. Existing
+  native/Docker mounted reuse remains T051; newest served editor/engineering
+  acceptance and full audit remain separate obligations. See
+  `evidence/distribution.md`.
 - [x] T051 Verify installed native and clean Docker saved-UI/open/common-view behavior without checkout/model/compiler/network installs; record exact artifact/platform and authoring capability limits in `specs/083-process-working-interfaces/evidence/distribution.md`.
   Both actual saved interfaces pass ten native and ten clean Linux Docker browser
   checks each, including normal workspace entry, common view, compiler-unavailable

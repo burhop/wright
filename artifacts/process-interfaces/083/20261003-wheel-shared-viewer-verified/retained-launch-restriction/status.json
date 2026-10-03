@@ -1,0 +1,41 @@
+{
+  "title": "Focus-wheel interface authoring through Wright",
+  "summary": "Browser launch was refused by the sandbox before navigation; no application action occurred.",
+  "overall": "blocked",
+  "updated": "2026-10-03T02:36:45.409Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Focus-wheel comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved focus-wheel workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Preview and save",
+      "instruction": "Click Create or choose interface, then Open preview. Inspect the actual results. Click Save interface and Open saved interface, then reload. Leave process decisions untouched."
+    }
+  ],
+  "steps": [
+    {
+      "id": "BOOTSTRAP",
+      "state": "blocked",
+      "label": "Browser launch unavailable in sandbox",
+      "summary": "Chromium could not start in the restricted host.",
+      "purpose": "Verify browser availability before application actions.",
+      "action": "Attempt to launch the owned headless browser.",
+      "controls": [],
+      "expected": "Owned Chromium starts.",
+      "actual": "spawn EPERM before browser navigation; no UI action, save or engineering mutation."
+    }
+  ]
+}

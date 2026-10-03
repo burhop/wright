@@ -26,7 +26,7 @@ Use `@wright/ui-kit` public components: ProcessUI, Section, InputEditor,
 SchemaField, ImageThumbnail, ReadinessPanel, ReasonNotice, ProgressPanel,
 ActionButton, CheckpointCard, ResultCard, EvidenceReference, FindingsPanel,
 NavigationButton, RepresentationViewer, DataTable, ThreeDViewer, ToolpathViewer,
-NumericPlot, ScalarFieldPlot and WorkingControls. Component/type signatures are supplied from
+NumericPlot, ScalarFieldPlot, ResultRepresentation and WorkingControls. Component/type signatures are supplied from
 the installed version. Kit styles are imported by the kit; use its theme tokens.
 
 Snapshot inputs are declared input definitions, not frozen values. Frozen values
@@ -43,6 +43,22 @@ stage grouping, plus `result_id`, `role`, `title`, `representations`,
 `assessments` and `supported_viewers` for presentation. It has no `block_id`
 field. Do not cast outputs to unknown shapes to bypass the public types.
 Use supported viewers only; show safe inspection/download fallback otherwise.
+For a generated results view, prefer `ResultRepresentation` to hand-written read
+controllers. It accepts `client`, the host's `snapshot`, an optional selected
+`ArtifactRef` as `reference`, and `onClose`. Wire `ResultCard.onOpen` to a local
+selection setter. The component verifies membership in the supplied current run
+results, uses the scoped client for exact reads, aborts superseded reads, and
+provides shared viewing/download/loading/error states. It never attaches, starts
+or independently observes a process:
+
+```tsx
+const [selected, setSelected] = useState<ArtifactRef | null>(null);
+// Keep every ResultCard's existing onNavigate callback.
+<ResultCard output={output} onOpen={setSelected} onNavigate={navigate} />
+<ResultRepresentation client={client} snapshot={snapshot}
+  reference={selected} onClose={() => setSelected(null)} />
+```
+
 ProgressPanel displays actual state/observations and reported freshness. Closing
 the app disposes observers, not the run. Abort pending reads when context changes
 so a stale reply cannot enter a different process/run.
@@ -61,12 +77,34 @@ For a recorded 3MF or G-code artifact, `getRepresentation(reference, context)`
 returns the unchanged bytes. An additive `preview: "toolpaths"` option requests
 a bounded passive view through the same result/preparation scope; optional
 `archiveEntry` selects one explicit G-code entry in a multi-plate archive.
+There are at most two arguments: put context, preview and signal together in the
+second options object. Do not pass a third options argument:
+
+```ts
+const context = snapshot.context.run_id
+  ? { runId: snapshot.context.run_id }
+  : { inputSnapshotId: snapshot.context.input_snapshot_id };
+const blob = await client.getRepresentation(reference, { ...context, signal });
+const readToolpaths = (signal: AbortSignal) => client.getRepresentation(
+  reference, { ...context, preview: "toolpaths", signal },
+);
+```
+
 Never silently select or merge ambiguous plates. Pass the artifact SHA-256 as
 `sourceSha256` and an abortable scoped `readToolpaths` callback to
 `RepresentationViewer`. The reader retains source/package digests, version,
 true layers, nominal arc approximation and unknown feature labels. Neither a
 preview nor recognized model/support comments establish engineering acceptance.
 Unsupported motion, unreadable or excessive data keeps the exact download.
+An independently produced, recorded `wright.gcode.toolpaths.v1` JSON result can
+also be opened by `RepresentationViewer`, with that result's exact
+`sourceSha256`. It displays the recorded evidence without requesting another
+package parse. Keep its reported package hash distinct from its evidence-file
+identity and retain linked assessments. The shared viewer requires bounded,
+finite paths and reader provenance, and discloses any declared nominal section
+and excluded machine setup/shutdown. It does not verify package correspondence,
+interpret vendor commands or approve engineering. JSON reads are bounded to
+16 MiB; ordinary text preview remains at 1 MiB.
 CSV views retain the actual table; numerical axes are explicit display choices,
 without inferred units, interpolated geometry or compliance claims.
 

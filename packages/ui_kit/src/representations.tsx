@@ -2,7 +2,30 @@ import { useEffect, useRef, useState } from "react";
 import type { JsonValue } from "@wright/process-client";
 import { ImageThumbnail } from "./inputs";
 import { ThreeDViewer, ToolpathViewer } from "./geometry";
-import { parseToolpaths, type ToolpathDocument } from "./toolpaths";
+import {
+  parseRecordedToolpaths,
+  parseToolpaths,
+  type ToolpathDocument,
+} from "./toolpaths";
+
+/** Download the exact bytes supplied by the scoped representation owner. */
+export function RepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
+  const [link, setLink] = useState<{ blob: Blob; url: string }>();
+  useEffect(() => {
+    const url = URL.createObjectURL(blob);
+    setLink({ blob, url });
+    return () => URL.revokeObjectURL(url);
+  }, [blob]);
+  return link?.blob === blob ? (
+    <a
+      className="wp-link"
+      href={link.url}
+      download={name.split("/").at(-1) || "representation"}
+    >
+      Download exact file
+    </a>
+  ) : null;
+}
 
 export function DataTable({
   columns,
@@ -309,6 +332,8 @@ export function RepresentationViewer({
     blob: Blob;
     text?: string;
     bytes?: ArrayBuffer;
+    toolpaths?: ToolpathDocument;
+    message?: string;
   }>();
   const [error, setError] = useState<{ blob: Blob; message: string }>();
   const type = blob.type.split(";")[0];
@@ -337,7 +362,7 @@ export function RepresentationViewer({
       : type === "text/csv"
         ? 2 * 1024 * 1024
         : type === "application/json"
-          ? 1024 * 1024
+          ? 16 * 1024 * 1024
           : 65536;
     if (blob.size > maximum) {
       setError({
@@ -349,7 +374,35 @@ export function RepresentationViewer({
     }
     void (
       type.startsWith("text/") || type === "application/json"
-        ? blob.text().then((text) => ({ text }))
+        ? blob.text().then((text) => {
+            if (type === "application/json") {
+              let record: unknown;
+              try {
+                record = JSON.parse(text);
+              } catch {
+                // Ordinary text fallback remains bounded below.
+              }
+              if (
+                record &&
+                typeof record === "object" &&
+                !Array.isArray(record) &&
+                (record as Record<string, unknown>).format ===
+                  "wright.gcode.toolpaths.v1"
+              ) {
+                if (!sourceSha256)
+                  throw new Error("Exact evidence identity is missing.");
+                return {
+                  toolpaths: parseRecordedToolpaths(record, sourceSha256),
+                };
+              }
+              if (blob.size > 1024 * 1024)
+                return {
+                  message:
+                    "This representation exceeds the supported text preview size. Download it to inspect the complete file.",
+                };
+            }
+            return { text };
+          })
         : blob.arrayBuffer().then((bytes) => ({ bytes }))
     )
       .then((value) => {
@@ -366,7 +419,7 @@ export function RepresentationViewer({
     return () => {
       active = false;
     };
-  }, [blob, type]);
+  }, [blob, type, sourceSha256]);
   if (["image/png", "image/jpeg", "image/gif", "image/webp"].includes(type))
     return <ImageThumbnail blob={blob} title={title} />;
   if (
@@ -386,6 +439,8 @@ export function RepresentationViewer({
   if (error?.blob === blob) return <p role="status">{error.message}</p>;
   if (!data || data.blob !== blob)
     return <p role="status">Opening representation…</p>;
+  if (data.toolpaths) return <ToolpathViewer document={data.toolpaths} />;
+  if (data.message) return <p role="status">{data.message}</p>;
   if (
     data.bytes &&
     ["model/stl", "application/sla", "application/vnd.ms-pki.stl"].includes(

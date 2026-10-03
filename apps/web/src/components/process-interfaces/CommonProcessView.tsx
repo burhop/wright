@@ -23,6 +23,7 @@ import {
   ProgressPanel,
   ReadinessPanel,
   ReasonNotice,
+  RepresentationDownload,
   RepresentationViewer,
   ResultCard,
   Section,
@@ -87,23 +88,6 @@ function binding(definition: InputDefinition): InputBinding | null {
   if ("reference" in value) return { ...value, kind: "file" };
   if ("option_id" in value) return { ...value, kind: "option" };
   return { ...value, kind: "value" };
-}
-function RepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
-  const [link, setLink] = useState<{ blob: Blob; url: string }>();
-  useEffect(() => {
-    const url = URL.createObjectURL(blob);
-    setLink({ blob, url });
-    return () => URL.revokeObjectURL(url);
-  }, [blob]);
-  return link?.blob === blob ? (
-    <a
-      className="wp-link"
-      href={link.url}
-      download={name.split("/").at(-1) || "representation"}
-    >
-      Download exact file
-    </a>
-  ) : null;
 }
 function mergePage(
   current: InteractionSnapshot,

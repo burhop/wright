@@ -1,7 +1,5 @@
 import { expect, it } from "vitest";
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import acceptedManufacturingSource from "../../../../../artifacts/process-interfaces/083/20261003-retained-report-correction-003/accepted.workflow.wflow?raw";
 import {
   applyRecoveryBatch,
   recoveryCommandBatch,
@@ -273,7 +271,7 @@ it("rejects a nonempty task allowlist on an exact configured tool step", () => {
 });
 
 it("opens the actual accepted manufacturing source with its read-only report allowlist", () => {
-  const source = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../../../../artifacts/process-interfaces/083/20261003-retained-report-correction-003/accepted.workflow.wflow"), "utf8");
+  const source = acceptedManufacturingSource;
   const base = cloneWorkflow(initialWorkflow);
   base.workflowId = "workflow.retained_consumer_003";
   const parsed = parseRecoveryAuthoringSource(source, base);

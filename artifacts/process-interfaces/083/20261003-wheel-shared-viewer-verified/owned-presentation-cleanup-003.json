@@ -1,0 +1,52 @@
+{
+  "workspace_id": "083-heat-live-005",
+  "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+  "before_run_sha256": "7abc4025bd840e9fb308753fc57524797cb3462337de3ad5b9b0643a85cb8b16",
+  "selected_presentations": [
+    [
+      "d2b239ef-b454-49e0-b1ea-3db90d2811b6",
+      "08d12438-4bbe-4d29-8f31-bc1a4d5ca15d",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "4a0880fd-2ce6-44c9-a3d9-f49a1a781930",
+      "22c5aabc-8e9b-4778-a50d-328e326f9eac",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "a6577b1e-a7ba-4855-bd5e-5bf909c1874a",
+      "288813ce-26fe-491f-9266-702a51d137ae",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ]
+  ],
+  "closures": [
+    {
+      "presentation_id": "d2b239ef-b454-49e0-b1ea-3db90d2811b6",
+      "surface_id": "08d12438-4bbe-4d29-8f31-bc1a4d5ca15d",
+      "status": 204
+    },
+    {
+      "presentation_id": "4a0880fd-2ce6-44c9-a3d9-f49a1a781930",
+      "surface_id": "22c5aabc-8e9b-4778-a50d-328e326f9eac",
+      "status": 204
+    },
+    {
+      "presentation_id": "a6577b1e-a7ba-4855-bd5e-5bf909c1874a",
+      "surface_id": "288813ce-26fe-491f-9266-702a51d137ae",
+      "status": 204
+    }
+  ],
+  "engineering_operation_or_decision": false,
+  "after_run_sha256": "7abc4025bd840e9fb308753fc57524797cb3462337de3ad5b9b0643a85cb8b16",
+  "remaining_exact_ui_presentations": 0,
+  "run_bytes_unchanged": true
+}

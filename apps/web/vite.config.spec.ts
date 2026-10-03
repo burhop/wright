@@ -10,6 +10,7 @@ import {
   surfaceProxyMatch,
   surfaceProxyHeaders,
   surfaceProxyConnection,
+  surfaceProxyResponseBody,
 } from "./vite.config";
 import configuration from "./vite.config";
 
@@ -68,6 +69,51 @@ describe("web license build output", () => {
 });
 
 describe("surface development proxy rewriting", () => {
+  it.each(["application/json", "text/plain", "application/octet-stream"])(
+    "preserves exact recorded %s evidence bytes and owning headers",
+    (contentType) => {
+      const body = Buffer.from('{"url":"/wright-ai/v1","text":"é","bytes":"\\u0000"}');
+      const headers = {
+        "content-type": contentType,
+        "content-length": String(body.byteLength),
+        "x-wright-artifact-sha256": "a".repeat(64),
+        "x-content-type-options": "nosniff",
+        "content-security-policy": "default-src 'none'",
+      };
+      const original = { ...headers };
+      expect(surfaceProxyResponseBody(body, headers, "s-editor.localhost%3A8030")).toBe(body);
+      expect(headers).toEqual(original);
+      expect(body.toString()).toContain('"url":"/wright-ai/v1"');
+    },
+  );
+
+  it("retains an invalid or absent declared artifact size for the scoped client to refuse", () => {
+    for (const length of [undefined, "999"]) {
+      const headers = {
+        "x-wright-artifact-sha256": "a".repeat(64),
+        ...(length === undefined ? {} : { "content-length": length }),
+      };
+      const original = { ...headers };
+      surfaceProxyResponseBody(Buffer.from("exact"), headers, "s-editor.localhost%3A8030");
+      expect(headers).toEqual(original);
+    }
+  });
+
+  it("recalculates rewritten UTF-8 application length without chunked framing", () => {
+    const body = Buffer.from('fetch("/wright-ai/config");const label="é";');
+    const headers = {
+      "content-type": "application/javascript",
+      "content-length": String(body.byteLength),
+      "transfer-encoding": "chunked",
+      "content-security-policy": "default-src 'self'",
+    };
+    const result = surfaceProxyResponseBody(body, headers, "s-editor.localhost%3A8030");
+    expect(result.toString()).toContain('/__wright-surface/s-editor.localhost%3A8030/wright-ai/config');
+    expect(headers["content-length"]).toBe(String(result.byteLength));
+    expect(headers).not.toHaveProperty("transfer-encoding");
+    expect(headers).not.toHaveProperty("content-security-policy");
+  });
+
   it.each([
     ["http://127.0.0.1:8030", "http:", "127.0.0.1", "8030"],
     ["http://localhost:8018", "http:", "localhost", "8018"],

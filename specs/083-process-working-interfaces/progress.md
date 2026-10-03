@@ -1774,3 +1774,124 @@ intact; public copies of the editor failure, package-reader failure and passing
 tailored journey have valid report structures and passed credential scans.
 Focused current-revision update/second-run reuse, full viewer/navigation parity,
 migration, packaging, remaining editor/accessibility and final audit remain open.
+
+3 October UTC continuation after aacbcace: the existing package-inspection
+operation already produced the standard neutral toolpath record for consumer
+003. Added shared viewing of that exact JSON result, with separate evidence and
+reported-package identities, required finite reader provenance and prominent
+excluded/unverified nominal-section disclosure. The whole-package reader stays
+strict; no vendor command parser, alternate executor or validation bypass was
+introduced. Eleven read-only common-workspace checks pass with a real visible
+canvas, rotation, layer/category controls and nineteen exact result identities.
+The screenshot shows actual layered wheel paths and supports. The original gate
+still holds authenticated review; no action or decision was replayed.
+
+All 57 kit tests and the overlapping 156-check affected component group pass.
+The full app typecheck found the prior accepted-source test's Node-only imports;
+it now uses Vite's typed raw fixture import, preserving the same actual source
+round-trip test. Corrected typecheck passes. Early size-bound assertion and
+typecheck failures are retained. Public proof is being finalized under
+20261003-recorded-nominal-layers; empty successful compiler output required an
+explicit result/exit record, and the initial partial publication remains intact.
+
+Submitted a focused update through Wright to the actual saved UI to embed the
+shared RepresentationViewer: job-58a9e56254fb4d299c09270980dc4017. Latest observed
+state is generating with bounded compiler repair diagnostics (incorrect client
+argument count, then incorrect callback arity). Do not restart/regenerate while
+that job is live. Reconcile via t047-wheel-ui-observe-update-005.py. Prepared API
+guidance now explicitly demonstrates the two-argument representation call and
+one-argument abortable callback for future jobs. Full tailored viewer/parity,
+other task obligations and the complete goal remain open.
+
+2 October 22:33 local / 3 October UTC overnight status review: the saved objective
+and active unlimited goal still authorize all 57 tasks. The ledger records 43
+checked and 14 open; this is a task record, not a completion percentage. The
+current source API (8030), source UI (5243) and installed read-only fixture (8037)
+return HTTP 200. Exact protected archive/campaign/context and nonretired prototype
+byte checks pass. Owned native leases and service handles still need validation
+before the next operation; health alone does not establish provider readiness.
+
+Reconciled actual-model update job-58a9e56254fb4d299c09270980dc4017: it is terminal
+failed/UI_BUILD_FAILED after the bounded repairs, with no revision. Its prior
+generating observation above is historical; do not poll it as live. The saved
+successful revision-e699e31782df459986a1c795f9c2bf65 remains intact.
+
+Corrected the shared ResultRepresentation missing download export by promoting
+the existing common-view exact-file helper into the public kit. The component
+receives host state and a read-only client capability; it does not execute or
+observe a process. Tests cover exact run/result reads, current membership,
+snapshot refresh, late replies, disposal, safe errors and close behavior. The
+initial implementation failure is retained in t047-result-representation-tests-001.log
+and t047-result-representation-typescript-001.stdout.txt. A misplaced added
+unmount assertion caused one test failure in tests-002; moved it into the disposal
+case and reran freshly. Tests-003 passes all 109 kit/result/common-view tests
+(7.43 seconds), overlapping prior coverage. Full app typecheck-002 exits 0.
+Unit WebGL/canvas limitations are disclosed; no browser proof of this new
+component or tailored layer viewer is claimed. These changes remain uncommitted.
+
+Updated continuation-goal.md for the current neutral ninety-layer common-view
+proof and the terminal failed tailored update. Next complete a focused generated
+update using the shared result reader, verify its real preview/save/open/layer
+controls and exact evidence, then finish the remaining migration, packaging,
+editor, regression and completion-audit obligations. Original mandatory reviews,
+failed runs and the uncertain simulator effect remain protected; no review,
+engineering rerun, physical effect, push, merge or release occurred in this review.
+
+## Overnight continuation prompt review — latest saved checkpoint
+
+Reviewed the submitted objective, current dirty tree, task ledger, saved model
+receipt and browser diagnostics. The goal remains active and unlimited. The
+ledger now has 44 checked / 13 open tasks; this does not establish percentage
+completion. T050's current three packaging checks pass in 57.84 seconds. Latest
+local commit remains aacbcace; viewer/proxy/tests/evidence changes are uncommitted.
+
+Actual configured-model job job-844e87c725754f3d988b2d1cdd26371c produced and saved
+revision-5d5d6defda104980a2455c7ddc95e687 with no build diagnostics. Its preview
+renders the exact provider-recorded ninety nominal layers. The shared development
+proxy now preserves exact artifact response bytes and integrity headers. Recorded
+109 component, overlapping 32 proxy/result and 42 API checks, typechecks and three
+packaging tests establish their tested scopes; no combined unique count is claimed.
+
+Audit correction: earlier 004/009 saved/open/reload reports retained a preview URL.
+Their save receipts and preview parity remain valid, but working-context reload
+was not proved. Browser 010 confirms the exact working backend context has
+read_only=false, then stops on a harness assertion counting hidden preview tabs.
+Prepared browser 011 scopes visible tabs and requires the actual working URL and
+context before reload. It has not been launched. Three exact owned presentations
+were closed through the normal owner API; original run bytes remain unchanged.
+
+Updated continuation-goal.md with that next action and the full remaining scope:
+two-process output/navigation/reuse proof, provider and migration work, current
+editor/accessibility/hosting checks, affected regressions and final requirement
+and evidence audit. No review response, engineering replay, physical effect,
+push, merge or release occurred in this status review. Saved links/service handles
+are recorded context, not newly verified live availability. Earlier observations
+above remain historical and must not override this reconciled checkpoint.
+
+## Saved working interface and exact layers verified — continuation 011
+
+Revalidated source API/UI owner handles 41512/21619 as live and ran the prepared
+browser through the real workspace. All 15 checks pass; console/page/failed
+response lists are empty. The saved URL is working without a preview-job
+parameter and final backend context is read_only=false for the exact run/UI/
+revision. Preview and saved reload match 19 outputs and the held assessment.
+Both visible canvases render 90 nominal layers / 69559 segments, with rotation,
+layer/category controls, exact declared byte length/hash and nosniff.
+
+Published actual immutable source/build/role, saved receipt, parity, scoped
+failures, cleanup records and overlapping regression/packaging outputs under
+20261003-wheel-shared-viewer-verified. Actual credential-value scans pass. The
+neutral common-view checkpoint now retains its original pending observation as
+history and links the later failed 005/successful 006 updates. The historical
+004/009 working-reload overclaim has a separate audit correction; original
+reports remain intact. Passing 011 report structure is verified. The preserved
+pre-navigation Chromium launch failure has no screenshot; its generic image
+interaction validator cannot be satisfied without invented visual evidence, so
+that exception is explicit. It establishes no product acceptance.
+
+Protected archive/campaign/context and nonretired prototype byte checks pass.
+No decision, start, physical action, generation/build/save replay or uncertain
+simulator retry occurred. Current-revision navigation activation, second-run
+reuse, final Heat completed-output parity, migration/editor/regression and full
+completion audit remain open. Work is being saved as a focused local checkpoint;
+the full goal stays active.

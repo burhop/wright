@@ -1,10 +1,41 @@
 # Installed process-interface resources and saved assets
 
-**Checked:** 2 October 2026. **Status:** partial T050/T051 evidence. Full installed
-workspace/common/saved-interface browser acceptance remains pending. Nothing was
-published or installed into a campaign runtime.
+**Checked:** 2 October 2026, including 3 October UTC continuation. **Status:**
+T050 resource packaging and T051's recorded native/Docker mounted reuse checks
+pass. Newest engineering/editor acceptance and the complete feature remain open.
+Nothing was published or installed into a campaign runtime. Earlier partial
+checkpoints below retain their original scope.
 
 ## Packages
+
+The current source packaging suite passes **3 tests in 57.84 seconds**, with no
+skips. It checks every public client/kit source byte, including
+`result-representation.tsx`, package manifests and READMEs in the root wheel,
+direct service wheel and service source-archive rebuild. An isolated installed
+compiler builds both the packaged reference and a composition importing the
+shared exact-result reader. Its client/kit roots point inside the extracted
+wheel; only the explicitly configured existing native dependency root is reused.
+The offline static-server test forbids compiler/model subprocesses and external
+connections. This proves packaged resources and compilation, not browser pixels
+or human engineering acceptance.
+
+The existing owning test file is
+`tests/packaging/test_process_interfaces_distribution.py`; the initial T050
+plan's proposed extra test path is replaced with this reused suite. Current logs
+and JUnit evidence are
+`.local-run/process-interfaces-083/t050-current-shared-result-resources-001.log`
+and `t050-current-shared-result-resources-001.xml`.
+
+```powershell
+.venv/Scripts/python.exe -m pytest -q -rs --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t050-current-shared-result-resources-001 tests/packaging/test_process_interfaces_distribution.py --junitxml=.local-run/process-interfaces-083/t050-current-shared-result-resources-001.xml
+```
+
+This bounded packaging completion retains the existing native/Docker serving
+mechanisms and backend ownership. It supplies the public result reader to
+generated UIs without a private web-app import or another executor. Exact result
+identity, stale-read disposal, compatibility and download fallback remain owning
+client/kit/backend behavior. Installed full workspace/editor and latest viewer
+proof are tracked separately under T051/T052/T047.
 
 At checkpoint `ffc6babb707108378f99a47aafeec810184e61bc`, the selected packaging
 suite passed **3 tests in 45.65 seconds**, without skips. It built a root wheel,

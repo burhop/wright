@@ -54,6 +54,7 @@ accepted-revision key; stale async replies must never enter another process/run.
 | ResultCard, EvidenceReference | Exact result/representation/assessment links, currentness and producer navigation. |
 | FindingsPanel, NavigationButton | Owning-service findings/corrections and exact host navigation intents. |
 | RepresentationViewer, DataTable | Bounded bitmap/STL/plaintext/CSV views and paginated tables; unsupported-format fallback. |
+| ResultRepresentation, RepresentationDownload | Exact scoped result reads, loading/errors, stale-read disposal, shared viewing and exact-file download. |
 | ThreeDViewer, ToolpathViewer | Neutral 3D orbit/zoom, all supported layers and reported categories; no device protocol. |
 | NumericPlot, ScalarFieldPlot | Supplied numeric profiles/samples, ranges and units; no analysis or acceptance verdict. |
 
@@ -150,11 +151,22 @@ model/support categories. Older documents lack this evidence and display all
 paths as unclassified. This field describes a reader method; it does not certify
 support adequacy, machine compatibility or engineering compliance.
 
+`parseRecordedToolpaths(data, exactEvidenceSha256)` uses the same finite parser
+for a separately recorded neutral toolpath JSON result. The scoped result reader
+owns its exact file identity. Its reported package hash stays distinct from the
+evidence-file hash; rendering this record does not revalidate package correspondence.
+Supported reader provenance is required. Explicit nominal section markers, line
+ranges, excluded prefix/suffix counts and selected-text hash are validated and
+displayed. The view prominently discloses excluded, unverified machine setup and
+shutdown. It neither interprets unknown commands nor changes engineering gates.
+
 CSV views are bounded to 2 MiB, 10,000 data rows, 50 columns and 8 KiB fields;
 quoted commas/newlines/quotes and CRLF/BOM are supported. Tables paginate rather
 than silently pretending that initial rows are complete. Text previews are
-limited to 64 KiB; exact JSON evidence is bounded to 1 MiB and displayed as inert
-text in a scrollable pane. HTML/SVG is never embedded as executable document content.
+limited to 64 KiB. JSON reads are bounded to 16 MiB so recorded neutral layer
+data can use the same shared 3D viewer; ordinary JSON text remains bounded to
+1 MiB and is displayed as inert text in a scrollable pane. HTML/SVG is never
+embedded as executable document content.
 Larger/unsupported representations retain exact open/download fallback.
 Numeric plots display supplied values with finite extents, at most 10,000
 samples; scalar fields do not invent interpolated geometry.
@@ -162,3 +174,11 @@ samples; scalar fields do not invent interpolated geometry.
 Result identity, finding/profile scope, hashes, freshness, engineering acceptance,
 canonical checksums and provider attestation remain backend/assessment authority.
 An attractive rendering or empty findings list cannot approve a subject.
+
+`ResultRepresentation({client, snapshot, reference?, onClose?})` composes the
+shared result viewer and exact download with bounded scoped reads. Pass the
+host-owned snapshot and the reference selected through a ResultCard. It rejects
+references absent from that current run's outputs, aborts reads on replacement
+or context change, and keeps loading/errors local to presentation. It does not
+attach, observe, execute or cancel process work. This allows AI-authored layouts
+to reuse the read lifecycle without reconstructing client signatures or recovery.

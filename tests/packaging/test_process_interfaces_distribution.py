@@ -126,6 +126,8 @@ assert resources.version == 'process-ui-author-1'
 public = files('workspace_service.process_interfaces.resources').joinpath('public')
 assert public.joinpath('process_client/src/index.ts').is_file()
 assert public.joinpath('ui_kit/src/styles.css').is_file()
+assert public.joinpath('ui_kit/src/result-representation.tsx').is_file()
+assert 'ResultRepresentation' in resources.instructions
 vault = pathlib.Path('isolated-saved-bundle')
 digest = ImmutableFileSet(vault).publish({{'dist/app.js': b'export function mount(){{}}'}})
 assets = process_ui_static.ProcessStaticAssets(vault, digest)
@@ -176,7 +178,24 @@ built = asyncio.run(build_interface(source=source, manifest=manifest, process=pr
     toolchain=configured, builds_root=pathlib.Path('installed-builds')))
 assert built.report.state == 'built', built.report.diagnostics
 assert built.dist.joinpath('app.js').is_file()
-print(json.dumps({{**configured.describe(), 'compiled_installed_sources': True}}))
+inspection_manifest = InterfaceManifest(ui_id='ui-installed-inspection',
+    revision_id='revision-installed-inspection', title='Installed result reader',
+    process=process, client_version='1.0.0', kit_version='1.0.0',
+    viewers=['ThreeDViewer', 'ToolpathViewer'])
+inspection_source = SourceEnvelope(files={{'App.tsx': '''
+import type {{InteractionSnapshot, ProcessClient}} from '@wright/process-client';
+import {{ResultRepresentation}} from '@wright/ui-kit';
+export default function App({{client, snapshot}}: {{client: ProcessClient; snapshot: InteractionSnapshot; readOnly: boolean}}) {{
+  return <ResultRepresentation client={{client}} snapshot={{snapshot}} reference={{null}} />;
+}}
+'''}})
+inspection = asyncio.run(build_interface(source=inspection_source, manifest=inspection_manifest,
+    process=process, catalog=[], toolchain=configured,
+    builds_root=pathlib.Path('installed-inspection-builds')))
+assert inspection.report.state == 'built', inspection.report.diagnostics
+assert inspection.dist.joinpath('app.js').is_file()
+print(json.dumps({{**configured.describe(), 'compiled_installed_sources': True,
+    'compiled_installed_result_reader': True}}))
 """,
         WRIGHT_PROCESS_UI_TOOLCHAIN_ROOT=str(ROOT),
     )
@@ -184,6 +203,7 @@ print(json.dumps({{**configured.describe(), 'compiled_installed_sources': True}}
     assert data["packages"]["@wright/process-client"]["version"] == "1.0.0"
     assert data["packages"]["@wright/ui-kit"]["version"] == "1.0.0"
     assert data["compiled_installed_sources"] is True
+    assert data["compiled_installed_result_reader"] is True
 
 
 def test_private_service_direct_wheel_and_sdist_rebuild_include_the_same_resources(

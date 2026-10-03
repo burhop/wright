@@ -600,3 +600,49 @@ package reader's refusal is a distinct capability limitation. Complete layer
 inspection, assessment/producing-step navigation and broader two-process parity
 remain open. Provider-compatible passive output or a justified shared reader
 extension must preserve V3 and exact engineering identities.
+
+## Exact saved working-view audit and shared 3D viewer
+
+A later audit corrected the preceding 004 saved-working/reload claim: its saved
+receipt and preview-result parity are valid, but its captured URL still had
+`processUIKind=preview`. `Connected to Wright` alone did not distinguish the
+working context. Original reports and immutable evidence remain intact; see the
+[historical claim audit](../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/historical-claim-audit.json).
+
+The focused viewer update 005 failed `UI_BUILD_FAILED` after bounded repairs and
+produced no revision. A smaller actual configured-model update 006 succeeded
+without build diagnostics, using the public shared `ResultRepresentation`
+component. Revision `revision-5d5d6defda104980a2455c7ddc95e687` was previewed and
+saved through Wright. No generated read controller, executor or vendor parser
+was added. It uses the provider's already-recorded neutral toolpath result;
+whole-package unknown-motion refusal remains unchanged.
+
+The first real representation read exposed a shared development-proxy defect:
+the proxy removed the owning artifact's Content-Length and could rewrite JSON
+bytes. The scoped client correctly refused that read. The bounded correction
+preserves artifact response bytes and integrity headers, while retaining the
+existing application-asset rewriting. The client still rejects missing or
+invalid sizes and foreign evidence. Tests cover that shared behavior.
+
+Fresh normal-workspace walkthrough 011 passes **15 checks** with no console,
+page or failed-response diagnostics. Before reload it requires a working-tab
+URL without the preview-job parameter; backend context confirms
+`read_only=false` for the exact source, run and saved UI revision. Preview and
+saved reload match all **19** result identities and the original held assessment.
+Both render a visible 3D canvas with **90 nominal layers / 69,559 segments**;
+pointer rotation, layer two, support visibility and all-layer restore work.
+Both exact reads retain 4,493,731 bytes, the evidence digest and `nosniff`.
+
+The [verified walkthrough](../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/workspace-walkthrough/report.html)
+and [checked scope](../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/checked-scope.json)
+retain immutable source/build/role records, failures and audit corrections.
+Earlier capacity and hidden-preview-selector stops remain distinct from product
+defects. The launch-restriction record has no screenshot because Chromium did
+not start; its structural validator cannot supply a full-size-image interaction
+and that exception is disclosed rather than inventing evidence.
+
+Excluded machine startup/shutdown remains unverified, the original source gate
+remains 17 pass/1 mandatory authenticated review blocked, and no decision or
+engineering action was replayed. This checkpoint proves same-run saved reload;
+actual navigation activation, current-revision second-run reuse and the full
+two-process completion audit remain open.

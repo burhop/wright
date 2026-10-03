@@ -382,6 +382,18 @@ export function ToolpathViewer({ document }: { document: ToolpathDocument }) {
         Drag to rotate · scroll to zoom · reveal layers with the slider.
         Geometry uses actual toolpaths; it is not a machine approval.
       </p>
+      {document.recordedEvidenceSha256 && (
+        <p className="wp-muted">
+          Recorded toolpath evidence. Package correspondence and engineering
+          acceptance require the linked checks.
+        </p>
+      )}
+      {document.provenance?.selectedSection && (
+        <p className="wp-muted">
+          This view covers the recorded nominal layer section. Machine setup and
+          shutdown are excluded and unverified.
+        </p>
+      )}
       {document.provenance ? (
         <details>
           <summary>Toolpath reader evidence</summary>
@@ -390,7 +402,13 @@ export function ToolpathViewer({ document }: { document: ToolpathDocument }) {
             Reader: {document.provenance.reader} ·{" "}
             {document.provenance.segments} segments
           </p>
-          <p>Package SHA-256: {document.packageSha256}</p>
+          <p>
+            {document.recordedEvidenceSha256 ? "Reported package" : "Package"}
+            {" SHA-256: "}{document.packageSha256}
+          </p>
+          {document.recordedEvidenceSha256 && (
+            <p>Recorded evidence SHA-256: {document.recordedEvidenceSha256}</p>
+          )}
           <p>Path source SHA-256: {document.provenance.sourceSha256}</p>
           {document.provenance.archiveEntry && (
             <p>Package entry: {document.provenance.archiveEntry}</p>
@@ -410,6 +428,26 @@ export function ToolpathViewer({ document }: { document: ToolpathDocument }) {
               {document.provenance.excludedUnlayeredCommands} extrusion commands
               outside recorded layers are excluded from this view.
             </p>
+          )}
+          {document.provenance.selectedSection && (
+            <>
+              <p>
+                Selected lines {document.provenance.selectedSection.firstLine}–
+                {document.provenance.selectedSection.lastLine};{" "}
+                {document.provenance.selectedSection.excludedPrefixLines} prefix
+                lines and{" "}
+                {document.provenance.selectedSection.excludedSuffixLines} suffix
+                lines excluded.
+              </p>
+              <p>
+                Selected text SHA-256:{" "}
+                {document.provenance.selectedSection.selectedTextSha256}
+              </p>
+              <p>
+                Markers: {document.provenance.selectedSection.startMarker} →{" "}
+                {document.provenance.selectedSection.endMarker}
+              </p>
+            </>
           )}
           <p>
             Nominal recorded paths. Firmware commands are not executed; material

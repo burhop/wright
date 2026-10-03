@@ -324,6 +324,8 @@ def test_passive_toolpath_preview_keeps_exact_managed_results_grant(case, monkey
     )
     assert response.status_code == 200
     assert response.headers["x-wright-artifact-sha256"] == "a" * 64
+    assert response.headers["content-length"] == str(len(response.content))
+    assert response.headers["x-content-type-options"] == "nosniff"
     assert response.headers["x-wright-view-format"] == "wright.gcode.toolpaths.v1"
     assert len(calls) == 1
     scope, process, reference, options = calls[0]

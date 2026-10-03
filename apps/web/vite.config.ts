@@ -228,6 +228,31 @@ export function rewriteSurfaceSetCookies(
   return rewritten;
 }
 
+export function surfaceProxyResponseBody(
+  body: Buffer,
+  headers: IncomingHttpHeaders,
+  encoded: string,
+): Buffer {
+  // Recorded evidence keeps its owning reader's exact bytes and declared size.
+  // JSON evidence may contain URLs; rewriting it would invalidate its digest.
+  if (headers["x-wright-artifact-sha256"] !== undefined) return body;
+  const contentType = String(headers["content-type"] ?? "");
+  if (
+    contentType.includes("text/html") ||
+    contentType.includes("text/css") ||
+    contentType.includes("javascript") ||
+    contentType.includes("application/json")
+  ) {
+    body = Buffer.from(rewriteSurfaceText(body.toString("utf-8"), encoded), "utf-8");
+    delete headers["content-security-policy"];
+  }
+  // The development proxy buffers finite responses; rewritten text needs its
+  // actual UTF-8 size and must not advertise both length and chunked framing.
+  delete headers["transfer-encoding"];
+  headers["content-length"] = String(body.byteLength);
+  return body;
+}
+
 function surfaceDevProxyPlugin(): Plugin {
   const surfaceSessions = new Map<string, string>();
   return {
@@ -272,17 +297,8 @@ function surfaceDevProxyPlugin(): Plugin {
               const chunks: Buffer[] = [];
               proxyRes.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
               proxyRes.on("end", () => {
-                const contentType = String(
-                  proxyRes.headers["content-type"] ?? "",
-                );
-                const textLike =
-                  contentType.includes("text/html") ||
-                  contentType.includes("text/css") ||
-                  contentType.includes("javascript") ||
-                  contentType.includes("application/json");
-                let body = Buffer.concat(chunks);
+                let body: Buffer = Buffer.concat(chunks);
                 const outgoing = { ...proxyRes.headers };
-                delete outgoing["content-length"];
                 const surfaceSession = extractSurfaceSessionCookie(
                   outgoing["set-cookie"],
                 );
@@ -310,13 +326,7 @@ function surfaceDevProxyPlugin(): Plugin {
                 ) {
                   outgoing.location = `${surfaceProxyPrefix}${match.encoded}${outgoing.location}`;
                 }
-                if (textLike) {
-                  body = Buffer.from(
-                    rewriteSurfaceText(body.toString("utf-8"), match.encoded),
-                    "utf-8",
-                  );
-                  delete outgoing["content-security-policy"];
-                }
+                body = surfaceProxyResponseBody(body, outgoing, match.encoded);
                 res.writeHead(proxyRes.statusCode ?? 502, outgoing);
                 res.end(body);
               });

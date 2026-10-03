@@ -19,6 +19,7 @@ import {
   CheckpointCard,
   SchemaField,
   parseToolpaths,
+  parseRecordedToolpaths,
   parseCsv,
   DataTable,
   NumericPlot,
@@ -614,6 +615,108 @@ describe("bounded neutral toolpath data", () => {
 });
 
 describe("bounded representation views", () => {
+  const recordedPaths = {
+    format: "wright.gcode.toolpaths.v1",
+    package_sha256: hash,
+    classification_source: "gcode_feature_comments",
+    layers: [{ index: 0, z: 0.2, model: [[0, 0, 10, 0]], support: [] }],
+    provenance: {
+      reader: "wright.passive-representations/1",
+      source_sha256: "b".repeat(64),
+      archive_entry: "Metadata/plate_1.gcode",
+      method: "Recorded planar commands",
+      units: "mm",
+      segments: 1,
+      extruding_arcs: 0,
+      arc_maximum_chord_error_mm: 0.02,
+      unlayered_extrusion_commands_excluded: 0,
+      unclassified_features: [],
+      engineering_acceptance: false,
+      selected_section: {
+        start_marker: "; BODY START",
+        end_marker: "; BODY END",
+        first_line: 11,
+        last_line: 20,
+        excluded_prefix_lines: 10,
+        excluded_suffix_lines: 5,
+        selected_text_sha256: "c".repeat(64),
+      },
+    },
+  };
+  function jsonBlob(value: unknown): Blob {
+    const text = JSON.stringify(value);
+    const blob = new Blob([text], { type: "application/json" });
+    Object.defineProperty(blob, "text", { value: async () => text });
+    return blob;
+  }
+  it("keeps the recorded evidence identity distinct from its reported package", () => {
+    const parsed = parseRecordedToolpaths(recordedPaths, "d".repeat(64));
+    expect(parsed.recordedEvidenceSha256).toBe("d".repeat(64));
+    expect(parsed.packageSha256).toBe(hash);
+    expect(parsed.provenance?.selectedSection?.excludedPrefixLines).toBe(10);
+    expect(() => parseRecordedToolpaths(recordedPaths, "unknown")).toThrow();
+    expect(() => parseRecordedToolpaths({ ...recordedPaths, provenance: null }, hash)).toThrow();
+    expect(() => parseRecordedToolpaths({ ...recordedPaths, package_sha256: "unknown" }, hash)).toThrow();
+  });
+  it.each([
+    { first_line: 0 },
+    { first_line: 10 },
+    { last_line: 9 },
+    { excluded_prefix_lines: -1 },
+    { excluded_suffix_lines: 2_000_000 },
+    { start_marker: "BODY START" },
+    { end_marker: "; BODY START" },
+    { start_marker: "; BODY\nSTART" },
+    { selected_text_sha256: "unknown" },
+  ])("rejects inconsistent nominal scope evidence (%#)", (change) => {
+    expect(() => parseRecordedToolpaths({
+      ...recordedPaths,
+      provenance: {
+        ...recordedPaths.provenance,
+        selected_section: { ...recordedPaths.provenance.selected_section, ...change },
+      },
+    }, hash)).toThrow();
+  });
+  it("shows recorded neutral paths and their excluded machine scope without requesting another read", async () => {
+    const readToolpaths = vi.fn();
+    render(<RepresentationViewer blob={jsonBlob(recordedPaths)} title="recorded-paths.json" sourceSha256={"d".repeat(64)} readToolpaths={readToolpaths} />);
+    await screen.findByRole("slider");
+    expect(screen.getByText(/Package correspondence and engineering/)).toBeVisible();
+    expect(screen.getByText(/Machine setup and shutdown are excluded and unverified/)).toBeVisible();
+    expect(screen.getByText(/Recorded evidence SHA-256: d{64}/)).toBeInTheDocument();
+    expect(screen.getByText(/Reported package SHA-256: a{64}/)).toBeInTheDocument();
+    expect(readToolpaths).not.toHaveBeenCalled();
+  });
+  it("supports bounded recorded layer data beyond the ordinary text preview limit", async () => {
+    const count = 120_000;
+    const value = {
+      ...recordedPaths,
+      layers: [{ ...recordedPaths.layers[0], model: Array.from({ length: count }, () => [0, 0, 10, 0]) }],
+      provenance: { ...recordedPaths.provenance, segments: count },
+    };
+    const blob = jsonBlob(value);
+    expect(blob.size).toBeGreaterThan(1024 * 1024);
+    render(<RepresentationViewer blob={blob} title="large-recorded-paths.json" sourceSha256={hash} />);
+    await screen.findByRole("slider");
+  });
+  it("retains the ordinary JSON text bound and refuses incomplete recorded provenance", async () => {
+    const view = render(<RepresentationViewer blob={jsonBlob({ value: "x".repeat(2 * 1024 * 1024) })} title="large-report.json" sourceSha256={hash} />);
+    await screen.findByText(/exceeds the supported text preview size/);
+    expect(screen.queryByRole("slider")).not.toBeInTheDocument();
+    view.rerender(<RepresentationViewer blob={jsonBlob({ ...recordedPaths, provenance: null })} title="invalid-paths.json" sourceSha256={hash} />);
+    await screen.findByText(/could not be read/);
+    expect(screen.queryByRole("slider")).not.toBeInTheDocument();
+  });
+  it("requires the exact recorded file identity and reconciles a changed representation", async () => {
+    const blob = jsonBlob(recordedPaths);
+    const view = render(<RepresentationViewer blob={blob} title="recorded-paths.json" />);
+    await screen.findByText(/could not be read/);
+    view.rerender(<RepresentationViewer blob={blob} title="recorded-paths.json" sourceSha256={hash} />);
+    await screen.findByRole("slider");
+    view.rerender(<RepresentationViewer blob={jsonBlob({ ...recordedPaths, layers: [] })} title="changed-paths.json" sourceSha256={hash} />);
+    await screen.findByText(/could not be read/);
+    expect(screen.queryByRole("slider")).not.toBeInTheDocument();
+  });
   it("reveals all true layers and the exact source evidence from a passive read", async () => {
     const raw = new Blob(["exact package"], { type: "model/3mf" });
     const data = {
@@ -868,7 +971,7 @@ describe("bounded representation views", () => {
     ).not.toBeInTheDocument();
   });
   it.each([
-    ["application/json", 1024 * 1024 + 1],
+    ["application/json", 16 * 1024 * 1024 + 1],
     ["text/plain", 65_537],
   ])("rejects oversized %s before reading bytes", async (type, size) => {
     const blob = new Blob(["x".repeat(size)], { type });

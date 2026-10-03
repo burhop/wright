@@ -1,0 +1,17 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+ Test Files  3 passed (3)
+      Tests  109 passed (109)
+   Start at  22:33:07
+   Duration  7.43s (transform 309ms, setup 303ms, import 796ms, tests 2.65s, environment 3.05s)
+

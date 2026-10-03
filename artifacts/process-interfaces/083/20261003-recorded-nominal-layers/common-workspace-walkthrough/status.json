@@ -1,0 +1,202 @@
+{
+  "title": "Focus-wheel results and held validation in the common working view",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-03T02:21:16.175Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Focus-wheel comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved focus-wheel workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Inspect held outputs",
+      "instruction": "Inspect the exact outputs and held assessment. Open the support-preview representation, then reload. Leave all decisions untouched."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Focus-wheel comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the wheel workflow",
+      "summary": "The exact accepted wheel workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow"
+      ],
+      "expected": "The accepted wheel workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Wheel workflow diagram",
+      "summary": "The original wheel assignment opens with its connected review, geometry and slicing stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted wheel workflow file.",
+      "controls": [
+        "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted wheel diagram and working view action available.",
+      "actual": "Exact saved wheel source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual wheel run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded wheel run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing wheel run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Exact outputs and original held gate",
+      "summary": "The common working view shows this run’s actual results and mandatory human-review hold.",
+      "purpose": "Compare public view with authoritative exact output and assessment identities.",
+      "action": "Inspect results and validation findings without approving or continuing.",
+      "controls": [
+        "Open representation",
+        "Open assessment"
+      ],
+      "expected": "All nineteen actual result identities and the original held assessment are visible.",
+      "actual": "Exact 19 working-view result identities match; original assessment is linked and blocked. Full review reason remains in the exact assessment evidence.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Recorded nominal layer evidence in 3D",
+      "summary": "The shared viewer reads the exact neutral layer evidence produced by the package inspection step.",
+      "purpose": "Inspect actual toolpaths rather than a mesh silhouette.",
+      "action": "Open the recorded support-preview result representation.",
+      "controls": [
+        "Open representation",
+        "Layers"
+      ],
+      "expected": "Actual ninety-layer rotatable toolpaths, with model/support visibility controls.",
+      "actual": "Ninety recorded nominal layers shown in the shared 3D viewer; excluded machine setup/shutdown and required package validation are disclosed.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Layer and category controls",
+      "summary": "Recorded layer evidence can be inspected at an early height with support visibility changed.",
+      "purpose": "Verify real shared viewer controls on actual recorded paths.",
+      "action": "Focus Layers, press Home then ArrowRight, and uncheck Support paths.",
+      "controls": [
+        "Layers",
+        "Support paths"
+      ],
+      "expected": "Two of ninety layers and support visibility off.",
+      "actual": "Layer 2 selected and supports hidden without changing artifacts or assessments.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Reload retains exact held results",
+      "summary": "Reopening reconciles the same durable run without starting work or consuming review authority.",
+      "purpose": "Verify close/reload recovery on a terminal held engineering run.",
+      "action": "Reload the common working tab.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "Same result identities and held assessment; no replay.",
+      "actual": "Same nineteen exact results restored.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    }
+  ]
+}
