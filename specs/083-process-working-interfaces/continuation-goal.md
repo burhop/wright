@@ -33,6 +33,70 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Current continuation — run-path contract and controlled runtime verified
+
+The shared run-path change now has 29 new parameterized cases and **237 passing
+tests / one existing Windows symlink-privilege skip** across fifteen affected
+suites. Ruff passes eight owning files. Public scoped evidence is under
+`artifacts/process-interfaces/083/20261003-run-path-binding-verified/`; the setup
+failure and exact source inventory are retained. Source/template identities,
+connected MCP schema validation, readonly readiness, separate run directories,
+changed-template rejection, owner reopen and enrolled local-review continuation
+are checked. Verification handles 1282/39455 are terminal; no API/provider/UI
+service was revalidated. Counts remain **47 checked / 10 open**.
+
+Next integrate the explicit opt-in contract into fresh engineering-example
+preparation. Preserve immutable requirements and protected subjects. Account for
+every provider write/job/native resource, mark only declared configuration text,
+and use the existing qualified providers. Accept the fresh source through the
+normal owner; check/update UI compatibility through Wright and prove the same
+saved built interface on two runs of that accepted source. No model generation
+or compilation per run, no vendor-path heuristics and no overwriting retained
+evidence. Then finish migration/provider and remaining UI/regression/audit work.
+The earlier uncommitted/untested handoff below is historical, superseded by this
+controlled proof; actual live engineering adoption remains unverified.
+
+### Overnight handoff — 3 October 2026, run isolation in progress
+
+Rechecked the submitted goal, Git worktree, task ledger and retained test logs.
+HEAD is `0248e68e`; **47 tasks are checked and 10 remain open**. The latest
+shared run-path work is uncommitted and must be inspected and completed rather
+than discarded or treated as verified engineering integration.
+
+`workflow_run_paths.py` introduces the explicit `wright.run-path/1` declaration
+and `{{wright.run_id}}` token. Existing compiler/preparation/continuation owners
+resolve declared paths before tool checks, retain raw input-template identity
+alongside resolved-content identity, reserve fresh output directories, and reuse
+the same paths on continuation. This remains part of the canonical runtime.
+Modified owners are `workflow_source_execution.py`, `workflow_run_preparation.py`,
+`workflow_references.py`, `workflow_execution_continuation.py` and
+`workflow_approval_execution.py`; new tests are `test_workflow_run_paths.py`.
+
+Retained private runs `t047-run-path-tests-001/002/003` pass 21, 116 and 36
+tests respectively; these scopes overlap and must not be added together.
+They include controlled repeat runs and declared file-template continuation after
+owner reopen. Attempt 004 collected no tests because a supplied test filename
+does not exist. Preserve that setup failure. The latest template-tampering
+parameter has not yet been tested. No actual engineering provider, model,
+current installed build or browser integration is established by these tests.
+
+Next: finish connected-MCP argument/preflight and template-tampering coverage,
+check the resolved-content inline limit and continuation guards, then run the
+affected existing suites using verified filenames in a fresh owned proof root.
+Document the explicit contract and provider limits, preserve failed attempts,
+and save a focused local commit after scoped evidence and credential checks.
+Then configure fresh isolated engineering sources with deliberately declared
+run paths, check source/UI compatibility, and prove the same accepted process
+and saved interface on distinct runs without overwriting earlier evidence or
+regenerating the UI per run. Do not patch vendor-specific scripts into Wright,
+infer isolation from one replaced path, or mark T047 complete from unit tests.
+
+Continue active slicing/provider migration, remaining authoring/editor/browser
+checks, regressions and the final requirement audit. The protected reviews and
+uncertain simulator outcome below remain unchanged. Recorded service handles
+are historical observations: revalidate before use; a previously launched API
+does not establish that it serves the new uncommitted backend changes.
+
 Latest continuation closes T021: **47 checked / 10 open**, T041, T043, T045,
 T047, T048, T049, T052, T053, T056, T057. See evidence/common-view.md and
 20261003-editor-native-regression-002 for 19 served mocked browser, 57 component

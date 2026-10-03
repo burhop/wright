@@ -22,6 +22,53 @@ interaction step. Unsupported conditional reachability is an actionable unsuppor
 readiness result. Recheck schema/provider/file/source identity immediately before
 dispatch; no frontend readiness badge grants permission.
 
+## Explicit run-path binding v1
+
+A reusable accepted process can declare `settings.run_path_template =
+"wright.run-path/1"` on individual tasks and configuration-text inputs. The only
+supported token is `{{wright.run_id}}`. Example saved/expected output:
+`outputs/{{wright.run_id}}/report.json`. The token must be exactly one standalone
+directory component before a declared output filename. Resolved paths retain the
+existing workspace path checks; backend run IDs are bounded safe components.
+Unsupported versions, unknown Wright tokens and templated object keys fail.
+
+The existing authorized preparation owner chooses the run ID before tool
+qualification. It resolves only declared task prompt/guidance, MCP arguments,
+saved/expected output paths, expected-file port mappings and file dependencies.
+Explicitly declared text inputs are resolved through the existing immutable-input
+conversion before connected-argument schema validation. Undeclared input text
+remains literal. Approval destinations, validation profiles, human-interaction
+schemas and native application/document configuration are not template fields.
+This is a bounded path binding, not an expression or execution language.
+
+The accepted source, step/port IDs and frozen raw input snapshot are unchanged by
+binding. File-template bytes are never rewritten: the reference retains its
+original path, byte count and SHA-256 and separately records the run ID and
+resolved-content SHA-256. Checkpoint identities bind both original and resolved
+identities. Review/prompt context exposes the distinction. The resolved text
+must fit the consuming step's inline budget; falling back to reading the raw
+template file would lose the run binding and is rejected. Opaque file/native
+imports and supplied-artifact approvals cannot consume a text template as though
+its original file held the resolved content.
+
+Readiness performs no directory reservation or engineering call. After a durable
+start is accepted, the canonical executor exclusively reserves the declared run
+directories before model/tool execution. An existing target blocks execution
+rather than replacing its bytes. A resumed input/review checkpoint prepares with
+its original run ID and requires the retained directory. Changed source/template
+identity or uncertain execution still follows existing continuation/replay rules.
+Legacy processes without declarations preserve their original behavior.
+
+Every provider write must be explicitly bound and qualified. Declaring one
+output does not isolate unmodified absolute paths, provider job names, native
+documents, internal caches or other undeclared writes. This mechanism is not a
+provider filesystem sandbox. Example migration must account for all writable
+subjects and supported provider operations without vendor-specific rewrites in
+Wright. A changed accepted source needs normal UI binding/compatibility checks;
+only subsequent runs of that same accepted source can prove saved-interface
+reuse. Current controlled runtime tests do not establish live provider or
+engineering-interface repeat-run acceptance.
+
 ## Human-input source extension v1
 
 Use the existing task/settings source representation; add an explicit template:

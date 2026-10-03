@@ -93,6 +93,13 @@ async def prepare_authorized_workflow_run(
         integration_policy_digest=integration_policy_digest,
     )
 
+    if run_id is None:
+        run_id = uuid4().hex
+    else:
+        from pydantic import TypeAdapter
+        from core.process_validation import Identifier
+
+        run_id = TypeAdapter(Identifier).validate_python(run_id)
     runtime = None
 
     def open_tools():
@@ -116,6 +123,7 @@ async def prepare_authorized_workflow_run(
             tool_runtime=open_tools,
             workspace_id=workspace_id,
             input_snapshot=input_snapshot,
+            run_id=run_id,
         )
         context = None
         if grant is not None:
@@ -129,13 +137,6 @@ async def prepare_authorized_workflow_run(
                 tool_runtime=open_tools() if grant["allowed_tools"] else runtime,
                 files=service.files,
             )
-        if run_id is None:
-            run_id = uuid4().hex
-        else:
-            from pydantic import TypeAdapter
-            from core.process_validation import Identifier
-
-            run_id = TypeAdapter(Identifier).validate_python(run_id)
         if context is not None and runtime is not None:
             from .workflow_integration_document_write import (
                 bind_integration_document_writes,

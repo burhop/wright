@@ -126,6 +126,8 @@ class WorkflowReference:
     image_url: str = ""
     file_only: bool = False
     size_bytes: int | None = None
+    run_path_id: str = ""
+    resolved_sha256: str = ""
 
     @classmethod
     def from_bytes(

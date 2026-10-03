@@ -49,7 +49,9 @@ async def setup_case(
     package_artifact=None,
     uploaded_artifact=None,
     include_supplied_files=False,
+    run_paths=False,
 ):
+    run_id = uuid4().hex
     services = service(tmp_path)
     text = source()
     original = {
@@ -193,6 +195,14 @@ async def setup_case(
                     quantity="one",
                     description="Test artifact",
                 )
+        if run_paths and block["kind"] == "task" and fields.get("performed_by") == "ai_assisted":
+            from workspace_service.workflow_run_paths import VERSION, TOKEN
+
+            settings = fields["settings"]
+            settings["run_path_template"] = VERSION
+            settings["output_filename"] = settings["output_filename"].replace(
+                "outputs/attempt/", f"outputs/attempt/{TOKEN}/"
+            )
         text += section(block["kind"], block["id"], **fields)
     source_path = "workflows/example.workflow.wflow"
     (tmp_path / "workflows").mkdir()
@@ -216,6 +226,7 @@ async def setup_case(
         path=source_path,
         expected_digest=digest(text.encode()),
         tool_runtime=tool_runtime,
+        run_id=run_id,
     )
     context = None
     if integration:
@@ -244,7 +255,6 @@ async def setup_case(
             files=services.files,
         )
     calls = []
-    run_id = uuid4().hex
 
     async def generate(prompt, fmt):
         calls.append(prompt)

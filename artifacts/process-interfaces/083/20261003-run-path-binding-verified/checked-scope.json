@@ -1,0 +1,41 @@
+{
+  "source_checkpoint": "0248e68ed5edbc671506e7e5e4acd26ed4d640a0",
+  "branch": "codex/083-process-working-interfaces",
+  "implementation_version": "wright.run-path/1",
+  "tested_worktree": true,
+  "counts": {
+    "tests": 238,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1
+  },
+  "passed": 237,
+  "seconds": 44.28,
+  "selected_new_cases": 29,
+  "skip": "Existing checkpoint-file symlink test: Windows host lacks symlink privilege (WinError 1314).",
+  "static_check": "Ruff: all checks passed, eight owning implementation/test files.",
+  "backend_runtime": "existing canonical compiler/preparer/executor/supervisor/continuation",
+  "mcp_boundary": "controlled existing Gateway fixture; real schema authority observed",
+  "model_boundary": "controlled injected callback; actual default model not invoked",
+  "synthetic_review": "isolated exact policy enrollment; actor integration_test:campaign; no hardware/network dispatch",
+  "browser_verified": false,
+  "live_engineering_provider_verified": false,
+  "installed_current_build_verified": false,
+  "human_acceptance": false,
+  "task_closed": null,
+  "source_sha256": {
+    "packages/workspace_service/src/workspace_service/workflow_run_paths.py": "eade24762dddc024b745a8f04ccbd381472c2e91885bfcf4af9988284b26d610",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py": "7f95e076a711205d4a5fdb993472df0db74096c4d2cff9f964fabdc9bd747d2f",
+    "packages/workspace_service/src/workspace_service/workflow_run_preparation.py": "30efe0801ce4406bb224aef44e0b1e6bd947a7e53c4073ce9e4d8df15cc57970",
+    "packages/workspace_service/src/workspace_service/workflow_references.py": "58574e22f29133c73a88cd61bc55045f71e58b5c523d15b6fbd9dab60adc319d",
+    "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py": "92eb7fb5db9ab85bdf449d62beb9b5ac90f764963afb9235c501ef4576160930",
+    "packages/workspace_service/src/workspace_service/workflow_approval_execution.py": "49a7832c6232710b6c8041364e07e58777f2f7408d6b0f08640b84f07a451079",
+    "packages/workspace_service/tests/test_workflow_run_paths.py": "af0730003d8a157e137e2663d3a88cb05fbe8aad85a9a379748a6895ff2427fb",
+    "packages/workspace_service/tests/test_workflow_approval_execution.py": "eab7846cc082e41bcab3463724d9b2c411e29ad04191ceaf05f3566859833cba"
+  },
+  "verification_processes_terminal": [
+    1282,
+    39455
+  ],
+  "services_revalidated": false
+}

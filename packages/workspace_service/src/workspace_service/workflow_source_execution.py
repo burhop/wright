@@ -183,6 +183,7 @@ class PromptStep:
     file_dependencies: dict[str, str] = field(default_factory=dict)
     task_tool_allowlist: tuple[str, ...] = ()
     human_interaction: dict | None = None
+    run_path_template: str = ""
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -211,13 +212,26 @@ def _reference_prompt_context(
         "sha256": reference.sha256,
         "kind": "text",
     }
-    size_bytes = reference.size_bytes
+    if reference.run_path_id:
+        record.update(
+            run_path_version="wright.run-path/1",
+            run_id=reference.run_path_id,
+            resolved_content_sha256=reference.resolved_sha256,
+        )
+    size_bytes = (
+        len(reference.text.encode()) if reference.run_path_id else reference.size_bytes
+    )
     if size_bytes is None:
         size_bytes = len(reference.text.encode())
     if size_bytes <= inline_max_bytes:
         return (
             f"\n\nReference document — {name} ({reference.path}):\n{reference.text}",
             record,
+        )
+    if reference.run_path_id:
+        raise _invalid(
+            "A resolved run-path reference exceeds this step's inline budget.",
+            "Use a smaller declared template or increase the reviewed bounded reference budget.",
         )
     identity = {
         "path": reference.path,
@@ -242,6 +256,8 @@ class PromptWorkflow:
     review_context: dict = field(default_factory=dict)
     definition_digest: str = ""
     input_snapshot: object | None = None
+    run_path_id: str = ""
+    run_path_roots: tuple[str, ...] = ()
 
 
 def _invalid(
@@ -1007,6 +1023,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 source_contract=source_contract,
                 reference_inline_max_bytes=reference_inline_max_bytes,
                 revision_policy=revision_policy,
+                run_path_template=settings.get("run_path_template", ""),
                 file_dependencies=file_dependencies,
                 task_tool_allowlist=tuple(raw_task_tools),
             )
@@ -1220,6 +1237,7 @@ async def prepare_prompt_workflow(
     tool_runtime=None,
     workspace_id: str | None = None,
     input_snapshot=None,
+    run_id=None,
 ) -> tuple[PromptWorkflow, dict[str, object]]:
     from dataclasses import replace
 
@@ -1268,6 +1286,9 @@ async def prepare_prompt_workflow(
         )
     validate_workspace_authoring_shape(document.source)
     plan = compile_prompt_workflow(document.source)
+    from .workflow_run_paths import bind_run_paths, bind_run_input_values
+
+    plan = bind_run_paths(plan, run_id)
     if any(step.human_interaction for step in plan.steps) and not getattr(
         service, "process_interfaces", None
     ):
@@ -1428,7 +1449,8 @@ async def prepare_prompt_workflow(
                 "The prepared input content no longer matches its frozen snapshot.",
                 "Prepare the current exact values before starting this process.",
             )
-        plan, values = converted.plan, converted.values
+        plan, values = bind_run_paths(converted.plan, run_id), converted.values
+        values = bind_run_input_values(plan, values)
         plan = replace(plan, input_snapshot=converted.snapshot)
         if tool_runtime is not None:
             connected_values = {
@@ -1489,6 +1511,7 @@ async def prepare_prompt_workflow(
         ):
             raise _invalid(f"{fields['name']}: supply text before running.")
         values[key] = value
+    values = bind_run_input_values(plan, values)
     plan = replace(plan, definition_digest=expected_digest)
     if review_snapshots:
         from dataclasses import replace
@@ -1500,7 +1523,15 @@ async def prepare_prompt_workflow(
                 "snapshots": review_snapshots,
                 "input_values": {
                     key: (
-                        {"path": value.path, "sha256": value.sha256}
+                        {
+                            "path": value.path,
+                            "sha256": value.sha256,
+                            **({
+                                "run_path_version": "wright.run-path/1",
+                                "run_id": value.run_path_id,
+                                "resolved_content_sha256": value.resolved_sha256,
+                            } if value.run_path_id else {}),
+                        }
                         if isinstance(value, WorkflowReference)
                         else value
                     )
@@ -1686,6 +1717,9 @@ async def execute_prompt_workflow(
 
         input_runtime_owner(service, plan)
     run_id = run_id or uuid4().hex
+    from .workflow_run_paths import reserve_run_paths
+
+    reserve_run_paths(plan, workspace_dir, run_id, continuing=continuation is not None)
     engineering_results = []
     validation_application = None
     if any(step.validation for step in plan.steps):
@@ -2885,9 +2919,9 @@ async def execute_prompt_workflow(
     if pending_action:
 
         def digest_input(value):
-            if isinstance(value, WorkflowReference):
-                return value.sha256
-            return hashlib.sha256(str(value).encode("utf-8")).hexdigest()
+            from .workflow_execution_continuation import input_identities
+
+            return input_identities({"value": value})["value"]
 
         artifact_digests = sorted(
             {

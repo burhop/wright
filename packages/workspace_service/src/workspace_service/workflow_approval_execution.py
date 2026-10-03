@@ -131,6 +131,7 @@ async def _prepare(
             path=checkpoint.workflow_id,
             expected_digest=checkpoint.subject["definition_digest"],
             tool_runtime=get_runtime,
+            run_id=checkpoint.run_id,
             **overlay,
         )
         state = checkpoint.continuation

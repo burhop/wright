@@ -11,6 +11,14 @@ T021 is subsequently closed by 57 common/recovery component checks and the
 19-case served mocked common/editor/composer/082 continuation. The ledger is
 47 checked / 10 open; broader editor, authoring and engineering acceptance remain
 incomplete.
+Subsequent shared run-path preparation/continuation changes have controlled
+237-pass/one-host-privilege-skip evidence, including distinct outputs, immutable
+templates and same-run review continuation. Engineering-example adoption and
+actual saved-interface repeat-run acceptance remain open; see
+[scoped proof](../../artifacts/process-interfaces/083/20261003-run-path-binding-verified/README.md).
+This correction does not close an additional task or establish live-provider
+qualification.
+
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
 be verified against current source, actual runtime and its required proof scope.

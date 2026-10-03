@@ -15,7 +15,12 @@ from .workflow_results import EngineeringResult, Provenance, Representation
 
 def input_identities(values):
     return {
-        key: value.sha256
+        key: hashlib.sha256(
+            json.dumps({"template_sha256": value.sha256, "run_id": value.run_path_id,
+                        "resolved_sha256": value.resolved_sha256}, sort_keys=True).encode()
+        ).hexdigest()
+        if isinstance(value, WorkflowReference) and value.run_path_id
+        else value.sha256
         if isinstance(value, WorkflowReference)
         else hashlib.sha256(str(value).encode("utf-8")).hexdigest()
         for key, value in sorted(values.items())

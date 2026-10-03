@@ -1,0 +1,37 @@
+{
+  "files": {
+    "checked-scope.json": {
+      "bytes": 2462,
+      "sha256": "025e700fc206fd2775955a310a5a05ec32cc187ee42ecf047e87c08c79ee313d"
+    },
+    "preservation.json": {
+      "bytes": 1420,
+      "sha256": "605629cea1234cb6eaac3463687bd0b9462c9c8af6b60dc5541a6bd03e6ff411"
+    },
+    "README.md": {
+      "bytes": 4903,
+      "sha256": "7f96b21113e56c704f33d141583229c3ce8f55aa11119ca03a0f25a8430c710d"
+    },
+    "retained-setup-failure/results.xml": {
+      "bytes": 232,
+      "sha256": "9e46a269122066597a5b6e801ec4b84608ab1cfb17b17d9934aa9b82f2a39e1c"
+    },
+    "retained-setup-failure/tests.log": {
+      "bytes": 125,
+      "sha256": "62febf7e245a74452cacac125290048d1bdfc1edcc0940eea1ef6dc4bcb3a9c1"
+    },
+    "ruff.log": {
+      "bytes": 20,
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "runtime-results.xml": {
+      "bytes": 43209,
+      "sha256": "02ca765a897ddedaf1e7cb48c75c7058231e96850bb4a0f8143558c8a0ecb30d"
+    },
+    "runtime.log": {
+      "bytes": 895,
+      "sha256": "6da8a7527c921a2f126b1887fcc3b4e5948342074dc5e91b752b411f4a6258a9"
+    }
+  },
+  "credential_value_scan": "passed"
+}

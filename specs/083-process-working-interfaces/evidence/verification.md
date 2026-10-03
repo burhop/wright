@@ -177,3 +177,18 @@ See [common-view mapping](common-view.md) for T021 closure and
 Protected archive/campaign/context and unrelated prototype byte checks pass;
 credential-value scans pass. Controlled regression evidence is not new live
 model/provider or engineering acceptance. T053's broader audit remains open.
+
+### Explicit run-path preparation and continuation
+
+The [controlled runtime proof](../../../artifacts/process-interfaces/083/20261003-run-path-binding-verified/README.md)
+records 237 passes and one existing Windows symlink-privilege skip across fifteen
+affected suites, plus passing Ruff checks. Twenty-nine new parameterized cases
+cover shared-source repeat runs, separate outputs, connected MCP schema checks
+without readiness effects, raw/resolved template identity, owner reopen,
+changed-template rejection, enrolled local-review continuation and duplicate
+reconciliation. Both verification handles are terminal. The retained setup attempt
+ran no tests because an incorrect filename was supplied. Protected archives,
+campaign/context and unrelated prototype byte checks pass. No live model/provider,
+browser or current installed-build behavior is established here. Example adoption,
+UI compatibility and actual engineering repeat-run evidence remain open; neither
+T047 nor T053 is closed by these controlled checks.

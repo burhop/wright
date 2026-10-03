@@ -2131,3 +2131,46 @@ uncertain simulator replay, physical action or push/merge/release occurred.
 Continue safe repeat-run output isolation, active slicing migration/provider
 qualification and remaining authoring/editor/regression/audit tasks. Do not
 repeat the now-passing common batch to create another status-only turn.
+
+## Overnight status review — run isolation remains in progress
+
+Reviewed the submitted goal, current worktree, task ledger and retained private
+test logs for the user's overnight continuation prompt. HEAD is `0248e68e`;
+counts remain **47 checked / 10 open**. The explicit shared run-path declaration
+and its preparation/continuation changes remain uncommitted. Private checks pass
+21, 116 and 36 overlapping cases; attempt 004 ran no tests due to an incorrect
+test filename. The latest template-tampering case remains untested. These checks
+do not establish actual-provider integration, saved-UI repeat-run acceptance or
+task completion. No new tests or engineering actions were performed by this
+status review. Updated continuation-goal.md preserves the precise next work,
+authority and limits. Live services have not been revalidated in this review.
+
+## Explicit shared run paths — controlled runtime verified
+
+The preceding goal turn only reviewed status and supplied a prompt; classify it
+as no implementation progress. This continuation read the submitted objective
+and inspected the actual uncommitted owners before taking the next safe action.
+
+Finished the explicit `wright.run-path/1` binding in existing preparation and
+execution owners. Backend run identity resolves declared fields before provider
+schema checks; raw template bytes/hash remain distinct from resolved content.
+Execution reserves fresh directories and both human-input and engineering-review
+continuations reuse their original run paths. Resolved text uses its actual
+inline byte count. Review context records the original and resolved identities.
+Opaque artifact/native imports cannot silently consume a configuration template.
+
+Twenty-nine new parameterized checks and fifteen affected suites pass **237 tests
+with one existing Windows symlink-privilege skip / 44.28 seconds**. Ruff passes
+eight owning files. Intermediate overlapping runs pass; attempt 004's incorrect
+filename/setup failure is retained rather than represented as execution evidence.
+Both handles 1282/39455 are terminal. Fresh preservation checks pass for archived
+prototype, protected campaign/context and unrelated prototype bytes. Public
+scope, source hashes, logs, XML, failure and reproduction are under
+20261003-run-path-binding-verified. No actual model/provider, browser, installed
+current-build or human acceptance is established by this controlled proof.
+
+The task ledger remains **47 checked / 10 open**. Next adopt the contract in fresh
+example configurations with explicit provider-write boundaries, normal source/UI
+compatibility and actual saved-interface repeat-run proofs. No protected review,
+uncertain simulator replay, physical effect, push, merge or release occurred.
+Previously recorded services require revalidation before use.

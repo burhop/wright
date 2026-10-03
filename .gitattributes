@@ -106,3 +106,4 @@ artifacts/process-interfaces/083/20261003-theme-handshake-verified/** -text -whi
 artifacts/process-interfaces/083/20261003-repeat-path-audit-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-original-history-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-editor-native-regression-002/** -text -whitespace
+artifacts/process-interfaces/083/20261003-run-path-binding-verified/** -text -whitespace
