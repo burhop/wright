@@ -526,3 +526,77 @@ accepted source. Private inspector helper syntax mistakes were corrected before
 any execution; they did not mutate a process or its evidence. Protected archive,
 campaign/context and nonretired prototype byte checks pass. No human acceptance,
 physical operation or retained second-run decision occurred. T045/T047 stay open.
+
+## Fresh consumer 003 reached its actual source gate
+
+Run `bebf24bcdec44058a46371fa05d7cd83` completed the actual native Blender repair,
+independent offline slicing, package inspection and bounded model report. The
+report made the two declared read-only evidence calls. Its JSON has 6499
+characters, exceeding the requested under-6000 prose target; that miss is
+recorded and is not silently treated as an engineering acceptance check.
+
+The freshly enrolled synthetic simulator decision was attributed to
+`integration_test:083-private-digital-wheel-retained-consumer-003`. One same-run
+continuation produced the actual simulator receipt, with `network_dispatch=false`,
+and then executed the source validator. Its HTTP response was 503 because of the
+subsequent validation hold. Authoritative run, event and receipt reads establish
+that the simulator already executed. No retry was submitted.
+
+The actual source assessment
+`assessment-46f892fa42ae4a21950679d986815e55` records **17 pass and 1 blocked**
+across the unchanged eighteen-check profile. The blocked requirement is
+authenticated human engineering review. Release eligibility is false; the run
+is durably `failed` with `PROCESS_VALIDATION_NEEDS_INPUT`, and its final review
+block was not executed. Neither synthetic test decision supplies that human
+engineering verdict. This fresh gate does not rewrite any earlier failed gate.
+
+Exact gate/report/receipt subjects, native outputs and source-event scope are
+retained in
+`artifacts/process-interfaces/083/20261003-retained-consumer-003-source-gate/`.
+The initial publication filtered an event kind the recorder does not emit;
+the corrected record joins actual `step_started` tool identities to
+`step_completed`, and discloses that extraction correction. Credential byte
+scans pass. Physical validation and dispatch remain unassessed/not performed.
+
+Read-only common-view walkthrough 004 matches all nineteen actual result IDs
+and links the original blocked assessment. Earlier walkthrough 003 counted
+retained diagram nodes as result cards; scoping to the working view corrects the
+harness without changing product output. Walkthrough 004 then stopped on a
+harness use of nonexistent `ArtifactRef.locator`; the public field is
+`artifact_ref`. The stopped reports remain preserved. Layer-viewer/reload and
+full current common/tailored parity are still pending.
+
+An initial scoped model-authoring request for this exact source failed with
+`UI_MODEL_TIMEOUT` and produced no revision. A smaller explicit request through
+Wright reached `preview_ready` with no repair or diagnostics, revision
+`revision-e699e31782df459986a1c795f9c2bf65`. It used the configured default
+`gpt-5.6-sol` through Hermes and the resolved `process-ui-author` profile.
+Preview readiness is not browser preview, saved reuse or user acceptance.
+
+### Exact-source tailored preview, save and reload verified
+
+Normal-workspace walkthrough `20261003T022500Z-wheel-ui-preview-004` passes
+eleven checks with no browser console/page/network errors. It recovers the
+existing actual-model job, opens its read-only managed preview, saves the exact
+revision, opens the saved working interface and reloads it. Preview, saved and
+reload views each match all nineteen result identities; the original blocked
+assessment remains linked. No process start, review response or engineering
+action is submitted. This is reuse of the same run, not a new second-run proof.
+
+Public exact source/build/profile/manifest/parity and browser evidence is under
+`artifacts/process-interfaces/083/20261003-wheel-exact-source-ui/`. The copied
+harness has a retained textual typo in S05 saying heat source; the selected
+workflow, exact digests, run and interface all identify the wheel process. That
+typo supplies no heat-process evidence. Credentials were scanned by actual
+value; authenticated traces remain private. Earlier timed-out job 003 is retained.
+
+Common-view walkthrough 006 matches the same nineteen results, then stops at
+the actual 3MF passive-preview HTTP 503. A local read of the exact package hash
+reproduces `Unsupported motion or coordinate semantics: G380.` The supported
+download fallback appears; no paths are fabricated or unknown semantics skipped.
+Walkthrough 005's separate raw provider-JSON attempt cannot establish 3D support:
+that JSON representation exceeds the general text preview bound. The proper
+package reader's refusal is a distinct capability limitation. Complete layer
+inspection, assessment/producing-step navigation and broader two-process parity
+remain open. Provider-compatible passive output or a justified shared reader
+extension must preserve V3 and exact engineering identities.

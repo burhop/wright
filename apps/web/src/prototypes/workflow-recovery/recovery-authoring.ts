@@ -337,6 +337,26 @@ function isMcpFileDependenciesObject(
   );
 }
 
+// The runtime's explicit MCP task allowlist is an ordered list, not a scalar
+// setting. Retain it through the same public configuration envelope; parsing
+// the diagram does not grant tools or replace runtime capability checks.
+function isMcpTaskToolsList(
+  sectionKind: string,
+  settings: Record<string, unknown>,
+  key: string,
+  value: unknown,
+): boolean {
+  return (
+    sectionKind === "task" &&
+    settings.authoring_template === "mcp-task" &&
+    key === "mcp_task_tools" &&
+    Array.isArray(value) &&
+    value.length <= 32 &&
+    value.every((name) => typeof name === "string" && name.length > 0) &&
+    new Set(value).size === value.length
+  );
+}
+
 function instructionFields(block: RecoveryBlock): [string, unknown][] {
   const active =
     block.configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY] ??
@@ -1414,6 +1434,12 @@ export function parseRecoveryAuthoringSource(
             key,
             value,
           ) &&
+          !isMcpTaskToolsList(
+            section.kind,
+            settings as Record<string, unknown>,
+            key,
+            value,
+          ) &&
           !isInteractionObject(
             section.kind,
             settings as Record<string, unknown>,
@@ -1427,7 +1453,7 @@ export function parseRecoveryAuthoringSource(
         diagnostic(
           "WFR-SOURCE-FIELD-TYPE",
           `${section.kind} ${section.key}.settings must contain scalar values or documented configuration objects.`,
-          "Use scalar settings or the documented tool file-dependency, file-port, approval, validator, input metadata and human-input declaration objects.",
+          "Use scalar settings or the documented MCP task tool list, tool file-dependency, file-port, approval, validator, input metadata and human-input declaration objects.",
           baseBlock?.id ?? null,
           section.startLine,
         ),
@@ -1562,7 +1588,8 @@ export function parseRecoveryAuthoringSource(
           isApprovalObject(configuration, key, value) ||
           isInteractionObject(section.kind, configuration, key, value) ||
           isExpectedFilePortsObject(key, value) ||
-          isMcpFileDependenciesObject(section.kind, configuration, key, value),
+          isMcpFileDependenciesObject(section.kind, configuration, key, value) ||
+          isMcpTaskToolsList(section.kind, configuration, key, value),
       ),
     );
     if (Object.keys(approvalObjects).length) {

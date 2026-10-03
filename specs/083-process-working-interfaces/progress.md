@@ -1716,3 +1716,61 @@ Saved the complete resumed /goal prompt in continuation-goal.md. The existing
 goal remains active and unlimited; the prompt carries forward all 57 tasks and
 the architecture, scope, test authority and protections. Feature completion,
 human engineering acceptance and physical verification remain separate.
+
+Correction checkpoint saved locally as 89c04058. Consumer 003 genuinely reached
+basis checkpoint checkpoint-ade1d85937f5fa91ac59c8de, received its exact enrolled
+synthetic integration-test decision, and accepted one continuation (HTTP 202).
+After reconciling that receipt, the same run reports running with four outputs
+and no diagnostics. The single basis continuation is recorded privately; do not
+submit it again. Final engineering review remains outside that test decision.
+
+2 October late-evening source-gate checkpoint: consumer 003 actually completes
+native repair, external offline slicing, package inspection, the two-read model
+report and its unchanged eighteen-check source validator. Assessment
+assessment-46f892fa42ae4a21950679d986815e55 records 17 pass and 1 mandatory
+authenticated human-review block; release eligibility is false. The run remains
+failed/PROCESS_VALIDATION_NEEDS_INPUT, never human accepted. Its synthetic
+simulator continuation returned 503 after the recorded effect and gate; reads
+reconcile the outcome, and that action must not be replayed. Exact evidence is
+under 20261003-retained-consumer-003-source-gate. The report's 6499-character
+prose target miss and corrected native-event extraction are disclosed.
+
+The accepted source exposed an editor defect: its documented MCP task tool list
+was rejected as a non-scalar setting. A bounded shared parser/round-trip fix
+retains the <=32 unique nonempty tool-name list without granting capabilities.
+All 74 affected editor tests pass. Normal-workspace browser continuation opens
+the actual accepted diagram; scoped common cards match all nineteen result IDs
+and the original blocked assessment. Earlier stopped parser/global-count/wrong
+ArtifactRef-field evidence remains preserved; complete layer-viewer/reload and
+current tailored parity remain pending.
+
+Exact-source model UI request 003 failed UI_MODEL_TIMEOUT with no revision.
+A smaller request 004 reached preview_ready without repair/diagnostics as
+job-47c7e3d74681486e9f9f76493c384ee5, revision-e699e31782df459986a1c795f9c2bf65.
+Reconcile and preview/save the existing job through Wright; do not regenerate
+blindly. Its private observation helper is t047-wheel-ui-observe-004.py.
+The source API 8030 and source frontend 5243 are healthy; host handles 41512
+and 21619 were revalidated. Installed read-only fixture 8037 is also healthy.
+Revalidate native host 67342 before relying on it. The full goal remains active,
+with the updated saved continuation-goal.md carrying the overnight authority.
+
+Late checkpoint continuation: eleven actual-model preview/save/open/reload
+browser checks pass for the exact consumer 003 interface, revision
+revision-e699e31782df459986a1c795f9c2bf65. All nineteen output identities and the
+original blocked assessment match in preview and saved/reloaded views. No
+engineering process or decision was dispatched. Public immutable source/build,
+resolved model/profile, exact parity and browser evidence is under
+20261003-wheel-exact-source-ui. The 74 editor tests were rerun successfully
+(14.55 seconds); raw output is retained without double-counting coverage.
+
+The actual common-view 3MF preview remains unverified: HTTP 503 and direct
+exact-byte reader diagnostic identify unsupported G380 motion/coordinate
+semantics. Preserve strict refusal/download fallback; do not add vendor command
+handling or guess that unknown motion is harmless. Seek supported passive
+output from an existing qualified provider or justify a truly shared reader
+extension. Earlier raw JSON, selector and field-name harness stops remain
+distinct from this actual reader limitation. Original browser reports remain
+intact; public copies of the editor failure, package-reader failure and passing
+tailored journey have valid report structures and passed credential scans.
+Focused current-revision update/second-run reuse, full viewer/navigation parity,
+migration, packaging, remaining editor/accessibility and final audit remain open.

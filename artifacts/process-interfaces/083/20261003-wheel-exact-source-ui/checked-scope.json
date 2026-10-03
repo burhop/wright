@@ -1,0 +1,43 @@
+{
+  "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+  "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+  "revision_id": "revision-e699e31782df459986a1c795f9c2bf65",
+  "actual_default_model": "gpt-5.6-sol",
+  "resolved_role": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "fdd68c5867cf6df033b3524f39803a2f5c350bd5d22924ccbaf165440ddd192a",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "fdd68c5867cf6df033b3524f39803a2f5c350bd5d22924ccbaf165440ddd192a",
+    "capability_scope": []
+  },
+  "inventory_digest": "2e6a7e99e0c545c7b513054fa4befab51e6388a922af938a8d813134bd4861f1",
+  "preview_save_saved_open_reload_verified": true,
+  "result_identity_parity_count": 19,
+  "assessment_id": "assessment-46f892fa42ae4a21950679d986815e55",
+  "source_gate_counts": {
+    "pass": 17,
+    "blocked": 1
+  },
+  "human_engineering_review": "required, unanswered",
+  "browser_checks": 11,
+  "browser_unexpected_diagnostics": false,
+  "retained_harness_label_typo": "S05 actual text says heat source; exact selected file and all source/run/UI digests are the wheel process. No heat proof is inferred from that label.",
+  "layer_viewer_verified": false,
+  "reader_limitation": "Actual 3MF passive reader refuses G380 as unsupported motion/coordinate semantics. Do not silently ignore it or add vendor protocol code to Wright.",
+  "current_revision_focused_update_verified": false,
+  "current_revision_second_run_reuse_verified": false,
+  "earlier_independent_ui_update_and_second_run_reuse_preserved": true,
+  "process_start_or_review_in_browser": false,
+  "physical_dispatch": false,
+  "engineering_acceptance": false,
+  "complete_feature": false
+}

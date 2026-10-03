@@ -1,0 +1,8 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow",
+  "expected_storage_digest": "8bb09ab66acc856bf1b9a8310606422a37a16882c6c2db3dec67645aafd00ca5",
+  "request_id": "083-wheel-tailored-ui-004",
+  "title": "Focus-wheel preparation review",
+  "instruction": "Use the provided reference template with minimal changes, under 60 App.tsx lines. Title: Focus-wheel digital preparation. Keep its WorkingControls, all ResultCards, RepresentationViewer and exact navigation callbacks. Add one short explanation: Blender repair and independent slicing prepare a manufacturing package; validation and human engineering review determine its readiness. Use only the live backend snapshot and supplied manifest identities. Return the required source/manifest JSON."
+}

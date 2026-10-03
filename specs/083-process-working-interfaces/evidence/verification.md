@@ -93,3 +93,26 @@ must not be added into a purported unique total. The preservation check passes
 after the run. No retained engineering process was resumed or review answered.
 T053 remains unchecked for its remaining component/browser/security/package-boundary
 and full affected acceptance scope. T056's new completion ledger remains open.
+
+## Accepted-source MCP task allowlist editor regression
+
+The actual fresh consumer source revealed a diagram parser rejection of the
+runtime's documented `mcp_task_tools` array. The shared editor now retains the
+bounded, distinct nonempty string list through its existing structured settings
+envelope. It grants no tools and does not replace backend capability checks.
+Tests include malformed lists, an inappropriate exact-tool block and a cold
+round trip of the actual accepted source.
+
+Current command, from `apps/web`:
+
+```text
+node ../../node_modules/vitest/vitest.mjs run src/prototypes/workflow-recovery/mcp-settings.spec.ts src/prototypes/workflow-recovery/recovery-instruction-fields.spec.ts src/prototypes/workflow-recovery/recovery-authoring.spec.ts --maxWorkers=1
+```
+
+**74 tests pass across three files**, terminal zero, 14.55 seconds for the
+recorded rerun. Raw output is retained in
+`artifacts/process-interfaces/083/20261003-wheel-exact-source-ui/editor-tests.log`.
+The earlier 5.47-second pass is the same scope, not an additional unique total.
+Served workspace evidence now opens the exact accepted diagram and matches its
+working-view results. This is narrower than complete editor or T053 acceptance.
+The unchanged protected/archive/context byte check also passes.

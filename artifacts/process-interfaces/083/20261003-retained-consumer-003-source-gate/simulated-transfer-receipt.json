@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "integration_test": true,
+  "simulated_handoff": true,
+  "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+  "step_id": "authorize_transfer_retained_consumer_003",
+  "checkpoint_id": "checkpoint-f052f5b07fa05a50e376f9b1",
+  "subject_digest": "a295d7310cbbb9cb4a49be59977ec14810867cf70797e3a4270cfd2da5ddc6bc",
+  "action_id": "wheel-consumer-003-transfer-continuation",
+  "campaign_id": "083-private-digital-wheel-retained-consumer-003",
+  "dataset_id": "printed-replacement-part-01",
+  "integration_policy_digest": "4fe37f8c6ef4da0a3109b532ed8fb75dba663996856744fde6195e3b59798596",
+  "destination": {
+    "id": "test://083-private-digital-wheel-retained-consumer-003/printer/printed-replacement-part-01",
+    "kind": "integration_test"
+  },
+  "action_kind": "printer_transfer",
+  "artifact_digests": [
+    "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+    "1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8",
+    "173bf6400d0bdfc410fe93446ba196fd69ef5853c9b1b307995b4d7a49f872c5",
+    "19ed1ebd9a0785618008da0ce7478c543a418a1820d77515b1ed3f21450b3b3a",
+    "4db2ccd8f8b652b66e6e5aeb8d09563e2cbb7d02969da87f875a970567c4f8e0",
+    "66e12946703ec667d173c19d063085572313c10a741d6308c68cc928d9e2b9e2",
+    "892773668e4afcb788280f58984ccdf20c87c58e1580d26d8a48c31ad6f2792d",
+    "8fed8956f65282a1efb5864d38bcec7495409c9bf12531e3f513bf8ac7d9ced1",
+    "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+    "99ffca06e9712adad33d937e0d2d5606568729e9083b2989988fa59df2012cc1",
+    "a8f740cf66c7b22b7a90c8fb742ea3f3cda0a868688d2b4b5cc5c44bf614fd7e",
+    "bc8b1e2eff16b33701a9062a106569d99784f8e98fc53a25db08638c426b2c43",
+    "c98e830b06c910c63b8ea3d25618b833039903e998933e9b0b43793dcc229a44",
+    "d1b32a453556dcdd39e9d0b099c469909e001e34eeee8f97ae319fee1ea182a8",
+    "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18",
+    "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+  ],
+  "network_dispatch": false
+}

@@ -1,0 +1,225 @@
+{
+  "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+  "run_log_path": "runs/printed-replacement-part-retained-consumer-003/bebf24bcdec44058a46371fa05d7cd83.json",
+  "durable_state": "failed",
+  "code": "PROCESS_VALIDATION_NEEDS_INPUT",
+  "source_validation_gate_executed": true,
+  "assessment_id": "assessment-46f892fa42ae4a21950679d986815e55",
+  "assessment_file_sha256": "f093ea6e53198b3ba25a5a9f825330c9021ccf0c01814c8d82c42f7b6011712b",
+  "assessment_digest": "80b29db5005a9e9293a3a6bdf1b43627c11eb0b2386ca8302cb4c9ee27eff665",
+  "assessment_current_at_gate": true,
+  "profile_checks": 18,
+  "counts": {
+    "blocked": 1,
+    "error": 0,
+    "fail": 0,
+    "inconclusive": 0,
+    "not_applicable": 0,
+    "pass": 17
+  },
+  "release_eligible": false,
+  "authenticated_review_required": true,
+  "final_review_step_executed": false,
+  "original_failed_consumers_preserved": true,
+  "synthetic_test_decisions_only": true,
+  "report_read_only_calls": [
+    {
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-evidence.json"
+      },
+      "status": "succeeded"
+    },
+    {
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-003/outputs/toolpath-summary.json"
+      },
+      "status": "succeeded"
+    }
+  ],
+  "actual_tool_steps": [
+    {
+      "task_id": "repair_measure_orient_retained_consumer_003",
+      "execution_kind": "mcp",
+      "tool": "proof-083-blender-wheel-continuation-002__execute_blender_code",
+      "completion_recorded": true
+    },
+    {
+      "task_id": "supports_and_slice_retained_consumer_003",
+      "execution_kind": "mcp",
+      "tool": "proof-083-slicer-wheel-continuation-002__slice_model_file",
+      "completion_recorded": true
+    },
+    {
+      "task_id": "retain_slice_response_retained_consumer_003",
+      "execution_kind": "mcp",
+      "tool": "wright-workspace-files__write_text_document",
+      "completion_recorded": true
+    },
+    {
+      "task_id": "inspect_slice_handoff_retained_consumer_003",
+      "execution_kind": "mcp",
+      "tool": "proof-083-oasis__run_simulation",
+      "completion_recorded": true
+    }
+  ],
+  "outputs": {
+    "filament-profile.json": {
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "geometry-basis.json": {
+      "bytes": 3470,
+      "sha256": "19ed1ebd9a0785618008da0ce7478c543a418a1820d77515b1ed3f21450b3b3a"
+    },
+    "machine-profile.json": {
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "mesh-preview.png": {
+      "bytes": 266946,
+      "sha256": "99ffca06e9712adad33d937e0d2d5606568729e9083b2989988fa59df2012cc1"
+    },
+    "mesh-repair-report.json": {
+      "bytes": 6040,
+      "sha256": "8fed8956f65282a1efb5864d38bcec7495409c9bf12531e3f513bf8ac7d9ced1"
+    },
+    "package-inspection-result.json": {
+      "bytes": 1744,
+      "sha256": "4db2ccd8f8b652b66e6e5aeb8d09563e2cbb7d02969da87f875a970567c4f8e0"
+    },
+    "process-profile.json": {
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "repaired_mesh.stl": {
+      "bytes": 540484,
+      "sha256": "1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8"
+    },
+    "response-retention-receipt.json": {
+      "bytes": 315,
+      "sha256": "892773668e4afcb788280f58984ccdf20c87c58e1580d26d8a48c31ad6f2792d"
+    },
+    "simulated-transfer-receipt.json": {
+      "bytes": 2011,
+      "sha256": "12b3a6269bc3dc55dbe9b581b4859b7509e3a7cefd87c640e3756780813343af"
+    },
+    "slice-evidence.json": {
+      "bytes": 1234,
+      "sha256": "bc8b1e2eff16b33701a9062a106569d99784f8e98fc53a25db08638c426b2c43"
+    },
+    "slice-provider-response.json": {
+      "bytes": 2040,
+      "sha256": "d1b32a453556dcdd39e9d0b099c469909e001e34eeee8f97ae319fee1ea182a8"
+    },
+    "slicer-execution.json": {
+      "bytes": 2040,
+      "sha256": "d1b32a453556dcdd39e9d0b099c469909e001e34eeee8f97ae319fee1ea182a8"
+    },
+    "slice_package.gcode.3mf": {
+      "bytes": 361112,
+      "sha256": "66e12946703ec667d173c19d063085572313c10a741d6308c68cc928d9e2b9e2"
+    },
+    "source-report.json": {
+      "bytes": 6500,
+      "sha256": "a8f740cf66c7b22b7a90c8fb742ea3f3cda0a868688d2b4b5cc5c44bf614fd7e"
+    },
+    "source_mesh.stl": {
+      "bytes": 541284,
+      "sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18"
+    },
+    "support-preview.json": {
+      "bytes": 4493731,
+      "sha256": "c98e830b06c910c63b8ea3d25618b833039903e998933e9b0b43793dcc229a44"
+    },
+    "toolpath-summary.json": {
+      "bytes": 1625,
+      "sha256": "173bf6400d0bdfc410fe93446ba196fd69ef5853c9b1b307995b4d7a49f872c5"
+    }
+  },
+  "report_characters": 6499,
+  "engineering_acceptance": false,
+  "physical_validation": "not_assessed",
+  "physical_dispatch": false,
+  "continuation_response_http": 503,
+  "continuation_limit": "HTTP 503 after actual simulator and gate execution; authoritative run/event/receipt read establishes outcome, so no action replay.",
+  "common_tailored_parity_verified": false,
+  "complete_feature": false,
+  "actual_tool_steps_extraction_limit": "Initial filter selected a nonexistent mcp_tool_completed event kind. An empty field is not evidence that native MCP stages did not execute.",
+  "event_kind_counts": {
+    "run_started": 1,
+    "step_started": 7,
+    "model_usage": 4,
+    "step_completed": 9,
+    "result_ready": 19,
+    "output_saved": 18,
+    "approval_requested": 2,
+    "approval_decided": 2,
+    "external_action_authorized": 2,
+    "external_action_reconciled": 2,
+    "run_resumed": 2,
+    "integration_document_write_authorized": 1,
+    "task_progress": 3,
+    "tool_started": 2,
+    "integration_file_read_authorized": 2,
+    "tool_completed": 2,
+    "design_check": 1
+  },
+  "completed_source_steps": [
+    {
+      "task_id": "define_geometry_basis_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "review_basis_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "repair_measure_orient_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "supports_and_slice_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "retain_slice_response_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "inspect_slice_handoff_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "summarize_preparation_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "authorize_transfer_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    },
+    {
+      "task_id": "validate_outputs_retained_consumer_003",
+      "kind": "step_completed",
+      "status": null
+    }
+  ],
+  "source_run_sha256": "7abc4025bd840e9fb308753fc57524797cb3462337de3ad5b9b0643a85cb8b16",
+  "source_report_target_limit": "Actual JSON report is 6499 characters against the requested under-6000 target; the engineering profile contains no report-length acceptance check. This is retained as a prose target miss.",
+  "actual_tool_steps_basis": "Actual step_started records with declared tool identity, joined to step_completed by task_id. Exact retained provider outputs supply their operation evidence; no nonexistent mcp_tool_completed event is assumed."
+}
