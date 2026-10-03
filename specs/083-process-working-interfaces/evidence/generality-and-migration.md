@@ -1,5 +1,26 @@
 # Generality and prototype migration — partial evidence
 
+## Selected profile guidance and remaining transitive callers
+
+[Scoped evidence](../../../artifacts/process-interfaces/083/20261003-neutral-profile-guidance-verified/README.md)
+records a message correction in the shared additive-package checks. It now names
+the selected machine/material/process profiles instead of assuming P1S. Four
+red cases reproduce the coupling across two different machine envelopes; 83
+owning/affected cases plus five actual jig-profile cases pass, with no skips.
+AST parity proves the algorithms and acceptance checks are unchanged except for
+the correction string. Original source/profile/evidence requirements remain.
+
+The transitive audit also finds `scripts/run_printed_validator_campaign.py`:
+it starts private feature-081 native lifecycle scripts, receives the bundled
+repair server identity and stages it before campaign dispatch. The earlier
+single-preparer observation was too narrow. This launcher and the original
+preparer both need migration or retirement before mesh-repair deletion. Their
+current hashes are retained; neither launcher nor campaign was executed here.
+Reuse existing independent provider invocation, supplied operation-argument
+inputs and passive exact-STL measurement mechanisms. Preserve historical
+qualification and original geometric thresholds. This is partial T049 progress,
+not vendor retirement, provider qualification, browser acceptance or full T048.
+
 ## Predictable permission readiness in the shared owner
 
 The retained permission denial exposed a shared preflight gap, distinct from vendor

@@ -4,6 +4,13 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
+The shared additive-package correction now refers to selected machine/material/
+process profiles, with unchanged algorithms and 88 owning/affected checks. A
+transitive audit finds a second active mesh-repair caller: the private-lifecycle
+campaign launcher, as well as the original preparer. Both need migration or
+retirement. This narrows the actual remaining work without closing T048/T049.
+See [generality and migration](evidence/generality-and-migration.md#selected-profile-guidance-and-remaining-transitive-callers).
+
 Known missing tool permissions now block shared readiness and run start before
 effects, with existing grant/dispatch authority preserved. An actual accepted-source
 metadata observation changes ordinary readiness from false-ready to blocked without

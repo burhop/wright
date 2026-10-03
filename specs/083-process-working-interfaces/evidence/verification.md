@@ -1,5 +1,16 @@
 # Verification record — partial feature acceptance
 
+## Selected profile guidance — 3 October 2026
+
+[Message correction and audit](../../../artifacts/process-interfaces/083/20261003-neutral-profile-guidance-verified/README.md)
+retain four genuine red cases, the first green zero-test setup failure, corrected
+83-pass combined suite and separate five-pass jig-profile suite. The tests keep
+actual volume checks for two different configured envelopes, oversize failures,
+incompatible-profile failure and exact artifact-evidence behavior. No skips.
+Two-file Ruff passes. AST parity verifies the production algorithm changes only
+the vendor-specific correction string. Scope remains controlled source tests;
+counts overlap other suites. No model/provider/campaign/engineering action ran.
+
 ## Linux file-boundary security — 3 October 2026
 
 [Exact scope, source hashes, commands, XML and retained failures](../../../artifacts/process-interfaces/083/20261003-linux-file-authority-verified/README.md)

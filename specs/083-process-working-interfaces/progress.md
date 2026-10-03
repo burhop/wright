@@ -2802,3 +2802,31 @@ full requirements audit. Preserve unrelated dirty work and protected history.
 Local receipt is planned at
 .local-run/process-interfaces-083/linux-file-authority-004-local-commit.json;
 inspect its actual result before repeating staging. No push/merge/release.
+
+## Shared selected-profile correction and additional active caller audit
+
+Linux security proof is locally committed as d96ba080 with 30 exact owned paths,
+26 byte-verified artifacts, passed credential scan and unchanged unrelated work.
+The next audit finds the shared additive validator's correction still assumed
+P1S profiles for all machines. Four genuine red cases reproduce that coupling
+across two different configured envelopes. The message now refers to selected
+machine/material/process profiles; AST parity proves all algorithms and checks
+are unchanged. The corrected combined owning/affected group passes83 cases and
+the actual jig-profile owner passes5, zero skips. Two-file Ruff passes.
+An intermediate command named a nonexistent test module and ran zero cases;
+its XML and exact attempted command are retained rather than counted as coverage.
+
+The transitive audit finds a second active mesh-repair path:
+scripts/run_printed_validator_campaign.py starts private feature-081 lifecycle,
+receives repair_server_id and stages the wrapper before campaign execution.
+Both this launcher and the original preparer must migrate or retire before
+bundled repair code deletion. Architecture inventory and continuation guidance
+now name both. Existing exact supplied-operation inputs and independent provider
+invocation are the reuse seams; passive final-byte engineering measurements and
+all original policies/checks/history must remain. No campaign/provider/model/
+engineering review or physical action ran. Nine credential-scanned scoped files
+are under artifacts/process-interfaces/083/20261003-neutral-profile-guidance-verified.
+Ledger remains 49 checked / eight open. T048/T049 and full acceptance stay open.
+Planned local receipt: .local-run/process-interfaces-083/neutral-profile-guidance-001-local-commit.json.
+Continue full migration, qualification, current UI/editor/accessibility/installed
+and final requirements audit; no push, merge or release is authorized.

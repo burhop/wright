@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="8" time="0.268" timestamp="2026-10-03T06:01:46.365360-04:00" hostname="Work17"><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_print_package_guidance_uses_selected_profiles_for_different_machines[dimensions0-volume0-pass]" time="0.001"><failure message="AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'&#10;  &#10;  Skipping 57 identical leading characters in diff, use -v to show&#10;  -  selected machine, material, and process profiles.&#10;  +  selected P1S profiles.">packages\workspace_service\tests\test_workflow_engineering_assertions.py:45: in test_print_package_guidance_uses_selected_profiles_for_different_machines
+    assert profile.correction == (
+E   AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'
+E     
+E     Skipping 57 identical leading characters in diff, use -v to show
+E     -  selected machine, material, and process profiles.
+E     +  selected P1S profiles.</failure></testcase><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_print_package_guidance_uses_selected_profiles_for_different_machines[dimensions1-volume1-pass]" time="0.001"><failure message="AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'&#10;  &#10;  Skipping 57 identical leading characters in diff, use -v to show&#10;  -  selected machine, material, and process profiles.&#10;  +  selected P1S profiles.">packages\workspace_service\tests\test_workflow_engineering_assertions.py:45: in test_print_package_guidance_uses_selected_profiles_for_different_machines
+    assert profile.correction == (
+E   AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'
+E     
+E     Skipping 57 identical leading characters in diff, use -v to show
+E     -  selected machine, material, and process profiles.
+E     +  selected P1S profiles.</failure></testcase><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_print_package_guidance_uses_selected_profiles_for_different_machines[dimensions2-volume2-fail]" time="0.001"><failure message="AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'&#10;  &#10;  Skipping 57 identical leading characters in diff, use -v to show&#10;  -  selected machine, material, and process profiles.&#10;  +  selected P1S profiles.">packages\workspace_service\tests\test_workflow_engineering_assertions.py:45: in test_print_package_guidance_uses_selected_profiles_for_different_machines
+    assert profile.correction == (
+E   AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'
+E     
+E     Skipping 57 identical leading characters in diff, use -v to show
+E     -  selected machine, material, and process profiles.
+E     +  selected P1S profiles.</failure></testcase><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_print_package_guidance_uses_selected_profiles_for_different_machines[dimensions3-volume3-fail]" time="0.001"><failure message="AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'&#10;  &#10;  Skipping 57 identical leading characters in diff, use -v to show&#10;  -  selected machine, material, and process profiles.&#10;  +  selected P1S profiles.">packages\workspace_service\tests\test_workflow_engineering_assertions.py:45: in test_print_package_guidance_uses_selected_profiles_for_different_machines
+    assert profile.correction == (
+E   AssertionError: assert 'Regenerate a...P1S profiles.' == 'Regenerate a...ess profiles.'
+E     
+E     Skipping 57 identical leading characters in diff, use -v to show
+E     -  selected machine, material, and process profiles.
+E     +  selected P1S profiles.</failure></testcase><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_print_package_checks_actual_scale_topology_volume_and_slice" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_cfd_rejects_substituted_geometry_and_theoretical_only_results" time="0.000" /><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_supplier_preview_requires_exact_files_quote_and_no_order_or_payment" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_engineering_assertions" name="test_missing_artifact_evidence_is_inconclusive_never_pass" time="0.001" /></testsuite></testsuites>

@@ -33,6 +33,39 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest progress — selected-profile guidance and transitive caller inventory
+
+Linux evidence is committed as d96ba080 (30 exact owned paths / 26 artifact blobs).
+Its receipt is `.local-run/process-interfaces-083/linux-file-authority-004-local-commit.json`.
+The next audit corrects a P1S-specific message in otherwise generic additive
+checks. Four genuine red cases reproduce the coupling for two different machine
+envelopes; 83 owning/affected and five jig-profile cases pass with no skips.
+Two-file Ruff passes. AST parity proves no algorithm/check changes beyond the
+correction string. Public evidence has nine credential-scanned files under
+`artifacts/process-interfaces/083/20261003-neutral-profile-guidance-verified/`.
+The first green command named a nonexistent test file and ran zero cases; its XML
+is preserved and the actual owner was run separately. No provider/campaign ran.
+
+The active caller audit finds `scripts/run_printed_validator_campaign.py` as well
+as `scripts/prepare-printed-dataset-campaign.py`. The former starts private
+feature-081 native lifecycle, takes repair_server_id and stages the old wrapper.
+Do not remove the two bundled mesh-repair files while leaving this activation
+path. Migrate or retire both entries through existing accepted-source/run and
+independent provider boundaries. Existing configured-operation examples already
+bind exact supplied provider arguments through declared inputs; reuse that
+mechanism. Pure final-STL feature measurements may remain generic engineering
+code, executed through the qualified independent inspection provider. Preserve
+the original 25 mm clearance and all original policy/profile/qualification bytes.
+Do not create another native wrapper, silently change repair policy or execute
+protected/legacy campaigns. Historical operation hashes remain historical proof,
+not approval for changed native recipes.
+
+HEAD before this checkpoint is d96ba080. Reconcile planned receipt
+`.local-run/process-interfaces-083/neutral-profile-guidance-001-local-commit.json`
+with actual Git HEAD before repeating staging. All verification handles are
+terminal; ledger remains 49 checked / eight open. Continue the full migration,
+qualification, current UI/editor/accessibility/installed and final audit scope.
+
 ### Latest progress — Linux file authority verified
 
 The preceding status/prompt turn made no implementation progress. This
