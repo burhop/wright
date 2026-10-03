@@ -80,7 +80,7 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
   Exact immutable artifact/grant/native-owner API checks pass; see
   `evidence/surface-bridge.md`. T034/T037 remain pending managed presenter creation,
   native handshake and actual browser integration; T040 retains the broader audit.
-- [ ] T037 [US3] Add preview-origin transport/theme/navigation handshake in `packages/process_client/` and `apps/web/src/services/surfaces/`, exposing no bearer credentials or generic invokeTool.
+- [x] T037 [US3] Add preview-origin transport/theme/navigation handshake in `packages/process_client/` and `apps/web/src/services/surfaces/`, exposing no bearer credentials or generic invokeTool. The final shared host lives in `apps/web/src/services/process-presentation-host.ts`; exact transport/theme/navigation, negative authority, frame reconnect and current packaging are mapped in `evidence/theme-handshake.md`.
 - [x] T038 [US3] Expose authoring capability/generation/status/preview/save/update/rollback routes through `apps/api/src/api/routers/process_interfaces.py` with durable request identities and exact revision validation.
   Native API and existing managed presentation/grant owners pass controlled
   checks, including two durable-run reuse and close-without-cancel. T034/T037

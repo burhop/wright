@@ -44,7 +44,7 @@ _RUNTIME = b"""const root = document.getElementById('wright-process-ui');
 const connection = document.getElementById('wright-process-connection');
 const observer = new AbortController();
 let dispose, context, host, mounted = false;
-const themeKeys = new Set(['--color-neutral','--color-surface','--color-surface-elevated','--color-surface-subtle',
+const themeKeys = new Set(['color-scheme','--color-neutral','--color-surface','--color-surface-elevated','--color-surface-subtle',
   '--color-primary','--color-secondary','--color-accent','--color-border','--color-success','--color-warning',
   '--color-error','--color-text-muted','--font-size-md','--space-md','--space-lg','--radius-md']);
 const signalHost = (type, extra = {}) => {
@@ -72,7 +72,8 @@ const receiveHost = event => {
   host = {origin:event.origin, nonce:value.nonce};
   if (value.tokens && typeof value.tokens === 'object' && !Array.isArray(value.tokens)) {
     for (const [key, token] of Object.entries(value.tokens)) {
-      if (themeKeys.has(key) && typeof token === 'string' && token.length <= 128 && !/[;{}@]|url\\s*\\(/i.test(token))
+      if (themeKeys.has(key) && typeof token === 'string' && token.length <= 128 && !/[;{}@]|url\\s*\\(/i.test(token) &&
+          (key !== 'color-scheme' || token === 'dark' || token === 'light'))
         document.documentElement.style.setProperty(key, token);
     }
   }

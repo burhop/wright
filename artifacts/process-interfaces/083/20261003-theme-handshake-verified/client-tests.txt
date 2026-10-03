@@ -1,0 +1,12 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+ ✓ src/services/process-client.spec.ts (75 tests) 55ms
+ ✓ src/services/surfaces/process-presentation.spec.ts (19 tests) 21ms
+
+ Test Files  2 passed (2)
+      Tests  94 passed (94)
+   Start at  23:55:19
+   Duration  2.40s (transform 111ms, setup 177ms, import 148ms, tests 76ms, environment 1.64s)
+
+JUNIT report written to D:/repos/wright/.local-run/process-interfaces-083/t037-theme-client-tests-001.xml

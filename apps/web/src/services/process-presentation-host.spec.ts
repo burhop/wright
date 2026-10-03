@@ -66,6 +66,35 @@ describe("native exact process frame connection", () => {
     document.documentElement.removeAttribute("style");
   });
 
+  it.each(["light", "dark"])("sends the selected %s browser-control scheme", scheme => {
+    document.documentElement.style.setProperty("color-scheme", scheme);
+    const f = fixture(true);
+    try {
+      expect(f.hello.tokens).toMatchObject({"color-scheme": scheme});
+      f.message("ready");
+      expect(f.ports.started).not.toHaveBeenCalled();
+    } finally {f.dispose(); document.documentElement.style.removeProperty("color-scheme");}
+  });
+
+  it.each(["normal", "light dark"])("does not send the unsupported %s scheme", scheme => {
+    document.documentElement.style.setProperty("color-scheme", scheme);
+    const f = fixture(true);
+    try {expect(f.hello.tokens).not.toHaveProperty("color-scheme");}
+    finally {f.dispose(); document.documentElement.style.removeProperty("color-scheme");}
+  });
+
+  it("updates a ready frame's browser-control scheme without a process action", async () => {
+    document.documentElement.style.setProperty("color-scheme", "dark");
+    const f = fixture(true);
+    try {
+      f.message("ready");
+      document.documentElement.style.setProperty("color-scheme", "light");
+      await Promise.resolve();
+      expect(f.post.mock.calls.at(-1)![0]).toMatchObject({type: "theme", tokens: {"color-scheme": "light"}});
+      expect(f.ports.started).not.toHaveBeenCalled();
+    } finally {f.dispose(); document.documentElement.style.removeProperty("color-scheme");}
+  });
+
   it("reconnects each loaded document and rejects the previous document nonce without replaying start signals", () => {
     const f = fixture(); f.message("ready"); f.message("started", {request_id: "start-one"});
     f.frame.dispatchEvent(new Event("load"));

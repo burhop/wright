@@ -3,7 +3,7 @@ import { assertContract, type NavigationTarget } from "@wright/process-client";
 import type { ProcessInterfacePresentation } from "./process-ui-authoring";
 
 const version = "wright.process-host/1";
-const themeKeys = ["--color-neutral", "--color-surface", "--color-surface-elevated", "--color-surface-subtle",
+const themeKeys = ["color-scheme", "--color-neutral", "--color-surface", "--color-surface-elevated", "--color-surface-subtle",
   "--color-primary", "--color-secondary", "--color-accent", "--color-border", "--color-success", "--color-warning",
   "--color-error", "--color-text-muted", "--font-size-md", "--space-md", "--space-lg", "--radius-md"];
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value);
@@ -26,7 +26,8 @@ export function connectProcessPresentation(frame: HTMLIFrameElement, view: Proce
     if (disposed) return;
     const style = getComputedStyle(document.documentElement);
     const tokens = Object.fromEntries(themeKeys.map(key => [key, style.getPropertyValue(key).trim()])
-      .filter(([, value]) => value.length > 0 && value.length <= 128 && !/[;{}@]|url\s*\(/i.test(value)));
+      .filter(([key, value]) => value.length > 0 && value.length <= 128 && !/[;{}@]|url\s*\(/i.test(value) &&
+        (key !== "color-scheme" || value === "dark" || value === "light")));
     frame.contentWindow?.postMessage({schema_version: version, nonce, presentation_id: view.launch.presentationId,
       generation: view.launch.generation, type, tokens}, origin);
   };

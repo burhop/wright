@@ -1,0 +1,63 @@
+{
+  "title": "Saved engineering interfaces inherit Wright theme and reconnect their frame",
+  "summary": "Actual settings controls and saved model-created interfaces; no process start, review or global preference save.",
+  "overall": "blocked",
+  "updated": "2026-10-03T03:45:24.163Z",
+  "manualSteps": [
+    {
+      "label": "Open interface",
+      "instruction": "Open the saved Heat or Focus-wheel working-interface link."
+    },
+    {
+      "label": "Choose light theme",
+      "instruction": "Click Back to Dashboard, then Settings. Choose Light Theme. Leave Save Preferences untouched."
+    },
+    {
+      "label": "Return to interface",
+      "instruction": "Use browser Back twice to return to the saved working interface."
+    },
+    {
+      "label": "Reload frame",
+      "instruction": "Reload the embedded page using the browser frame-reload action. Inspect the same exact results."
+    },
+    {
+      "label": "Restore theme",
+      "instruction": "Repeat the Settings route, choose Dark Theme, then return. Leave all reviews unchanged."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "heat saved working interface",
+      "summary": "The exact saved revision and engineering outputs are connected.",
+      "purpose": "Establish the real scoped working context.",
+      "action": "Open the saved working-interface link.",
+      "controls": [
+        "Back to Dashboard",
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Exact saved revision and current results.",
+      "actual": "18 exact results in the current working context.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Theme/handshake check stopped",
+      "summary": "The first unexpected interface behavior is preserved.",
+      "purpose": "Keep the real failure and exact current theme values.",
+      "action": "Stop at the current saved interface.",
+      "controls": [
+        "Use common working view",
+        "Reopen interface view"
+      ],
+      "expected": "Parent and saved interface have the same selected theme and exact run context.",
+      "actual": "expect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n    \"neutral\": \"#e8edf5\",\n    \"primary\": \"#0f172a\",\n-   \"scheme\": \"light\",\n+   \"scheme\": \"dark\",\n  }\n\nCall Log:\n- Timeout 30000ms exceeded while waiting on the predicate",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

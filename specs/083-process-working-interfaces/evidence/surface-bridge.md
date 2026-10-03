@@ -106,3 +106,9 @@ static-runtime/internal-manifest scope. Its current two modules match the actual
 retained native/Docker qualification wheel byte for byte; the current tests and
 browser evidence are inspected separately. T037's remaining theme/handshake
 audit, newer installed frontend acceptance and the complete feature remain open.
+
+The subsequent [theme/handshake audit](theme-handshake.md) closes T037's scoped
+transport/theme/navigation obligation. Current tests, the shipped receiver,
+eight real two-process theme/reconnect checks and fresh packaging are recorded
+separately from the older installed build. Complete UI/editor and feature
+acceptance remain open.

@@ -7,6 +7,8 @@ from pathlib import Path
 from threading import Thread
 from typing import get_args
 import sys
+import shutil
+import subprocess
 
 import pytest
 
@@ -23,10 +25,59 @@ from workspace_service.process_interfaces.presentation import (
     ProcessInterfacePresentations,
 )
 from workspace_service.surfaces.process_ui_static import (
+    _RUNTIME,
     ProcessStaticAssets,
     STATIC_CSP,
     make_static_server,
 )
+
+
+def test_fixed_runtime_applies_only_supported_control_schemes():
+    """Execute the shipped receiver before its separate network/mount startup."""
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("The fixed-runtime JavaScript check requires Node.js")
+    receiver, startup = _RUNTIME.decode().split(
+        "try {\n  const response = await fetch", 1
+    )
+    assert startup  # Keep this check attached to the actual shipped runtime.
+    script = r"""
+const assert = require('node:assert/strict');
+const vm = require('node:vm');
+const receiver = JSON.parse(require('node:fs').readFileSync(0, 'utf8'));
+const applied = new Map(), replies = [];
+const parent = {postMessage: (value, origin) => replies.push({value, origin})};
+const sandbox = {AbortController, URL, window: {parent, addEventListener() {}},
+  document: {getElementById() {return {};}, documentElement: {style: {
+    setProperty: (key, value) => applied.set(key, value)}}}};
+vm.runInNewContext(receiver + `
+mounted = true; context = {presentation_id:'presentation-one', generation:1};
+globalThis.deliver = (type, tokens, nonce = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa') =>
+  receiveHost({source:window.parent, origin:'https://wright.example.test', data:{
+    schema_version:'wright.process-host/1', type, nonce,
+    presentation_id:context.presentation_id, generation:context.generation, tokens}});
+`, sandbox);
+for (const scheme of ['light', 'dark']) {
+  sandbox.deliver('hello', {'color-scheme':scheme, '--private-token':'private'});
+  assert.equal(applied.get('color-scheme'), scheme);
+  assert.equal(applied.has('--private-token'), false);
+}
+for (const scheme of ['normal', 'light dark', 'url(https://foreign.invalid)', 'light;display:none']) {
+  sandbox.deliver('theme', {'color-scheme':scheme});
+  assert.equal(applied.get('color-scheme'), 'dark');
+}
+sandbox.deliver('theme', {'color-scheme':'light'}, 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
+assert.equal(applied.get('color-scheme'), 'dark');
+sandbox.deliver('theme', {'color-scheme':'light'});
+assert.equal(applied.get('color-scheme'), 'light');
+assert.equal(replies.length, 2);
+assert.equal(replies.every(reply => reply.value.type === 'ready'), true);
+"""
+    reply = subprocess.run(
+        [node, "-e", script], input=json.dumps(receiver), text=True,
+        capture_output=True, timeout=10, check=False,
+    )
+    assert reply.returncode == 0, reply.stderr
 
 
 def manifest():

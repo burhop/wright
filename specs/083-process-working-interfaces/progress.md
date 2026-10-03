@@ -2001,3 +2001,35 @@ requirements retain their own obligations. No service availability, generation,
 engineering start/review, physical action or external publication is newly
 claimed by this read-only audit. Continue current-revision reuse with safe
 output isolation, theme/handshake and the remaining approved tasks.
+
+## Shared theme/handshake task verified and closed
+
+The preceding status/prompt turn updated durable continuation guidance and is
+classified as progress. Read the submitted objective again before implementation.
+Owned API/UI handles 41512/21619 were revalidated live; no native-provider or older
+installed-fixture availability is newly claimed.
+
+Finished the partial native color-scheme correction in the fixed embedded runtime,
+limited to light/dark on the existing bounded theme bridge. Exact origin/source/
+nonce/presentation/generation and backend action authority remain unchanged. The
+shipped receiver is executed in a focused negative/positive test. Current checks
+pass 47 affected frontend, 94 scoped-client, 71 backend and three packaging cases;
+app TypeScript and Ruff pass. The initial backend temporary-directory permission
+setup failure remains retained, followed by a fresh workspace-scoped passing run.
+
+Actual browser continuation 002 passes Heat light/dark/frame reload, then stops
+on a harness assumption: the global last response belongs to a retained hidden
+Heat tab rather than the visible wheel interface. Continuation 003 inspects the
+visible frame's own backend context and passes all eight two-process checks with
+empty browser diagnostics. Exact 18/19 results, all 57 retained file hashes and
+UI authoring records are unchanged. Three remaining owned proof views were closed
+via the normal owner API; no process start, review decision or saved preference
+change occurred. All three walkthrough structures validate. Credential-scanned
+evidence has 66 files plus inventory under 20261003-theme-handshake-verified.
+
+T037 is complete by its mapped task audit; counts are 46 checked / 11 open.
+The new packaging checks compare current fixed-runtime/manifest bytes; older
+installed browser builds are not relabelled as current. Full feature acceptance
+remains incomplete. Continue substantive repeat-run isolation/provider/migration
+work and the remaining UI/editor/regression/audit obligations. Protected reviews
+remain unanswered and no physical action, push, merge or release occurred.

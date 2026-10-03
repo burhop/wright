@@ -1,0 +1,25 @@
+{
+  "closed": [
+    {
+      "presentation_id": "334e0902-cf4f-48c6-98cb-14ea8c781510",
+      "surface_id": "651ec92f-573d-4cc4-b28a-c6be7594f386",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "3463f95e-3886-4c7e-998c-94aec25ee01d",
+      "surface_id": "5e60d978-ac15-4293-868d-1583949eaff7",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "25448872-162b-4fac-8240-4d6982725375",
+      "surface_id": "f4c834c0-533d-48e3-9996-cf631d12aa32",
+      "previous_state": "active",
+      "status": 204
+    }
+  ],
+  "engineering_files_unchanged": true,
+  "authoring_records_unchanged": true,
+  "other_presentations_touched": false
+}

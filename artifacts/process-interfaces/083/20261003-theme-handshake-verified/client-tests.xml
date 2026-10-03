@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="94" failures="0" errors="0" time="0.0756473">
+    <testsuite name="src/services/process-client.spec.ts" timestamp="2026-10-03T03:55:21.917Z" hostname="Work17" tests="75" failures="0" errors="0" skipped="0" time="0.0545913">
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; submits only the declared response and scopes the retained acknowledgement" time="0.0120946">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; retains uncertainty when the response acknowledgement changes its subject: {&quot;workspace_id&quot;:&quot;foreign&quot;}" time="0.0015758">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; retains uncertainty when the response acknowledgement changes its subject: {&quot;checkpoint_id&quot;:&quot;other&quot;}" time="0.0005682">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; retains uncertainty when the response acknowledgement changes its subject: {&quot;subject_digest&quot;:&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;}" time="0.0004747">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; retains uncertainty when the response acknowledgement changes its subject: {&quot;request_id&quot;:&quot;different-request&quot;}" time="0.0004266">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; retains uncertainty when the response acknowledgement changes its subject: {&quot;value&quot;:{&quot;selection&quot;:&quot;a&quot;}}" time="0.0003764">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; does not automatically replay a response after a lost acknowledgement" time="0.0003572">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects invalid response IDs, subject and nonfinite values before transport" time="0.0008653">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; requires a discriminator in owning tagged input unions" time="0.0003492">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; uses the owning shared shapes and optional defaults" time="0.0003134">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects non-JSON values: NaN" time="0.0001339">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects non-JSON values: Infinity" time="0.0000625">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects non-JSON values: undefined" time="0.0000638">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects non-JSON values: Fri Oct 02 2026 23:55:20 GMT-0400 (Eastern Daylight Time)" time="0.0000446">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects non-JSON values: () =&gt; 1" time="0.0000516">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects non-JSON values: { value: undefined }" time="0.0000551">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects non-JSON values: " time="0.0000646">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects cycles, excessive depth, oversized inline values and accessors" time="0.0018406">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects incompatible closed/bounded contracts" time="0.0001857">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects incompatible closed/bounded contracts" time="0.0001526">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects incompatible closed/bounded contracts" time="0.000104">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="public process contract guards &gt; rejects incompatible closed/bounded contracts" time="0.0005178">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; fixes host scope, uses host fetch, and reads without starting work" time="0.0008813">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; copies host scope so later caller mutation cannot redirect it" time="0.000472">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; serializes only allowed fields, not caller actor/workspace authority" time="0.0005486">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; rejects injected binding fields before any mutation" time="0.0002909">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; rejects wrong reply scope: workspace" time="0.0004998">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; rejects wrong reply scope: source_path" time="0.0003151">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; rejects wrong reply scope: source_digest" time="0.0003">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; rejects an attach response for another run" time="0.0003967">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; requires the exact input scope before start" time="0.0003199">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; starts explicitly with a caller-retained stable request and input digest" time="0.0003689">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; does not accept a mismatched start receipt: request_id" time="0.0003324">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; does not accept a mismatched start receipt: input_snapshot_id" time="0.0003154">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; does not accept a mismatched start receipt: input_digest" time="0.0002773">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; reports a lost start acknowledgement and never retries automatically" time="0.0002566">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; preserves a structured backend reason and recovery instruction" time="0.0003591">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; does not render arbitrary raw HTTP failures as user messages" time="0.0003148">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; cancellation is explicit and represents a request, not confirmed stop" time="0.0003154">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; pre-aborted submission never reaches the transport" time="0.0004145">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; a disconnected cancellation cannot be reported as a confirmed stop" time="0.0002324">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; checks readiness against the exact prepared input digest" time="0.0003893">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; passes only a validated exact navigation intent to the native host" time="0.0011074">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; rejects invalid action subjects and missing representation ownership without calls" time="0.0005213">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; acknowledges an exact authorized action without treating it as provider acceptance" time="0.001045">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; records an exact review request and verifies its retained decision" time="0.0012192">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; does not retry a lost review acknowledgement or submit invalid changes" time="0.0003122">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="native process client &gt; rejects navigation replies that change the requested source or subject" time="0.0009432">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; reads passive toolpaths with the same source identity and an exact optional plate" time="0.0013751">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects an unsupported derived format envelope: { &apos;content-type&apos;: &apos;application/json&apos;, &apos;x-wright-view-format&apos;: &apos;wright.gcode.toolpaths.v1&apos; }" time="0.000414">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects an unsupported derived format envelope: { &apos;content-type&apos;: &apos;application/vnd.wright.toolpaths+json&apos;, &apos;x-wright-view-format&apos;: &apos;&apos; }" time="0.0002389">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects an unsupported derived format envelope: { &apos;content-type&apos;: &apos;application/vnd.wright.toolpaths+json&apos;, &apos;x-wright-view-format&apos;: &apos;wright.gcode.toolpaths.v2&apos; }" time="0.0002221">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; uploads only the declared input and host source fields without execution" time="0.0016656">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unsupported input names before a request: ../one.txt" time="0.0003602">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unsupported input names before a request: .hidden" time="0.0002103">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unsupported input names before a request: bad
+name.txt" time="0.0002256">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unsupported input names before a request: bad%name.txt" time="0.0002255">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects empty or oversized inputs and another source&apos;s upload receipt" time="0.0007258">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; reads through the exact run and preparation owner without a generic file route" time="0.0008718">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unverified, excessive or incomplete representations: { &apos;x-wright-artifact-sha256&apos;: &apos;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&apos; }" time="0.0003029">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unverified, excessive or incomplete representations: { &apos;x-content-type-options&apos;: &apos;&apos; }" time="0.0002284">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unverified, excessive or incomplete representations: { &apos;content-length&apos;: &apos;104857601&apos; }" time="0.0002465">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unverified, excessive or incomplete representations: { &apos;content-length&apos;: &apos;3&apos; }" time="0.0002755">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unverified, excessive or incomplete representations: { &apos;content-length&apos;: &apos;5&apos; }" time="0.0002655">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; rejects unverified, excessive or incomplete representations: { &apos;content-length&apos;: &apos;invalid&apos; }" time="0.000205">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="scoped input upload and representation reads &gt; keeps HTML inert and preserves abort and owning errors" time="0.0006267">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; parses chunk boundaries and CRLF, then reads the terminal snapshot without mutations" time="0.0028733">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; reconnects using the last recorded cursor and reconciles without restarting" time="0.0011894">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; recovers a rejected cursor through a full snapshot and a fresh read attachment" time="0.0009408">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; bounds repeated connection failures" time="0.0008268">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; rejects wrong run events and oversized frames without mutation" time="0.0014233">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; closing an event observer releases it without cancelling the run" time="0.0007758">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; an abort releases a pending reader without sending cancellation" time="0.0006213">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; a server scope-reconciliation event stops reattachment and preserves the reason" time="0.0007673">
+        </testcase>
+        <testcase classname="src/services/process-client.spec.ts" name="recorded event attachment and reconciliation &gt; does not accept a partial final SSE frame after disconnection" time="0.0005494">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/services/surfaces/process-presentation.spec.ts" timestamp="2026-10-03T03:55:21.932Z" hostname="Work17" tests="19" failures="0" errors="0" skipped="0" time="0.021056">
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;schema_version&quot;:&quot;future&quot;}" time="0.0018332">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;read_only&quot;:&quot;false&quot;}" time="0.0002973">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;generation&quot;:0}" time="0.0001806">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;ui_id&quot;:&quot;chosen-ui&quot;}" time="0.0002229">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;revision_id&quot;:&quot;chosen-revision&quot;}" time="0.0002055">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {}" time="0.0001824">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;capabilities&quot;:[&quot;process.read&quot;,&quot;process.invokeTool&quot;]}" time="0.0001711">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;capabilities&quot;:[&quot;process.read&quot;,&quot;process.read&quot;]}" time="0.0001645">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;capabilities&quot;:[&quot;process.results&quot;]}" time="0.0001857">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;capabilities&quot;:[&quot;process.read&quot;,&quot;process.start&quot;]}" time="0.0002654">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects malformed/widened context {&quot;native_token&quot;:&quot;forbidden&quot;}" time="0.0001526">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; clones and freezes exact context without trusting later mutations" time="0.0010489">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; reads only the reserved same-origin transport with no native credential" time="0.0073171">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; rejects all preview mutations before fetching" time="0.0017788">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; binds snapshot/attach/follow/cancel to the exact current run" time="0.000995">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; notifies native host from a verified receipt without broadening the current binding" time="0.0019837">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; does not change known accepted outcome when host navigation fails" time="0.0005896">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; does not notify host from a mismatched or uncertain start reply" time="0.0010068">
+        </testcase>
+        <testcase classname="src/services/surfaces/process-presentation.spec.ts" name="isolated process presentation transport &gt; requires fresh native binding for preparation controls on an attached run" time="0.000407">
+        </testcase>
+    </testsuite>
+</testsuites>

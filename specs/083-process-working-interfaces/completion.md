@@ -5,6 +5,8 @@
 saved-view departure cleanup. Fresh consumer 003 source gate, common/tailored
 exact outputs/navigation and genuine working reload are recorded. The installed
 generic host task T034 is now closed by its scoped source/wheel/evidence audit.
+T037 is subsequently closed by the current scoped transport/theme/navigation
+audit, eight two-process browser checks and fresh fixed-runtime packaging.
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
 be verified against current source, actual runtime and its required proof scope.
@@ -110,3 +112,14 @@ terminal output, JUnit and checked scope. This strengthens the regression basis
 for FR-002–007, FR-013–014 and SC-002–003/006 within controlled test scope; it
 does not close their served/installed parity obligations or any other pending row.
 T053 and T056 remain incomplete.
+
+### Current theme and handshake evidence
+
+[T037 audit](evidence/theme-handshake.md) maps the shared transport, exact
+navigation, theme and negative authority obligations. Current checks pass 47
+affected frontend, 94 client, 71 backend and three packaging cases, plus app
+TypeScript/Ruff. Eight actual saved-interface theme/reconnect checks retain exact
+18/19 results and all 57 baseline files. Failures remain separately labelled.
+Older installed browser builds do not establish the new runtime's browser behavior.
+The ledger now has 46 checked / 11 open tasks; complete feature acceptance remains
+unproved. T021/T041/T043/T045/T047/T048/T049/T052/T053/T056/T057 remain open.

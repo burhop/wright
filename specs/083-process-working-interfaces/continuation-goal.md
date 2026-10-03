@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile the committed browser checkpoints described below, then finish printed current-revision second-run reuse with fresh isolated output paths. Preserve the existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload or navigation proofs merely to produce another status report.
+1. Reconcile the latest verified theme/handshake checkpoint described below, then finish printed current-revision second-run reuse with safely isolated output paths. Preserve existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload, theme or navigation proofs merely to produce another status report.
 2. Complete common/tailored output, assessment, block/evidence navigation, compatibility, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
@@ -33,17 +33,20 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
-Reviewed against local records after the saved handoff. The ledger has **45 checked
-and 12 open tasks**: T021, T037, T041, T043, T045, T047, T048, T049, T052,
+Reviewed against local records after the saved handoff. The ledger has **46 checked
+and 11 open tasks**: T021, T041, T043, T045, T047, T048, T049, T052,
 T053, T056 and T057. Local checkpoints `573eb0b8`, `1d759201` and `dcebc661` save the
 shared viewer/proxy and exact navigation corrections with their tests and evidence.
 The staged navigation inventory was checked against all 73 recorded files;
 credential scans and protected archive/campaign/context checks passed before
 commit. Preserve unrelated untracked work; do not stage all dirty files.
-T034 is complete after the installed-host audit: the current fixed runtime and
+T034 is complete after the installed-host audit at source checkpoint dcebc661: the fixed runtime and
 manifest modules exactly match the actual native/Docker qualification wheel, with
-current host tests and two-process reload/departure evidence. See evidence/hosting-audit.md.
-T037 theme/handshake and broader editor/UI acceptance remain open.
+host tests and two-process reload/departure evidence. See evidence/hosting-audit.md.
+HEAD at the latest status review is `6728c238`. Subsequent runtime changes need
+fresh current packaging checks; the earlier wheel audit remains historical evidence.
+T037 theme/handshake is complete within its mapped task scope; broader editor/UI
+acceptance remains open. See evidence/theme-handshake.md for the current correction.
 T050 now has three passing packaging checks (57.84 seconds), including
 exact public resources and installed compilation of the shared result viewer.
 Earlier distribution paragraphs remain historical; reconcile their stale status
@@ -94,9 +97,9 @@ authoring/revision records are unchanged; both retained run files stayed unchang
 during normal cleanup of accumulated owned proof views. Evidence is under
 `artifacts/process-interfaces/083/20261003-two-process-exact-navigation/`.
 
-**Next concrete action:** finish current-revision printed second-run reuse and
-the remaining engineering/provider/migration obligations, then host/editor/audit
-work. Preserve the routing failure and premature Heat-load assertion, plus its
+**Next concrete action:** finish current-revision printed second-run reuse and remaining
+engineering/provider/migration/editor/audit obligations. Preserve the routing
+failure and premature Heat-load assertion, plus its
 separate capacity stop. The fixed workspace now selects an exact common evidence
 tab rather than a tailored or preview tab; 106 affected tests and the full app
 typecheck pass. Browser departure now has a shared host correction and scoped
@@ -104,7 +107,7 @@ proof under 20261003-presentation-departure-verified: three reloads per saved
 engineering UI and navigation away close prior exact views without changing
 retained files or authoring records. Abrupt termination remains unqualified;
 back-forward-cache and late-open cases have component scope only. Keep the broader
-host audit open. Reuse qualified harnesses and only
+acceptance audit open. Reuse qualified harnesses and only
 fresh isolated subjects for required starts. Verify output path isolation before
 starting another run; never overwrite the retained first-run engineering files.
 Close only owned isolated proof presentations through the normal owner API when
@@ -124,3 +127,53 @@ Revalidate health, owner handles and native leases before reuse or restart.
 Installed older builds do not include the latest committed kit/navigation changes.
 Current status/evidence updates must distinguish saved assets, preview rendering,
 working/reload proof, engineering checks and human acceptance.
+
+## Retained overnight handoff: observed theme failure
+
+The real saved-interface browser check stopped at the first product mismatch:
+Wright's light-theme colors reached the embedded Heat interface, but its browser
+control color scheme stayed dark. Eighteen exact results were present, and the
+retained engineering files were unchanged. Preserve the blocked report at
+`artifacts/ui-walkthrough/process-interfaces-083-hosting/20261003T034435Z-theme-handshake-001/`.
+Its private harness and observation are under
+`.local-run/process-interfaces-083/t037-theme-handshake-001/` and
+`t037-theme-browser-001.mjs`.
+
+The worktree has a partial, uncommitted correction in
+`apps/web/src/services/process-presentation-host.ts`: it adds `color-scheme` to
+the existing theme token allowlist, limited to `light` or `dark`. Inspect actual
+current bytes before editing. The fixed embedded runtime, focused tests and a
+fresh browser continuation still need completion; this is not verified behavior.
+Preserve exact origin/source/nonce/presentation guards and the existing scoped
+bridge. Check both saved engineering interfaces, light/dark transitions and frame
+reload without generation, engineering decisions or process replay. A change to
+the fixed runtime also needs current packaging-resource verification; do not
+attribute it to the older installed wheel.
+
+After that bounded correction, move to substantive remaining obligations. The
+printed source uses fixed output paths, including an overwrite in its prologue.
+Resolve safe repeat-run isolation through the existing owning mechanisms before
+starting a fresh run; stopping at its first review would still overwrite evidence.
+Keep exact workflow/UI compatibility and engineering gates. Neither a renamed
+workflow nor a fixture-only reuse claim closes the required proof.
+
+This handoff is a status review and prompt update, not another verification run.
+Task counts remain 45 checked / 12 open. Revalidate recorded owned services before
+reuse. The active goal retains the complete original M0–M5 scope and authority.
+
+## Current continuation: theme/handshake verified
+
+The partial correction described in the historical handoff is now implemented and
+verified in both native sender and fixed runtime. The final visible-frame context
+check passes eight actual saved Heat/wheel theme/reconnect steps, with the same
+18/19 outputs and all 57 baseline files/authoring records unchanged. The original
+product failure and a separate hidden-tab response assertion stop are preserved.
+No process start, review or saved preference mutation occurred. Normal owner cleanup
+closed three remaining exact proof views.
+
+T037 is checked. Current checks pass 47 frontend, 94 client, 71 backend and three
+packaging cases, plus app TypeScript and Ruff. The new wheel contains exact current
+runtime/manifest bytes; older installed browser builds retain their original scope.
+See evidence/theme-handshake.md and
+`artifacts/process-interfaces/083/20261003-theme-handshake-verified/`.
+Continue the 11 remaining tasks; do not repeat this completed correction.

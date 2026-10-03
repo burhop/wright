@@ -1,0 +1,129 @@
+{
+  "title": "Saved engineering interfaces inherit Wright theme and reconnect their frame",
+  "summary": "Actual settings controls and saved model-created interfaces; no process start, review or global preference save.",
+  "overall": "blocked",
+  "updated": "2026-10-03T03:53:01.541Z",
+  "manualSteps": [
+    {
+      "label": "Open interface",
+      "instruction": "Open the saved Heat or Focus-wheel working-interface link."
+    },
+    {
+      "label": "Choose light theme",
+      "instruction": "Click Back to Dashboard, then Settings. Choose Light Theme. Leave Save Preferences untouched."
+    },
+    {
+      "label": "Return to interface",
+      "instruction": "Use browser Back twice to return to the saved working interface."
+    },
+    {
+      "label": "Reload frame",
+      "instruction": "Reload the embedded page using the browser frame-reload action. Inspect the same exact results."
+    },
+    {
+      "label": "Restore theme",
+      "instruction": "Repeat the Settings route, choose Dark Theme, then return. Leave all reviews unchanged."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "heat saved working interface",
+      "summary": "The exact saved revision and engineering outputs are connected.",
+      "purpose": "Establish the real scoped working context.",
+      "action": "Open the saved working-interface link.",
+      "controls": [
+        "Back to Dashboard",
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Exact saved revision and current results.",
+      "actual": "18 exact results in the current working context.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "heat light theme matches Wright",
+      "summary": "The saved isolated interface inherits Wright’s selected light theme.",
+      "purpose": "Check actual host theme transmission, not a screenshot-only approximation.",
+      "action": "Open Settings, choose Light Theme without saving preferences, and use browser Back twice.",
+      "controls": [
+        "Interface Theme",
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Frame background/text theme tokens and color scheme match its parent.",
+      "actual": "{\"parent\":{\"neutral\":\"#e8edf5\",\"primary\":\"#0f172a\",\"scheme\":\"light\"},\"child\":{\"neutral\":\"#e8edf5\",\"primary\":\"#0f172a\",\"scheme\":\"light\"}}",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "heat embedded page reconnects",
+      "summary": "The same presentation reconnects after its frame document reloads.",
+      "purpose": "Verify re-armed exact host handshake and current run binding.",
+      "action": "Reload the embedded page using the browser frame-reload operation.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Fresh frame handshake, same saved UI/run/results and selected light theme.",
+      "actual": "New context read and 18 exact result identities restored; theme retained.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "heat dark theme restored",
+      "summary": "Wright’s selected dark theme is restored without changing engineering work.",
+      "purpose": "Verify both supported theme values and no saved preference mutation.",
+      "action": "Use Settings to choose Dark Theme, then return through browser Back.",
+      "controls": [
+        "Interface Theme",
+        "Run inputs"
+      ],
+      "expected": "Exact dark parent/frame theme and unchanged outputs.",
+      "actual": "{\"parent\":{\"neutral\":\"#090d16\",\"primary\":\"#f1f5f9\",\"scheme\":\"dark\"},\"child\":{\"neutral\":\"#090d16\",\"primary\":\"#f1f5f9\",\"scheme\":\"dark\"}}",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "wheel saved working interface",
+      "summary": "The exact saved revision and engineering outputs are connected.",
+      "purpose": "Establish the real scoped working context.",
+      "action": "Open the saved working-interface link.",
+      "controls": [
+        "Back to Dashboard",
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Exact saved revision and current results.",
+      "actual": "19 exact results in the current working context.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Theme/handshake check stopped",
+      "summary": "The first unexpected interface behavior is preserved.",
+      "purpose": "Keep the real failure and exact current theme values.",
+      "action": "Stop at the current saved interface.",
+      "controls": [
+        "Use common working view",
+        "Reopen interface view"
+      ],
+      "expected": "Parent and saved interface have the same selected theme and exact run context.",
+      "actual": "expect(received).toMatchObject(expected)\n\n- Expected  - 3\n+ Received  + 3\n\n  Object {\n    \"read_only\": false,\n-   \"revision_id\": \"revision-5d5d6defda104980a2455c7ddc95e687\",\n-   \"run_id\": \"bebf24bcdec44058a46371fa05d7cd83\",\n-   \"ui_id\": \"ui-ce377446f6d44705846a32f7c3eb94b2\",\n+   \"revision_id\": \"revision-9c8c8b164ea34a9ba65910567b41b170\",\n+   \"run_id\": \"67abaa021ee44972a94e3c9cbaa3dbbe\",\n+   \"ui_id\": \"ui-8858f2ec2bc24bc588ce5042626503ab\",\n  }",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

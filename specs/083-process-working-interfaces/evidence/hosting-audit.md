@@ -44,3 +44,8 @@ editor/accessibility acceptance, provider/migration obligations and the complete
 requirement audit remain separate. Abrupt browser/OS termination is unqualified;
 back-forward-cache and late-open cleanup currently have component evidence only.
 No physical action, publication, human acceptance, push, merge or release follows.
+
+Follow-up: [T037 theme/handshake](theme-handshake.md) is now complete. Its bounded
+fixed-runtime correction postdates the source/wheel equality checkpoint above.
+Fresh packaging compares the new runtime and manifest bytes with source; the
+older native/Docker browser reports retain their original build scope.
