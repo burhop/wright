@@ -201,3 +201,17 @@ unsupported declarations. This overlaps the runtime suite above. See the
 [Heat preparation record](../../../artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/README.md).
 No actual native repeat-run or UI compatibility acceptance is established; T047
 and T053 remain open.
+
+### Run-path authority configuration rejects unresolved tokens
+
+The [bounded correction](../../../artifacts/process-interfaces/083/20261003-run-path-authority-fields-verified/README.md)
+adds fifteen parameterized cases: five authority/document configuration dictionaries
+on declared, undeclared and legacy steps. Unsupported tokens now fail before
+execution even when the step is outside the template declaration. Forty-four
+focused cases and 108 affected runtime/readiness/approval/continuation cases pass;
+counts overlap and there are no skips. Two-file Ruff, exact source hashes, XML,
+credential-value scans and fresh protected archive/campaign/context checks pass.
+These are controlled regressions, not installed/UI/live-provider acceptance.
+The isolated Heat API was loaded from `a4cfc474` before this fix; its separate
+proof has no affected tokens and does not establish live verification of the fix.
+T047/T053 and the broader feature audit remain open.

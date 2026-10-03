@@ -39,6 +39,9 @@ Explicitly declared text inputs are resolved through the existing immutable-inpu
 conversion before connected-argument schema validation. Undeclared input text
 remains literal. Approval destinations, validation profiles, human-interaction
 schemas and native application/document configuration are not template fields.
+Reserved Wright tokens in those configuration dictionaries are rejected on every
+step, including undeclared steps and processes with no run-path declarations.
+They cannot remain literal until a later approval or document operation fails.
 This is a bounded path binding, not an expression or execution language.
 
 The accepted source, step/port IDs and frozen raw input snapshot are unchanged by

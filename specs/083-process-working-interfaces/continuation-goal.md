@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Use the now-verified original-history checkpoint below, then resolve printed current-revision second-run output isolation and complete its saved-interface reuse proof. Preserve existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload, theme, navigation or original-history proofs merely to produce another status report.
+1. Reconcile the latest isolated Heat run and interface job below. Diagnose the actual UI_MODEL_TIMEOUT with bounded authoring attempts, preserve its failed job/report, and finish same-source repeat-run and saved-interface reuse evidence. Adopt the explicit run-path contract in printed preparation, including all provider-write boundaries, before another start. Preserve existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload, theme, navigation or original-history proofs merely to produce another status report.
 2. Complete common/tailored output, assessment, block/evidence navigation, compatibility, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
@@ -32,6 +32,95 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Active continuation — saved Heat reuse and update proved; second tool chain active
+
+The authority-field readiness gap is corrected: reserved run tokens are rejected
+in all five unsupported configuration dictionaries even on undeclared and legacy
+steps. Fifteen added cases, 44 focused passes, 108 affected passes and two-file
+Ruff checks are retained in `20261003-run-path-authority-fields-verified`.
+
+Retry `job-f24cdd3e48684f28a7d306fa6d72cacc` succeeded with configured default
+model/Hermes. UI `ui-512d6109b37f4c0f89b86d86a34827b2`, revision
+`revision-1307d9f0c2ad4bc78d204efd64c4da91`, passes thirteen normal-workspace
+generation/preview/save/open checks. The original timeout remains retained.
+Ten further checks prove unchanged saved assets on second run
+`50942bb6d23649b5bbb4d4e51a019af6` at its actual declared review and after reload.
+All six saved assets, both authoring tables and 35 first-run files are unchanged.
+The premature loading assertion is retained; no integrity or authority check was
+weakened. These reports and meaningful screenshots were validated/inspected.
+
+Private current receipts remain in `t047-heat-repeat-013/`. `first-run-frozen.json`
+is the exclusive first-output/native-version preservation baseline.
+`saved-ui-reuse-baseline.json` and `saved-ui-reuse-retention.json` prove unchanged
+assets/authoring state. Second-run helpers alongside that directory have
+`-second-013` names; its request/receipt/observation files begin `second-`.
+The exact enrolled second basis was synthetically approved with labelled actor
+and integration_test=true, then normal continuation returned 202. Latest actual
+observation is running, 17 outputs and consumed checkpoint. Do not rerun the
+review or continuation scripts; observe the same run.
+
+Focused update harness `t047-heat-repeat-focused-update-013.mjs` completed under
+terminal handle 85473. Job `job-1e03b43bc5664e6fa1d9fbea3a264299` saved revision
+`revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0` with the same UI and original parent.
+Thirteen checks pass through normal preview/save/open, including all 18 first-run
+results and baseline/revision/shared headings in preview. It preserves shared
+controls/viewers and adds the stated idealization limitation. The report
+structure is valid; current-view output parity/navigation still needs its own
+proof. Do not regenerate this update. Reports are timestamped under
+`artifacts/ui-walkthrough/process-interfaces-083-heat/`.
+Revalidate API20756/8039 and UI31043/5244; the API loaded a4cfc474 before this
+authority-field fix and this Heat source has no affected unsupported tokens.
+
+Next prove the second actual CAD/solver outputs are in their distinct run
+directory/native version while all first-run bytes remain intact. Finish focused
+update, all current output/assessment parity/navigation and saved-reuse evidence,
+then continue printed adoption/migration/provider and remaining acceptance work.
+The first assessment is legitimately held (25 pass / 1 mandatory human review,
+no measured failures); never grant engineering acceptance. Counts remain
+47 checked / 10 open and the complete M0–M5 scope remains active.
+
+### Overnight status review — actual Heat outputs and authoring timeout
+
+HEAD is `a4cfc474`, following shared run-path commit `105f98fd`. The tracked
+worktree was clean before this documentation update. Counts remain **47 checked /
+10 open**: T041, T043, T045, T047, T048, T049, T052, T053, T056 and T057.
+This review closes no task and runs no tests or engineering mutations.
+
+Fresh isolated source `workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow`
+has digest `d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b`.
+Normal API observation returned HTTP 200 for run
+`503a32a91e454a219bcbe2f2da3b99b2`: **18 outputs**, recorded state `failed`, and
+`PROCESS_VALIDATION_NEEDS_INPUT` requiring authenticated human review. Its enrolled,
+labelled synthetic basis review was consumed and continuation used the same run.
+Do not present the required final review as engineering acceptance or override
+mandatory findings. Inspect the exact assessment and native history before a
+second isolated run; freeze the first outputs and qualify every write boundary.
+The first completed run alone does not prove repeat execution or saved-UI reuse.
+
+Actual Wright interface job `job-9ba8f4acfca04278b6255d10dcca9f4b` is **failed** with
+`UI_MODEL_TIMEOUT`; normal job GET confirmed this. Resolved authoring used the
+configured default `gpt-5.6-sol` through Hermes. Nine normal-workspace checks passed
+through visible creation progress; preview/save/open were not reached. Preserve
+`artifacts/ui-walkthrough/process-interfaces-083-heat/20261003T051700Z-heat-repeat-authoring-002/`.
+An earlier frontend recovery-flag setup failure is retained separately. Diagnose
+the model timeout through existing authoring ownership; use bounded explicit
+corrections without dropping required interface behavior or claiming success from
+a longer browser wait. The common view remains usable.
+
+Private receipts/harnesses are under
+`.local-run/process-interfaces-083/t047-heat-repeat-013/`, with its observer and
+authoring harnesses alongside that directory. Never print its browser context or
+publish its credential-bearing traces. The API at 8039 answered both observations;
+browser handle 60433 is terminal with the blocked report. API host 20756 and UI
+host 31043/5244 were previously recorded live; revalidate exact ownership and
+leases before reuse or cleanup. Earlier services remain separate.
+
+Continue provider qualification, printed preparation/migration, accessibility and
+editor/current-build proof, affected regressions and the final requirements audit
+while any genuinely required review/resource waits. Preserve protected campaign
+and retained second-run subjects. The full M0–M5 scope remains active; no physical
+effects, push, merge, release or public promotion are authorized.
 
 ### Latest continuation — Heat preparation adopts explicit run paths
 

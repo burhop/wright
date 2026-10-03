@@ -67,6 +67,13 @@ def _root(path, run_id):
 
 def bind_run_paths(plan, run_id):
     """Resolve only explicitly declared fields, retaining source/step/port identity."""
+    # These fields never participate in this template version, including on
+    # undeclared steps in a templated process. Leaving a token literal here
+    # would defer predictable missing action/document configuration until run.
+    for step in plan.steps:
+        for value in (step.external_action, step.validation, step.cad, step.application, step.human_interaction):
+            if _contains(value):
+                raise _invalid("This run-path version cannot template approval, validation or document configuration.")
     enabled = any(step.run_path_template for step in plan.steps) or any(
         fields.get("settings", {}).get("run_path_template") for fields in plan.inputs.values()
     )
@@ -90,11 +97,6 @@ def bind_run_paths(plan, run_id):
                 raise _invalid("A Wright run token needs an explicit step declaration.")
             steps.append(step)
             continue
-        # Approval destinations, validation profiles and native document identities
-        # are not template fields. Their existing exact-subject contracts apply.
-        for value in (step.external_action, step.validation, step.cad, step.application, step.human_interaction):
-            if _contains(value):
-                raise _invalid("This run-path version cannot template approval, validation or document configuration.")
         for path in ((step.output_path,) if step.save else ()) + step.expected_files:
             _, root = _root(path, run_id)
             roots.add(root)

@@ -1,0 +1,25 @@
+{
+  "files": {
+    "affected-junit.xml": {
+      "bytes": 19256,
+      "sha256": "7f03da3e04a6ebe6f8138c7a3748967da9968e80ab00ccd0e42108590329adaa"
+    },
+    "checked-scope.json": {
+      "bytes": 1197,
+      "sha256": "67c9983e9287121e4273f9d73b6643ab038365b35b5b80bae5305640c298be9b"
+    },
+    "junit.xml": {
+      "bytes": 8014,
+      "sha256": "4f9ee727b4f4a60dedb5298339ecdf05446e3877eb4728e7e6028649dccb5b96"
+    },
+    "preservation.json": {
+      "bytes": 1420,
+      "sha256": "605629cea1234cb6eaac3463687bd0b9462c9c8af6b60dc5541a6bd03e6ff411"
+    },
+    "README.md": {
+      "bytes": 2139,
+      "sha256": "ea88331be320ead60c3f01f4f8658a8666ceafc9e6c7f0027e08a10d04131ab4"
+    }
+  },
+  "credential_value_scan": "passed"
+}

@@ -72,6 +72,25 @@ def test_literal_legacy_process_remains_unchanged():
     assert bind_run_paths(original, None) is original
 
 
+@pytest.mark.parametrize("field", [
+    "external_action", "validation", "cad", "application", "human_interaction",
+])
+@pytest.mark.parametrize("declaration", ["declared", "undeclared", "legacy"])
+def test_authority_configuration_tokens_are_rejected_on_every_step(field, declaration):
+    literal = plan(run_path_template="", prompt="Literal prompt", arguments={},
+                   output_path="legacy.txt", expected_files=(), expected_file_ports={})
+    if declaration == "declared":
+        original = plan(**{field: {"nested": {"path": TOKEN}}})
+    else:
+        step = replace(literal.steps[0], id="approval", **{field: {"nested": {"path": TOKEN}}})
+        original = replace(literal, steps=(step,)) if declaration == "legacy" else replace(
+            plan(), steps=(*plan().steps, step),
+        )
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        bind_run_paths(original, None if declaration == "legacy" else "run-one")
+    assert "cannot template approval, validation or document configuration" in str(error.value)
+
+
 def test_only_declared_text_inputs_resolve_and_pin_template_plus_resolved_content():
     raw = f'{{"path":"outputs/{TOKEN}/model.stl"}}'.encode()
     reference = WorkflowReference.from_bytes("arguments.json", raw, image=False)

@@ -1,5 +1,72 @@
 # Feature 083 progress
 
+## Current continuation — readiness correction and actual saved Heat UI reuse
+
+The preceding status review established terminal Heat and authoring outcomes and
+updated the next action; it made no implementation change. This continuation
+re-read the submitted objective and revalidated exact API/UI handles 20756/31043.
+
+The explicit run-path owner now rejects reserved tokens in approval, validation,
+native application/document and human-interaction dictionaries on every step,
+including undeclared and legacy steps. Fifteen new cases bring the focused suite
+to 44 passes. Seven affected suites pass 108 cases with no skips; counts overlap.
+Ruff passes both files and fresh preservation/credential checks pass. Scoped
+evidence is `20261003-run-path-authority-fields-verified`. This is controlled
+runtime verification, not a claim about installed or live-provider behavior.
+
+A bounded actual-model retry reusing supplied Wright components succeeded:
+job `job-f24cdd3e48684f28a7d306fa6d72cacc`, saved UI
+`ui-512d6109b37f4c0f89b86d86a34827b2`, revision
+`revision-1307d9f0c2ad4bc78d204efd64c4da91`. Thirteen normal-workspace browser
+checks pass through preview/save/working open, with zero browser diagnostics.
+The report structure passes validation and the working screenshot was inspected.
+The original timeout and frontend-flag failure remain preserved.
+
+First run `503a32a91e454a219bcbe2f2da3b99b2` has 18 exact outputs and the original
+26-check assessment: 25 pass, one authenticated-review block, no measured failure,
+release ineligible and physical validation not assessed. Thirty-five exact
+source/input/output/run/native-version files were frozen before starting second
+run `50942bb6d23649b5bbb4d4e51a019af6` with the same accepted source and frozen
+input snapshot. Ten served reuse/reload checks pass at its actual declared basis
+review; the first premature loading assertion is retained. Six saved asset files
+and both authoring tables are unchanged, as are all 35 first-run files. No
+generation, compilation, execution or review response occurred in that walkthrough.
+Its report structure and meaningful screenshot were checked.
+
+Only that fresh enrolled second-run basis received a labelled synthetic review,
+actor `integration_test:083-private-digital-heat-repeat-013`, integration_test=true,
+human engineering acceptance=false. Normal continuation returned 202; latest
+observation is running with 17 outputs and consumed checkpoint. Focused actual
+model update `job-1e03b43bc5664e6fa1d9fbea3a264299` succeeded: new revision
+`revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0` retains the original parent and UI.
+Thirteen checks pass, including all 18 first-run results and three candidate/
+shared headings in preview; its report structure is valid. Browser 85473 is
+terminal. Observe and reconcile the second run, never replay it. All receipt/harness locations are in
+the continuation checkpoint. Task counts remain 47 checked / 10 open: full
+repeat execution, complete output parity/navigation/reuse and the wider migration/provider/
+UI/regression/audit scope are still required. No protected review or physical
+effect occurred. The active API remains loaded from a4cfc474, before the new
+authority-field correction; do not attribute that correction to its live proof.
+
+## Latest overnight status review — 2026-10-03
+
+Current HEAD is `a4cfc474`; the task ledger remains **47 checked / 10 open**.
+This review inspected current Git state and observed the latest isolated Heat
+run and authoring job through their normal API owners. No tests, engineering
+starts, reviews or other execution mutations were performed; no task was closed.
+
+Run `503a32a91e454a219bcbe2f2da3b99b2` has 18 recorded outputs and ends with
+`PROCESS_VALIDATION_NEEDS_INPUT` requiring authenticated human review. Its initial
+enrolled synthetic basis checkpoint is consumed. Actual default-model interface
+job `job-9ba8f4acfca04278b6255d10dcca9f4b` failed with `UI_MODEL_TIMEOUT`; nine
+normal-workspace checks passed before preview/save/open remained unverified.
+Preserve both first-failure reports and the exact current engineering outputs.
+The current continuation prompt and private receipt locations are recorded in
+`continuation-goal.md`. Next diagnose authoring within bounded attempts, finish
+same-source repeat execution and saved-UI reuse, and continue printed migration,
+provider qualification and remaining UI/regression/audit obligations. This is
+status evidence, not new implementation or engineering acceptance.
+
 ## Latest implementation state — 2026-10-01
 
 T027/T028 interaction/editor recovery, T029–T031 confined authoring, T033 immutable

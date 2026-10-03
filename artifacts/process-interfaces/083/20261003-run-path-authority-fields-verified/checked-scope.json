@@ -1,0 +1,40 @@
+{
+  "change": "Reject reserved run-path tokens in authority/document configuration on every step before execution",
+  "new_parameterized_cases": 15,
+  "fields": [
+    "external_action",
+    "validation",
+    "cad",
+    "application",
+    "human_interaction"
+  ],
+  "declaration_cases": [
+    "declared",
+    "undeclared step in templated process",
+    "legacy process"
+  ],
+  "checks": {
+    "junit.xml": {
+      "passed": 44,
+      "skipped": 0,
+      "failures": 0
+    },
+    "affected-junit.xml": {
+      "passed": 108,
+      "skipped": 0,
+      "failures": 0
+    }
+  },
+  "counts_overlap": true,
+  "ruff": "two owning files passed",
+  "source_sha256": {
+    "packages/workspace_service/src/workspace_service/workflow_run_paths.py": "c543efc99889a44dc9a6cbbe9079d499366da887b6a6c246cbf384e8fe9b19dd",
+    "packages/workspace_service/tests/test_workflow_run_paths.py": "171fbf921d2145f7c5495f8d7085f0fd4c60acf74fecf0309982b322904c8fe8"
+  },
+  "scope_limits": [
+    "controlled runtime regressions only",
+    "no live API reload or provider qualification",
+    "no UI or installed-package proof of this change",
+    "no human engineering acceptance"
+  ]
+}
