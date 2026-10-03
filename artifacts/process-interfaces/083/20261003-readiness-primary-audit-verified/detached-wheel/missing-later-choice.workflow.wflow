@@ -1,0 +1,59 @@
+workflow test
+  name: "Test"
+  purpose: "Prepared input fixture"
+  discipline: "engineering"
+  reviewed_ai_suggestions: false
+end
+input brief
+  name: "Brief"
+  purpose: "Prepared input"
+  group: null
+  provided_by: "engineer"
+  step_type: "work"
+  tool: null
+  reusable_step: null
+  instructions: "Use exact input"
+  inputs: []
+  outputs: [{"key": "brief_out", "name": "brief_out", "kind": "engineering_document", "item": null, "required": false, "quantity": "one", "description": "Document"}]
+  settings: {}
+end
+task first
+  name: "First"
+  purpose: "Use exact input"
+  group: null
+  step_type: "work"
+  performed_by: "ai_assisted"
+  inputs: [{"key": "first_in", "name": "first_in", "kind": "engineering_document", "item": null, "required": false, "quantity": "one", "description": "Document"}]
+  outputs: [{"key": "first_out", "name": "first_out", "kind": "engineering_document", "item": null, "required": false, "quantity": "one", "description": "Document"}]
+  prompt: "Prepare a result"
+  tool: null
+  reusable_step: null
+  settings: {"output_format": "text", "save_output": true, "output_filename": "first.txt"}
+end
+task later
+  name: "Later"
+  purpose: "Use the produced result"
+  group: null
+  step_type: "work"
+  performed_by: "ai_assisted"
+  inputs: [{"key": "later_in", "name": "later_in", "kind": "engineering_document", "item": null, "required": true, "quantity": "one", "description": "Document"}, {"key": "late_choice", "name": "late_choice", "kind": "engineering_document", "item": null, "required": true, "quantity": "one", "description": "Document"}]
+  outputs: [{"key": "later_out", "name": "later_out", "kind": "engineering_document", "item": null, "required": false, "quantity": "one", "description": "Document"}]
+  prompt: "Use exact earlier result"
+  tool: null
+  reusable_step: null
+  settings: {"output_format": "text", "output_filename": "later.txt"}
+end
+connection upstream
+  type: "item"
+  from: "first.first_out"
+  to: "later.later_in"
+  label: "Produced result"
+  when: null
+end
+connection supplied
+  type: "item"
+  from: "brief.brief_out"
+  to: "later.late_choice"
+  label: "Input"
+  when: null
+end

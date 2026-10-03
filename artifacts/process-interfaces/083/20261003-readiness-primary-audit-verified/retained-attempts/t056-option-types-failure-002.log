@@ -1,0 +1,23 @@
+FFFF.                                                                    [100%]
+================================== FAILURES ===================================
+________ test_provider_choice_requires_exact_json_value_types[0-False] ________
+packages\workspace_service\tests\test_process_input_readiness.py:382: in test_provider_choice_requires_exact_json_value_types
+    with pytest.raises(ProcessInterfaceError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'workspace_service.process_interfaces.errors.ProcessInterfaceError'>
+________ test_provider_choice_requires_exact_json_value_types[1-True] _________
+packages\workspace_service\tests\test_process_input_readiness.py:382: in test_provider_choice_requires_exact_json_value_types
+    with pytest.raises(ProcessInterfaceError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'workspace_service.process_interfaces.errors.ProcessInterfaceError'>
+_ test_provider_choice_requires_exact_json_value_types[provider_value2-supplied_value2] _
+packages\workspace_service\tests\test_process_input_readiness.py:382: in test_provider_choice_requires_exact_json_value_types
+    with pytest.raises(ProcessInterfaceError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'workspace_service.process_interfaces.errors.ProcessInterfaceError'>
+_ test_provider_choice_requires_exact_json_value_types[provider_value3-supplied_value3] _
+packages\workspace_service\tests\test_process_input_readiness.py:382: in test_provider_choice_requires_exact_json_value_types
+    with pytest.raises(ProcessInterfaceError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'workspace_service.process_interfaces.errors.ProcessInterfaceError'>
+4 failed, 1 passed, 17 deselected in 0.54s

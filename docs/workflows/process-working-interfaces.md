@@ -38,8 +38,9 @@ the final dispatch checks or a process's declared human review.
    preparation freezes these inputs separately from the accepted definition.
    Uploaded images have thumbnails; changes invalidate prior preparation.
 4. Check readiness before **Start**. Missing supported-path dependencies block
-   start with reasons. Outputs declared to be produced upstream need not exist
-   beforehand. Readiness is not an engineering verdict.
+   start with reasons. Use **Open related item** on a missing-input reason to
+   inspect its exact input step. Outputs declared to be produced upstream need
+   not exist beforehand. Readiness is not an engineering verdict.
 5. Start deliberately. Follow backend activity and actual tool contributions.
    Inspect outputs, findings and evidence. A declared human review/action/input
    persists waiting state until its exact response is accepted. Unattended

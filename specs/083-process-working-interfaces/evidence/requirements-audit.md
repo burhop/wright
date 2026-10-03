@@ -1,7 +1,8 @@
-# Full requirement audit — evidence index prepared, signoff pending
+# Full requirement audit — primary review in progress
 
 **Index checkpoint:** `5323a6d6`, with one documented route-parameter correction.
-**Runtime correction:** `910bd53b`; final semantic signoff remains pending.
+**Earlier runtime correction:** `910bd53b`; recovery checkpoint `f55c1eac`.
+**Current readiness batch:** two bounded owner corrections; full signoff pending.
 **Scope:** T056 in progress. No complete-goal or human acceptance claim.
 
 The current [182-obligation index](../../../artifacts/process-interfaces/083/20261003-requirement-evidence-index/README.md)
@@ -47,6 +48,24 @@ a trailing blank paragraph boundary. Both harness failures are retained, correct
 without altering requirements, and followed by a fresh derived index.
 
 ## Remaining T056 work
+
+The [primary readiness batch](../../../artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/README.md)
+now dispositions seven exact obligations: FR-003/004, SC-002, US1-AC1/AC2 and
+NEG-01/02. Its [semantic ledger](../../../artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/semantic-ledger.json)
+preserves all 182 original rows, explicit reviewed behaviors and evidence scope;
+175 rows await further review. The backend/storage assertions use actual canonical
+owners with controlled responses; navigation is verified at component/client
+scope. Separate live engineering and installed-workspace requirements retain
+their own evidence and are not proved by these counts.
+
+The review reproduced acceptance of different provider JSON types and absent
+navigation targets on missing-input reasons. Existing owners now compare
+canonical JSON and supply an exact block target. 188 backend and 178 component/
+client cases pass; a fresh detached wheel proves the corrected owners separately.
+First failures, including a navigation-disabled fixture assumption, are retained.
+Begin the next batch with FR-005/006/007, FR-014/019 and SC-003/005/006. Do not
+repeat readiness review or reopen completed fixes without contradictory evidence.
+T056 remains open until the remaining required obligations have dispositions.
 
 The primary-behavior review confirmed an EDGE-09 defect: both the operation
 monitor and an enclosing AI task used the short step deadline. A new explicit

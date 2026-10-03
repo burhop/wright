@@ -4,6 +4,16 @@
 **Current ledger:** **55 checked / 2 open**: T056 and T057.
 Task counts are not a percentage of completion.
 
+T056's [primary readiness audit](../../artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/README.md)
+now reviews FR-003/004, SC-002, US1-AC1/AC2 and NEG-01/02 against inspected
+behaviors. Its semantic ledger preserves all 182 obligations: seven proved in
+this batch, 175 awaiting further review. Two bounded existing-owner corrections
+preserve provider-choice JSON type identity and give missing-input reasons exact
+block links. 188 backend/storage/runtime and 178 component/client cases pass;
+counts overlap other runs. The fresh detached-wheel proof has its own hash and
+scope, and does not relabel older native/Docker or live engineering evidence.
+T056/T057 remain open; next review is runtime, declared interactions and recovery.
+
 T043's selected-provider qualification audit now passes: fresh selected installs,
 official protocol/schema discovery and actual production-gateway backend calls
 cover Blender geometry, independent offline slicing, OASiS and existing pinned

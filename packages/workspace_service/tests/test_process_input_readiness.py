@@ -170,6 +170,25 @@ async def test_missing_required_input_blocks_before_a_later_stage(tmp_path):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("missing_file_default", [False, True])
+async def test_missing_input_reason_targets_exact_accepted_block(
+    tmp_path, missing_file_default
+):
+    text = source(file="missing.md") if missing_file_default else source(later=True)
+    prepared = await prepare(tmp_path, text)
+    readiness = owner.input_readiness(prepared)
+    assert readiness.state == "blocked"
+    missing = next(
+        item for item in readiness.reasons
+        if item.code == "INPUT_REQUIRED" and item.binding_id == "brief"
+    )
+    assert missing.navigation is not None
+    assert missing.navigation.kind == "block"
+    assert missing.navigation.block_id == "brief"
+    assert not (tmp_path / "first.txt").exists()
+
+
+@pytest.mark.asyncio
 async def test_supplied_value_and_declared_upstream_output_are_ready(tmp_path):
     text = source(later=True)
     prepared = await prepare(
@@ -353,6 +372,64 @@ async def test_changed_provider_resource_or_expired_choice_cannot_pass(tmp_path)
         with pytest.raises(ProcessInterfaceError) as error:
             await prepare(tmp_path, text, (choice,), tool_runtime=runtime, now=now)
         assert error.value.reason.code == "OPTION_STALE"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "provider_value,supplied_value",
+    [(0, False), (1, True), ({"flag": 0}, {"flag": False}), ([1], [True])],
+)
+async def test_provider_choice_requires_exact_json_value_types(
+    tmp_path, provider_value, supplied_value
+):
+    runtime = OptionsRuntime()
+    runtime.options[0]["value"] = provider_value
+    metadata = {**option_metadata(), "value_schema": {}}
+    text = source(metadata=metadata)
+    prepared = await prepare(
+        tmp_path, text, tool_runtime=runtime, now="2026-09-30T12:00:00Z"
+    )
+    definition = prepared.definitions[0]
+    choice = OptionBinding(
+        input_id="brief",
+        option_id="material-a",
+        capability=definition.option_source,
+        value=supplied_value,
+        observed_at=definition.options_observed_at,
+        stale_after=definition.options_stale_after,
+    )
+    with pytest.raises(ProcessInterfaceError) as error:
+        await prepare(
+            tmp_path, text, (choice,), tool_runtime=runtime, now="2026-09-30T12:00:01Z"
+        )
+    assert error.value.reason.code == "OPTION_STALE"
+    assert runtime.calls == [("available_choices", {})] * 2
+    assert not (tmp_path / "first.txt").exists()
+
+
+@pytest.mark.asyncio
+async def test_provider_choice_object_key_order_does_not_change_identity(tmp_path):
+    runtime = OptionsRuntime()
+    runtime.options[0]["value"] = {"count": 0, "enabled": False}
+    metadata = {**option_metadata(), "value_schema": {"type": "object"}}
+    text = source(metadata=metadata)
+    prepared = await prepare(
+        tmp_path, text, tool_runtime=runtime, now="2026-09-30T12:00:00Z"
+    )
+    definition = prepared.definitions[0]
+    choice = OptionBinding(
+        input_id="brief",
+        option_id="material-a",
+        capability=definition.option_source,
+        value={"enabled": False, "count": 0},
+        observed_at=definition.options_observed_at,
+        stale_after=definition.options_stale_after,
+    )
+    selected = await prepare(
+        tmp_path, text, (choice,), tool_runtime=runtime, now="2026-09-30T12:00:01Z"
+    )
+    assert owner.input_readiness(selected).state == "ready"
+    assert selected.values == {"brief": {"enabled": False, "count": 0}}
 
 
 @pytest.mark.asyncio

@@ -19,6 +19,7 @@ from core.process_interactions import (
     InputDependency,
     InputSnapshot,
     InlineJSON,
+    NavigationTarget,
     ProcessRef,
     Readiness,
     Reason,
@@ -73,6 +74,9 @@ def _reason(code, message, correction, *, binding=None, step=None):
         correction=correction,
         binding_id=binding,
         step_id=step,
+        navigation=NavigationTarget(kind="block", block_id=step or binding)
+        if step or binding
+        else None,
     )
 
 

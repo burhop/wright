@@ -1,0 +1,13 @@
+{
+  "exit_code": 0,
+  "modules": 10,
+  "counts": {
+    "tests": 188,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "passed": 188
+  },
+  "scope": "Actual readiness/input/run/storage owners with controlled gateway/model responses.",
+  "live_model_mcp_engineering_hardware_or_user_acceptance": false
+}

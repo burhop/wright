@@ -33,6 +33,27 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest primary audit — seven readiness obligations reviewed
+
+Read the current primary audit at
+`artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/` and
+`evidence/requirements-audit.md`. Its semantic ledger retains all 182 obligations:
+FR-003/004, SC-002, US1-AC1/AC2 and NEG-01/02 have inspected primary behavior
+dispositions; 175 await further review. Do not restart this batch from the frozen
+preliminary index or infer other obligations from these passing cases.
+
+Two existing-owner corrections reject provider boolean/number JSON substitutions
+and put exact block navigation on missing-input reasons. The direct public start
+control blocks a missing later choice before model/gateway calls or a receipt/run.
+188 backend and 178 component/client cases pass, with preserved first failures,
+Ruff and a fresh isolated wheel functional proof. No production frontend change,
+fresh native/Docker browser acceptance, live provider/model call, protected review
+or hardware/supplier action is claimed. Older evidence retains its build scope.
+
+Next review FR-005/006/007, FR-014/019, SC-003/005/006 and their interaction/recovery
+obligations. Keep the full approved scope. T056/T057 remain open (55 checked);
+finish the remaining primary audit and final preservation/resource handoff.
+
 ### Latest continuation — EDGE-09 correction verified, final audit continues
 
 The runtime correction is committed as `910bd53b`. The subsequent recovery

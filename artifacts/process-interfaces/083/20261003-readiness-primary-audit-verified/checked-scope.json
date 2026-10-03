@@ -1,0 +1,51 @@
+{
+  "scope": "T056 primary readiness audit and two bounded existing-owner corrections",
+  "source_commit": "f55c1eacac44b1b57ae5519dff6db4bdb01ca16f",
+  "source_sha256": {
+    "packages/workspace_service/src/workspace_service/process_interfaces/options.py": "fb69c5173e0afc0c655d7ebf942548e1daf78b7bc086d8ccd16ff3fbe381267e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py": "d0f7468bbfe7979ab27ec4b88cbddcfd3f2317fa6aebcd610da62e9e086f8536",
+    "packages/workspace_service/src/workspace_service/process_interfaces/service.py": "025c6fdf339d23bb4a4ac7b97e3d3757bb728a5d528c6df4aca334028bd6585d",
+    "packages/workspace_service/src/workspace_service/process_interfaces/readiness.py": "d0746df74f4f072acb2753fb3d3d47d8998264c2e18b5d1deb5e97822906225e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/runs.py": "3c71ed98e00624079b5f4a040b165f3110ca5bdd9b1f9c408fdfc3278b035d33",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py": "0e29734066a3bdf0dc7652d2aeb7b17eaf6d56aa438430f54236f532ddd03c7c",
+    "packages/core/src/core/process_interactions.py": "609750acee7acb117c9864d179b1fd6b205f5881382f22e89e46a1d3bdbdd831",
+    "packages/data_vault/src/data_vault/process_input_repository.py": "c4a71836c5de22c5419cbfafe9f15ff2bc3b80a7a485db236c290546d5bb2a72",
+    "packages/workspace_service/tests/test_process_input_readiness.py": "64757198e7770a721307821fb9940b7ca959d2a1218a38685c94b24439af498f",
+    "packages/workspace_service/tests/test_process_preparation_service.py": "78e7b3ded4ad13879a34affada6e48cdc6168c5aa1ab97d2f4115452d4ef8298",
+    "packages/workspace_service/tests/test_process_input_execution_overlay.py": "e4c53cb180ef072ee4ac25b92edd90bc1d48afb99862af2795b52b2c46187848",
+    "packages/workspace_service/tests/test_process_input_mcp_values.py": "1c3aafeb353d78ec5a7b7afe8645a2b36e864fed8686a631a93f636732d3b9c6",
+    "packages/workspace_service/tests/test_process_human_input_source.py": "081a970091d8846773f50991a1f348869e55d6682a3fbafa1a90dc9f5adbce55",
+    "packages/workspace_service/tests/test_process_run_supervisor.py": "21360d5b2305a7b7aacc1970ec76150fc4d94f49ea1d65a7af175ec6c82dfcce",
+    "packages/workspace_service/tests/test_process_input_supervision.py": "61c622320a00263725ed91350f6171878d46e071dbbf90204f8d97701bed2b2e",
+    "packages/core/tests/test_process_interface_contracts.py": "7f8ca6f4cb8487bc683cf13b08eefbb6f06f8f467559a2575d30588688deed38",
+    "packages/data_vault/tests/test_process_interface_migrations.py": "479128494363d3108c7b159cc1767c4b007b30b5fed98ee12ea76112322b4965",
+    "packages/data_vault/tests/test_process_run_identity_queries.py": "638374c506991c200ea63452f7e680e164d080dbcee7356cf56f2bbce04db92e",
+    "apps/web/src/components/common/ProcessUIKit.spec.tsx": "1c30cf49ff180ac9ff7eabd128b94ec9b06cf7c7d6460cbaa4bc4933e381a212",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx": "3061333061b89cc9a737705fc2c87175279392363eb4a6228609db8780367583",
+    "apps/web/src/services/process-client.spec.ts": "6897c9367acb8cb2ff1c3053f0f424275d8ae538ee6dd7289093eeb692b293b3",
+    "apps/web/src/components/process-interfaces/CommonProcessView.tsx": "df6d648572918f3dd607b1771d38286e099e7b86a45d223d34e1d91c87580aa9",
+    "packages/ui_kit/src/patterns.tsx": "805adb0858a2194e0fc1ce0267646954b43282afad0f4451c5a472fe8f73c2b9"
+  },
+  "protected_file_hashes": {
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92",
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+  },
+  "retained_engineering_ui_files_unchanged": 550,
+  "backend_passed": 188,
+  "frontend_passed": 178,
+  "counts_overlap_do_not_sum": true,
+  "runtime_changes": [
+    "Canonical JSON equality for selected provider values.",
+    "Exact block navigation on required-input readiness reasons."
+  ],
+  "detached_wheel_sha256": "9751e7921f49fdf21141862a2dfc83cfefdcfa0c8de96fae34ce23004c97bd62",
+  "semantic_rows_proved": 7,
+  "semantic_rows_remaining": 175,
+  "live_model_mcp_engineering_hardware_supplier_or_protected_review_actions": false,
+  "T056_complete": false,
+  "T057_complete": false,
+  "goal_complete": false
+}

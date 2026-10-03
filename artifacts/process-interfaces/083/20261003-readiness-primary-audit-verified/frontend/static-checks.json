@@ -1,0 +1,28 @@
+{
+  "typescript": {
+    "argv": [
+      "node",
+      "D:/repos/wright/node_modules/typescript/bin/tsc",
+      "-b",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "D:/repos/wright/apps/web",
+    "exit_code": 0,
+    "log": "typescript.log"
+  },
+  "ruff": {
+    "argv": [
+      "D:/repos/wright/.venv/Scripts/ruff.exe",
+      "check",
+      "packages/workspace_service/src/workspace_service/process_interfaces/options.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py",
+      "packages/workspace_service/tests/test_process_input_readiness.py",
+      "packages/workspace_service/tests/test_process_preparation_service.py"
+    ],
+    "cwd": "D:/repos/wright",
+    "exit_code": 0,
+    "log": "../regression/ruff.log"
+  },
+  "scope": "Affected static checks; component/source hashes retained separately."
+}

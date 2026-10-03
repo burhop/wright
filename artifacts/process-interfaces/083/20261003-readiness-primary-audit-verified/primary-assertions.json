@@ -1,0 +1,161 @@
+{
+  "manual_body_and_owner_review": true,
+  "inspected_functions": [
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_overlay_has_exact_identity_and_does_not_rewrite_source",
+      "line": 218,
+      "end_line": 230,
+      "function_sha256": "fa52bf2f190f692c13e6e13f323a77b66363070109a04c7b1a237832f8f5daed"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_typed_value_schema_and_explicit_false_default",
+      "line": 234,
+      "end_line": 249,
+      "function_sha256": "1cc1f494a564d5a0afb1a8fe558d27285fc10f578f67173d9dd00d082635173c"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_provider_choice_requires_exact_json_value_types",
+      "line": 382,
+      "end_line": 407,
+      "function_sha256": "46ce3e4ff61144afb559dbee8f7765703296689f35beb971b5e88091d4a7e966"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_provider_choice_object_key_order_does_not_change_identity",
+      "line": 411,
+      "end_line": 432,
+      "function_sha256": "ca5ed71448bc69a8fded01de9206e34a696529607cc63569327ea87b3b0a6aaf"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_missing_input_reason_targets_exact_accepted_block",
+      "line": 174,
+      "end_line": 188,
+      "function_sha256": "68ed78093ff01ca98bed14ef82fe0391ecb17d83bf7b6f1870c6ba5c07947fb5"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_supplied_value_and_declared_upstream_output_are_ready",
+      "line": 192,
+      "end_line": 204,
+      "function_sha256": "64ef37c5feff015705aeb0a4e2343395fd9c0c6302543c6c24dd28e4cf3f0e2e"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_only_explicit_source_default_is_resolved",
+      "line": 208,
+      "end_line": 214,
+      "function_sha256": "5e5068bb128fdb2fcbd033d3fb48696d7d104b0477311c2c1d532027be555eba"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_file_reference_is_hashed_and_reread_without_path_as_contents",
+      "line": 478,
+      "end_line": 495,
+      "function_sha256": "9a61a0c8a924f7c3dad6bd53c00368bbc98514b6a9b191ab71f5a10a9dea5acd"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_required_consumer_cannot_be_weakened_by_optional_input_label",
+      "line": 467,
+      "end_line": 474,
+      "function_sha256": "820da9906e7032e2fc9de223321624113c7479a9a366aca5d30308669b1fe6c6"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_changed_provider_resource_or_expired_choice_cannot_pass",
+      "line": 352,
+      "end_line": 374,
+      "function_sha256": "287330e5062373600b667542ec3031aaa50c2794b21670f95c77cde238ecf29e"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_unknown_schema_or_graph_semantics_are_explicitly_unsupported",
+      "line": 507,
+      "end_line": 520,
+      "function_sha256": "57f971b1c1e319090a1d8bbf97f2bb23fffc870807c0dc2a531eaf73760bbeee"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_preparation_service.py",
+      "function": "test_set_inputs_persists_exact_values_without_source_edit_or_execution",
+      "line": 66,
+      "end_line": 87,
+      "function_sha256": "368a2ecb7f2c0040e33df0128a18ce9c8b9d7eafc2bf320cff85d7b83e590683"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_preparation_service.py",
+      "function": "test_missing_later_choice_blocks_public_start_before_any_dispatch",
+      "line": 91,
+      "end_line": 127,
+      "function_sha256": "a24f305eb614f7063a90eeb3da6b38f591993b1f57848c5a9af43d0f7f98b50e"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_preparation_service.py",
+      "function": "test_invalid_known_tool_value_blocks_readiness_without_effects",
+      "line": 200,
+      "end_line": 216,
+      "function_sha256": "bc29469341c1a8c108491b857b367f8f38afd66fac21bae76fdb16cae5e91be1"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_preparation_service.py",
+      "function": "test_predictable_tool_authority_is_checked_before_execution",
+      "line": 254,
+      "end_line": 287,
+      "function_sha256": "5f5663816fba7299c586315c570d8a94bf0dac9de108a4837e7941b82bd05297"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_execution_overlay.py",
+      "function": "test_existing_preparation_and_execution_use_overlay_and_same_run",
+      "line": 21,
+      "end_line": 60,
+      "function_sha256": "f05643cb2ab7db3d41055fa92dcc8c57063a4941c1e07195e725818224f61021"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_execution_overlay.py",
+      "function": "test_wrong_workspace_snapshot_rejects_before_tool_preflight",
+      "line": 99,
+      "end_line": 114,
+      "function_sha256": "8c55c1fe9dbda14a2b2cbd01f7733a9e898eae65fc1c0291266f2c12cd19cfc9"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_execution_overlay.py",
+      "function": "test_only_later_required_choice_blocks_before_first_generation",
+      "line": 138,
+      "end_line": 156,
+      "function_sha256": "d7de929ab524401cd54d33d59786e0ef946f861944b799d741627ef8a15d1f66"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_human_input_source.py",
+      "function": "test_readiness_distinguishes_planned_human_response_from_ordinary_production",
+      "line": 332,
+      "end_line": 351,
+      "function_sha256": "df772091bb80bab17171e6ab601292a6480ef8147efa5e953f5776ceb3a84726"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_supervision.py",
+      "function": "test_two_supervised_checkpoints_survive_reopen_and_duplicate_submissions",
+      "line": 341,
+      "end_line": 386,
+      "function_sha256": "ad0a886c2ecfa234cca42468c739a5ae106ef42e80693938817be19ecf7edf4d"
+    },
+    {
+      "file": "packages/data_vault/tests/test_process_interface_migrations.py",
+      "function": "test_snapshot_is_immutable_scoped_and_read_after_reopen",
+      "line": 211,
+      "end_line": 223,
+      "function_sha256": "ff493fbfff6d7981775b2e26d2679be584e7351a9be716cf4fc947ff542fabbb"
+    },
+    {
+      "file": "packages/core/tests/test_process_interface_contracts.py",
+      "function": "test_snapshot_changed_value_cannot_keep_digest",
+      "line": 83,
+      "end_line": 87,
+      "function_sha256": "e8e7640fa2c6a657e051015f51a9b9f674777b46c3eed38a1146b0b5f55505d3"
+    }
+  ],
+  "component_assertion": "The common view keeps Start disabled, supplies false without stringifying it, and invokes client.navigate with the exact blocked destination block. The host explicitly supports navigation.",
+  "method": "Disposition is based on the reviewed behaviors below, not function-name/route/family presence. AST hashes and passed case identities make the selected evidence reproducible."
+}

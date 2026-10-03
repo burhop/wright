@@ -1,0 +1,892 @@
+[
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards submits only the declared response and scopes the retained acknowledgement",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"workspace_id\":\"foreign\"}",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"checkpoint_id\":\"other\"}",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"subject_digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"request_id\":\"different-request\"}",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"value\":{\"selection\":\"a\"}}",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards does not automatically replay a response after a lost acknowledgement",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects invalid response IDs, subject and nonfinite values before transport",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards requires a discriminator in owning tagged input unions",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards uses the owning shared shapes and optional defaults",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects non-JSON values: NaN",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects non-JSON values: Infinity",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects non-JSON values: undefined",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects non-JSON values: Sat Oct 03 2026 14:15:39 GMT-0400 (Eastern Daylight Time)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects non-JSON values: () => 1",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects non-JSON values: { value: undefined }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects non-JSON values: \ud800",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects cycles, excessive depth, oversized inline values and accessors",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects incompatible closed/bounded contracts",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects incompatible closed/bounded contracts",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects incompatible closed/bounded contracts",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "public process contract guards rejects incompatible closed/bounded contracts",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client fixes host scope, uses host fetch, and reads without starting work",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client copies host scope so later caller mutation cannot redirect it",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client serializes only allowed fields, not caller actor/workspace authority",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client rejects injected binding fields before any mutation",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client rejects wrong reply scope: workspace",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client rejects wrong reply scope: source_path",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client rejects wrong reply scope: source_digest",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client rejects an attach response for another run",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client requires the exact input scope before start",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client starts explicitly with a caller-retained stable request and input digest",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client does not accept a mismatched start receipt: request_id",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client does not accept a mismatched start receipt: input_snapshot_id",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client does not accept a mismatched start receipt: input_digest",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client reports a lost start acknowledgement and never retries automatically",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client preserves a structured backend reason and recovery instruction",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client does not render arbitrary raw HTTP failures as user messages",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client cancellation is explicit and represents a request, not confirmed stop",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client pre-aborted submission never reaches the transport",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client a disconnected cancellation cannot be reported as a confirmed stop",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client checks readiness against the exact prepared input digest",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client passes only a validated exact navigation intent to the native host",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client rejects invalid action subjects and missing representation ownership without calls",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client acknowledges an exact authorized action without treating it as provider acceptance",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client records an exact review request and verifies its retained decision",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client does not retry a lost review acknowledgement or submit invalid changes",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "native process client rejects navigation replies that change the requested source or subject",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads reads passive toolpaths with the same source identity and an exact optional plate",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects an unsupported derived format envelope: { 'content-type': 'application/json', 'x-wright-view-format': 'wright.gcode.toolpaths.v1' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects an unsupported derived format envelope: { 'content-type': 'application/vnd.wright.toolpaths+json', 'x-wright-view-format': '' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects an unsupported derived format envelope: { 'content-type': 'application/vnd.wright.toolpaths+json', 'x-wright-view-format': 'wright.gcode.toolpaths.v2' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads uploads only the declared input and host source fields without execution",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unsupported input names before a request: ../one.txt",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unsupported input names before a request: .hidden",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unsupported input names before a request: bad\nname.txt",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unsupported input names before a request: bad%name.txt",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects empty or oversized inputs and another source's upload receipt",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads reads through the exact run and preparation owner without a generic file route",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'x-wright-artifact-sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'x-content-type-options': '' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': '104857601' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': '3' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': '5' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': 'invalid' }",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "scoped input upload and representation reads keeps HTML inert and preserves abort and owning errors",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation parses chunk boundaries and CRLF, then reads the terminal snapshot without mutations",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation reconnects using the last recorded cursor and reconciles without restarting",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation recovers a rejected cursor through a full snapshot and a fresh read attachment",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation bounds repeated connection failures",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation rejects wrong run events and oversized frames without mutation",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation closing an event observer releases it without cancelling the run",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation an abort releases a pending reader without sending cancellation",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation a server scope-reconciliation event stops reattachment and preserves the reason",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/services/process-client.spec.ts",
+    "name": "recorded event attachment and reconciliation does not accept a partial final SSE frame after disconnection",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority uses an explicit theme without private shell state",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority shows readable correction and keeps raw identifiers in details",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority requires both backend permission and an explicit handler for actions",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority shows missing readiness and declared later dependency distinctions",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority displays only observed progress and does not refresh stale measurements",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority does not fabricate percentage or a confirmed stop for cancellation requests",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority retains terminal historical progress without advertising a remaining time",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority expires observations while the view is quiet, without changing the observed timestamp",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority keeps failing exact assessments visible with navigation to their owner",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority shows declared review evidence without enabling an invented approval",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "public kit presentation and authority shows a retained test review without inventing dispatch authority",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls edits a prompt as a typed binding without executing the process",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls preserves explicit false and clears numeric values without inventing defaults",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls renders configured option identities and their actual capability provenance",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls does not guess missing provider option lists or unsupported schemas",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls renders a bounded structured field with declared units",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls shows a selected image while the host stores an exact file reference",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls shows a prepared file reference with an omitted default discriminator",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls preserves an explicit prepared zero with an omitted default discriminator",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "schema and provider-backed input controls shows an explicit default file before preparation without uploading it",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data accepts actual finite layer paths only for their matching package",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data keeps legacy absent classification evidence unknown",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data retains finite passive reader provenance without promoting acceptance",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data rejects invalid path coordinate NaN",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data rejects invalid path coordinate Infinity",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data rejects invalid path coordinate 10",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data rejects invalid path coordinate undefined",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded neutral toolpath data rejects malformed, empty, duplicate and excessive layer documents",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views keeps the recorded evidence identity distinct from its reported package",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (0)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (1)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (2)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (3)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (4)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (5)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (6)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (7)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects inconsistent nominal scope evidence (8)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views shows recorded neutral paths and their excluded machine scope without requesting another read",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views supports bounded recorded layer data beyond the ordinary text preview limit",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views retains the ordinary JSON text bound and refuses incomplete recorded provenance",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views requires the exact recorded file identity and reconciles a changed representation",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views reveals all true layers and the exact source evidence from a passive read",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views keeps numeric view axes as explicit choices over the exact table",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views refuses missing exact package identity and preserves download fallback",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views aborts a passive read on close and ignores late results",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views does not restart a pending passive read because a host callback identity changes",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views presents actionable findings without treating absent findings as approval",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views shows supplied scalar samples with actual ranges and explicit units",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views parses quoted CSV fields and Windows line endings as actual table data",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views paginates data instead of silently claiming that the first rows are the whole result",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views plots finite supplied data and labels the range and units",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views does not render HTML or SVG representations as executable content",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views shows exact assessment-sized JSON as inert text without the smaller prose limit",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects oversized application/json before reading bytes",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views rejects oversized text/plain before reading bytes",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "name": "bounded representation views releases thumbnails and never reuses a bitmap for a different blob",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls requires a changes reason and records only the declared exact review",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls keeps review approval separate from confirmed action submission and provider observations",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls reopens a lost response acknowledgement without replay, then explicitly reconciles the same intent",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls reopens a lost review acknowledgement without replay, then explicitly reconciles the same intent",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls reopens a lost action acknowledgement without replay, then explicitly reconciles the same intent",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls does not dispatch when request preservation is unavailable or the view is read-only (false)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls does not dispatch when request preservation is unavailable or the view is read-only (true)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority shows an undeclared-input diagnostic and exact correction without inventing a response form",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority renders only the declared form, submits its exact subject and follows the same run",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority keeps a lost acknowledgement's exact response frozen for explicit reconciliation",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority preserves declared form inspection without giving read-only views response authority",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority evaluates fresh observations at snapshot receipt without waiting for a clock tick",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority reads on mount without preparing, starting, reviewing or cancelling",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority checks the saved input overlay before the explicit start and records recovery before submission",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority invalidates readiness as soon as a prepared value is edited, without changing accepted source",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority preserves a supplied false value and explicitly reports downstream unresolved input",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority expires readiness while idle and requires a fresh assessment",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority does not start when backend permission or exact input subject is absent",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority contains late preparation replies when another process is opened",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority shows uploading progress and prevents preparation until selected files are ready",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority preserves usable read-only and missing-capability fallback",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime keeps exact-request recovery available even when the source read fails",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime blocks preparation rather than overwriting an unreadable recovery record",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime preserves another view's pending start when an older view edits its draft",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime does not overwrite a start that arrives while input preparation is in flight",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime cancels the explicit recorded run with a stable ID even when browser recovery is unavailable",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime does not adopt a cached receipt when an explicit different run is opened",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime blocks submission if the request identity cannot be preserved",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime retains the same start request through lost acknowledgement, close and explicit recovery",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime does not replay a start on double click or StrictMode attachment",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime persists an accepted receipt after closing while start is in flight",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime releases only the observer on close and reopens the exact existing run",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime shows cancellation as a request and preserves its identity on a repeat",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime reports a disconnected observer without guessing completion or restarting work",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime retains exact result, assessment, evidence and producer navigation",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime aborts a representation read on close without cancelling the process",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: false)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: true)",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime rejects foreign navigation without reading files or changing the run",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime shows only declared interactions and never submits an invented response",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime pages exact outputs and rejects a page from a changed snapshot",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage round-trips compact identities without user input values or credentials",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage isolates sessions, workspaces, source paths and accepted revisions",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage rejects malformed, oversized, changed-subject and foreign-run records",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage returns a visible failure if storage is unavailable or silently drops the record",
+    "passed": true
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage derives stable distinct identities for an immutable preparation and cancellation",
+    "passed": true
+  }
+]

@@ -856,6 +856,8 @@ describe("common process preparation and authority", () => {
           code: "INPUT_REQUIRED",
           message: "A later step needs a destination.",
           correction: "Configure the destination before starting.",
+          binding_id: "destination",
+          navigation: { kind: "block", block_id: "destination" },
         },
       ],
     } satisfies Readiness;
@@ -874,6 +876,7 @@ describe("common process preparation and authority", () => {
         client={client}
         sessionId="session"
         recoveryStore={store}
+        canNavigate
       />,
     );
     await screen.findByLabelText("Cooling enabled (required)");
@@ -888,6 +891,14 @@ describe("common process preparation and authority", () => {
     expect(
       screen.getByRole("button", { name: "Start process" }),
     ).toBeDisabled();
+    expect(client.start).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Open related item" }));
+    await waitFor(() =>
+      expect(client.navigate).toHaveBeenCalledWith({
+        kind: "block",
+        block_id: "destination",
+      }),
+    );
     expect(client.start).not.toHaveBeenCalled();
   });
   it("expires readiness while idle and requires a fresh assessment", async () => {

@@ -1,5 +1,38 @@
 # Feature 083 progress
 
+## Primary readiness audit — seven obligations reviewed, 3 October 2026
+
+Manual review of the exact readiness/input/storage owners and primary assertions
+dispositions FR-003/004, SC-002, US1-AC1/AC2 and NEG-01/02 at the documented
+bounded source-contract scope. A new semantic ledger retains all 182 original
+obligations: seven proved in this batch, 175 awaiting further review. It does not
+replace the frozen preliminary index or sign off broader stale-output, recovery,
+engineering, UI authoring or installed-workspace requirements by association.
+
+The review reproduced two required defects. Provider choice comparison accepted
+boolean/number substitutions, including nested values, because Python equality
+does not preserve JSON type identity. It now uses existing canonical JSON
+comparison. Missing-input reasons also lacked exact block navigation; they now
+supply the existing NavigationTarget. No production frontend or executor changes.
+The direct public start negative control makes zero model/gateway calls and
+creates no receipt/run/output when a later choice is omitted.
+
+188 controlled backend/runtime/storage and 178 component/client cases pass with
+zero skips/failures/errors; counts overlap earlier runs. The common view keeps
+Start disabled and sends the exact related block to its scoped navigation client.
+Its first fixture omitted the explicit navigation capability; that failure is
+retained and the fixture corrected. Ruff passes. A fresh local wheel passes an
+isolated import and actual input/option functional proof; it does not qualify a
+new native/Docker browser or live provider/model campaign. Earlier proof identities
+and failed setup/build attempts remain. 550 retained engineering/UI files and
+protected history match. No real review, engineering run, provider/model call or
+hardware/supplier action occurred. T056/T057 remain open (55 tasks checked).
+
+Continue at the ledger's runtime/interaction obligations, beginning FR-005/006/007,
+FR-014/019 and SC-003/005/006. Do not repeat the completed readiness batch solely
+to collect more evidence. Evidence:
+[primary readiness audit](../../artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/README.md).
+
 ## Recovery assertions strengthened after owner recreation — 3 October 2026
 
 The bounded-operation correction is committed locally as `910bd53b`: 39 owned

@@ -17,7 +17,13 @@ from core.process_interactions import (
     checked_json,
     validate_response,
 )
-from core.process_validation import Contract, Digest, Identifier, canonical_digest
+from core.process_validation import (
+    Contract,
+    Digest,
+    Identifier,
+    canonical_digest,
+    canonical_json,
+)
 from core.redaction import redact_text
 
 from ..workflow_source_execution import PromptStep, WorkflowSourceExecutionError
@@ -220,7 +226,7 @@ def verify_option(binding: OptionBinding, catalog: OptionCatalog):
     if (
         binding.capability != catalog.capability
         or selected is None
-        or selected.value != binding.value
+        or canonical_json(selected.value) != canonical_json(binding.value)
         or observed > current
         or (current - observed).total_seconds() > catalog.freshness_seconds
         or expires is None

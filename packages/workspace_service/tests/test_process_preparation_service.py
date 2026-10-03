@@ -88,6 +88,46 @@ async def test_set_inputs_persists_exact_values_without_source_edit_or_execution
 
 
 @pytest.mark.asyncio
+async def test_missing_later_choice_blocks_public_start_before_any_dispatch(tmp_path):
+    text = source(later=True, late_root=True, required=False)
+    app = owner(tmp_path, text)
+    prepared = await app.set_inputs(scope(), process(text))
+    readiness = await app.check_readiness(
+        scope(), process(text), prepared.snapshot.snapshot_id
+    )
+    assert readiness.state == "blocked"
+    assert readiness.dependencies[0].binding_id == "brief"
+    assert readiness.dependencies[0].classification == "unresolved"
+    calls = []
+
+    async def must_not_execute(*args, **kwargs):
+        calls.append("model")
+        raise AssertionError("A missing later choice must block before any model work")
+
+    def must_not_connect():
+        calls.append("gateway")
+        raise AssertionError("A missing later choice must block before any tool work")
+
+    try:
+        with pytest.raises(ProcessInterfaceError) as denied:
+            await app.runs.start(
+                scope(), process(text), prepared.snapshot.snapshot_id,
+                "missing-later-choice", expected_input_digest=prepared.snapshot.digest,
+                response_generator=must_not_execute, gateway=must_not_connect,
+            )
+        assert denied.value.reason.code == "INPUT_REQUIRED"
+        assert calls == []
+        assert app.runs._owned == {}
+        with pytest.raises(KeyError):
+            app.inputs.start_receipt("user", process(text), "missing-later-choice")
+        assert not (tmp_path / "runs").exists()
+        assert not (tmp_path / "first.txt").exists()
+        assert not (tmp_path / "later.txt").exists()
+    finally:
+        await app.close()
+
+
+@pytest.mark.asyncio
 async def test_read_only_default_view_and_missing_input_reasons(tmp_path):
     text = source(later=True)
     app = owner(tmp_path, text)
