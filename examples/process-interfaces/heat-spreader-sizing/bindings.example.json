@@ -3,5 +3,6 @@
   "files_server": "wright-workspace-files",
   "solver_server": "your-enabled-solver-server",
   "cad_project": "ABSOLUTE_PATH_TO_FRESH_WORKSPACE_CAD_PROJECT",
-  "solver_workspace": "/workspace"
+  "solver_workspace": "/workspace",
+  "run_path_template": "wright.run-path/1"
 }

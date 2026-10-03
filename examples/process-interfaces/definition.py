@@ -12,6 +12,7 @@ from workspace_service.workflow_source_execution import (
     compile_prompt_workflow,
     validate_workspace_authoring_shape,
 )
+from workspace_service.workflow_run_paths import VERSION as RUN_PATH_VERSION, TOKEN as RUN_PATH_TOKEN
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -39,7 +40,9 @@ def port(key, kind="engineering_document"):
 
 
 class Definition:
-    def __init__(self, template, workspace, attempt, tools):
+    def __init__(self, template, workspace, attempt, tools, *, run_path_template=""):
+        if run_path_template not in ("", RUN_PATH_VERSION):
+            raise ValueError("Use the supported explicit run-path template version")
         if not re.fullmatch(r"[a-z][a-z0-9-]{0,63}", attempt):
             raise ValueError("Use a bounded lowercase attempt identifier")
         self.workspace = Path(workspace).resolve(strict=True)
@@ -51,7 +54,9 @@ class Definition:
             raise ValueError(
                 "Choose a fresh attempt; existing proof bytes are retained"
             )
-        self.output = self.relative + "/outputs"
+        self.run_path_template = run_path_template
+        self.output_root = self.relative + "/outputs"
+        self.output = self.output_root + ("/" + RUN_PATH_TOKEN if run_path_template else "")
         self.input_root = self.relative + "/inputs"
         self.suffix = attempt.replace("-", "_")
         self.tools = tools
@@ -67,7 +72,7 @@ class Definition:
         self.staged = []
         self.used_tools = {}
         self.root.mkdir(parents=True)
-        (self.workspace / self.output).mkdir()
+        (self.workspace / self.output_root).mkdir()
 
     def original(self, name):
         matches = [
@@ -98,8 +103,13 @@ class Definition:
         return value
 
     def input_bytes(
-        self, name, data, *, original=None, kind="engineering_document", title=None
+        self, name, data, *, original=None, kind="engineering_document", title=None,
+        run_paths=False,
     ):
+        if type(run_paths) is not bool or (run_paths and not self.run_path_template):
+            raise ValueError("Declare the supported run-path version before templating configuration text")
+        if run_paths and kind != "engineering_document":
+            raise ValueError("Only explicit configuration text can be a run-path template")
         relative = self.input_root + "/" + name
         write_new(self.workspace / relative, data)
         self.staged.append(dict(path=relative, sha256=sha(data), original=original))
@@ -118,7 +128,8 @@ class Definition:
                 inputs=[],
                 outputs=[port(identity + "_out", kind)],
                 instructions="Preserve exact supplied bytes and their stated scope.",
-                settings={"input_mode": "workspace-file", "workspace_file": relative},
+                settings={"input_mode": "workspace-file", "workspace_file": relative,
+                          **({"run_path_template": self.run_path_template} if run_paths else {})},
                 tool=None,
                 reusable_step=None,
             ),
@@ -197,6 +208,7 @@ class Definition:
             save_output=True,
             output_filename=self.output + "/" + filename,
             file_policy="overwrite",
+            **({"run_path_template": self.run_path_template} if self.run_path_template else {}),
         )
         if server:
             fields["settings"].update(
@@ -231,6 +243,7 @@ class Definition:
             output_filename=self.output + "/" + filename,
             file_policy="overwrite",
             expected_files="\n".join(self.output + "/" + item for item in expected),
+            **({"run_path_template": self.run_path_template} if self.run_path_template else {}),
         )
 
     def review(self, step, subject, *, profile=None):
@@ -374,7 +387,9 @@ class Definition:
             source_sha256=sha(source.encode()),
             template_source_sha256=sha(self.template_bytes),
             input_files=self.staged,
-            output_root=self.output,
+            output_root=self.output_root,
+            **({"run_path_template": self.run_path_template, "output_template": self.output}
+               if self.run_path_template else {}),
             tool_allowlist=list(self.used_tools.values()),
             step_count=len(plan.steps),
             physical_dispatch=False,

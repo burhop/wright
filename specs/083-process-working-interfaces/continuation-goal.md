@@ -33,6 +33,27 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest continuation — Heat preparation adopts explicit run paths
+
+Shared runtime correction is saved as `105f98fd`. The neutral Definition helper
+and fresh Heat example bindings now support the explicit version; only generated
+CAD/solver configuration text is templated. Saved/expected paths, CAD output names
+and solver job names vary by run ID. Original assignment, numerical source,
+profile and review requirements remain unchanged. Controlled combined checks pass
+**85 tests / zero skips / 5.04 seconds**, including five new preparation cases;
+Ruff passes three files. Public proof is
+`artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/`.
+
+Next revalidate owned model/provider services and their leases. Use a fresh
+isolated Heat project/source, normal source acceptance and exact enrollment to
+qualify native project history/ownership, actual repeat-run outputs and source/UI
+compatibility. The older API process does not establish current backend code.
+Also adopt run paths in printed preparation with explicit qualified recipes and
+every provider-write boundary; do not heuristically rewrite vendor code. Preserve
+protected reviews and first-run evidence. Finish migration and the remaining
+authoring/editor/regression/audit tasks. Counts remain 47 checked / 10 open; actual
+native repeat-run and saved-UI reuse are still unproved by preparation fixtures.
+
 ### Current continuation — run-path contract and controlled runtime verified
 
 The shared run-path change now has 29 new parameterized cases and **237 passing

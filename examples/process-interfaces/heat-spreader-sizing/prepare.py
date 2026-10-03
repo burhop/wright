@@ -62,7 +62,10 @@ def prepare(workspace, attempt, tools, bindings):
                     + "/"
                     + name
                 )
-    flow = definition.Definition("heat-spreader-sizing", workspace, attempt, tools)
+    flow = definition.Definition(
+        "heat-spreader-sizing", workspace, attempt, tools,
+        run_path_template=bindings.get("run_path_template", ""),
+    )
     for server, names in [
         (cad, ("context", "docs", "run", "measure")),
         (files, ("write_text_document", "inspect_file")),
@@ -169,7 +172,7 @@ def prepare(workspace, attempt, tools, bindings):
     geometry = flow.original("create_plate_geometry")
     arguments = dict(
         script=str(source_path),
-        output="plates",
+        output="plates" + ("_" + definition.RUN_PATH_TOKEN if flow.run_path_template else ""),
         cwd=str(project),
         build_dir="build",
         preview=False,
@@ -177,7 +180,8 @@ def prepare(workspace, attempt, tools, bindings):
         diff=False,
     )
     cad_call = flow.input_bytes(
-        "cad-call.json", (json.dumps(arguments, indent=2) + "\n").encode()
+        "cad-call.json", (json.dumps(arguments, indent=2) + "\n").encode(),
+        run_paths=bool(flow.run_path_template),
     )
     argument_port = flow.reference(cad_call, geometry, "exact_arguments")
     flow.exact_mcp(
@@ -239,7 +243,8 @@ def prepare(workspace, attempt, tools, bindings):
         critic_approved=False,
     )
     solver_call = flow.input_bytes(
-        "solver-call.json", (json.dumps(solver_arguments, indent=2) + "\n").encode()
+        "solver-call.json", (json.dumps(solver_arguments, indent=2) + "\n").encode(),
+        run_paths=bool(flow.run_path_template),
     )
     solve = flow.stage(
         "compute_fields", "Compute coarse and refined temperature fields"

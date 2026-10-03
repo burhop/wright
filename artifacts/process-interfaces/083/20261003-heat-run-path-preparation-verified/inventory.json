@@ -1,0 +1,29 @@
+{
+  "files": {
+    "checked-scope.json": {
+      "bytes": 1299,
+      "sha256": "c9777f3690078aafe461f09600e95ea0d27b2c490968dbb757dd0bd2a11dcd36"
+    },
+    "preservation.json": {
+      "bytes": 1420,
+      "sha256": "605629cea1234cb6eaac3463687bd0b9462c9c8af6b60dc5541a6bd03e6ff411"
+    },
+    "README.md": {
+      "bytes": 3058,
+      "sha256": "0c3aa759d80a1f6bc3dc3bf1ad540d0e9eda3f29eef5531f5c3ad554ad0e0748"
+    },
+    "results.xml": {
+      "bytes": 21881,
+      "sha256": "5cd1a0a0cc91fe8f784c0f710ccfaf4cb4d01cbe1c2855a7fa17757c9b1f7673"
+    },
+    "ruff.log": {
+      "bytes": 20,
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "tests.log": {
+      "bytes": 182,
+      "sha256": "02e3139cdfd7d0f8796bcc3e28e545c2b206b7f3f85528fe5f984e92e26298ce"
+    }
+  },
+  "credential_value_scan": "passed"
+}

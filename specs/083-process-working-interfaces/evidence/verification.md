@@ -192,3 +192,12 @@ campaign/context and unrelated prototype byte checks pass. No live model/provide
 browser or current installed-build behavior is established here. Example adoption,
 UI compatibility and actual engineering repeat-run evidence remain open; neither
 T047 nor T053 is closed by these controlled checks.
+
+The following Heat configuration adoption passes 85 combined example/operator/
+canonical run-path checks with zero skips and three-file Ruff checks. Five new
+preparation cases preserve assignment/profile bytes, distinguish provider job/
+output names, bind all saved/expected handoffs for two IDs and reject opaque or
+unsupported declarations. This overlaps the runtime suite above. See the
+[Heat preparation record](../../../artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/README.md).
+No actual native repeat-run or UI compatibility acceptance is established; T047
+and T053 remain open.

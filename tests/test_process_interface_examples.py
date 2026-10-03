@@ -173,6 +173,97 @@ def test_existing_attempt_is_preserved(configuration):
     assert source.read_bytes() == original
 
 
+def test_heat_run_paths_bind_geometry_and_solver_without_changing_requirements(configuration):
+    from workspace_service.workflow_references import WorkflowReference
+    from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths, bind_run_input_values, reserve_run_paths
+
+    workspace, _, bindings, tools = configuration
+    bindings["run_path_template"] = VERSION
+    report = heat_preparer().prepare(workspace, "repeatable", tools, bindings)
+    proposal = workspace / report["source_path"]
+    source_bytes = proposal.read_bytes()
+    plan = compile_prompt_workflow(source_bytes.decode())
+    assert report["run_path_template"] == VERSION
+    assert report["output_template"] == report["output_root"] + "/" + TOKEN
+    assert not list((workspace / report["output_root"]).iterdir())
+    assert not (workspace / report["accepted_source_path"]).exists()
+    assert len(plan.steps) == 10
+    for item in report["input_files"]:
+        if item["original"]:
+            assert (workspace / item["path"]).read_bytes() == (REPO / item["original"]).read_bytes()
+    configured = {
+        key: WorkflowReference.from_bytes(
+            fields["settings"]["workspace_file"],
+            (workspace / fields["settings"]["workspace_file"]).read_bytes(), image=False,
+        )
+        for key, fields in plan.inputs.items()
+        if fields["settings"].get("run_path_template")
+    }
+    assert len(configured) == 2
+    original_templates = {value.path: (workspace / value.path).read_bytes() for value in configured.values()}
+    first = workspace / report["output_root"] / "heat-one" / "retained.txt"
+    for run_id in ("heat-one", "heat-two"):
+        bound = bind_run_paths(plan, run_id)
+        values = bind_run_input_values(bound, configured)
+        assert bound.run_path_roots == (report["output_root"] + "/" + run_id,)
+        assert {step.id for step in bound.steps} == {step.id for step in plan.steps}
+        for step in bound.steps:
+            if step.save:
+                assert step.output_path.startswith(report["output_root"] + "/" + run_id + "/")
+            assert TOKEN not in step.prompt
+            assert all(TOKEN not in path for path in step.expected_files)
+            assert all(TOKEN not in path for path in step.file_dependencies.values())
+        operations = {Path(value.path).name: json.loads(value.text) for value in values.values()}
+        assert operations["cad-call.json"]["output"] == "plates_" + run_id
+        assert run_id in operations["cad-call.json"]["script"]
+        solver = operations["solver-call.json"]
+        assert solver["job_name"] == "/workspace/" + report["output_root"] + "/" + run_id
+        assert run_id in solver["input_content"] and TOKEN not in solver["input_content"]
+        assert solver["critic_approved"] is False
+        reserve_run_paths(bound, str(workspace), run_id)
+        if run_id == "heat-one":
+            first.write_bytes(b"first exact output")
+        else:
+            assert first.read_bytes() == b"first exact output"
+    assert first.read_bytes() == b"first exact output"
+    assert proposal.read_bytes() == source_bytes
+    assert all((workspace / path).read_bytes() == raw for path, raw in original_templates.items())
+    validation = next(step for step in plan.steps if step.validation)
+    profile = ValidatorConfiguration.model_validate(validation.validation).load(str(workspace))
+    assert len(profile.checks) == 26
+    assert '"max_revisions":0' in source_bytes.decode()
+
+
+def test_unsupported_run_path_version_blocks_before_staging(configuration):
+    workspace, _, bindings, tools = configuration
+    bindings["run_path_template"] = "unsupported/2"
+    with pytest.raises(ValueError, match="supported explicit"):
+        heat_preparer().prepare(workspace, "wrong-path-version", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+@pytest.mark.parametrize("kind", ["workspace_file", "reference_images"])
+def test_example_templates_cannot_relabel_opaque_inputs(configuration, kind):
+    from workspace_service.workflow_run_paths import VERSION
+
+    workspace, _, _, tools = configuration
+    module = heat_preparer()
+    flow = module.definition.Definition(
+        "heat-spreader-sizing", workspace, "opaque-template", tools,
+        run_path_template=VERSION,
+    )
+    with pytest.raises(ValueError, match="configuration text"):
+        flow.input_bytes("opaque.bin", b"\x00original bytes", kind=kind, run_paths=True)
+    assert not (workspace / flow.input_root / "opaque.bin").exists()
+
+
+def test_published_heat_bindings_explicitly_select_run_path_version():
+    from workspace_service.workflow_run_paths import VERSION
+
+    bindings = json.loads((REPO / "examples/process-interfaces/heat-spreader-sizing/bindings.example.json").read_bytes())
+    assert bindings["run_path_template"] == VERSION
+
+
 @pytest.mark.parametrize("mount", ["relative", "/workspace/../other"])
 def test_bad_solver_mount_blocks_before_staging(configuration, mount):
     workspace, _, bindings, tools = configuration

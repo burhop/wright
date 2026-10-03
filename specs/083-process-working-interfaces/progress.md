@@ -2174,3 +2174,23 @@ example configurations with explicit provider-write boundaries, normal source/UI
 compatibility and actual saved-interface repeat-run proofs. No protected review,
 uncertain simulator replay, physical effect, push, merge or release occurred.
 Previously recorded services require revalidation before use.
+
+The shared runtime proof and contract are committed locally as `105f98fd`.
+All 23 staged files matched the eight-file evidence inventory and credential-value
+scan; no unrelated path was staged. A subsequent bounded configuration change
+adds the explicit version to fresh Heat bindings through the existing neutral
+Definition helper. Only generated CAD/solver configuration inputs are templated;
+saved/expected exports, CAD output names and solver job names vary by run ID.
+Original assignments, numerical source, full 26-check profile, ten stages,
+critic=false and zero revision budget remain intact. The output manifest separates
+the fixed boundary from the run-path template; preparation creates no run folders.
+
+Five new preparation checks plus existing example/operator/canonical run-path
+checks pass **85 tests / zero skips / 5.04 seconds**. Ruff passes three owning
+files. Counts overlap prior verification. Fresh preservation checks pass and
+scoped evidence is under 20261003-heat-run-path-preparation-verified. This does not
+qualify native shared-project history/concurrency, actual repeat execution,
+accepted-source/UI compatibility or saved-interface reuse. Next use fresh
+isolated providers/subjects for those proofs and deliberately adopt printed
+configuration recipes. Counts remain 47 checked / 10 open; no protected reviews
+or physical/external effects occurred and live services remain unverified here.

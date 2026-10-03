@@ -62,6 +62,31 @@ UI authoring control to compose a tailored comparison view from the same contrac
 Any isolated synthetic reviewer policy must be separately enrolled by trusted
 test management for this exact source; preparation creates no such authority.
 
+## Prepare separate output paths for later runs
+
+The example bindings now explicitly select `"run_path_template":
+"wright.run-path/1"`. New preparation declares run-scoped outputs under
+`process-proofs/heat-spreader-sizing/<attempt>/outputs/{{wright.run_id}}`.
+Only the generated CAD/solver configuration inputs are text templates; original
+assignments, images, requirements, numerical source and validation profiles retain
+their exact bytes. CAD output names and solver job names also include the run ID.
+The manifest distinguishes the output boundary from its run-path template.
+Preparation creates the empty boundary, never a run directory or an engineering
+operation. Older bindings without this field retain their earlier behavior.
+
+Accept this new proposal normally and check/update a saved UI's compatibility
+through Wright. Later runs of the same accepted source can share that saved UI;
+do not regenerate the interface for each run. Each run still reaches its declared
+basis and final reviews. No existing pending review is migrated or answered by
+preparation. An unattended configured section cannot invent another question.
+
+This configuration has controlled preparation/binding tests; actual repeated
+CAD/solver execution and saved-UI acceptance are still unverified. The native
+project/build remains a shared provider resource. Qualify its history behavior
+and serialize access through its supported ownership mechanism; separate export
+paths alone do not prove safe concurrent native operations. Do not reuse this
+option as permission to overwrite retained engineering files or bypass reviews.
+
 ## Present the job through Wright
 
 Compose the tailored interface from the public client/UI kit:

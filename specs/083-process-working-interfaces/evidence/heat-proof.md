@@ -1,5 +1,19 @@
 # Heat-spreader proof progress
 
+## Current run-path preparation — 3 October 2026
+
+Fresh Heat configurations can declare `wright.run-path/1` through the existing
+example preparer. Generated CAD/solver argument text and saved/expected paths
+bind to the run ID; native output and solver job names also differ between runs.
+Original inputs, numerical procedure, full profile and declared reviews remain
+unchanged. The combined controlled example/operator/runtime suite passes 85
+cases, no skips, and Ruff passes. See the
+[scoped preparation proof](../../../../artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/README.md).
+Native project history/ownership, fresh source acceptance, actual repeated
+CAD/solver work, UI compatibility and saved-interface reuse are not proved by
+this configuration test. Retained reviews remain unanswered and T047 stays open.
+The earlier live evidence below applies to its recorded source/build only.
+
 **Status:** actual CAD/solver chain, original validation and common-workspace
 result inspection proved; complete tailored-interface proof pending.
 **Checkpoint:** 2 October 2026 UTC.
