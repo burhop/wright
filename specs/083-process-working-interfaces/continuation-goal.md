@@ -35,6 +35,13 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ### Latest continuation — EDGE-09 correction verified, final audit continues
 
+The runtime correction is committed as `910bd53b`. The subsequent recovery
+review strengthened previously indirect “restart” evidence: actual persisted
+owners now reopen for completed and unknown-action/input retries, with 67 passing
+checks and unchanged unknown records. Read recovery-owner-reopen-verified for
+exact source/assertion scope. It does not prove OS power-loss durability or every
+part of the related broad obligations. Preserve both sets of evidence.
+
 The audit confirmed and corrected the short observation/enclosing-task deadlines.
 The existing runtime now supports an explicitly finite observation budget,
 retains short model/tool calls and restores only remaining AI decision time.

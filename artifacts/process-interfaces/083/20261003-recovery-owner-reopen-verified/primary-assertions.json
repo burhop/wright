@@ -1,0 +1,45 @@
+{
+  "inspected_functions": [
+    {
+      "source": "packages/workspace_service/tests/test_process_interface_continuation.py",
+      "function": "test_interrupted_input_continuation_blocks_replay_of_uncertain_segment",
+      "line": 584,
+      "end_line": 654,
+      "source_segment_sha256": "666c58166bb4b5bfad22e3dce433e0ea9d1c2ac10eb84614aa9f541539c5dfd5"
+    },
+    {
+      "source": "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "function": "test_auto_resume_and_restart_retry_complete_same_run_without_replay",
+      "line": 465,
+      "end_line": 508,
+      "source_segment_sha256": "86004447bff6def971ab4eadf8cc556b1d1b4c5faa637be541f82f0ec31eb281"
+    },
+    {
+      "source": "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "function": "test_failed_continuation_has_unknown_mutation_protection_on_retry",
+      "line": 563,
+      "end_line": 576,
+      "source_segment_sha256": "2abeef11f419e3eb00b6d985abd1c525dd6db704af26f4dbd720b013356e2a2f"
+    },
+    {
+      "source": "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "function": "test_uncertain_handoff_is_never_dispatched_again",
+      "line": 580,
+      "end_line": 610,
+      "source_segment_sha256": "0c69709341cbd5704f9bc5fd29116ac72e4ae695e142c1747a862b54274a2ef8"
+    }
+  ],
+  "primary_behaviors": [
+    "Unknown input continuation recreates the service/SQLite owner, restores the consumed checkpoint, refuses replay and preserves original run-log bytes.",
+    "Completed approved action recreates file/action/policy owners and reconstructs its checkpoint; same-run cached result returns with no repeated dispatch/model call.",
+    "Failed post-approval segment refuses replay after recreated ownership.",
+    "Unknown enrolled digital handoff remains unknown with fresh file/action/policy owners and no injected failure; no receipt or repeated dispatch is permitted."
+  ],
+  "supporting_obligations": [
+    "EDGE-04",
+    "NEG-05",
+    "NEG-07",
+    "NEG-08"
+  ],
+  "not_automatic_full_obligation_signoff": true
+}

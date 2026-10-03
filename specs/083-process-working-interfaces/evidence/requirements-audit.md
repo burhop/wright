@@ -1,6 +1,7 @@
 # Full requirement audit — evidence index prepared, signoff pending
 
-**Checkpoint:** `5323a6d6`, with one documented route-parameter correction.
+**Index checkpoint:** `5323a6d6`, with one documented route-parameter correction.
+**Runtime correction:** `910bd53b`; final semantic signoff remains pending.
 **Scope:** T056 in progress. No complete-goal or human acceptance claim.
 
 The current [182-obligation index](../../../artifacts/process-interfaces/083/20261003-requirement-evidence-index/README.md)
@@ -58,6 +59,16 @@ checks across 22 modules and a fresh detached-wheel import proof. No multi-hour
 physical operation, live provider/model call, native browser reacceptance or human
 acceptance is claimed. See the
 [bounded-operation evidence](../../../artifacts/process-interfaces/083/20261003-multihour-operation-budget-verified/README.md).
+
+The recovery review also found that an approval test's “restart” request name
+did not recreate its backend owner. Strengthened input, completed-action,
+failed-segment and unknown-handoff cases now reopen actual persisted service
+owners. 67 cases pass; exact checkpoint/subject/run identity and refusal to
+replay survive recreation, with unknown records byte-identical. This supports
+the inspected EDGE-04/NEG-05/07/08 assertions at controlled-owner scope. It does
+not sign off every assertion in those broad obligations or prove OS power-loss
+durability/live-provider restart. See
+[owner-recreation evidence](../../../artifacts/process-interfaces/083/20261003-recovery-owner-reopen-verified/README.md).
 
 Review each primary assertion and exact real evidence at the obligation's scope.
 Family membership, paths, digests and green counts cannot substitute for that

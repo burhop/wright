@@ -329,6 +329,26 @@ async def setup_case(
     )
 
 
+def reopen_case(case):
+    """Recreate persisted owners without enrolling or dispatching anything."""
+    previous = case.services
+    reopened = service(case.root)
+    reopened.workflow_integration_policies = WorkflowIntegrationPolicyService(
+        str(case.root / "policy.db"), enabled=True
+    )
+
+    async def read(workspace_dir, path):
+        raw = (case.root / path).read_bytes()
+        return SimpleNamespace(source=raw.decode(), storage_digest=digest(raw))
+
+    reopened.workflow_sources = SimpleNamespace(read=read)
+    checkpoint = reopened.workflow_external_actions.lookup(case.checkpoint.checkpoint_id)
+    assert reopened.workflow_external_actions is not previous.workflow_external_actions
+    assert checkpoint.subject_digest == case.checkpoint.subject_digest
+    case.services = reopened
+    case.args = {**case.args, "service": reopened, "checkpoint": checkpoint}
+
+
 @pytest.mark.asyncio
 async def test_first_simulated_handoff_seals_exact_supplied_binary_without_generation(
     tmp_path,
@@ -461,6 +481,7 @@ async def test_auto_resume_and_restart_retry_complete_same_run_without_replay(
     assert result["run_id"] == case.result["run_id"]
     assert checkpoint.external_action["outcome"] == "dispatched"
     assert len(case.calls) == 2
+    reopen_case(case)
     _, repeated = await resume_workflow_approval(
         **case.args, request_id="resume-after-restart", response_generator=case.generate
     )
@@ -547,6 +568,7 @@ async def test_failed_continuation_has_unknown_mutation_protection_on_retry(tmp_
             **case.args, request_id="resume", response_generator=case.generate
         )
     assert len(case.calls) == 2
+    reopen_case(case)
     with pytest.raises(WorkflowSourceExecutionError, match="cannot be replayed"):
         await resume_workflow_approval(
             **case.args, request_id="resume-retry", response_generator=case.generate
@@ -574,13 +596,18 @@ async def test_uncertain_handoff_is_never_dispatched_again(tmp_path):
         case.checkpoint.checkpoint_id
     )
     assert checkpoint.external_action["outcome"] == "outcome_unknown"
-    case.services.files.write_generated = write
+    # Fresh owners no longer have the injected receipt failure. The durable
+    # unknown action must still prevent dispatch after backend recreation.
+    original_record = (tmp_path / case.result["run_log_path"]).read_bytes()
+    reopen_case(case)
+    assert case.args["checkpoint"].external_action["outcome"] == "outcome_unknown"
     with pytest.raises(WorkflowSourceExecutionError, match="no confirmed"):
         await resume_workflow_approval(
             **case.args, request_id="retry", response_generator=case.generate
         )
     assert not (tmp_path / "outputs/attempt/receipt.json").exists()
     assert len(case.calls) == 1
+    assert (tmp_path / case.result["run_log_path"]).read_bytes() == original_record
 
 
 @pytest.mark.asyncio

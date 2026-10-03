@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "D:/repos/wright/.venv/Scripts/python.exe",
+    "-m",
+    "pytest",
+    "packages/workspace_service/tests/test_process_interface_continuation.py",
+    "packages/workspace_service/tests/test_process_input_supervision.py",
+    "packages/workspace_service/tests/test_workflow_approval_execution.py",
+    "-q",
+    "--basetemp=.pytest-tmp/t056-reopen-unknown-003",
+    "-p",
+    "no:cacheprovider",
+    "--junitxml=.local-run/process-interfaces-083/t056-observation-budget-001/reopen-regression-003.xml"
+  ],
+  "cwd": "D:/repos/wright",
+  "source_sha256": {
+    "packages/workspace_service/tests/test_process_interface_continuation.py": "9b9814397e73239710d3fb35c283e314cb995415ebd43e7de56992029b12ed2f",
+    "packages/workspace_service/tests/test_process_input_supervision.py": "61c622320a00263725ed91350f6171878d46e071dbbf90204f8d97701bed2b2e",
+    "packages/workspace_service/tests/test_workflow_approval_execution.py": "c6085a78cb5d836fb66c66e0ded4acd8dbc91191ff17923795e7957a10b1d967",
+    "packages/workspace_service/src/workspace_service/workflow_run_record.py": "2e5870bdb56422802a0a650d23b5501292eb3d8a3d89d4522e6e88253bf86cc9",
+    "packages/workspace_service/src/workspace_service/workflow_approval_execution.py": "49a7832c6232710b6c8041364e07e58777f2f7408d6b0f08640b84f07a451079",
+    "packages/workspace_service/src/workspace_service/workflow_external_actions.py": "e5c68454deadc6707e92c08704319dc996cd53509c1e54540bbd993efaf1e8be"
+  }
+}

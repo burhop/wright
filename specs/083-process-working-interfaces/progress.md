@@ -1,5 +1,31 @@
 # Feature 083 progress
 
+## Recovery assertions strengthened after owner recreation — 3 October 2026
+
+The bounded-operation correction is committed locally as `910bd53b`: 39 owned
+paths, 28 exact artifact blobs, 69 checked documentation links and all 311
+unrelated status/hash entries unchanged. Its first commit check rejected raw
+Windows evidence line endings; artifact-only attributes preserve those original
+bytes. No runtime/source/documentation whitespace check was bypassed.
+
+Primary recovery review found one “restart” test reused its backend owner.
+The existing tests now recreate actual persisted input/file/action/policy owners
+before retrying completed, interrupted and unknown outcomes. 67 continuation,
+supervision and approval cases pass with stronger assertions. No new authority
+is enrolled. Original run/checkpoint/subject identity survives; unknown action
+state and run-log bytes persist, and no model/action/receipt replay occurs.
+This is controlled owner-recreation evidence, not an OS power-loss campaign or
+live-provider restart, and it does not automatically sign off all parts of the
+related broad recovery obligations. No business runtime code changes here.
+
+Both owned native proof handles 90330/46681 are revalidated live; their earlier
+build and unavailable-model scope remain unchanged. 550 retained engineering/UI
+files and protected history match. T056/T057 remain open (55 checked). Continue
+primary semantic review of all 182 obligations, preserve the frozen index and
+old proof/build scopes, then finish the final preservation/resource handoff.
+
+Evidence: `artifacts/process-interfaces/083/20261003-recovery-owner-reopen-verified/`.
+
 ## EDGE-09 bounded observation corrected — 3 October 2026
 
 The final requirements audit reproduced the multi-hour-operation gap: direct

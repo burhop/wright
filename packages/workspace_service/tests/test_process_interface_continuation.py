@@ -633,10 +633,21 @@ def test_interrupted_input_continuation_blocks_replay_of_uncertain_segment(tmp_p
     with pytest.raises(RuntimeError, match="Simulated backend interruption"):
         asyncio.run(resume())
     assert len(calls) == 2
+    # Recreate the backend owner before retry: uncertainty must survive its
+    # in-memory state, with the same consumed checkpoint and original record.
+    original_log = (tmp_path / first["run_log_path"]).read_bytes()
+    c.app = service(tmp_path)
+    c.app.db_path = c.db_path
+    c.app.process_interfaces = ProcessInterfaceService(c.app)
+    checkpoint = c.app.process_interfaces.human_inputs.get(
+        checkpoint.checkpoint_id, workspace_id="ws", run_id=first["run_id"]
+    )
+    assert checkpoint.state == "consumed"
     with pytest.raises(WorkflowSourceExecutionError) as error:
         asyncio.run(resume())
     assert error.value.code == "WORKFLOW_CONTINUATION_OUTCOME_UNKNOWN"
     assert len(calls) == 2
+    assert (tmp_path / first["run_log_path"]).read_bytes() == original_log
     log = json.loads((tmp_path / first["run_log_path"]).read_text(encoding="utf-8"))
     assert (
         log["resume_segments"][checkpoint.checkpoint_id]["state"] == "outcome_unknown"
