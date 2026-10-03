@@ -2974,3 +2974,27 @@ No model/provider/process/decision/physical operation ran. Evidence is under
 artifacts/process-interfaces/083/20261003-compact-workspace-verified. The ledger
 remains49 checked/eight open. Finish the focused local commit and continue
 qualification, migration/generality, broader regression and full acceptance audits.
+
+## Fresh clean slicer qualification — selected scope resolved
+
+Continued the full goal with a missing T043 proof scope. Official selected Linux
+host release metadata/checksum are verified; only the existing pinned MCP and
+free host prerequisites are freshly installed in a separate neutral-base-derived
+image with fresh Python/cache directories. The base image is unchanged.
+
+First001 stops at a shared evidence-helper type mismatch before installation.
+Its container and failure remain. Fresh002 corrects only the helper, reuses the
+checksum-verified download and installs selected dependencies once. Official
+MCP initialization discovers eleven tools; exact schema parity and one actual
+offline slice through the production gateway pass. Independent readback confirms
+the 30,054-byte package, nonempty G-code and unchanged PETG/four-wall/35%/.2mm
+qualification settings. No display, printer connection or printer tool is used.
+
+Read-only publication revalidates all three exact ownership-labeled containers
+stopped, original hashes, one actual backend invocation and credential exclusion.
+Twenty-one evidence files remain under
+artifacts/process-interfaces/083/20261003-slicer-fresh-clean-qualification-002.
+This resolves clean selected slicer scope, not all original scenarios or T043.
+AgentCAD's external creation-response defect and broader migration/UI/regression/
+full acceptance obligations remain. Ledger stays49 checked/eight open. No product
+source, catalog, engineering review, protected campaign or physical action changed.

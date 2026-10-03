@@ -1,0 +1,424 @@
+{
+  "tools": [
+    {
+      "name": "qualification-083-slicer-clean-002__printer_ams",
+      "description": "AMS / external spool trays: type, color, empty, active tray.",
+      "inputSchema": {
+        "properties": {},
+        "title": "printer_amsArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_ams",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_doctor",
+      "description": "Check env, LAN ports, MQTT, FTPS, and slicer CLI. Does not print or change printer state.",
+      "inputSchema": {
+        "properties": {},
+        "title": "printer_doctorArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_doctor",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_files",
+      "description": "List files on the printer SD card via FTPS.",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "default": "/",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "title": "printer_filesArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_files",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_pause",
+      "description": "Pause the current print. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_pauseArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_pause",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_print",
+      "description": "Start a print from a local sliced file (upload first) or a filename already on the printer.\n\n    Requires confirm=true. Check printer_status first \u2014 do not start if a job is RUNNING.\n    ",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "plate": {
+            "default": 1,
+            "title": "Plate",
+            "type": "integer"
+          },
+          "use_ams": {
+            "default": true,
+            "title": "Use Ams",
+            "type": "boolean"
+          },
+          "bed_levelling": {
+            "default": true,
+            "title": "Bed Levelling",
+            "type": "boolean"
+          },
+          "flow_cali": {
+            "default": false,
+            "title": "Flow Cali",
+            "type": "boolean"
+          },
+          "vibration_cali": {
+            "default": true,
+            "title": "Vibration Cali",
+            "type": "boolean"
+          },
+          "layer_inspect": {
+            "default": true,
+            "title": "Layer Inspect",
+            "type": "boolean"
+          },
+          "timelapse": {
+            "default": false,
+            "title": "Timelapse",
+            "type": "boolean"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "title": "printer_printArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_print",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_resume",
+      "description": "Resume a paused print. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_resumeArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_resume",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_speed",
+      "description": "Set speed profile: silent, standard, sport, ludicrous. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "profile": {
+            "title": "Profile",
+            "type": "string"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "profile"
+        ],
+        "title": "printer_speedArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_speed",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_status",
+      "description": "Current P1S state: idle/printing, job name, progress, temps, remaining time.\n\n    Set fresh=true to request a full P1S pushall (avoid calling that in a tight loop).\n    ",
+      "inputSchema": {
+        "properties": {
+          "fresh": {
+            "default": false,
+            "title": "Fresh",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_statusArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_status",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_stop",
+      "description": "Stop the current print. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_stopArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_stop",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__printer_upload",
+      "description": "Upload a sliced .gcode.3mf / .3mf / .gcode to the printer over FTPS. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "local_path": {
+            "title": "Local Path",
+            "type": "string"
+          },
+          "remote_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Remote Name"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "local_path"
+        ],
+        "title": "printer_uploadArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "printer_upload",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-slicer-clean-002__slice_model_file",
+      "description": "Slice an STL/3MF with the Bambu Studio CLI into a printable .gcode.3mf. Requires confirm=true.\n\n    STL/STEP needs machine/process/filament JSON (auto-discovered from BambuStudio config when present).\n    A project .3mf that already contains settings can be sliced without extra profiles.\n    ",
+      "inputSchema": {
+        "properties": {
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "plate": {
+            "default": 1,
+            "title": "Plate",
+            "type": "integer"
+          },
+          "output": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Output"
+          },
+          "orient": {
+            "default": false,
+            "title": "Orient",
+            "type": "boolean"
+          },
+          "arrange": {
+            "default": false,
+            "title": "Arrange",
+            "type": "boolean"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "title": "slice_model_fileArguments",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-slicer-clean-002",
+        "wright/toolName": "slice_model_file",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-slicer-clean-002",
+          "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+          "installed_version": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "server_revision": "config-01933b3a7824d9f7b1f2020cae76b4e7fd6baa222b7f8244deb295fcc74ecc55",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-slicer-clean-002:1791030473:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    }
+  ]
+}

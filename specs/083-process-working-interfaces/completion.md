@@ -4,6 +4,14 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
+Fresh selected Linux slicer installation/protocol/backend/gateway qualification
+now passes: eleven schemas match exactly, one actual offline call produces a
+hash-checked 3MF with the configured material/process settings, the base image is
+unchanged and three owned containers are stopped. The first pre-installation
+helper failure is retained. This resolves the missing clean slicer scope, not
+AgentCAD's creation-response defect, all original bindings or complete T043.
+See [slicer qualification](evidence/provider-qualification.md#fresh-clean-selected-slicer-qualification--3-october-2026).
+
 Latest compact navigation and shared-label wrapping are verified in fresh
 installed005 on both jobs: eight sizing/navigation/page-scale and five
 editor/common/read-only-preview checks per workflow. Both common views measure
@@ -11,7 +19,8 @@ editor/common/read-only-preview checks per workflow. Both common views measure
 resizing. 300 selected frontend checks and TypeScript pass. See
 [compact evidence](../../artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md).
 This resolves the recorded compact-content defect; complete acceptance remains
-open. The latest proof is based on `e4e9d735` with the listed owned source changes.
+open. The latest proof is based on `e4e9d735` with the listed owned source changes,
+now committed with the evidence as `6efc357c`.
 
 The preceding evidence checkpoint is committed as `e4e9d735`; its installed
 product build is based on `68748b83`. A fresh installed editor passes

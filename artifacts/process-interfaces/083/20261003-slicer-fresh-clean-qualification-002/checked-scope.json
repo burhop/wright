@@ -1,0 +1,142 @@
+{
+  "status": "passed",
+  "fresh_selected_install": true,
+  "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+  "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "source_archive_sha256": "afeba0b70cc654f11317ed8ba8f5b7d82eb7de14d9c9ef2e27ec23bcda33f47a",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "selected_image": "sha256:07fb28ce80858f2d9dfba83d00d8b1917a7edf1f0bda2b9dde10471dd58ec2d1",
+  "base_image_unchanged": true,
+  "platform": "linux/amd64 Debian trixie selected prerequisites",
+  "native_release": "Bambu Studio v02.08.02.61 official Ubuntu 22.04 AppImage",
+  "official_asset_sha256": "69426a59682574591590f51c913d3889baa19252d1c8e9fcae2497eb0ed6bf92",
+  "protocol_tools": 11,
+  "gateway_schemas_exactly_equal": true,
+  "actual_backend_calls": 1,
+  "actual_output": {
+    "bytes": 30054,
+    "sha256": "b4aa238f0d44fc71f169b321e7a5ce00ee30df31ec23d874657430e6b96091f6",
+    "gcode_member": "Metadata/plate_1.gcode",
+    "gcode_bytes": 103622,
+    "gcode_sha256": "01183471b19d55e6818e6e0e22bf0ff2d87d943cf3365d656ac90f402c3cdc7b",
+    "actual_settings": {
+      "filament_type": "PETG",
+      "filament_density": "1.28",
+      "enable_support": "1",
+      "wall_loops": "4",
+      "sparse_infill_density": "35%",
+      "layer_height": "0.2",
+      "printer_model": "Bambu Lab P1S"
+    }
+  },
+  "profile_sha256": {
+    "machine": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+    "process": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+    "filament": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+  },
+  "backend_host": "network-disabled fresh selected image, one isolated workspace mount, CLI without a display",
+  "gateway_host": "current Windows source environment api.gateway_stdio, not an in-container gateway installation claim",
+  "cleanup_revalidated": [
+    {
+      "container_id": "b5f57eebf838e5b8acc9dd2f9cbe296857cc0bf28cfa762c1ece760c3f02efe3",
+      "proof": "slicer-clean-base-001",
+      "running": false,
+      "network": "bridge",
+      "status": "exited"
+    },
+    {
+      "container_id": "18e8bd1ce18bc876b8588ade85148023a5b9e08ace702d9c09650af92d37fd32",
+      "proof": "slicer-clean-base-002",
+      "running": false,
+      "network": "bridge",
+      "status": "exited"
+    },
+    {
+      "container_id": "45cb9f66d8bf9f53526f9bdc2c5b73e263acbe9322522ae48a1a6d0188e0be5a",
+      "proof": "slicer-clean-base-002",
+      "running": false,
+      "network": "none",
+      "status": "exited"
+    }
+  ],
+  "original_source_hashes": {
+    "first-attempt/qualification.json": {
+      "original_bytes": 1258,
+      "original_sha256": "a3e486d9c175945484abe42e865d0998e09015b277297319aafd771bb5d2d67f"
+    },
+    "first-attempt/release.json": {
+      "original_bytes": 484,
+      "original_sha256": "742e4489bce0a4e0210c83e21919062121b47e839cdd4b7f673feb07bc22536f"
+    },
+    "qualification.json": {
+      "original_bytes": 10604,
+      "original_sha256": "0146bcf575459e548c6f85a538baf0b4c9eff8a4c90319825e4786436587c3aa"
+    },
+    "release.json": {
+      "original_bytes": 484,
+      "original_sha256": "742e4489bce0a4e0210c83e21919062121b47e839cdd4b7f673feb07bc22536f"
+    },
+    "installation-command.json": {
+      "original_bytes": 848,
+      "original_sha256": "b1e751853a22588a5ddb0ca2aacfe7e4c8a36b260d373939bdb2a6f08cb3fc45"
+    },
+    "installation.log": {
+      "original_bytes": 87509,
+      "original_sha256": "27f7dfb5373cba4e56cf68eb4c83426705551ab28215c9aed6d7ebc3acd451f2"
+    },
+    "tools.json": {
+      "original_bytes": 7227,
+      "original_sha256": "6577bdd0684a84ab33613005f327b99c33db246e000aa416a36a6ea8dbe97dab"
+    },
+    "actual-settings.json": {
+      "original_bytes": 485,
+      "original_sha256": "72120ddd841d080d487d62501fa83f8628a2bc377a8489fa391b2ef8743548f2"
+    },
+    "gateway-definition.json": {
+      "original_bytes": 1561,
+      "original_sha256": "59f428b96690a3ab571af645df863eb5fac8adb8c269bce5442786b7d529449b"
+    },
+    "gateway/qualification.json": {
+      "original_bytes": 6425,
+      "original_sha256": "3a77ff1a4b216a35556a39d4f96125466a7e997939a1c1eddd5fd3d0e2c087ac"
+    },
+    "gateway/gateway-tools.json": {
+      "original_bytes": 16031,
+      "original_sha256": "610ed550e7f24a81a55aaccb51aa7905d84172835a7960883edac9d4ec558b16"
+    },
+    "gateway/result.json": {
+      "original_bytes": 754,
+      "original_sha256": "4f8b904d93754b8af3daaf242317786e451400fc9f9e4ea75ff631da004d1ba8"
+    },
+    "actual-input/tiny.stl": {
+      "original_bytes": 684,
+      "original_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+    },
+    "actual-output/sliced.gcode.3mf": {
+      "original_bytes": 30054,
+      "original_sha256": "b4aa238f0d44fc71f169b321e7a5ce00ee30df31ec23d874657430e6b96091f6"
+    },
+    "configured-provider-presets/machine-profile.json": {
+      "original_bytes": 20560,
+      "original_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "configured-provider-presets/process-profile.json": {
+      "original_bytes": 8180,
+      "original_sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "configured-provider-presets/filament-profile.json": {
+      "original_bytes": 7954,
+      "original_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    }
+  },
+  "first_failure": "Shared evidence redactor expects an object, not a list. Command publication stopped before installation or protocol/backend calls. First container stopped. Fresh second container wraps command in an object and reuses the checksum-verified official download.",
+  "limits": [
+    "One tiny isolated STL, not an original engineering assignment or all six scenario bindings.",
+    "Listing eleven tools qualifies no printer operation; no printer tools called, no credentials used.",
+    "Native settings and hashes prove this package only, not physical printing, material strength or orientation optimality.",
+    "AgentCAD creation-response defect, migration/generality and complete UI/regression/audit obligations remain."
+  ],
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "human_engineering_acceptance": false
+}

@@ -1,5 +1,44 @@
 # Selected-provider qualification progress — T043
 
+## Fresh clean selected slicer qualification — 3 October 2026
+
+A neutral Linux/amd64 Wright image was verified without the selected MCP or
+slicer. The pinned existing MCP revision
+`7b50d0288fb7b91af8af422b96c4df4db0f1110c`, official Bambu Studio 2.8.2.61
+Ubuntu 22.04 AppImage and free selected prerequisites were installed in a
+separate image with fresh Python/cache directories. The base image is unchanged.
+The official release asset matches its published SHA-256
+`69426a59682574591590f51c913d3889baa19252d1c8e9fcae2497eb0ed6bf92`.
+No provider source or Wright runtime dependency was changed.
+
+Official initialization/listing discovers eleven tools; every input schema matches
+the prefixed production gateway projection. One actual `slice_model_file` call
+through current Windows `api.gateway_stdio` creates a 30,054-byte 3MF, with
+103,622 bytes of G-code. Independent byte readback confirms the explicit original
+qualification settings: PETG/density1.28, four walls, 35% infill, 0.2mm layers,
+supports enabled and the selected machine. Flat preset bytes are unchanged
+provider configuration data, not a Wright profile resolver.
+
+The CLI backend needs no display, uses network disabled and one isolated workspace
+mount. No printer tool or real credential is used. The gateway remains on the
+Windows source host; this does not qualify an in-container API installation.
+All three exact labeled containers are revalidated stopped. The first helper's
+redaction type error happened before installation; its failed record remains.
+Fresh attempt002 corrects the helper and reuses the checksum-verified download.
+The selected dependencies are installed once; no backend call is replayed.
+
+See [checked scope](../../../artifacts/process-interfaces/083/20261003-slicer-fresh-clean-qualification-002/checked-scope.json)
+and [reproduction records](../../../artifacts/process-interfaces/083/20261003-slicer-fresh-clean-qualification-002/README.md).
+Twenty-one retained files include actual package/input/profile bytes, installation,
+schemas, gateway response, original failure, cleanup and a hash inventory; shared
+redaction and actual credential-value scanning pass.
+
+This closes the recorded missing clean slicer install/protocol/backend/gateway
+scope. A tiny backend qualification does not replace the original engineering
+assignments or qualify all listed printer tools. AgentCAD's creation-response
+defect and remaining migrated-binding/full acceptance obligations keep T043 open.
+No physical verification or human engineering acceptance is claimed.
+
 ## Actual independent slicing runtime integration — 3 October 2026
 
 [Scoped evidence](../../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json)

@@ -1,0 +1,10 @@
+{
+  "_meta": {},
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"ok\": true,\n  \"source\": \"/workspace/tiny.stl\",\n  \"output\": \"/workspace/sliced.gcode.3mf\",\n  \"plate\": 1,\n  \"slicer\": \"/selected/squashfs-root/AppRun\",\n  \"bytes\": 30054,\n  \"argv\": [\n    \"/selected/squashfs-root/AppRun\",\n    \"--slice\",\n    \"1\",\n    \"--debug\",\n    \"1\",\n    \"--export-3mf\",\n    \"/workspace/sliced.gcode.3mf\",\n    \"--load-settings\",\n    \"/workspace/presets/machine-profile.json;/workspace/presets/process-profile.json\",\n    \"--load-filaments\",\n    \"/workspace/presets/filament-profile.json\",\n    \"--arrange\",\n    \"1\",\n    \"/workspace/tiny.stl\"\n  ]\n}"
+    }
+  ],
+  "isError": false
+}

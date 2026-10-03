@@ -18,10 +18,10 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile the latest compact-presentation correction and its focused local commit. Current installed005 verifies shared navigation, desktop preference/frame preservation, wrapped common results, editor return and read-only preview on both jobs. Reuse the exact007/008 reports and preceding016/017/printed011 scopes; do not repeat completed engineering runs or treat scoped checks as complete acceptance. Then advance the remaining provider/caller, broader authoring/regression and requirement audits.
+1. Reconcile current HEAD and the remaining eight-task ledger. The compact-presentation correction is committed as 6efc357c; installed005 verifies shared navigation, desktop preference/frame preservation, wrapped common results, editor return and read-only preview on both jobs. Reuse the exact007/008 reports and preceding016/017/printed011 scopes; do not repeat completed engineering runs or treat scoped checks as complete acceptance. Advance remaining provider/caller, broader authoring/regression and requirement audits.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
-4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 287-pass frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
+4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 300-pass selected frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
 5. Audit every requirement, success criterion, acceptance case and task against authoritative evidence. Update completion.md, the evidence index, runnable guidance, progress and task checkboxes. Finish focused local commits. Mark complete only when the full required scope is proved; checked task counts are not percentage completion.
 
 Use fresh isolated proof subjects. Synthetic input/review decisions require exact enrollment, actor attribution and integration_test=true. Never answer retained second-run reviews, protected campaign checkpoints or un-enrolled human decisions. Never override a mandatory measured failure or claim human engineering acceptance. Continue independent work while a genuine review waits. Unknown action outcomes require reconciliation, never blind replay.
@@ -32,6 +32,48 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Clean slicer scope verified — continue remaining qualification and audits
+
+Fresh selected Linux slicer installation now passes protocol discovery, exact
+eleven-tool gateway schema parity and one real offline CLI slice through the
+production gateway. Actual package/configuration hashes and settings are checked;
+the neutral base is unchanged and three exact owned containers are stopped.
+The original pre-installation helper failure remains. See
+`artifacts/process-interfaces/083/20261003-slicer-fresh-clean-qualification-002/`.
+
+This supersedes the missing-clean-slicer next action in historical checkpoints
+below. It does not close T043 or qualify every original scenario: AgentCAD's
+creation-response defect and broader migrated-binding obligations remain.
+Next audit remaining provider/migration scope against the original requirements,
+then finish T041/T052/T053 and full T056/T057 acceptance. Reuse this proof instead
+of downloading or installing this selected host again. No product source changed,
+printer operation, model call or engineering review ran in this qualification.
+Ledger remains49 checked/eight open.
+
+### Overnight continuation — compact correction committed, eight tasks remain
+
+Read-only status review on 3 October 2026 confirms HEAD `6efc357c` on
+`codex/083-process-working-interfaces`. The existing unlimited goal is active.
+The ledger remains **49 checked / eight open**: T041, T043, T048, T049,
+T052, T053, T056 and T057. Counts are not percentage completion.
+
+The compact correction and its evidence are committed. Installed005 and the
+300 selected frontend checks retain the exact scopes below. Both engineering
+chains have actual-model generation/update and saved-reuse evidence, with their
+original mandatory human reviews held. No human engineering acceptance is implied.
+
+Next, finish selected-provider qualification and active-caller/generality audits,
+then broader authoring, served/installed acceptance, affected regressions and
+the full requirement ledger. T043 retains the missing fresh clean slicer scope
+and AgentCAD's externally reproduced creation-response defect. Do not retry an
+uncertain committed creation, reinterpret an error as success or implement a
+vendor workaround in Wright. Continue independent tasks while external gaps remain.
+
+This review starts no tests, models, providers, processes or external actions.
+Service liveness is not revalidated; inspect exact owned service records before
+reuse. Preserve all unrelated work and retained failure evidence. The latest
+checkpoint supersedes pending-commit instructions in historical sections below.
 
 ### Compact presentation corrected — remaining acceptance next
 
@@ -55,7 +97,7 @@ See `artifacts/process-interfaces/083/20261003-compact-workspace-verified`.
 Preserve first launch/guard/observer/overflow stops. The original timeout/limit
 investigation remains test-resource evidence, not a speculative lifecycle fix.
 The ledger stays49 checked/eight open; do not close broader tasks from compact
-checks alone. Finish the focused local commit, then qualification, active-caller/
+checks alone. The focused local commit is `6efc357c`; continue qualification, active-caller/
 generality, remaining authoring/regression and full requirement acceptance audits.
 Commit/service receipts belong under `.local-run/process-interfaces-083/`;
 revalidate exact owned handles before reuse. No model/provider/process/review or
