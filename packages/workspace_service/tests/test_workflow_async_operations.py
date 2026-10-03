@@ -1,6 +1,7 @@
 """Simulated remote service contracts. These are not live FEA results."""
 
 import asyncio
+import json
 from dataclasses import replace
 import pytest
 from tool_registry.gateway_models import GatewayTool, GatewayToolResult
@@ -99,6 +100,232 @@ def test_submission_is_polled_to_completion_once():
         "results_collected",
     ]
     assert all(a["operation_id"] == "job-123" for n, a in g.calls if n != "fea__submit")
+
+
+@pytest.mark.asyncio
+async def test_multihour_observation_keeps_each_gateway_call_short(monkeypatch):
+    # Exercise real elapsed observation beyond a short call budget, while
+    # capturing the configured two-hour deadline instead of sleeping for hours.
+    g, runtime, step, tools = remote(("working",) * 4 + ("completed",))
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+    step = replace(step, schema_digest=schema_digest(tools[0]), timeout_seconds=0.1)
+    deadlines, call_budgets = [], []
+    real_timeout, original = asyncio.timeout, g.call_tool
+
+    def capture_timeout(seconds):
+        deadlines.append(seconds)
+        return real_timeout(seconds)
+
+    async def call(*args, **kwargs):
+        call_budgets.append(kwargs["timeout"])
+        return await original(*args, **kwargs)
+
+    monkeypatch.setattr(asyncio, "timeout", capture_timeout)
+    g.call_tool = call
+    result = await runtime.call(step, {})
+    assert result[0] == {"stress": 12, "units": "MPa"}
+    assert 7200 in deadlines
+    assert call_budgets == [0.1] * 6
+    assert [name for name, _ in g.calls].count("fea__submit") == 1
+    assert all(args == {"operation_id": "job-123"} for name, args in g.calls[1:])
+
+
+@pytest.mark.asyncio
+async def test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded():
+    g, runtime, step, tools = remote(("working",) * 4 + ("completed",))
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+    step = replace(step, agent_task=True, timeout_seconds=0.1)
+    decisions, events = [], []
+
+    async def emit(kind, **data):
+        events.append((kind, data))
+
+    async def decide(messages, schemas, **kwargs):
+        decisions.append(messages[-1]["role"])
+        if len(decisions) == 1:
+            return {
+                "role": "assistant",
+                "tool_calls": [{"id": "submit-once", "function": {
+                    "name": schemas[0]["function"]["name"], "arguments": "{}",
+                }}],
+            }
+        assert any(data.get("state") == "completed" for _, data in events)
+        return {"role": "assistant", "content": json.dumps({
+            "status": "completed", "response": '{"stress":12}', "evidence": [1],
+        })}
+
+    response, records = await runtime.run_task(step, "Run the analysis", decide, emit)
+    assert response == '{"stress":12}'
+    assert decisions == ["user", "tool"]
+    assert len(records) == 1 and records[0]["status"] == "succeeded"
+    assert [name for name, _ in g.calls].count("fea__submit") == 1
+
+
+@pytest.mark.parametrize("phase", ["before", "after"])
+@pytest.mark.asyncio
+async def test_multihour_profile_does_not_extend_model_decision_budget(phase):
+    g, runtime, step, tools = remote(("completed",))
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+    step = replace(step, agent_task=True, timeout_seconds=0.1)
+    decisions = []
+
+    async def emit(*args, **kwargs):
+        pass
+
+    async def decide(messages, schemas, **kwargs):
+        decisions.append(messages[-1]["role"])
+        if (len(decisions) == 1) == (phase == "before"):
+            await asyncio.sleep(0.2)
+        return {"role": "assistant", "tool_calls": [{
+            "id": "submit-once", "function": {
+                "name": schemas[0]["function"]["name"], "arguments": "{}",
+            },
+        }]}
+
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        await runtime.run_task(step, "Run the analysis", decide, emit)
+    assert error.value.code == "TASK_TIMEOUT"
+    assert [name for name, _ in g.calls].count("fea__submit") == (phase == "after")
+
+
+@pytest.mark.asyncio
+async def test_multihour_observation_does_not_refill_spent_model_budget():
+    g, runtime, step, tools = remote(("working",) * 4 + ("completed",))
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+    step = replace(step, agent_task=True, timeout_seconds=0.2)
+    decisions = []
+
+    async def emit(*args, **kwargs):
+        pass
+
+    async def decide(messages, schemas, **kwargs):
+        decisions.append(messages[-1]["role"])
+        await asyncio.sleep(0.13)
+        return {"role": "assistant", "tool_calls": [{
+            "id": "submit-once", "function": {
+                "name": schemas[0]["function"]["name"], "arguments": "{}",
+            },
+        }]}
+
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        await runtime.run_task(step, "Run the analysis", decide, emit)
+    assert error.value.code == "TASK_TIMEOUT"
+    assert decisions == ["user", "tool"]
+    assert [name for name, _ in g.calls].count("fea__submit") == 1
+
+
+@pytest.mark.asyncio
+async def test_interrupting_multihour_ai_monitor_does_not_cancel_or_resubmit():
+    g, runtime, step, tools = remote(("working",))
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+    step = replace(step, agent_task=True, timeout_seconds=0.1)
+    started, events = asyncio.Event(), []
+
+    async def emit(kind, **data):
+        events.append(data)
+        if data.get("state") == "working":
+            started.set()
+
+    async def decide(messages, schemas, **kwargs):
+        return {"role": "assistant", "tool_calls": [{
+            "id": "submit-once", "function": {
+                "name": schemas[0]["function"]["name"], "arguments": "{}",
+            },
+        }]}
+
+    task = asyncio.create_task(runtime.run_task(step, "Run the analysis", decide, emit))
+    await asyncio.wait_for(started.wait(), 2)
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert events[-1]["state"] == "monitor_interrupted"
+    assert [name for name, _ in g.calls].count("fea__submit") == 1
+    assert not any(name == "fea__cancel" for name, _ in g.calls)
+    assert not runtime._active_operations
+
+
+@pytest.mark.parametrize("value", [True, None, "7200", 0, -1, 604801,
+                                          float("nan"), float("inf")])
+def test_invalid_observation_timeout_rejected_before_submission(value):
+    g, runtime, step, tools = remote()
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = value
+    step = replace(step, schema_digest=schema_digest(tools[0]))
+    with pytest.raises(WorkflowSourceExecutionError):
+        asyncio.run(runtime.call(step, {}))
+    assert not g.calls
+
+
+@pytest.mark.parametrize("agent_task", [False, True])
+def test_invalid_observation_timeout_blocks_readiness(agent_task):
+    g, runtime, step, tools = remote()
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 604801
+    step = replace(step, agent_task=agent_task, schema_digest=schema_digest(tools[0]))
+    with pytest.raises(WorkflowSourceExecutionError, match="observation_timeout_seconds"):
+        runtime.preflight(step)
+    assert not g.calls
+
+
+@pytest.mark.asyncio
+async def test_profile_without_explicit_observation_budget_keeps_ai_deadline():
+    g, runtime, step, _ = remote(("working",))
+    step = replace(step, agent_task=True, timeout_seconds=0.1)
+    events = []
+
+    async def emit(kind, **data):
+        events.append(data)
+
+    async def decide(messages, schemas, **kwargs):
+        return {"role": "assistant", "tool_calls": [{
+            "id": "submit-once", "function": {
+                "name": schemas[0]["function"]["name"], "arguments": "{}",
+            },
+        }]}
+
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        await runtime.run_task(step, "Run the analysis", decide, emit)
+    assert error.value.code == "TASK_TIMEOUT"
+    assert events[-1]["state"] == "monitor_interrupted"
+    assert [name for name, _ in g.calls].count("fea__submit") == 1
+    assert not any(name == "fea__cancel" for name, _ in g.calls)
+
+
+@pytest.mark.asyncio
+async def test_multihour_budget_does_not_hold_a_stalled_status_call_open():
+    g, runtime, step, tools = remote(("working",))
+    tools[0].upstream_meta["wright/operation"].update(
+        observation_timeout_seconds=7200, cancel_confirm_seconds=0,
+    )
+    step = replace(step, schema_digest=schema_digest(tools[0]), timeout_seconds=0.1)
+    original = g.call_tool
+
+    async def call(*args, **kwargs):
+        if args[2] == "fea__status":
+            await asyncio.sleep(0.2)
+        return await original(*args, **kwargs)
+
+    g.call_tool = call
+    with pytest.raises(TimeoutError):
+        await asyncio.wait_for(runtime.call(step, {}), 2)
+    assert [name for name, _ in g.calls].count("fea__submit") == 1
+    assert [name for name, _ in g.calls].count("fea__cancel") == 1
+
+
+@pytest.mark.asyncio
+async def test_explicit_observation_timeout_retains_uncertainty_and_single_submit():
+    g, runtime, step, tools = remote(("working",))
+    tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 0.06
+    step = replace(step, schema_digest=schema_digest(tools[0]))
+    events = []
+
+    async def emit(kind, **data):
+        events.append(data)
+
+    with pytest.raises(TimeoutError):
+        await runtime.call(step, {}, on_event=emit)
+    assert [name for name, _ in g.calls].count("fea__submit") == 1
+    assert [name for name, _ in g.calls].count("fea__cancel") == 1
+    assert events[-1]["state"] == "cancellation_unconfirmed"
+    assert not any(data["state"] == "completed" for data in events)
 
 
 def test_timeout_requests_cancel_without_resubmission_or_false_completion():

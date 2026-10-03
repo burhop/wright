@@ -223,6 +223,16 @@ not inferred from ordinary MCP tool names or success prose. Source declares exac
 connected text/JSON/file argument representations and pins the qualification
 digest. Observe mode pins `wright/operation` and each actual status/result/cancel
 tool identity before approval. Receipt mode does not imply observed completion.
+The optional version-1 observation field `observation_timeout_seconds` is finite
+and bounded to 0.05–604800 seconds (seven days). It is part of the existing tool
+schema/profile digests, checked at readiness and again before dispatch. It bounds
+the complete observation loop separately from finite submission/status/result
+calls. During explicitly delegated observation an AI task retains its remaining
+decision budget; it does not keep a model request open or replenish decision time.
+Omitting this field preserves the existing step/task deadline behavior. Changing
+the profile invalidates the existing binding/review rather than widening a live
+operation's budget. Timeout/interruption retains cancellation and uncertain
+outcome semantics; it grants no replay authority.
 See [operation evidence/configuration](../evidence/mcp-operations.md) for the
 bounded declaration and checked ownership.
 

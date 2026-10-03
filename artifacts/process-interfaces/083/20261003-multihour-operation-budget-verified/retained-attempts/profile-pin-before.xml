@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.373" timestamp="2026-10-03T13:05:12.052805-04:00" hostname="Work17"><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_accepted_operation_keeps_qualified_deadline_when_catalog_object_changes" time="0.894"><failure message="assert (7200 in [30, 30.0, 30.0, 30.0, 30.0, 30.0, ...])">tmp_path = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-006/test_accepted_operation_keeps_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001ED11F3F820&gt;
+
+    def test_accepted_operation_keeps_qualified_deadline_when_catalog_object_changes(tmp_path, monkeypatch):
+        async def run():
+            gateway = ObservedGateway()
+            long_profile = {**PROFILE, "observation_timeout_seconds": 7200}
+            gateway.tool = replace(gateway.tool, upstream_meta={
+                **gateway.tool.upstream_meta, "wright/operation": long_profile,
+            })
+            text = configured_source(tool=gateway.tool, settings_patch={
+                "operation_policy": {
+                    "mode": "observe", "qualification_digest": digest(QUALIFICATION),
+                    "profile_digest": digest(long_profile),
+                },
+            })
+            services, checkpoint, gateway, generate, models, initial = await approved_case(
+                tmp_path, gateway=gateway, text=text,
+            )
+            original, real_timeout, deadlines = gateway.call_tool, asyncio.timeout, []
+    
+            async def changed_catalog(*args, **kwargs):
+                result = await original(*args, **kwargs)
+                if args[2] == TOOL.name:
+                    long_profile["observation_timeout_seconds"] = 604800
+                return result
+    
+            def timeout(seconds):
+                deadlines.append(seconds)
+                return real_timeout(seconds)
+    
+            gateway.call_tool = changed_catalog
+            monkeypatch.setattr(asyncio, "timeout", timeout)
+            await dispatch(tmp_path, services, checkpoint, gateway, generate)
+            assert 7200 in deadlines and 604800 not in deadlines
+            assert [args[2] for args, _ in gateway.calls].count(TOOL.name) == 1
+    
+&gt;       asyncio.run(run())
+
+packages\workspace_service\tests\test_workflow_mcp_operations.py:931: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+D:\Users\markb\miniconda3\Lib\asyncio\runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        gateway = ObservedGateway()
+        long_profile = {**PROFILE, "observation_timeout_seconds": 7200}
+        gateway.tool = replace(gateway.tool, upstream_meta={
+            **gateway.tool.upstream_meta, "wright/operation": long_profile,
+        })
+        text = configured_source(tool=gateway.tool, settings_patch={
+            "operation_policy": {
+                "mode": "observe", "qualification_digest": digest(QUALIFICATION),
+                "profile_digest": digest(long_profile),
+            },
+        })
+        services, checkpoint, gateway, generate, models, initial = await approved_case(
+            tmp_path, gateway=gateway, text=text,
+        )
+        original, real_timeout, deadlines = gateway.call_tool, asyncio.timeout, []
+    
+        async def changed_catalog(*args, **kwargs):
+            result = await original(*args, **kwargs)
+            if args[2] == TOOL.name:
+                long_profile["observation_timeout_seconds"] = 604800
+            return result
+    
+        def timeout(seconds):
+            deadlines.append(seconds)
+            return real_timeout(seconds)
+    
+        gateway.call_tool = changed_catalog
+        monkeypatch.setattr(asyncio, "timeout", timeout)
+        await dispatch(tmp_path, services, checkpoint, gateway, generate)
+&gt;       assert 7200 in deadlines and 604800 not in deadlines
+E       assert (7200 in [30, 30.0, 30.0, 30.0, 30.0, 30.0, ...])
+
+packages\workspace_service\tests\test_workflow_mcp_operations.py:928: AssertionError</failure></testcase></testsuite></testsuites>

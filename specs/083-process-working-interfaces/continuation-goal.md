@@ -7,18 +7,18 @@ a saved URL or process handle as proof of a running service.
 ## Ready-to-paste prompt
 
 ```text
-/goal Continue and complete Feature 083 in D:/repos/wright on codex/083-process-working-interfaces. Read specs/083-process-working-interfaces/continuation-goal.md first, then follow implementation-goal.md and finish all 57 tasks through M0–M5. Continue the existing worktree and evidence rather than starting over.
+/goal Continue and complete Feature 083 in D:/repos/wright on codex/083-process-working-interfaces. Read specs/083-process-working-interfaces/continuation-goal.md first, then follow implementation-goal.md and finish all 57 tasks through M0â€“M5. Continue the existing worktree and evidence rather than starting over.
 
 I authorize unattended local implementation, testing, fresh isolated actual-model/MCP digital demonstrations, bounded corrections and focused local commits within the approved scope. Keep making meaningful progress until the complete required scope is verified, I explicitly pause, or a genuine missing resource or authority prevents all useful work. Do not stop after a status report or milestone. No token budget is specified.
 
 Read AGENTS.md, the workflow-platform vision, process-app design, refactoring plan, engineering-demonstration principles and workflow UI integration guidance. Inspect the feature's specification, plan, contracts, tasks, acceptance cases, progress, completion ledger and evidence. Reconcile current branch, dirty work, immutable artifacts, saved jobs and owned services before choosing the next action. Preserve unrelated changes and historical failures.
 
-Apply V1–V7. Wright supports varied engineering workflows. Preserve complementary editor/source/inspectors and optional common or tailored working interfaces on the same accepted process and durable run. Use Wright workspace tabs, the public scoped client, shared components and style, and existing runtime, gateway, validator, reviews, results, surfaces and storage. The backend owns execution, state, permitted actions and recovery. Generated UI must not contain another executor or independent status authority. Independent providers own vendor behavior; do not add Wright-owned device protocols or compatibility workarounds.
+Apply V1â€“V7. Wright supports varied engineering workflows. Preserve complementary editor/source/inspectors and optional common or tailored working interfaces on the same accepted process and durable run. Use Wright workspace tabs, the public scoped client, shared components and style, and existing runtime, gateway, validator, reviews, results, surfaces and storage. The backend owns execution, state, permitted actions and recovery. Generated UI must not contain another executor or independent status authority. Independent providers own vendor behavior; do not add Wright-owned device protocols or compatibility workarounds.
 
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile current HEAD and the remaining two-task ledger: T056 and T057. T043 selected-provider qualification is committed as 5323a6d6; T053 current regression/corrections, T048/T049 migration/shared-code audits and T052 current installed/workspace/native-zoom acceptance are checked within their exact scopes. Reuse them. The current 182-obligation requirement index is an audit input, not semantic signoff; review primary assertions and actual behavior before closing T056. Preserve prior-feature integration-debt dispositions, failed attempts and older build identities.
+1. Reconcile current HEAD and the remaining two-task ledger: T056 and T057. The 7768d9f9 requirement index is a preliminary audit input. The EDGE-09 multi-hour deadline gap and mutable accepted-profile gap now have bounded corrections and retained failures; read 20261003-multihour-operation-budget-verified and requirements-audit.md for exact current source, controlled regression and detached-wheel scope. Do not redo those fixes or treat the configured two-hour test as hours of physical execution. Review primary assertions and actual behavior for every indexed obligation, correct remaining required gaps, then close T056. Reuse T043 qualification, T048/T049 migration, T052 workspace/native-zoom and T053 regression within their recorded source/build scopes. Preserve prior-feature debt dispositions, failures and old build identities.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Reuse the completed selected-provider qualification and active prototype migration audits within their scope. Existing pinned AgentCAD upstream2a377583 is separately qualified; the published0.6.0 creation failure remains retained. Reuse actual installed historical-format compatibility. Keep retired device/Studio/mesh code retired, frozen campaign bindings and the existing30 examples preserved. No new vendor implementation or catalog promotion is authorized.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 300-pass selected frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
@@ -33,7 +33,23 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
-### T056 evidence index prepared — semantic signoff remains
+### Latest continuation — EDGE-09 correction verified, final audit continues
+
+The audit confirmed and corrected the short observation/enclosing-task deadlines.
+The existing runtime now supports an explicitly finite observation budget,
+retains short model/tool calls and restores only remaining AI decision time.
+A separate negative control confirmed mutable catalog metadata could widen an
+accepted policy; approved qualification now detaches its exact profiles.
+351 controlled checks across 22 modules and a fresh detached-wheel runtime proof
+pass. Read the bounded-operation evidence and current progress for exact hashes,
+failures, checked scope and preserved original evidence. This is not a physical
+multi-hour proof or a new installed-browser acceptance campaign.
+
+The task ledger remains 55 checked with T056/T057 open. Continue primary semantic
+review of all 182 obligations. Do not close the goal based on task counts or the
+preliminary index. The existing unlimited goal and authority remain unchanged.
+
+### T056 evidence index prepared â€” semantic signoff remains
 
 The current 182-obligation index covers all FR/SC,21 story scenarios,four story
 tests,nine edge cases,15 recovery cases,eight engineering stages/two artifact
@@ -52,7 +68,7 @@ gaps, then publish the final ledger and finish T057.55 checked/two open remains.
 Native handles90330/46681 are revalidated live; model/compiler-unavailable proof
 scope remains deliberate. No provider/model/process/review/effect was replayed.
 
-### T043 selected-provider audit verified — two tasks remain
+### T043 selected-provider audit verified â€” two tasks remain
 
 Existing pinned AgentCAD upstream `2a377583` passes fresh selected installation,
 official 11-tool protocol discovery, exact gateway schemas, one native creation
@@ -69,13 +85,13 @@ focused commits/preservation checks. Reuse the substantive two-process proofs,
 preserve held real reviews and exact older installed build scope. Do not rerun
 engineering work merely to collect more evidence. No physical effect authorized.
 
-### T053 current regression verified — three tasks remain
+### T053 current regression verified â€” three tasks remain
 
 Exact91 backend modules pass1,538 cases; three Windows symlink skips run on the
 current Linux95-pass snapshot.53 frontend modules pass760, eight mocked workspace
 specs pass33 and nine package/native modules pass29.124 post-correction builder/
 authoring/presentation checks pass. Counts overlap. Native schema metadata now
-matches0–23 and the trusted fixed compiler resolves installed geometry sources
+matches0â€“23 and the trusted fixed compiler resolves installed geometry sources
 outside the checkout; generated import scopes remain closed. TypeScript/Ruff pass.
 Original failures, exact commands/hashes and safe screenshots remain. Both mock
 hosts and the exact Linux container are stopped; no model/provider/review/effect
@@ -90,7 +106,7 @@ metadata scope; this current package regression proves the corrections without
 relabelling those earlier reports. See `evidence/verification.md` and
 `artifacts/process-interfaces/083/20261003-current-regression-verified/`.
 
-### T052 current installed/workspace acceptance verified — four tasks remain
+### T052 current installed/workspace acceptance verified â€” four tasks remain
 
 Fresh installed006 from b9ce9a14 contains the latest backend corrections and953
 byte-verified entries.48 primary checks pass across seven reports: normal refined
@@ -110,7 +126,7 @@ existing real engineering proofs; do not rerun held reviews. Revalidate exact ow
 services014/015 before reuse. See `evidence/workspace-acceptance.md` and
 `artifacts/process-interfaces/083/20261003-current-package-workspace-verified/`.
 
-### T049 verified — five broader tasks remain
+### T049 verified â€” five broader tasks remain
 
 The shared-code survey covers447 tracked Python owners. Permanent guards verify
 36 feature/shared Python and22 public client/kit/process-view files. Two defects
@@ -129,7 +145,7 @@ and full current workspace/installed/regression/requirement acceptance. Installe
 retains its original reader/runtime bytes and must not be called the newest backend
 after these two source corrections. See `evidence/shared-platform-audit.md`.
 
-### T048 verified — six broader tasks remain
+### T048 verified â€” six broader tasks remain
 
 The current disposition audit completes T048's named caller-migration/history
 scope. All inventoried prototype paths have a disposition;21 removed paths stay
@@ -140,13 +156,13 @@ Installed005 startup/API/history owners equal current source; the original-histo
 proof's four owner/test hashes and actual engineering/UI evidence are unchanged.
 No provider, model, process, review or external action was invoked by this audit.
 
-Current ledger:51 checked/six open — T043, T049, T052, T053, T056 and T057.
+Current ledger:51 checked/six open â€” T043, T049, T052, T053, T056 and T057.
 See `evidence/migration-disposition-audit.md`. Broader provider/process coupling,
 error/currentness behavior, selected qualification and complete platform acceptance
 retain separate obligations. Historical pending T048 statements below are
 superseded only at this named scope; original reports/build identities remain.
 
-### T041 verified — seven broader tasks remain
+### T041 verified â€” seven broader tasks remain
 
 The authoring obligation audit now completes T041: current71 component checks
 and TypeScript; both installed005 five-check unavailable-authoring/saved-reuse/
@@ -155,14 +171,14 @@ rollback and shared actual theme proof. Each scope stays explicitly labelled.
 All four owned presentations close; exact18/20 outputs and ten protected-table
 snapshots remain unchanged. No new generation, process, decision or action ran.
 
-Current ledger:50 checked/seven open — T043, T048, T049, T052, T053, T056,
+Current ledger:50 checked/seven open â€” T043, T048, T049, T052, T053, T056,
 T057. See `evidence/authoring-state-acceptance.md` and
 `artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/`.
 Next finish remaining provider/migration/generality and full workspace/regression/
 requirement audits. Reuse verified authoring scopes; do not regenerate both
 engineering runs to repeat them. Earlier pending T041 statements remain historical.
 
-### Clean slicer scope verified — continue remaining qualification and audits
+### Clean slicer scope verified â€” continue remaining qualification and audits
 
 Fresh selected Linux slicer installation now passes protocol discovery, exact
 eleven-tool gateway schema parity and one real offline CLI slice through the
@@ -180,7 +196,7 @@ of downloading or installing this selected host again. No product source changed
 printer operation, model call or engineering review ran in this qualification.
 Ledger remains49 checked/eight open.
 
-### Overnight continuation — compact correction committed, eight tasks remain
+### Overnight continuation â€” compact correction committed, eight tasks remain
 
 Read-only status review on 3 October 2026 confirms HEAD `6efc357c` on
 `codex/083-process-working-interfaces`. The existing unlimited goal is active.
@@ -204,7 +220,7 @@ Service liveness is not revalidated; inspect exact owned service records before
 reuse. Preserve all unrelated work and retained failure evidence. The latest
 checkpoint supersedes pending-commit instructions in historical sections below.
 
-### Compact presentation corrected — remaining acceptance next
+### Compact presentation corrected â€” remaining acceptance next
 
 The shared compact correction is implemented and verified. Below768px the
 non-adaptive workspace uses transient overlay navigation; Files/Close/Escape/
@@ -232,7 +248,7 @@ Commit/service receipts belong under `.local-run/process-interfaces-083/`;
 revalidate exact owned handles before reuse. No model/provider/process/review or
 physical operation ran in this correction.
 
-### Bedtime continuation — committed UI evidence, compact layout next
+### Bedtime continuation â€” committed UI evidence, compact layout next
 
 Actual HEAD at this review is `e4e9d735` on
 `codex/083-process-working-interfaces`. The existing unlimited goal is active.
@@ -259,7 +275,7 @@ audits from actual evidence. Reuse satisfied proof scopes instead of repeating
 completed engineering runs. Follow the prompt above and original implementation
 authority; no additional product decisions are needed for independent local work.
 
-### Latest progress — installed preview/reopen and exact navigation verified
+### Latest progress â€” installed preview/reopen and exact navigation verified
 
 This supersedes the unresolved preview/observer next actions below. First014
 reports eight-open-interface capacity, and exact state inspection attributes
@@ -293,7 +309,7 @@ No model/provider/process/review/physical action ran in this continuation.
 Owned API hosts008/009 remain available for current-build investigation; revalidate
 their exact handles before reuse. Do not rerun completed setup or engineering work.
 
-### Latest handoff — committed migration and current installed UI checks
+### Latest handoff â€” committed migration and current installed UI checks
 
 This section supersedes pending-commit and next-action statements in historical
 checkpoints below. Actual HEAD is `68748b83` on
@@ -358,7 +374,7 @@ defect remains an external dependency; continue independent work. Preserve all
 original assignments, policies, measured checks and held human reviews. No new
 task closure, human engineering approval or physical verification is claimed.
 
-### Mesh checkpoint audit — partial results verified
+### Mesh checkpoint audit â€” partial results verified
 
 The next active-goal turn takes the safe action after the status/prompt turn.
 Read-only audit verifies **66 durable workspace-file representations** across the
@@ -376,7 +392,7 @@ reconcile it with actual HEAD before staging or repeating any helper. Then move
 to current-build normal-workspace pointer/pan, working/preview and accessibility
 acceptance. Older installed builds retain their earlier scope.
 
-### Bedtime handoff — reviewed mesh gate and remaining acceptance
+### Bedtime handoff â€” reviewed mesh gate and remaining acceptance
 
 This checkpoint supersedes the pending mesh-proof statements below. Actual HEAD
 is `ab2d21ce` on `codex/083-process-working-interfaces`; the index is empty and
@@ -427,7 +443,7 @@ workaround or protected campaign decision is authorized. Ask only for a genuinel
 necessary missing resource, authority or new engineering decision. Keep working
 between milestones; finish only when the complete approved scope is verified.
 
-### Bedtime handoff — current uncommitted mesh migration
+### Bedtime handoff â€” current uncommitted mesh migration
 
 At this status review, actual Git HEAD is `ab2d21ce` on
 `codex/083-process-working-interfaces`. The task ledger remains 49 checked / eight
@@ -475,7 +491,7 @@ policy do not alone prove semantic application; actual outputs and existing
 validators remain authority. Do not reintroduce native/vendor implementation in
 Wright to produce this qualification.
 
-### Latest progress — selected-profile guidance and transitive caller inventory
+### Latest progress â€” selected-profile guidance and transitive caller inventory
 
 Linux evidence is committed as d96ba080 (30 exact owned paths / 26 artifact blobs).
 Its receipt is `.local-run/process-interfaces-083/linux-file-authority-004-local-commit.json`.
@@ -508,7 +524,7 @@ with actual Git HEAD before repeating staging. All verification handles are
 terminal; ledger remains 49 checked / eight open. Continue the full migration,
 qualification, current UI/editor/accessibility/installed and final audit scope.
 
-### Latest progress — Linux file authority verified
+### Latest progress â€” Linux file authority verified
 
 The preceding status/prompt turn made no implementation progress. This
 continuation takes the next safe action: actual Linux verification of the three
@@ -541,7 +557,7 @@ Preserve original engineering requirements, frozen qualification/history and
 held human reviews. No provider/model/engineering/physical action ran here;
 old API/frontend owners still need liveness checks before reuse.
 
-### Bedtime status and continuation review — latest HEAD `f1bdc248`
+### Bedtime status and continuation review â€” latest HEAD `f1bdc248`
 
 Read the submitted goal, current Git state, task ledger, implementation authority,
 vision and checkpoint records. Current branch is
@@ -574,7 +590,7 @@ human engineering reviews remain held; no physical action is authorized.
 This status review runs no tests or engineering work and does not establish live
 service availability. The existing unlimited goal remains active.
 
-### Latest implementation — predictable tool authority at preparation
+### Latest implementation â€” predictable tool authority at preparation
 
 The slicing runtime correction is committed as `fca24ce0` (62 exact owned paths,
 48 byte-verified artifact blobs). Its receipt is
@@ -609,7 +625,7 @@ active mesh-repair/provider coupling migration, remaining provider qualification
 current UI/editor/installed/accessibility and complete requirement audits.
 This checkpoint does not establish current served UI behavior or final T053.
 
-### Latest implementation — actual slicing handoffs and producer correction
+### Latest implementation â€” actual slicing handoffs and producer correction
 
 This continuation completes the next safe runtime qualification after the bedtime
 status turn. HEAD before the new checkpoint remains `989145db`; reconcile the
@@ -630,7 +646,7 @@ runtime. Actual gateway audit shows one call each to geometry, independent slici
 response retention and passive inspection. All 15 recorded output sizes/hashes
 match current files; a duplicate start reconciles the same receipt with no extra
 calls. Run: `315d74b4187a45aba31c50416e7e7c60`. Fourteen exact owned containers
-across attempts001–007 are revalidated stopped. Their handles are terminal.
+across attempts001â€“007 are revalidated stopped. Their handles are terminal.
 
 Public evidence: `artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/`.
 The first read-only publisher failed before writing because it assumed attempt001
@@ -654,7 +670,7 @@ how normal workspace tool grants and exact integration authority are represented
 before deciding whether the shared preflight has an uncovered gap. Do not grant
 broad automatic permissions or treat a planned human review as a missing grant.
 
-### Bedtime continuation review — 3 October 2026
+### Bedtime continuation review â€” 3 October 2026
 
 Read this checkpoint before the older entries below. Current branch is
 `codex/083-process-working-interfaces`; observed HEAD is `989145db`.
@@ -673,7 +689,7 @@ and affected checks have 51 passes, followed by 32 canonical-runtime/supervisor
 passes. Two-file Ruff passes. These results still need scoped evidence publication
 and a focused local commit; they do not establish actual runtime qualification.
 
-The isolated qualification attempts 001–004 are terminal failures, not active
+The isolated qualification attempts 001â€“004 are terminal failures, not active
 runs. Their private drivers and receipts are under
 `.local-run/process-interfaces-083/t048-external-slice-runtime-*`.
 Failures were duplicate provider names (001), a missing gateway transport (002),
@@ -703,7 +719,7 @@ them. Preserve unrelated untracked evidence and documentation. No push, merge,
 release, physical operation, supplier submission, protected review response or
 vendor security workaround is authorized by this checkpoint.
 
-### Latest implementation — clean selected Blender installation and gateway proof
+### Latest implementation â€” clean selected Blender installation and gateway proof
 
 The slicing retirement checkpoint is now committed as 24976669: 47 exact owned
 paths and all 34 staged evidence files were verified. Its initial commit helpers
@@ -731,7 +747,7 @@ Ledger remains 49 checked / 8 open. Reconcile the planned local receipt
 and Git HEAD before repeating staging. No service availability is newly claimed;
 API/frontend/other old owners need current handle checks before reuse.
 
-### Latest implementation — independent diagnostic and embedded slicing retirement
+### Latest implementation â€” independent diagnostic and embedded slicing retirement
 
 The last user-facing status/prompt review was a no-progress goal turn. The next
 safe action is to save this already verified implementation checkpoint, then
@@ -764,7 +780,7 @@ regression/requirement acceptance. API 8040 was verified live at the preceding
 implementation checkpoint; revalidate all owned handles before use. No process
 start, human decision, physical dispatch or public promotion occurred here.
 
-### Latest implementation — external slicing declarations in both preparers
+### Latest implementation â€” external slicing declarations in both preparers
 
 The last user-facing status/prompt turn made no implementation progress. This
 continuation changes both original campaign preparers: explicit exact-scenario
@@ -795,7 +811,7 @@ Reconcile the exact local receipt
 .local-run/process-interfaces-083/external-slice-migration-001-local-commit.json
 and Git HEAD before staging; services still need current liveness checks.
 
-### Latest continuation — clean AgentCAD and neutral helper extraction
+### Latest continuation â€” clean AgentCAD and neutral helper extraction
 
 The audited two-process checkpoint is committed locally as f0ef1068 (325 exact
 owned paths/316 evidence blobs byte-verified). No push occurred.
@@ -825,7 +841,7 @@ the printed preparer until its actual vendor callers migrate; other examples'
 neutral helper dependency is now separated. Other recorded services require
 current liveness checks before reuse.
 
-### Current continuation — two-process obligations audited
+### Current continuation â€” two-process obligations audited
 
 The preceding goal turn supplied a status review/prompt only; classify it as no
 implementation progress. This continuation verifies both retained inventories,
@@ -857,7 +873,7 @@ check ownership/liveness before reuse. Continue substantive qualification and
 active migration, preserving other examples' neutral helper imports and all
 protected campaign/history identities. No physical action or push/merge/release.
 
-### Latest checkpoint — both configured016 source gates and saved reuse recorded
+### Latest checkpoint â€” both configured016 source gates and saved reuse recorded
 
 Read-only status review on 3 October 2026; HEAD remains `1d529f0e`. This
 review runs no tests, engineering operations, decisions or continuations. The
@@ -913,7 +929,7 @@ Audit transitive imports before retiring slicing/campaign helpers: several other
 examples depend on their neutral functions. Keep the original thirty assignments,
 protected campaigns and existing validator thresholds unchanged.
 
-### Latest read-only reconciliation — configured run016 and saved interface
+### Latest read-only reconciliation â€” configured run016 and saved interface
 
 Historical checkpoint, superseded by the completed continuation above.
 
@@ -966,7 +982,7 @@ accessibility, regressions and requirement audit while a real review waits.
 This supersedes older pending-generation and running-summary statements; it
 closes no task and claims no physical or human engineering acceptance.
 
-### Latest correction — partial-run navigation complete; configured mode needs live proof
+### Latest correction â€” partial-run navigation complete; configured mode needs live proof
 
 This supersedes the pending browser/preservation and candidate-option statements
 below. The final walkthrough at
@@ -1011,7 +1027,7 @@ The full goal remains active. Implementation/evidence is committed locally as
 `496a83f3` after exact 276-path staging and 264 artifact-byte checks. Unrelated
 work remains excluded; no push, merge or release occurred.
 
-### Latest reconciled checkpoint — printed repair timeout and saved-interface progress
+### Latest reconciled checkpoint â€” printed repair timeout and saved-interface progress
 
 This section supersedes the older running-run and pending-update statements
 below. HEAD remains `bcbb31c7`; the ledger remains **47 checked / 10 open**.
@@ -1071,7 +1087,7 @@ remains reusable; it does not establish physical or human engineering acceptance
 This review changes documentation only and closes no task. The existing unlimited
 goal is active. No additional routine approval is needed for authorized local work.
 
-### Latest overnight review — active printed repeat 015 and saved UI
+### Latest overnight review â€” active printed repeat 015 and saved UI
 
 HEAD is `bcbb31c7`, after `feffdd5a`. Tracked product files were clean at
 review; existing untracked evidence and unrelated documentation remain intact.
@@ -1130,7 +1146,7 @@ This section supersedes older instructions below to start printed repeat work
 or to continue the already completed third Heat basis review. Earlier records
 are retained as history, not current action authority.
 
-### Latest implementation — run receipts and printed preparation paths
+### Latest implementation â€” run receipts and printed preparation paths
 
 Shared receipt declaration/binding and explicit printed run-path preparation
 are implemented. Read `contracts/runtime-and-source.md` and the scoped evidence
@@ -1158,7 +1174,7 @@ consumers, actual gate/evidence, historical UI and protected reviews. Continue
 T043/T048/T049 migration/qualification, T041/T052/T053 current UI/regressions,
 and T056/T057 full-audit obligations. Counts remain 47 checked / ten open.
 
-### Latest completed digital checkpoint — Heat repeat gate and saved UI verified
+### Latest completed digital checkpoint â€” Heat repeat gate and saved UI verified
 
 This supersedes the waiting-run/cold-load instructions below. Third run
 `63b639c7a8f446cd90a9285921ab9072` is terminal, recorded `failed` with
@@ -1195,7 +1211,7 @@ requirement/evidence audit retain their scope. Serial native versions do not
 prove concurrent shared-project operation. Continue those obligations rather
 than repeating this Heat proof or narrowing completion to it.
 
-### Latest overnight checkpoint — corrected backend, third run at declared review
+### Latest overnight checkpoint â€” corrected backend, third run at declared review
 
 This section supersedes older statements below about the live API not loading
 the validator correction, host 20756 being active, and the second run still
@@ -1240,7 +1256,7 @@ printed preparation/receipt ownership, selected provider qualification, active
 caller migration, current workspace/editor/accessibility checks and the complete
 requirement audit. Do not narrow completion to the heat demonstration.
 
-### Latest finding — actual second-run validator conflict corrected in source
+### Latest finding â€” actual second-run validator conflict corrected in source
 
 Authority-field fix is committed as `4209a847`. The second actual run
 `50942bb6d23649b5bbb4d4e51a019af6` is terminal **failed**, with 17 outputs and
@@ -1279,7 +1295,7 @@ digital/UI evidence without credentials and finish the remaining printed
 migration/provider/UI/regression/audit obligations. Counts remain 47 checked /
 10 open. The full goal is active; this finding is not a reason to narrow scope.
 
-### Active continuation — saved Heat reuse and update proved; second tool chain active
+### Active continuation â€” saved Heat reuse and update proved; second tool chain active
 
 The authority-field readiness gap is corrected: reserved run tokens are rejected
 in all five unsupported configuration dictionaries even on undeclared and legacy
@@ -1324,9 +1340,9 @@ update, all current output/assessment parity/navigation and saved-reuse evidence
 then continue printed adoption/migration/provider and remaining acceptance work.
 The first assessment is legitimately held (25 pass / 1 mandatory human review,
 no measured failures); never grant engineering acceptance. Counts remain
-47 checked / 10 open and the complete M0–M5 scope remains active.
+47 checked / 10 open and the complete M0â€“M5 scope remains active.
 
-### Overnight status review — actual Heat outputs and authoring timeout
+### Overnight status review â€” actual Heat outputs and authoring timeout
 
 HEAD is `a4cfc474`, following shared run-path commit `105f98fd`. The tracked
 worktree was clean before this documentation update. Counts remain **47 checked /
@@ -1365,10 +1381,10 @@ leases before reuse or cleanup. Earlier services remain separate.
 Continue provider qualification, printed preparation/migration, accessibility and
 editor/current-build proof, affected regressions and the final requirements audit
 while any genuinely required review/resource waits. Preserve protected campaign
-and retained second-run subjects. The full M0–M5 scope remains active; no physical
+and retained second-run subjects. The full M0â€“M5 scope remains active; no physical
 effects, push, merge, release or public promotion are authorized.
 
-### Latest continuation — Heat preparation adopts explicit run paths
+### Latest continuation â€” Heat preparation adopts explicit run paths
 
 Shared runtime correction is saved as `105f98fd`. The neutral Definition helper
 and fresh Heat example bindings now support the explicit version; only generated
@@ -1389,7 +1405,7 @@ protected reviews and first-run evidence. Finish migration and the remaining
 authoring/editor/regression/audit tasks. Counts remain 47 checked / 10 open; actual
 native repeat-run and saved-UI reuse are still unproved by preparation fixtures.
 
-### Current continuation — run-path contract and controlled runtime verified
+### Current continuation â€” run-path contract and controlled runtime verified
 
 The shared run-path change now has 29 new parameterized cases and **237 passing
 tests / one existing Windows symlink-privilege skip** across fifteen affected
@@ -1412,7 +1428,7 @@ evidence. Then finish migration/provider and remaining UI/regression/audit work.
 The earlier uncommitted/untested handoff below is historical, superseded by this
 controlled proof; actual live engineering adoption remains unverified.
 
-### Overnight handoff — 3 October 2026, run isolation in progress
+### Overnight handoff â€” 3 October 2026, run isolation in progress
 
 Rechecked the submitted goal, Git worktree, task ledger and retained test logs.
 HEAD is `0248e68e`; **47 tasks are checked and 10 remain open**. The latest
@@ -1592,7 +1608,7 @@ workflow nor a fixture-only reuse claim closes the required proof.
 
 This handoff is a status review and prompt update, not another verification run.
 Task counts remain 45 checked / 12 open. Revalidate recorded owned services before
-reuse. The active goal retains the complete original M0–M5 scope and authority.
+reuse. The active goal retains the complete original M0â€“M5 scope and authority.
 
 ## Current continuation: theme/handshake verified
 
@@ -1619,7 +1635,7 @@ proof record. Seven active slicing Python implementation/reference files are
 also pinned for the next migration action; data/configuration callers still need
 inspection. These audits made no engineering start, provider call or review.
 
-## Overnight staging checkpoint — 3 October 2026 (completed below)
+## Overnight staging checkpoint â€” 3 October 2026 (completed below)
 
 The following preserves the staging handoff. The later installed original-history
 proof supersedes its pending build/launch/browser actions; do not repeat them.
@@ -1668,7 +1684,7 @@ remaining clean provider qualification, UI/editor/accessibility/regressions and
 the final requirement/evidence audit. Neither a repeat report nor preparatory
 staging alone is a completed implementation milestone.
 
-## Current continuation — original-history proof verified
+## Current continuation â€” original-history proof verified
 
 The staged wheel was built, inspected and installed with the current frontend.
 Three original pumpkin cases passed exact API checks and sixteen diagnostic-strict

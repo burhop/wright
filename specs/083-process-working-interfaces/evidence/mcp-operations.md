@@ -69,6 +69,21 @@ role tool basename to exact `{name, schema}`. It pins the existing
 separately authorized cancellation tools. These selections must be configured
 before execution; there is no late runtime form or guessed default.
 
+For multi-hour observation, the independently qualified `wright/operation`
+metadata may explicitly include `"observation_timeout_seconds": 7200`.
+The optional value must be a finite number from 0.05 to 604800 seconds (seven
+days); booleans and numeric strings are invalid. Its existing schema/profile
+digest must be pinned again before a changed operation can run. Ordinary step
+`timeout_seconds` and approved submission `timeout_seconds` remain short finite
+call budgets. Each status/result call also has that call deadline. An AI task
+delegates only the explicitly bounded observation interval, then resumes the
+remaining decision budget without refilling it. No model call remains pending
+during observation. Profiles without the field retain their existing deadlines.
+This is the existing optional Wright adapter contract, not universal MCP Tasks
+support or a provider-specific implementation. Timeout, cancellation and unknown
+outcomes still require reconciliation; a larger observation budget grants no
+submission replay authority.
+
 Finite decimal arguments use the existing validation JSON canonicalizer for the
 new MCP-operation subject/digests. Historical aliases retain their original
 strict integer JSON hashes. Credentials/payment fields, nonfinite values,

@@ -1,0 +1,1932 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+__________ test_multihour_observation_keeps_each_gateway_call_short ___________
+
+runtime = <workspace_service.workflow_mcp_execution.WorkflowMcpRuntime object at 0x0000024D18F406E0>
+step = PromptStep(id='analysis', title='Analysis', prompt='', prompt_from=None, references=(), output_format='json', output_p...ces=(), revision_policy='', file_dependencies={}, task_tool_allowlist=(), human_interaction=None, run_path_template='')
+submitted = {'operation_id': 'job-123'}
+profile = {'cancel_tool': 'cancel', 'observation_timeout_seconds': 7200, 'poll_seconds': 0.05, 'status_tool': 'status', ...}
+emit = None
+
+    async def monitor_operation(
+        runtime, step, submitted, profile, emit, *, pinned_tools=None
+    ):
+        from .workflow_mcp_execution import schema_digest
+    
+        if (
+            not isinstance(profile, dict)
+            or type(profile.get("version")) is not int
+            or profile["version"] != 1
+        ):
+            raise _invalid("The application operation adapter is unsupported.")
+        _observation_options(profile)
+        id_field = profile.get("id_field", "operation_id")
+        if (
+            not isinstance(submitted, dict)
+            or not isinstance(submitted.get(id_field), str)
+            or not submitted[id_field]
+            or submitted[id_field].strip() != submitted[id_field]
+            or len(submitted[id_field]) > 160
+        ):
+            if emit:
+                await emit(
+                    "operation_progress",
+                    task_id=step.id,
+                    task_title=step.title,
+                    provider_binding=step.server_id,
+                    provider_schema_digest=step.schema_digest,
+                    state="reconciliation_required",
+                    operation_id=None,
+                    message="The provider returned a submission response without a verifiable operation identity.",
+                    **_observation(profile, source="unknown"),
+                )
+            raise _error(
+                "APPLICATION_OUTCOME_UNKNOWN",
+                "The application did not return a stable operation identity.",
+                "Reconcile the submission before another attempt; do not submit it again automatically.",
+            )
+        operation_id = submitted[id_field]
+        argument = profile.get("id_argument", "operation_id")
+        pinned = (
+            pinned_tools
+            if pinned_tools is not None
+            else validate_operation_profile(runtime, step, profile)
+        )
+        last_observation = _observation(profile, source="submission_receipt")
+        last_provider_state = None
+    
+        def qualified_cancel():
+            name = profile.get("cancel_tool")
+            try:
+                tool = next(
+                    (t for t in runtime.task_tools(step) if t.tool_name == name), None
+                )
+                if tool is None or pinned.get(name) != (tool.name, schema_digest(tool)):
+                    return False
+                approvals = runtime.gateway.workspace_approvals_for_model_call(
+                    runtime.session_id, tool.name
+                )
+                return set(tool.required_approvals).issubset(approvals)
+            except Exception:
+                return False
+    
+        cancellation = OperationCancellation(
+            operation_id, step.id, step.server_id, qualified_cancel
+        )
+        runtime._active_operations[step.id] = cancellation
+    
+        async def event(state, **extra):
+            if emit:
+                await emit(
+                    "operation_progress",
+                    task_id=step.id,
+                    task_title=step.title,
+                    operation_id=operation_id,
+                    provider_binding=step.server_id,
+                    provider_schema_digest=step.schema_digest,
+                    state=state,
+                    **last_observation,
+                    **extra,
+                )
+    
+        async def invoke(role, readonly=False):
+            name = profile.get(role)
+            tool = next((t for t in runtime.task_tools(step) if t.tool_name == name), None)
+            if tool is None or (
+                readonly and tool.annotations.get("readOnlyHint") is not True
+            ):
+                raise _invalid(
+                    f"The application needs an available {'read-only ' if readonly else ''}{role} operation."
+                )
+            if pinned.get(name) != (tool.name, schema_digest(tool)):
+                raise _invalid(
+                    "The application operation binding has changed; reconcile its identity before retrying."
+                )
+            invocation = replace(
+                step,
+                tool_name=tool.name,
+                schema_digest=schema_digest(tool),
+                agent_task=False,
+            )
+            args = {argument: operation_id}
+            runtime.validate(invocation, args, tool.input_schema)
+            return await runtime.call(invocation, args, monitor=False)
+    
+        interval = float(profile.get("poll_seconds", 1))
+        states = profile.get(
+            "states",
+            {
+                "working": "working",
+                "completed": "completed",
+                "failed": "failed",
+                "cancelled": "cancelled",
+                "input_required": "input_required",
+            },
+        )
+    
+        async def read_status():
+            nonlocal last_observation, last_provider_state
+            value, _ = await invoke("status_tool", readonly=True)
+            if not isinstance(value, dict):
+                raise _invalid("The application returned an invalid job status.")
+            if id_field in value and value[id_field] != operation_id:
+                last_observation = _observation(profile, source="unknown")
+                await event(
+                    "reconciliation_required",
+                    message="The provider status belongs to another operation identity.",
+                )
+                raise _invalid(
+                    "The application returned another operation identity; reconcile the identified job."
+                )
+            raw_state = value.get(profile.get("status_field", "status"))
+            state = states.get(raw_state) if isinstance(raw_state, str) else None
+            if state not in _PROVIDER_STATES:
+                last_observation = _observation(profile, source="unknown")
+                await event(
+                    "reconciliation_required",
+                    message="The provider's operation state is not recognized.",
+                )
+                raise _invalid(
+                    "The application returned an unknown job state; inspect the operation before retrying."
+                )
+            last_observation = _observation(profile, value, source="provider_status")
+            last_provider_state = state
+            await event(state, message=redact_text(str(value.get("message", state)))[:1000])
+            return state, value
+    
+        async def cancel_and_observe():
+            nonlocal last_observation
+            if not qualified_cancel():
+                last_observation = _observation(profile, source="unknown")
+                await event(
+                    "cancellation_unavailable",
+                    message="This operation has no currently authorized cancellation capability; reconcile its outcome.",
+                )
+                return "unknown"
+            try:
+                async with asyncio.timeout(10):
+                    await invoke("cancel_tool")
+                last_observation = _observation(profile, source="local_request")
+                await event(
+                    "cancellation_requested",
+                    message="Cancellation requested; waiting for the provider's actual outcome.",
+                )
+                confirmation = float(profile.get("cancel_confirm_seconds", 1))
+                if confirmation:
+                    async with asyncio.timeout(confirmation):
+                        while True:
+                            state, _ = await read_status()
+                            if state in {"completed", "failed", "cancelled"}:
+                                return state
+                            await asyncio.sleep(interval)
+            except Exception:
+                pass
+            last_observation = _observation(profile, source="unknown")
+            await event(
+                "cancellation_unconfirmed",
+                message="The provider operation may still be working. Reconcile it before another submission.",
+            )
+            return "unknown"
+    
+        async def cancellation_barrier():
+            if not cancellation.reserved:
+                return
+            try:
+                async with asyncio.timeout(6):
+                    await cancellation.decision.wait()
+            except TimeoutError:
+                raise _error(
+                    "APPLICATION_OUTCOME_UNKNOWN",
+                    "Cancellation request publication could not be confirmed.",
+                    "Reconcile the retained operation before another action.",
+                ) from None
+            if cancellation.publication_failed:
+                raise _error(
+                    "APPLICATION_OUTCOME_UNKNOWN",
+                    "Cancellation request publication could not be confirmed.",
+                    "Reconcile the retained operation before another action.",
+                )
+            if cancellation.requested:
+                cancellation.outcome = (
+                    last_provider_state
+                    if last_provider_state in {"completed", "failed", "cancelled"}
+                    else await cancel_and_observe()
+                )
+                raise asyncio.CancelledError()
+    
+        try:
+            await event(
+                "submitted",
+                message="Application job submitted; waiting for verified completion.",
+            )
+            async with asyncio.timeout(step.timeout_seconds):
+                while True:
+                    await cancellation_barrier()
+                    state, value = await read_status()
+                    await cancellation_barrier()
+                    if state == "completed":
+                        if profile.get("result_tool"):
+                            result = await invoke("result_tool", readonly=True)
+                        else:
+                            if "result" not in value:
+                                raise _invalid(
+                                    "The application completed without returning its result."
+                                )
+                            import json
+    
+                            result = (
+                                value["result"],
+                                json.dumps(value["result"], ensure_ascii=False),
+                            )
+                        await event("results_collected")
+                        await cancellation_barrier()
+                        return result
+                    if state in {"failed", "cancelled", "input_required"}:
+                        raise _error(
+                            "APPLICATION_" + state.upper(),
+                            f"{step.title}: application job {state.replace('_', ' ')}.",
+                            str(
+                                value.get(
+                                    "message",
+                                    "Inspect the identified operation before starting another run.",
+                                )
+                            )[:1000],
+                        )
+                    try:
+>                       await asyncio.wait_for(
+                            cancellation.changed.wait(), timeout=interval
+                        )
+
+packages\workspace_service\src\workspace_service\workflow_async_operations.py:466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+D:\Users\markb\miniconda3\Lib\asyncio\tasks.py:507: in wait_for
+    return await fut
+           ^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <asyncio.locks.Event object at 0x0000024D19194F50 [unset]>
+
+    async def wait(self):
+        """Block until the internal flag is true.
+    
+        If the internal flag is true on entry, return True
+        immediately.  Otherwise, block until another task calls
+        set() to set the flag to true, then return True.
+        """
+        if self._value:
+            return True
+    
+        fut = self._get_loop().create_future()
+        self._waiters.append(fut)
+        try:
+>           await fut
+E           asyncio.exceptions.CancelledError
+
+D:\Users\markb\miniconda3\Lib\asyncio\locks.py:213: CancelledError
+
+The above exception was the direct cause of the following exception:
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000024D191915B0>
+
+    @pytest.mark.asyncio
+    async def test_multihour_observation_keeps_each_gateway_call_short(monkeypatch):
+        # Exercise real elapsed observation beyond a short call budget, while
+        # capturing the configured two-hour deadline instead of sleeping for hours.
+        g, runtime, step, tools = remote(("working",) * 4 + ("completed",))
+        tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+        step = replace(step, schema_digest=schema_digest(tools[0]), timeout_seconds=0.1)
+        deadlines, call_budgets = [], []
+        real_timeout, original = asyncio.timeout, g.call_tool
+    
+        def capture_timeout(seconds):
+            deadlines.append(seconds)
+            return real_timeout(seconds)
+    
+        async def call(*args, **kwargs):
+            call_budgets.append(kwargs["timeout"])
+            return await original(*args, **kwargs)
+    
+        monkeypatch.setattr(asyncio, "timeout", capture_timeout)
+        g.call_tool = call
+>       result = await runtime.call(step, {})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+packages\workspace_service\tests\test_workflow_async_operations.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:714: in call
+    return await monitor_operation(
+packages\workspace_service\src\workspace_service\workflow_async_operations.py:432: in monitor_operation
+    async with asyncio.timeout(step.timeout_seconds):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Timeout [expired]>
+exc_type = <class 'asyncio.exceptions.CancelledError'>
+exc_val = CancelledError(), exc_tb = <traceback object at 0x0000024D19113440>
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> Optional[bool]:
+        assert self._state in (_State.ENTERED, _State.EXPIRING)
+    
+        if self._timeout_handler is not None:
+            self._timeout_handler.cancel()
+            self._timeout_handler = None
+    
+        if self._state is _State.EXPIRING:
+            self._state = _State.EXPIRED
+    
+            if self._task.uncancel() <= self._cancelling and exc_type is not None:
+                # Since there are no new cancel requests, we're
+                # handling this.
+                if issubclass(exc_type, exceptions.CancelledError):
+>                   raise TimeoutError from exc_val
+E                   TimeoutError
+
+D:\Users\markb\miniconda3\Lib\asyncio\timeouts.py:116: TimeoutError
+__ test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded __
+
+self = <workspace_service.workflow_mcp_execution.WorkflowMcpRuntime object at 0x0000024D19195E50>
+step = PromptStep(id='analysis', title='Analysis', prompt='', prompt_from=None, references=(), output_format='json', output_p...ces=(), revision_policy='', file_dependencies={}, task_tool_allowlist=(), human_interaction=None, run_path_template='')
+prompt = 'Run the analysis'
+decide = <function test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded.<locals>.decide at 0x0000024D193605E0>
+emit = <function test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded.<locals>.emit at 0x0000024D19360040>
+
+    async def run_task(self, step, prompt, decide, emit, *, cad=None, images=None):
+        """One isolated task, one server, bounded decisions, existing gateway calls."""
+        from .workflow_source_execution import WorkflowSourceExecutionError
+    
+        alias_names = {}
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    UNATTENDED_STEP_POLICY
+                    + " Complete the task using only the provided tools. Inspect their results before choosing "
+                    "another operation. Do not invent missing engineering requirements. The available tool "
+                    "contracts are refreshed for each decision. Before reporting "
+                    "that an inspection capability is unavailable, examine these contracts and use the relevant "
+                    "read-only inspection tool when one is provided. A creation response that omits measurements "
+                    "does not mean the separate measurement tools are unavailable. Do not repeat creation to "
+                    "obtain measurements of an existing result. Do not claim unperformed "
+                    "operations. Do not create files unless explicitly requested; Wright saves your final response. "
+                    "When finished, return a message whose content is a JSON object with status "
+                    "('completed', 'blocked' or 'error'), response (string), and evidence (array of successful tool-call "
+                    "numbers supporting the result). If requirements are missing or the task cannot be completed, "
+                    "return blocked and explain what must change; add reason input_required when a user choice "
+                    "is missing, capability_unavailable when a required tool is absent, or execution_failed "
+                    "for another failure. Do not invent an answer or perform unrelated calls. "
+                    f"Inside that envelope, format response as {step.output_format}. For HTML use a complete standalone "
+                    "HTML document; for JSON use valid JSON text, without code fences. "
+                    f"You may use at most {step.max_tool_calls} tool calls.\nAdditional task guidance:\n{step.task_guidance}"
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    [
+                        {"type": "text", "text": prompt},
+                        *[
+                            {"type": "image_url", "image_url": {"url": url}}
+                            for url in images
+                        ],
+                    ]
+                    if images
+                    else prompt
+                ),
+            },
+        ]
+        records, succeeded, rejected_recipes = [], set(), set()
+        from .workflow_mcp_images import MAX_IMAGES_PER_TASK, MAX_TASK_IMAGE_BYTES
+    
+        image_count = len(images or [])
+        image_bytes = sum(len(url) for url in images or [])
+    
+        async def execute():
+            nonlocal image_count, image_bytes
+            for index in range(step.max_tool_calls + 1):
+                # Lazy discovery can replace a cached catalog after a call.
+                # Present the current contracts on each decision, with stable
+                # aliases so previous tool results remain understandable.
+                selected = self.task_tools(step)
+                if step.design_check:
+                    selected = tuple(
+                        t for t in selected if t.annotations.get("readOnlyHint") is True
+                    )
+                if cad:
+                    selected = tuple(t for t in selected if cad.allows_tool(t))
+                aliases = {}
+                for tool in selected:
+                    alias = alias_names.setdefault(
+                        tool.name, f"tool_{len(alias_names)}"
+                    )
+                    aliases[alias] = tool
+                schemas = [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": alias,
+                            "description": f"{tool.title or tool.tool_name}: {tool.description}",
+                            "parameters": dict(tool.input_schema),
+                        },
+                    }
+                    for alias, tool in aliases.items()
+                ]
+                await emit(
+                    "task_progress",
+                    task_id=step.id,
+                    task_title=step.title,
+                    message="Reviewing tool results"
+                    if records
+                    else "Planning the task",
+                    tool_calls=len(records),
+                    available_tools=[
+                        {
+                            "alias": alias,
+                            "tool": tool.name,
+                            "schema_digest": schema_digest(tool),
+                        }
+                        for alias, tool in aliases.items()
+                    ],
+                )
+                message = await decide(messages, schemas, required=False)
+                decision_usage = getattr(message, "wright_usage", None)
+                if isinstance(decision_usage, dict):
+                    await emit(
+                        "model_usage",
+                        task_id=step.id,
+                        task_title=step.title,
+                        usage=decision_usage,
+                    )
+                calls = message.get("tool_calls", [])
+                from .workflow_source_execution import require_unattended_completion
+    
+                # A mixed question/tool decision cannot dispatch its accompanying
+                # operations. Only an explicit structured disposition is checked;
+                # ordinary documents may legitimately contain questions.
+                if calls and message.get("content"):
+                    try:
+                        disposition = json.loads(message["content"])
+                    except (ValueError, TypeError):
+                        disposition = None
+                    if isinstance(disposition, dict):
+                        await require_unattended_completion(step, disposition, emit)
+                if not calls:
+                    try:
+                        outcome = json.loads(message.get("content", ""))
+                        if (
+                            not isinstance(outcome, dict)
+                            or not isinstance(outcome.get("response"), str)
+                            or not outcome["response"].strip()
+                        ):
+                            raise ValueError()
+                    except (ValueError, TypeError):
+                        raise _invalid(
+                            f"{step.title}: the task returned no verifiable completion evidence."
+                        ) from None
+                    await require_unattended_completion(step, outcome, emit)
+                    evidence = outcome.get("evidence")
+                    if (
+                        outcome.get("status") != "completed"
+                        or not isinstance(evidence, list)
+                        or not evidence
+                        or any(
+                            type(number) is not int
+                            or not 1 <= number <= len(records)
+                            or records[number - 1]["status"] != "succeeded"
+                            for number in evidence
+                        )
+                    ):
+                        raise _invalid(
+                            f"{step.title}: the task returned no valid execution evidence."
+                        )
+                    from .workflow_source_execution import validate_response
+    
+                    try:
+                        response = validate_response(
+                            outcome["response"], step.output_format
+                        )
+                    except WorkflowSourceExecutionError:
+                        # A formatting mistake after successful engineering
+                        # calls does not justify replaying those operations.
+                        # One tool-free correction stays inside this task's
+                        # existing deadline and preserves its evidence claims.
+                        await emit(
+                            "task_response_format_repair",
+                            task_id=step.id,
+                            task_title=step.title,
+                            output_format=step.output_format,
+                            evidence=evidence,
+                            original_response=outcome["response"],
+                        )
+                        repair = {}
+                        repair_usage_recorded = False
+                        repair_started = time.perf_counter()
+                        failure_reason = "model_request_failed"
+                        try:
+                            repair = await decide(
+                                response_format_repair_messages(
+                                    outcome, step.output_format
+                                ),
+                                [],
+                                required=False,
+                            )
+                            repair_usage = getattr(repair, "wright_usage", None)
+                            if not isinstance(repair_usage, dict):
+                                repair_usage = {
+                                    "status": "unknown",
+                                    "model": None,
+                                    "input_tokens": None,
+                                    "cached_input_tokens": None,
+                                    "output_tokens": None,
+                                    "reasoning_output_tokens": None,
+                                    "total_tokens": None,
+                                    "duration_ms": round(
+                                        (time.perf_counter() - repair_started) * 1000
+                                    ),
+                                }
+                            await emit(
+                                "model_usage",
+                                task_id=step.id,
+                                task_title=step.title,
+                                usage=repair_usage,
+                            )
+                            repair_usage_recorded = True
+                            failure_reason = "invalid_completion_envelope"
+                            corrected = json.loads(repair.get("content", ""))
+                            if repair.get("tool_calls"):
+                                failure_reason = "tool_call_requested"
+                                raise ValueError()
+                            if not isinstance(corrected, dict):
+                                raise ValueError()
+                            # A formatting repair has no authority to ask for
+                            # input or change the engineering disposition.
+                            if corrected.get("reason") == "input_required":
+                                await require_unattended_completion(
+                                    step, corrected, emit
+                                )
+                            failure_reason = "execution_evidence_changed"
+                            if (
+                                corrected.get("status") != outcome["status"]
+                                or corrected.get("evidence") != evidence
+                                or any(
+                                    type(number) is not int
+                                    for number in corrected["evidence"]
+                                )
+                            ):
+                                raise ValueError()
+                            failure_reason = "invalid_response_format"
+                            response = validate_response(
+                                corrected.get("response"), step.output_format
+                            )
+                        except (
+                            ValueError,
+                            TypeError,
+                            WorkflowSourceExecutionError,
+                        ) as error:
+                            if (
+                                isinstance(error, WorkflowSourceExecutionError)
+                                and error.code == "INTERACTION_NOT_DECLARED"
+                            ):
+                                raise
+                            content = (
+                                repair.get("content", "")
+                                if isinstance(repair, dict)
+                                else ""
+                            )
+                            if not repair_usage_recorded:
+                                await emit(
+                                    "model_usage",
+                                    task_id=step.id,
+                                    task_title=step.title,
+                                    usage={
+                                        "status": "unknown",
+                                        "model": None,
+                                        "input_tokens": None,
+                                        "cached_input_tokens": None,
+                                        "output_tokens": None,
+                                        "reasoning_output_tokens": None,
+                                        "total_tokens": None,
+                                        "duration_ms": round(
+                                            (time.perf_counter() - repair_started)
+                                            * 1000
+                                        ),
+                                    },
+                                )
+                            content = content if isinstance(content, str) else ""
+                            await emit(
+                                "task_response_format_repair_failed",
+                                task_id=step.id,
+                                task_title=step.title,
+                                output_format=step.output_format,
+                                evidence=evidence,
+                                reason=failure_reason,
+                                correction_sha256=hashlib.sha256(
+                                    content.encode()
+                                ).hexdigest(),
+                                correction_preview=content[:2048],
+                                correction_truncated=len(content) > 2048,
+                            )
+                            raise _invalid(
+                                f"{step.title}: final response formatting could not be corrected without changing execution evidence."
+                            ) from None
+                    return response, records
+                if index == step.max_tool_calls:
+                    raise _error(
+                        "TASK_LIMIT_REACHED",
+                        f"{step.title}: the tool-call limit was reached.",
+                        "Inspect completed operations before increasing the limit or retrying.",
+                    )
+                if (
+                    len(calls) != 1
+                    or calls[0].get("function", {}).get("name") not in aliases
+                ):
+                    raise _invalid(
+                        f"{step.title}: the model requested a tool outside this task."
+                    )
+                call = calls[0]
+                tool = aliases[call["function"]["name"]]
+                invocation = replace(
+                    step,
+                    tool_name=tool.name,
+                    schema_digest=schema_digest(tool),
+                    agent_task=False,
+                )
+                # Re-resolve on every call: removal or authority/schema change stops the run.
+                current_tool = self.resolve(invocation)
+                if (
+                    step.design_check
+                    and current_tool.annotations.get("readOnlyHint") is not True
+                ):
+                    raise _invalid(
+                        "The design check cannot use a tool that changes the model."
+                    )
+                try:
+                    arguments = json.loads(call["function"]["arguments"])
+                except (ValueError, KeyError, TypeError):
+                    raise _invalid(
+                        f"{step.title}: the model returned invalid tool arguments."
+                    ) from None
+                if cad:
+                    arguments = cad.guard(tool, arguments)
+                signature = tool.name + json.dumps(arguments, sort_keys=True)
+                if signature in rejected_recipes:
+                    raise _invalid(
+                        f"{step.title}: the same rejected recipe was requested again.",
+                        "Correct the conflicting parameter names and their references before retrying.",
+                    )
+                if signature in succeeded and not repeatable_call(
+                    current_tool, arguments
+                ):
+                    raise _invalid(
+                        f"{step.title}: a completed operation ({tool.title or tool.tool_name}) was requested again.",
+                        "Inspect the task log and clarify the remaining work before retrying.",
+                    )
+                await emit(
+                    "tool_started",
+                    task_id=step.id,
+                    task_title=step.title,
+                    tool=tool.title or tool.tool_name,
+                    arguments=arguments,
+                    tool_calls=index + 1,
+                )
+                terminal_error = None
+                observation = {}
+                try:
+                    self.validate(invocation, arguments, tool.input_schema)
+                    if cad:
+                        await cad.validate_creation(tool, arguments)
+                except WorkflowSourceExecutionError as error:
+                    # No external operation has occurred; allow a bounded correction.
+                    value, text, status = (
+                        getattr(error, "tool_result", {}),
+                        str(error),
+                        "invalid_arguments",
+                    )
+                else:
+                    try:
+                        value, text = await self.call(
+                            invocation,
+                            arguments,
+                            on_event=emit,
+                            image_observations=observation,
+                        )
+                        if cad:
+                            cad.observe(tool, value)
+                        succeeded.add(signature)
+                        status = "succeeded"
+                    except WorkflowSourceExecutionError as error:
+                        value, text, status = (
+                            getattr(error, "tool_result", {}),
+                            str(error),
+                            "failed",
+                        )
+                        if cad and safe_recipe_parameter_correction(
+                            current_tool, value
+                        ):
+                            # The native server proved that its temporary document
+                            # was closed and no recipe/output mutation remains.
+                            # Permit a new decision, never replay these arguments.
+                            rejected_recipes.add(signature)
+                            status = "invalid_arguments"
+                        elif not current_tool.annotations.get("readOnlyHint", False):
+                            terminal_error = error
+                terminal_receipt = (
+                    terminal_operation_receipt(current_tool, arguments, value)
+                    if status == "succeeded"
+                    else None
+                )
+                record = {
+                    "tool": tool.name,
+                    "arguments": arguments,
+                    "status": status,
+                    "result": value,
+                    "text": text,
+                    "schema_digest": schema_digest(tool),
+                }
+                if isinstance(decision_usage, dict):
+                    record["model_usage"] = decision_usage
+                if terminal_receipt is not None:
+                    record["terminal_receipt"] = terminal_receipt
+                if observation.get("evidence"):
+                    record["image_observations"] = observation["evidence"]
+                records.append(record)
+                if cad:
+                    cad.records.append(record)
+                await emit(
+                    "tool_completed", task_id=step.id, task_title=step.title, **record
+                )
+                # A failed mutation still stops immediately. Keep its complete
+                # report (including partial files and cleanup warnings) before
+                # raising; it is evidence, never successful execution.
+                if terminal_error is not None:
+                    raise terminal_error
+                if terminal_receipt is not None:
+                    from .workflow_source_execution import validate_response
+    
+                    response = validate_response(
+                        terminal_operation_response(
+                            current_tool,
+                            index + 1,
+                            terminal_receipt,
+                            step.output_format,
+                        ),
+                        step.output_format,
+                    )
+                    await emit(
+                        "task_terminal_operation",
+                        task_id=step.id,
+                        task_title=step.title,
+                        tool=current_tool.name,
+                        tool_call_number=index + 1,
+                        receipt=terminal_receipt,
+                    )
+                    return response, records
+                result = json.dumps(
+                    {
+                        "tool_call_number": index + 1,
+                        "status": status,
+                        "result": value,
+                        "text": text,
+                    },
+                    ensure_ascii=False,
+                    default=dict,
+                )
+                if len(result.encode()) > 262_144:
+                    raise _invalid(
+                        f"{step.title}: the tool result exceeds the task context limit.",
+                        "Request a smaller result.",
+                    )
+                image_parts = (
+                    observation.get("parts", []) if status == "succeeded" else []
+                )
+                image_count += len(image_parts)
+                image_bytes += sum(
+                    len(part["image_url"]["url"]) for part in image_parts
+                )
+                if (
+                    image_count > MAX_IMAGES_PER_TASK
+                    or image_bytes > MAX_TASK_IMAGE_BYTES
+                ):
+                    raise _invalid(
+                        f"{step.title}: image observations exceed the task context limit.",
+                        "Split the visual inspection into tasks with at most eight images and 8 MiB of image data.",
+                    )
+                content = (
+                    [{"type": "text", "text": result}, *image_parts]
+                    if image_parts
+                    else result
+                )
+                messages.extend(
+                    [
+                        message,
+                        {
+                            "role": "tool",
+                            "tool_call_id": call["id"],
+                            "content": content,
+                        },
+                    ]
+                )
+            raise AssertionError("bounded task must return or fail")
+    
+        try:
+            async with asyncio.timeout(step.timeout_seconds):
+>               return await execute()
+                       ^^^^^^^^^^^^^^^
+
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:1226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:1100: in execute
+    value, text = await self.call(
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:714: in call
+    return await monitor_operation(
+packages\workspace_service\src\workspace_service\workflow_async_operations.py:466: in monitor_operation
+    await asyncio.wait_for(
+D:\Users\markb\miniconda3\Lib\asyncio\tasks.py:507: in wait_for
+    return await fut
+           ^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <asyncio.locks.Event object at 0x0000024D19191A70 [unset]>
+
+    async def wait(self):
+        """Block until the internal flag is true.
+    
+        If the internal flag is true on entry, return True
+        immediately.  Otherwise, block until another task calls
+        set() to set the flag to true, then return True.
+        """
+        if self._value:
+            return True
+    
+        fut = self._get_loop().create_future()
+        self._waiters.append(fut)
+        try:
+>           await fut
+E           asyncio.exceptions.CancelledError
+
+D:\Users\markb\miniconda3\Lib\asyncio\locks.py:213: CancelledError
+
+The above exception was the direct cause of the following exception:
+
+self = <workspace_service.workflow_mcp_execution.WorkflowMcpRuntime object at 0x0000024D19195E50>
+step = PromptStep(id='analysis', title='Analysis', prompt='', prompt_from=None, references=(), output_format='json', output_p...ces=(), revision_policy='', file_dependencies={}, task_tool_allowlist=(), human_interaction=None, run_path_template='')
+prompt = 'Run the analysis'
+decide = <function test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded.<locals>.decide at 0x0000024D193605E0>
+emit = <function test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded.<locals>.emit at 0x0000024D19360040>
+
+    async def run_task(self, step, prompt, decide, emit, *, cad=None, images=None):
+        """One isolated task, one server, bounded decisions, existing gateway calls."""
+        from .workflow_source_execution import WorkflowSourceExecutionError
+    
+        alias_names = {}
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    UNATTENDED_STEP_POLICY
+                    + " Complete the task using only the provided tools. Inspect their results before choosing "
+                    "another operation. Do not invent missing engineering requirements. The available tool "
+                    "contracts are refreshed for each decision. Before reporting "
+                    "that an inspection capability is unavailable, examine these contracts and use the relevant "
+                    "read-only inspection tool when one is provided. A creation response that omits measurements "
+                    "does not mean the separate measurement tools are unavailable. Do not repeat creation to "
+                    "obtain measurements of an existing result. Do not claim unperformed "
+                    "operations. Do not create files unless explicitly requested; Wright saves your final response. "
+                    "When finished, return a message whose content is a JSON object with status "
+                    "('completed', 'blocked' or 'error'), response (string), and evidence (array of successful tool-call "
+                    "numbers supporting the result). If requirements are missing or the task cannot be completed, "
+                    "return blocked and explain what must change; add reason input_required when a user choice "
+                    "is missing, capability_unavailable when a required tool is absent, or execution_failed "
+                    "for another failure. Do not invent an answer or perform unrelated calls. "
+                    f"Inside that envelope, format response as {step.output_format}. For HTML use a complete standalone "
+                    "HTML document; for JSON use valid JSON text, without code fences. "
+                    f"You may use at most {step.max_tool_calls} tool calls.\nAdditional task guidance:\n{step.task_guidance}"
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    [
+                        {"type": "text", "text": prompt},
+                        *[
+                            {"type": "image_url", "image_url": {"url": url}}
+                            for url in images
+                        ],
+                    ]
+                    if images
+                    else prompt
+                ),
+            },
+        ]
+        records, succeeded, rejected_recipes = [], set(), set()
+        from .workflow_mcp_images import MAX_IMAGES_PER_TASK, MAX_TASK_IMAGE_BYTES
+    
+        image_count = len(images or [])
+        image_bytes = sum(len(url) for url in images or [])
+    
+        async def execute():
+            nonlocal image_count, image_bytes
+            for index in range(step.max_tool_calls + 1):
+                # Lazy discovery can replace a cached catalog after a call.
+                # Present the current contracts on each decision, with stable
+                # aliases so previous tool results remain understandable.
+                selected = self.task_tools(step)
+                if step.design_check:
+                    selected = tuple(
+                        t for t in selected if t.annotations.get("readOnlyHint") is True
+                    )
+                if cad:
+                    selected = tuple(t for t in selected if cad.allows_tool(t))
+                aliases = {}
+                for tool in selected:
+                    alias = alias_names.setdefault(
+                        tool.name, f"tool_{len(alias_names)}"
+                    )
+                    aliases[alias] = tool
+                schemas = [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": alias,
+                            "description": f"{tool.title or tool.tool_name}: {tool.description}",
+                            "parameters": dict(tool.input_schema),
+                        },
+                    }
+                    for alias, tool in aliases.items()
+                ]
+                await emit(
+                    "task_progress",
+                    task_id=step.id,
+                    task_title=step.title,
+                    message="Reviewing tool results"
+                    if records
+                    else "Planning the task",
+                    tool_calls=len(records),
+                    available_tools=[
+                        {
+                            "alias": alias,
+                            "tool": tool.name,
+                            "schema_digest": schema_digest(tool),
+                        }
+                        for alias, tool in aliases.items()
+                    ],
+                )
+                message = await decide(messages, schemas, required=False)
+                decision_usage = getattr(message, "wright_usage", None)
+                if isinstance(decision_usage, dict):
+                    await emit(
+                        "model_usage",
+                        task_id=step.id,
+                        task_title=step.title,
+                        usage=decision_usage,
+                    )
+                calls = message.get("tool_calls", [])
+                from .workflow_source_execution import require_unattended_completion
+    
+                # A mixed question/tool decision cannot dispatch its accompanying
+                # operations. Only an explicit structured disposition is checked;
+                # ordinary documents may legitimately contain questions.
+                if calls and message.get("content"):
+                    try:
+                        disposition = json.loads(message["content"])
+                    except (ValueError, TypeError):
+                        disposition = None
+                    if isinstance(disposition, dict):
+                        await require_unattended_completion(step, disposition, emit)
+                if not calls:
+                    try:
+                        outcome = json.loads(message.get("content", ""))
+                        if (
+                            not isinstance(outcome, dict)
+                            or not isinstance(outcome.get("response"), str)
+                            or not outcome["response"].strip()
+                        ):
+                            raise ValueError()
+                    except (ValueError, TypeError):
+                        raise _invalid(
+                            f"{step.title}: the task returned no verifiable completion evidence."
+                        ) from None
+                    await require_unattended_completion(step, outcome, emit)
+                    evidence = outcome.get("evidence")
+                    if (
+                        outcome.get("status") != "completed"
+                        or not isinstance(evidence, list)
+                        or not evidence
+                        or any(
+                            type(number) is not int
+                            or not 1 <= number <= len(records)
+                            or records[number - 1]["status"] != "succeeded"
+                            for number in evidence
+                        )
+                    ):
+                        raise _invalid(
+                            f"{step.title}: the task returned no valid execution evidence."
+                        )
+                    from .workflow_source_execution import validate_response
+    
+                    try:
+                        response = validate_response(
+                            outcome["response"], step.output_format
+                        )
+                    except WorkflowSourceExecutionError:
+                        # A formatting mistake after successful engineering
+                        # calls does not justify replaying those operations.
+                        # One tool-free correction stays inside this task's
+                        # existing deadline and preserves its evidence claims.
+                        await emit(
+                            "task_response_format_repair",
+                            task_id=step.id,
+                            task_title=step.title,
+                            output_format=step.output_format,
+                            evidence=evidence,
+                            original_response=outcome["response"],
+                        )
+                        repair = {}
+                        repair_usage_recorded = False
+                        repair_started = time.perf_counter()
+                        failure_reason = "model_request_failed"
+                        try:
+                            repair = await decide(
+                                response_format_repair_messages(
+                                    outcome, step.output_format
+                                ),
+                                [],
+                                required=False,
+                            )
+                            repair_usage = getattr(repair, "wright_usage", None)
+                            if not isinstance(repair_usage, dict):
+                                repair_usage = {
+                                    "status": "unknown",
+                                    "model": None,
+                                    "input_tokens": None,
+                                    "cached_input_tokens": None,
+                                    "output_tokens": None,
+                                    "reasoning_output_tokens": None,
+                                    "total_tokens": None,
+                                    "duration_ms": round(
+                                        (time.perf_counter() - repair_started) * 1000
+                                    ),
+                                }
+                            await emit(
+                                "model_usage",
+                                task_id=step.id,
+                                task_title=step.title,
+                                usage=repair_usage,
+                            )
+                            repair_usage_recorded = True
+                            failure_reason = "invalid_completion_envelope"
+                            corrected = json.loads(repair.get("content", ""))
+                            if repair.get("tool_calls"):
+                                failure_reason = "tool_call_requested"
+                                raise ValueError()
+                            if not isinstance(corrected, dict):
+                                raise ValueError()
+                            # A formatting repair has no authority to ask for
+                            # input or change the engineering disposition.
+                            if corrected.get("reason") == "input_required":
+                                await require_unattended_completion(
+                                    step, corrected, emit
+                                )
+                            failure_reason = "execution_evidence_changed"
+                            if (
+                                corrected.get("status") != outcome["status"]
+                                or corrected.get("evidence") != evidence
+                                or any(
+                                    type(number) is not int
+                                    for number in corrected["evidence"]
+                                )
+                            ):
+                                raise ValueError()
+                            failure_reason = "invalid_response_format"
+                            response = validate_response(
+                                corrected.get("response"), step.output_format
+                            )
+                        except (
+                            ValueError,
+                            TypeError,
+                            WorkflowSourceExecutionError,
+                        ) as error:
+                            if (
+                                isinstance(error, WorkflowSourceExecutionError)
+                                and error.code == "INTERACTION_NOT_DECLARED"
+                            ):
+                                raise
+                            content = (
+                                repair.get("content", "")
+                                if isinstance(repair, dict)
+                                else ""
+                            )
+                            if not repair_usage_recorded:
+                                await emit(
+                                    "model_usage",
+                                    task_id=step.id,
+                                    task_title=step.title,
+                                    usage={
+                                        "status": "unknown",
+                                        "model": None,
+                                        "input_tokens": None,
+                                        "cached_input_tokens": None,
+                                        "output_tokens": None,
+                                        "reasoning_output_tokens": None,
+                                        "total_tokens": None,
+                                        "duration_ms": round(
+                                            (time.perf_counter() - repair_started)
+                                            * 1000
+                                        ),
+                                    },
+                                )
+                            content = content if isinstance(content, str) else ""
+                            await emit(
+                                "task_response_format_repair_failed",
+                                task_id=step.id,
+                                task_title=step.title,
+                                output_format=step.output_format,
+                                evidence=evidence,
+                                reason=failure_reason,
+                                correction_sha256=hashlib.sha256(
+                                    content.encode()
+                                ).hexdigest(),
+                                correction_preview=content[:2048],
+                                correction_truncated=len(content) > 2048,
+                            )
+                            raise _invalid(
+                                f"{step.title}: final response formatting could not be corrected without changing execution evidence."
+                            ) from None
+                    return response, records
+                if index == step.max_tool_calls:
+                    raise _error(
+                        "TASK_LIMIT_REACHED",
+                        f"{step.title}: the tool-call limit was reached.",
+                        "Inspect completed operations before increasing the limit or retrying.",
+                    )
+                if (
+                    len(calls) != 1
+                    or calls[0].get("function", {}).get("name") not in aliases
+                ):
+                    raise _invalid(
+                        f"{step.title}: the model requested a tool outside this task."
+                    )
+                call = calls[0]
+                tool = aliases[call["function"]["name"]]
+                invocation = replace(
+                    step,
+                    tool_name=tool.name,
+                    schema_digest=schema_digest(tool),
+                    agent_task=False,
+                )
+                # Re-resolve on every call: removal or authority/schema change stops the run.
+                current_tool = self.resolve(invocation)
+                if (
+                    step.design_check
+                    and current_tool.annotations.get("readOnlyHint") is not True
+                ):
+                    raise _invalid(
+                        "The design check cannot use a tool that changes the model."
+                    )
+                try:
+                    arguments = json.loads(call["function"]["arguments"])
+                except (ValueError, KeyError, TypeError):
+                    raise _invalid(
+                        f"{step.title}: the model returned invalid tool arguments."
+                    ) from None
+                if cad:
+                    arguments = cad.guard(tool, arguments)
+                signature = tool.name + json.dumps(arguments, sort_keys=True)
+                if signature in rejected_recipes:
+                    raise _invalid(
+                        f"{step.title}: the same rejected recipe was requested again.",
+                        "Correct the conflicting parameter names and their references before retrying.",
+                    )
+                if signature in succeeded and not repeatable_call(
+                    current_tool, arguments
+                ):
+                    raise _invalid(
+                        f"{step.title}: a completed operation ({tool.title or tool.tool_name}) was requested again.",
+                        "Inspect the task log and clarify the remaining work before retrying.",
+                    )
+                await emit(
+                    "tool_started",
+                    task_id=step.id,
+                    task_title=step.title,
+                    tool=tool.title or tool.tool_name,
+                    arguments=arguments,
+                    tool_calls=index + 1,
+                )
+                terminal_error = None
+                observation = {}
+                try:
+                    self.validate(invocation, arguments, tool.input_schema)
+                    if cad:
+                        await cad.validate_creation(tool, arguments)
+                except WorkflowSourceExecutionError as error:
+                    # No external operation has occurred; allow a bounded correction.
+                    value, text, status = (
+                        getattr(error, "tool_result", {}),
+                        str(error),
+                        "invalid_arguments",
+                    )
+                else:
+                    try:
+                        value, text = await self.call(
+                            invocation,
+                            arguments,
+                            on_event=emit,
+                            image_observations=observation,
+                        )
+                        if cad:
+                            cad.observe(tool, value)
+                        succeeded.add(signature)
+                        status = "succeeded"
+                    except WorkflowSourceExecutionError as error:
+                        value, text, status = (
+                            getattr(error, "tool_result", {}),
+                            str(error),
+                            "failed",
+                        )
+                        if cad and safe_recipe_parameter_correction(
+                            current_tool, value
+                        ):
+                            # The native server proved that its temporary document
+                            # was closed and no recipe/output mutation remains.
+                            # Permit a new decision, never replay these arguments.
+                            rejected_recipes.add(signature)
+                            status = "invalid_arguments"
+                        elif not current_tool.annotations.get("readOnlyHint", False):
+                            terminal_error = error
+                terminal_receipt = (
+                    terminal_operation_receipt(current_tool, arguments, value)
+                    if status == "succeeded"
+                    else None
+                )
+                record = {
+                    "tool": tool.name,
+                    "arguments": arguments,
+                    "status": status,
+                    "result": value,
+                    "text": text,
+                    "schema_digest": schema_digest(tool),
+                }
+                if isinstance(decision_usage, dict):
+                    record["model_usage"] = decision_usage
+                if terminal_receipt is not None:
+                    record["terminal_receipt"] = terminal_receipt
+                if observation.get("evidence"):
+                    record["image_observations"] = observation["evidence"]
+                records.append(record)
+                if cad:
+                    cad.records.append(record)
+                await emit(
+                    "tool_completed", task_id=step.id, task_title=step.title, **record
+                )
+                # A failed mutation still stops immediately. Keep its complete
+                # report (including partial files and cleanup warnings) before
+                # raising; it is evidence, never successful execution.
+                if terminal_error is not None:
+                    raise terminal_error
+                if terminal_receipt is not None:
+                    from .workflow_source_execution import validate_response
+    
+                    response = validate_response(
+                        terminal_operation_response(
+                            current_tool,
+                            index + 1,
+                            terminal_receipt,
+                            step.output_format,
+                        ),
+                        step.output_format,
+                    )
+                    await emit(
+                        "task_terminal_operation",
+                        task_id=step.id,
+                        task_title=step.title,
+                        tool=current_tool.name,
+                        tool_call_number=index + 1,
+                        receipt=terminal_receipt,
+                    )
+                    return response, records
+                result = json.dumps(
+                    {
+                        "tool_call_number": index + 1,
+                        "status": status,
+                        "result": value,
+                        "text": text,
+                    },
+                    ensure_ascii=False,
+                    default=dict,
+                )
+                if len(result.encode()) > 262_144:
+                    raise _invalid(
+                        f"{step.title}: the tool result exceeds the task context limit.",
+                        "Request a smaller result.",
+                    )
+                image_parts = (
+                    observation.get("parts", []) if status == "succeeded" else []
+                )
+                image_count += len(image_parts)
+                image_bytes += sum(
+                    len(part["image_url"]["url"]) for part in image_parts
+                )
+                if (
+                    image_count > MAX_IMAGES_PER_TASK
+                    or image_bytes > MAX_TASK_IMAGE_BYTES
+                ):
+                    raise _invalid(
+                        f"{step.title}: image observations exceed the task context limit.",
+                        "Split the visual inspection into tasks with at most eight images and 8 MiB of image data.",
+                    )
+                content = (
+                    [{"type": "text", "text": result}, *image_parts]
+                    if image_parts
+                    else result
+                )
+                messages.extend(
+                    [
+                        message,
+                        {
+                            "role": "tool",
+                            "tool_call_id": call["id"],
+                            "content": content,
+                        },
+                    ]
+                )
+            raise AssertionError("bounded task must return or fail")
+    
+        try:
+>           async with asyncio.timeout(step.timeout_seconds):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:1225: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Timeout [expired]>
+exc_type = <class 'asyncio.exceptions.CancelledError'>
+exc_val = CancelledError(), exc_tb = <traceback object at 0x0000024D1937E700>
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> Optional[bool]:
+        assert self._state in (_State.ENTERED, _State.EXPIRING)
+    
+        if self._timeout_handler is not None:
+            self._timeout_handler.cancel()
+            self._timeout_handler = None
+    
+        if self._state is _State.EXPIRING:
+            self._state = _State.EXPIRED
+    
+            if self._task.uncancel() <= self._cancelling and exc_type is not None:
+                # Since there are no new cancel requests, we're
+                # handling this.
+                if issubclass(exc_type, exceptions.CancelledError):
+>                   raise TimeoutError from exc_val
+E                   TimeoutError
+
+D:\Users\markb\miniconda3\Lib\asyncio\timeouts.py:116: TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+    @pytest.mark.asyncio
+    async def test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded():
+        g, runtime, step, tools = remote(("working",) * 4 + ("completed",))
+        tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+        step = replace(step, agent_task=True, timeout_seconds=0.1)
+        decisions, events = [], []
+    
+        async def emit(kind, **data):
+            events.append((kind, data))
+    
+        async def decide(messages, schemas, **kwargs):
+            decisions.append(messages[-1]["role"])
+            if len(decisions) == 1:
+                return {
+                    "role": "assistant",
+                    "tool_calls": [{"id": "submit-once", "function": {
+                        "name": schemas[0]["function"]["name"], "arguments": "{}",
+                    }}],
+                }
+            assert any(data.get("state") == "completed" for _, data in events)
+            return {"role": "assistant", "content":
+                    '{"status":"completed","response":"observed","evidence":[1]}'}
+    
+>       response, records = await runtime.run_task(step, "Run the analysis", decide, emit)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+packages\workspace_service\tests\test_workflow_async_operations.py:155: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <workspace_service.workflow_mcp_execution.WorkflowMcpRuntime object at 0x0000024D19195E50>
+step = PromptStep(id='analysis', title='Analysis', prompt='', prompt_from=None, references=(), output_format='json', output_p...ces=(), revision_policy='', file_dependencies={}, task_tool_allowlist=(), human_interaction=None, run_path_template='')
+prompt = 'Run the analysis'
+decide = <function test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded.<locals>.decide at 0x0000024D193605E0>
+emit = <function test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded.<locals>.emit at 0x0000024D19360040>
+
+    async def run_task(self, step, prompt, decide, emit, *, cad=None, images=None):
+        """One isolated task, one server, bounded decisions, existing gateway calls."""
+        from .workflow_source_execution import WorkflowSourceExecutionError
+    
+        alias_names = {}
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    UNATTENDED_STEP_POLICY
+                    + " Complete the task using only the provided tools. Inspect their results before choosing "
+                    "another operation. Do not invent missing engineering requirements. The available tool "
+                    "contracts are refreshed for each decision. Before reporting "
+                    "that an inspection capability is unavailable, examine these contracts and use the relevant "
+                    "read-only inspection tool when one is provided. A creation response that omits measurements "
+                    "does not mean the separate measurement tools are unavailable. Do not repeat creation to "
+                    "obtain measurements of an existing result. Do not claim unperformed "
+                    "operations. Do not create files unless explicitly requested; Wright saves your final response. "
+                    "When finished, return a message whose content is a JSON object with status "
+                    "('completed', 'blocked' or 'error'), response (string), and evidence (array of successful tool-call "
+                    "numbers supporting the result). If requirements are missing or the task cannot be completed, "
+                    "return blocked and explain what must change; add reason input_required when a user choice "
+                    "is missing, capability_unavailable when a required tool is absent, or execution_failed "
+                    "for another failure. Do not invent an answer or perform unrelated calls. "
+                    f"Inside that envelope, format response as {step.output_format}. For HTML use a complete standalone "
+                    "HTML document; for JSON use valid JSON text, without code fences. "
+                    f"You may use at most {step.max_tool_calls} tool calls.\nAdditional task guidance:\n{step.task_guidance}"
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    [
+                        {"type": "text", "text": prompt},
+                        *[
+                            {"type": "image_url", "image_url": {"url": url}}
+                            for url in images
+                        ],
+                    ]
+                    if images
+                    else prompt
+                ),
+            },
+        ]
+        records, succeeded, rejected_recipes = [], set(), set()
+        from .workflow_mcp_images import MAX_IMAGES_PER_TASK, MAX_TASK_IMAGE_BYTES
+    
+        image_count = len(images or [])
+        image_bytes = sum(len(url) for url in images or [])
+    
+        async def execute():
+            nonlocal image_count, image_bytes
+            for index in range(step.max_tool_calls + 1):
+                # Lazy discovery can replace a cached catalog after a call.
+                # Present the current contracts on each decision, with stable
+                # aliases so previous tool results remain understandable.
+                selected = self.task_tools(step)
+                if step.design_check:
+                    selected = tuple(
+                        t for t in selected if t.annotations.get("readOnlyHint") is True
+                    )
+                if cad:
+                    selected = tuple(t for t in selected if cad.allows_tool(t))
+                aliases = {}
+                for tool in selected:
+                    alias = alias_names.setdefault(
+                        tool.name, f"tool_{len(alias_names)}"
+                    )
+                    aliases[alias] = tool
+                schemas = [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": alias,
+                            "description": f"{tool.title or tool.tool_name}: {tool.description}",
+                            "parameters": dict(tool.input_schema),
+                        },
+                    }
+                    for alias, tool in aliases.items()
+                ]
+                await emit(
+                    "task_progress",
+                    task_id=step.id,
+                    task_title=step.title,
+                    message="Reviewing tool results"
+                    if records
+                    else "Planning the task",
+                    tool_calls=len(records),
+                    available_tools=[
+                        {
+                            "alias": alias,
+                            "tool": tool.name,
+                            "schema_digest": schema_digest(tool),
+                        }
+                        for alias, tool in aliases.items()
+                    ],
+                )
+                message = await decide(messages, schemas, required=False)
+                decision_usage = getattr(message, "wright_usage", None)
+                if isinstance(decision_usage, dict):
+                    await emit(
+                        "model_usage",
+                        task_id=step.id,
+                        task_title=step.title,
+                        usage=decision_usage,
+                    )
+                calls = message.get("tool_calls", [])
+                from .workflow_source_execution import require_unattended_completion
+    
+                # A mixed question/tool decision cannot dispatch its accompanying
+                # operations. Only an explicit structured disposition is checked;
+                # ordinary documents may legitimately contain questions.
+                if calls and message.get("content"):
+                    try:
+                        disposition = json.loads(message["content"])
+                    except (ValueError, TypeError):
+                        disposition = None
+                    if isinstance(disposition, dict):
+                        await require_unattended_completion(step, disposition, emit)
+                if not calls:
+                    try:
+                        outcome = json.loads(message.get("content", ""))
+                        if (
+                            not isinstance(outcome, dict)
+                            or not isinstance(outcome.get("response"), str)
+                            or not outcome["response"].strip()
+                        ):
+                            raise ValueError()
+                    except (ValueError, TypeError):
+                        raise _invalid(
+                            f"{step.title}: the task returned no verifiable completion evidence."
+                        ) from None
+                    await require_unattended_completion(step, outcome, emit)
+                    evidence = outcome.get("evidence")
+                    if (
+                        outcome.get("status") != "completed"
+                        or not isinstance(evidence, list)
+                        or not evidence
+                        or any(
+                            type(number) is not int
+                            or not 1 <= number <= len(records)
+                            or records[number - 1]["status"] != "succeeded"
+                            for number in evidence
+                        )
+                    ):
+                        raise _invalid(
+                            f"{step.title}: the task returned no valid execution evidence."
+                        )
+                    from .workflow_source_execution import validate_response
+    
+                    try:
+                        response = validate_response(
+                            outcome["response"], step.output_format
+                        )
+                    except WorkflowSourceExecutionError:
+                        # A formatting mistake after successful engineering
+                        # calls does not justify replaying those operations.
+                        # One tool-free correction stays inside this task's
+                        # existing deadline and preserves its evidence claims.
+                        await emit(
+                            "task_response_format_repair",
+                            task_id=step.id,
+                            task_title=step.title,
+                            output_format=step.output_format,
+                            evidence=evidence,
+                            original_response=outcome["response"],
+                        )
+                        repair = {}
+                        repair_usage_recorded = False
+                        repair_started = time.perf_counter()
+                        failure_reason = "model_request_failed"
+                        try:
+                            repair = await decide(
+                                response_format_repair_messages(
+                                    outcome, step.output_format
+                                ),
+                                [],
+                                required=False,
+                            )
+                            repair_usage = getattr(repair, "wright_usage", None)
+                            if not isinstance(repair_usage, dict):
+                                repair_usage = {
+                                    "status": "unknown",
+                                    "model": None,
+                                    "input_tokens": None,
+                                    "cached_input_tokens": None,
+                                    "output_tokens": None,
+                                    "reasoning_output_tokens": None,
+                                    "total_tokens": None,
+                                    "duration_ms": round(
+                                        (time.perf_counter() - repair_started) * 1000
+                                    ),
+                                }
+                            await emit(
+                                "model_usage",
+                                task_id=step.id,
+                                task_title=step.title,
+                                usage=repair_usage,
+                            )
+                            repair_usage_recorded = True
+                            failure_reason = "invalid_completion_envelope"
+                            corrected = json.loads(repair.get("content", ""))
+                            if repair.get("tool_calls"):
+                                failure_reason = "tool_call_requested"
+                                raise ValueError()
+                            if not isinstance(corrected, dict):
+                                raise ValueError()
+                            # A formatting repair has no authority to ask for
+                            # input or change the engineering disposition.
+                            if corrected.get("reason") == "input_required":
+                                await require_unattended_completion(
+                                    step, corrected, emit
+                                )
+                            failure_reason = "execution_evidence_changed"
+                            if (
+                                corrected.get("status") != outcome["status"]
+                                or corrected.get("evidence") != evidence
+                                or any(
+                                    type(number) is not int
+                                    for number in corrected["evidence"]
+                                )
+                            ):
+                                raise ValueError()
+                            failure_reason = "invalid_response_format"
+                            response = validate_response(
+                                corrected.get("response"), step.output_format
+                            )
+                        except (
+                            ValueError,
+                            TypeError,
+                            WorkflowSourceExecutionError,
+                        ) as error:
+                            if (
+                                isinstance(error, WorkflowSourceExecutionError)
+                                and error.code == "INTERACTION_NOT_DECLARED"
+                            ):
+                                raise
+                            content = (
+                                repair.get("content", "")
+                                if isinstance(repair, dict)
+                                else ""
+                            )
+                            if not repair_usage_recorded:
+                                await emit(
+                                    "model_usage",
+                                    task_id=step.id,
+                                    task_title=step.title,
+                                    usage={
+                                        "status": "unknown",
+                                        "model": None,
+                                        "input_tokens": None,
+                                        "cached_input_tokens": None,
+                                        "output_tokens": None,
+                                        "reasoning_output_tokens": None,
+                                        "total_tokens": None,
+                                        "duration_ms": round(
+                                            (time.perf_counter() - repair_started)
+                                            * 1000
+                                        ),
+                                    },
+                                )
+                            content = content if isinstance(content, str) else ""
+                            await emit(
+                                "task_response_format_repair_failed",
+                                task_id=step.id,
+                                task_title=step.title,
+                                output_format=step.output_format,
+                                evidence=evidence,
+                                reason=failure_reason,
+                                correction_sha256=hashlib.sha256(
+                                    content.encode()
+                                ).hexdigest(),
+                                correction_preview=content[:2048],
+                                correction_truncated=len(content) > 2048,
+                            )
+                            raise _invalid(
+                                f"{step.title}: final response formatting could not be corrected without changing execution evidence."
+                            ) from None
+                    return response, records
+                if index == step.max_tool_calls:
+                    raise _error(
+                        "TASK_LIMIT_REACHED",
+                        f"{step.title}: the tool-call limit was reached.",
+                        "Inspect completed operations before increasing the limit or retrying.",
+                    )
+                if (
+                    len(calls) != 1
+                    or calls[0].get("function", {}).get("name") not in aliases
+                ):
+                    raise _invalid(
+                        f"{step.title}: the model requested a tool outside this task."
+                    )
+                call = calls[0]
+                tool = aliases[call["function"]["name"]]
+                invocation = replace(
+                    step,
+                    tool_name=tool.name,
+                    schema_digest=schema_digest(tool),
+                    agent_task=False,
+                )
+                # Re-resolve on every call: removal or authority/schema change stops the run.
+                current_tool = self.resolve(invocation)
+                if (
+                    step.design_check
+                    and current_tool.annotations.get("readOnlyHint") is not True
+                ):
+                    raise _invalid(
+                        "The design check cannot use a tool that changes the model."
+                    )
+                try:
+                    arguments = json.loads(call["function"]["arguments"])
+                except (ValueError, KeyError, TypeError):
+                    raise _invalid(
+                        f"{step.title}: the model returned invalid tool arguments."
+                    ) from None
+                if cad:
+                    arguments = cad.guard(tool, arguments)
+                signature = tool.name + json.dumps(arguments, sort_keys=True)
+                if signature in rejected_recipes:
+                    raise _invalid(
+                        f"{step.title}: the same rejected recipe was requested again.",
+                        "Correct the conflicting parameter names and their references before retrying.",
+                    )
+                if signature in succeeded and not repeatable_call(
+                    current_tool, arguments
+                ):
+                    raise _invalid(
+                        f"{step.title}: a completed operation ({tool.title or tool.tool_name}) was requested again.",
+                        "Inspect the task log and clarify the remaining work before retrying.",
+                    )
+                await emit(
+                    "tool_started",
+                    task_id=step.id,
+                    task_title=step.title,
+                    tool=tool.title or tool.tool_name,
+                    arguments=arguments,
+                    tool_calls=index + 1,
+                )
+                terminal_error = None
+                observation = {}
+                try:
+                    self.validate(invocation, arguments, tool.input_schema)
+                    if cad:
+                        await cad.validate_creation(tool, arguments)
+                except WorkflowSourceExecutionError as error:
+                    # No external operation has occurred; allow a bounded correction.
+                    value, text, status = (
+                        getattr(error, "tool_result", {}),
+                        str(error),
+                        "invalid_arguments",
+                    )
+                else:
+                    try:
+                        value, text = await self.call(
+                            invocation,
+                            arguments,
+                            on_event=emit,
+                            image_observations=observation,
+                        )
+                        if cad:
+                            cad.observe(tool, value)
+                        succeeded.add(signature)
+                        status = "succeeded"
+                    except WorkflowSourceExecutionError as error:
+                        value, text, status = (
+                            getattr(error, "tool_result", {}),
+                            str(error),
+                            "failed",
+                        )
+                        if cad and safe_recipe_parameter_correction(
+                            current_tool, value
+                        ):
+                            # The native server proved that its temporary document
+                            # was closed and no recipe/output mutation remains.
+                            # Permit a new decision, never replay these arguments.
+                            rejected_recipes.add(signature)
+                            status = "invalid_arguments"
+                        elif not current_tool.annotations.get("readOnlyHint", False):
+                            terminal_error = error
+                terminal_receipt = (
+                    terminal_operation_receipt(current_tool, arguments, value)
+                    if status == "succeeded"
+                    else None
+                )
+                record = {
+                    "tool": tool.name,
+                    "arguments": arguments,
+                    "status": status,
+                    "result": value,
+                    "text": text,
+                    "schema_digest": schema_digest(tool),
+                }
+                if isinstance(decision_usage, dict):
+                    record["model_usage"] = decision_usage
+                if terminal_receipt is not None:
+                    record["terminal_receipt"] = terminal_receipt
+                if observation.get("evidence"):
+                    record["image_observations"] = observation["evidence"]
+                records.append(record)
+                if cad:
+                    cad.records.append(record)
+                await emit(
+                    "tool_completed", task_id=step.id, task_title=step.title, **record
+                )
+                # A failed mutation still stops immediately. Keep its complete
+                # report (including partial files and cleanup warnings) before
+                # raising; it is evidence, never successful execution.
+                if terminal_error is not None:
+                    raise terminal_error
+                if terminal_receipt is not None:
+                    from .workflow_source_execution import validate_response
+    
+                    response = validate_response(
+                        terminal_operation_response(
+                            current_tool,
+                            index + 1,
+                            terminal_receipt,
+                            step.output_format,
+                        ),
+                        step.output_format,
+                    )
+                    await emit(
+                        "task_terminal_operation",
+                        task_id=step.id,
+                        task_title=step.title,
+                        tool=current_tool.name,
+                        tool_call_number=index + 1,
+                        receipt=terminal_receipt,
+                    )
+                    return response, records
+                result = json.dumps(
+                    {
+                        "tool_call_number": index + 1,
+                        "status": status,
+                        "result": value,
+                        "text": text,
+                    },
+                    ensure_ascii=False,
+                    default=dict,
+                )
+                if len(result.encode()) > 262_144:
+                    raise _invalid(
+                        f"{step.title}: the tool result exceeds the task context limit.",
+                        "Request a smaller result.",
+                    )
+                image_parts = (
+                    observation.get("parts", []) if status == "succeeded" else []
+                )
+                image_count += len(image_parts)
+                image_bytes += sum(
+                    len(part["image_url"]["url"]) for part in image_parts
+                )
+                if (
+                    image_count > MAX_IMAGES_PER_TASK
+                    or image_bytes > MAX_TASK_IMAGE_BYTES
+                ):
+                    raise _invalid(
+                        f"{step.title}: image observations exceed the task context limit.",
+                        "Split the visual inspection into tasks with at most eight images and 8 MiB of image data.",
+                    )
+                content = (
+                    [{"type": "text", "text": result}, *image_parts]
+                    if image_parts
+                    else result
+                )
+                messages.extend(
+                    [
+                        message,
+                        {
+                            "role": "tool",
+                            "tool_call_id": call["id"],
+                            "content": content,
+                        },
+                    ]
+                )
+            raise AssertionError("bounded task must return or fail")
+    
+        try:
+            async with asyncio.timeout(step.timeout_seconds):
+                return await execute()
+        except TimeoutError as error:
+>           raise _error(
+                "TASK_TIMEOUT",
+                f"{step.title}: the task exceeded its time limit.",
+                "Inspect the tool log and current files before retrying; completed operations remain.",
+            ) from error
+E           workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Analysis: the task exceeded its time limit.
+
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:1228: WorkflowSourceExecutionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\_pytest\cacheprovider.py:475
+  D:\repos\wright\.venv\Lib\site-packages\_pytest\cacheprovider.py:475: PytestCacheWarning: could not create cache path D:\repos\wright\.pytest_cache\v\cache\nodeids: [WinError 5] Access is denied: 'D:\\repos\\wright\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+.venv\Lib\site-packages\_pytest\cacheprovider.py:429
+  D:\repos\wright\.venv\Lib\site-packages\_pytest\cacheprovider.py:429: PytestCacheWarning: could not create cache path D:\repos\wright\.pytest_cache\v\cache\lastfailed: [WinError 5] Access is denied: 'D:\\repos\\wright\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_observation_keeps_each_gateway_call_short
+FAILED packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded
+2 failed, 38 deselected, 2 warnings in 1.00s

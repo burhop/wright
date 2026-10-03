@@ -7,6 +7,7 @@ AI prose. Submission happens once; only identified status reads are polled.
 
 import asyncio
 import math
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass, field as dataclass_field, replace
 from core.redaction import redact_text
@@ -122,6 +123,30 @@ def _observation_options(profile):
     _bounded_seconds(profile, "poll_seconds", 1, 0.05, 30)
     _bounded_seconds(profile, "freshness_seconds", 30, 0.05, 300)
     _bounded_seconds(profile, "cancel_confirm_seconds", 1, 0, 10)
+    if "observation_timeout_seconds" in profile:
+        _bounded_seconds(profile, "observation_timeout_seconds", None, 0.05, 604800)
+
+
+@asynccontextmanager
+async def delegated_observation_budget(profile, task_deadline):
+    """Exclude an explicitly bounded monitor from the AI decision budget.
+
+    The qualified profile is pinned before submission. Only observation gets
+    its separate budget; the same remaining decision time resumes afterwards.
+    Profiles without that declaration preserve the existing task deadline.
+    """
+    remaining = None
+    if "observation_timeout_seconds" in profile and task_deadline is not None:
+        _bounded_seconds(profile, "observation_timeout_seconds", None, 0.05, 604800)
+        remaining = task_deadline.when() - asyncio.get_running_loop().time()
+        if remaining <= 0:
+            raise TimeoutError("The task deadline expired before observation.")
+        task_deadline.reschedule(None)
+    try:
+        yield
+    finally:
+        if remaining is not None:
+            task_deadline.reschedule(asyncio.get_running_loop().time() + remaining)
 
 
 def _observation(profile, value=None, *, source):
@@ -320,7 +345,9 @@ async def monitor_operation(
         )
         args = {argument: operation_id}
         runtime.validate(invocation, args, tool.input_schema)
-        return await runtime.call(invocation, args, monitor=False)
+        # A long observation budget never becomes a long status/result call.
+        async with asyncio.timeout(step.timeout_seconds):
+            return await runtime.call(invocation, args, monitor=False)
 
     interval = float(profile.get("poll_seconds", 1))
     states = profile.get(
@@ -429,7 +456,9 @@ async def monitor_operation(
             "submitted",
             message="Application job submitted; waiting for verified completion.",
         )
-        async with asyncio.timeout(step.timeout_seconds):
+        async with asyncio.timeout(
+            profile.get("observation_timeout_seconds", step.timeout_seconds)
+        ):
             while True:
                 await cancellation_barrier()
                 state, value = await read_status()

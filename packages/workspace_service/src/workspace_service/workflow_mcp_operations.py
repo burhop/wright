@@ -6,6 +6,7 @@ neither a tool name nor a model's success prose supplies them.
 """
 
 from dataclasses import replace
+from copy import deepcopy
 import asyncio
 import hashlib
 import json
@@ -163,7 +164,7 @@ def qualify_operation(runtime, step, *, integration=False):
     invocation = operation_step(step)
     runtime.preflight(invocation)
     tool = runtime.resolve(invocation)
-    profile = tool.upstream_meta.get("wright/approved-operation")
+    profile = deepcopy(tool.upstream_meta.get("wright/approved-operation"))
     policy = step.external_action["settings"]["operation_policy"]
     if (
         not isinstance(profile, dict)
@@ -221,7 +222,9 @@ def qualify_operation(runtime, step, *, integration=False):
         raise _invalid(
             f"{step.title}: configure the provider's required authority before submission."
         )
-    operation = tool.upstream_meta.get("wright/operation")
+    # Catalog discovery can refresh mutable metadata during submission. The
+    # accepted operation retains exactly the already qualified policy bytes.
+    operation = deepcopy(tool.upstream_meta.get("wright/operation"))
     bindings = None
     if policy["mode"] == "observe":
         from .workflow_async_operations import validate_operation_profile

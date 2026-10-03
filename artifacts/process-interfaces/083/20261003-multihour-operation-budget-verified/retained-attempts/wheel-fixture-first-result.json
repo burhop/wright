@@ -1,0 +1,22 @@
+{
+  "build_exit_code": 0,
+  "proof_exit_code": 1,
+  "wheel": "wright_engineering-0.1.9-py3-none-any.whl",
+  "wheel_sha256": "c3a700a5a254eafab5c3455d4af3f30fc53a233371274575d80ba8d73bb2bccf",
+  "build_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "build",
+    "--wheel",
+    "--no-isolation",
+    "--outdir",
+    "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-observation-installed-001\\dist"
+  ],
+  "proof_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-I",
+    "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-observation-installed-001\\detached-proof.py",
+    "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-observation-installed-001"
+  ],
+  "scope": "Fresh local wheel extraction/import proof, not installed native browser acceptance."
+}

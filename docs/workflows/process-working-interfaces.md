@@ -153,6 +153,22 @@ does not make an input a tool-produced output, authorize a printer/supplier,
 or extend MCP-operation argument contracts. See the
 [runtime contract](../../specs/083-process-working-interfaces/contracts/runtime-and-source.md).
 
+### Longer external operations
+
+An independently qualified operation may declare `observation_timeout_seconds`
+in its version-1 `wright/operation` metadata, for example `7200` for two hours.
+This optional finite budget is separate from submission, status/result calls and
+AI decisions. It must be configured and pinned before starting; changing it
+requires reviewing the changed binding/policy. The maximum is seven days.
+Without the field, existing step/task timeout behavior is preserved.
+
+Wright polls the identified operation through the existing runtime. Acceptance,
+observed completion, cancellation and unknown outcome remain distinct facts.
+Closing a view does not submit another job; an uncertain action is reconciled.
+This requires the provider's qualified observation capabilities and does not
+imply universal MCP Tasks or physical-device support. See the
+[operation contract](../../specs/083-process-working-interfaces/evidence/mcp-operations.md).
+
 ## Locally verified proof environment
 
 The recorded proof used API [localhost:8030](http://127.0.0.1:8030)

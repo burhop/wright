@@ -1,0 +1,8 @@
+{
+  "exit_code": 2,
+  "affected_artifact_files": 25,
+  "captured_output_bytes": 2011154,
+  "scope": "Raw byte-preserved Windows CRLF evidence; no runtime/source/docs whitespace finding.",
+  "commit_created": false,
+  "preserve_raw_test_bytes": true
+}

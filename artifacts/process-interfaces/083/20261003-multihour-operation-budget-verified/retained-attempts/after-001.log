@@ -1,0 +1,271 @@
+..F.....................................                                 [100%]
+================================== FAILURES ===================================
+__ test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded __
+
+    @pytest.mark.asyncio
+    async def test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded():
+        g, runtime, step, tools = remote(("working",) * 4 + ("completed",))
+        tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 7200
+        step = replace(step, agent_task=True, timeout_seconds=0.1)
+        decisions, events = [], []
+    
+        async def emit(kind, **data):
+            events.append((kind, data))
+    
+        async def decide(messages, schemas, **kwargs):
+            decisions.append(messages[-1]["role"])
+            if len(decisions) == 1:
+                return {
+                    "role": "assistant",
+                    "tool_calls": [{"id": "submit-once", "function": {
+                        "name": schemas[0]["function"]["name"], "arguments": "{}",
+                    }}],
+                }
+            assert any(data.get("state") == "completed" for _, data in events)
+            return {"role": "assistant", "content":
+                    '{"status":"completed","response":"observed","evidence":[1]}'}
+    
+>       response, records = await runtime.run_task(step, "Run the analysis", decide, emit)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+packages\workspace_service\tests\test_workflow_async_operations.py:155: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:1232: in run_task
+    return await execute()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def execute():
+        nonlocal image_count, image_bytes
+        for index in range(step.max_tool_calls + 1):
+            # Lazy discovery can replace a cached catalog after a call.
+            # Present the current contracts on each decision, with stable
+            # aliases so previous tool results remain understandable.
+            selected = self.task_tools(step)
+            if step.design_check:
+                selected = tuple(
+                    t for t in selected if t.annotations.get("readOnlyHint") is True
+                )
+            if cad:
+                selected = tuple(t for t in selected if cad.allows_tool(t))
+            aliases = {}
+            for tool in selected:
+                alias = alias_names.setdefault(
+                    tool.name, f"tool_{len(alias_names)}"
+                )
+                aliases[alias] = tool
+            schemas = [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": alias,
+                        "description": f"{tool.title or tool.tool_name}: {tool.description}",
+                        "parameters": dict(tool.input_schema),
+                    },
+                }
+                for alias, tool in aliases.items()
+            ]
+            await emit(
+                "task_progress",
+                task_id=step.id,
+                task_title=step.title,
+                message="Reviewing tool results"
+                if records
+                else "Planning the task",
+                tool_calls=len(records),
+                available_tools=[
+                    {
+                        "alias": alias,
+                        "tool": tool.name,
+                        "schema_digest": schema_digest(tool),
+                    }
+                    for alias, tool in aliases.items()
+                ],
+            )
+            message = await decide(messages, schemas, required=False)
+            decision_usage = getattr(message, "wright_usage", None)
+            if isinstance(decision_usage, dict):
+                await emit(
+                    "model_usage",
+                    task_id=step.id,
+                    task_title=step.title,
+                    usage=decision_usage,
+                )
+            calls = message.get("tool_calls", [])
+            from .workflow_source_execution import require_unattended_completion
+    
+            # A mixed question/tool decision cannot dispatch its accompanying
+            # operations. Only an explicit structured disposition is checked;
+            # ordinary documents may legitimately contain questions.
+            if calls and message.get("content"):
+                try:
+                    disposition = json.loads(message["content"])
+                except (ValueError, TypeError):
+                    disposition = None
+                if isinstance(disposition, dict):
+                    await require_unattended_completion(step, disposition, emit)
+            if not calls:
+                try:
+                    outcome = json.loads(message.get("content", ""))
+                    if (
+                        not isinstance(outcome, dict)
+                        or not isinstance(outcome.get("response"), str)
+                        or not outcome["response"].strip()
+                    ):
+                        raise ValueError()
+                except (ValueError, TypeError):
+                    raise _invalid(
+                        f"{step.title}: the task returned no verifiable completion evidence."
+                    ) from None
+                await require_unattended_completion(step, outcome, emit)
+                evidence = outcome.get("evidence")
+                if (
+                    outcome.get("status") != "completed"
+                    or not isinstance(evidence, list)
+                    or not evidence
+                    or any(
+                        type(number) is not int
+                        or not 1 <= number <= len(records)
+                        or records[number - 1]["status"] != "succeeded"
+                        for number in evidence
+                    )
+                ):
+                    raise _invalid(
+                        f"{step.title}: the task returned no valid execution evidence."
+                    )
+                from .workflow_source_execution import validate_response
+    
+                try:
+                    response = validate_response(
+                        outcome["response"], step.output_format
+                    )
+                except WorkflowSourceExecutionError:
+                    # A formatting mistake after successful engineering
+                    # calls does not justify replaying those operations.
+                    # One tool-free correction stays inside this task's
+                    # existing deadline and preserves its evidence claims.
+                    await emit(
+                        "task_response_format_repair",
+                        task_id=step.id,
+                        task_title=step.title,
+                        output_format=step.output_format,
+                        evidence=evidence,
+                        original_response=outcome["response"],
+                    )
+                    repair = {}
+                    repair_usage_recorded = False
+                    repair_started = time.perf_counter()
+                    failure_reason = "model_request_failed"
+                    try:
+                        repair = await decide(
+                            response_format_repair_messages(
+                                outcome, step.output_format
+                            ),
+                            [],
+                            required=False,
+                        )
+                        repair_usage = getattr(repair, "wright_usage", None)
+                        if not isinstance(repair_usage, dict):
+                            repair_usage = {
+                                "status": "unknown",
+                                "model": None,
+                                "input_tokens": None,
+                                "cached_input_tokens": None,
+                                "output_tokens": None,
+                                "reasoning_output_tokens": None,
+                                "total_tokens": None,
+                                "duration_ms": round(
+                                    (time.perf_counter() - repair_started) * 1000
+                                ),
+                            }
+                        await emit(
+                            "model_usage",
+                            task_id=step.id,
+                            task_title=step.title,
+                            usage=repair_usage,
+                        )
+                        repair_usage_recorded = True
+                        failure_reason = "invalid_completion_envelope"
+                        corrected = json.loads(repair.get("content", ""))
+                        if repair.get("tool_calls"):
+                            failure_reason = "tool_call_requested"
+                            raise ValueError()
+                        if not isinstance(corrected, dict):
+                            raise ValueError()
+                        # A formatting repair has no authority to ask for
+                        # input or change the engineering disposition.
+                        if corrected.get("reason") == "input_required":
+                            await require_unattended_completion(
+                                step, corrected, emit
+                            )
+                        failure_reason = "execution_evidence_changed"
+                        if (
+                            corrected.get("status") != outcome["status"]
+                            or corrected.get("evidence") != evidence
+                            or any(
+                                type(number) is not int
+                                for number in corrected["evidence"]
+                            )
+                        ):
+                            raise ValueError()
+                        failure_reason = "invalid_response_format"
+                        response = validate_response(
+                            corrected.get("response"), step.output_format
+                        )
+                    except (
+                        ValueError,
+                        TypeError,
+                        WorkflowSourceExecutionError,
+                    ) as error:
+                        if (
+                            isinstance(error, WorkflowSourceExecutionError)
+                            and error.code == "INTERACTION_NOT_DECLARED"
+                        ):
+                            raise
+                        content = (
+                            repair.get("content", "")
+                            if isinstance(repair, dict)
+                            else ""
+                        )
+                        if not repair_usage_recorded:
+                            await emit(
+                                "model_usage",
+                                task_id=step.id,
+                                task_title=step.title,
+                                usage={
+                                    "status": "unknown",
+                                    "model": None,
+                                    "input_tokens": None,
+                                    "cached_input_tokens": None,
+                                    "output_tokens": None,
+                                    "reasoning_output_tokens": None,
+                                    "total_tokens": None,
+                                    "duration_ms": round(
+                                        (time.perf_counter() - repair_started)
+                                        * 1000
+                                    ),
+                                },
+                            )
+                        content = content if isinstance(content, str) else ""
+                        await emit(
+                            "task_response_format_repair_failed",
+                            task_id=step.id,
+                            task_title=step.title,
+                            output_format=step.output_format,
+                            evidence=evidence,
+                            reason=failure_reason,
+                            correction_sha256=hashlib.sha256(
+                                content.encode()
+                            ).hexdigest(),
+                            correction_preview=content[:2048],
+                            correction_truncated=len(content) > 2048,
+                        )
+>                       raise _invalid(
+                            f"{step.title}: final response formatting could not be corrected without changing execution evidence."
+                        ) from None
+E                       workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Analysis: final response formatting could not be corrected without changing execution evidence.
+
+packages\workspace_service\src\workspace_service\workflow_mcp_execution.py:1027: WorkflowSourceExecutionError
+=========================== short test summary info ===========================
+FAILED packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded
+1 failed, 39 passed in 3.50s

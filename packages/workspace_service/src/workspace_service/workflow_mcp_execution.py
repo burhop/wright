@@ -350,10 +350,15 @@ class WorkflowMcpRuntime:
         return tool
 
     def preflight(self, step):
+        selected = self.task_tools(step) if step.agent_task else (self.resolve(step),)
+        from .workflow_async_operations import validate_operation_profile
+
+        for tool in selected:
+            if tool.upstream_meta.get("wright/operation"):
+                validate_operation_profile(self, step, tool.upstream_meta["wright/operation"])
         if step.agent_task:
-            self.task_tools(step)
             return
-        tool = self.resolve(step)
+        tool = selected[0]
         if step.output_format not in {"json", "text"}:
             raise _invalid(f"{step.title}: save MCP results as JSON or text.")
         if not step.arguments_from:
@@ -519,6 +524,7 @@ class WorkflowMcpRuntime:
         monitor=True,
         image_observations=None,
         before_dispatch=None,
+        task_deadline=None,
     ):
         tool = self.resolve(step)
         request_id = uuid.uuid4().hex
@@ -709,16 +715,20 @@ class WorkflowMcpRuntime:
                 value,
             )
         if operation_profile is not None:
-            from .workflow_async_operations import monitor_operation
-
-            return await monitor_operation(
-                self,
-                step,
-                value,
-                operation_profile,
-                on_event,
-                pinned_tools=operation_bindings,
+            from .workflow_async_operations import (
+                delegated_observation_budget,
+                monitor_operation,
             )
+
+            async with delegated_observation_budget(operation_profile, task_deadline):
+                return await monitor_operation(
+                    self,
+                    step,
+                    value,
+                    operation_profile,
+                    on_event,
+                    pinned_tools=operation_bindings,
+                )
         return value, text
 
     def task_tools(self, step):
@@ -1102,6 +1112,7 @@ class WorkflowMcpRuntime:
                             arguments,
                             on_event=emit,
                             image_observations=observation,
+                            task_deadline=task_deadline,
                         )
                         if cad:
                             cad.observe(tool, value)
@@ -1222,7 +1233,7 @@ class WorkflowMcpRuntime:
             raise AssertionError("bounded task must return or fail")
 
         try:
-            async with asyncio.timeout(step.timeout_seconds):
+            async with asyncio.timeout(step.timeout_seconds) as task_deadline:
                 return await execute()
         except TimeoutError as error:
             raise _error(

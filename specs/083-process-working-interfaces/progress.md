@@ -1,5 +1,35 @@
 # Feature 083 progress
 
+## EDGE-09 bounded observation corrected — 3 October 2026
+
+The final requirements audit reproduced the multi-hour-operation gap: direct
+observation timed out at the short call budget, and an enclosing AI task also
+cut observation short. The existing version-1 qualified profile now accepts an
+explicit finite `observation_timeout_seconds` (0.05–604800). Finite gateway and
+status/result calls remain short. An AI task delegates only that observation
+interval and restores its remaining decision budget; it keeps no model request
+open and does not refill elapsed decision time. Legacy profiles retain their
+existing deadlines. Invalid configuration blocks readiness and dispatch.
+
+A second negative control reproduced mutable catalog metadata widening the
+already accepted observation policy. Approved qualification now copies the exact
+profile bytes. Changed policy before consumption still blocks the action, and
+accepted actions retain the qualified deadline. Cancellation, interrupted/unknown
+outcomes, receipt persistence and duplicate-submission safeguards remain checked.
+
+351 controlled tests pass across 22 existing runtime/storage/API/recovery modules;
+counts overlap earlier runs. A fresh locally built wheel passes a detached import
+and actual runtime proof with a two-hour configured budget and accelerated
+controlled observations. It does not prove hours of physical execution or fresh
+native-browser acceptance. The first detached fixture omitted session
+initialization; that failure and both product failures are preserved. Ruff passes.
+Original 550 engineering/UI files and protected history are checked separately
+in the published scope. No live model/provider, review response, hardware or
+supplier action ran. T056/T057 remain open (55 checked); continue final semantic
+review of all 182 obligations, then preservation/commit/resource handoff.
+
+Evidence: `artifacts/process-interfaces/083/20261003-multihour-operation-budget-verified/`.
+
 ## Full requirement index prepared — 3 October 2026
 
 T043's focused checkpoint is committed locally as `5323a6d6`: 29 owned paths,

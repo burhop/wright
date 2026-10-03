@@ -18,9 +18,10 @@ external observation; the older eight-case summary was incomplete.
 
 ## Stronger inspected facts
 
-- The current executable tree has no changes after the T053 correction checkpoint.
-  Source/test/protected file hashes still match. The new provider/audit commits
-  affect documentation/evidence only.
+- At the frozen index checkpoint, the executable tree had no changes after T053;
+  the provider/index commits affected only documentation/evidence. The subsequent
+  EDGE-09 correction below changes three runtime owners and two test owners.
+  Earlier source/build identities are retained and are not relabelled current.
 - Both substantive engineering inventories and exact original profile identities
   match: printed preparation retains 17 passes/one mandatory human-review hold;
   analysis retains 25 passes/one mandatory hold. These are actual source gates,
@@ -45,6 +46,18 @@ a trailing blank paragraph boundary. Both harness failures are retained, correct
 without altering requirements, and followed by a fresh derived index.
 
 ## Remaining T056 work
+
+The primary-behavior review confirmed an EDGE-09 defect: both the operation
+monitor and an enclosing AI task used the short step deadline. A new explicit
+finite observation budget now reuses the existing monitor, preserving finite
+submission/status/result/model calls and the AI task's remaining decision budget.
+The review also reproduced mutable catalog metadata widening an accepted policy;
+approved qualification now detaches those profile bytes. Both original failures
+are retained. The correction has 351 passing controlled runtime/storage/recovery
+checks across 22 modules and a fresh detached-wheel import proof. No multi-hour
+physical operation, live provider/model call, native browser reacceptance or human
+acceptance is claimed. See the
+[bounded-operation evidence](../../../artifacts/process-interfaces/083/20261003-multihour-operation-budget-verified/README.md).
 
 Review each primary assertion and exact real evidence at the obligation's scope.
 Family membership, paths, digests and green counts cannot substitute for that

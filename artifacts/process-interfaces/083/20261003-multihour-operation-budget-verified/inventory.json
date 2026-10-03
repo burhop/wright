@@ -1,0 +1,113 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 139,
+      "sha256": "a4d0c179cd8eb43b2b124d9325df54556cd665e71bdbf9165289f20978862f84"
+    },
+    "checked-scope.json": {
+      "bytes": 6016,
+      "sha256": "21017a4ebc5766ccda1ca2850e693cbef9727b232c3fba92d89287086c68a6da"
+    },
+    "README.md": {
+      "bytes": 3460,
+      "sha256": "a407fda33b51a0109ef5f37c1bacd813c47417278495efbbc2ef52fbbb0695a2"
+    },
+    "detached-wheel/build.log": {
+      "bytes": 126,
+      "sha256": "f139a8f42e3d1cf00c612ab0028132a9af7186b2f53c2eb7090b58b7d2cf7315"
+    },
+    "detached-wheel/detached-proof.py": {
+      "bytes": 5398,
+      "sha256": "97613641eb8eca5fa82fcf15711bb14da334ef5c40f0606c89f6f5b88ffffbce"
+    },
+    "detached-wheel/detached-result.json": {
+      "bytes": 17896,
+      "sha256": "2aeac7484143fed7d6c54eb4db16691686c88d81ccb66236ce2e78f469fff5d8"
+    },
+    "detached-wheel/detached.log": {
+      "bytes": 85,
+      "sha256": "b41a418391c9fa495dd74f583e9d3dec88ad77f44b0763ae3aac397f43bfa906"
+    },
+    "detached-wheel/result.json": {
+      "bytes": 859,
+      "sha256": "6ed90031d818d6f4817a899ffe916830a47197d232f9ff8259be6ee8de8d8966"
+    },
+    "regression/case-index.json": {
+      "bytes": 71357,
+      "sha256": "cd51ea99fe5800fe6a9d8946f090ebd62d86fb99789e66fadde38754353f7bc2"
+    },
+    "regression/command.json": {
+      "bytes": 7797,
+      "sha256": "11c950b5fecfaae5d5ae7703d9628731a7ab0105e9068e94a78e4e95de7295bb"
+    },
+    "regression/output.log": {
+      "bytes": 1360,
+      "sha256": "b9acd6196c40ecdeca36c84fa0d9a3df8949c9840c60810ef714e402e726a614"
+    },
+    "regression/result.json": {
+      "bytes": 329,
+      "sha256": "750c8d777cb2d7164b666a5d0bdc3c6833356ea3ec51e60fc65b3866082e55f5"
+    },
+    "regression/results.xml": {
+      "bytes": 63173,
+      "sha256": "5c892f9233ae6d2c1e4f549158dc9e639d6ca9b385e3e8d01b28200539977a81"
+    },
+    "retained-attempts/after-001.log": {
+      "bytes": 13692,
+      "sha256": "729ff1b518446aeb025c81ee7e943997a3bdd1650e5f83cda6e8e03083305774"
+    },
+    "retained-attempts/after-001.xml": {
+      "bytes": 20583,
+      "sha256": "b7ed6516751fa27bbab02d9f64d4edbcdee1609b6516d65c7c2a697c783be796"
+    },
+    "retained-attempts/after-002.log": {
+      "bytes": 41856,
+      "sha256": "786a3fbb59efe844974ea7e1f26e556b70ebc112749c66d7609923759e83d894"
+    },
+    "retained-attempts/after-002.xml": {
+      "bytes": 54641,
+      "sha256": "7d0683e8ad6d152d805b899f9f900bd755d6bfb3fb68d091a790b53cca2a2f9b"
+    },
+    "retained-attempts/after-003.log": {
+      "bytes": 57396,
+      "sha256": "564d2ade214b9f0940a60c51442b5b35642c132b81003a421504acdf0b7ee87f"
+    },
+    "retained-attempts/after-003.xml": {
+      "bytes": 72101,
+      "sha256": "6df49598366ffdcc819be3f23bccad673892beb4b5762bfb93d4f9ba4b7af206"
+    },
+    "retained-attempts/before.log": {
+      "bytes": 98151,
+      "sha256": "36e7c1b5033c51917343b0690cf6215f6fbdc796753560ae15b7eded992e1918"
+    },
+    "retained-attempts/before.xml": {
+      "bytes": 97570,
+      "sha256": "7e1f4d29cb90ac4866127d68ac5217801c96ede2ab33f6a0d23d8130e0ee08d8"
+    },
+    "retained-attempts/commit-whitespace-finding.json": {
+      "bytes": 259,
+      "sha256": "652f173384c0bd8251b3d8c898f57020520bf38e7ea6169081cb586472466135"
+    },
+    "retained-attempts/profile-pin-before.log": {
+      "bytes": 4905,
+      "sha256": "b265bed30b5dc395f2591afd32ec1da019f0898ad58675b63cb97d00a7c51ee7"
+    },
+    "retained-attempts/profile-pin-before.xml": {
+      "bytes": 4675,
+      "sha256": "216b8a424fc2352c70c6d2d1cc84f4460a4588e000aba1d50bb22c5ce76b1b3d"
+    },
+    "retained-attempts/ruff.log": {
+      "bytes": 20,
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "retained-attempts/wheel-fixture-first-detached.log": {
+      "bytes": 1193,
+      "sha256": "cdd19dc286554d828300be30aa5c37206f8cfa689ad0078b99ef70c1d6431597"
+    },
+    "retained-attempts/wheel-fixture-first-result.json": {
+      "bytes": 859,
+      "sha256": "a09c320889413a9a6824c66f4c28f44f573fd1ae5c6cfeab44344e7e0ad40afc"
+    }
+  },
+  "credential_value_scan": "known active fixture values excluded"
+}
