@@ -1,0 +1,240 @@
+{
+  "status": "passed",
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "definition_sha256": "987e066bb9a215b42ca7c5ad1d61161aa76433cb642f629082755923e2cbfbfd",
+  "schema_file_sha256": "b20059df7513252349a05bdf9e9521e1db0a34c5c46cc003364be6470ae7f237",
+  "production_gateway_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "api.gateway_stdio",
+    "--session-id",
+    "session-083-qualification",
+    "--workspace-id",
+    "workspace-083-qualification",
+    "--principal-id",
+    "private-provider-probe"
+  ],
+  "server_id": "qualification-083-agentcad-head-measure-002",
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "source_revision": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "selected_tool_count": 11,
+  "tool": "qualification-083-agentcad-head-measure-002__measure",
+  "response_sha256": "93e650729fd075ff68345f6e1462c0c86f81985cd8265fb8e87be871d1dd0f49",
+  "audit": [
+    {
+      "operation": "tool.list",
+      "target": "check_spec",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "context",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "diff",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "docs",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "export",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "inspect",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "measure",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "recover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "render",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "view",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "check_spec",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "context",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "diff",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "docs",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "export",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "inspect",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "measure",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "recover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "render",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "view",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "check_spec",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "context",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "diff",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "docs",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "export",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "inspect",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "measure",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "recover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "render",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "view",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.call",
+      "target": "measure",
+      "outcome": "started",
+      "reason": "policy_allowed"
+    },
+    {
+      "operation": "tool.call",
+      "target": "measure",
+      "outcome": "succeeded",
+      "reason": "policy_allowed"
+    }
+  ],
+  "cleanup": {
+    "gateway_runner_stopped": true
+  }
+}

@@ -1,5 +1,49 @@
 # Selected-provider qualification progress — T043
 
+## Current selected-provider audit — 3 October 2026
+
+**T043 is verified within its selected digital qualification scope.** Existing
+fresh clean installation, official protocol/schema discovery, actual safe backend
+operations and production-gateway qualification now cover all four selected
+providers. Earlier partial/failed attempts below retain their original scope;
+they are not relabelled as successful.
+
+| Existing provider | Selected qualification | Scope and limits |
+|---|---|---|
+| Blender geometry | Pinned `5f8ddaf6`, Blender 4.3.2, 28 schemas, actual STL export | Fresh selected Linux prerequisites and virtual display; no qualification of all asset tools. Original Windows engineering runs keep their recorded version. |
+| Independent slicer | Pinned `7b50d028`, native 2.8.2.61, 11 schemas, actual offline 3MF/G-code | Explicit PETG/profile/process settings and official asset hash; no printer dispatch, camera or hardware qualification. |
+| OASiS | Pinned `7c184d5b`, 17 schemas, actual skfem CSV/VTU | Conduction backend; critic remains false and provider trust remains false. Other solver hosts are not qualified. |
+| AgentCAD | Pinned upstream `2a377583`, 11 schemas, actual `run` and exact STEP `measure` | Unreleased revision with metadata 0.6.0; structured success at creation/readback. Published 0.6.0's formatter defect remains retained. |
+
+AgentCAD's upstream source separates structured CLI stdout from diagnostic stderr
+and isolates protocol stdout. Installed server SHA matches the exact pinned source.
+One fresh gateway creation returns success and creates a 15,378-byte STEP; a
+separate read-only measurement reports 2×3×4 mm, 24 mm³ and a valid deliverable.
+The STEP hash remains unchanged; no failed native creation was retried and no
+Wright provider implementation was added. The pin qualifies this revision,
+not a future release or the published 0.6.0 creation response.
+
+The [audit and reproduction records](../../../artifacts/process-interfaces/083/20261003-agentcad-pinned-upstream-qualified/README.md)
+and [checked scope](../../../artifacts/process-interfaces/083/20261003-agentcad-pinned-upstream-qualified/checked-scope.json)
+include exact source/install/launch identities, direct and gateway schemas,
+responses, native bytes, numerical readback, original failure preservation and
+credential-safe inventory. Earlier provider inventories are byte checked and
+eleven exact owned containers are revalidated stopped. 550 retained actual
+engineering/UI artifacts and protected campaign files remain unchanged.
+
+The production gateway runs on the current Windows source host; selected
+backends run in isolated Linux containers. This is not clean-container API
+installation qualification. Actual engineering demonstrations retain their exact
+provider revisions, assignments, assessments and held human reviews. Tiny
+qualification inputs do not substitute for those demonstrations or qualify every
+listed tool. Catalog/setup promotion, hardware effects and human engineering
+acceptance remain outside this goal. T056/T057 remain open.
+
+The first publisher's pretty-file-versus-canonical-response hash assumption is
+retained as a harness failure. Correct canonical verification uses the probe's
+recorded serialization; exact file bytes are independently inventoried. No
+provider operation was replayed during publication.
+
 ## Fresh clean selected slicer qualification — 3 October 2026
 
 A neutral Linux/amd64 Wright image was verified without the selected MCP or

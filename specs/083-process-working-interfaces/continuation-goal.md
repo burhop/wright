@@ -33,6 +33,23 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### T043 selected-provider audit verified — two tasks remain
+
+Existing pinned AgentCAD upstream `2a377583` passes fresh selected installation,
+official 11-tool protocol discovery, exact gateway schemas, one native creation
+and exact STEP readback. This is an unreleased revision with metadata 0.6.0;
+the old release failure remains untouched. All four selected-provider inventories
+and gateway seams are audited; eleven exact containers are stopped and 550
+retained engineering/UI files and protected campaign files match. No vendor
+implementation or catalog promotion was added. See `evidence/provider-qualification.md`
+and `artifacts/process-interfaces/083/20261003-agentcad-pinned-upstream-qualified/`.
+
+Ledger 55 checked/two open: T056/T057. Audit every FR/SC/acceptance and contract
+obligation against actual current evidence; refresh stale tables and finish
+focused commits/preservation checks. Reuse the substantive two-process proofs,
+preserve held real reviews and exact older installed build scope. Do not rerun
+engineering work merely to collect more evidence. No physical effect authorized.
+
 ### T053 current regression verified — three tasks remain
 
 Exact91 backend modules pass1,538 cases; three Windows symlink skips run on the

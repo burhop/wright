@@ -1,8 +1,19 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Current ledger:** **54 checked / 3 open**: T043, T056 and T057.
+**Current ledger:** **55 checked / 2 open**: T056 and T057.
 Task counts are not a percentage of completion.
+
+T043's selected-provider qualification audit now passes: fresh selected installs,
+official protocol/schema discovery and actual production-gateway backend calls
+cover Blender geometry, independent offline slicing, OASiS and existing pinned
+AgentCAD upstream. The latter's unreleased `2a377583` revision returns structured
+creation success; exact 2×3×4 mm STEP readback confirms 24 mm³ and unchanged bytes.
+Published 0.6.0's earlier failed receipt remains unchanged. No vendor source patch,
+catalog promotion, physical operation or human acceptance is implied. Eleven
+exact selected containers are stopped; 550 engineering/UI files and protected
+campaign files match. See [provider audit](evidence/provider-qualification.md#current-selected-provider-audit--3-october-2026).
+Current requirement tables below still need the complete T056 audit.
 
 T053's targeted current regression coverage is verified.91 exact backend modules
 pass1,538 cases; the three Windows symlink skips run and pass in the current

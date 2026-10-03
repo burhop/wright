@@ -1,5 +1,30 @@
 # Feature 083 progress
 
+## Current selected-provider qualification closed — 3 October 2026
+
+The prior goal turn refreshed status/prompt and discovered terminal passing
+upstream evidence, but made no implementation-state change. This continuation
+checks actual protocol/gateway responses, canonical response hashes, exact STEP
+bytes and dimensions, source pins, earlier inventories and live Docker state.
+Existing AgentCAD upstream `2a377583` is independently qualified in a fresh
+selected environment: 11 schemas match, one creation and one readback succeed.
+The installed server source matches the pinned upstream hash. Metadata remains
+0.6.0; this is explicitly an unreleased revision, not a patched Wright provider
+or a corrected published release. The old failed creation remains untouched.
+
+The complete selected-provider audit verifies all four fresh installations and
+actual backend/gateway seams. Eleven exact containers are stopped. 23 published
+credential-safe files retain source/install/launch, schemas, native responses,
+actual STEP, readback, cleanup and inventory. 550 retained engineering/UI files
+and protected campaign/context files match. The first publisher's canonical-hash
+assumption failure is retained and corrected without replaying a provider call;
+Docker inspection requires the approved host permission boundary.
+
+T043 is checked; 55 tasks checked and T056/T057 open. Continue the full FR/SC,
+acceptance and contract audit, correct real gaps, then finish focused local
+commits/preservation checks. No hardware, supplier, held review, catalog promotion,
+push/merge/release action ran. See [qualification](evidence/provider-qualification.md).
+
 ## Current installed proof continuation — 3 October 2026
 
 The previous goal turn refreshed status/prompt only: no implementation progress.

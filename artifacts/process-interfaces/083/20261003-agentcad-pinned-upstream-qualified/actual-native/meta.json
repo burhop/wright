@@ -1,0 +1,256 @@
+{
+  "command": "run",
+  "status": "success",
+  "core": {
+    "status": "success",
+    "committed_at": "2026-10-03T15:29:38.004019+00:00"
+  },
+  "version": 1,
+  "label": "clean-probe",
+  "runtime": "build123d",
+  "runtime_source": "project",
+  "output_type": "single_part",
+  "created": "2026-10-03T15:29:38.004019+00:00",
+  "script": "v1_clean-probe/script.py",
+  "outputs": {
+    "step": "v1_clean-probe/output.step",
+    "script": "v1_clean-probe/script.py"
+  },
+  "metrics": {
+    "bounding_box": {
+      "x": [
+        -1.0,
+        1.0
+      ],
+      "y": [
+        -1.5,
+        1.5
+      ],
+      "z": [
+        -2.0,
+        2.0
+      ]
+    },
+    "dimensions": {
+      "x": 2.0,
+      "y": 3.0,
+      "z": 4.0
+    },
+    "volume": 24.0,
+    "surface_area": 52.0,
+    "center_of_mass": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "face_count": 6,
+    "edge_count": 12,
+    "is_valid": true,
+    "reliable": true
+  },
+  "validation": {
+    "profile": "deliverable",
+    "is_valid": true,
+    "first_failure": null,
+    "undetermined_layer": null,
+    "layers": {
+      "file_parse": {
+        "status": "pass",
+        "duration_ms": 0
+      },
+      "kernel_load": {
+        "status": "pass",
+        "duration_ms": 0
+      },
+      "brep_check": {
+        "status": "pass",
+        "errors": [],
+        "entities": [],
+        "entity_count": 0,
+        "evidence_truncated": false,
+        "duration_ms": 3
+      },
+      "shell_closure": {
+        "status": "pass",
+        "closed_shell_count": 1,
+        "open_shell_count": 0,
+        "loose_face_count": 0,
+        "loose_face_ids": [],
+        "free_edge_count": 0,
+        "free_edge_ids": [],
+        "free_edges": [],
+        "evidence_truncated": false,
+        "duration_ms": 0
+      },
+      "mesh_manifold": {
+        "deflection_mm": 0.005385,
+        "triangle_count": 12,
+        "vertex_count": 8,
+        "status": "pass",
+        "ladder_divisor": 1,
+        "requested_deflection_mm": 0.005385,
+        "worker": "in_process",
+        "duration_ms": 3
+      },
+      "structure": {
+        "status": "pass",
+        "solid_count": 1,
+        "shell_count": 1,
+        "face_count": 6,
+        "edge_count": 12,
+        "faces_outside_solids": 0,
+        "solids": [
+          {
+            "id": 1,
+            "volume": 24.0,
+            "bbox": {
+              "x": [
+                -1.0,
+                1.0
+              ],
+              "y": [
+                -1.5,
+                1.5
+              ],
+              "z": [
+                -2.0,
+                2.0
+              ]
+            }
+          }
+        ],
+        "evidence_truncated": false,
+        "duration_ms": 1
+      },
+      "advisory": {
+        "status": "pass",
+        "min_face_area_mm2": 6.0,
+        "max_tolerance_mm": 0.0,
+        "flags": [],
+        "duration_ms": 1
+      }
+    },
+    "message": "The shape passed every deliverable validation layer.",
+    "repairs": [],
+    "worker": "in_process",
+    "step_round_trip": {
+      "status": "pass",
+      "matches": true,
+      "before": {
+        "is_valid": true,
+        "solid_count": 1,
+        "layers": {
+          "brep_check": "pass",
+          "shell_closure": "pass",
+          "mesh_manifold": "pass",
+          "structure": "pass",
+          "advisory": "pass"
+        }
+      },
+      "after": {
+        "is_valid": true,
+        "solid_count": 1,
+        "layers": {
+          "brep_check": "pass",
+          "shell_closure": "pass",
+          "mesh_manifold": "pass",
+          "structure": "pass",
+          "advisory": "pass"
+        }
+      },
+      "differences": [],
+      "skipped_layers": [],
+      "skipped_reason": null,
+      "message": "STEP layer outcomes and solid count match the source."
+    }
+  },
+  "validation_profile": "deliverable",
+  "artifacts": {
+    "mesh_exports": {
+      "status": "skipped",
+      "message": "No optional mesh exports requested."
+    },
+    "renders": {
+      "status": "skipped",
+      "message": "No explicit renders requested."
+    },
+    "preview": {
+      "status": "skipped",
+      "message": "Preview disabled with --no-preview."
+    },
+    "parts_preview": {
+      "status": "skipped",
+      "message": "No per-part preview work requested."
+    },
+    "viewer_glb": {
+      "status": "skipped",
+      "message": "Viewer artifacts disabled on the core-only fast path."
+    },
+    "diff": {
+      "status": "skipped",
+      "message": "Automatic comparison disabled with --no-diff."
+    },
+    "viewer": {
+      "status": "skipped",
+      "message": "Viewer artifacts disabled on the core-only fast path."
+    },
+    "browser": {
+      "status": "skipped",
+      "message": "Browser launch disabled with --no-view."
+    }
+  },
+  "completed_phases": [
+    "validation",
+    "script_exec",
+    "metrics",
+    "export_step"
+  ],
+  "phase_timings": {
+    "validation_ms": 1636,
+    "script_exec_ms": 23,
+    "metrics_ms": 3,
+    "source_validation_ms": 10,
+    "export_write_ms": 11,
+    "reload_ms": 5,
+    "delivered_validation_ms": 8,
+    "export_step_ms": 44
+  },
+  "parts": [
+    {
+      "id": "part_0",
+      "id_source": "generated",
+      "part_of": null,
+      "metrics": {
+        "bounding_box": {
+          "x": [
+            -1.0,
+            1.0
+          ],
+          "y": [
+            -1.5,
+            1.5
+          ],
+          "z": [
+            -2.0,
+            2.0
+          ]
+        },
+        "dimensions": {
+          "x": 2.0,
+          "y": 3.0,
+          "z": 4.0
+        },
+        "volume": 24.0,
+        "surface_area": 52.0,
+        "center_of_mass": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "face_count": 6,
+        "edge_count": 12,
+        "is_valid": true
+      }
+    }
+  ]
+}

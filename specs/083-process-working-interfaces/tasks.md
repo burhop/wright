@@ -117,7 +117,7 @@ isolated preview/save/update/rollback and second-run reuse with no fresh build.
 **Independent verification:** Two live digital tool chains and distinct tailored
 interfaces use the same foundation, with honest engineering checks and limits.
 
-- [ ] T043 [US4] Freshly discover/qualify selected existing Blender/geometry/slicer and AgentCAD/OASiS provider bindings through the normal clean-container/host process; record actual schemas/options/artifact limits in `specs/083-process-working-interfaces/evidence/provider-qualification.md` without public promotion or new vendor implementation.
+- [x] T043 [US4] Freshly discover/qualify selected existing Blender/geometry/slicer and AgentCAD/OASiS provider bindings through the normal clean-container/host process; record actual schemas/options/artifact limits in `specs/083-process-working-interfaces/evidence/provider-qualification.md` without public promotion or new vendor implementation.
 - [x] T044 [US4] Add bounded vendor-neutral STL/3MF/G-code toolpath and numerical result presentation/readers in `packages/ui_kit/` and `packages/workspace_service/src/workspace_service/process_interfaces/representations.py`, retaining parser provenance, true layers and unsupported classification fallback.
   Passive exact-subject readers and common/public-kit integration pass 110
   backend/API checks and 157 component/client checks. Actual external slicer and
