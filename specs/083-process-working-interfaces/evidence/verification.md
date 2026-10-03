@@ -1,5 +1,26 @@
 # Verification record — partial feature acceptance
 
+## Compact workspace correction — 3 October 2026
+
+Current installed005 verifies shared navigation and text wrapping on both
+engineering jobs. Four passing reports cover eight sizing/navigation/page-scale
+and five editor/common/read-only-preview checks per job. Both common views now
+measure432px client/scroll width at480px; exact18/20 results and saved identities
+remain preserved. Stopped006 retains the real pre-correction overflow.
+
+The complete selected frontend group passes300 tests across16 modules, with no
+failures/skips; TypeScript passes. A prior command omitted two modules through
+incorrect filenames and passed287 across14: it is retained with its actual scope.
+Initial focused checks pass22/fail2 due a hidden-control query and a DOM CSS
+serialization assumption; the corrected focused group passes24. A first command
+could not locate the root-owned test runner and ran no tests. Counts overlap.
+
+290 distinct original files, original/copied protected tables and953 entries in
+each of two installed candidates are verified. All proof views are closed.
+See [exact evidence](../../../artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md).
+T041/T052/T053 and final acceptance remain open; this is no model/provider/
+engineering execution or human acceptance claim.
+
 ## Current installed UI continuation — 3 October 2026
 
 At source `68748b83`, thirteen frontend modules pass287 checks without failures

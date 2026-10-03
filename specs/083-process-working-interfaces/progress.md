@@ -2950,3 +2950,27 @@ Updated continuation-goal.md and completion.md to put the unresolved blank previ
 and printed harness correction ahead of final qualification/migration/acceptance
 audits. Ledger remains49 checked/eight open. The existing unlimited goal stays
 active; no new goal, task closure, release or human/physical acceptance is claimed.
+
+## Compact workspace correction — current installed proofs
+
+After the bedtime status/prompt turn, the next available action corrected the
+recorded compact-content defect through existing workspace mechanisms. A
+transient overlay replaces the docked sidebar below768px in non-adaptive mode;
+Files remains accessible with Close/Escape/focus/backdrop return. Resizing
+preserves the desktop preference and saved iframe. Shared text wrapping fixes a
+separate actual common-view overflow retained in stopped006. Saved immutable UI
+bundles, exact process/run/result/review identity and backend authority remain.
+
+Final installed005 wheel ba9bc8d8604629cca3d07544943a01ce2fd96df199f507e7f13d9c00a0cab33e
+passes five editor/common/read-only-preview and eight sizing/navigation/page-scale
+checks per workflow. Common width/scroll width is432/432px at480px; exact18/20
+outputs remain. Scoped navigation accessibility has zero violations. The selected
+frontend group passes300 across16 modules without failures/skips; TypeScript
+passes. Initial launch/root/receipt/selector/timing failures remain preserved.
+
+All290 original files and protected original/copied tables remain unchanged;
+both installed candidates have953 verified entries and no active proof views.
+No model/provider/process/decision/physical operation ran. Evidence is under
+artifacts/process-interfaces/083/20261003-compact-workspace-verified. The ledger
+remains49 checked/eight open. Finish the focused local commit and continue
+qualification, migration/generality, broader regression and full acceptance audits.

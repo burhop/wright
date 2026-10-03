@@ -43,9 +43,10 @@ import { WorkflowRecoveryPage } from "../pages/WorkflowRecoveryPage";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
+import { WorkspaceSidebarPanel } from "../workspace/WorkspaceSidebarPanel";
 import { PaneSeparator } from "../workspace/PaneSeparator";
 import { ResponsivePaneSwitcher } from "../workspace/ResponsivePaneSwitcher";
-import { resolveWorkspaceLayout } from "../workspace/workspace-layout";
+import { COMPACT_NAVIGATION_BREAKPOINT_PX, resolveWorkspaceLayout } from "../workspace/workspace-layout";
 import {
   SurfaceFocusManager,
   installF6HostRegionCycle,
@@ -458,6 +459,9 @@ export function WorkspacePanel({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
+  const compactNavigation = !surfacesEnabled && panelWidth < COMPACT_NAVIGATION_BREAKPOINT_PX;
+  const [compactSidebarOpen, setCompactSidebarOpen] = useState(false);
+  const dockedSidebarCollapsed = compactNavigation || isSidebarCollapsed;
   const [ordinaryAgentCollapsed, setOrdinaryAgentCollapsed] = useState<boolean>(
     savedLayout?.isAgentCollapsed ?? false,
   );
@@ -486,6 +490,11 @@ export function WorkspacePanel({
     reloadDocument,
     resetViewer,
   } = useViewerPanel();
+
+  // Drawer visibility is transient; resizing must not overwrite desktop layout.
+  useEffect(() => {
+    setCompactSidebarOpen(false);
+  }, [compactNavigation, activeTabPath]);
 
   const [processTabError, setProcessTabError] = useState<string | null>(null);
   const [processNavigation, setProcessNavigation] = useState<
@@ -572,8 +581,8 @@ export function WorkspacePanel({
     1,
     panelWidth -
       48 -
-      (isSidebarCollapsed ? 0 : leftSidebarWidth) -
-      (isSidebarCollapsed ? 0 : 4),
+      (dockedSidebarCollapsed ? 0 : leftSidebarWidth) -
+      (dockedSidebarCollapsed ? 0 : 4),
   );
   const [surfaceLayout, surfaceLayoutDispatch] = usePersistentSurfaceLayout(
     _workspaceId ?? "unbound-workspace",
@@ -1404,6 +1413,7 @@ export function WorkspacePanel({
   // Click file in Tree → Open Tab
   const handleFileClick = async (path: string) => {
     if (!activeSessionId) return;
+    setCompactSidebarOpen(false);
 
     if (
       recoveryWorkflowEnabled &&
@@ -1665,6 +1675,11 @@ export function WorkspacePanel({
 
   // Toggle activity bar sidebar
   const handleActivityBarClick = (sidebar: WorkspaceSidebarId) => {
+    if (compactNavigation) {
+      setCompactSidebarOpen((open) => activeSidebar === sidebar ? !open : true);
+      setActiveSidebar(sidebar);
+      return;
+    }
     if (activeSidebar === sidebar) {
       setIsSidebarCollapsed((collapsed) => !collapsed);
     } else {
@@ -2387,7 +2402,7 @@ export function WorkspacePanel({
       layout={surfaceLayout}
       paneContainerWidth={surfacePaneContainerWidth}
       leftSidebarWidth={leftSidebarWidth}
-      leftSidebarCollapsed={isSidebarCollapsed}
+      leftSidebarCollapsed={dockedSidebarCollapsed}
       chatCollapsed={isAgentCollapsed}
       legacyChatWidth={rightSidebarWidth}
       adaptive={surfacesEnabled}
@@ -2406,10 +2421,11 @@ export function WorkspacePanel({
       {!surfaceChromeHidden && (
         <WorkspaceActivityBar
           activeSidebar={activeSidebar}
-          isSidebarCollapsed={isSidebarCollapsed}
+          isSidebarCollapsed={compactNavigation ? !compactSidebarOpen : isSidebarCollapsed}
           onBack={() => navigate("/")}
           onSelectSidebar={handleActivityBarClick}
           onOpenWorkflows={() => {
+            setCompactSidebarOpen(false);
             if (recoveryWorkflowEnabled) {
               if (canonicalWorkflowRequested) {
                 openWorkspaceWorkflowTab();
@@ -2434,16 +2450,11 @@ export function WorkspacePanel({
       )}
 
       {/* 2. Left Sidebar Panel (collapsible) */}
-      <div
-        data-testid="workspace-sidebar"
-        style={{
-          backgroundColor: "var(--color-surface)",
-          borderRight: "1px solid var(--color-border)",
-          gridColumn: "2",
-          display: surfaceChromeHidden || isSidebarCollapsed ? "none" : "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
+      <WorkspaceSidebarPanel
+        compact={compactNavigation}
+        open={!surfaceChromeHidden && (compactNavigation ? compactSidebarOpen : !isSidebarCollapsed)}
+        width={leftSidebarWidth}
+        onClose={() => setCompactSidebarOpen(false)}
       >
         {activeSidebar === "marketplace" && (
           <div
@@ -3285,10 +3296,10 @@ export function WorkspacePanel({
             </div>
           </div>
         )}
-      </div>
+      </WorkspaceSidebarPanel>
 
       {/* Left Sidebar Resize Handle */}
-      {!surfaceChromeHidden && !isSidebarCollapsed && (
+      {!surfaceChromeHidden && !dockedSidebarCollapsed && (
         <div
           data-testid="left-resize-handle"
           style={{

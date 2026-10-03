@@ -5,6 +5,15 @@ import { describe, expect, it, vi } from "vitest";
 import { WorkspaceActivityBar } from "./WorkspaceActivityBar";
 
 describe("WorkspaceActivityBar", () => {
+  it("announces the selected navigation panel visibility", () => {
+    const props = { activeSidebar: "files" as const, onBack: vi.fn(), onSelectSidebar: vi.fn(), onOpenBrepPanel: vi.fn() };
+    const { rerender } = render(<WorkspaceActivityBar {...props} isSidebarCollapsed />);
+    expect(screen.getByTestId("activity-bar-explorer-btn")).toHaveAttribute("aria-expanded", "false");
+    rerender(<WorkspaceActivityBar {...props} isSidebarCollapsed={false} />);
+    expect(screen.getByTestId("activity-bar-explorer-btn")).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("activity-bar-explorer-btn")).toHaveAttribute("aria-controls", "workspace-navigation-panel");
+    expect(screen.getByTestId("activity-bar-mcp-btn")).toHaveAttribute("aria-expanded", "false");
+  });
   it("opens BREP without selecting a sidebar", async () => {
     const user = userEvent.setup();
     const onOpenBrepPanel = vi.fn();

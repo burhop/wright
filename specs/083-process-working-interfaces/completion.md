@@ -4,16 +4,26 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
-Current checkpoint is committed as `68748b83`. A fresh installed editor passes
+Latest compact navigation and shared-label wrapping are verified in fresh
+installed005 on both jobs: eight sizing/navigation/page-scale and five
+editor/common/read-only-preview checks per workflow. Both common views measure
+432px client/scroll width at480px; saved identity and desktop preference survive
+resizing. 300 selected frontend checks and TypeScript pass. See
+[compact evidence](../../artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md).
+This resolves the recorded compact-content defect; complete acceptance remains
+open. The latest proof is based on `e4e9d735` with the listed owned source changes.
+
+The preceding evidence checkpoint is committed as `e4e9d735`; its installed
+product build is based on `68748b83`. A fresh installed editor passes
 12 workspace checks, including actual pointer connections and pan; automated
 editor and working-view accessibility scans report zero WCAG A/AA violations.
 The current frontend regression group passes 287 checks without skips. These
 do not close broader acceptance. Exact terminal-test view cleanup now restores
 Heat preview/reopen on the unchanged build; printed011 resolves the observer race
 and verifies exact assessment/path/producer identities. Stopped reports retain
-their scopes. Visual review finds compact comparison content clipped inside the
-narrow frame, so T052 stays open. See the
-[latest continuation checkpoint](continuation-goal.md#latest-handoff--committed-migration-and-current-installed-ui-checks).
+their scopes. Its compact-content finding is corrected in the latest evidence
+above. T052 stays open for the complete acceptance audit. See the
+[latest continuation checkpoint](continuation-goal.md#compact-presentation-corrected--remaining-acceptance-next).
 
 Latest migration: the original printed preparer now declares independent native
 geometry and passive inspection. Bundled repair implementation/wrapper, private

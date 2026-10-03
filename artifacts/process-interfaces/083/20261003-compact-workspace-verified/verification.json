@@ -1,0 +1,166 @@
+{
+  "base_commit": "e4e9d7350ded9b7e0fdfd251c8cf7f9661d545f1",
+  "source_changes_verified": {
+    "apps/web/src/components/chat/WorkspacePanel.tsx": "9657c94b5ec5b51a66b00f1c05466ffab5a9cb422c042444c4d123bddeb62452",
+    "apps/web/src/components/chat/WorkspaceActivityBar.tsx": "0df1c92b91e7a4613b53b80e283d78ad3fb9337507e59b1fcff9ab95e337fbb7",
+    "apps/web/src/components/chat/WorkspaceActivityBar.spec.tsx": "2d757c43a366b82d3225a12f0c03b42bef59b3347d5d779f2f84d980cd841cd5",
+    "apps/web/src/components/workspace/WorkspaceLayout.tsx": "fbf315d8af97ea40ae84bd2ac244ec08876b2b5a620d523697af824b12234401",
+    "apps/web/src/components/workspace/workspace-layout.ts": "5b847d55f244576a9f5fac1081113a571e8062e481c8e4a91e4719ed20a168b9",
+    "apps/web/src/components/workspace/WorkspaceSidebarPanel.tsx": "fc0a6de12bad45f6ba9093ccee4a18d1386cb53fc7c60e1c9bb30713f27e6691",
+    "apps/web/src/components/workspace/WorkspaceSidebarPanel.spec.tsx": "8bf80db785d73126ea6d962c04a4065b9ed4d8317a30ce5f4495a09ab5ac0ff2",
+    "packages/ui_kit/src/styles.css": "035426e200bd5f8e681d76b556e0d485734a04fa1a0ac41f139e3e68d7a5725d"
+  },
+  "installed_builds": [
+    {
+      "build": "004",
+      "wheel_sha256": "5688afe2a4acadd894380e90ff80d873b186a538bdf66fac54fd92cf27139f50",
+      "installed_entries_byte_verified": 953
+    },
+    {
+      "build": "005",
+      "wheel_sha256": "ba9bc8d8604629cca3d07544943a01ce2fd96df199f507e7f13d9c00a0cab33e",
+      "installed_entries_byte_verified": 953
+    }
+  ],
+  "fixtures": [
+    {
+      "fixture": "010",
+      "original_files_checked": 135,
+      "copied_context_or_locator_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary context materialization in copied workspace only"
+        },
+        {
+          "path": ".wright/apps/process.ui-512d6109b37f4c0f89b86d86a34827b2.revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0.surface.json",
+          "scope": "Only installed interpreter and identical copied immutable UI-vault locator relocated"
+        }
+      ],
+      "protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    },
+    {
+      "fixture": "011",
+      "original_files_checked": 155,
+      "copied_context_or_locator_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary context materialization in copied workspace only"
+        },
+        {
+          "path": ".wright/apps/process.ui-0a09766ccdd94bfdb3dab1f5519d1628.revision-d38d8f51a4674fe7816f9b00ca43ad73.surface.json",
+          "scope": "Only installed interpreter and identical copied immutable UI-vault locator relocated"
+        }
+      ],
+      "protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    },
+    {
+      "fixture": "012",
+      "original_files_checked": 135,
+      "copied_context_or_locator_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary context materialization in copied workspace only"
+        },
+        {
+          "path": ".wright/apps/process.ui-512d6109b37f4c0f89b86d86a34827b2.revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0.surface.json",
+          "scope": "Only installed interpreter and identical copied immutable UI-vault locator relocated"
+        }
+      ],
+      "protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    },
+    {
+      "fixture": "013",
+      "original_files_checked": 155,
+      "copied_context_or_locator_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary context materialization in copied workspace only"
+        },
+        {
+          "path": ".wright/apps/process.ui-0a09766ccdd94bfdb3dab1f5519d1628.revision-d38d8f51a4674fe7816f9b00ca43ad73.surface.json",
+          "scope": "Only installed interpreter and identical copied immutable UI-vault locator relocated"
+        }
+      ],
+      "protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    }
+  ],
+  "distinct_original_files_byte_verified": 290,
+  "reports": [
+    {
+      "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-007/workspace-walkthrough/status.json",
+      "passed_steps": 5,
+      "sha256": "137b778b913b8ab64f1a797fdd097caaf53db2de9328227e5316aefcdefcc513"
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-008/workspace-walkthrough/status.json",
+      "passed_steps": 8,
+      "sha256": "acee59ba28496b7fcc89fdf2d1fd6ac42dbd527c3201be777402f9a619026682"
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-compact-printed-installed-007/workspace-walkthrough/status.json",
+      "passed_steps": 5,
+      "sha256": "6128b4fcfd8094995aacd11665c34eb058599ec69c6f404f1a7515215c26c358"
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-compact-printed-installed-008/workspace-walkthrough/status.json",
+      "passed_steps": 8,
+      "sha256": "ab060b105f3c5bfafc8cbe8285df49909c768ea8b575d2c9ad52241ebae81994"
+    }
+  ],
+  "regressions": {
+    "passes": 300,
+    "failures": 0,
+    "skips": 0,
+    "modules": [
+      "apps/web/src/services/process-client.spec.ts",
+      "apps/web/src/services/process-presentation-host.spec.ts",
+      "apps/web/src/services/process-ui-authoring-recovery.spec.ts",
+      "apps/web/src/services/process-ui-authoring.spec.ts",
+      "apps/web/src/services/process-view-recovery.spec.ts",
+      "apps/web/src/services/process-workspace-tabs.spec.ts",
+      "apps/web/src/components/chat/WorkspaceActivityBar.spec.tsx",
+      "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+      "apps/web/src/components/process-interfaces/HistoricalResultView.spec.tsx",
+      "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx",
+      "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+      "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx",
+      "apps/web/src/components/workspace/workspace-layout.spec.ts",
+      "apps/web/src/components/workspace/WorkspaceSidebarPanel.spec.tsx",
+      "apps/web/src/services/surfaces/process-presentation.spec.ts",
+      "apps/web/src/services/surfaces/presenters/live-app-presenter.spec.ts"
+    ],
+    "typescript_exit_code": 0
+  },
+  "scope": "Shared compact navigation, common text wrapping, editor return, exact saved/common/read-only-preview identity, keyboard navigation, measured page scale; no engineering execution or decisions",
+  "human_acceptance": false,
+  "physical_execution": false,
+  "feature_complete": false
+}

@@ -141,6 +141,10 @@ export function WorkspaceActivityBar({
               }}
               style={iconButtonStyle(isActive)}
               title={item.title}
+              {...(item.id !== "workflows" && item.id !== "brep" ? {
+                "aria-controls": "workspace-navigation-panel",
+                "aria-expanded": isActive,
+              } : {})}
               className="activity-bar-icon"
             >
               {item.icon(20)}

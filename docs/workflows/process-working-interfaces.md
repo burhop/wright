@@ -15,6 +15,12 @@ or engineering-acceptance claim. Consult the
 
 ## Open and prepare a process
 
+In a compact workspace, **Workspace Files** opens navigation over the document.
+Use **Close**, press **Escape**, or click the shaded space beside navigation to
+return. Resizing back restores the desktop sidebar preference. Long engineering
+labels wrap in the common view; wider saved-interface content can be scrolled
+horizontally. These controls preserve the accepted process and recorded run.
+
 Readiness checks the selected tools' known execution permissions as well as
 inputs, schemas and configuration. A missing permission identifies the affected
 step and blocks start before execution. Existing workspace provider grants remain

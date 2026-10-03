@@ -1,5 +1,28 @@
 # Workspace acceptance evidence
 
+## Compact shared presentation correction — 3 October 2026
+
+The recorded compact-content defect now has a shared correction. Non-adaptive
+workspace navigation overlays its document below768px without saving that
+transient state as the desktop preference. Files remains accessible; Close,
+Escape/focus return and clicking the exposed shaded space work. The document
+keeps432px at a480px viewport rather than losing260px to the docked panel.
+The shared UI kit also wraps long engineering labels after real common-view
+overflow was measured and preserved in stopped006.
+
+Current installed005 proofs on both jobs pass eight navigation/sizing/page-scale
+checks and five editor/common/read-only-preview continuation checks each.
+Exact18/20 outputs, UI revision/run and iframe identity remain preserved; common
+width/scroll width is432/432px. Wider immutable saved-interface content supports
+actual horizontal wheel scrolling. Scoped navigation WCAG A/AA scans find zero
+violations. See [evidence and reports](../../../artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md).
+
+All290 original files and original/copied protected tables are unchanged; both
+installed candidates have953 verified entries. Earlier failed observations are
+retained. No process/model/provider/decision ran. This resolves the specific
+sidebar/content defect below; T052 stays open for the complete acceptance audit.
+Measured page scale two is not a browser-zoom or human accessibility claim.
+
 ## Current installed workspace continuation — 3 October 2026
 
 Fresh wheel `68748b83` passes twelve editor checks, including real pointer

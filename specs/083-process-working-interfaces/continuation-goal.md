@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Improve and verify the remaining compact working/preview presentation: visual review at480px shows the fixed workspace sidebar leaves comparison content clipped inside a narrow iframe, even though controls/focus/outer-overflow checks pass. Use shared workspace/client/kit mechanisms and preserve editor capabilities and exact saved UI/run bindings. Reuse current016/017 preview/reopen and printed011 assessment/path/producer proof; their observation/terminal-test resource issues are reconciled without a speculative product lifecycle fix. Do not replay completed engineering runs.
+1. Reconcile the latest compact-presentation correction and its focused local commit. Current installed005 verifies shared navigation, desktop preference/frame preservation, wrapped common results, editor return and read-only preview on both jobs. Reuse the exact007/008 reports and preceding016/017/printed011 scopes; do not repeat completed engineering runs or treat scoped checks as complete acceptance. Then advance the remaining provider/caller, broader authoring/regression and requirement audits.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 287-pass frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
@@ -32,6 +32,61 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Compact presentation corrected — remaining acceptance next
+
+The shared compact correction is implemented and verified. Below768px the
+non-adaptive workspace uses transient overlay navigation; Files/Close/Escape/
+visible backdrop work, desktop preference survives resizing and the saved iframe
+is retained. A separate real common-view overflow is fixed by inherited text
+wrapping in the public UI kit. Immutable saved bundles are unchanged and support
+actual horizontal scrolling. No new runtime, process authority or vendor code.
+
+Final installed005 wheel SHA-256:
+`ba9bc8d8604629cca3d07544943a01ce2fd96df199f507e7f13d9c00a0cab33e`.
+Current heat/printed007 each pass five editor/common/read-only-preview checks;
+008 each pass eight sizing/navigation/restoration/measured-page-scale checks.
+Both common widths are432/432px at480px, with exact18/20 results. Navigation
+accessibility scans have zero violations. 300 selected frontend tests and
+TypeScript pass. All290 original files, protected original/copied tables and
+953 entries in each installed candidate are checked. All proof views are closed.
+See `artifacts/process-interfaces/083/20261003-compact-workspace-verified`.
+
+Preserve first launch/guard/observer/overflow stops. The original timeout/limit
+investigation remains test-resource evidence, not a speculative lifecycle fix.
+The ledger stays49 checked/eight open; do not close broader tasks from compact
+checks alone. Finish the focused local commit, then qualification, active-caller/
+generality, remaining authoring/regression and full requirement acceptance audits.
+Commit/service receipts belong under `.local-run/process-interfaces-083/`;
+revalidate exact owned handles before reuse. No model/provider/process/review or
+physical operation ran in this correction.
+
+### Bedtime continuation — committed UI evidence, compact layout next
+
+Actual HEAD at this review is `e4e9d735` on
+`codex/083-process-working-interfaces`. The existing unlimited goal is active.
+The ledger remains **49 checked / eight open**: T041, T043, T048, T049,
+T052, T053, T056 and T057. This review reads saved evidence and Git state;
+it does not run tests, engineering processes or provider operations, and does
+not revalidate live services.
+
+The installed preview/reopen and printed assessment/path/producer evidence below
+is now committed. The installed product build remains based on `68748b83`;
+`e4e9d735` commits verification evidence and documentation, not a product fix.
+See `artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/`.
+
+Start with the recorded compact-content defect under T052. The initial read-only
+investigation found that WorkspacePanel already observes its container width,
+while recovery workflow mode bypasses its ordinary thin-panel behavior. Inspect
+the existing WorkspaceLayout and persistence contract before choosing a shared
+correction. Preserve desktop sidebar preferences, usable file navigation, editor
+capabilities and saved process/UI/run identities. No compact-layout source change
+or new verification has been made at this checkpoint.
+
+Then finish the remaining provider/migration, authoring/regression and requirement
+audits from actual evidence. Reuse satisfied proof scopes instead of repeating
+completed engineering runs. Follow the prompt above and original implementation
+authority; no additional product decisions are needed for independent local work.
 
 ### Latest progress — installed preview/reopen and exact navigation verified
 

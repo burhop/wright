@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/api/workspace/process-interfaces/uis/ui-0a09766ccdd94bfdb3dab1f5519d1628/present",
+    "method": "POST",
+    "elapsed_ms": 3821
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "GET",
+    "elapsed_ms": 325
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "POST",
+    "elapsed_ms": 29,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/context",
+    "method": "GET",
+    "elapsed_ms": 198
+  },
+  {
+    "path": "/__wright/process/runs/5c3a84a335854e88aa8bbe48a591ce0d",
+    "method": "GET",
+    "elapsed_ms": 879
+  },
+  {
+    "path": "/__wright/process/runs/5c3a84a335854e88aa8bbe48a591ce0d",
+    "method": "GET",
+    "elapsed_ms": 896
+  },
+  {
+    "path": "/__wright/process/runs/5c3a84a335854e88aa8bbe48a591ce0d/events",
+    "method": "GET",
+    "elapsed_ms": 318,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/runs/5c3a84a335854e88aa8bbe48a591ce0d",
+    "method": "GET",
+    "elapsed_ms": 837
+  }
+]

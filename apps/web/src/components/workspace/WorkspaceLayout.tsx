@@ -46,7 +46,7 @@ export const WorkspaceLayout = forwardRef<HTMLDivElement, Props>(
       : chatCollapsed
         ? "minmax(480px, 1fr) 0px 0px"
         : `minmax(480px, 1fr) ${resolved.separatorPixels}px ${resolved.chatPixels}px`;
-    const legacyColumns = `48px ${leftSidebarCollapsed ? "0px" : `${leftSidebarWidth}px`} ${leftSidebarCollapsed ? "0px" : "4px"} 1fr ${chatCollapsed ? "0px" : "4px"} ${chatCollapsed ? "0px" : `${legacyChatWidth}px`}`;
+    const legacyColumns = `48px ${leftSidebarCollapsed ? "0px" : `${leftSidebarWidth}px`} ${leftSidebarCollapsed ? "0px" : "4px"} minmax(0, 1fr) ${chatCollapsed ? "0px" : "4px"} ${chatCollapsed ? "0px" : `${legacyChatWidth}px`}`;
     const layoutStyle: CSSProperties = {
       display: "grid",
       gridTemplateColumns: adaptive

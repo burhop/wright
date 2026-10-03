@@ -1,0 +1,143 @@
+{
+  "title": "Compact heat working interface and workspace navigation",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-03T11:59:35.333Z",
+  "manualSteps": [
+    {
+      "label": "Open saved interface",
+      "instruction": "Open the saved working-interface link for the proof run."
+    },
+    {
+      "label": "Desktop preference",
+      "instruction": "At desktop width, open Workspace Files."
+    },
+    {
+      "label": "Compact navigation",
+      "instruction": "Resize to480px. Open Files, then close with Escape, Close or clicking the shaded space to the right of Files."
+    },
+    {
+      "label": "Restore",
+      "instruction": "Resize back to1440px and check the file panel returns."
+    },
+    {
+      "label": "Editor",
+      "instruction": "At compact width click Open workflow and inspect Diagram and Source."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Updated installed workspace",
+      "summary": "The updated package opens through the normal workspace.",
+      "purpose": "Verify the owning workspace, not a detached UI route.",
+      "action": "Open the isolated workspace.",
+      "controls": [
+        "Workflows",
+        "Workspace Files"
+      ],
+      "expected": "Existing workspace navigation visible.",
+      "actual": "Normal Workflows and Files controls are available.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Saved engineering interface and desktop navigation",
+      "summary": "The same exact results render with the desktop file panel open.",
+      "purpose": "Establish saved identity and desktop preference before compact resizing.",
+      "action": "Open the saved working link; click Workspace Files if closed.",
+      "controls": [
+        "Workspace Files",
+        "Working tab"
+      ],
+      "expected": "Exact recorded results and docked navigation.",
+      "actual": "18 exact result identities; docked file panel 260px wide.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Compact content gets the workspace width",
+      "summary": "The file panel no longer consumes the compact document width.",
+      "purpose": "Check actual document/iframe width and retained engineering results.",
+      "action": "Resize to 480 by 900.",
+      "controls": [
+        "Workspace Files",
+        "Open workflow"
+      ],
+      "expected": "Navigation closed; document wider than420px; same live frame/results.",
+      "actual": "Document 432px; embedded body 382px with 533px scroll width and visible horizontal overflow; same iframe and results.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Files remains accessible as compact navigation",
+      "summary": "Files opens over the working view without resizing or restarting it.",
+      "purpose": "Keep normal file navigation available at compact widths.",
+      "action": "Click Workspace Files.",
+      "controls": [
+        "Workspace Files",
+        "Close workspace navigation",
+        "Return to workspace"
+      ],
+      "expected": "Focused close control and overlay navigation; document width unchanged.",
+      "actual": "Compact overlay opens; Close is focused; the same iframe keeps its available width.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Compact return and keyboard focus",
+      "summary": "Escape, Close and clicking back to the workspace all dismiss navigation.",
+      "purpose": "Verify return controls and preservation of the desktop preference.",
+      "action": "Press Escape; reopen Files and click Return to workspace; reopen and click Close.",
+      "controls": [
+        "Workspace Files",
+        "Close workspace navigation",
+        "Return to workspace"
+      ],
+      "expected": "Navigation closes; Escape returns focus; desktop preference remains expanded.",
+      "actual": "All three return paths work; Escape restores Files focus; desktop preference and exact results are preserved.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Small phone and wider compact workspace",
+      "summary": "The working view remains available at360px and640px.",
+      "purpose": "Check container-driven compact layout on both sides of480px.",
+      "action": "Resize to360px, then640px.",
+      "controls": [
+        "Workspace Files",
+        "Open workflow"
+      ],
+      "expected": "Available document width and same exact results.",
+      "actual": "Both compact sizes use the available width with navigation closed; result identities remain exact.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Entry stopped",
+      "summary": "The normal workspace entry did not meet the expected state.",
+      "purpose": "Retain the first stopping point.",
+      "action": "Stop at the unexpected entry state.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workspace and established editor available.",
+      "actual": "expect(received).toBe(expected) // Object.is equality\n\nExpected: 260\nReceived: 46.203125",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "title": "Compact heat working interface and workspace navigation",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-03T11:57:11.162428+00:00",
+  "manualSteps": [
+    {
+      "label": "Open saved interface",
+      "instruction": "Open the saved working-interface link for the proof run."
+    },
+    {
+      "label": "Desktop preference",
+      "instruction": "At desktop width, open Workspace Files."
+    },
+    {
+      "label": "Compact navigation",
+      "instruction": "Resize to480px. Open Files, then close with Escape, Close or Return to workspace."
+    },
+    {
+      "label": "Restore",
+      "instruction": "Resize back to1440px and check the file panel returns."
+    },
+    {
+      "label": "Editor",
+      "instruction": "At compact width click Open workflow and inspect Diagram and Source."
+    }
+  ],
+  "steps": [
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Browser launch denied before navigation",
+      "summary": "The local browser did not start.",
+      "purpose": "Preserve the first attempted observation.",
+      "action": "Launch the local headless browser.",
+      "controls": [],
+      "expected": "Browser available for installed workspace verification.",
+      "actual": "Sandbox process launch returned spawn EPERM before navigation; no UI action or screenshot was possible."
+    }
+  ]
+}
