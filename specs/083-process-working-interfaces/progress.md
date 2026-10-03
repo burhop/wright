@@ -35,7 +35,10 @@ repeat015 subjects and check UI compatibility for the new binding. Reuse the
 completed Heat proof. Continue qualification/migration, current installed/editor/
 accessibility, remaining regressions and full audit; do not narrow completion.
 API8040/frontend5245 remain owned resources; revalidate before use. No live API
-restart or new native engineering run occurred. Focused local commit is pending.
+restart or new native engineering run occurred. Implementation and the exact
+276-path owned inventory are committed locally as `496a83f3`; all 264 evidence
+files were verified against their staged bytes. Unrelated untracked work remains
+excluded. No push, merge or release occurred.
 
 ## Latest overnight handoff — terminal printed failures and reusable UI evidence
 

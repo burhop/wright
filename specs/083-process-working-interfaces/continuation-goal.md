@@ -74,7 +74,9 @@ its UI against a changed digest without compatibility checks. No new engineering
 run or API restart occurred in this correction. Revalidate owned API8040,
 frontend5245 and native leases before reuse. Continue all remaining migration,
 qualification, installed UI/editor/accessibility, regression and audit work.
-The full goal remains active; a focused local commit is still pending.
+The full goal remains active. Implementation/evidence is committed locally as
+`496a83f3` after exact 276-path staging and 264 artifact-byte checks. Unrelated
+work remains excluded; no push, merge or release occurred.
 
 ### Latest reconciled checkpoint — printed repair timeout and saved-interface progress
 
