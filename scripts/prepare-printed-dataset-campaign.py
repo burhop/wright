@@ -20,8 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json"
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/printed-replacement-part.workflow.wflow"
 SERVER = "blender-mcp-ahujasid"
-REPAIR_WRAPPER = ROOT / "scripts/engineering_dataset_mesh_repair_mcp.py"
-REPAIR_OPERATION = ROOT / "scripts/engineering_dataset_mesh_repair.py"
+REPAIR_POLICY = ROOT / "examples/process-interfaces/printed-replacement-part/original-repair-policy.json"
 VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
 
 
@@ -50,17 +49,38 @@ _slice_spec = importlib.util.spec_from_file_location(
 external_slice = importlib.util.module_from_spec(_slice_spec)
 _slice_spec.loader.exec_module(external_slice)
 
+_mesh_spec = importlib.util.spec_from_file_location(
+    "external_campaign_mesh_binding", ROOT / "scripts/engineering_external_mesh_binding.py"
+)
+external_mesh = importlib.util.module_from_spec(_mesh_spec)
+_mesh_spec.loader.exec_module(external_mesh)
+
 
 def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     renewal = _renewal_module()
     config = json.loads(BINDING.read_text(encoding="utf-8"))
     blender_server = getattr(args, "blender_server", None) or SERVER
-    repair_server = getattr(args, "repair_server", None) or config["repair_server"]
     manifest = json.loads((scenario_dir / "scenario.json").read_text(encoding="utf-8"))
     scenario_id = manifest["scenario_id"]
     prepared_slice = external_slice.preflight(
         getattr(args, "slicer_binding", None), scenario_id, tools,
         config["scenarios"][scenario_id]["process"],
+    )
+    original_policy = json.loads(REPAIR_POLICY.read_bytes())
+    repair_policy = {key: value for key, value in original_policy.items()
+                     if key not in {"schema_version", "basis", "archived_operation_sha256", "handle_triangle_limit"}}
+    if scenario_id == "printed-replacement-part-02":
+        repair_policy["triangle_limit"] = original_policy["handle_triangle_limit"]
+    repair_policy["planar_cleanup"] = scenario_id == "printed-replacement-part-02"
+    input_root = f"campaign/{scenario_id}/{args.attempt}/inputs"
+    output_root = f"campaign/{scenario_id}/{args.attempt}/artifacts"
+    workspace = Path(args.workspace_root).resolve()
+    if getattr(args, "repair_server", None):
+        raise ValueError("The old --repair-server wrapper path is retired; supply --repair-binding")
+    prepared_mesh = external_mesh.preflight(
+        getattr(args, "repair_binding", None), scenario_id, tools,
+        workspace=workspace, output_root=output_root, policy=repair_policy,
+        machine_profile_sha256=digest(prepared_slice[2]["machine"]),
     )
     correction_source = getattr(args, "review_correction_source", None)
     correction_proof = getattr(args, "review_correction_proof", None)
@@ -74,11 +94,11 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         if (
             proof.get("status") != "qualified"
             or proof.get("source_code_after_sha256") != digest(source_bytes)
-            or proof.get("operation_sha256") != digest(REPAIR_OPERATION.read_bytes())
+            or proof.get("operation_sha256") != original_policy["archived_operation_sha256"]
             or proof.get("cleanup", {}).get("status") != "cleaned"
             or proof.get("cleanup", {}).get("post_cleanup_identity") is not None
         ):
-            raise ValueError("Printed 02 review correction qualification identity is not current")
+            raise ValueError("Printed 02 historical correction qualification identity is not current")
         correction_files = {
             "review-correction-source.py": source_bytes,
             "review-correction-qualification.json": proof_bytes,
@@ -98,9 +118,6 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         ).read_text(encoding="utf-8")
     )
     suffix = scenario_id.replace("-", "_") + "_" + args.attempt.replace("-", "_")
-    input_root = f"campaign/{scenario_id}/{args.attempt}/inputs"
-    output_root = f"campaign/{scenario_id}/{args.attempt}/artifacts"
-    workspace = Path(args.workspace_root).resolve()
     draft_root = Path(args.draft_root).resolve() / scenario_id / args.attempt
     if draft_root.exists():
         raise ValueError(f"Draft attempt already exists; inspect it or choose a new attempt: {draft_root}")
@@ -213,49 +230,15 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     add_reference(sections, prompt_ref, source_task, "natural_prompt")
     add_reference(sections, context_ref, source_task, "supplied_context")
 
-    repair_config = {
-        "workspace_root": str(workspace),
-        "source": str(confined(workspace, f"{output_root}/source_mesh.stl")),
-        "repaired": str(confined(workspace, f"{output_root}/repaired_mesh.stl")),
-        "preview": str(confined(workspace, f"{output_root}/mesh-preview.png")),
-        "object_name": f"wright_{scenario_id.replace('-', '_')}_{args.attempt.replace('-', '_')}_repaired",
-        "triangle_limit": 24000 if scenario_id == "printed-replacement-part-02" else 80000,
-        "merge_tolerance_mm": 0.001,
-        "degenerate_tolerance_mm": 0.000001,
-        "force_voxel_remesh": False,
-        "envelope_margin_mm": 0.0,
-        "planar_cleanup": scenario_id == "printed-replacement-part-02",
-        "measure_handle_features": scenario_id == "printed-replacement-part-02",
-    }
-    repair_recipe_path = f"{input_root}/mesh-repair-operation.json"
-    repair_recipe_bytes = (json.dumps(repair_config, indent=2) + "\n").encode()
-    write_once(confined(workspace, repair_recipe_path), repair_recipe_bytes)
-    inputs.append({"path": repair_recipe_path, "sha256": digest(repair_recipe_bytes), "size_bytes": len(repair_recipe_bytes), "kind": "reviewed_operation_configuration"})
-    repair_operation_path = f"{input_root}/mesh-repair-operation.py"
-    repair_operation_source = REPAIR_OPERATION.read_bytes()
-    write_once(confined(workspace, repair_operation_path), repair_operation_source)
-    inputs.append({"path": repair_operation_path, "sha256": digest(repair_operation_source), "size_bytes": len(repair_operation_source), "kind": "reviewed_executed_source"})
     repair = stage("repair_measure_orient")
-    repair_binding = selected_tool(tools, repair_server, config["repair_tool"])
-    repair_result_key = repair["id"] + "_result"
-    repair["fields"].update(
-        step_type="work", performed_by="configured_tool", inputs=[],
-        outputs=[port(repair_result_key), port("repaired_mesh", "workspace_file")], prompt="",
-        instructions=config["stages"]["repair_measure_orient"]["prompt"].replace("{output_root}", output_root),
-        tool=None, reusable_step=None,
+    repair_binding = prepared_mesh["selected_tool"]
+    repair["fields"]["instructions"] = config["stages"]["repair_measure_orient"]["prompt"].replace("{output_root}", output_root)
+    mesh_binding_evidence = external_mesh.bind(
+        sections, repair, source_task["id"] + ".source_mesh", workspace=workspace,
+        input_root=input_root, output_root=output_root, prepared=prepared_mesh,
+        inspection={"tool": prepared_slice[1]["inspection"], "configuration": prepared_slice[0]["inspection"]},
+        staged=inputs,
     )
-    repair["fields"]["settings"] = {
-        "authoring_template": "mcp-tool", "mcp_server": repair_server,
-        "mcp_tool": repair_binding["name"],
-        "mcp_schema_digest": repair_binding["schema_digest"],
-        "mcp_arguments": json.dumps({"configuration_document": repair_recipe_path, "operation_source_document": repair_operation_path}, separators=(",", ":")),
-        "output_format": "json", "save_output": True,
-        "output_filename": f"{output_root}/repair-model-report.json",
-        "file_policy": "overwrite",
-        "expected_files": "\n".join(f"{output_root}/{name}" for name in config["stages"]["repair_measure_orient"]["expected_files"]),
-        "timeout_seconds": 600,
-        "expected_file_ports": {"repaired_mesh": f"{output_root}/repaired_mesh.stl"},
-    }
     # The original template already orders these stages. Retain that identity
     # rather than adding a duplicate that the diagram correctly rejects.
     if not any(
@@ -285,6 +268,10 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         source=f"{output_root}/repaired_mesh.stl", prepared=prepared_slice,
         staged=inputs, operation_label="actual_local_bambu_slice",
     )
+    sections.append({"kind": "connection", "id": "verified_mesh_before_slice_" + suffix,
+                     "fields": {"type": "order", "from": mesh_binding_evidence["validation_step_id"],
+                                "to": slice_binding_evidence["package_reference"].split(".")[0],
+                                "when": None, "label": "hold slicing until actual geometry checks pass"}})
     approval = stage("authorize_transfer")
     approval["fields"]["outputs"] = [port("receipt", "workspace_file")]
     approval["fields"]["settings"].update({
@@ -329,9 +316,10 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     }
     sections.append(final_review)
     add_reference(sections, source_task["id"] + "." + source_result_key, final_review, "source_report")
+    add_reference(sections, mesh_binding_evidence["feature_reference"], final_review, "actual_mesh_inspection", "workspace_file")
     if scenario_id == "printed-replacement-part-02":
         add_reference(sections, source_task["id"] + ".native_design", final_review, "native_design")
-        add_reference(sections, repair["id"] + "." + repair_result_key, final_review, "final_feature_measurements")
+        add_reference(sections, mesh_binding_evidence["feature_reference"], final_review, "final_feature_measurements", "workspace_file")
     validation_sources = {
         "source_mesh": (source_task, "source_mesh", "workspace_file"),
         "source_report": (source_task, source_result_key, "engineering_document"),
@@ -403,12 +391,8 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "input_manifest": inputs,
         "tool_allowlist": [selected_tool(tools, blender_server, name) for name in config["allowed_tools"]]
         + [repair_binding, *prepared_slice[1].values()],
-        "fixed_mesh_repair_wrapper": {
-            "path": str(REPAIR_WRAPPER),
-            "sha256": digest(REPAIR_WRAPPER.read_bytes()),
-            "operation_path": str(REPAIR_OPERATION),
-            "operation_sha256": digest(REPAIR_OPERATION.read_bytes()),
-        },
+        "external_mesh_binding": {key: value for key, value in mesh_binding_evidence.items() if key != "inspection_step"},
+        "historical_correction_scope": "Retained source/legacy qualification is historical evidence only; current independent repair and exact-byte inspection must run afresh",
         "external_slicer_binding": slice_binding_evidence,
         "execution_lineage_authority": {
             "kind": "canonical_mcp_step_record",
@@ -438,7 +422,7 @@ def main():
     parser.add_argument("--scenario", help="Scenario ID; otherwise prepare all three")
     parser.add_argument("--instance-source", help="Source returned by original-template instance API; requires --scenario")
     parser.add_argument("--blender-server", help="Registered server ID for the lifecycle-owned guarded Blender endpoint")
-    parser.add_argument("--repair-server", help="Registered server ID for the fixed same-attempt Blender repair endpoint")
+    parser.add_argument("--repair-binding", required=True, help="Pinned arguments and original policy for an independently installed geometry provider")
     parser.add_argument("--slicer-binding", required=True, help="Explicit independent slicer/inspection binding and pinned profiles for the selected scenario")
     parser.add_argument("--review-correction-source", help="Audited same-case Printed 02 construction to reuse through MCP")
     parser.add_argument("--review-correction-proof", help="Current native qualification bound to the correction source and repair operation")
@@ -452,10 +436,6 @@ def main():
     blender_server = args.blender_server or SERVER
     if any((blender_server, name) not in tools for name in required):
         raise RuntimeError("Required Blender tools are not workspace available")
-    binding = json.loads(BINDING.read_text())
-    repair_server = args.repair_server or binding["repair_server"]
-    if (repair_server, binding["repair_tool"]) not in tools:
-        raise RuntimeError("Required fixed mesh-repair tool is not workspace available")
     rows = []
     for directory in sorted((ROOT / "tests/datasets/engineering-workflows/scenarios/printed-replacement-part").iterdir()):
         scenario = json.loads((directory / "scenario.json").read_text())["scenario_id"]

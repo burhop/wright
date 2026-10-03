@@ -3,19 +3,19 @@
 import hashlib
 import importlib.util
 import json
-import os
 from pathlib import Path
-import sys
 from types import SimpleNamespace
 
 import pytest
 
-from tool_registry.runners.stdio import StdioRunner
 
 ROOT = Path(__file__).resolve().parents[1]
 fixture_spec = importlib.util.spec_from_file_location("external_slice_fixture", ROOT / "tests/fixtures/external_slice_binding.py")
 slice_fixture = importlib.util.module_from_spec(fixture_spec)
 fixture_spec.loader.exec_module(slice_fixture)
+mesh_fixture_spec = importlib.util.spec_from_file_location("external_mesh_fixture", ROOT / "tests/fixtures/external_mesh_binding.py")
+mesh_fixture = importlib.util.module_from_spec(mesh_fixture_spec)
+mesh_fixture_spec.loader.exec_module(mesh_fixture)
 
 BLENDER_MCP_FIXTURE = ROOT / "tests/fixtures/blender_mcp_5f8ddaf6"
 BLENDER_MCP_SOURCE = BLENDER_MCP_FIXTURE / "src"
@@ -40,11 +40,6 @@ probe_spec = importlib.util.spec_from_file_location(
 )
 probe = importlib.util.module_from_spec(probe_spec)
 probe_spec.loader.exec_module(probe)
-repair_spec = importlib.util.spec_from_file_location(
-    "printed_mesh_repair", ROOT / "scripts/engineering_dataset_mesh_repair.py"
-)
-repair_operation = importlib.util.module_from_spec(repair_spec)
-repair_spec.loader.exec_module(repair_operation)
 
 
 @pytest.mark.parametrize("number, with_correction", [(1, False), (2, False), (2, True), (3, False)])
@@ -76,7 +71,7 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
         proof.write_text(json.dumps({
             "status": "qualified",
             "source_code_after_sha256": prepare.digest(correction.read_bytes()),
-            "operation_sha256": prepare.digest(prepare.REPAIR_OPERATION.read_bytes()),
+            "operation_sha256": json.loads(prepare.REPAIR_POLICY.read_bytes())["archived_operation_sha256"],
             "cleanup": {"status": "cleaned", "post_cleanup_identity": None},
         }), encoding="utf-8")
         args.review_correction_source = str(correction)
@@ -96,17 +91,64 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
         json.loads(prepare.BINDING.read_text())["scenarios"][f"printed-replacement-part-0{number}"]["process"],
     )
     tools.update({(item["server_id"], item["tool_name"]): item for item in extra_tools})
-    tools[("wright-printed-part-mesh-repair", "repair_model_file")] = {
-        "name": "wright-printed-part-mesh-repair__repair_model_file",
-        "tool_name": "repair_model_file",
-        "server_id": "wright-printed-part-mesh-repair",
-        "schema_digest": "fixed-repair-schema",
-    }
+    machine_profile = json.loads(Path(args.slicer_binding).read_bytes())["profiles"]["machine"]["path"]
+    args.repair_binding = mesh_fixture.make_binding(
+        tmp_path / "mesh-binding", f"printed-replacement-part-0{number}", args.workspace_root,
+        args.attempt, prepare.REPAIR_POLICY, machine_profile,
+        tools[(blender_server, "execute_blender_code")],
+    )
     result = prepare.prepare(args, folder, tools)
     bound = Path(result["draft"]).read_text()
     plan = prepare.compile_prompt_workflow(bound)
-    original_steps = [step for step in plan.steps if not step.id.startswith(("invoke_external_slice_", "retain_slice_response_"))]
-    assert len(plan.steps) == 8
+    original_steps = [step for step in plan.steps if not step.id.startswith(("invoke_external_slice_", "retain_slice_response_", "inspect_repaired_mesh_", "validate_repaired_mesh_"))]
+    assert len(plan.steps) == 10
+    actual_inspection = next(step for step in plan.steps if step.id.startswith("inspect_repaired_mesh_"))
+    mesh_gate = next(step for step in plan.steps if step.id.startswith("validate_repaired_mesh_"))
+    assert not mesh_gate.tool_name and mesh_gate.validation
+    assert dict(mesh_gate.validation_sources) == {
+        "repaired_mesh": original_steps[1].id + ".repaired_mesh",
+        "mesh_evidence": actual_inspection.id + ".mesh_evidence",
+    }
+    from core.process_validation import ValidationProfile
+
+    mesh_profile = ValidationProfile.model_validate_json(
+        (Path(args.workspace_root) / mesh_gate.validation["profile"]["name"]).read_bytes()
+    )
+    assert mesh_profile.reference().model_dump(mode="json") == mesh_gate.validation["profile"]["reference"]
+    assert len(mesh_profile.checks) == (14 if number == 2 else 13)
+    raw_checks = {check.id: check for check in mesh_profile.checks if check.reader == "printing"}
+    assert len(raw_checks) == 7 and all(check.evidence_method == "independent_measurement" for check in raw_checks.values())
+    assert raw_checks["actual-connected_components"].constraint.expected == 1
+    assert raw_checks["actual-signed_volume_mm3"].constraint.minimum == 0.0
+    assert raw_checks["actual-signed_volume_mm3"].constraint.inclusive is False
+    assert raw_checks["actual-triangle_count"].constraint.maximum == (24000 if number == 2 else 80000)
+    assert all(check.evidence_method == "structured_value" for check in mesh_profile.checks if check.reader == "structured")
+    assert all(requirement.mandatory and not requirement.review_required for requirement in mesh_profile.baseline.requirements)
+    mesh_gate = next(step for step in plan.steps if step.id.startswith("validate_repaired_mesh_"))
+    assert not mesh_gate.tool_name and mesh_gate.validation
+    assert dict(mesh_gate.validation_sources) == {
+        "repaired_mesh": original_steps[1].id + ".repaired_mesh",
+        "mesh_evidence": actual_inspection.id + ".mesh_evidence",
+    }
+    from core.process_validation import ValidationProfile
+
+    mesh_profile = ValidationProfile.model_validate_json(
+        (Path(args.workspace_root) / mesh_gate.validation["profile"]["name"]).read_bytes()
+    )
+    assert mesh_profile.reference().model_dump(mode="json") == mesh_gate.validation["profile"]["reference"]
+    assert len(mesh_profile.checks) == (14 if number == 2 else 13)
+    raw_checks = {check.id: check for check in mesh_profile.checks if check.reader == "printing"}
+    assert len(raw_checks) == 7 and all(check.evidence_method == "independent_measurement" for check in raw_checks.values())
+    assert raw_checks["actual-connected_components"].constraint.expected == 1
+    assert raw_checks["actual-signed_volume_mm3"].constraint.minimum == 0.0
+    assert raw_checks["actual-signed_volume_mm3"].constraint.inclusive is False
+    assert raw_checks["actual-triangle_count"].constraint.maximum == (24000 if number == 2 else 80000)
+    assert all(check.evidence_method == "structured_value" for check in mesh_profile.checks if check.reader == "structured")
+    assert all(requirement.mandatory and not requirement.review_required for requirement in mesh_profile.baseline.requirements)
+    assert actual_inspection.server_id == "independent-python"
+    assert actual_inspection.arguments["critic_approved"] is False
+    assert actual_inspection.arguments["job_name"].startswith("/workspace/campaign/")
+    assert "'measure_handle_features': " + str(number == 2) in actual_inspection.arguments["input_content"]
     native_slice = next(step for step in plan.steps if step.id.startswith("invoke_external_slice_"))
     assert native_slice.tool_name == "independent-offline-slicer__slice_model_file"
     assert Path(native_slice.arguments["source"]).name == "repaired_mesh.stl"
@@ -114,23 +156,23 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     repair_configuration = json.loads(
         (
             Path(args.workspace_root)
-            / f"campaign/printed-replacement-part-0{number}/isolated/inputs/mesh-repair-operation.json"
+            / f"campaign/printed-replacement-part-0{number}/isolated/inputs/mesh-inspection-policy.json"
         ).read_text()
     )
     assert repair_configuration["force_voxel_remesh"] is False
     assert repair_configuration["triangle_limit"] == (24000 if number == 2 else 80000)
     assert repair_configuration["envelope_margin_mm"] == 0.0
     assert repair_configuration["planar_cleanup"] is (number == 2)
-    assert repair_configuration["measure_handle_features"] is (number == 2)
+    assert repair_configuration["build_volume_mm"] == [256, 256, 256]
     assert len(original_steps) == 6
     assert all(step.id.endswith("api_created_identity") for step in original_steps[:4])
     assert all(step.expected_files for step in original_steps[:3])
     assert original_steps[0].server_id == blender_server
-    assert original_steps[1].server_id == "wright-printed-part-mesh-repair"
+    assert original_steps[1].server_id == blender_server
     assert (
-        original_steps[1].tool_name == "wright-printed-part-mesh-repair__repair_model_file"
+        original_steps[1].tool_name == blender_server + "__execute_blender_code"
     )
-    assert original_steps[1].schema_digest == "fixed-repair-schema"
+    assert original_steps[1].schema_digest == "test-only"
     assert not original_steps[1].agent_task
     assert original_steps[2].server_id == "independent-python"
     assert original_steps[2].tool_name == "independent-python__run_simulation"
@@ -156,6 +198,11 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
         # A changed source cannot reuse this qualification in a fresh attempt.
         correction.write_bytes(b"# Modified and not qualified\n")
         args.attempt = "tampered"
+        args.repair_binding = mesh_fixture.make_binding(
+            tmp_path / "mesh-binding-tampered", f"printed-replacement-part-0{number}", args.workspace_root,
+            args.attempt, prepare.REPAIR_POLICY, machine_profile,
+            tools[(blender_server, "execute_blender_code")],
+        )
         with pytest.raises(ValueError, match="qualification identity"):
             prepare.prepare(args, folder, tools)
         assert not (Path(args.workspace_root) / "campaign/printed-replacement-part-02/tampered").exists()
@@ -163,16 +210,12 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/repaired_mesh.stl",
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/mesh-preview.png",
     )
-    assert (
-        original_steps[1]
-        .arguments["configuration_document"]
-        .endswith("/mesh-repair-operation.json")
-    )
-    assert (
-        original_steps[1]
-        .arguments["operation_source_document"]
-        .endswith("/mesh-repair-operation.py")
-    )
+    assert original_steps[1].arguments == {}
+    assert original_steps[1].arguments_from
+    native_arguments = Path(args.workspace_root) / f"campaign/printed-replacement-part-0{number}/isolated/inputs/mesh-provider-arguments.json"
+    original_arguments = tmp_path / "mesh-binding/provider-arguments.json"
+    assert native_arguments.read_bytes() == original_arguments.read_bytes()
+    assert dict(original_steps[1].file_dependencies)[original_steps[0].id + ".source_mesh"].endswith("/source_mesh.stl")
     assert original_steps[1].timeout_seconds == 600
     assert original_steps[1].max_tool_calls == 8
     assert "do not repeat submitted source code" in original_steps[0].prompt
@@ -192,7 +235,7 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     assert original_steps[3].external_action["settings"]["nozzle_mm"] == "0.4"
     assert original_steps[3].output_ports == (("receipt", "workspace_file"),)
     assert set(original_steps[0].expected_file_ports) == ({"source_mesh", "native_design"} if number == 2 else {"source_mesh"})
-    assert set(original_steps[1].expected_file_ports) == {"repaired_mesh"}
+    assert set(original_steps[1].expected_file_ports) == {"repaired_mesh", "geometry_preview"}
     assert set(original_steps[2].expected_file_ports) == {
         "support_preview",
         "slice_evidence",
@@ -257,8 +300,13 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     assert record["external_slicer_binding"]["vendor_implementation"] == "independent_provider"
     assert not any("slice-operation.py" in row["path"] for row in record["input_manifest"])
     assert "engineering_dataset_slice" not in bound
-    assert record["fixed_mesh_repair_wrapper"]["operation_sha256"] == prepare.digest(
-        prepare.REPAIR_OPERATION.read_bytes()
+    assert record["external_mesh_binding"]["vendor_implementation"] == "independent_provider"
+    assert record["external_mesh_binding"]["arguments_sha256"] == prepare.digest(original_arguments.read_bytes())
+    assert "fixed_mesh_repair_wrapper" not in record
+    assert not any("mesh-repair-operation.py" in item["path"] for item in record["input_manifest"])
+    assert any(
+        connection["type"] == "order" and connection["from"] == record["external_mesh_binding"]["validation_step_id"]
+        and connection["to"] == native_slice.id for connection in connections
     )
     assert record["execution_lineage_authority"] == {
         "kind": "canonical_mcp_step_record",
@@ -282,35 +330,6 @@ def test_preparation_rejects_escape_and_different_staged_input(tmp_path):
     assert target.read_bytes() == b"human original"
 
 
-@pytest.mark.asyncio
-async def test_fixed_mesh_repair_is_a_separate_configured_mcp_tool(tmp_path):
-    python_path = os.pathsep.join(
-        [
-            str(ROOT / "scripts"),
-            str(BLENDER_MCP_SOURCE),
-        ]
-    )
-    runner = StdioRunner(
-        [sys.executable, str(prepare.REPAIR_WRAPPER)],
-        env={
-            "WRIGHT_PRINT_WORKSPACE": str(tmp_path),
-            "BLENDER_HOST": "127.0.0.1",
-            "BLENDER_PORT": "9",
-            "PYTHONPATH": python_path,
-        },
-        cwd=str(ROOT),
-    )
-    await runner.start()
-    try:
-        tools = await runner.list_tools()
-    finally:
-        await runner.stop()
-    assert len(tools) == 1
-    assert tools[0]["name"] == "repair_model_file"
-    assert set(tools[0]["inputSchema"]["required"]) == {
-        "configuration_document",
-        "operation_source_document",
-    }
 
 
 def test_diagnostic_mesh_code_clears_exact_pinned_guard(tmp_path):
@@ -325,40 +344,3 @@ def test_diagnostic_mesh_code_clears_exact_pinned_guard(tmp_path):
     assert safe_mode.is_safe(code) == (True, "")
     assert safe_mode.is_safe("open('blocked', 'w')")[0] is False
     assert safe_mode.is_safe("import runpy\nrunpy.run_path('blocked.py')")[0] is False
-
-
-def test_fixed_mesh_repair_code_clears_exact_pinned_guard(tmp_path):
-    assert text_sha256(BLENDER_SAFE_MODE) == BLENDER_SAFE_MODE_SHA256
-    safe_spec = importlib.util.spec_from_file_location(
-        "pinned_blender_safe_mode_fixed_repair",
-        BLENDER_SAFE_MODE,
-    )
-    safe_mode = importlib.util.module_from_spec(safe_spec)
-    safe_spec.loader.exec_module(safe_mode)
-    code = repair_operation.blender_code(
-        {
-            "source": str(tmp_path / "source_mesh.stl"),
-            "repaired": str(tmp_path / "repaired_mesh.stl"),
-            "preview": str(tmp_path / "mesh-preview.png"),
-            "object_name": "wright_test_repaired",
-            "triangle_limit": 80000,
-            "force_voxel_remesh": True,
-            "envelope_margin_mm": 0.001,
-        }
-    )
-    assert safe_mode.is_safe(code) == (True, "")
-    assert "force_voxel_remesh = True" in code
-    assert "envelope_margin = 0.001" in code
-    assert "subprocess" not in code
-    assert "open(" not in code
-
-    with pytest.raises(ValueError, match="Envelope margin"):
-        repair_operation.blender_code(
-            {
-                "source": str(tmp_path / "source_mesh.stl"),
-                "repaired": str(tmp_path / "repaired_mesh.stl"),
-                "preview": str(tmp_path / "mesh-preview.png"),
-                "object_name": "wright_invalid_margin",
-                "envelope_margin_mm": 0.01,
-            }
-        )

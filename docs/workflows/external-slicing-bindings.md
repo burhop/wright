@@ -44,6 +44,13 @@ records selected tools, binding/profile hashes and proposed source identity.
 Accept and run the proposal through Wright's normal source services; preparing
 it does not enroll a test policy, approve review, dispatch or authorize hardware.
 
+Printed preparation also requires an explicit
+[independent geometry binding](external-mesh-bindings.md) through `--repair-binding`.
+The bundled repair implementation and private native campaign launcher are retired.
+Exact originals remain inactive historical evidence. A separate passive inspection
+checks the actual repaired STL before the slicer; supplied policy metadata is not
+proof that an independent native recipe applies it.
+
 Missing binding, changed/ambiguous tools, changed profiles or contradictory
 process settings fail before workspace staging or optional native CAD init.
 There is no default embedded slicer fallback. Supply the configuration or choose
@@ -99,9 +106,11 @@ digital demonstrations remain separate evidence. The diagnostic
 `--slicer-provider`. The three embedded slicing files and their wrapper-only test
 are removed with exact inactive archives. One fresh isolated native diagnostic
 call passes, separately from live canonical-runtime qualification of the six
-newly bound preparer scenarios. Existing
-mesh-repair wrappers and any other active provider implementation also retain
-their own inventory/retirement obligations. T043/T048/T049 remain open.
+newly bound preparer scenarios. The original printed preparer's mesh-repair
+wrapper and private native launcher are now retired through the
+[independent geometry declaration and existing validator gate](external-mesh-bindings.md).
+Other active provider implementation retains its inventory/retirement obligations.
+Small digital qualifications do not close all T043/T048/T049 requirements.
 
 ### Diagnostic provider definition
 

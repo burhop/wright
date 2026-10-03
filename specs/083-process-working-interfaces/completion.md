@@ -4,12 +4,23 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
-The shared additive-package correction now refers to selected machine/material/
-process profiles, with unchanged algorithms and 88 owning/affected checks. A
-transitive audit finds a second active mesh-repair caller: the private-lifecycle
-campaign launcher, as well as the original preparer. Both need migration or
-retirement. This narrows the actual remaining work without closing T048/T049.
-See [generality and migration](evidence/generality-and-migration.md#selected-profile-guidance-and-remaining-transitive-callers).
+Latest migration: the original printed preparer now declares independent native
+geometry and passive inspection. Bundled repair implementation/wrapper, private
+campaign launcher and wrapper-only test are retired with exact inactive archives.
+A real failed-inspection control exposed downstream slicing despite a nested
+provider failure. An existing 082 gate now measures the actual STL before slicing:
+fresh negative proof records two failed checks and no slicer call/package; fresh
+positive proof passes 13 checks and records 21 exact outputs across six MCP calls.
+207 owning/affected and 231 broader 082 checks pass with no skips; counts overlap.
+All twelve proof containers are revalidated stopped. This is small digital binding
+qualification, not native recipe equivalence for all original assignments or
+complete T043/T048/T049/UI/installed acceptance. See
+[mesh migration and gate evidence](evidence/generality-and-migration.md#independent-mesh-retirement-and-existing-validator-gate).
+
+The earlier shared additive-package correction refers to selected machine/material/
+process profiles with unchanged algorithms. Historical checkpoints below preserve
+their original scopes; the latest evidence supersedes their pending statements
+only for the exact retired paths and newly verified behaviours.
 
 Known missing tool permissions now block shared readiness and run start before
 effects, with existing grant/dispatch authority preserved. An actual accepted-source

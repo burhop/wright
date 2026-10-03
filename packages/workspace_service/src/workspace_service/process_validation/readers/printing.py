@@ -60,7 +60,7 @@ def _json_object(content: bytes, name: str) -> dict:
     return value
 
 
-def _stl(content: bytes, context) -> dict:
+def _stl(content: bytes, context, *, measure_topology: bool = False) -> dict:
     if len(content) < 84:
         raise _defect("printing.invalid_stl", "The printable mesh is not a binary STL.")
     count = struct.unpack_from("<I", content, 80)[0]
@@ -79,6 +79,8 @@ def _stl(content: bytes, context) -> dict:
         Counter()
     )
     degenerate = 0
+    neighbors = {}
+    volumes = []
     for index in range(count):
         values = struct.unpack_from("<12fH", content, 84 + index * 50)
         if not all(math.isfinite(item) for item in values[:12]):
@@ -103,6 +105,11 @@ def _stl(content: bytes, context) -> dict:
         )
         if sum(item * item for item in cross) <= 1e-20:
             degenerate += 1
+        if measure_topology:
+            a, b, c = vertices
+            volumes.append((a[0] * (b[1]*c[2] - b[2]*c[1])
+                            + a[1] * (b[2]*c[0] - b[0]*c[2])
+                            + a[2] * (b[0]*c[1] - b[1]*c[0])) / 6)
         for left, right in (
             (vertices[0], vertices[1]),
             (vertices[1], vertices[2]),
@@ -112,10 +119,13 @@ def _stl(content: bytes, context) -> dict:
             if edge not in edges:
                 context.checkpoint(entities=count + len(edges) + 1)
             edges[edge] += 1
+            if measure_topology:
+                neighbors.setdefault(left, set()).add(right)
+                neighbors.setdefault(right, set()).add(left)
         if index % 1024 == 0:
             context.checkpoint(entities=count + len(edges))
     context.checkpoint(entities=count + len(edges))
-    return {
+    measured = {
         "triangle_count": count,
         "minimum": tuple(minimum),
         "maximum": tuple(maximum),
@@ -124,6 +134,25 @@ def _stl(content: bytes, context) -> dict:
         "boundary_edges": sum(value == 1 for value in edges.values()),
         "nonmanifold_edges": sum(value > 2 for value in edges.values()),
     }
+    if measure_topology:
+        remaining = set(neighbors)
+        components = 0
+        while remaining:
+            context.checkpoint(entities=count + len(edges))
+            components += 1
+            stack = [remaining.pop()]
+            visited = 0
+            while stack:
+                current = stack.pop()
+                visited += 1
+                if visited % 1024 == 0:
+                    context.checkpoint(entities=count + len(edges))
+                for neighbor in neighbors[current]:
+                    if neighbor in remaining:
+                        remaining.remove(neighbor)
+                        stack.append(neighbor)
+        measured.update(connected_components=components, signed_volume_mm3=math.fsum(volumes))
+    return measured
 
 
 def _archive(content: bytes, context) -> set[str]:
@@ -202,7 +231,7 @@ def _related(context, *roles):
 class PrintingArtifactReader:
     identity = ReaderIdentity(
         id="printing",
-        version="2",
+        version="3",
         config_digest=canonical_digest(
             {
                 "formats": ["binary-stl", "json-evidence", "3mf-zip"],
@@ -213,12 +242,13 @@ class PrintingArtifactReader:
                     "safe-package-inventory",
                     "simulator-transfer-binding",
                 ],
-                "version": 3,
+                "version": 4,
+                "mesh_metrics": ["triangle_count", "connected_components", "signed_volume_mm3"],
                 "stl_entity_accounting": "triangles-plus-unique-edges",
             }
         ),
         method="independent_measurement",
-        tool_identity="wright bounded print artifact reader v2",
+        tool_identity="wright bounded mesh/print artifact reader v3",
         formats=("stl", "json", "3mf"),
     )
 
@@ -228,7 +258,7 @@ class PrintingArtifactReader:
             f"subject:{snapshot.subject.id}@{snapshot.subject.sha256}#{check.selector}"
         ]
         unit = None
-        if operation in {"stl_dimension", "mesh_integrity"}:
+        if operation in {"stl_dimension", "mesh_integrity", "mesh_metric"}:
             if snapshot.subject.format != "stl":
                 raise _defect(
                     "printing.mesh_format", "Mesh checks require a binary STL."
@@ -239,8 +269,16 @@ class PrintingArtifactReader:
                     "STL checks require a source-backed millimetre unit convention.",
                     category="source_conflict",
                 )
-            mesh = _stl(snapshot.content, context)
-            if operation == "mesh_integrity":
+            mesh = _stl(snapshot.content, context, measure_topology=operation == "mesh_metric")
+            if operation == "mesh_metric":
+                metric = check.selector.removeprefix("mesh/")
+                if check.selector != "mesh/" + metric or metric not in {
+                    "triangle_count", "connected_components", "signed_volume_mm3"
+                }:
+                    raise ValidationIssue("profile.printing_selector", "Choose a declared exact-STL mesh metric.", category="source_conflict")
+                observed = mesh[metric]
+                unit = "mm3" if metric == "signed_volume_mm3" else "1"
+            elif operation == "mesh_integrity":
                 if any(
                     mesh[key]
                     for key in (

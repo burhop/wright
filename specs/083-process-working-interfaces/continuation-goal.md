@@ -18,9 +18,9 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Preserve the audited completed two-process digital proof, fresh Blender/OASiS qualification and now-verified Linux symlink security cases. T045/T047 are checked after exact inventories, original profiles, sixteen report structures and screenshot inspection. Finish remaining slicer/AgentCAD qualification and active mesh-repair/transitive caller migration, followed by current UI/editor/installed/accessibility/regression and requirement audits. AgentCAD's retained creation-response defect remains an external dependency; continue independent work. Do not replay completed engineering runs, consumed synthetic decisions or reconciled unknown actions merely to produce another report.
+1. Finish the current uncommitted mesh-retirement checkpoint: reconcile the 89-file evidence inventory, exact output/partial-result hashes and preserved originals; finish its documentation and a focused local commit. Reuse the fresh positive and negative canonical-runtime proofs and the 207-pass affected/231-pass validation results; their counts overlap. Do not replay their completed runs. Then prioritize the remaining current-build workspace/editor/authoring/accessibility and installed journeys. Preserve the audited two-process digital proof, fresh Blender/OASiS qualification and verified Linux symlink cases. AgentCAD's retained creation-response defect remains an external dependency; continue independent work.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
-3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
+3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
 5. Audit every requirement, success criterion, acceptance case and task against authoritative evidence. Update completion.md, the evidence index, runnable guidance, progress and task checkboxes. Finish focused local commits. Mark complete only when the full required scope is proved; checked task counts are not percentage completion.
 
@@ -32,6 +32,123 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Mesh checkpoint audit — partial results verified
+
+The next active-goal turn takes the safe action after the status/prompt turn.
+Read-only audit verifies **66 durable workspace-file representations** across the
+four terminal executed proofs, including all five partial results from the held
+negative run. Actual bytes match each recorded digest and size; fresh005/006
+public copies also match exactly. This is representation count, not a count of
+distinct outputs or additional execution. The original 89-file inventory stays
+unchanged; an additive audit and supplemental inventory bring this evidence root
+to 91 files. No process, model or provider was replayed.
+
+Next finish the focused checkpoint commit with exact index-byte verification,
+credential scanning and unrelated/protected file preservation. Planned private
+receipt is `.local-run/process-interfaces-083/mesh-retirement-001-local-commit.json`;
+reconcile it with actual HEAD before staging or repeating any helper. Then move
+to current-build normal-workspace pointer/pan, working/preview and accessibility
+acceptance. Older installed builds retain their earlier scope.
+
+### Bedtime handoff — reviewed mesh gate and remaining acceptance
+
+This checkpoint supersedes the pending mesh-proof statements below. Actual HEAD
+is `ab2d21ce` on `codex/083-process-working-interfaces`; the index is empty and
+the mesh migration remains owned uncommitted work. The existing unlimited goal
+is active. The ledger remains **49 checked / eight open**: T041, T043, T048,
+T049, T052, T053, T056 and T057. Counts are not percentage completion.
+
+The status review read the actual task ledger, Git state, current implementation
+authority and published mesh evidence. All twelve source/configuration/test hashes
+in `20261003-mesh-repair-retirement/checked-scope.json` match the worktree, and that
+evidence directory contains 89 files. This review ran no tests, providers, models
+or engineering actions and did not revalidate service liveness.
+
+Recorded current mesh proof:
+
+- Positive run `a249652e3969432d99e8ece79b0b2550` passes thirteen existing-validator
+  checks and produces 21 distinct recorded outputs through six actual MCP calls.
+- Negative run `a7894cc4c9474cf997658d2959bf262b` fails two checks for disconnected
+  geometry. No slicer/write call or slice package follows the held gate.
+- Earlier attempt004 retains the real nested-provider-error defect: successful
+  transport did not establish valid geometry. The correction measures the actual
+  STL with the existing 082 validator before slicing; it adds no alternate runner.
+- The final affected suite records 207 passes and broader validation records 231,
+  no skips; counts overlap. Ten-file Ruff passed. Published cleanup records all
+  twelve exact owned proof containers stopped; observation now is not a new
+  liveness check.
+
+The original printed preparer binds independent native geometry and passive
+inspection. Four active wrapper/launcher/test paths are retired with exact inactive
+originals retained; original policies, handle measurements, full engineering
+profiles, frozen bindings and protected reviews remain intact. Small digital
+qualification does not prove native recipe equivalence for all original
+assignments, complete provider qualification, physical execution or human approval.
+
+**Next actions:** finish exact evidence/partial-result verification and the focused
+local checkpoint commit, preserving all unrelated dirty/untracked work. Then
+advance the remaining current normal-workspace UI/editor, pointer/pan, generation
+and update, theme/accessibility/loading/error, installed and affected regression
+proofs. Use the existing walkthrough skill and UI integration guide when doing
+that work. Audit active callers and provider boundaries, and finish the complete
+FR/SC/acceptance ledger. AgentCAD's creation-response format remains an external
+dependency; continue independent tasks without patching vendor implementation
+into Wright. Existing recorded engineering proofs and original-history results
+must not be rerun merely to add another report.
+
+No push, merge, release, catalog promotion, hardware/supplier effect, firmware
+workaround or protected campaign decision is authorized. Ask only for a genuinely
+necessary missing resource, authority or new engineering decision. Keep working
+between milestones; finish only when the complete approved scope is verified.
+
+### Bedtime handoff — current uncommitted mesh migration
+
+At this status review, actual Git HEAD is `ab2d21ce` on
+`codex/083-process-working-interfaces`. The task ledger remains 49 checked / eight
+open: T041, T043, T048, T049, T052, T053, T056 and T057. The existing unlimited
+goal is active. This handoff does not start another goal or verify live services.
+
+Current owned uncommitted work replaces bundled mesh repair with explicit
+independent-provider bindings and separate passive final-byte inspection.
+The original printed preparer is updated; its old repair implementation, MCP
+wrapper, private campaign launcher and wrapper-only test are removed from active
+paths. Exact originals are retained under
+`artifacts/process-interfaces/083/20261003-mesh-repair-retirement/`.
+The original repair policy is configuration in
+`examples/process-interfaces/printed-replacement-part/original-repair-policy.json`.
+New declaration and inspection files are
+`scripts/engineering_external_mesh_binding.py` and
+`scripts/engineering/inspect_repaired_mesh.py`.
+
+The terminal private XML
+`.local-run/process-interfaces-083/t048-external-mesh-retired-001.xml`
+records 73 passes, no failures or skips, across seven owning/affected modules.
+Eight-file Ruff passed in the preceding implementation turn. Earlier declaration
+and test-harness failures are retained. These are local checks, not a live native
+repair/runtime proof, complete migration acceptance or engineering approval.
+The archive/evidence publication, broader regressions, documentation and focused
+local commit are still pending. Preserve this dirty work and unrelated untracked
+artifacts; do not recreate it from older checkpoint instructions below.
+
+**Next action:** audit the new boundaries and exact original policy/measurement
+preservation; finish affected regressions; qualify the new binding with a fresh
+small isolated accepted-source runtime proof through existing independent
+geometry and inspection providers. Reuse the terminal slice-runtime-007 harness
+as reference with new roots, IDs and ownership; never replay its completed run.
+Check actual artifacts, producer ownership, mandatory measurement holds and
+duplicate-request reconciliation. A small cube qualification does not establish
+the original engineering assignments or human acceptance. Publish scoped evidence,
+update migration/operator/requirement records and make a focused local commit.
+Then continue current workspace/editor/authoring/accessibility/installed proofs,
+remaining provider qualification and the full FR/SC/acceptance audit.
+
+Audit points include strict finite typed policy identity, bounded preview handling,
+and honest geometry-preview scope: the current inspector checks PNG header/size,
+not complete image content or supports. Opaque provider arguments plus a pinned
+policy do not alone prove semantic application; actual outputs and existing
+validators remain authority. Do not reintroduce native/vendor implementation in
+Wright to produce this qualification.
 
 ### Latest progress — selected-profile guidance and transitive caller inventory
 

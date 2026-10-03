@@ -1,0 +1,442 @@
+{
+  "status": "independent_mesh_retirement_and_existing_validator_gate_verified",
+  "source_head": "ab2d21ce78f9c4ce271c44931565ecb06dcf0d28",
+  "source_sha256": {
+    "scripts/engineering_external_mesh_binding.py": "7770e9c4085ae02065593c95171eee7d0417bb37b4c8f9629205f1295d9eeaed",
+    "scripts/engineering/inspect_repaired_mesh.py": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+    "scripts/prepare-printed-dataset-campaign.py": "0da34537afebf2ce1bd477f66763468551207350be0b46905c95a527d1199f70",
+    "packages/workspace_service/src/workspace_service/process_validation/readers/printing.py": "6d8bcbc28381bc2f21a60d0852382eef2ec786fe055613575f1fbf48e0e6c4b9",
+    "tests/test_external_mesh_binding.py": "e3d3552ffbf01c5340bf0187452a7937e7121bb2681f2f60a8061a074727a1e3",
+    "tests/test_embedded_mesh_retirement.py": "be1b5ae8feed6c423ea01e4c166fcfc3de2bf506e978209eb2b71bacf4b5ea06",
+    "tests/test_printed_dataset_bindings.py": "8d873c889332792b13e7cc86c1d08681373b0ef838b16128c68e94f42e0d4587",
+    "tests/test_printed_handle_measurements.py": "fb97616f7d9402aa37bdfdbd7145b795bca6660e6427ce6da98e2c3c879e892c",
+    "tests/fixtures/external_mesh_binding.py": "2c19a54add8e17447ff15223613eb2838c686db78b206290d9d285b43ce1f125",
+    "tests/external/process_validation/test_printing.py": "8ff4fcb2791047c3baac5a8154f90bdc4aca3aa10a3a9e9927bd31fc4df7e69f",
+    "examples/process-interfaces/printed-replacement-part/original-repair-policy.json": "62068e54ccdb7ab565b8364bd7e681d7af372cdf881f5f5d5bdc858489917392",
+    "examples/process-interfaces/external-mesh-binding.example.json": "582d5165c97ce910b91618a3d69dcd6e0ba116e35916bca982d0d390f784448f"
+  },
+  "retired_paths": [
+    "scripts/engineering_dataset_mesh_repair.py",
+    "scripts/engineering_dataset_mesh_repair_mcp.py",
+    "scripts/run_printed_validator_campaign.py",
+    "tests/test_printed_validator_campaign_wrapper.py"
+  ],
+  "original_handle_functions_ast_identical": true,
+  "original_reference_policy_preserved": true,
+  "protected_file_hashes": {
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92",
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+  },
+  "checks": [
+    {
+      "file": "t048-external-mesh-owning-001.xml",
+      "tests": 10,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 6
+    },
+    {
+      "file": "t048-external-mesh-owning-002.xml",
+      "tests": 10,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 6
+    },
+    {
+      "file": "t048-external-mesh-owning-003.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 10
+    },
+    {
+      "file": "t048-external-mesh-owning-004.xml",
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 36
+    },
+    {
+      "file": "t048-external-mesh-retired-001.xml",
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 73
+    },
+    {
+      "file": "t048-external-mesh-type-red-005.xml",
+      "tests": 7,
+      "failures": 7,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 0
+    },
+    {
+      "file": "t048-external-mesh-affected-006.xml",
+      "tests": 197,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 197
+    },
+    {
+      "file": "t048-external-mesh-gate-red-007.xml",
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 0
+    },
+    {
+      "file": "t048-external-mesh-affected-008.xml",
+      "tests": 201,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 197
+    },
+    {
+      "file": "t048-external-mesh-affected-009.xml",
+      "tests": 201,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 201
+    },
+    {
+      "file": "t048-external-mesh-affected-010.xml",
+      "tests": 207,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 207
+    },
+    {
+      "file": "t048-external-mesh-082-011.xml",
+      "tests": 231,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 231
+    }
+  ],
+  "latest_owning_affected_passes": 207,
+  "broader_082_passes": 231,
+  "counts_overlap": true,
+  "ruff_command": [
+    ".venv/Scripts/python.exe",
+    "-m",
+    "ruff",
+    "check",
+    "--no-cache",
+    "scripts/engineering_external_mesh_binding.py",
+    "scripts/engineering/inspect_repaired_mesh.py",
+    "scripts/prepare-printed-dataset-campaign.py",
+    "packages/workspace_service/src/workspace_service/process_validation/readers/printing.py",
+    "tests/test_external_mesh_binding.py",
+    "tests/test_embedded_mesh_retirement.py",
+    "tests/test_printed_dataset_bindings.py",
+    "tests/test_printed_handle_measurements.py",
+    "tests/fixtures/external_mesh_binding.py",
+    "tests/external/process_validation/test_printing.py"
+  ],
+  "positive_run_id": "a249652e3969432d99e8ece79b0b2550",
+  "negative_run_id": "a7894cc4c9474cf997658d2959bf262b",
+  "positive_exact_recorded_outputs": 21,
+  "all_recorded_output_hashes_verified": true,
+  "negative_actual_components": 2,
+  "negative_assessment_counts": {
+    "blocked": 0,
+    "error": 0,
+    "fail": 2,
+    "inconclusive": 0,
+    "not_applicable": 0,
+    "pass": 11
+  },
+  "negative_slice_or_write_calls": 0,
+  "positive_assessment_passes": 13,
+  "duplicate_start_no_replay": true,
+  "source_preserved_in_each_proof": true,
+  "native_artifact_ownership_preserved": true,
+  "actual_calls": {
+    "3": [
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "started"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "slice_model_file",
+        "outcome": "started"
+      },
+      {
+        "target": "slice_model_file",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "write_text_document",
+        "outcome": "started"
+      },
+      {
+        "target": "write_text_document",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "started"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "succeeded"
+      }
+    ],
+    "4": [
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "started"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "slice_model_file",
+        "outcome": "started"
+      },
+      {
+        "target": "slice_model_file",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "write_text_document",
+        "outcome": "started"
+      },
+      {
+        "target": "write_text_document",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "started"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "succeeded"
+      }
+    ],
+    "5": [
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "started"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "succeeded"
+      }
+    ],
+    "6": [
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "started"
+      },
+      {
+        "target": "execute_blender_code",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "started"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "slice_model_file",
+        "outcome": "started"
+      },
+      {
+        "target": "slice_model_file",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "write_text_document",
+        "outcome": "started"
+      },
+      {
+        "target": "write_text_document",
+        "outcome": "succeeded"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "started"
+      },
+      {
+        "target": "run_simulation",
+        "outcome": "succeeded"
+      }
+    ]
+  },
+  "native_geometry_preview_visually_inspected": true,
+  "native_preview_scope": "Geometry-only cube; not support preview or complete PNG/image-content acceptance",
+  "layer_count": 30,
+  "path_segments": {
+    "model": 1016,
+    "support": 0,
+    "unclassified": 14
+  },
+  "owned_containers_revalidated_stopped": [
+    {
+      "attempt": 1,
+      "container_id": "d5de9a0e36c104a157afa81030657fbbe31b77470d8e63d115d7bc9258ba6ded",
+      "running": false
+    },
+    {
+      "attempt": 1,
+      "container_id": "a299da71a8df6b0349f22f00e7f2884bd52a0aeaee2052dabd8229fc20bbf719",
+      "running": false
+    },
+    {
+      "attempt": 2,
+      "container_id": "f0348d1de65302e5d06f85c2ad4d3fd895b1f6850a1e2840062a37d6bfe1e9f4",
+      "running": false
+    },
+    {
+      "attempt": 2,
+      "container_id": "30882bd97d60f5d6139c93ac7d2f4b7319d6d1410d1e68655c2701fad777316a",
+      "running": false
+    },
+    {
+      "attempt": 3,
+      "container_id": "eb3293589827b1c060b0f41da66e51deb2c20e069785acc45efe264e5250e1b8",
+      "running": false
+    },
+    {
+      "attempt": 3,
+      "container_id": "d516f91b5ce56eb0ed7539fa130507fa0b06801d64a8fe065d8cd646f4c97224",
+      "running": false
+    },
+    {
+      "attempt": 4,
+      "container_id": "863da2a724593ede94ebc733844df917b41f8d3b020c59bf5acf7f8163c31ec6",
+      "running": false
+    },
+    {
+      "attempt": 4,
+      "container_id": "d5de3ad098a471fa83210d5e80ad2c182c3371048335ab5c5d937f73329ef5c9",
+      "running": false
+    },
+    {
+      "attempt": 5,
+      "container_id": "86333a6d99a9f38a92751c1f496e82298a96b84381f5a8245e2bd3642d10ff77",
+      "running": false
+    },
+    {
+      "attempt": 5,
+      "container_id": "5fd162e42bc5d2eb900cece5e815e49b8482e7cce005ac9fedb6268cdbd18fa8",
+      "running": false
+    },
+    {
+      "attempt": 6,
+      "container_id": "011fb42eb4c93ab451697f7d1f5451b97d5e3ff1980ad50e429ede578081d59a",
+      "running": false
+    },
+    {
+      "attempt": 6,
+      "container_id": "d18b432ed49c3813c89825a0b1f31f0b72036a60ccfa955cfbbde12c13a5063b",
+      "running": false
+    }
+  ],
+  "product_failure_preserved": "Attempt004: failed job nested in a successful MCP response allowed slicing; existing 082 exact-artifact gate corrects the declaration in fresh005/006",
+  "harness_failures_preserved": [
+    "001 invented block prefix before start",
+    "002 expected ordinary readiness to grant test write authority; ordinary blocking is correct",
+    "008 duplicate validator output identity corrected without changing compiler"
+  ],
+  "setup_failures_preserved": [
+    "Initial archive helper denied source writes; normal patch used",
+    "Partial multi-file patch deletion and exact checked native PowerShell removal",
+    "Initial Windows extraction command quoting error; read-only failure"
+  ],
+  "ordinary_readiness_guard_preserved": true,
+  "test_preparation_uses_existing_enrolled_authority": true,
+  "synthetic_review_decisions": 0,
+  "remaining": [
+    "Full engineering-assignment/provider recipe qualification; small native cube handoff is not equivalent",
+    "Current UI/editor/authoring/installed/accessibility/regression obligations",
+    "Final complete FR/SC/acceptance and task audit"
+  ],
+  "new_clean_provider_install": false,
+  "solver_attestation_or_human_acceptance": false,
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "T043_T048_T049_complete": false,
+  "task_ledger": "49 checked / 8 open"
+}

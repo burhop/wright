@@ -1,0 +1,30 @@
+{
+  "source_head": "ab2d21ce78f9c4ce271c44931565ecb06dcf0d28",
+  "files": {
+    "scripts/engineering_dataset_mesh_repair.py": {
+      "bytes": 28387,
+      "sha256": "69645e039b62ed5d1eedda0860a42258413ecd0cc0e49ea693481fd83ea6cc82"
+    },
+    "scripts/engineering_dataset_mesh_repair_mcp.py": {
+      "bytes": 3302,
+      "sha256": "6b4229c6ad92b77b46535089313f769da95dd4ba97c5f61f29192f57c13582a0"
+    },
+    "scripts/run_printed_validator_campaign.py": {
+      "bytes": 8361,
+      "sha256": "5087f18642beeac5b1e1dbc58b280003992c685345c30d22a542292bd58614b2"
+    },
+    "tests/test_printed_validator_campaign_wrapper.py": {
+      "bytes": 4885,
+      "sha256": "2efe76a079ae7da5aa0581365161cfbacfd76fe57d3065a4f522f034228c8379"
+    },
+    "tests/test_printed_dataset_bindings.py": {
+      "bytes": 16601,
+      "sha256": "0f111728f8e829ae60fed5d704c2aa9c829514149e2c07f9692b5e0fbbfcf103"
+    },
+    "tests/test_printed_handle_measurements.py": {
+      "bytes": 3183,
+      "sha256": "8bae34a7eb5c8e76f519e836ba3ae214e55936a61f0cde43f62b5b8c73c1cec6"
+    }
+  },
+  "inactive_archives": true
+}

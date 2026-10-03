@@ -1,0 +1,72 @@
+{
+  "status": "failed",
+  "scope": "Independent native source/repair and exact-byte inspection before actual slicing through accepted source/durable runtime; small digital qualification only",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false,
+  "ai_generation": false,
+  "workspace": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-mesh-runtime-001",
+  "mesh_declaration": {
+    "binding_sha256": "99333f09cf2c5c65ba72670e84dfca8249bf585b8fbae731d1b70a1d62740f8a",
+    "selected_tool": {
+      "server_id": "qualification-083-runtime-geometry",
+      "tool_name": "execute_blender_code",
+      "name": "qualification-083-runtime-geometry__execute_blender_code",
+      "schema_digest": "1f8005a1bb667845ee821e21e80bbc26edd6c17256b5a07d292953ed35c94c67"
+    },
+    "arguments_sha256": "1168840ae2d0795ec5834da23f793d179e4ccc4a89b45e51ece53accb1a33d4e",
+    "arguments_source": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-mesh-runtime-001\\supplied-native-arguments.json",
+    "arguments_staged": "qualification/inputs/mesh-provider-arguments.json",
+    "policy_sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+    "inspection_source_sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+    "feature_reference": "inspect_repaired_mesh_qualified_repair.mesh_evidence",
+    "vendor_implementation": "independent_provider",
+    "engineering_acceptance": false
+  },
+  "declaration": {
+    "binding_sha256": "c96a1543694f77b49520d09a619109355caa4e28405234696c52307afeba7679",
+    "selected_tools": {
+      "slicer": {
+        "server_id": "qualification-083-runtime-slicer",
+        "tool_name": "slice_model_file",
+        "name": "qualification-083-runtime-slicer__slice_model_file",
+        "schema_digest": "69228578c2050b1526a3564b9f177a68ff73ded0a35d7c3c312e08fca5ac81f1"
+      },
+      "files": {
+        "server_id": "wright-workspace-files",
+        "tool_name": "write_text_document",
+        "name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12"
+      },
+      "inspection": {
+        "server_id": "qualification-083-runtime-inspection",
+        "tool_name": "run_simulation",
+        "name": "qualification-083-runtime-inspection__run_simulation",
+        "schema_digest": "4d58c44a6bfdefcebf8ea02bf919695d19b6fc760a147b8b1c2afdc26cd6303b"
+      }
+    },
+    "package_reference": "invoke_external_slice_inspect_actual_package.external_slice_package",
+    "profile_sha256": {
+      "machine": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "process": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "filament": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "vendor_implementation": "independent_provider",
+    "inspection": "passive_actual_package",
+    "engineering_acceptance": false
+  },
+  "error_type": "RuntimeError",
+  "diagnostic": "coroutine raised StopIteration",
+  "durable_runtime_owner_closed": true,
+  "gateway_closed": true,
+  "cleanup": [
+    {
+      "container_id": "d5de9a0e36c104a157afa81030657fbbe31b77470d8e63d115d7bc9258ba6ded",
+      "running": false
+    },
+    {
+      "container_id": "a299da71a8df6b0349f22f00e7f2884bd52a0aeaee2052dabd8229fc20bbf719",
+      "running": false
+    }
+  ]
+}

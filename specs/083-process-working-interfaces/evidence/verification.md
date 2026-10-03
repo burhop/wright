@@ -1,5 +1,27 @@
 # Verification record — partial feature acceptance
 
+## Mesh retirement and exact-output gate — 3 October 2026
+
+[Current checked scope, XML, source hashes and runtime evidence](../../../artifacts/process-interfaces/083/20261003-mesh-repair-retirement/checked-scope.json)
+record **207 affected passes** and **231 broader 082 validation passes**, no skips.
+Counts overlap. Ten-file Ruff passed. Earlier red tests and setup failures are
+retained, including strict typed-policy and bounded-preview failures and the
+first duplicate assessment-output identity defect.
+
+The fresh negative runtime fails the actual two-component STL and its passive
+report check, with no downstream slicer/write call or package. The fresh positive
+runtime passes thirteen gate checks and records 21 distinct outputs across six
+actual MCP calls. Both duplicate starts reconcile without replay. This corrects
+the retained attempt004's slicing after failure nested inside a successful MCP
+response through an existing 082 exact-output gate. Twelve exact owned containers
+are recorded stopped; complete provider/engineering qualification is not implied.
+
+The bedtime status review rechecked the twelve listed source/configuration/test
+hashes and found no mismatch. It ran no tests or live provider calls. This evidence
+does not close full T053/current-browser/installed obligations or certify native
+recipe equivalence, physical behaviour or engineering approval. Reuse the recorded
+commands and scopes rather than counting overlapping suites as distinct coverage.
+
 ## Selected profile guidance — 3 October 2026
 
 [Message correction and audit](../../../artifacts/process-interfaces/083/20261003-neutral-profile-guidance-verified/README.md)

@@ -1,0 +1,544 @@
+{
+  "workflow_path": "workflows/external-mesh-qualification.workflow.wflow",
+  "source_digest": "4ea4a4aae7261c19fcadb7c4511b82439b37831787a6e7187fb8f7cf92cb255e",
+  "owner": {
+    "host": "Work17",
+    "lease": "workflow-run:workspace-083-external-mesh-005:a7894cc4c9474cf997658d2959bf262b"
+  },
+  "started_at": "2026-10-03T10:41:14.981883+00:00",
+  "status": "failed",
+  "events": [
+    {
+      "kind": "run_started",
+      "run_id": "a7894cc4c9474cf997658d2959bf262b",
+      "at": "2026-10-03T10:41:14.981883+00:00",
+      "task_id": "",
+      "task_title": "external-mesh-qualification",
+      "run_log_path": "runs/external-mesh-qualification/a7894cc4c9474cf997658d2959bf262b.json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T10:41:15.285046+00:00",
+      "task_id": "qualified_geometry",
+      "task_title": "Create isolated qualification geometry",
+      "execution_kind": "mcp",
+      "tool": "qualification-083-runtime-geometry__execute_blender_code",
+      "arguments": {
+        "code": "import bpy\nbpy.ops.mesh.primitive_cube_add(size=1)\nobj=bpy.context.object\nobj.name='RuntimeQualificationCube'\nobj.dimensions=(10,8,6)\nbpy.ops.object.transform_apply(location=False,rotation=False,scale=True)\nbpy.ops.wm.stl_export(filepath='/workspace/qualification/artifacts/source_mesh.stl',export_selected_objects=True)\nprint('Actual qualification geometry exported: 10 x 8 x 6 model units')\n",
+        "user_prompt": "resume"
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T10:41:16.911002+00:00",
+      "task_id": "qualified_geometry",
+      "task_title": "Create isolated qualification geometry",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "a7894cc4c9474cf997658d2959bf262b:qualified_geometry:source_mesh",
+        "kind": "file",
+        "name": "qualification/artifacts/source_mesh.stl",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "qualification/artifacts/source_mesh.stl",
+            "format": "stl",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+            "size_bytes": 684
+          }
+        ],
+        "provenance": {
+          "run_id": "a7894cc4c9474cf997658d2959bf262b",
+          "task_id": "qualified_geometry",
+          "output_port": "source_mesh",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-03T10:41:16.961561+00:00",
+      "task_id": "qualified_geometry",
+      "task_title": "Create isolated qualification geometry",
+      "response": "{\n  \"result\": \"Code executed successfully: Actual qualification geometry exported: 10 x 8 x 6 model units\\n\"\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T10:41:17.175587+00:00",
+      "task_id": "qualified_repair",
+      "task_title": "Independent native geometry preparation",
+      "execution_kind": "mcp",
+      "tool": "qualification-083-runtime-geometry__execute_blender_code",
+      "arguments": {
+        "code": "import bpy\nimport bmesh\nimport mathutils\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.object.delete(use_global=False)\nbpy.ops.wm.stl_import(filepath='/workspace/qualification/artifacts/source_mesh.stl')\nobj=bpy.context.object\nobj.name='IndependentPreparedCube'\nobj.location.z=3\nbpy.ops.object.transform_apply(location=True,rotation=False,scale=False)\nbm=bmesh.new()\nbm.from_mesh(obj.data)\nbmesh.ops.recalc_face_normals(bm,faces=bm.faces)\nbm.to_mesh(obj.data)\nbm.free()\nobj.data.update()\n# Deliberately violate the unchanged single-component requirement.\nbpy.ops.object.duplicate()\nextra=bpy.context.object\nextra.location.x=20\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.wm.stl_export(filepath='/workspace/qualification/artifacts/repaired_mesh.stl',export_selected_objects=True)\nscene=bpy.context.scene\nscene.render.engine='BLENDER_WORKBENCH'\nscene.render.resolution_x=256\nscene.render.resolution_y=256\nscene.render.resolution_percentage=100\nscene.render.image_settings.file_format='PNG'\nscene.render.filepath='/workspace/qualification/artifacts/mesh-preview.png'\nscene.render.film_transparent=False\nscene.display.shading.color_type='SINGLE'\nscene.display.shading.single_color=(0.2,0.6,0.9)\ncamera_data=bpy.data.cameras.new('QualificationCamera')\ncamera=bpy.data.objects.new('QualificationCamera',camera_data)\nscene.collection.objects.link(camera)\ncamera.location=(25,-35,25)\ncamera.rotation_euler=(mathutils.Vector((0,0,3))-camera.location).to_track_quat('-Z','Y').to_euler()\ncamera.data.type='ORTHO'\ncamera.data.ortho_scale=18\nscene.camera=camera\nbpy.ops.render.render(write_still=True)\nprint('Actual source imported, placed on bed, normals recalculated, STL and native geometry PNG exported')\n",
+        "user_prompt": "resume"
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T10:41:18.193418+00:00",
+      "task_id": "qualified_repair",
+      "task_title": "Independent native geometry preparation",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "a7894cc4c9474cf997658d2959bf262b:qualified_repair:repaired_mesh",
+        "kind": "file",
+        "name": "qualification/artifacts/repaired_mesh.stl",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "qualification/artifacts/repaired_mesh.stl",
+            "format": "stl",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "ad296788e5c3f7f33745e2d6518534a4dd0ed55f0e7c6a31992130745d75c43e",
+            "size_bytes": 1284
+          }
+        ],
+        "provenance": {
+          "run_id": "a7894cc4c9474cf997658d2959bf262b",
+          "task_id": "qualified_repair",
+          "output_port": "repaired_mesh",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T10:41:18.208672+00:00",
+      "task_id": "qualified_repair",
+      "task_title": "Independent native geometry preparation",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "a7894cc4c9474cf997658d2959bf262b:qualified_repair:geometry_preview",
+        "kind": "file",
+        "name": "qualification/artifacts/mesh-preview.png",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "qualification/artifacts/mesh-preview.png",
+            "format": "png",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "7279fe2b296f0b6fba33e52ed2b66dce9bc91322aef42979b4c045f23799a588",
+            "size_bytes": 51845
+          }
+        ],
+        "provenance": {
+          "run_id": "a7894cc4c9474cf997658d2959bf262b",
+          "task_id": "qualified_repair",
+          "output_port": "geometry_preview",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-03T10:41:18.274953+00:00",
+      "task_id": "qualified_repair",
+      "task_title": "Independent native geometry preparation",
+      "response": "{\n  \"result\": \"Code executed successfully: Actual source imported, placed on bed, normals recalculated, STL and native geometry PNG exported\\n\"\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T10:41:18.488714+00:00",
+      "task_id": "inspect_repaired_mesh_qualified_repair",
+      "task_title": "Measure the exact repaired STL against the original policy",
+      "execution_kind": "mcp",
+      "tool": "qualification-083-runtime-inspection__run_simulation",
+      "arguments": {
+        "solver": "skfem",
+        "input_content": "import hashlib\nfrom pathlib import Path\nraw=Path('/workspace/qualification/inputs/inspect_repaired_mesh.py').read_bytes()\nassert hashlib.sha256(raw).hexdigest()=='88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c'\nnamespace={'__name__':'passive_mesh_inspection'}\nexec(compile(raw,'inspect_repaired_mesh.py','exec'),namespace)\nprint(namespace['run']({'workspace_root': '/workspace', 'source': 'qualification/artifacts/source_mesh.stl', 'repaired': 'qualification/artifacts/repaired_mesh.stl', 'preview': 'qualification/artifacts/mesh-preview.png', 'output': 'qualification/artifacts/mesh-inspection-evidence.json', 'policy': {'build_volume_mm': [256.0, 256.0, 256.0], 'build_volume_tolerance_mm': 1e-06, 'triangle_limit': 80000, 'merge_tolerance_mm': 0.001, 'degenerate_tolerance_mm': 1e-06, 'force_voxel_remesh': False, 'envelope_margin_mm': 0.0, 'planar_cleanup': False}, 'measure_handle_features': False}))\n",
+        "job_name": "/workspace/qualification/artifacts/mesh-inspection",
+        "critic_approved": false
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T10:41:20.221452+00:00",
+      "task_id": "inspect_repaired_mesh_qualified_repair",
+      "task_title": "Measure the exact repaired STL against the original policy",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "a7894cc4c9474cf997658d2959bf262b:inspect_repaired_mesh_qualified_repair:mesh_evidence",
+        "kind": "file",
+        "name": "qualification/artifacts/mesh-inspection-evidence.json",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "qualification/artifacts/mesh-inspection-evidence.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "cdcdb94ce79aab12eac88b49edd749aacb631a1c589f0c35e1bff83c0248fe7a",
+            "size_bytes": 2477
+          }
+        ],
+        "provenance": {
+          "run_id": "a7894cc4c9474cf997658d2959bf262b",
+          "task_id": "inspect_repaired_mesh_qualified_repair",
+          "output_port": "mesh_evidence",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-03T10:41:20.258948+00:00",
+      "task_id": "inspect_repaired_mesh_qualified_repair",
+      "task_title": "Measure the exact repaired STL against the original policy",
+      "response": "{\n  \"result\": \"{\\n  \\\"job_id\\\": \\\"eff1fd9c\\\",\\n  \\\"solver\\\": \\\"skfem\\\",\\n  \\\"status\\\": \\\"failed\\\",\\n  \\\"work_dir\\\": \\\"/workspace/qualification/artifacts/mesh-inspection\\\",\\n  \\\"elapsed\\\": \\\"0.09s\\\",\\n  \\\"error\\\": \\\"Traceback (most recent call last):\\\\n  File \\\\\\\"/workspace/qualification/artifacts/mesh-inspection/solve.py\\\\\\\", line 7, in <module>\\\\n    print(namespace['run']({'workspace_root': '/workspace', 'source': 'qualification/artifacts/source_mesh.stl', 'repaired': 'qualification/artifacts/repaired_mesh.stl', 'preview': 'qualification/artifacts/mesh-preview.png', 'output': 'qualification/artifacts/mesh-inspection-evidence.json', 'policy': {'build_volume_mm': [256.0, 256.0, 256.0], 'build_volume_tolerance_mm': 1\\\",\\n  \\\"input_validation_warnings\\\": [\\n    \\\"Script should import from skfem\\\"\\n  ],\\n  \\\"trustworthy_result\\\": false,\\n  \\\"verification\\\": \\\"NOT VERIFIED \\\\u2014 the solver run errored, so no number is backed by a valid run. Per OASiS attestation this claim must NOT be reported as a result; revise the setup and re-run.\\\",\\n  \\\"critic_review\\\": \\\"REQUIRED \\\\u2014 mandatory critic not yet performed\\\"\\n}\"\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T10:41:20.292241+00:00",
+      "task_id": "validate_repaired_mesh_qualified_repair",
+      "task_title": "Validate exact repaired geometry before slicing",
+      "execution_kind": "validator",
+      "output_format": "json"
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-03T10:41:20.458658+00:00",
+      "task_id": "validate_repaired_mesh_qualified_repair",
+      "task_title": "Validate exact repaired geometry before slicing",
+      "output_path": "validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+      "output_bytes": 50877,
+      "output_format": "json",
+      "sha256": "f559d8a9d876c99753ae5a21bc9cb52ae74e4c05ccde45d0ebdcd2827ef9f583",
+      "artifact_role": "diagnostic",
+      "artifact_title": "Validate exact repaired geometry before slicing \u2014 validation evidence"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T10:41:20.473909+00:00",
+      "task_id": "validate_repaired_mesh_qualified_repair",
+      "task_title": "Validate exact repaired geometry before slicing",
+      "artifact_role": "diagnostic",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "a7894cc4c9474cf997658d2959bf262b:validate_repaired_mesh_qualified_repair:diagnostic:validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+        "kind": "file",
+        "name": "Validate exact repaired geometry before slicing \u2014 validation evidence",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "f559d8a9d876c99753ae5a21bc9cb52ae74e4c05ccde45d0ebdcd2827ef9f583",
+            "size_bytes": 50877
+          }
+        ],
+        "provenance": {
+          "run_id": "a7894cc4c9474cf997658d2959bf262b",
+          "task_id": "validate_repaired_mesh_qualified_repair",
+          "output_port": "diagnostic:validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "diagnostic"
+      }
+    },
+    {
+      "kind": "design_check",
+      "at": "2026-10-03T10:41:20.491320+00:00",
+      "task_id": "validate_repaired_mesh_qualified_repair",
+      "task_title": "Validate exact repaired geometry before slicing",
+      "report": {
+        "schema_version": "wright.process-validation/1",
+        "assessment_id": "assessment-ffcec5ce32da443ca799a773fd5c9062",
+        "assessment_digest": "650647d15d629611022cbe0180af09cf9a46906ca3c3ff519184e7f07f2908d5",
+        "attempt_id": "781b6f28a4bc4907b40970e66ec24b20",
+        "workspace_id": "workspace-083-external-mesh-005",
+        "is_current": true,
+        "release_eligible": false,
+        "summary": {
+          "content_verified": null,
+          "requirements_compliant": false,
+          "evaluation_complete": true,
+          "release_eligible": false,
+          "physical_validation": "not_assessed",
+          "counts": {
+            "blocked": 0,
+            "error": 0,
+            "fail": 2,
+            "inconclusive": 0,
+            "not_applicable": 0,
+            "pass": 11
+          }
+        },
+        "finding_count": 2,
+        "verdict": "revise",
+        "assessment_path": "validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+        "corrections": [
+          "Observed 2. Satisfy actual-connected_components at mesh/connected_components: {'operator': 'equals', 'expected': 1, 'inclusive': True}.",
+          "Observed False. Satisfy inspection-single_component at /checks/single_component: {'operator': 'equals', 'expected': True, 'inclusive': True}."
+        ]
+      },
+      "revision": 0,
+      "status": "revise",
+      "message": "Validation is holding downstream work; inspect the saved findings.",
+      "assessment_id": "assessment-ffcec5ce32da443ca799a773fd5c9062",
+      "assessment_path": "validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+      "release_eligible": false
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-03T10:41:20.516403+00:00",
+      "task_id": "validate_repaired_mesh_qualified_repair",
+      "task_title": "Validate exact repaired geometry before slicing",
+      "response": "{\"assessment_digest\":\"650647d15d629611022cbe0180af09cf9a46906ca3c3ff519184e7f07f2908d5\",\"assessment_id\":\"assessment-ffcec5ce32da443ca799a773fd5c9062\",\"assessment_path\":\"validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json\",\"attempt_id\":\"781b6f28a4bc4907b40970e66ec24b20\",\"corrections\":[\"Observed 2. Satisfy actual-connected_components at mesh/connected_components: {'operator': 'equals', 'expected': 1, 'inclusive': True}.\",\"Observed False. Satisfy inspection-single_component at /checks/single_component: {'operator': 'equals', 'expected': True, 'inclusive': True}.\"],\"finding_count\":2,\"is_current\":true,\"release_eligible\":false,\"schema_version\":\"wright.process-validation/1\",\"summary\":{\"content_verified\":null,\"counts\":{\"blocked\":0,\"error\":0,\"fail\":2,\"inconclusive\":0,\"not_applicable\":0,\"pass\":11},\"evaluation_complete\":true,\"physical_validation\":\"not_assessed\",\"release_eligible\":false,\"requirements_compliant\":false},\"verdict\":\"revise\",\"workspace_id\":\"workspace-083-external-mesh-005\"}",
+      "output_format": "json"
+    }
+  ],
+  "execution_context": {
+    "allowed_tools": [
+      {
+        "name": "qualification-083-runtime-geometry__execute_blender_code",
+        "schema_digest": "ac8d344dd9e943ce70f32ee501de3efd3bc56c419f21782d7d17c793e58130d3",
+        "server_id": "qualification-083-runtime-geometry"
+      },
+      {
+        "name": "qualification-083-runtime-inspection__run_simulation",
+        "schema_digest": "5a9bd6212a0597a6dd52c0d87de8e6e72542afcfc9bbb816a4ea5e76dd34412f",
+        "server_id": "qualification-083-runtime-inspection"
+      },
+      {
+        "name": "qualification-083-runtime-slicer__slice_model_file",
+        "schema_digest": "5fea4400d3a806f4d31a343ca341e2cf278ea8064d6aaff5b2a248336e9420d7",
+        "server_id": "qualification-083-runtime-slicer"
+      },
+      {
+        "name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12",
+        "server_id": "wright-workspace-files"
+      }
+    ],
+    "approval_mode": "auto",
+    "campaign_id": "083-external-mesh-runtime-005",
+    "created_at": 1791024060,
+    "dataset_digest": "aad7738f9dab780c8a6e1a1c531e6b58c1c7a0545cc9db1c92b1d2f58a645457",
+    "dataset_id": "isolated-mesh-stage-integration-005",
+    "expires_at": 1791027660,
+    "input_files": {
+      "qualification/inputs/filament-profile.json": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "qualification/inputs/inspect_manufacturing_package.py": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568",
+      "qualification/inputs/inspect_repaired_mesh.py": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+      "qualification/inputs/machine-profile.json": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "qualification/inputs/mesh-inspection-policy.json": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+      "qualification/inputs/mesh-provider-arguments.json": "373fd48036c51258ecef9ae0fb031b6eb51e5547d8e5c25d43d765b743883410",
+      "qualification/inputs/mesh-validation-profile.json": "82117c89d422ec6937d7ea79ef62e1d8b36926cbcb3464f908f78746e32b7f45",
+      "qualification/inputs/passive-representations.py": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38",
+      "qualification/inputs/process-profile.json": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "output_root": "qualification/artifacts",
+    "schema_version": 1,
+    "source_digest": "4ea4a4aae7261c19fcadb7c4511b82439b37831787a6e7187fb8f7cf92cb255e",
+    "source_path": "workflows/external-mesh-qualification.workflow.wflow",
+    "test_destinations": [],
+    "workspace_id": "workspace-083-external-mesh-005",
+    "integration_policy_digest": "b1fb0f675bf9fe80984c57969a4b489aa654bd11acbde05d1a6cd7bb18d33b27",
+    "actor": "integration_test:083-external-mesh-runtime-005",
+    "execution_kind": "integration"
+  },
+  "run_id": "a7894cc4c9474cf997658d2959bf262b",
+  "required_step_ids": [
+    "qualified_geometry",
+    "qualified_repair",
+    "inspect_repaired_mesh_qualified_repair",
+    "validate_repaired_mesh_qualified_repair",
+    "invoke_external_slice_inspect_actual_package",
+    "retain_slice_response_inspect_actual_package",
+    "inspect_actual_package"
+  ],
+  "partial_results": {
+    "a7894cc4c9474cf997658d2959bf262b:qualified_geometry:source_mesh": {
+      "schema_version": 1,
+      "id": "a7894cc4c9474cf997658d2959bf262b:qualified_geometry:source_mesh",
+      "kind": "file",
+      "name": "qualification/artifacts/source_mesh.stl",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "qualification/artifacts/source_mesh.stl",
+          "format": "stl",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+          "size_bytes": 684
+        }
+      ],
+      "provenance": {
+        "run_id": "a7894cc4c9474cf997658d2959bf262b",
+        "task_id": "qualified_geometry",
+        "output_port": "source_mesh",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "a7894cc4c9474cf997658d2959bf262b:qualified_repair:repaired_mesh": {
+      "schema_version": 1,
+      "id": "a7894cc4c9474cf997658d2959bf262b:qualified_repair:repaired_mesh",
+      "kind": "file",
+      "name": "qualification/artifacts/repaired_mesh.stl",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "qualification/artifacts/repaired_mesh.stl",
+          "format": "stl",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "ad296788e5c3f7f33745e2d6518534a4dd0ed55f0e7c6a31992130745d75c43e",
+          "size_bytes": 1284
+        }
+      ],
+      "provenance": {
+        "run_id": "a7894cc4c9474cf997658d2959bf262b",
+        "task_id": "qualified_repair",
+        "output_port": "repaired_mesh",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "a7894cc4c9474cf997658d2959bf262b:qualified_repair:geometry_preview": {
+      "schema_version": 1,
+      "id": "a7894cc4c9474cf997658d2959bf262b:qualified_repair:geometry_preview",
+      "kind": "file",
+      "name": "qualification/artifacts/mesh-preview.png",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "qualification/artifacts/mesh-preview.png",
+          "format": "png",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "7279fe2b296f0b6fba33e52ed2b66dce9bc91322aef42979b4c045f23799a588",
+          "size_bytes": 51845
+        }
+      ],
+      "provenance": {
+        "run_id": "a7894cc4c9474cf997658d2959bf262b",
+        "task_id": "qualified_repair",
+        "output_port": "geometry_preview",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "a7894cc4c9474cf997658d2959bf262b:inspect_repaired_mesh_qualified_repair:mesh_evidence": {
+      "schema_version": 1,
+      "id": "a7894cc4c9474cf997658d2959bf262b:inspect_repaired_mesh_qualified_repair:mesh_evidence",
+      "kind": "file",
+      "name": "qualification/artifacts/mesh-inspection-evidence.json",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "qualification/artifacts/mesh-inspection-evidence.json",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "cdcdb94ce79aab12eac88b49edd749aacb631a1c589f0c35e1bff83c0248fe7a",
+          "size_bytes": 2477
+        }
+      ],
+      "provenance": {
+        "run_id": "a7894cc4c9474cf997658d2959bf262b",
+        "task_id": "inspect_repaired_mesh_qualified_repair",
+        "output_port": "mesh_evidence",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "a7894cc4c9474cf997658d2959bf262b:validate_repaired_mesh_qualified_repair:diagnostic:validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json": {
+      "schema_version": 1,
+      "id": "a7894cc4c9474cf997658d2959bf262b:validate_repaired_mesh_qualified_repair:diagnostic:validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+      "kind": "file",
+      "name": "Validate exact repaired geometry before slicing \u2014 validation evidence",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "f559d8a9d876c99753ae5a21bc9cb52ae74e4c05ccde45d0ebdcd2827ef9f583",
+          "size_bytes": 50877
+        }
+      ],
+      "provenance": {
+        "run_id": "a7894cc4c9474cf997658d2959bf262b",
+        "task_id": "validate_repaired_mesh_qualified_repair",
+        "output_port": "diagnostic:validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "diagnostic"
+    }
+  },
+  "error": "Validate exact repaired geometry before slicing: the output has not passed validation.",
+  "code": "PROCESS_VALIDATION_REJECTED",
+  "correction": "Observed 2. Satisfy actual-connected_components at mesh/connected_components: {'operator': 'equals', 'expected': 1, 'inclusive': True}. Observed False. Satisfy inspection-single_component at /checks/single_component: {'operator': 'equals', 'expected': True, 'inclusive': True}.",
+  "execution_ended_at": "2026-10-03T10:41:20.531215+00:00",
+  "completed_at": "2026-10-03T10:41:20.531215+00:00"
+}

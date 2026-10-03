@@ -2830,3 +2830,63 @@ Ledger remains 49 checked / eight open. T048/T049 and full acceptance stay open.
 Planned local receipt: .local-run/process-interfaces-083/neutral-profile-guidance-001-local-commit.json.
 Continue full migration, qualification, current UI/editor/accessibility/installed
 and final requirements audit; no push, merge or release is authorized.
+
+## Bedtime status review — uncommitted mesh migration handoff
+
+The user requested a reviewed long-running continuation prompt. Current HEAD is
+ab2d21ce; the active unlimited goal and original M0–M5 authority remain unchanged.
+Read actual Git state, implementation authority, task/progress records and current
+verification XML. Ledger is 49 checked / eight open. Both recorded engineering/UI
+proof chains remain retained, and Linux symlink verification is already committed.
+
+Owned dirty work now declares independent mesh repair and passive inspection,
+retains original policies and pure handle measurements, and archives/removes the
+bundled repair files plus private launcher. Current terminal owning/affected XML
+records 73 passes and zero skips. This review ran no tests or provider calls;
+it checked that prior result and did not revalidate live services. Live runtime
+qualification, broader regressions, evidence publication, documentation and a
+focused commit remain pending. New first-priority handoff details are in
+continuation-goal.md, ahead of historical checkpoint statements.
+
+Continue the eight open tasks through full requirements and acceptance coverage.
+Preserve unrelated work, original failures and protected reviews. No physical
+effect, push, merge, release or new vendor implementation is authorized.
+
+## Bedtime continuation refresh — verified gate checkpoint
+
+The requested status review reconciled actual HEAD ab2d21ce, the empty Git index,
+49 checked/eight open tasks and the published 89-file mesh-retirement evidence.
+All twelve recorded source/configuration/test hashes match the current worktree.
+The later proof supersedes the preceding handoff's pending runtime statements:
+negative005 holds invalid disconnected geometry before slicing; positive006
+passes thirteen checks and records 21 distinct outputs through six actual MCP
+calls. The recorded final suites pass207 and231 respectively, no skips, with
+overlapping coverage; published cleanup records twelve proof containers stopped.
+
+This status/prompt turn ran no tests, models, providers or engineering actions,
+and did not revalidate live services. It updates continuation-goal.md and current
+migration/verification records so overnight work starts from this actual state.
+The focused local checkpoint commit, broader current UI/editor/accessibility/
+installed/regression work, provider/caller audits and full requirements audit
+remain required. AgentCAD's retained creation-response defect is external;
+continue independent work. The existing goal remains active and unlimited.
+No implementation completion, new task closure, human approval or physical
+verification is claimed. Preserve all unrelated dirty work and protected reviews.
+
+## Mesh retirement checkpoint — additive partial-result audit
+
+The previous goal turn reviewed status and saved a continuation prompt; it ran
+no implementation or verification process. This continuation takes the next
+available safe action: verify all66 durable workspace-file representations in
+the four terminal executed mesh proofs, including all five held negative-run
+partial results. Actual private bytes match recorded hashes/sizes and the005/006
+public copies. No run/provider/model/action was replayed. The original89-file
+inventory is immutable; additive audit and supplemental inventory make91 files.
+This is scoped evidence, not additional engineering acceptance or task closure.
+
+Current verification/migration/operator records now reflect the existing gate
+and exact retirement. Finish the focused local commit with credential scan,
+index-byte checking and unrelated/protected work preservation. Planned private
+receipt: .local-run/process-interfaces-083/mesh-retirement-001-local-commit.json.
+Then advance current-build workspace/editor/working/preview/accessibility proofs
+and the remaining eight-task scope. No push, merge, release or physical effect.

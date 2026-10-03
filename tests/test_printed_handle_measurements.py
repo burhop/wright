@@ -7,7 +7,7 @@ import struct
 import pytest
 
 spec = importlib.util.spec_from_file_location(
-    "handle_repair", Path(__file__).resolve().parents[1] / "scripts/engineering_dataset_mesh_repair.py"
+    "passive_handle_measurement", Path(__file__).resolve().parents[1] / "scripts/engineering/inspect_repaired_mesh.py"
 )
 repair = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(repair)

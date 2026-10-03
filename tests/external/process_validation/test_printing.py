@@ -105,6 +105,51 @@ def test_binary_stl_envelope_and_integrity_are_measured():
     assert PrintingArtifactReader().measure(mesh, integrity, context).value is True
 
 
+@pytest.mark.parametrize("metric,expected,unit", [
+    ("triangle_count", 8, "1"),
+    ("connected_components", 2, "1"),
+    ("signed_volume_mm3", 2.0, "mm3"),
+])
+def test_mesh_metrics_measure_actual_disconnected_bytes(metric, expected, unit):
+    first = binary_stl(((0, 0, 0), (1, 0, 0), (0, 2, 0), (0, 0, 3)))
+    second = binary_stl(((5, 0, 0), (6, 0, 0), (5, 2, 0), (5, 0, 3)))
+    actual = first[:80] + struct.pack("<I", 8) + first[84:] + second[84:]
+    mesh = subject("repaired_mesh", actual, "stl")
+    measurement = PrintingArtifactReader().measure(mesh, check("mesh_metric", selector="mesh/" + metric,
+        parameters={"unit_convention": "mm"}, unit=unit), ReaderContext.create(ResourceBudget(), "mesh-test"))
+    assert measurement.value == expected
+    assert measurement.unit == unit
+    assert measurement.subject_id == mesh.subject.id
+    assert measurement.subject_sha256 == mesh.subject.sha256
+
+
+def test_signed_volume_metric_preserves_inward_orientation():
+    mesh = subject("repaired_mesh", binary_stl(((0, 0, 0), (0, 2, 0), (1, 0, 0), (0, 0, 3))), "stl")
+    measurement = PrintingArtifactReader().measure(mesh, check("mesh_metric", selector="mesh/signed_volume_mm3",
+        parameters={"unit_convention": "mm"}, unit="mm3"), ReaderContext.create(ResourceBudget(), "mesh-test"))
+    assert measurement.value == -1.0
+
+
+@pytest.mark.parametrize("limit,allowed", [(10, True), (9, False)])
+def test_mesh_metric_keeps_actual_triangle_edge_budget(limit, allowed):
+    mesh = subject("repaired_mesh", binary_stl(((0, 0, 0), (1, 0, 0), (0, 2, 0), (0, 0, 3))), "stl")
+    context = ReaderContext.create(ResourceBudget(max_entities=limit), "mesh-budget-test")
+    metric = check("mesh_metric", selector="mesh/connected_components", parameters={"unit_convention": "mm"}, unit="1")
+    if allowed:
+        assert PrintingArtifactReader().measure(mesh, metric, context).value == 1
+    else:
+        with pytest.raises(ValidationIssue):
+            PrintingArtifactReader().measure(mesh, metric, context)
+
+
+@pytest.mark.parametrize("selector", ["mesh/unknown", "connected_components", "mesh/", "mesh/x_span_mm"])
+def test_mesh_metric_rejects_undeclared_selector(selector):
+    mesh = subject("repaired_mesh", binary_stl(((0, 0, 0), (1, 0, 0), (0, 2, 0), (0, 0, 3))), "stl")
+    with pytest.raises(ValidationIssue, match="declared exact-STL mesh metric"):
+        PrintingArtifactReader().measure(mesh, check("mesh_metric", selector=selector, parameters={"unit_convention": "mm"}, unit="1"),
+            ReaderContext.create(ResourceBudget(), "mesh-selector-test"))
+
+
 @pytest.mark.parametrize("max_entities,allowed", [(10, True), (9, False), (3, False)])
 def test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit(
     max_entities, allowed

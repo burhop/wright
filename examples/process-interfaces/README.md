@@ -59,3 +59,11 @@ Their `prepare.py` commands stage proposals in fresh isolated roots. Source
 acceptance, readiness, execution and reviewer authority remain Wright operations.
 Provider installation and vendor protocols remain outside these examples.
 Neither example authorizes a machine, supplier action or engineering acceptance.
+
+The original dataset preparers additionally use explicit
+[external slicing bindings](../../docs/workflows/external-slicing-bindings.md)
+and, for printed replacement parts,
+[independent geometry bindings](../../docs/workflows/external-mesh-bindings.md).
+These are proposed source/configuration and exact-artifact verification, not
+bundled vendor implementation or private campaign execution. Saved historical
+campaigns keep their original source and evidence.

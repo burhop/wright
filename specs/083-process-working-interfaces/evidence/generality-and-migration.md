@@ -1,5 +1,41 @@
 # Generality and prototype migration — partial evidence
 
+## Independent mesh retirement and existing validator gate
+
+[Retirement and runtime evidence](../../../artifacts/process-interfaces/083/20261003-mesh-repair-retirement/README.md)
+records the current original-preparer migration to independently installed native
+geometry and passive inspection. Four active repair/wrapper/launcher/test paths
+are retired; six original files remain exact inactive archives. Original repair
+policy is pinned configuration, and pure handle measurements remain AST-identical.
+Frozen assignments, full profiles, historical bindings and protected reviews are
+preserved. Declaration helpers own bindings and evidence handoffs; independent
+providers own native operations and their geometry/package outputs.
+
+Actual attempt004 exposed failure inside a successful MCP transport response:
+disconnected geometry still reached slicing. A subsequent existing 082 validator
+gate directly measures the exact STL's topology, volume, triangle count, integrity
+and envelope before slicing, with pinned passive measurements as supplementary
+evidence. No generic interpretation of vendor status strings or new executor was
+introduced. Fresh negative005 fails two checks, observes two components, and
+dispatches no slicer/write call or slice package. Fresh positive006 passes thirteen
+checks, performs six actual MCP calls and records 21 distinct outputs. Duplicate
+starts reconcile original receipts without replay.
+
+The final affected suite records 207 passes and broader 082 validation records
+231, with no skips; counts overlap. Ten-file Ruff passes. The published scope
+records twelve exact owned containers stopped, original policy preservation,
+credential scanning and actual evidence identities. Setup and product failures
+remain separate and retained. The status review verified every recorded current
+source/configuration/test hash against the worktree; it ran no new provider or test.
+
+This is small isolated digital geometry/slicing qualification, not complete native
+recipe equivalence for the original assignments, all provider platforms, trustworthy
+solver attestation, physical execution, human engineering acceptance or full
+T043/T048/T049 closure. Current owned changes still require their focused local
+commit. Historical pending statements below remain historical and are superseded
+only for these exact retired paths and scoped behaviours. See
+[binding ownership and limits](../../../docs/workflows/external-mesh-bindings.md).
+
 ## Selected profile guidance and remaining transitive callers
 
 [Scoped evidence](../../../artifacts/process-interfaces/083/20261003-neutral-profile-guidance-verified/README.md)

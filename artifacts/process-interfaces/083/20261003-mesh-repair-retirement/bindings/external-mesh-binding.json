@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "scenario_id": "printed-replacement-part-01",
+  "workspace_root": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-mesh-runtime-006",
+  "output_root": "qualification/artifacts",
+  "policy": {
+    "build_volume_mm": [
+      256.0,
+      256.0,
+      256.0
+    ],
+    "build_volume_tolerance_mm": 1e-06,
+    "triangle_limit": 80000,
+    "merge_tolerance_mm": 0.001,
+    "degenerate_tolerance_mm": 1e-06,
+    "force_voxel_remesh": false,
+    "envelope_margin_mm": 0.0,
+    "planar_cleanup": false
+  },
+  "machine_profile_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+  "provider": {
+    "server": "qualification-083-runtime-geometry",
+    "tool": "execute_blender_code",
+    "schema_digest": "4ba33d139ab90a523444b2d31c47a2bed1a7bd0764c18ee5a4adfe2cd632c6b8"
+  },
+  "arguments": {
+    "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-mesh-runtime-006\\supplied-native-arguments.json",
+    "sha256": "1168840ae2d0795ec5834da23f793d179e4ccc4a89b45e51ece53accb1a33d4e"
+  }
+}

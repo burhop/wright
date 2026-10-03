@@ -1,0 +1,1252 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "assessment-671b6f0e9cca4e08808b1b9f78003ddd",
+  "attempt_id": "8d649df4e0824a66aa21f48799be2931",
+  "request": {
+    "schema_version": "wright.process-validation/1",
+    "trace_id": "a249652e3969432d99e8ece79b0b2550",
+    "workspace_id": "workspace-083-external-mesh-006",
+    "invocation_id": "validate_repaired_mesh_qualified_repair:1",
+    "run_id": "a249652e3969432d99e8ece79b0b2550",
+    "check_step_id": "validate_repaired_mesh_qualified_repair",
+    "subjects": [
+      {
+        "id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+        "role": "repaired_mesh",
+        "result_id": "a249652e3969432d99e8ece79b0b2550:qualified_repair:repaired_mesh",
+        "producer": {
+          "run_id": "a249652e3969432d99e8ece79b0b2550",
+          "step_id": "qualified_repair",
+          "attempt": 1,
+          "output_port": "repaired_mesh"
+        },
+        "kind": "file",
+        "sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+        "value": null,
+        "locator": "qualification/artifacts/repaired_mesh.stl",
+        "format": "stl",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46",
+        "role": "mesh_evidence",
+        "result_id": "a249652e3969432d99e8ece79b0b2550:inspect_repaired_mesh_qualified_repair:mesh_evidence",
+        "producer": {
+          "run_id": "a249652e3969432d99e8ece79b0b2550",
+          "step_id": "inspect_repaired_mesh_qualified_repair",
+          "attempt": 1,
+          "output_port": "mesh_evidence"
+        },
+        "kind": "file",
+        "sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+        "value": null,
+        "locator": "qualification/artifacts/mesh-inspection-evidence.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      }
+    ],
+    "profile_ref": {
+      "id": "repaired-mesh-integrity",
+      "version": "1",
+      "sha256": "ed64211dce4f7cf9c9bd99ca5c12318eed7d399bf82ac5c2fcf0c0d5a9d1c350"
+    },
+    "baseline_ref": {
+      "id": "original-repaired-mesh-policy",
+      "version": "1",
+      "sha256": "29d36e2aad197e879b53288ee360b8a010ec0daa901eebf1bb1d32ef12259b74"
+    },
+    "idempotency_key": "run:d525eb08e7677c2a96bd96ec7ce2cd070b02ab270d0e82356e127e1d37a278c2",
+    "budget": {
+      "max_bytes": 16777216,
+      "max_entities": 240000,
+      "timeout_seconds": 120,
+      "memory_limit_mb": 512
+    }
+  },
+  "profile": {
+    "schema_version": "wright.process-validation/1",
+    "id": "repaired-mesh-integrity",
+    "version": "1",
+    "baseline": {
+      "id": "original-repaired-mesh-policy",
+      "version": "1",
+      "requirements": [
+        {
+          "id": "actual-mesh-integrity",
+          "text": "The actual repaired binary STL has closed nondegenerate manifold edges.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "actual-connected_components",
+          "text": "Retain the original repaired-mesh requirement for connected_components.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "actual-signed_volume_mm3",
+          "text": "Retain the original repaired-mesh requirement for signed_volume_mm3.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "actual-triangle_count",
+          "text": "Retain the original repaired-mesh requirement for triangle_count.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "actual-envelope-x",
+          "text": "The actual repaired extent fits the declared original build envelope.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "actual-envelope-y",
+          "text": "The actual repaired extent fits the declared original build envelope.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "actual-envelope-z",
+          "text": "The actual repaired extent fits the declared original build envelope.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "inspection-closed_manifold",
+          "text": "The pinned passive measurement report also records this retained check passing: closed_manifold.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "inspection-outward_normals",
+          "text": "The pinned passive measurement report also records this retained check passing: outward_normals.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "inspection-single_component",
+          "text": "The pinned passive measurement report also records this retained check passing: single_component.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "inspection-no_degenerate_faces",
+          "text": "The pinned passive measurement report also records this retained check passing: no_degenerate_faces.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "inspection-within_triangle_limit",
+          "text": "The pinned passive measurement report also records this retained check passing: within_triangle_limit.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "inspection-fits_declared_build_volume",
+          "text": "The pinned passive measurement report also records this retained check passing: fits_declared_build_volume.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "qualification/inputs/mesh-inspection-policy.json",
+              "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+              "locator": "Retained original geometry preparation policy"
+            },
+            {
+              "artifact_ref": "qualification/inputs/inspect_repaired_mesh.py",
+              "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+              "locator": "Pinned passive exact-byte inspection and original handle measurements"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        }
+      ],
+      "unresolved_decisions": [],
+      "amendments": []
+    },
+    "checks": [
+      {
+        "id": "actual-mesh-integrity",
+        "version": "1",
+        "requirement_ids": [
+          "actual-mesh-integrity"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/integrity",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "mesh_integrity",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "actual-connected_components",
+        "version": "1",
+        "requirement_ids": [
+          "actual-connected_components"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/connected_components",
+        "constraint": {
+          "operator": "equals",
+          "expected": 1,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "mesh_metric",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "actual-signed_volume_mm3",
+        "version": "1",
+        "requirement_ids": [
+          "actual-signed_volume_mm3"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/signed_volume_mm3",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": 0.0,
+          "maximum": null,
+          "inclusive": false
+        },
+        "unit": "mm3",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "mesh_metric",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "actual-triangle_count",
+        "version": "1",
+        "requirement_ids": [
+          "actual-triangle_count"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/triangle_count",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 80000.0,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "mesh_metric",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "actual-envelope-x",
+        "version": "1",
+        "requirement_ids": [
+          "actual-envelope-x"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/x_span_mm",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 256.000001,
+          "inclusive": true
+        },
+        "unit": "mm",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "stl_dimension",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "actual-envelope-y",
+        "version": "1",
+        "requirement_ids": [
+          "actual-envelope-y"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/y_span_mm",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 256.000001,
+          "inclusive": true
+        },
+        "unit": "mm",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "stl_dimension",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "actual-envelope-z",
+        "version": "1",
+        "requirement_ids": [
+          "actual-envelope-z"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/z_span_mm",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 256.000001,
+          "inclusive": true
+        },
+        "unit": "mm",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "stl_dimension",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "inspection-closed_manifold",
+        "version": "1",
+        "requirement_ids": [
+          "inspection-closed_manifold"
+        ],
+        "subject_role": "mesh_evidence",
+        "reader": "structured",
+        "selector": "/checks/closed_manifold",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "inspection-outward_normals",
+        "version": "1",
+        "requirement_ids": [
+          "inspection-outward_normals"
+        ],
+        "subject_role": "mesh_evidence",
+        "reader": "structured",
+        "selector": "/checks/outward_normals",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "inspection-single_component",
+        "version": "1",
+        "requirement_ids": [
+          "inspection-single_component"
+        ],
+        "subject_role": "mesh_evidence",
+        "reader": "structured",
+        "selector": "/checks/single_component",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "inspection-no_degenerate_faces",
+        "version": "1",
+        "requirement_ids": [
+          "inspection-no_degenerate_faces"
+        ],
+        "subject_role": "mesh_evidence",
+        "reader": "structured",
+        "selector": "/checks/no_degenerate_faces",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "inspection-within_triangle_limit",
+        "version": "1",
+        "requirement_ids": [
+          "inspection-within_triangle_limit"
+        ],
+        "subject_role": "mesh_evidence",
+        "reader": "structured",
+        "selector": "/checks/within_triangle_limit",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "inspection-fits_declared_build_volume",
+        "version": "1",
+        "requirement_ids": [
+          "inspection-fits_declared_build_volume"
+        ],
+        "subject_role": "mesh_evidence",
+        "reader": "structured",
+        "selector": "/checks/fits_declared_build_volume",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      }
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "This pre-slice gate reuses the 082 validator over exact current output subjects; the original full profile and human reviews still govern engineering acceptance.",
+      "Signed volume is the retained global orientation diagnostic, not verification of every facet winding.",
+      "Passive report checks and handle clearance are structured measurements from the pinned inspection operation, not a trustworthy solver attestation or human acceptance."
+    ],
+    "supported_kinds": [
+      "file"
+    ]
+  },
+  "created_at": "2026-10-03T10:42:48.647688+00:00",
+  "measurements": [
+    {
+      "id": "m-21693eb01bfc86023ec457c804cdbd5d8c89a2218a1fb10e2d83063708768529",
+      "subject_id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+      "subject_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "selector": "mesh/integrity",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "e0a37fd059e3f41bf0e5d0bb79d9c128ddc7f85c38829b0139b6f92bef8bcb03",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/integrity"
+      ]
+    },
+    {
+      "id": "m-4653dceb5ee7c1d770dd153b2af6506f3ddf898e3e57d0a0e2f58ede4b8cfd20",
+      "subject_id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+      "subject_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "selector": "mesh/connected_components",
+      "value": 1,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "e0a37fd059e3f41bf0e5d0bb79d9c128ddc7f85c38829b0139b6f92bef8bcb03",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/connected_components"
+      ]
+    },
+    {
+      "id": "m-c6cd1bbaf753a1cf372433aaef3fcd6b12db2ba3bb72f067d7d61674985cb4ad",
+      "subject_id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+      "subject_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "selector": "mesh/signed_volume_mm3",
+      "value": 480.0,
+      "unit": "mm3",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "e0a37fd059e3f41bf0e5d0bb79d9c128ddc7f85c38829b0139b6f92bef8bcb03",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/signed_volume_mm3"
+      ]
+    },
+    {
+      "id": "m-a21a61306bc5bbf6d06ac44053c93b93e8cd7b5cf5618c55c3e647f24dd79c91",
+      "subject_id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+      "subject_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "selector": "mesh/triangle_count",
+      "value": 12,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "e0a37fd059e3f41bf0e5d0bb79d9c128ddc7f85c38829b0139b6f92bef8bcb03",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/triangle_count"
+      ]
+    },
+    {
+      "id": "m-0dd299d062ee15589865fecaa7fc4189791832c84d4f21ce76e83cad5f319925",
+      "subject_id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+      "subject_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "selector": "mesh/x_span_mm",
+      "value": 10.0,
+      "unit": "mm",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "e0a37fd059e3f41bf0e5d0bb79d9c128ddc7f85c38829b0139b6f92bef8bcb03",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/x_span_mm"
+      ]
+    },
+    {
+      "id": "m-fa423ff5a39d2f506535888df90fc190ffc5d870c5d5733a78933049cdb15470",
+      "subject_id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+      "subject_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "selector": "mesh/y_span_mm",
+      "value": 8.0,
+      "unit": "mm",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "e0a37fd059e3f41bf0e5d0bb79d9c128ddc7f85c38829b0139b6f92bef8bcb03",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/y_span_mm"
+      ]
+    },
+    {
+      "id": "m-db773d36b0aa3f1c5fad846f13c0141d1fab0315b6ded34a7a864ba6a477a977",
+      "subject_id": "output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242",
+      "subject_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "selector": "mesh/z_span_mm",
+      "value": 6.0,
+      "unit": "mm",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "e0a37fd059e3f41bf0e5d0bb79d9c128ddc7f85c38829b0139b6f92bef8bcb03",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/z_span_mm"
+      ]
+    },
+    {
+      "id": "m-b2a60a3a2ea10f2e0cf37a6b0be7bb9f8ed35fafce4172ab796b0f97333e28cd",
+      "subject_id": "output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46",
+      "subject_sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+      "selector": "/checks/closed_manifold",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/closed_manifold"
+      ]
+    },
+    {
+      "id": "m-06a3222a3fc0bcdf8f613cedca1ab96fb8b8cc6dd3a0be844d4a4db64a3c4304",
+      "subject_id": "output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46",
+      "subject_sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+      "selector": "/checks/outward_normals",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/outward_normals"
+      ]
+    },
+    {
+      "id": "m-1933ed7fc7bd6a634e5dfc43360c0b5fb902654e0fb2f32f0a57174a34d5c604",
+      "subject_id": "output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46",
+      "subject_sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+      "selector": "/checks/single_component",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/single_component"
+      ]
+    },
+    {
+      "id": "m-90b79f184cb0215920e697d173ecc613b05a6e54c9acdcb0c2b4820da9cc3196",
+      "subject_id": "output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46",
+      "subject_sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+      "selector": "/checks/no_degenerate_faces",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/no_degenerate_faces"
+      ]
+    },
+    {
+      "id": "m-f98dfcfcae0cd5cbd3c32fae1629268e2a33db974429aa64ea7fe3a9cd76935c",
+      "subject_id": "output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46",
+      "subject_sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+      "selector": "/checks/within_triangle_limit",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/within_triangle_limit"
+      ]
+    },
+    {
+      "id": "m-630173d816df5e5182b43a07a4c20922f9f934c23d570c3052e86a687899c61a",
+      "subject_id": "output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46",
+      "subject_sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+      "selector": "/checks/fits_declared_build_volume",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/fits_declared_build_volume"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "actual-mesh-integrity",
+      "requirement_ids": [
+        "actual-mesh-integrity"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-21693eb01bfc86023ec457c804cdbd5d8c89a2218a1fb10e2d83063708768529"
+      ],
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/integrity"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "actual-connected_components",
+      "requirement_ids": [
+        "actual-connected_components"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-4653dceb5ee7c1d770dd153b2af6506f3ddf898e3e57d0a0e2f58ede4b8cfd20"
+      ],
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/connected_components"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "actual-signed_volume_mm3",
+      "requirement_ids": [
+        "actual-signed_volume_mm3"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-c6cd1bbaf753a1cf372433aaef3fcd6b12db2ba3bb72f067d7d61674985cb4ad"
+      ],
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/signed_volume_mm3"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "actual-triangle_count",
+      "requirement_ids": [
+        "actual-triangle_count"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-a21a61306bc5bbf6d06ac44053c93b93e8cd7b5cf5618c55c3e647f24dd79c91"
+      ],
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/triangle_count"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "actual-envelope-x",
+      "requirement_ids": [
+        "actual-envelope-x"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-0dd299d062ee15589865fecaa7fc4189791832c84d4f21ce76e83cad5f319925"
+      ],
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/x_span_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "actual-envelope-y",
+      "requirement_ids": [
+        "actual-envelope-y"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-fa423ff5a39d2f506535888df90fc190ffc5d870c5d5733a78933049cdb15470"
+      ],
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/y_span_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "actual-envelope-z",
+      "requirement_ids": [
+        "actual-envelope-z"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-db773d36b0aa3f1c5fad846f13c0141d1fab0315b6ded34a7a864ba6a477a977"
+      ],
+      "evidence_refs": [
+        "subject:output-018e9c916eb01c4e1643c402ec3591ec1fccb42ceab216789e0e5d6d208dc242@86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867#mesh/z_span_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "inspection-closed_manifold",
+      "requirement_ids": [
+        "inspection-closed_manifold"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-b2a60a3a2ea10f2e0cf37a6b0be7bb9f8ed35fafce4172ab796b0f97333e28cd"
+      ],
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/closed_manifold"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "inspection-outward_normals",
+      "requirement_ids": [
+        "inspection-outward_normals"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-06a3222a3fc0bcdf8f613cedca1ab96fb8b8cc6dd3a0be844d4a4db64a3c4304"
+      ],
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/outward_normals"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "inspection-single_component",
+      "requirement_ids": [
+        "inspection-single_component"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-1933ed7fc7bd6a634e5dfc43360c0b5fb902654e0fb2f32f0a57174a34d5c604"
+      ],
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/single_component"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "inspection-no_degenerate_faces",
+      "requirement_ids": [
+        "inspection-no_degenerate_faces"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-90b79f184cb0215920e697d173ecc613b05a6e54c9acdcb0c2b4820da9cc3196"
+      ],
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/no_degenerate_faces"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "inspection-within_triangle_limit",
+      "requirement_ids": [
+        "inspection-within_triangle_limit"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-f98dfcfcae0cd5cbd3c32fae1629268e2a33db974429aa64ea7fe3a9cd76935c"
+      ],
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/within_triangle_limit"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "inspection-fits_declared_build_volume",
+      "requirement_ids": [
+        "inspection-fits_declared_build_volume"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-630173d816df5e5182b43a07a4c20922f9f934c23d570c3052e86a687899c61a"
+      ],
+      "evidence_refs": [
+        "subject:output-95d8ab58241950daeffdbf73a997982b596891ec2b60ff8a2bd07cbc38d3ca46@8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f#/checks/fits_declared_build_volume"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "content_verified": null,
+    "requirements_compliant": true,
+    "evaluation_complete": true,
+    "release_eligible": true,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 0,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 13
+    }
+  },
+  "subject_current": true,
+  "review_ids": [],
+  "supersedes": null
+}

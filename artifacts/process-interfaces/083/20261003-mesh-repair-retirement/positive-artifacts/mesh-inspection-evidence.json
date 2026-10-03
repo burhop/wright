@@ -1,0 +1,95 @@
+{
+  "operation": "passive_exact_repaired_mesh_inspection",
+  "before": {
+    "source_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+    "triangles": 12,
+    "minimum_mm": [
+      -5.0,
+      -4.0,
+      -3.0
+    ],
+    "maximum_mm": [
+      5.0,
+      4.0,
+      3.0
+    ],
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "connected_components": 1,
+    "signed_volume_mm3": 480.0,
+    "method": "Actual binary-STL triangle coordinates, exact shared edges, components and signed volume"
+  },
+  "after": {
+    "source_sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+    "triangles": 12,
+    "minimum_mm": [
+      -5.0,
+      -4.0,
+      0.0
+    ],
+    "maximum_mm": [
+      5.0,
+      4.0,
+      6.0
+    ],
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "connected_components": 1,
+    "signed_volume_mm3": 480.0,
+    "method": "Actual binary-STL triangle coordinates, exact shared edges, components and signed volume"
+  },
+  "checks": {
+    "closed_manifold": true,
+    "outward_normals": true,
+    "single_component": true,
+    "no_degenerate_faces": true,
+    "within_triangle_limit": true,
+    "fits_declared_build_volume": true
+  },
+  "policy": {
+    "build_volume_mm": [
+      256.0,
+      256.0,
+      256.0
+    ],
+    "build_volume_tolerance_mm": 1e-06,
+    "triangle_limit": 80000,
+    "merge_tolerance_mm": 0.001,
+    "degenerate_tolerance_mm": 1e-06,
+    "force_voxel_remesh": false,
+    "envelope_margin_mm": 0.0,
+    "planar_cleanup": false
+  },
+  "artifacts": [
+    {
+      "path": "qualification/artifacts/source_mesh.stl",
+      "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+      "size_bytes": 684
+    },
+    {
+      "path": "qualification/artifacts/repaired_mesh.stl",
+      "sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+      "size_bytes": 684
+    },
+    {
+      "path": "qualification/artifacts/mesh-preview.png",
+      "sha256": "948f920dc7af54e2b266c44351f0bf3c90df9b15171f6b64aaf1ec437be5ce9e",
+      "size_bytes": 51845
+    }
+  ],
+  "preview_scope": "Header and bytes verified; geometry-only native preview, not support prediction or image-content acceptance",
+  "engineering_acceptance": false,
+  "physical_verification": false
+}

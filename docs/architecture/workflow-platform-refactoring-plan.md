@@ -10,6 +10,24 @@ The shared interaction contract/client/kit and runtime migration are not complet
 
 ## Current migration checkpoint — 3 October 2026
 
+The original printed preparer now declares independent geometry and passive
+inspection with explicit pinned arguments, original policy and exact native output
+ownership. The bundled repair implementation/wrapper, private campaign launcher
+and wrapper-only test are retired with six exact original files retained inactive.
+The inspector's original handle measurement functions remain AST-identical.
+
+A fresh negative control exposed a failed job inside a successful MCP transport
+response. An existing 082 validation step now directly measures the exact STL
+before slicing. Two components fail the original requirement and hold slicing;
+a fresh valid cube passes 13 checks and reaches the actual independent slicer.
+This reuses the existing validator, subjects, reports and recovery; it adds no
+executor or inferred vendor status authority. 207 owning/affected and 231 broader
+082 checks pass (overlapping counts); all twelve exact proof containers are stopped.
+See [mesh evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#independent-mesh-retirement-and-existing-validator-gate)
+and [explicit configuration](../workflows/external-mesh-bindings.md).
+Small digital handoff qualification does not prove native repair-policy equivalence
+for the original assignments or complete provider/UI/installed migration acceptance.
+
 The new independent slicing declarations now have a small actual accepted-source
 runtime proof. Package ownership stays with the slicer; passive inspection creates
 only its evidence/preview/profile outputs, and both original preparers route their
@@ -31,7 +49,7 @@ produced actual 3MF/preview/nominal paths on the existing Windows Python/native
 host, with exact owned MCP cleanup. 175 final owning/affected checks pass.
 This does not establish live canonical-runtime qualification of the new bindings,
 clean Linux catalog qualification, physical verification or human acceptance.
-Mesh-repair wrappers and other active provider coupling still require their own
+Other active provider coupling and full qualification still require their own
 audit/disposition. T043/T048/T049 remain open, as do complete current platform
 acceptance and final audits. See [migration evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#slice-probe-migration-and-embedded-file-retirement).
 
@@ -318,8 +336,8 @@ removing or reusing code; preserve campaign sources and recorded digests.
 | `scripts/print_demo_studio.py`, `scripts/windows/inspect-bambu-studio.ps1`, `scripts/windows/studio-desktop.ps1` | Studio package conversion, desktop controls, OCR, worker monitoring. | Retain experimental evidence, then remove active vendor automation after migration. Cloud/Handy workarounds are outside Wright's product plan. |
 | `scripts/configure_print_demo_studio.py`, `scripts/configure_print_demo_offline.py` | Registers repo-local vendor scripts, profiles, sources, and launch overrides. | Use existing providers' normal installation/configuration and Wright capability onboarding. Retain only neutral example configuration in Wright. |
 | `scripts/engineering_dataset_slice.py`, `scripts/engineering_dataset_slice_mcp.py`, `scripts/engineering_jig_slice_mcp.py` | Bambu CLI, pinned profiles, P1S envelope, vendor slice metadata and support/toolpath extraction. | Replace operational vendor slicing with qualified existing capabilities. Preserve campaign copies/evidence; update active bindings deliberately with new provenance. Shared geometry algorithms may remain only after removing device assumptions. |
-| `scripts/engineering_dataset_mesh_repair.py` and `scripts/engineering_dataset_mesh_repair_mcp.py` | Bundled native geometry operation, provider transport and scenario/fixed-envelope constraints; still called by the original preparer and private campaign lifecycle. | Migrate both active callers to existing independent provider invocation before retirement. Reuse exact supplied-argument inputs and passive final-byte measurements; preserve original geometry policies/qualification history. Do not replace these with a renamed native wrapper or new Wright-owned MCP. |
-| `scripts/run_printed_validator_campaign.py` | Active launcher starts private feature-081 native lifecycle, accepts its `repair_server_id`, stages that provider and invokes the campaign runner. Found by the current transitive audit; not executed. | Migrate or retire this entry with its callers before bundled mesh-repair deletion. Normal Wright accepted-source/run mechanisms own new work; private historical campaign scripts and evidence remain preserved. No new domain executor or campaign execution is authorized. |
+| `scripts/engineering_dataset_mesh_repair.py` and `scripts/engineering_dataset_mesh_repair_mcp.py` | Retired active paths; exact originals retained as inactive archives. Original preparer declares existing independent geometry and passive measurements, then the existing 082 gate. | No native implementation or transport was relocated. Preserve original policy/history and exact handle functions. Small positive/negative runtime proofs establish the handoff/gate, not every original native recipe or engineering acceptance. |
+| `scripts/run_printed_validator_campaign.py` | Retired private-lifecycle launcher; exact original retained inactive and wrapper-only test archived/retired. | New work uses normal Wright accepted-source/runtime mechanisms. Private historical campaign scripts, bindings and evidence remain preserved and unexecuted. No replacement domain executor is introduced. |
 | `packages/workspace_service/src/workspace_service/print_part_demo.py` | Hard-coded example, server/tools, repo-root lookup, material defaults, and artifact conventions. | Retain the example as a saved workflow and binding data. Generalise only proven shared preparation mechanisms; remove production reliance on private demo naming or source-checkout paths. |
 | `apps/api/src/api/main.py` | Restores one Studio binding after catalog reconciliation. | Remove vendor startup logic. Address configuration ownership in generic onboarding/reconciliation; metadata refresh must preserve authorised installed bindings. |
 | `apps/api/src/api/routers/workspace.py` `/print-demo/*` handlers | Embedded preparation, package selection, vendor checks, submit/retry/cancel, and camera mediation. | Thin adapters to shared workflow/review/action services, or remove demo endpoints when the external panel uses normal gateway tools. Declare any temporary compatibility route and its removal milestone. |
