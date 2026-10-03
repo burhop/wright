@@ -1,0 +1,37 @@
+{
+  "title": "Saved Heat comparison after repeated CAD and solver execution",
+  "summary": "Current installed Linux Docker build and copied actual engineering run; normal workspace entry. Model and compiler deliberately unavailable; no mocked routes or engineering replay.",
+  "overall": "blocked",
+  "updated": "2026-10-03T22:06:34.019Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved heat workflow and click Use saved process."
+    },
+    {
+      "label": "Attach second run",
+      "instruction": "Open the third recorded run link and inspect its CAD, analysis and held assessment results."
+    },
+    {
+      "label": "Reuse",
+      "instruction": "Click Create or choose interface, select Heat-spreader candidate comparison and click Open saved interface. Inspect the full results; leave human reviews untouched."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working interface and inspect the same third-run results and held assessment."
+    }
+  ],
+  "steps": [
+    {
+      "id": "LAUNCH",
+      "state": "blocked",
+      "label": "Browser launch denied before navigation",
+      "summary": "The sandbox prevented Chromium from starting; no product action occurred.",
+      "purpose": "Retain the actual first attempt.",
+      "action": "Launch the isolated browser check.",
+      "controls": [],
+      "expected": "Chromium starts.",
+      "actual": "spawn EPERM before navigation. Fresh escalated continuation is recorded separately."
+    }
+  ]
+}

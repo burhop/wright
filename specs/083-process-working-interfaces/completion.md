@@ -427,3 +427,9 @@ Older installed browser builds do not establish the new runtime's browser behavi
 That checkpoint recorded 46 checked / 11 open. Subsequent common-view and
 two-process audits close T021/T045/T047; the current ledger at the top has
 49 checked / 8 open. Full feature acceptance remains unproved.
+
+## 3 October — current Docker installed acceptance primary audit
+
+The [current Docker review](../../artifacts/process-interfaces/083/20261003-current-docker-primary-audit-008-verified/README.md) verifies two fresh current-wheel Linux installations, normal workspace/common/saved journeys, exact geometry/toolpath/thermal evidence, held assessments, read-only preview and explicit reopening with model/compiler/provider startup unavailable. Across four reports,36 checks pass; two harness assumption stops and a pre-navigation launch denial remain explicit. No production correction or engineering replay occurs. All297 original files, copied engineering/saved assets and five business tables per fixture remain unchanged; generated Linux workspace/launch metadata changes are inspected. All captured views close; both owned Docker hosts stop normally.
+
+T051,SC-001,SC-008 now have primary semantic dispositions: **67 proved /115 awaiting review**, all182 identities/texts preserved. T056/T057 and the unlimited goal remain open. Earlier wheel/editor/regression proofs retain their original scope; the current frontend manifest is identical. No physical/user acceptance, push,merge or release. Continue the remaining shared UI/progress/engineering/migration/contract/task audit without repeating completed digital chains.

@@ -1,0 +1,250 @@
+{
+  "title": "Saved Heat comparison after repeated CAD and solver execution",
+  "summary": "Current installed Linux Docker build and copied actual engineering run; normal workspace entry. Model and compiler deliberately unavailable; no mocked routes or engineering replay.",
+  "overall": "blocked",
+  "updated": "2026-10-03T22:07:50.407Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved heat workflow and click Use saved process."
+    },
+    {
+      "label": "Attach second run",
+      "instruction": "Open the third recorded run link and inspect its CAD, analysis and held assessment results."
+    },
+    {
+      "label": "Reuse",
+      "instruction": "Click Create or choose interface, select Heat-spreader candidate comparison and click Open saved interface. Inspect the full results; leave human reviews untouched."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working interface and inspect the same third-run results and held assessment."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Heat-spreader comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the heat workflow",
+      "summary": "The exact accepted heat workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow"
+      ],
+      "expected": "The accepted heat workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Heat workflow diagram",
+      "summary": "The original heat assignment opens with its connected review, CAD and analysis stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted heat workflow file.",
+      "controls": [
+        "workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved heat source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual heat run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded heat run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing heat run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Common view shows the exact completed digital chain",
+      "summary": "The recorded CAD and solver results are visible with the final human-review hold.",
+      "purpose": "Check common-view parity against the authoritative third-run contract.",
+      "action": "Inspect all recorded common-view result cards; leave reviews untouched.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "All eighteen exact third-run results, with no substituted earlier evidence.",
+      "actual": "All result identities match the third-run API contract.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S08B",
+      "state": "pass",
+      "label": "Common view opens the same actual solver samples",
+      "summary": "The common reader renders every fine-field sample before switching to the tailored interface.",
+      "purpose": "Compare common and tailored readers against the same exact recorded bytes.",
+      "action": "Open revision_60_fine in the common view and choose the recorded axes.",
+      "controls": [
+        "Open representation",
+        "View numerical samples",
+        "Horizontal column",
+        "Vertical column",
+        "Value column"
+      ],
+      "expected": "765 samples from the exact fine-field CSV.",
+      "actual": "Common viewer renders all 765 recorded samples.",
+      "raw": "screenshots/raw/S08B.png",
+      "annotated": "screenshots/annotated/S08B.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Saved updated comparison shows identical evidence",
+      "summary": "The previously built comparison groups the actual third-run geometry, fields and checks.",
+      "purpose": "Prove unchanged saved-interface reuse with common/tailored result identity parity.",
+      "action": "Choose the saved Heat comparison and click Open saved interface.",
+      "controls": [
+        "Saved interface",
+        "Open saved interface"
+      ],
+      "expected": "The saved updated revision displays exactly the same eighteen third-run result identities.",
+      "actual": "Exact common/tailored identity parity and all three comparison groups are visible.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Actual solver field opens inside the saved interface",
+      "summary": "Wright’s shared viewer shows the exact fine-field table and all recorded samples.",
+      "purpose": "Verify exact third-run rendering in the generated interface using the shared reader.",
+      "action": "Click Open representation on revision_60_fine; expand View numerical samples and select x_m, y_m and temperature_c.",
+      "controls": [
+        "Open representation",
+        "View numerical samples",
+        "Horizontal column",
+        "Vertical column",
+        "Value column"
+      ],
+      "expected": "765 samples from the recorded third-run CSV.",
+      "actual": "765 actual samples rendered in the saved interface.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Exact held assessment opens",
+      "summary": "The comparison preserves all checks and the mandatory human-review hold.",
+      "purpose": "Verify assessment identity and honest engineering status.",
+      "action": "Reopen the saved comparison and click Open assessment on revision_60_fine.",
+      "controls": [
+        "Open assessment"
+      ],
+      "expected": "25 passed checks, one blocked review, exact requested result focus.",
+      "actual": "Full held assessment visible with the exact fine-field result focus.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "Exact producing step opens in the refined editor",
+      "summary": "Result navigation returns to the actual solver-output block in the accepted process.",
+      "purpose": "Preserve complementary engineering inspection and working views.",
+      "action": "Reopen the saved comparison and click Open producing step.",
+      "controls": [
+        "Open producing step",
+        "Workflow files"
+      ],
+      "expected": "The accepted source and exact compute_fields producer open.",
+      "actual": "Accepted process editor and exact producer focus restored.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Entry stopped",
+      "summary": "The normal workspace entry did not meet the expected state.",
+      "purpose": "Retain the first stopping point.",
+      "action": "Stop at the unexpected entry state.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workspace and established editor available.",
+      "actual": "expect(received).toBe(expected) // Object.is equality\n\nExpected: false\nReceived: undefined",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

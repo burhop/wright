@@ -1,0 +1,44 @@
+{
+  "Id": "4da0ed46780235991b292d052689c803e1d2470aa2896f81879cb0b3aed3a76c",
+  "Image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "State": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 3376980,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-03T22:06:19.775751799Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "D:/repos/wright/.local-run/process-interfaces-083/t056-current-docker-001-heat",
+      "Destination": "/proof-input",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "limits": {
+    "Memory": 2147483648,
+    "NanoCpus": 2000000000,
+    "PidsLimit": 256,
+    "ReadonlyRootfs": true,
+    "PortBindings": {
+      "8041/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8041"
+        }
+      ]
+    },
+    "Tmpfs": {
+      "/tmp": "rw,size=1073741824"
+    }
+  }
+}

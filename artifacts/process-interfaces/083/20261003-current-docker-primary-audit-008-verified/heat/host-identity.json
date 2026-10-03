@@ -1,0 +1,19 @@
+{
+  "installed_owning_modules": [
+    "api.main",
+    "core",
+    "data_vault",
+    "agent_adapters",
+    "workspace_service",
+    "tool_registry",
+    "wright_engineering"
+  ],
+  "frontend_from_installed_wheel": true,
+  "compiler_available": false,
+  "provider_autostart": false,
+  "original_worktree_imports": false,
+  "retired_modules_absent": true,
+  "fixture_local_credentials": true,
+  "fixture_local_agent_config": true,
+  "agent_unavailable_on_checked_loopback_port": true
+}

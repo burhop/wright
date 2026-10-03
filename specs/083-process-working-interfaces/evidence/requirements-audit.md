@@ -223,3 +223,9 @@ that work is complete. T057's final preservation/commit/resource handoff is sepa
 No held review, protected campaign, physical/supplier effect, promotion, push,
 merge or release occurred. Credential values are checked; private contexts,
 databases and traces are excluded. Goal completion remains unproven.
+
+## 3 October — current Docker installed acceptance primary audit
+
+The [current Docker review](../../../artifacts/process-interfaces/083/20261003-current-docker-primary-audit-008-verified/README.md) verifies two fresh current-wheel Linux installations, normal workspace/common/saved journeys, exact geometry/toolpath/thermal evidence, held assessments, read-only preview and explicit reopening with model/compiler/provider startup unavailable. Across four reports,36 checks pass; two harness assumption stops and a pre-navigation launch denial remain explicit. No production correction or engineering replay occurs. All297 original files, copied engineering/saved assets and five business tables per fixture remain unchanged; generated Linux workspace/launch metadata changes are inspected. All captured views close; both owned Docker hosts stop normally.
+
+T051,SC-001,SC-008 now have primary semantic dispositions: **67 proved /115 awaiting review**, all182 identities/texts preserved. T056/T057 and the unlimited goal remain open. Earlier wheel/editor/regression proofs retain their original scope; the current frontend manifest is identical. No physical/user acceptance, push,merge or release. Continue the remaining shared UI/progress/engineering/migration/contract/task audit without repeating completed digital chains.
