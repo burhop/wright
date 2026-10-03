@@ -1,5 +1,21 @@
 # Heat-spreader proof progress
 
+## Current repeated Heat chain and saved-interface evidence
+
+The [repeat/reuse proof](../../../artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md)
+records actual run `63b639c7a8f446cd90a9285921ab9072`, eighteen outputs, exact STEP
+readback-to-solver mapping, 135/765 coarse/fine samples and its original source gate:
+25 passes and mandatory human-review hold. The actual default-model interface is
+generated, previewed, saved, focus-updated and reused through Wright. Common and
+tailored views inspect identical fields, assessment and producer identities.
+
+The [current primary audit](../../../artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/README.md)
+rehashes actual frozen files/fields and saved assets, comparing full original
+profiles and actual gate events. T046's named scope is proved; overall T047/FR-016
+review remains open for the stricter printed first-stage scope. Earlier pending
+paragraphs below keep their historical checkpoint meaning. No critic, physical or
+human engineering acceptance is added, and no source/run/decision is replayed.
+
 ## Current run-path preparation — 3 October 2026
 
 Fresh Heat configurations can declare `wright.run-path/1` through the existing
@@ -8,7 +24,7 @@ bind to the run ID; native output and solver job names also differ between runs.
 Original inputs, numerical procedure, full profile and declared reviews remain
 unchanged. The combined controlled example/operator/runtime suite passes 85
 cases, no skips, and Ruff passes. See the
-[scoped preparation proof](../../../../artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/README.md).
+[scoped preparation proof](../../../artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/README.md).
 Native project history/ownership, fresh source acceptance, actual repeated
 CAD/solver work, UI compatibility and saved-interface reuse are not proved by
 this configuration test. Retained reviews remain unanswered and T047 stays open.
@@ -90,7 +106,7 @@ The first run subsequently failed before CAD source creation because its manual
 test policy did not permit automatic document writes. No CAD version or solver
 output was produced. Its consumed continuation was not replayed and its policy was
 not changed. Owned providers and container were stopped gracefully. The failure is
-retained in [failed-manual-attempt.json](../../../../artifacts/process-interfaces/083/20261002-heat-continuation/failed-manual-attempt.json).
+retained in [failed-manual-attempt.json](../../../artifacts/process-interfaces/083/20261002-heat-continuation/failed-manual-attempt.json).
 
 A fresh exact automatic digital-test policy and workspace produced run
 `86533be67a404058bc21a633146bd598` with accepted source digest
@@ -116,7 +132,7 @@ Final checks retain 28 action/example tests and add 57 frontend tests across fou
 files; TypeScript and Ruff pass. Authoring-availability coverage adds visible
 capability progress and lets
 creation readiness resolve independently of saved-interface reads. The original
-failed test/report roots remain retained. See [checked scope](../../../../artifacts/process-interfaces/083/20261002-heat-continuation/checked-scope.json).
+failed test/report roots remain retained. See [checked scope](../../../artifacts/process-interfaces/083/20261002-heat-continuation/checked-scope.json).
 
 Prepared definitions now remain proposals outside `workflows/`. The example
 documents normal source-service acceptance and exact digest read-back; writing a
@@ -156,7 +172,7 @@ profile recorded **25 passing checks and one blocked review**, assessment
 the profile's authenticated human review. Release eligibility remains false.
 
 Actual outputs, exact assessment and checked scope are retained in
-[the digital analysis artifacts](../../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/checked-scope.json).
+[the digital analysis artifacts](../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/checked-scope.json).
 Assessment semantic digest and serialized-file SHA-256 are separate identities.
 
 ## Common working view and remaining model limitation
@@ -176,7 +192,7 @@ requested result as well as its assessment. JSON evidence has a 1 MiB inert,
 scrollable preview bound; prose retains 64 KiB, with download fallback above the
 limits. Earlier incorrect harness selectors and the assessment-size stopping
 report remain retained. See the
-[workspace report](../../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/workspace-walkthrough/report.html).
+[workspace report](../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/workspace-walkthrough/report.html).
 Raw authenticated traces remain private.
 
 Three actual heat-interface generation attempts failed before a preview/build.
@@ -185,7 +201,7 @@ the unchanged configured `gpt-5.6-sol`/Hermes model-only role. No broad tools,
 global model change or automatic replay was used. Fixed timeout/auth/rate-limit
 categories provide actionable messages without forwarding SDK exception text.
 The failed job and
-[safe timeout evidence](../../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/ui-authoring-timeout.json)
+[safe timeout evidence](../../../artifacts/process-interfaces/083/20261002-live-heat-analysis/ui-authoring-timeout.json)
 are retained. The common results view remains usable; successful earlier generic
 authoring smoke does not establish this tailored heat interface.
 
@@ -233,8 +249,8 @@ Workflows/file entry, common view and exact run, existing built-preview restorat
 actual managed rendering of all **18** results, explicit native save and saved
 working-tab opening. Console, page-error and failed-response lists are empty.
 Source/bindings/build/saved provenance and screenshots are in
-[the tailored-interface evidence](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/checked-scope.json)
-and its [workspace report](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/workspace-walkthrough/report.html).
+[the tailored-interface evidence](../../../artifacts/process-interfaces/083/20261002-live-heat-interface/checked-scope.json)
+and its [workspace report](../../../artifacts/process-interfaces/083/20261002-live-heat-interface/workspace-walkthrough/report.html).
 Authenticated traces remain private. The report structure validator passes.
 
 This first compact interface is a presentation milestone, not complete acceptance:
@@ -264,7 +280,7 @@ The normal-workspace update/preview/save/open journey passed **13 checks**, with
 all 18 actual result cards, enabled navigation controls and empty browser error
 lists. It did not invoke CAD/solver work. Exact source/build/role/revision evidence
 and the corrected manual checklist are in
-[the focused-update record](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/focused-update/checked-scope.json).
+[the focused-update record](../../../artifacts/process-interfaces/083/20261002-live-heat-interface/focused-update/checked-scope.json).
 Actual navigation activation, second-run reuse and complete preparation/review
 controls retain separate proof obligations. T047 remains unchecked.
 
@@ -300,7 +316,7 @@ UI revision records are byte-identical before/after reuse: no new UI generation,
 build or dependency download was needed. This is not a second complete CAD/solver
 execution or human acceptance. The original measured gate remains held.
 
-The [navigation and reuse evidence](../../../../artifacts/process-interfaces/083/20261002-live-heat-interface/navigation-and-reuse/checked-scope.json)
+The [navigation and reuse evidence](../../../artifacts/process-interfaces/083/20261002-live-heat-interface/navigation-and-reuse/checked-scope.json)
 includes unchanged-bundle checks, actual readiness/start/interaction receipts and
 both browser reports. Their structure validators pass; authenticated traces stay
 private. The compact comparison still lacks preparation/mutation controls;
@@ -368,8 +384,8 @@ Browser-unload presentation lifetime remains a broader host-audit subject.
 Fresh 012 then completed without that capacity stop.
 
 Evidence, screenshots, tests, exact parity and retained stops are in the
-[two-process navigation record](../../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/checked-scope.json)
-and its [latest Heat walkthrough](../../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/heat-results-and-navigation/report.html).
+[two-process navigation record](../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/checked-scope.json)
+and its [latest Heat walkthrough](../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/heat-results-and-navigation/report.html).
 All five copied report structures pass; authenticated traces stay private and
 actual credential-value scans pass. Full engineering/user acceptance, migration,
 broader lifecycle/editor and final requirement audits remain separate work.

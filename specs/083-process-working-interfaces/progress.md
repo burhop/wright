@@ -1,5 +1,21 @@
 # Feature 083 progress
 
+## Actual engineering/UI primary review — 3 October 2026
+
+The [engineering primary review](../../artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/README.md) disposes 18 whole obligations using actual
+retained STL/3MF/G-code/STEP/field bytes, original source-run gates and real
+default-model UI generation/update/reuse. **112 proved / 70 awaiting review** of
+182 original identities/texts. Both printed gates retain 17 passes plus mandatory
+human hold; Heat retains 25 passes plus mandatory hold and critic approval false.
+All original numerical/profile limits and failed attempts remain intact.
+
+550 public evidence files, 23 private Heat files and 12 saved UI assets are rehashed.
+No new execution, review or physical operation occurs. The successful printed
+configuration routes image/prompt to AI basis/review and JSON to native geometry;
+JOB-A-stage1's stricter handoff wording and related FR-016/T047 whole-scope review
+remain open. **55 tasks checked; T056/T057 remain open.** Provider qualification,
+remaining contract/runtime review and post-trace installed verification continue.
+
 ## Current migration/history primary review — 3 October 2026
 
 The [migration primary review](../../artifacts/process-interfaces/083/20261003-migration-primary-audit-verified/README.md) completes five whole obligations against

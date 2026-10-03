@@ -1,0 +1,88 @@
+[
+  {
+    "job": "printed",
+    "run_id": "40a732fd2ccb46c2af8a0f466febee00",
+    "assessment_id": "assessment-da4a53f1a99f4c0b95358956e3dce7cf",
+    "assessment_file_sha256": "dae29eb07428b4abd4bb35f2c481f52001b992deb991432c3f591622ad4f4c88",
+    "gate_step": "validate_outputs_configured_default_016",
+    "original_profile_exact": true,
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 17
+      }
+    },
+    "request": {
+      "run_id": "40a732fd2ccb46c2af8a0f466febee00",
+      "check_step_id": "validate_outputs_configured_default_016"
+    },
+    "held_checks": [
+      "engineering-review"
+    ]
+  },
+  {
+    "job": "printed",
+    "run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+    "assessment_id": "assessment-5f34914203794f148d653c47e99f98d4",
+    "assessment_file_sha256": "6334d47afb6442a5028171d1ba706d6c5c9d89bbb8f9c46ae77ea2d8a93a3042",
+    "gate_step": "validate_outputs_configured_default_016",
+    "original_profile_exact": true,
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 17
+      }
+    },
+    "request": {
+      "run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+      "check_step_id": "validate_outputs_configured_default_016"
+    },
+    "held_checks": [
+      "engineering-review"
+    ]
+  },
+  {
+    "job": "heat",
+    "run_id": "63b639c7a8f446cd90a9285921ab9072",
+    "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+    "assessment_file_sha256": "d6c833a6106119a204a509a3248a4542ec4a64a69802256f97c623117067df3b",
+    "gate_step": "validate_outputs_repeatable_default_013",
+    "original_profile_exact": true,
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 25
+      }
+    },
+    "held_checks": [
+      "basis-review"
+    ]
+  }
+]
