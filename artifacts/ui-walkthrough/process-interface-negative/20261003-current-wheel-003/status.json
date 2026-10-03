@@ -1,0 +1,193 @@
+{
+  "title": "Common and saved interface evidence checks",
+  "summary": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true })\nExpected: visible\nError: strict mode violation: locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true }) resolved to 2 elements:\n    1) <p>The review evidence changed or is unavailable.</p> aka locator('[id=\"_r_b_\"]').getByText('The review evidence changed')\n    2) <p>The review evidence changed or is unavailable.</p> aka locator('[id=\"_r_c_\"]').getByText('The review evidence changed')\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true })\n",
+  "overall": "blocked",
+  "updated": "2026-10-03T19:32:01.621Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the isolated workspace. Click Workflows, Workflow files, Open workflow, choose ui-evidence-negative-001.workflow.wflow, then Use saved process."
+    },
+    {
+      "label": "Attach prepared run",
+      "instruction": "Open the prepared run link; inspect the available document review without approving it."
+    },
+    {
+      "label": "Save UI",
+      "instruction": "Open its prepared preview. Click Create or choose interface, Save interface, then Open saved interface."
+    },
+    {
+      "label": "Changed or missing evidence",
+      "instruction": "After the controlled fixture changes or removes the reviewed document, reload each view. Approve must be unavailable and explain which evidence needs refreshing."
+    },
+    {
+      "label": "Changed process",
+      "instruction": "Open the saved interface link for the changed process revision. Use common working view must remain available; historical evidence must not authorize a new review."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Normal workspace entry",
+      "summary": "Normal Wright workspace and Workflows control are visible.",
+      "purpose": "Workflows available in normal workspace",
+      "action": "Open isolated workspace",
+      "controls": [
+        "Open isolated workspace"
+      ],
+      "expected": "Workflows available in normal workspace",
+      "actual": "Normal Wright workspace and Workflows control are visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Refined editor",
+      "summary": "Editor opens inside Wright.",
+      "purpose": "Established editor and Workflow files controls",
+      "action": "Click Workflows",
+      "controls": [
+        "Click Workflows"
+      ],
+      "expected": "Established editor and Workflow files controls",
+      "actual": "Editor opens inside Wright.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Choose saved process",
+      "summary": "Named synthetic workflow is available.",
+      "purpose": "Exact fixture workflow listed",
+      "action": "Click Workflow files then Open workflow",
+      "controls": [
+        "Click Workflow files then Open workflow"
+      ],
+      "expected": "Exact fixture workflow listed",
+      "actual": "Named synthetic workflow is available.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Accepted process",
+      "summary": "Actual accepted diagram opens; no process starts.",
+      "purpose": "Connected source opens without executing",
+      "action": "Choose ui-evidence-negative-001.workflow.wflow",
+      "controls": [
+        "Choose ui-evidence-negative-001.workflow.wflow"
+      ],
+      "expected": "Connected source opens without executing",
+      "actual": "Actual accepted diagram opens; no process starts.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Common view in workspace tab",
+      "summary": "The common view is hosted beside the editor.",
+      "purpose": "Common working view opens",
+      "action": "Click Use saved process",
+      "controls": [
+        "Click Use saved process"
+      ],
+      "expected": "Common working view opens",
+      "actual": "The common view is hosted beside the editor.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Exact run review available",
+      "summary": "Approve is available for the one recorded synthetic document. No decision is submitted.",
+      "purpose": "Existing exact review available without another run",
+      "action": "Open prepared run link",
+      "controls": [
+        "Open prepared run link"
+      ],
+      "expected": "Existing exact review available without another run",
+      "actual": "Approve is available for the one recorded synthetic document. No decision is submitted.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Actual read-only preview",
+      "summary": "Loaded preview renders shared controls and disables Approve.",
+      "purpose": "Exact preview loads; reviews are read-only",
+      "action": "Open prepared preview link",
+      "controls": [
+        "Open prepared preview link"
+      ],
+      "expected": "Exact preview loads; reviews are read-only",
+      "actual": "Loaded preview renders shared controls and disables Approve.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Preview ready to save",
+      "summary": "Backend-loaded preview enables Save interface.",
+      "purpose": "Save available only after exact preview loaded",
+      "action": "Click Create or choose interface",
+      "controls": [
+        "Click Create or choose interface"
+      ],
+      "expected": "Save available only after exact preview loaded",
+      "actual": "Backend-loaded preview enables Save interface.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Immutable saved interface",
+      "summary": "The real save owner records the built revision after preview.",
+      "purpose": "Saved interface available",
+      "action": "Click Save interface",
+      "controls": [
+        "Click Save interface"
+      ],
+      "expected": "Saved interface available",
+      "actual": "The real save owner records the built revision after preview.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Saved tailored view authority",
+      "summary": "Saved interface presents the same prepared document and available Approve. No review or action is sent.",
+      "purpose": "Same exact available review as common view",
+      "action": "Click Open saved interface",
+      "controls": [
+        "Click Open saved interface"
+      ],
+      "expected": "Same exact available review as common view",
+      "actual": "Saved interface presents the same prepared document and available Approve. No review or action is sent.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "First unexpected stopping point",
+      "summary": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true })\nExpected: visible\nError: strict mode violation: locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true }) resolved to 2 elements:\n    1) <p>The review evidence changed or is unavailable.</p> aka locator('[id=\"_r_b_\"]').getByText('The review evidence changed')\n    2) <p>The review evidence changed or is unavailable.</p> aka locator('[id=\"_r_c_\"]').getByText('The review evidence changed')\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true })\n",
+      "purpose": "Preserve the first failure",
+      "action": "Stop current walkthrough",
+      "controls": [],
+      "expected": "The declared next behavior",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true })\nExpected: visible\nError: strict mode violation: locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true }) resolved to 2 elements:\n    1) <p>The review evidence changed or is unavailable.</p> aka locator('[id=\"_r_b_\"]').getByText('The review evidence changed')\n    2) <p>The review evidence changed or is unavailable.</p> aka locator('[id=\"_r_c_\"]').getByText('The review evidence changed')\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for locator('[data-testid=\"common-process-view\"]:visible').getByText('The review evidence changed or is unavailable.', { exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

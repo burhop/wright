@@ -1,0 +1,90 @@
+{
+  "title": "Common and saved interface evidence checks",
+  "summary": "Earlier reports retain changed and missing evidence checks in both views. This continuation uses normal conditional source updates to prove incompatible saved binding fallback without replay. Current wheel, controlled synthetic fixture, no engineering or external action.",
+  "overall": "pass",
+  "updated": "2026-10-03T20:05:58.763Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the isolated workspace. Click Workflows, Workflow files, Open workflow, choose ui-evidence-negative-001.workflow.wflow, then Use saved process."
+    },
+    {
+      "label": "Attach prepared run",
+      "instruction": "Open the prepared run link; inspect the available document review without approving it."
+    },
+    {
+      "label": "Save UI",
+      "instruction": "Open its prepared preview. Click Create or choose interface, Save interface, then Open saved interface."
+    },
+    {
+      "label": "Changed or missing evidence",
+      "instruction": "After the controlled fixture changes or removes the reviewed document, reload each view. Approve must be unavailable and explain which evidence needs refreshing."
+    },
+    {
+      "label": "Changed process",
+      "instruction": "Open the saved interface link for the changed process revision. Use common working view must remain available; historical evidence must not authorize a new review."
+    }
+  ],
+  "steps": [
+    {
+      "id": "C01",
+      "state": "pass",
+      "label": "common restored exact baseline",
+      "summary": "Exact original evidence enables Approve. Earlier saved-preview and two-view changed-evidence proofs are retained; no preview, producer or authoring is repeated.",
+      "purpose": "Same exact saved review available; no execution or decision",
+      "action": "Open retained common run link",
+      "controls": [
+        "Open retained common run link"
+      ],
+      "expected": "Same exact saved review available; no execution or decision",
+      "actual": "Exact original evidence enables Approve. Earlier saved-preview and two-view changed-evidence proofs are retained; no preview, producer or authoring is repeated.",
+      "raw": "screenshots/raw/C01.png",
+      "annotated": "screenshots/annotated/C01.png"
+    },
+    {
+      "id": "C02",
+      "state": "pass",
+      "label": "working restored exact baseline",
+      "summary": "Exact original evidence enables Approve. Earlier saved-preview and two-view changed-evidence proofs are retained; no preview, producer or authoring is repeated.",
+      "purpose": "Same exact saved review available; no execution or decision",
+      "action": "Open retained working run link",
+      "controls": [
+        "Open retained working run link"
+      ],
+      "expected": "Same exact saved review available; no execution or decision",
+      "actual": "Exact original evidence enables Approve. Earlier saved-preview and two-view changed-evidence proofs are retained; no preview, producer or authoring is repeated.",
+      "raw": "screenshots/raw/C02.png",
+      "annotated": "screenshots/annotated/C02.png"
+    },
+    {
+      "id": "S15",
+      "state": "pass",
+      "label": "Incompatible saved binding contained",
+      "summary": "Changed accepted output binding prevents launching the saved interface and offers the common view.",
+      "purpose": "No generated frame/action authority; common fallback offered",
+      "action": "Open saved interface for changed process revision",
+      "controls": [
+        "Open saved interface for changed process revision"
+      ],
+      "expected": "No generated frame/action authority; common fallback offered",
+      "actual": "Changed accepted output binding prevents launching the saved interface and offers the common view.",
+      "raw": "screenshots/raw/S15.png",
+      "annotated": "screenshots/annotated/S15.png"
+    },
+    {
+      "id": "S16",
+      "state": "pass",
+      "label": "Common fallback preserves historical identity",
+      "summary": "Common fallback opens the exact historical run while review stays unavailable for changed source.",
+      "purpose": "Historical run inspectable without new permission",
+      "action": "Click Use common working view",
+      "controls": [
+        "Click Use common working view"
+      ],
+      "expected": "Historical run inspectable without new permission",
+      "actual": "Common fallback opens the exact historical run while review stays unavailable for changed source.",
+      "raw": "screenshots/raw/S16.png",
+      "annotated": "screenshots/annotated/S16.png"
+    }
+  ]
+}

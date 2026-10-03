@@ -1,0 +1,93 @@
+{
+  "diagnostics": {
+    "console": [
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:61434/assets/index-ClxcUrTE.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:61434/assets/index-ClxcUrTE.js:4160:3720)\n    at async http://wright.localhost:61434/assets/index-ClxcUrTE.js:4308:100927\n    at async http://wright.localhost:61434/assets/index-ClxcUrTE.js:4308:101340",
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:61434/assets/index-ClxcUrTE.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:61434/assets/index-ClxcUrTE.js:4160:3720)\n    at async http://wright.localhost:61434/assets/index-ClxcUrTE.js:4308:100927\n    at async http://wright.localhost:61434/assets/index-ClxcUrTE.js:4308:101340",
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:61434/assets/index-ClxcUrTE.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:61434/assets/index-ClxcUrTE.js:4160:3720)\n    at async http://wright.localhost:61434/assets/index-ClxcUrTE.js:4308:100927\n    at async http://wright.localhost:61434/assets/index-ClxcUrTE.js:4308:101340"
+    ],
+    "pageErrors": [],
+    "failedResponses": [
+      {
+        "path": "/api/agent/models",
+        "status": 503
+      },
+      {
+        "path": "/api/agent/models",
+        "status": 503
+      },
+      {
+        "path": "/api/agent/models",
+        "status": 503
+      }
+    ]
+  },
+  "posts": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-f1ca33c61df74d2ea8a96a3f284f2692/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-f1ca33c61df74d2ea8a96a3f284f2692/present",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-f1ca33c61df74d2ea8a96a3f284f2692/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-f1ca33c61df74d2ea8a96a3f284f2692/present",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-f1ca33c61df74d2ea8a96a3f284f2692/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    }
+  ],
+  "decisions_or_execution_posts": 0,
+  "model_or_provider_calls": 0,
+  "controlled_fixture": true,
+  "protected_subjects_touched": false
+}

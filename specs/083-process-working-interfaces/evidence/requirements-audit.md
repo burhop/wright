@@ -2,9 +2,31 @@
 
 **Index checkpoint:** `5323a6d6`, with one documented route-parameter correction.
 **Earlier runtime correction:** `910bd53b`; recovery checkpoint `f55c1eac`.
-**Current primary batch:** validation/action review adds seven dispositions;
-35 cumulative, 147 awaiting review. Full signoff pending.
+**Current primary batch:** combined negative UI review adds SC-005;
+36 cumulative, 146 awaiting review. Full signoff pending.
 **Scope:** T056 in progress. No complete-goal or human acceptance claim.
+
+## Current common/tailored negative checkpoint
+
+The [installed negative journey](../../../artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/README.md)
+proves SC-005 at its recorded scope. The [cumulative ledger](../../../artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/semantic-ledger.json)
+preserves all 182 obligations: 36 proved, 146 awaiting review. Both views disable
+approval for changed/missing actual evidence; incompatible saved bindings contain
+generated code and offer the common view. The exact historical run and evidence
+remain inspectable with stale interactions and no replay.
+
+The valid source-change browser proof reproduced a historical-read defect. The
+bounded existing service correction verifies the exact durable receipt/record,
+projects against the current source and leaves preparation/mutation checks strict.
+An authenticated regression uses actual source creation/CAS; forged revision claims
+are denied. 259 affected cases pass across 14 modules, no failures/errors/skips.
+The corrected installed wheel passes an eight-step combined browser continuation.
+Earlier failure statuses, raw screenshots and wheel identities remain unchanged.
+Synthetic producer/coding responses establish this controlled scope, not new live
+model/MCP or engineering acceptance. No decision or external action was sent.
+550 retained engineering/UI files match; mandatory engineering reviews remain held.
+Owned proof views close and the temporary host stops normally. T056/T057 remain
+open; continue authoring, scoped hosting, compatibility and distribution review.
 
 ## Latest primary validation/action checkpoint
 

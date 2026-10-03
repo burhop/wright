@@ -1,0 +1,96 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 142,
+      "sha256": "847570a2b08ace530fc37fbb2a23d364987e44d5282375dbe1120d95d5a4fbf4"
+    },
+    "browser-report-index.json": {
+      "bytes": 4506,
+      "sha256": "82e234a776f8bb661af4f76abe419ba02928129e3aab6d020adb8ede8c48517e"
+    },
+    "checked-scope.json": {
+      "bytes": 8964,
+      "sha256": "8444100f69b09d675e4b49c4db1e3e5a8edf289bbc738f4b9ff48845aaa6f54f"
+    },
+    "final-authority-and-cleanup.json": {
+      "bytes": 756,
+      "sha256": "bcb51ef8cdb2aa81b4aa6a71d4bf0370eafa007325710979f1efd2fb4f3dbf70"
+    },
+    "installed-build.json": {
+      "bytes": 785,
+      "sha256": "87a3888843efe107e4aab82bd0e993ab8189b62e2624f0138890dd7ba2a36d42"
+    },
+    "primary-assertions.json": {
+      "bytes": 1256,
+      "sha256": "2575123cf02becf161e0c4c4fc0aa125e30ce35c3ddc6f66615ae0eb6b563fb3"
+    },
+    "publication-first-stop.json": {
+      "bytes": 294,
+      "sha256": "c5b8ddf029c9ed15d6d20e4c7270dfbd03a90e4f19b2a69602c798f1fd9f5649"
+    },
+    "README.md": {
+      "bytes": 3119,
+      "sha256": "cabaedd5eca7ad0863194826584ad7a948cf1a40f53c3f65971e38423f0b3082"
+    },
+    "resources.json": {
+      "bytes": 597,
+      "sha256": "5e229d30eae776e679d96beca300ff7cdfc3d18403f2fd0d6e60c32a006f52e2"
+    },
+    "semantic-ledger.json": {
+      "bytes": 136133,
+      "sha256": "ad49fa29a568fe7e069b891d685af72282c46a1ce86969cb7ee6dfadd936cda3"
+    },
+    "walkthrough-inventory.json": {
+      "bytes": 32658,
+      "sha256": "7221b8c31f4501ac5678541a7c222efb225b051c4853dc43f7d88186f1840f69"
+    },
+    "first-test-attempts/t056-historical-read-reproduce-002.log": {
+      "bytes": 1749,
+      "sha256": "0309dcf57e67909d907146b571cbac5c2643d9cb70c4bd8a3b0dd752b3782afc"
+    },
+    "first-test-attempts/t056-historical-read-reproduce-003.log": {
+      "bytes": 1553,
+      "sha256": "2862373eb2e1eddc176db48ed83442f3da3b572bc719019bd199864c5d35d0ac"
+    },
+    "first-test-attempts/t056-historical-read-reproduce-004.log": {
+      "bytes": 1832,
+      "sha256": "9cd5acb382902bde7c0425c0d43a9fe4ed7ed19eabda1a7ba3933f7cae30fe71"
+    },
+    "first-test-attempts/t056-historical-read-reproduce-005.log": {
+      "bytes": 1832,
+      "sha256": "869be624b70cfb41d254d20faa4037a446539e769565356857d410bc54433574"
+    },
+    "first-test-attempts/t056-historical-read-reproduce-006.log": {
+      "bytes": 32988,
+      "sha256": "bbc6af585d265b3810107fbe9693dbebef5b909dd7a2a68009fc3b1ea0699141"
+    },
+    "first-test-attempts/t056-historical-read-reproduce-007.log": {
+      "bytes": 1542,
+      "sha256": "b3170e44094a487ededcd5fa743c2fb57e170575c0098d89d6770dfe79697a4e"
+    },
+    "regression/case-index.json": {
+      "bytes": 52469,
+      "sha256": "46db9e905222180366b60d3310e7eac0a1b92d0977ca641580aa0c8f08777867"
+    },
+    "regression/command.json": {
+      "bytes": 5272,
+      "sha256": "7cfc0d4c755cb8f364f807f3ab088a6cfd6e4abb052cc58e101e8a6556d4028d"
+    },
+    "regression/direct-correction.log": {
+      "bytes": 913,
+      "sha256": "96d9b79942362abfbaa87f3d82dd9faf9709fc27632769fd17b365e894ef004d"
+    },
+    "regression/output.log": {
+      "bytes": 1154,
+      "sha256": "90f87ffcf7bbe2896cd5a1054068ebb19a27ad03d278d94180d28d8a8674224f"
+    },
+    "regression/result.json": {
+      "bytes": 362,
+      "sha256": "97c2a06864eccca9383f9c292c9485878ee0b526876fa874312b0d6c432459de"
+    },
+    "regression/results.xml": {
+      "bytes": 46931,
+      "sha256": "a3bfb8680516591f43b85b66486aec537663645dbee22f6b96bbf699a0684a22"
+    }
+  }
+}

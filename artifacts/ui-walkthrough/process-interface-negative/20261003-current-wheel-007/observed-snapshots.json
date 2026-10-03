@@ -1,0 +1,1338 @@
+[
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:46.854125+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "waiting",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": true,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:46.854125+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:47.383787+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "waiting",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": true,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:47.383787+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:50.759628+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "waiting",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": true,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:50.759628+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:54.636698+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "waiting",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": true,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:54.636698+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:57.838020+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "stale",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": false,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [
+          {
+            "code": "SUBJECT_STALE",
+            "message": "The review evidence changed or is unavailable.",
+            "correction": "Create a new exact review package; inspect the recorded evidence and decision.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:57.838020+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:58.116257+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "stale",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": false,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [
+          {
+            "code": "SUBJECT_STALE",
+            "message": "The review evidence changed or is unavailable.",
+            "correction": "Create a new exact review package; inspect the recorded evidence and decision.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:58.116257+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:58.419513+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "stale",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": false,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [
+          {
+            "code": "SUBJECT_STALE",
+            "message": "The review evidence changed or is unavailable.",
+            "correction": "Create a new exact review package; inspect the recorded evidence and decision.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:58.419513+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+      "input_snapshot_id": "inputs-cedb5499a2034d2391b78958ff20b76c",
+      "input_digest": "f8fd43a12d10293ecc7fb58918d33beb330b87a2bfbc7ad5262748dabed4df9b",
+      "cursor": 6,
+      "generated_at": "2026-10-03T20:05:58.660929+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "step_id": "first",
+        "port_id": "first_out",
+        "role": "deliverable",
+        "title": "First",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "step_id": "review",
+        "kind": "review",
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "instructions": "Review the prepared test document before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "first.txt",
+            "sha256": "65faf4dd8b684663a11609969b5820f6b618300da9d7e5eba33ac570d6d5a609",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "stale",
+        "decision": null,
+        "action_receipt": null
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-f7c6ad74c0f84f998b25f373338f5952",
+        "operation": "review",
+        "title": "Review outputs",
+        "enabled": false,
+        "subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+        "reasons": [
+          {
+            "code": "SUBJECT_STALE",
+            "message": "The review evidence changed or is unavailable.",
+            "correction": "Create a new exact review package; inspect the recorded evidence and decision.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "f7c6ad74c0f84f998b25f373338f5952",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "ab4fefec8747bc7ff29a78f28abcb154c7310f4b5b57ccfeebefd8dac43db35a",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-03T20:05:58.660929+00:00",
+        "stale_after": null,
+        "operation_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 6,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0:first:first_out",
+        "assessment_id": null,
+        "artifact_ref": "first.txt"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  }
+]

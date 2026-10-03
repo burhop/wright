@@ -1,5 +1,32 @@
 # Feature 083 progress
 
+## Common/tailored negative audit — 36 cumulative dispositions, 3 October 2026
+
+The [negative UI audit](../../artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/README.md)
+adds SC-005. Its [ledger](../../artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/semantic-ledger.json)
+retains all 182 obligations: 36 proved at recorded scope, 146 awaiting review.
+Both views block changed/missing reviewed files. A valid source CAS makes the
+saved binding incompatible; common fallback retains the exact old run/evidence
+and disables review. Eight combined installed-browser steps pass.
+
+This exposed a real read-path defect, reproduced by an authenticated regression.
+The existing service now verifies an exact durable start receipt/run record before
+reading historical evidence against current source. Mutations and preparation
+remain strict; forged historical revisions are denied. 259 affected cases pass
+across 14 modules, no failures/errors/skips; counts overlap earlier proofs.
+Corrected native wheel: afa5cdf39d5007f84a783728a0abaa518d1f02ea5d54c7ade95b1eb758130759.
+Frontend manifest remains byte-identical to the prior qualified native frontend.
+
+First browser/fixture/packaging/selector/source-corruption failures are retained;
+none is silently relabelled as product success. Controlled synthetic author/producer
+responses are distinct from retained actual-model/engineering proofs. No review
+decision or external operation was sent; the synthetic review remains pending.
+Source/artifact bytes restore exactly, owned views close, temporary host60821 stops
+normally. Older hosts90330/46681 remain live at their original build scope. 550
+engineering/UI files, protected subjects and unrelated work remain preserved.
+55 tasks checked; T056/T057 remain open. Continue the remaining authoring, hosting,
+compatibility, distribution and contract/task semantic audit.
+
 ## Primary validation/action audit — 35 cumulative dispositions, 3 October 2026
 
 The [authority primary audit](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/README.md)

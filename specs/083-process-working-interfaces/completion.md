@@ -4,7 +4,19 @@
 **Current ledger:** **55 checked / 2 open**: T056 and T057.
 Task counts are not a percentage of completion.
 
-The latest [authority primary audit](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/README.md)
+The current [negative UI audit](../../artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/README.md)
+proves SC-005 at installed controlled-fixture scope. Its [ledger](../../artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/semantic-ledger.json)
+retains all 182 obligations: 36 proved, 146 awaiting review. Eight combined browser
+steps and 259 affected owner/API checks pass. A bounded historical-read correction
+keeps exact accepted evidence inspectable without transferring old permission.
+Required changed/missing evidence and incompatible saved bindings block review;
+the common fallback works without execution replay. Earlier failures/builds retain
+their identity. No new live-model/MCP engineering proof, engineering decision or
+external effect is claimed. 550 engineering/UI files remain preserved and mandatory
+reviews stay held. T056/T057 remain open; complete the remaining semantic audit
+and final resource/preservation/commit handoff before marking the goal complete.
+
+The earlier [authority primary audit](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/README.md)
 adds seven dispositions: FR-013/014, US2-AC3, EDGE-02/03 and NEG-09/10. Its
 [cumulative ledger](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/semantic-ledger.json)
 retains all 182 obligations: 35 proved at their recorded scope, 147 awaiting

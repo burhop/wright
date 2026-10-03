@@ -157,6 +157,71 @@ def test_start_returns_before_work_finishes_and_retry_reattaches(lifecycle_case)
     assert len(case.calls) == 1
 
 
+def test_changed_source_reopens_exact_historical_run_without_permission(
+    lifecycle_case, request
+):
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.workflow_sources import WorkspaceWorkflowSourceUseCases
+
+    case = lifecycle_case
+    executor = BoundedExecutor(max_workers=1)
+    request.addfinalizer(lambda: case.client.portal.call(executor.close))
+    case.owner.workspace.workflow_sources = WorkspaceWorkflowSourceUseCases(executor)
+    case.owner.workspace.ensure_workspace_path_safe = lambda path: path
+    owned_source = case.root / case.reference.source_path
+    original_source = owned_source.read_text(encoding="utf-8")
+    owned_source.unlink()
+    created = case.client.post(
+        "/api/workspace/workflow-sources",
+        json={
+            "session_id": case.query["session_id"],
+            "path": case.reference.source_path,
+            "source": original_source,
+        },
+    )
+    assert created.status_code == 201
+    response = begin(case)
+    assert response.status_code == 202, response.json()
+    run_id = response.json()["run_id"]
+    assert case.entered.wait(2)
+    case.release.set()
+    assert wait(case, run_id)["status"] == "completed"
+    head = case.client.get(
+        "/api/workspace/workflow-sources",
+        params={
+            "session_id": case.query["session_id"],
+            "path": case.reference.source_path,
+        },
+    ).json()
+    updated = case.client.put(
+        "/api/workspace/workflow-sources",
+        json={
+            "session_id": case.query["session_id"],
+            "path": case.reference.source_path,
+            "source": head["source"] + "\n",
+            "semantic_change_validated": True,
+            "expected_storage_revision": head["storage_revision"],
+            "expected_storage_digest": head["storage_digest"],
+        },
+    )
+    assert updated.status_code == 200
+    recorded = case.root / response.json()["run_log_path"]
+    before = recorded.read_bytes()
+    attached = case.client.get(f"{PREFIX}/runs/{run_id}", params=case.query)
+    assert attached.status_code == 200
+    body = attached.json()
+    assert body["context"]["process"]["source_digest"] == case.reference.source_digest
+    assert body["context"]["run_id"] == run_id and body["state"] == "completed"
+    assert body["outputs"] and all(not action["enabled"] for action in body["actions"])
+    assert (
+        case.client.get(f"{PREFIX}/interaction", params=case.query).status_code == 409
+    )
+    forged = {**case.query, "expected_storage_digest": "0" * 64}
+    assert case.client.get(f"{PREFIX}/runs/{run_id}", params=forged).status_code == 403
+    assert begin(case, "changed-source-new-start").status_code == 409
+    assert recorded.read_bytes() == before and len(case.calls) == 1
+
+
 def test_actual_sse_disconnect_leaves_backend_running(lifecycle_case):
     case = lifecycle_case
     response = begin(case)

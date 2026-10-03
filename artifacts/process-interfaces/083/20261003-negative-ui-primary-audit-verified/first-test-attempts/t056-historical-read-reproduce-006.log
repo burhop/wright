@@ -1,0 +1,550 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____ test_changed_source_reopens_exact_historical_run_without_permission _____
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\_utils.py", line 85, in create_collapsing_task_group
+  |     async with anyio.create_task_group() as tg:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "D:\repos\wright\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 847, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\runner.py", line 353, in from_call
+    |     result: TResult | None = func()
+    |                              ~~~~^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\runner.py", line 245, in <lambda>
+    |     lambda: runtest_hook(item=item, **kwds),
+    |             ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\logging.py", line 850, in pytest_runtest_call
+    |     yield
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\capture.py", line 900, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\skipping.py", line 268, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\runner.py", line 179, in pytest_runtest_call
+    |     item.runtest()
+    |     ~~~~~~~~~~~~^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\python.py", line 1720, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\_pytest\python.py", line 166, in pytest_pyfunc_call
+    |     result = testfunction(**testargs)
+    |   File "D:\repos\wright\apps\api\tests\test_process_interface_run_lifecycle.py", line 171, in test_changed_source_reopens_exact_historical_run_without_permission
+    |     created = case.client.post("/api/workspace/workflow-sources", json={
+    |         "session_id": case.query["session_id"], "path": case.reference.source_path,
+    |         "source": original_source,
+    |     })
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 555, in post
+    |     return super().post(
+    |            ~~~~~~~~~~~~^
+    |         url,
+    |         ^^^^
+    |     ...<10 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 1144, in post
+    |     return self.request(
+    |            ~~~~~~~~~~~~^
+    |         "POST",
+    |         ^^^^^^^
+    |     ...<11 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 454, in request
+    |     return super().request(
+    |            ~~~~~~~~~~~~~~~^
+    |         method,
+    |         ^^^^^^^
+    |     ...<11 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 825, in request
+    |     return self.send(request, auth=auth, follow_redirects=follow_redirects)
+    |            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    |     response = self._send_handling_auth(
+    |         request,
+    |     ...<2 lines>...
+    |         history=[],
+    |     )
+    |   File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    |     response = self._send_handling_redirects(
+    |         request,
+    |         follow_redirects=follow_redirects,
+    |         history=history,
+    |     )
+    |   File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    |     response = self._send_single_request(request)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    |     response = transport.handle_request(request)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 356, in handle_request
+    |     raise exc
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 353, in handle_request
+    |     portal.call(self.app, scope, receive, send)
+    |     ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\anyio\from_thread.py", line 340, in call
+    |     return cast(T_Retval, self.start_task_soon(func, *args).result())
+    |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+    |   File "D:\Users\markb\miniconda3\Lib\concurrent\futures\_base.py", line 456, in result
+    |     return self.__get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "D:\Users\markb\miniconda3\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    |     raise self._exception
+    |   File "D:\repos\wright\.venv\Lib\site-packages\anyio\from_thread.py", line 265, in _call_func
+    |     retval = await retval_or_awaitable
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\fastapi\applications.py", line 1159, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    |     raise exc
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\apps\api\src\api\middleware\tracing.py", line 126, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\apps\api\src\api\security.py", line 202, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "D:\repos\wright\apps\api\src\api\main.py", line 119, in __call__
+    |     await self._app(scope, receive, send)
+    |   File "D:\repos\wright\apps\api\src\api\main.py", line 161, in __call__
+    |     await self._app(scope, replay_receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    |     await route.handle(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    |     await self.app(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 328, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\packages\core\src\core\tracing.py", line 47, in async_wrapper
+    |     result = await func(*args, **kwargs)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\apps\api\src\api\routers\workspace.py", line 1120, in create_workflow_source_endpoint
+    |     document = await service.workflow_sources.create(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "D:\repos\wright\packages\workspace_service\src\workspace_service\workflow_sources.py", line 1797, in create
+    |     return await self._executor.run_to_completion(
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<10 lines>...
+    |     )
+    |     ^
+    |   File "D:\repos\wright\packages\workspace_service\src\workspace_service\executor.py", line 60, in run_to_completion
+    |     await asyncio.shield(future)
+    |   File "D:\Users\markb\miniconda3\Lib\concurrent\futures\thread.py", line 59, in run
+    |     result = self.fn(*self.args, **self.kwargs)
+    |   File "D:\repos\wright\packages\workspace_service\src\workspace_service\workflow_sources.py", line 1799, in <lambda>
+    |     lambda: self._store_factory(workspace_dir).create(
+    |             ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\packages\workspace_service\src\workspace_service\workflow_sources.py", line 429, in __init__
+    |     self._paths = WorkspacePath(workspace_dir)
+    |                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+    |   File "D:\repos\wright\packages\workspace_service\src\workspace_service\workspace_path.py", line 21, in __init__
+    |     self.root = Path(os.path.realpath(os.path.abspath(root)))
+    |                                       ~~~~~~~~~~~~~~~^^^^^^
+    |   File "<frozen ntpath>", line 576, in abspath
+    | TypeError: _path_normpath: path should be string, bytes or os.PathLike, not NoneType
+    +------------------------------------
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\repos\wright\apps\api\tests\test_process_interface_run_lifecycle.py", line 171, in test_changed_source_reopens_exact_historical_run_without_permission
+    created = case.client.post("/api/workspace/workflow-sources", json={
+        "session_id": case.query["session_id"], "path": case.reference.source_path,
+        "source": original_source,
+    })
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 555, in post
+    return super().post(
+           ~~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<10 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 1144, in post
+    return self.request(
+           ~~~~~~~~~~~~^
+        "POST",
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 454, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "D:\repos\wright\.venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 356, in handle_request
+    raise exc
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py", line 353, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\anyio\from_thread.py", line 340, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Users\markb\miniconda3\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\Users\markb\miniconda3\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "D:\repos\wright\.venv\Lib\site-packages\anyio\from_thread.py", line 265, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\fastapi\applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\apps\api\src\api\middleware\tracing.py", line 126, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\apps\api\src\api\security.py", line 202, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "D:\repos\wright\apps\api\src\api\main.py", line 119, in __call__
+    await self._app(scope, receive, send)
+  File "D:\repos\wright\apps\api\src\api\main.py", line 161, in __call__
+    await self._app(scope, replay_receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\repos\wright\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\repos\wright\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\fastapi\routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\packages\core\src\core\tracing.py", line 47, in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\apps\api\src\api\routers\workspace.py", line 1120, in create_workflow_source_endpoint
+    document = await service.workflow_sources.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\repos\wright\packages\workspace_service\src\workspace_service\workflow_sources.py", line 1797, in create
+    return await self._executor.run_to_completion(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "D:\repos\wright\packages\workspace_service\src\workspace_service\executor.py", line 60, in run_to_completion
+    await asyncio.shield(future)
+  File "D:\Users\markb\miniconda3\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\repos\wright\packages\workspace_service\src\workspace_service\workflow_sources.py", line 1799, in <lambda>
+    lambda: self._store_factory(workspace_dir).create(
+            ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\repos\wright\packages\workspace_service\src\workspace_service\workflow_sources.py", line 429, in __init__
+    self._paths = WorkspacePath(workspace_dir)
+                  ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\repos\wright\packages\workspace_service\src\workspace_service\workspace_path.py", line 21, in __init__
+    self.root = Path(os.path.realpath(os.path.abspath(root)))
+                                      ~~~~~~~~~~~~~~~^^^^^^
+  File "<frozen ntpath>", line 576, in abspath
+TypeError: _path_normpath: path should be string, bytes or os.PathLike, not NoneType
+
+The above exception was the direct cause of the following exception:
+apps\api\tests\test_process_interface_run_lifecycle.py:171: in test_changed_source_reopens_exact_historical_run_without_permission
+    created = case.client.post("/api/workspace/workflow-sources", json={
+.venv\Lib\site-packages\starlette\testclient.py:555: in post
+    return super().post(
+.venv\Lib\site-packages\httpx\_client.py:1144: in post
+    return self.request(
+.venv\Lib\site-packages\starlette\testclient.py:454: in request
+    return super().request(
+.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\testclient.py:356: in handle_request
+    raise exc
+.venv\Lib\site-packages\starlette\testclient.py:353: in handle_request
+    portal.call(self.app, scope, receive, send)
+.venv\Lib\site-packages\anyio\from_thread.py:340: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+.venv\Lib\site-packages\anyio\from_thread.py:265: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+apps\api\src\api\middleware\tracing.py:126: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+apps\api\src\api\security.py:202: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+apps\api\src\api\main.py:119: in __call__
+    await self._app(scope, receive, send)
+apps\api\src\api\main.py:161: in __call__
+    await self._app(scope, replay_receive, send)
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\fastapi\routing.py:674: in app
+    raw_response = await run_endpoint_function(
+.venv\Lib\site-packages\fastapi\routing.py:328: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\core\src\core\tracing.py:47: in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+apps\api\src\api\routers\workspace.py:1120: in create_workflow_source_endpoint
+    document = await service.workflow_sources.create(
+packages\workspace_service\src\workspace_service\workflow_sources.py:1797: in create
+    return await self._executor.run_to_completion(
+packages\workspace_service\src\workspace_service\executor.py:60: in run_to_completion
+    await asyncio.shield(future)
+D:\Users\markb\miniconda3\Lib\concurrent\futures\thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:1799: in <lambda>
+    lambda: self._store_factory(workspace_dir).create(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:429: in __init__
+    self._paths = WorkspacePath(workspace_dir)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workspace_path.py:21: in __init__
+    self.root = Path(os.path.realpath(os.path.abspath(root)))
+                                      ^^^^^^^^^^^^^^^^^^^^^
+<frozen ntpath>:576: in abspath
+    ???
+E   TypeError: _path_normpath: path should be string, bytes or os.PathLike, not NoneType
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\repos\wright\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED apps/api/tests/test_process_interface_run_lifecycle.py::test_changed_source_reopens_exact_historical_run_without_permission
+1 failed, 11 deselected, 2 warnings in 8.21s

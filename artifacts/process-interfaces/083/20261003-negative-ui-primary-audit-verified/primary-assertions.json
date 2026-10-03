@@ -1,0 +1,28 @@
+{
+  "manual_owner_and_browser_evidence_review": true,
+  "functions": [
+    {
+      "file": "packages/workspace_service/src/workspace_service/process_interfaces/service.py",
+      "function": "get_snapshot",
+      "line": 107,
+      "function_sha256": "a86916620f0c26437cd112138772540028d2ecef15a188ca0292ac8e8ede87cb"
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_interaction_owners.py",
+      "function": "test_exact_historical_review_remains_readable_but_cannot_decide",
+      "line": 239,
+      "function_sha256": "11cadd6734a0bc2cca439a50f8e70dfda5cbfcf9986fddaf95a274ddce875ec1"
+    },
+    {
+      "file": "apps/api/tests/test_process_interface_run_lifecycle.py",
+      "function": "test_changed_source_reopens_exact_historical_run_without_permission",
+      "line": 160,
+      "function_sha256": "a5325ce5d73a56b8ce305deffcb9f42e3138eb929872b6a79edfccd801f77e92"
+    }
+  ],
+  "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+  "review_subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+  "no_review_or_external_dispatch": true,
+  "historical_fallback": "Exact receipt/record verified; projected against current source; no mutation resolver is weakened",
+  "failed_attempts_retained": true
+}

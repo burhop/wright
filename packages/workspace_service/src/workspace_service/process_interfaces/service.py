@@ -119,7 +119,44 @@ class ProcessInterfaceService:
         from .projection import project_interactions
 
         scope.require_run(run_id)
-        resolved = await self.resolve_process(scope, process)
+        try:
+            resolved = await self.resolve_process(scope, process)
+        except ProcessInterfaceError as error:
+            if error.reason.code != "SOURCE_CHANGED" or run_id is None:
+                raise
+            # A retained run is readable under its exact accepted identity even
+            # after the current source changes. Verify both its durable receipt
+            # and record; this exception never applies to preparation/mutation.
+            import asyncio
+
+            root, receipt = self.runs._receipt(scope, process, run_id)
+            if receipt.process != process:
+                raise ProcessInterfaceError(
+                    "SCOPE_DENIED",
+                    "This historical reference does not identify the accepted run.",
+                    "Open the exact process revision recorded in its start receipt.",
+                ) from error
+            await asyncio.to_thread(self.runs._record, scope, process, run_id)
+            try:
+                document = await self.workspace.workflow_sources.read(
+                    root, process.source_path
+                )
+            except WorkflowSourceStorageError as storage_error:
+                raise ProcessInterfaceError(
+                    "CAPABILITY_UNAVAILABLE",
+                    "Wright could not read the current accepted process.",
+                    "Open its workflow file and inspect the retained run separately.",
+                    navigation=NavigationTarget(kind="process"),
+                    details={"storage_error": storage_error.code},
+                ) from storage_error
+            # Projection compares this current source with the recorded source
+            # and disables affected actions, while retaining the run's identity.
+            current = ProcessRef(
+                workspace_id=process.workspace_id,
+                source_path=process.source_path,
+                source_digest=document.storage_digest,
+            )
+            resolved = ResolvedProcess(current, root, document)
         if run_id is not None:
             if input_snapshot_id is not None:
                 raise ProcessInterfaceError(

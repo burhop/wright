@@ -235,6 +235,51 @@ async def test_changed_source_keeps_original_run_and_blocks_mutations(tmp_path):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("run_bound", [False, True])
+async def test_exact_historical_review_remains_readable_but_cannot_decide(
+    tmp_path, run_bound
+):
+    result, service, _, calls = await run_review(tmp_path)
+    app = application(service, tmp_path, database="state.sqlite3")
+    original = reference(tmp_path, result["review"]["workflow_path"])
+    run_id = result["run_id"]
+    frozen = InputSnapshot.create(
+        snapshot_id="historical-inputs",
+        process=original,
+        created_at="2026-09-30T12:00:00Z",
+        bindings=(),
+    )
+    receipt = StartReceipt(
+        principal_id="test-user",
+        process=original,
+        request_id="historical-start",
+        payload_digest=canonical_digest(frozen.bindings),
+        input_snapshot_id=frozen.snapshot_id,
+        input_digest=frozen.digest,
+        run_id=run_id,
+        run_log_path=result["run_log_path"],
+        created_at="2026-09-30T12:00:00Z",
+    )
+    app.inputs.reserve_start(frozen, receipt)
+    source = tmp_path / original.source_path
+    source.write_bytes(source.read_bytes() + b"\n")
+    recorded = tmp_path / result["run_log_path"]
+    before = recorded.read_bytes()
+    calls_before = list(calls)
+    scoped = scope(run_bound=run_bound, run_id=run_id if run_bound else None)
+    view = await app.get_snapshot(scoped, original, run_id=run_id)
+    assert view.context.process == original and view.context.run_id == run_id
+    assert view.outputs and view.interactions[0].state == "stale"
+    assert all(not item.enabled for item in view.actions)
+    assert view.interactions[0].decision is None
+    assert recorded.read_bytes() == before and calls == calls_before
+    forged = original.model_copy(update={"source_digest": "0" * 64})
+    with pytest.raises(ProcessInterfaceError) as failure:
+        await app.get_snapshot(scoped, forged, run_id=run_id)
+    assert failure.value.reason.code == "SCOPE_DENIED"
+
+
+@pytest.mark.asyncio
 async def test_wrong_run_review_pointer_cannot_expose_another_review(tmp_path):
     result, service, _, _ = await run_review(tmp_path)
     app = application(service, tmp_path, database="state.sqlite3")

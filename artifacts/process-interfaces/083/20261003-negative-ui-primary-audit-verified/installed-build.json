@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "frontend_manifest_sha256": "44317815b2bf8bdfcb7620db0b3f2582984e6e1029ca9d0274d51330e730924e",
+  "source_root": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-negative-current-package-002\\build-source",
+  "published": false,
+  "browser_verified": true,
+  "original_packaged_frontend_unchanged": true,
+  "wheel": "wright_engineering-0.1.9-py3-none-any.whl",
+  "wheel_sha256": "afa5cdf39d5007f84a783728a0abaa518d1f02ea5d54c7ade95b1eb758130759",
+  "browser_report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-008/report.html",
+  "installed_imports_without_checkout": true,
+  "cached_dependencies_only": true,
+  "generation_proof": "Controlled authoring fixture; live-model authoring proofs are retained separately"
+}

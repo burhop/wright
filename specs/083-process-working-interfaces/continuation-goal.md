@@ -33,6 +33,30 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Current negative UI audit — 36 cumulative dispositions
+
+Read `artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/`
+and `evidence/requirements-audit.md`. SC-005 now has a combined eight-step current
+installed common/tailored negative journey. Changed/missing actual evidence blocks
+approval, incompatible saved UI is contained, and common fallback shows the exact
+historical run without permission or replay. The cumulative ledger preserves182
+obligations:36 proved at recorded scope,146 awaiting review. T056/T057 remain open.
+
+A bounded existing-owner correction verifies the historical receipt and run record
+before reading against current source. Current preparation/mutation authority stays
+strict; forged revision claims fail.259 affected cases pass across14 modules.
+Corrected wheel afa5cdf39d5007f84a783728a0abaa518d1f02ea5d54c7ade95b1eb758130759
+has actual installed browser proof; its native frontend manifest is unchanged.
+Original failures and older builds retain their exact scope. Synthetic authoring/
+producer replies are not relabelled live-model/engineering acceptance. No decision
+or external action ran; mandatory original engineering reviews remain held.
+
+Both temporary negative hosts1080/60821 are stopped;60821 exits normally and its
+owned presentations close. Retained hosts90330/46681 remain at their earlier build
+scope.550 engineering/UI files and protected history match. Continue FR-008/009/
+010/011/012/018/019 and remaining authoring, hosting, compatibility, distribution,
+task and contract obligations. Do not repeat SC-005 absent contradictory evidence.
+
 ### Latest primary audit — validation/action authority, 35 cumulative dispositions
 
 Read `artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/`
