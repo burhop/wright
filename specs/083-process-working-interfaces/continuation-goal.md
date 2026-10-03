@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Finish the current saved-interface browser checkpoint described below, including genuine working-context reload, exact outputs and held assessment, actual 3D layer controls and navigation. Preserve and correct weaker historical claims without erasing their reports. Publish credential-scanned evidence with exact inventories, reconcile documentation and make a focused local commit.
+1. Reconcile the committed browser checkpoints described below, then finish printed current-revision second-run reuse with fresh isolated output paths. Preserve the existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload or navigation proofs merely to produce another status report.
 2. Complete common/tailored output, assessment, block/evidence navigation, compatibility, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
@@ -35,9 +35,12 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 Reviewed against local records after the saved handoff. The ledger has **44 checked
 and 13 open tasks**: T021, T034, T037, T041, T043, T045, T047, T048, T049, T052,
-T053, T056 and T057. Latest local commit is `aacbcace`; current shared viewer,
-proxy, tests and documentation work remains uncommitted. Do not stage all dirty
-files. T050 now has three passing packaging checks (57.84 seconds), including
+T053, T056 and T057. Local checkpoints `573eb0b8` and `1d759201` now save the
+shared viewer/proxy and exact navigation corrections with their tests and evidence.
+The staged navigation inventory was checked against all 73 recorded files;
+credential scans and protected archive/campaign/context checks passed before
+commit. Preserve unrelated untracked work; do not stage all dirty files.
+T050 now has three passing packaging checks (57.84 seconds), including
 exact public resources and installed compilation of the shared result viewer.
 Earlier distribution paragraphs remain historical; reconcile their stale status
 when auditing evidence.
@@ -110,6 +113,6 @@ second run `9cfe133164bd4e70b97be9a058d0feb8`, Printed second run
 Owned services last recorded: source API 8030 (handle 41512), source UI 5243
 (handle 21619), native provider host (67342), and installed read-only fixture 8037.
 Revalidate health, owner handles and native leases before reuse or restart.
-Earlier installed builds do not include the latest uncommitted kit changes.
+Installed older builds do not include the latest committed kit/navigation changes.
 Current status/evidence updates must distinguish saved assets, preview rendering,
 working/reload proof, engineering checks and human acceptance.
