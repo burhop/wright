@@ -1,6 +1,17 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
+**Latest correction:** current printed repeat015 runs both failed at the repair
+model timeout; their source meshes and consumed decisions remain preserved.
+Actual-model interface update, second-run waiting reuse and exact partial-result/
+3D/producer navigation pass with unchanged saved assets and authoring records.
+The explicit configured-operation option has 202 affected controlled test passes;
+its fresh live construction-to-source-gate proof remains required. See
+[printed evidence](evidence/printed-proof.md#repeated-partial-runs-saved-ui-and-explicit-operations--3-october-2026).
+This supersedes older unproven-parity statements only for the recorded partial
+results. It closes no task and does not establish a complete printed package,
+current installed acceptance, fresh qualification or human engineering acceptance.
+
 **Audit checkpoint:** source `dcebc661`, following verified exact navigation and
 saved-view departure cleanup. Fresh consumer 003 source gate, common/tailored
 exact outputs/navigation and genuine working reload are recorded. The installed

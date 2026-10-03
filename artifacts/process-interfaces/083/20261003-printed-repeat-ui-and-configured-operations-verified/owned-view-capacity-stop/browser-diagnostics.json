@@ -1,0 +1,12 @@
+{
+  "console": [
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+  ],
+  "pageErrors": [],
+  "failedResponses": [
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-ee4c80bbdfad4b2d9468b37a4dbc0451/present",
+      "status": 503
+    }
+  ]
+}

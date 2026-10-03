@@ -141,9 +141,32 @@ actual submitted tool arguments, outputs and measurements in the live proof.
 Keep provider qualification and any recipe adaptations explicit. The default
 AI modelling path remains available when these inputs are absent.
 
+For qualified supplied operations, private bindings can explicitly select
+`"geometry_operation_mode": "configured_tool"`. Construction and repair then
+use the existing configured MCP binding with the pinned JSON as its connected
+arguments, a 360-second allowance and retained provider response. The original
+scaled image is consumed by AI basis interpretation before the declared review;
+it is not passed to a tool that only accepts code. The review includes unchanged
+copies of both operation templates and the application qualification guidance.
+Those review documents are distinct from the run-resolved argument inputs:
+their original bytes remain frozen, while the actual call retains its resolved
+content identity. Required source/repaired/preview files and the source-file
+dependency remain explicit. The operation executes through the normal provider
+gateway, never in the preparer. The provider still owns native implementation
+and safeguards. This option requires all three pinned operation inputs; a missing
+or unsupported mode fails before staging. The default remains `ai_task`.
+
+This is for replaying an explicitly configured and qualified modelling approach,
+not for converting an arbitrary new prompt into geometry without AI. Qualify the
+recipe against its proposed design and application before selecting this mode;
+the final engineering gate still measures the actual output. Current evidence
+proves preparation/compilation/run-path binding; live construction-to-gate
+verification of the new mode remains pending.
+
 The supplied basis still waits at this run's declared review; all original
-assignment, profiles, native file dependencies, two-call bounds and full 18-check
-validation remain. A recipe hash is not measured compliance or engineering
+assignment, profiles, native file dependencies and full 18-check validation
+remain. The AI-task mode retains its two-call bounds; configured calls invoke
+the supplied operation once. A recipe hash is not measured compliance or engineering
 acceptance. This mechanism supplies provider inputs; it adds no device protocol,
 local code executor or new process runner.
 

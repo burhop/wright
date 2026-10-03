@@ -1,5 +1,92 @@
 # Feature 083 progress
 
+## Current correction — exact printed navigation and configured-operation preparation
+
+This turn made implementation/evidence progress after the preceding handoff-only
+review. Both repeat015 failures remain terminal and preserved; no start, review
+or continuation was replayed. The final twelve-check partial-run walkthrough
+passes: exact common/tailored result and timeout parity, actual source STL in both
+readers, reload of the built interface and backend-resolved producer selection
+in the accepted editor. First reader/URL/canonical-ID assumptions remain blocked
+reports. A separate owned-view capacity stop was resolved by closing seven
+abandoned presentations through their owner, leaving both run records unchanged.
+Both 22-file run baselines, six UI assets and authoring tables remain unchanged.
+
+Explicit qualified-operation preparation now uses the existing exact MCP binding
+for construction and repair when configured_tool is selected. Default AI tasks
+remain. AI interpretation consumes the original scaled image; the basis review
+retains both exact operation templates and application guidance. Native calls
+receive assigned arguments and the exact repair source-file dependency only.
+Separate frozen review documents keep run-resolved configuration outside opaque
+approval scope. Compiler/authority restrictions were preserved; no executor,
+provider protocol, algorithm, original requirement or validation threshold changed.
+
+Seven affected suites pass **202 tests / zero failures/errors/skips**, including
+55 preparation cases; three-file Ruff and protected preservation checks pass.
+The separate focused authoring group has 48 passes. Initial red/compiler/fixture
+failures and eight browser reports are retained in credential-scanned evidence:
+`artifacts/process-interfaces/083/20261003-printed-repeat-ui-and-configured-operations-verified/`.
+The original missing T041 harness filename was corrected to its existing live
+file. No task was closed: **47 checked / ten open**.
+
+Fresh actual construction-to-source-gate proof of the new configured mode remains
+next. Use a new proposal/source and exact test enrollment, preserve both failed
+repeat015 subjects and check UI compatibility for the new binding. Reuse the
+completed Heat proof. Continue qualification/migration, current installed/editor/
+accessibility, remaining regressions and full audit; do not narrow completion.
+API8040/frontend5245 remain owned resources; revalidate before use. No live API
+restart or new native engineering run occurred. Focused local commit is pending.
+
+## Latest overnight handoff — terminal printed failures and reusable UI evidence
+
+Reconciled both printed repeat 015 runs through their normal interaction API.
+First `86289015177e4d55ab93460101ec1d43` and second
+`0a81a465287248d5a2a79a17519f7c74` are terminal `failed`,
+`MODEL_UNAVAILABLE`, at repair/measure/orient: Hermes AI request timed out.
+Each retains two outputs and its consumed synthetic basis decision. No repair,
+slice or completed source validation gate is claimed. Do not replay their starts,
+reviews or continuations.
+
+Existing actual-model focused UI update has thirteen passing browser checks;
+saved second-run waiting-state reuse has ten. Both diagnostics records are clean.
+Latest revision is `revision-35cac9bd65794c36a408135a71ac0a65` on the existing
+printed UI. Two later parity attempts preserve test assumptions as blocked
+reports: local representation opening need not switch views, and producer
+navigation need not write a focus query parameter. Actual source geometry renders
+in both views; exact selected-block navigation and final preservation remain to
+be checked with a corrected harness. Forty-eight focused authoring regression
+tests pass, but do not establish all remaining UI/accessibility obligations.
+
+Updated continuation-goal.md with current identities, no-replay instructions,
+bounded investigation of the repeated repair-model timeout and the full remaining
+scope. A qualified recipe through the existing configured-tool path is a candidate
+correction, not delivered support. Preserve all engineering requirements and gates.
+This status review adds no implementation, runs no tests and closes no task.
+HEAD `bcbb31c7`; **47 checked / 10 open**. Existing unlimited goal remains active.
+
+## Overnight status review — current printed run and authoring failure retained
+
+Reviewed the submitted objective, actual branch/HEAD `bcbb31c7`, ten open tasks
+and current authoritative receipts for the user's overnight continuation prompt.
+Counts remain **47 checked / 10 open**. No test, new process start, review,
+continuation or task closure occurred in this review. Existing goal stays active.
+
+Printed repeat 015 run `86289015177e4d55ab93460101ec1d43` returned HTTP200,
+`running`, two outputs, no diagnostics and its consumed synthetic basis
+checkpoint. Its recorded activity is `Planning the task`; this is not proof of
+ongoing native progress or completion. Reconcile current stage/events rather
+than repeating start/review/continue. API8040/handle76400 and UI5245/handle64532
+were revalidated live; browser5197 is terminal.
+
+Actual-model UI `ui-ee4c80bbdfad4b2d9468b37a4dbc0451`, revision
+`revision-7c446bc5e93e441e8bf651db6d33b83a`, was previewed, saved and opened
+in a working workspace tab. Thirteen individual walkthrough steps pass, but
+the overall report is blocked by workflow-sources HTTP404 and its console
+error. Preserve the first failed report and diagnose the owning request before
+claiming clean browser acceptance. Updated continuation-goal.md records exact
+subjects, resources, no-replay instructions and remaining platform obligations.
+This is a status/documentation checkpoint, not implementation completion.
+
 ## Current implementation checkpoint — run receipts and printed preparation
 
 The preceding goal turn reviewed status and supplied the overnight prompt; it

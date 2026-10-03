@@ -1,0 +1,216 @@
+{
+  "title": "Recorded partial geometry and failure in both working views",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-03T07:07:59.264Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved wheel process and click Use saved process."
+    },
+    {
+      "label": "Inspect the failed run",
+      "instruction": "Open the recorded first-run link and inspect its partial results and model timeout."
+    },
+    {
+      "label": "Reuse the interface",
+      "instruction": "Click Create or choose interface, select Focus-wheel digital preparation and click Open saved interface."
+    },
+    {
+      "label": "Inspect geometry",
+      "instruction": "Reload the saved working interface, then click Open representation on source_mesh.stl."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Return to the saved interface and click Open producing step on source_mesh.stl."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Repeated focus-wheel preparation proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the focus-wheel workflow",
+      "summary": "The exact accepted focus-wheel workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-repeatable-default-015.workflow.wflow"
+      ],
+      "expected": "The accepted focus-wheel workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Focus-wheel workflow diagram",
+      "summary": "The original focus-wheel assignment opens with its connected review, geometry and slicing stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted focus-wheel workflow file.",
+      "controls": [
+        "workflows/printed-replacement-part-repeatable-default-015.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved heat source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual focus-wheel run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded focus-wheel run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing focus-wheel run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Common view retains the actual failure and partial results",
+      "summary": "The source geometry and requirements interpretation remain available; no repair or preparation completion is claimed.",
+      "purpose": "Check exact common-view identities and the real model-timeout diagnostic.",
+      "action": "Inspect the common working view of the recorded failed run.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "Two exact first-run results and the recorded model timeout.",
+      "actual": "Common results match the authoritative failed-run contract.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S08G",
+      "state": "pass",
+      "label": "Common view reads the retained source geometry",
+      "summary": "The actual source STL is inspectable despite the later repair-model failure.",
+      "purpose": "Verify the exact common result uses the shared bounded geometry reader.",
+      "action": "Click Open representation on the source_mesh.stl result.",
+      "controls": [
+        "Open representation",
+        "Close representation"
+      ],
+      "expected": "A visible 3D canvas for the actual first-run source.",
+      "actual": "Actual partial source geometry is visible in the common view.",
+      "raw": "screenshots/raw/S08G.png",
+      "annotated": "screenshots/annotated/S08G.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Saved working interface agrees with the common view",
+      "summary": "The same built interface retains exact partial-result identities and the real failure.",
+      "purpose": "Verify common/tailored evidence and failure parity without authoring again.",
+      "action": "Select Focus-wheel digital preparation and click Open saved interface.",
+      "controls": [
+        "Saved interface",
+        "Open saved interface"
+      ],
+      "expected": "Exact same two result identities and model-timeout diagnostic.",
+      "actual": "Saved working interface agrees with the common view.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Actual source geometry remains inspectable",
+      "summary": "The exact constructed STL opens in the shared 3D viewer; it is not a repaired or accepted manufacturing package.",
+      "purpose": "Inspect real retained geometry through the scoped result reader.",
+      "action": "Reload the saved view and click Open representation on source_mesh.stl.",
+      "controls": [
+        "Open representation"
+      ],
+      "expected": "The exact first-run source STL and a visible 3D canvas.",
+      "actual": "The shared reader renders the exact source geometry within the tailored view.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Exact producer opens in the accepted editor",
+      "summary": "The partial result leads to its actual source-construction block.",
+      "purpose": "Retain the complementary working view and detailed engineering inspection.",
+      "action": "Return to the saved view and click Open producing step on source_mesh.stl.",
+      "controls": [
+        "Open producing step"
+      ],
+      "expected": "Accepted process and exact source-mesh producer selected.",
+      "actual": "The original producing block opens in the preserved editor.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    }
+  ]
+}

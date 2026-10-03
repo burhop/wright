@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reuse the now-verified third Heat run and saved updated-interface evidence below; do not rerun its CAD/solver chain, authoring or read-only navigation merely to produce another report. Next adopt explicit run-scoped configuration in printed preparation, including every provider-write and action-receipt boundary, through the existing owners before another start. Finish its current saved-interface second-run parity and remaining qualification/migration. Preserve existing files and protected unanswered reviews.
+1. Read the latest correction below before any new execution. Both printed repeat015 runs are terminal MODEL_UNAVAILABLE at repair; preserve their actual source meshes and consumed basis decisions. Its focused UI update, waiting-state saved reuse and exact partial-result/3D/producer navigation now pass, with frozen runs/assets/authoring records unchanged. Explicit qualified operations can now prepare through the existing configured-tool binding; 202 affected tests pass. Fresh live construction-to-source-gate proof of that option is not yet established. Use a new proposal/source, exact isolated test enrollment and compatible UI bindings for the new configuration. Preserve the original engineering assignment, supplied operations, provider safeguards and full gate. Do not replay the two failed subjects or repeat unchanged AI-copy attempts. Reuse verified Heat evidence without rerunning its CAD/solver or authoring chain. Then finish qualification/migration and the remaining platform obligations.
 2. Complete common/tailored output, assessment, block/evidence navigation, compatibility, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
@@ -32,6 +32,168 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Latest correction — partial-run navigation complete; configured mode needs live proof
+
+This supersedes the pending browser/preservation and candidate-option statements
+below. The final walkthrough at
+`artifacts/process-interfaces/083/20261003-printed-repeat-ui-and-configured-operations-verified/exact-partial-result-navigation/report.html`
+passes twelve checks with clean diagnostics. Both views retain exact output IDs,
+the real model timeout and actual source STL; reload reuses the saved bundle and
+the backend-resolved producing block opens selected in the accepted editor.
+First reader, URL and canonical-editor-ID assumptions remain blocked reports.
+A separate capacity stop after repeated walkthroughs left owned views open;
+seven abandoned presentations were closed through the normal owner, preserving
+both run records. The corrected continuation passes. Each 22-file run baseline,
+six saved UI files and both authoring tables remain byte-identical.
+
+`geometry_operation_mode: configured_tool` is now implemented in example
+preparation using the existing exact MCP binding. It requires the pinned basis
+and both operation inputs. Default `ai_task` remains unchanged. AI interpretation
+consumes the original scaled image; the declared review includes unchanged
+operation-template documents and qualified application guidance. Configured
+calls receive assigned JSON and the repair source-file dependency only.
+Review-document copies are separate from run-resolved argument inputs; no
+compiler or authority guard was relaxed. Original profiles/requirements/full
+eighteen-check gate remain. Native code still executes only in the selected
+external provider, not Wright's preparer.
+
+Seven affected suites pass 202 tests, including 55 preparation cases; three-file
+Ruff and protected preservation checks pass. The separate authoring group has
+48 passes. Eight walkthroughs and all initial regression failures are retained in
+the credential-scanned evidence root above. T041's nonexistent harness filename
+was corrected to the existing process-ui-authoring-live.spec.ts. No task closed;
+47 checked / ten open. This implementation is not a completed native chain.
+
+Next qualify and prepare fresh explicit operation inputs for a new accepted
+source and isolated subjects; preserve both failed repeat015 runs and all saved
+assets. Compare actual submitted arguments/outputs with the pinned recipe,
+reach the original source gate, and prove same-source repeat execution with
+compatible saved UI bindings. Do not silently update the old source or reuse
+its UI against a changed digest without compatibility checks. No new engineering
+run or API restart occurred in this correction. Revalidate owned API8040,
+frontend5245 and native leases before reuse. Continue all remaining migration,
+qualification, installed UI/editor/accessibility, regression and audit work.
+The full goal remains active; a focused local commit is still pending.
+
+### Latest reconciled checkpoint — printed repair timeout and saved-interface progress
+
+This section supersedes the older running-run and pending-update statements
+below. HEAD remains `bcbb31c7`; the ledger remains **47 checked / 10 open**.
+Both normal read-only observations returned HTTP200 and terminal `failed`,
+`MODEL_UNAVAILABLE`, at `repair_measure_orient_repeatable_default_015`:
+"The model task could not continue (upstream_timeout): Hermes AI request timed out."
+Each run has two outputs, including its actual source STL. The repair result,
+slice and eighteen-check source gate are not proved by those outputs.
+
+- First run: `86289015177e4d55ab93460101ec1d43`, consumed basis checkpoint
+  `checkpoint-b01c912fae7553da8a01eff7`.
+- Second run: `0a81a465287248d5a2a79a17519f7c74`, consumed basis checkpoint
+  `checkpoint-871563652fbbd8f71bab7f15`.
+
+Both basis decisions and continuations were already submitted once under exact
+isolated integration-test enrollment. **Do not replay prepare/start/review/continue
+helpers, resume failed subjects blindly, or substitute a separate assessment for
+their unexecuted source gate.** Private context remains
+`.local-run/process-interfaces-083/t047-printed-repeat-015/`.
+The existing API8040 responds; revalidate frontend/service ownership before use.
+
+Actual-model focused update passes thirteen walkthrough checks with no console,
+page or failed-response diagnostics. Saved UI remains
+`ui-ee4c80bbdfad4b2d9468b37a4dbc0451`; latest revision is
+`revision-35cac9bd65794c36a408135a71ac0a65`. Its second-run waiting-state reuse
+passes ten checks, without generation, compilation, execution or review actions.
+Reports:
+
+- `artifacts/ui-walkthrough/process-interfaces-083-printed/20261003T072500Z-printed-repeat-focused-update-001/report.html`
+- `artifacts/ui-walkthrough/process-interfaces-083-printed/20261003T064849Z-printed-repeat-saved-reuse-001/report.html`
+
+The original authoring report remains blocked on its strict missing-default-source
+404 diagnostic. Later reports are clean; the expected read-before-create path was
+identified. Preserve the original failure. Two later failed-run parity attempts
+also remain blocked: the first incorrectly expected local representation opening
+to navigate to the common view; the second renders the actual STL in both views
+but expects a producer-focus URL parameter that workspace navigation need not
+set. The observed editor selects Create source mesh in its inspector. Verify
+the actual navigation response and selected block in a fresh corrected harness;
+do not change product authority or navigation solely to satisfy that assertion.
+
+Forty-eight tests pass across the three focused authoring component/client/recovery
+files, with zero failed or pending tests. These are controlled regressions, not
+full accessibility, current installed-build or feature-completion evidence.
+First-run 22-file and saved-UI six-file/authoring-table baselines exist privately.
+Still verify them after the second run, freeze its terminal outputs, and publish
+credential-scanned evidence preserving failed attempts. Private traces and
+credential-bearing presentation/context records must remain private.
+
+Next finish these evidence checks and investigate the repeated model-copy timeout
+with a bounded correction using existing ownership. A third unchanged attempt
+without new diagnostic evidence is not progress. Continue unaffected migration,
+qualification, installed workspace/editor/accessibility, regression and audit
+work while a provider or model is unavailable. Heat's completed digital evidence
+remains reusable; it does not establish physical or human engineering acceptance.
+
+This review changes documentation only and closes no task. The existing unlimited
+goal is active. No additional routine approval is needed for authorized local work.
+
+### Latest overnight review — active printed repeat 015 and saved UI
+
+HEAD is `bcbb31c7`, after `feffdd5a`. Tracked product files were clean at
+review; existing untracked evidence and unrelated documentation remain intact.
+The task ledger remains **47 checked / 10 open**: T041, T043, T045, T047,
+T048, T049, T052, T053, T056 and T057. This status review ran no tests,
+started no new process and closed no task. The existing unlimited goal is active.
+
+Private context and receipts:
+`.local-run/process-interfaces-083/t047-printed-repeat-015/`.
+Workspace `083-printed-repeat-015`, session
+`083-printed-repeat-session-015`, accepted source
+`workflows/printed-replacement-part-repeatable-default-015.workflow.wflow`,
+digest `9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82`.
+Immutable inputs `inputs-b6d3849b31f14fe68a0ecdcdba837c6e`.
+First run **`86289015177e4d55ab93460101ec1d43`** is already started.
+Its exactly enrolled synthetic basis checkpoint
+`checkpoint-b01c912fae7553da8a01eff7` was approved and continued once on
+the same run. **Do not rerun prepare/start/review/continue helpers.**
+The normal read-only observer returned HTTP 200, `running`, two outputs,
+no diagnostics and the consumed basis interaction. Outputs include the
+requirements interpretation and actual `source_mesh.stl`. The observation
+records three completed steps and activity `Planning the task`; this does
+not prove healthy ongoing progress or completion. Inspect stage/events and
+owned model/provider resources before diagnosing a stall or attempting recovery.
+
+Normal API8040 owner handle76400 and frontend5245 owner handle64532 were
+revalidated live. The host owns Blender19987 and isolated inspection resources;
+check private ownership records before using or stopping them. Cached provider
+execution is not fresh clean-install qualification. Slicer connection is
+deliberately offline; only digital preparation/test destinations are enrolled.
+Keep credentials and private traces out of published evidence.
+
+Actual configured-model authoring created and saved UI
+`ui-ee4c80bbdfad4b2d9468b37a4dbc0451`, revision
+`revision-7c446bc5e93e441e8bf651db6d33b83a`. Thirteen individual browser
+steps passed, including normal workspace entry, generation/progress, managed
+preview, saving and opening the working interface in a workspace tab.
+**The overall walkthrough is blocked**, because its final diagnostics check
+found one `/api/workspace/workflow-sources` HTTP404 and corresponding console
+error. Preserve and diagnose that first failure; do not suppress diagnostics
+or call this a clean browser acceptance pass. Browser handle5197 is terminal.
+Report:
+`artifacts/ui-walkthrough/process-interfaces-083-printed/20261003T063920Z-printed-repeat-authoring-001/report.html`.
+
+Next reconcile this run and saved UI, diagnose the workflow-list request,
+make any bounded correction in the owning layer, and capture a fresh
+continuation. Complete actual first-run gate/evidence, focused UI update and
+unchanged-source/immutable-input second-run reuse with exact output/assessment
+identity and preservation of first-run bytes. A declared final human-review
+hold remains a legitimate unaccepted result; do not approve it with synthetic
+test authority. Existing verified Heat and earlier printed consumer evidence
+remain reusable within their recorded limits. Continue all ten open tasks;
+do not narrow completion to these two demonstrations.
+
+This section supersedes older instructions below to start printed repeat work
+or to continue the already completed third Heat basis review. Earlier records
+are retained as history, not current action authority.
 
 ### Latest implementation — run receipts and printed preparation paths
 

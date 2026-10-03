@@ -235,6 +235,18 @@ dispatch needs separate authorization and qualification.
 
 ## Required checks at implementation
 
+The printed reference can explicitly choose `geometry_operation_mode` as
+`ai_task` (default) or `configured_tool` for pinned supplied operations. This
+is example preparation using the existing `mcp-tool` argument connection and
+source-file dependency contract, not a new runtime mode. Image interpretation
+and basis review remain declared work; exact native calls do not receive ignored
+image/document ports. Original operation templates are separate frozen review
+documents, not run-path configuration used as opaque approval artifacts. The
+existing template/authority guard remains. The actual resolved native arguments,
+required file outputs and provider response retain normal run identity. Missing
+qualified inputs or unsupported mode blocks preparation before staging. Full
+engineering validation and real review authority remain independent.
+
 Explicit `mcp_file_dependencies` are supported on both exact MCP calls and scoped
 AI MCP tasks. Each connected `workspace_file` must match its producer's retained
 path, byte count and SHA-256 immediately before consumption. Explicitly supplied

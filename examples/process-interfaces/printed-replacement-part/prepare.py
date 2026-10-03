@@ -33,6 +33,7 @@ retained_spec.loader.exec_module(retained_source)
 def prepare(workspace, attempt, tools, bindings):
     workspace = Path(workspace).resolve(strict=True)
     qualified_geometry = provider_inputs.qualified_geometry_inputs(bindings)
+    configured_geometry = bindings.get("geometry_operation_mode", "ai_task") == "configured_tool"
     retained = retained_source.qualify(bindings)
     validation_budget = (
         ResourceBudget.model_validate(bindings["validation_resource_budget"])
@@ -223,8 +224,18 @@ def prepare(workspace, attempt, tools, bindings):
         "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success.",
     )
     flow.reference(basis_result, basis_review, "basis")
+    if configured_geometry:
+        flow.reference(guidance_ref, basis_review, "qualified_application_guidance")
     absolute_output = workspace / flow.output
     create = flow.original("create_mesh")
+    if configured_geometry:
+        # The fixed operation consumes JSON, not an image. Keep the original
+        # scaled reference in the AI interpretation and its declared review.
+        image_connection = flow.original("image_to_mesh")
+        image_connection["fields"]["to"] = basis["id"] + ".mesh_source_image_in"
+        image_connection["fields"]["label"] = "original scaled reference for proposed basis"
+        basis["fields"]["inputs"].extend(create["fields"]["inputs"])
+        create["fields"]["inputs"] = []
     source_result = flow.ai(
         create,
         f"Use the existing Blender execute_blender_code tool to construct the reviewed focus wheel from the actual supplied image and dimensions. Wright runs this stage only after consuming its declared exact-subject basis review. The reviewed_basis input remains the unchanged proposed design; use the design released by that order barrier rather than treating its earlier proposal status as a new runtime question. A labelled integration-test decision permits digital construction only and is not human engineering acceptance; retain final measured-feature/support/package review. Work only with uniquely named owned objects and actual geometry. Export binary STL in explicit millimetres at {str(absolute_output / 'source_mesh.stl')!r}. Preserve the complete original feature requirements; do not substitute a cylinder/cube or infer verified fit. Keep <=80000 triangles. Return compact actual construction observations and unresolved physical limits; Wright retains the exact tool call. Do not request an undeclared review or missing construction choice. If the released design cannot be implemented within original limits, return an explicit blocked technical outcome instead of making up evidence. Use guarded bpy/bmesh/mathutils modelling and Blender STL export only: no open/pathlib/os/sys/hashlib/runpy/subprocess/network/handlers/timers/drivers/addon operations or raw filesystem calls. Do not overwrite unrelated objects. Geometry failure is explicit; no fabricated export or verdict.",
@@ -240,22 +251,37 @@ def prepare(workspace, attempt, tools, bindings):
             "construction-provider-arguments.json", raw, original=original,
             run_paths=bool(flow.run_path_template),
         )
-        flow.reference(invocation, create, "qualified_operation")
-        create["fields"]["prompt"] += (
-            " Use the code argument in qualified_operation as the supplied native construction "
-            "recipe. Submit it unchanged to execute_blender_code; do not invent another "
-            "modelling algorithm or replace its dimensions. Its export path and owned names "
-            "are configured for this fresh run. Keep actual tool observations and failures. "
-            "This is reuse of a prior qualified operation, not new AI-authored geometry code "
-            "or proof of compliance. If its input design differs from reviewed_basis, stop "
-            "with a technical mismatch before executing it."
+        argument_port = flow.reference(invocation, create, "qualified_operation")
+        if configured_geometry:
+            flow.exact_mcp(
+                create,
+                flow.select(geometry, "execute_blender_code"),
+                argument_port,
+                ("source_mesh.stl",),
+                "source-model-report.json",
+            )
+            create["fields"]["settings"]["timeout_seconds"] = 360
+            reviewed_operation = flow.input_bytes(
+                "construction-operation-review.json", raw, original=original
+            )
+            flow.reference(reviewed_operation, basis_review, "construction_operation")
+        else:
+            create["fields"]["prompt"] += (
+                " Use the code argument in qualified_operation as the supplied native construction "
+                "recipe. Submit it unchanged to execute_blender_code; do not invent another "
+                "modelling algorithm or replace its dimensions. Its export path and owned names "
+                "are configured for this fresh run. Keep actual tool observations and failures. "
+                "This is reuse of a prior qualified operation, not new AI-authored geometry code "
+                "or proof of compliance. If its input design differs from reviewed_basis, stop "
+                "with a technical mismatch before executing it."
+            )
+    if not configured_geometry:
+        flow.reference(basis_result, create, "reviewed_basis")
+        flow.reference(requirements_ref, create, "requirements")
+        flow.reference(guidance_ref, create, "qualified_application_guidance")
+        flow.reference(
+            refs["concept.png"], create, "original_reference", "reference_images"
         )
-    flow.reference(basis_result, create, "reviewed_basis")
-    flow.reference(requirements_ref, create, "requirements")
-    flow.reference(guidance_ref, create, "qualified_application_guidance")
-    flow.reference(
-        refs["concept.png"], create, "original_reference", "reference_images"
-    )
     source_roles = flow.file_outputs(
         create, {"source_mesh": flow.output + "/source_mesh.stl"}
     )
@@ -275,24 +301,46 @@ def prepare(workspace, attempt, tools, bindings):
             "repair-provider-arguments.json", raw, original=original,
             run_paths=bool(flow.run_path_template),
         )
-        flow.reference(invocation, repair, "qualified_operation")
-        repair["fields"]["prompt"] += (
-            " Use the code argument in qualified_operation as the supplied native inspection/repair "
-            "recipe. Submit it unchanged to execute_blender_code rather than generating another "
-            "algorithm. It consumes this run's actual source file and uses uniquely owned "
-            "objects and a separate preview scene. Retain the real measurements, exported "
-            "file verification and all unresolved feature/support/physical limits. A provider "
-            "error remains explicit; never claim an absent output."
-        )
+        argument_port = flow.reference(invocation, repair, "qualified_operation")
+        if configured_geometry:
+            flow.exact_mcp(
+                repair,
+                flow.select(geometry, "execute_blender_code"),
+                argument_port,
+                ("repaired_mesh.stl", "mesh-preview.png"),
+                "mesh-repair-report.json",
+            )
+            repair["fields"]["settings"]["timeout_seconds"] = 360
+            reviewed_operation = flow.input_bytes(
+                "repair-operation-review.json", raw, original=original
+            )
+            flow.reference(reviewed_operation, basis_review, "repair_operation")
+            basis_review["fields"]["instructions"] += (
+                " This process invokes the supplied construction and repair arguments exactly. "
+                "Check both operation templates against the proposed basis and original requirements "
+                "before releasing this barrier. Operation hashes and all inputs remain part "
+                "of this exact review subject; the run-resolved call arguments are retained "
+                "separately. This is not measured or physical acceptance."
+            )
+        else:
+            repair["fields"]["prompt"] += (
+                " Use the code argument in qualified_operation as the supplied native inspection/repair "
+                "recipe. Submit it unchanged to execute_blender_code rather than generating another "
+                "algorithm. It consumes this run's actual source file and uses uniquely owned "
+                "objects and a separate preview scene. Retain the real measurements, exported "
+                "file verification and all unresolved feature/support/physical limits. A provider "
+                "error remains explicit; never claim an absent output."
+            )
     actual_source_port = flow.reference(
         create["id"] + ".source_mesh", repair, "actual_source", "workspace_file"
     )
     repair["fields"]["settings"]["mcp_file_dependencies"] = {
         actual_source_port: flow.output + "/source_mesh.stl"
     }
-    flow.reference(source_result, repair, "construction_report")
-    flow.reference(requirements_ref, repair, "requirements")
-    flow.reference(guidance_ref, repair, "qualified_application_guidance")
+    if not configured_geometry:
+        flow.reference(source_result, repair, "construction_report")
+        flow.reference(requirements_ref, repair, "requirements")
+        flow.reference(guidance_ref, repair, "qualified_application_guidance")
     repaired_roles = flow.file_outputs(
         repair,
         {

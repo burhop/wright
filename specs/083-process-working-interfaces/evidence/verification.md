@@ -1,5 +1,32 @@
 # Verification record — partial feature acceptance
 
+## Configured-operation preparation and actual partial-run UI — 3 October 2026
+
+Seven affected example/operator/source/run-path/file-dependency/MCP-contract/
+continuation suites pass **202 tests, zero failures/errors/skips**. The included
+55-case preparation suite covers explicit configured calls, unchanged default AI
+tasks, exact supplied bytes/review documents, both run IDs, full original gate,
+retained consumer compatibility and missing/invalid mode before staging.
+Initial nine red tests exposed the absent option; intermediate failures exposed
+image-port, unassigned-input, disconnected-guidance and authority-template
+constraints. Corrections use existing owners and keep those constraints intact.
+The initial missing test-directory setup and assertion-name mistake are retained
+separately; they are not product defects. Ruff passes all three owning Python files.
+
+Three focused authoring component/client/recovery files pass **48 tests**, zero
+failures/pending. Actual-model update, saved waiting-state reuse and partial-run
+parity/navigation walkthroughs pass 13, 10 and 12 checks respectively, with clean
+diagnostics. Both actual printed runs still failed at the repair AI timeout; these
+UI proofs do not establish repair, slicing or execution of their source gate.
+Frozen output/source/input and saved-build bytes remain intact. First blocked
+walkthroughs remain preserved. Qualification, installed-build/accessibility and
+full affected-regression/audit obligations retain their scope. These counts overlap
+earlier subsets and must not be summed into feature completion.
+
+See [scoped evidence](../../../artifacts/process-interfaces/083/20261003-printed-repeat-ui-and-configured-operations-verified/README.md)
+and [printed proof](printed-proof.md). No new live configured-operation run was
+started in this correction. The full task ledger still has ten open tasks.
+
 ## Run receipts and printed preparation, 3 October 2026
 
 Thirteen affected source/runtime/approval/operation/integration/continuation and

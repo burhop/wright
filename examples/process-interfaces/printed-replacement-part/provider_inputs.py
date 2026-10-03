@@ -8,11 +8,16 @@ from pathlib import Path
 def qualified_geometry_inputs(bindings):
     from workspace_service.workflow_run_paths import TOKEN, VERSION
 
+    mode = bindings.get("geometry_operation_mode", "ai_task")
+    if not isinstance(mode, str) or mode not in ("ai_task", "configured_tool"):
+        raise ValueError("Select the supported geometry operation mode explicitly")
     version = bindings.get("run_path_template", "")
     if version not in ("", VERSION):
         raise ValueError("Declare the supported run-path version before staging geometry inputs")
     selected = bindings.get("geometry_operation_files")
     if selected is None:
+        if mode == "configured_tool":
+            raise ValueError("Supply the pinned basis and both qualified geometry operations")
         return {}
     if not isinstance(selected, dict) or set(selected) != {
         "basis",

@@ -442,7 +442,7 @@ def test_printed_missing_tool_never_stages_attempt(printed_configuration):
     assert not (workspace / "process-proofs").exists()
 
 
-@pytest.mark.parametrize("mode", ["generated", "qualified", "retained"])
+@pytest.mark.parametrize("mode", ["generated", "qualified", "configured", "retained"])
 def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(printed_configuration, mode):
     from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths, bind_run_input_values
     from workspace_service.workflow_references import WorkflowReference
@@ -450,6 +450,8 @@ def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(prin
     workspace, bindings, tools = printed_configuration
     module = printed_preparer()
     bindings["run_path_template"] = VERSION
+    if mode == "configured":
+        bindings["geometry_operation_mode"] = "configured_tool"
     if mode != "generated":
         configured_geometry(bindings, workspace, module)
         for role in ("construction", "repair"):
@@ -506,6 +508,73 @@ def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(prin
         assert profile.id == "printed-replacement-part-01-full" and len(profile.checks) == 18
     assert source_path.read_bytes() == source_bytes
     assert all((workspace / p).read_bytes() == raw for p, raw in original_templates.items())
+
+
+def test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding(
+    printed_configuration,
+):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_mode"] = "configured_tool"
+    report = module.prepare(workspace, "configured-operations", tools, bindings)
+    source = (workspace / report["source_path"]).read_text(encoding="utf-8")
+    plan = compile_prompt_workflow(source)
+    assert len(plan.steps) == 11
+    for prefix, role in (("create_mesh", "construction"), ("repair_measure_orient", "repair")):
+        step = next(s for s in plan.steps if s.id.startswith(prefix))
+        assert step.agent_task is False
+        assert step.server_id == "fixture-geometry"
+        assert step.tool_name == "fixture-geometry__execute_blender_code"
+        assert step.timeout_seconds == 360
+        assert step.prompt == ""
+        assert step.arguments_from
+        input_id = step.arguments_from.split(".")[0]
+        raw = (workspace / plan.inputs[input_id]["settings"]["workspace_file"]).read_bytes()
+        assert raw == Path(bindings["geometry_operation_files"][role]["path"]).read_bytes()
+        assert step.save and step.output_path.endswith("report.json")
+        assert any(source == step.arguments_from for _, source in step.references)
+        assert step.expected_files
+    create = next(s for s in plan.steps if s.id.startswith("create_mesh"))
+    assert len(create.references) == 1
+    basis_review = next(s for s in plan.steps if s.id.startswith("review_basis"))
+    assert len(basis_review.references) == 4
+    for role in ("construction", "repair"):
+        address = next(address for name, address in basis_review.references if role + "_operation" in name.replace(" ", "_"))
+        fields = plan.inputs[address.split(".")[0]]["settings"]
+        assert "run_path_template" not in fields
+        assert (workspace / fields["workspace_file"]).read_bytes() == Path(bindings["geometry_operation_files"][role]["path"]).read_bytes()
+    assert [s.id for s in plan.steps].index(basis_review.id) < [s.id for s in plan.steps].index(create.id)
+    repair = next(s for s in plan.steps if s.id.startswith("repair_measure_orient"))
+    assert len(repair.file_dependencies) == 1
+    assert next(iter(repair.file_dependencies)).endswith(".source_mesh")
+    assert source.count('"action_kind":"local_review"') == 2
+    assert next(s for s in plan.steps if s.id.startswith("define_geometry_basis")).agent_task is False
+    validator = next(s for s in plan.steps if s.validation)
+    profile = ValidatorConfiguration.model_validate(validator.validation).load(str(workspace))
+    assert profile.id == "printed-replacement-part-01-full" and len(profile.checks) == 18
+    assert profile.checks[-1].constraint.operator == "review"
+    assert report["physical_dispatch"] is False
+    assert not list((workspace / report["output_root"]).iterdir())
+
+
+@pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_mode"] = mode
+    with pytest.raises(ValueError, match="geometry operation mode"):
+        module.prepare(workspace, "invalid-operation-mode", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def test_configured_geometry_requires_qualified_inputs_before_staging(printed_configuration):
+    workspace, bindings, tools = printed_configuration
+    bindings["geometry_operation_mode"] = "configured_tool"
+    with pytest.raises(ValueError, match="pinned basis and both qualified"):
+        printed_preparer().prepare(workspace, "missing-operations", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
 
 
 def test_reusable_printed_recipe_does_not_rewrite_fixed_vendor_code(printed_configuration):
@@ -611,12 +680,14 @@ def configured_retained_source(bindings, root, module):
         }
 
 
+@pytest.mark.parametrize("mode", ["ai_task", "configured_tool"])
 def test_retained_consumer_uses_exact_repair_and_original_full_gate(
-    printed_configuration,
+    printed_configuration, mode,
 ):
     workspace, bindings, tools = printed_configuration
     module = printed_preparer()
     configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_mode"] = mode
     configured_retained_source(bindings, workspace, module)
     report = module.prepare(workspace, "retained-consumer", tools, bindings)
     source = (workspace / report["source_path"]).read_text(encoding="utf-8")

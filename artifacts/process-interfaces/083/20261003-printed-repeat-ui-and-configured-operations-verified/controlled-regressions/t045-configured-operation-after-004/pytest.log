@@ -1,0 +1,179 @@
+................F.F....................................                  [100%]
+================================== FAILURES ===================================
+_ test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs[configured] _
+
+printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-after-004/tmp/test_printed_r...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = 'configured'
+
+    @pytest.mark.parametrize("mode", ["generated", "qualified", "configured", "retained"])
+    def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(printed_configuration, mode):
+        from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths, bind_run_input_values
+        from workspace_service.workflow_references import WorkflowReference
+    
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        bindings["run_path_template"] = VERSION
+        if mode == "configured":
+            bindings["geometry_operation_mode"] = "configured_tool"
+        if mode != "generated":
+            configured_geometry(bindings, workspace, module)
+            for role in ("construction", "repair"):
+                reference = bindings["geometry_operation_files"][role]
+                path = Path(reference["path"])
+                path.write_text(json.dumps({"code": f"print('fixture-only outputs/{TOKEN}/{role}.stl')"}))
+                reference["sha256"] = module.definition.sha(path.read_bytes())
+        if mode == "retained":
+            configured_retained_source(bindings, workspace, module)
+>       report = module.prepare(workspace, "repeatable-" + mode, tools, bindings)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_process_interface_examples.py:464: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+examples\process-interfaces\printed-replacement-part\prepare.py:652: in prepare
+    return flow.save(
+examples\process-interfaces\definition.py:367: in save
+    plan = compile_prompt_workflow(source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:390: in compile_prompt_workflow
+    _require_connected_process(sections, blocks, ports)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+sections = [{'fields': {'discipline': 'additive.manufacturing', 'name': '3D Printed Replacement Part', 'purpose': 'Create and ver...ame': 'Authorize exact package transfer', ...}, 'id': 'authorize_transfer_repeatable_configured', 'kind': 'task'}, ...]
+blocks = {'authorize_transfer_repeatable_configured': {'fields': {'group': None, 'inputs': [{'description': 'Original input or ...de original image and reference dimension', ...}, 'id': 'image_and_scale_repeatable_configured', 'kind': 'input'}, ...}
+ports = {'authorize_transfer_repeatable_configured.authorize_transfer_repeatable_configured_exact_package': ('authorize_transf...None, 'key': 'authorize_transfer_repeatable_configured_preparation_review', 'kind': 'engineering_document', ...}), ...}
+
+    def _require_connected_process(sections, blocks, ports):
+        """Reject independent processes before resolving tools or executing any task.
+    
+        Connectivity ignores direction: several inputs may converge and a task may
+        produce several deliverables. Visual groups do not establish dependencies.
+        Source storage/authoring deliberately does not impose this run constraint.
+        """
+        neighbors = {key: set() for key in blocks}
+        for section in sections:
+            if section["kind"] != "connection":
+                continue
+            fields = section["fields"]
+            source, target = fields.get("from"), fields.get("to")
+            if not isinstance(source, str) or not isinstance(target, str):
+                continue  # The compiler reports malformed connections separately.
+            if fields.get("type") == "item":
+                if source not in ports or target not in ports:
+                    continue
+                source, target = ports[source][0], ports[target][0]
+            elif fields.get("type") not in {"order", "approval", "revision"}:
+                continue
+            if source in neighbors and target in neighbors:
+                neighbors[source].add(target)
+                neighbors[target].add(source)
+        visited, groups = set(), []
+        for block_id in blocks:
+            if block_id in visited:
+                continue
+            group, pending = [], [block_id]
+            visited.add(block_id)
+            while pending:
+                current = pending.pop()
+                group.append(current)
+                for neighbor in neighbors[current]:
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        pending.append(neighbor)
+            groups.append(group)
+        if len(groups) > 1:
+            examples = "; ".join(
+                f"�{blocks[group[0]]['fields']['name']}� ({len(group)} {'block' if len(group) == 1 else 'blocks'})"
+                for group in groups[:4]
+            )
+>           raise _error(
+                "WORKFLOW_DISCONNECTED_PROCESS",
+                f"This workflow contains {len(groups)} disconnected groups of blocks. Run is blocked; one workflow must describe one connected process.",
+                f"Connect the groups into one process, or move each independent process to its own workflow. Groups: {examples}{'; �' if len(groups) > 4 else ''}.",
+            )
+E           workspace_service.workflow_source_execution.WorkflowSourceExecutionError: This workflow contains 2 disconnected groups of blocks. Run is blocked; one workflow must describe one connected process.
+
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:338: WorkflowSourceExecutionError
+_ test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding _
+
+printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-after-004/tmp/test_qualified...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+
+    def test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding(
+        printed_configuration,
+    ):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = "configured_tool"
+>       report = module.prepare(workspace, "configured-operations", tools, bindings)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_process_interface_examples.py:520: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+examples\process-interfaces\printed-replacement-part\prepare.py:652: in prepare
+    return flow.save(
+examples\process-interfaces\definition.py:367: in save
+    plan = compile_prompt_workflow(source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:390: in compile_prompt_workflow
+    _require_connected_process(sections, blocks, ports)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+sections = [{'fields': {'discipline': 'additive.manufacturing', 'name': '3D Printed Replacement Part', 'purpose': 'Create and ver...ame': 'Authorize exact package transfer', ...}, 'id': 'authorize_transfer_configured_operations', 'kind': 'task'}, ...]
+blocks = {'authorize_transfer_configured_operations': {'fields': {'group': None, 'inputs': [{'description': 'Original input or ...de original image and reference dimension', ...}, 'id': 'image_and_scale_configured_operations', 'kind': 'input'}, ...}
+ports = {'authorize_transfer_configured_operations.authorize_transfer_configured_operations_exact_package': ('authorize_transf...None, 'key': 'authorize_transfer_configured_operations_preparation_review', 'kind': 'engineering_document', ...}), ...}
+
+    def _require_connected_process(sections, blocks, ports):
+        """Reject independent processes before resolving tools or executing any task.
+    
+        Connectivity ignores direction: several inputs may converge and a task may
+        produce several deliverables. Visual groups do not establish dependencies.
+        Source storage/authoring deliberately does not impose this run constraint.
+        """
+        neighbors = {key: set() for key in blocks}
+        for section in sections:
+            if section["kind"] != "connection":
+                continue
+            fields = section["fields"]
+            source, target = fields.get("from"), fields.get("to")
+            if not isinstance(source, str) or not isinstance(target, str):
+                continue  # The compiler reports malformed connections separately.
+            if fields.get("type") == "item":
+                if source not in ports or target not in ports:
+                    continue
+                source, target = ports[source][0], ports[target][0]
+            elif fields.get("type") not in {"order", "approval", "revision"}:
+                continue
+            if source in neighbors and target in neighbors:
+                neighbors[source].add(target)
+                neighbors[target].add(source)
+        visited, groups = set(), []
+        for block_id in blocks:
+            if block_id in visited:
+                continue
+            group, pending = [], [block_id]
+            visited.add(block_id)
+            while pending:
+                current = pending.pop()
+                group.append(current)
+                for neighbor in neighbors[current]:
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        pending.append(neighbor)
+            groups.append(group)
+        if len(groups) > 1:
+            examples = "; ".join(
+                f"�{blocks[group[0]]['fields']['name']}� ({len(group)} {'block' if len(group) == 1 else 'blocks'})"
+                for group in groups[:4]
+            )
+>           raise _error(
+                "WORKFLOW_DISCONNECTED_PROCESS",
+                f"This workflow contains {len(groups)} disconnected groups of blocks. Run is blocked; one workflow must describe one connected process.",
+                f"Connect the groups into one process, or move each independent process to its own workflow. Groups: {examples}{'; �' if len(groups) > 4 else ''}.",
+            )
+E           workspace_service.workflow_source_execution.WorkflowSourceExecutionError: This workflow contains 2 disconnected groups of blocks. Run is blocked; one workflow must describe one connected process.
+
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:338: WorkflowSourceExecutionError
+=========================== short test summary info ===========================
+FAILED tests/test_process_interface_examples.py::test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs[configured]
+FAILED tests/test_process_interface_examples.py::test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding
+2 failed, 53 passed in 4.49s

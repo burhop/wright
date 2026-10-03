@@ -1,0 +1,1189 @@
+................F.F...................................                   [100%]
+================================== FAILURES ===================================
+_ test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs[configured] _
+
+printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-after-001/tmp/test_printed_r...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = 'configured'
+
+    @pytest.mark.parametrize("mode", ["generated", "qualified", "configured", "retained"])
+    def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(printed_configuration, mode):
+        from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths, bind_run_input_values
+        from workspace_service.workflow_references import WorkflowReference
+    
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        bindings["run_path_template"] = VERSION
+        if mode == "configured":
+            bindings["geometry_operation_mode"] = "configured_tool"
+        if mode != "generated":
+            configured_geometry(bindings, workspace, module)
+            for role in ("construction", "repair"):
+                reference = bindings["geometry_operation_files"][role]
+                path = Path(reference["path"])
+                path.write_text(json.dumps({"code": f"print('fixture-only outputs/{TOKEN}/{role}.stl')"}))
+                reference["sha256"] = module.definition.sha(path.read_bytes())
+        if mode == "retained":
+            configured_retained_source(bindings, workspace, module)
+>       report = module.prepare(workspace, "repeatable-" + mode, tools, bindings)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_process_interface_examples.py:464: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+examples\process-interfaces\printed-replacement-part\prepare.py:634: in prepare
+    return flow.save(
+examples\process-interfaces\definition.py:367: in save
+    plan = compile_prompt_workflow(source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+source = 'workflow repeatable_configured\n  name: "3D Printed Replacement Part"\n  purpose: "Create and verify a dimensioned pr..._configured"\n  to: "review_preparation_repeatable_configured"\n  label: "accepted process order"\n  when: null\nend\n'
+
+    def compile_prompt_workflow(source: str) -> PromptWorkflow:
+        sections = _parse(source)
+        workflows = [s for s in sections if s["kind"] == "workflow"]
+        tasks = [s for s in sections if s["kind"] == "task"]
+        inputs = [s for s in sections if s["kind"] == "input"]
+        if len(workflows) != 1 or not 1 <= len(tasks) <= 32:
+            raise _invalid("Add between one and 32 AI prompt or MCP tool steps.")
+        if any(
+            s["kind"] not in {"workflow", "task", "input", "connection", "group", "item"}
+            for s in sections
+        ):
+            raise _invalid("The workflow contains an unsupported block.")
+        blocks = {str(s["id"]): s for s in tasks + inputs}
+        if len(blocks) != len(tasks + inputs):
+            raise _invalid("Block names must be unique.")
+        ports: dict[str, tuple[str, str, dict]] = {}
+        for block_id, block in blocks.items():
+            fields = block["fields"]
+            if (
+                block["kind"] == "input"
+                and isinstance(settings := fields.get("settings"), dict)
+                and (
+                    "human_interaction" in settings
+                    or settings.get("authoring_template") == "human-input"
+                )
+            ):
+                raise _invalid(
+                    f"{block_id}: a declared human interaction must be a task barrier.",
+                    "Use interaction_input for preparation metadata or a human-input task for a declared runtime response.",
+                )
+            if not isinstance(fields.get("name"), str) or not fields["name"].strip():
+                raise _invalid(f"{block_id} needs a name.")
+            for direction in ("inputs", "outputs"):
+                values = fields.get(direction, [])
+                if not isinstance(values, list):
+                    raise _invalid(f"{fields['name']}: invalid {direction}.")
+                for port in values:
+                    if not isinstance(port, dict) or not isinstance(port.get("key"), str):
+                        raise _invalid(
+                            f"{fields['name']}: each connection point needs a key."
+                        )
+                    endpoint = f"{block_id}.{port['key']}"
+                    if endpoint in ports:
+                        raise _invalid(f"Duplicate connection point: {endpoint}.")
+                    ports[endpoint] = (block_id, direction, port)
+        _require_connected_process(sections, blocks, ports)
+        incoming: dict[str, list[str]] = {}
+        dependencies: dict[str, set[str]] = {key: set() for key in blocks}
+        outgoing: dict[str, set[str]] = {key: set() for key in blocks}
+        revisions = {}
+        for section in sections:
+            if section["kind"] != "connection":
+                continue
+            fields = section["fields"]
+            if fields.get("type") in {"revision", "approval"}:
+                source_id, target_id = fields.get("from"), fields.get("to")
+                if (
+                    not isinstance(source_id, str)
+                    or not isinstance(target_id, str)
+                    or source_id not in blocks
+                    or target_id not in blocks
+                    or blocks[target_id]["kind"] != "task"
+                    or blocks[source_id]["kind"] != "task"
+                ):
+                    raise _invalid("A design-check path references a missing task.")
+                settings = blocks[source_id]["fields"].get("settings", {})
+                if not isinstance(settings, dict) or (
+                    settings.get("design_check") is not True
+                    and settings.get("authoring_template") != "process-validator"
+                ):
+                    raise _invalid(
+                        "Only an executable design check can release or revise this native run."
+                    )
+                expected = "revise" if fields["type"] == "revision" else "pass"
+                if fields.get("when") != expected:
+                    raise _invalid(
+                        f"Design-check {fields['type']} paths must use the condition {expected}."
+                    )
+                if expected == "revise":
+                    if source_id in revisions:
+                        raise _invalid("Choose one revision target for each design check.")
+                    revisions[source_id] = target_id
+                else:
+                    dependencies[target_id].add(source_id)
+                    outgoing[source_id].add(target_id)
+                continue
+            if fields.get("type") == "order" and fields.get("when") is None:
+                source_id, target_id = fields.get("from"), fields.get("to")
+                if (
+                    not isinstance(source_id, str)
+                    or not isinstance(target_id, str)
+                    or source_id not in blocks
+                    or target_id not in blocks
+                    or blocks[target_id]["kind"] != "task"
+                ):
+                    raise _invalid(
+                        "An execution-order connection references a missing block."
+                    )
+                dependencies[target_id].add(source_id)
+                outgoing[source_id].add(target_id)
+                continue
+            if fields.get("type") != "item" or fields.get("when") is not None:
+                raise _invalid(
+                    "This run contains a conditional or control connection.",
+                    "Use data connections between AI prompts and text inputs for this run.",
+                )
+            source_port, target_port = fields.get("from"), fields.get("to")
+            if (
+                not isinstance(source_port, str)
+                or not isinstance(target_port, str)
+                or source_port not in ports
+                or target_port not in ports
+            ):
+                raise _invalid("A connection references a missing input or output.")
+            source_id, source_direction, _ = ports[source_port]
+            target_id, target_direction, _ = ports[target_port]
+            source_kind = ports[source_port][2].get("kind")
+            target_kind = ports[target_port][2].get("kind")
+            if source_kind != target_kind and not (
+                source_kind in TEXT_KINDS and target_kind in TEXT_KINDS
+            ):
+                raise _invalid(
+                    "These connected inputs and outputs have incompatible types.",
+                    "Connect an image only to an image input, and text to a text-compatible input.",
+                )
+            if (
+                ports[source_port][2].get("quantity") == "many"
+                and ports[target_port][2].get("quantity") != "many"
+            ):
+                raise _invalid("A collection cannot feed a single-item input.")
+            if (
+                source_direction != "outputs"
+                or target_direction != "inputs"
+                or blocks[target_id]["kind"] != "task"
+            ):
+                raise _invalid("Connect a block output to an AI step input.")
+            incoming.setdefault(target_port, []).append(source_port)
+            dependencies[target_id].add(source_id)
+            outgoing[source_id].add(target_id)
+        ordered: list[str] = []
+        remaining = set(blocks)
+        while remaining:
+            ready = [
+                key
+                for key in blocks
+                if key in remaining and dependencies[key].issubset(ordered)
+            ]
+            if not ready:
+                raise _invalid(
+                    "The workflow contains a cycle.",
+                    "Remove the circular prompt connection before running.",
+                )
+            ordered.extend(ready)
+            remaining.difference_update(ready)
+        steps = []
+        for block_id in ordered:
+            block = blocks[block_id]
+            fields = block["fields"]
+            if block["kind"] != "task":
+                continue
+            title = fields["name"]
+            settings = fields.get("settings", {})
+            if not isinstance(settings, dict):
+                raise _invalid(f"{title}: invalid settings.")
+            if settings.get("authoring_template") == "human-input":
+                from .workflow_human_input import compile_human_input
+    
+                steps.append(compile_human_input(block_id, fields, incoming, blocks))
+                continue
+            if "human_interaction" in settings:
+                raise _invalid(
+                    f"{title}: a human interaction must use the human-input template.",
+                    "Declare the input barrier explicitly; do not add questions to an unattended step.",
+                )
+            if settings.get("authoring_template") == "process-validator":
+                from .process_validation.configuration import compile_validator
+    
+                steps.append(compile_validator(block_id, fields, incoming, blocks))
+                continue
+            if settings.get("authoring_template") == "external-action-approval":
+                action_kind = settings.get("action_kind")
+    
+                def approval_object(name, fallback):
+                    value = settings.get(name)
+                    if isinstance(value, str):
+                        try:
+                            value = json.loads(value)
+                        except ValueError:
+                            value = None
+                    return value if value is not None else fallback
+    
+                binding = approval_object(
+                    "approval_binding",
+                    {
+                        "server": settings.get("approval_server"),
+                        "tool": settings.get("approval_tool"),
+                        "schema": settings.get("approval_schema"),
+                    },
+                )
+                destination = approval_object(
+                    "approval_destination",
+                    {
+                        "kind": settings.get("approval_destination_kind"),
+                        "id": settings.get("approval_destination_id"),
+                    },
+                )
+                action_settings = approval_object("approval_settings", None)
+                action = approval_object("approval_action", None)
+                declared_outputs = fields.get("outputs", [])
+                receipt_outputs = tuple(
+                    (port["key"], str(port.get("kind", "engineering_document")))
+                    for port in declared_outputs
+                    if isinstance(port, dict) and isinstance(port.get("key"), str)
+                )
+                receipt_path = ""
+                receipt_declaration = settings.get("run_path_template", "")
+                if receipt_declaration or "output_filename" in settings:
+                    from .workflow_run_paths import VERSION
+    
+                    if (
+                        receipt_declaration != VERSION
+                        or action_kind == "local_review"
+                        or not isinstance(action_settings, dict)
+                        or "receipt_path" in action_settings
+                        or len(declared_outputs) != 1
+                        or len(receipt_outputs) != 1
+                        or receipt_outputs[0][1] != "workspace_file"
+                        or not receipt_outputs[0][0].endswith("receipt")
+                    ):
+                        raise _invalid(
+                            f"{title}: declare one run-scoped receipt output, without a separate approval receipt path."
+                        )
+                    receipt_path = _safe_path(settings.get("output_filename"))
+                    if PurePosixPath(receipt_path).suffix.lower() != ".json":
+                        raise _invalid(f"{title}: the receipt filename must end in .json.")
+                valid_receipt_output = not declared_outputs or (
+                    action_kind != "local_review"
+                    and isinstance(action_settings, dict)
+                    and (receipt_path or isinstance(action_settings.get("receipt_path"), str))
+                    and len(receipt_outputs) == 1
+                    and receipt_outputs[0][1] == "workspace_file"
+                    and receipt_outputs[0][0].endswith("receipt")
+                )
+                if (
+                    action_kind
+                    not in {
+                        "local_review",
+                        "printer_transfer",
+                        "supplier_upload_preview",
+                        "cart_quote_handoff",
+                        "mcp-operation",
+                    }
+                    or fields.get("performed_by") != "engineer"
+                    or fields.get("step_type") != "review"
+                    or fields.get("tool") is not None
+                    or fields.get("reusable_step") is not None
+                    or not valid_receipt_output
+                    or not dependencies[block_id]
+                    or not all(
+                        isinstance(value, dict) and value
+                        for value in (binding, destination, action)
+                    )
+                    or not isinstance(action_settings, dict)
+                    or not (action_settings or receipt_path)
+                    or action.get("kind") != action_kind
+                ):
+                    raise _invalid(
+                        f"{title}: configure an Engineer external-action approval with an upstream dependency and exact binding, destination, settings, and action details."
+                    )
+                instructions = fields.get("instructions", "")
+                if not isinstance(instructions, str) or not instructions.strip():
+                    raise _invalid(f"{title}: enter approval instructions.")
+                steps.append(
+                    PromptStep(
+                        block_id,
+                        title,
+                        instructions,
+                        None,
+                        tuple(
+                            (str(port.get("name", "Document")), source)
+                            for port in fields.get("inputs", [])
+                            for source in incoming.get(f"{block_id}.{port['key']}", [])
+                        ),
+                        "json" if receipt_path else "text",
+                        receipt_path,
+                        False,
+                        "overwrite" if receipt_path else "indexed",
+                        output_ports=receipt_outputs,
+                        expected_files=(receipt_path,) if receipt_path else (),
+                        expected_file_ports={receipt_outputs[0][0]: receipt_path} if receipt_path else {},
+                        run_path_template=receipt_declaration,
+                        external_action={
+                            "action_kind": action_kind,
+                            "binding": binding,
+                            "destination": destination,
+                            "settings": action_settings,
+                            "action": action,
+                        },
+                    )
+                )
+                if action_kind == "mcp-operation":
+                    from .workflow_mcp_operations import operation_step
+    
+                    operation_step(steps[-1])
+                continue
+            if settings.get("authoring_template") == "manual-review":
+                refs = [
+                    (str(port.get("name", "Document")), source)
+                    for port in fields.get("inputs", [])
+                    for source in incoming.get(f"{block_id}.{port['key']}", [])
+                ]
+                instructions = fields.get("instructions", fields.get("prompt", ""))
+                if (
+                    fields.get("performed_by") != "engineer"
+                    or fields.get("step_type") != "work"
+                    or fields.get("tool") is not None
+                    or fields.get("reusable_step") is not None
+                    or len(fields.get("inputs", [])) != 1
+                    or len(refs) != 1
+                    or not isinstance(instructions, str)
+                    or not instructions.strip()
+                    or len(instructions) > 8000
+                ):
+                    raise _invalid(
+                        f"{title}: use an Engineer review with one connected document and review instructions."
+                    )
+                steps.append(
+                    PromptStep(
+                        block_id,
+                        title,
+                        instructions,
+                        None,
+                        tuple(refs),
+                        "text",
+                        "",
+                        False,
+                        "indexed",
+                        output_ports=tuple(
+                            (p["key"], str(p.get("kind", "engineering_document")))
+                            for p in fields.get("outputs", [])
+                        ),
+                        human_review=True,
+                    )
+                )
+                continue
+            is_mcp = settings.get("authoring_template") == "mcp-tool"
+            agent_task = settings.get("authoring_template") == "mcp-task"
+            design_check = settings.get("design_check", False)
+            max_revisions = settings.get("max_revisions", 0)
+            if (
+                type(design_check) is not bool
+                or type(max_revisions) is not int
+                or not 0 <= max_revisions <= 3
+            ):
+                raise _invalid(
+                    f"{title}: use a design-check toggle and a revision limit from zero to three."
+                )
+            if design_check and (not agent_task or settings.get("output_format") != "json"):
+                raise _invalid(
+                    f"{title}: a design check needs an MCP task with a JSON response."
+                )
+            from .workflow_cad import parse_cad
+    
+            cad = (
+                parse_cad(settings.get("cad"), terminal=not outgoing[block_id])
+                if agent_task
+                else None
+            )
+            cad_from = None
+            from .workflow_application_task import parse_application
+    
+            application = (
+                parse_application(settings.get("application_resource"))
+                if agent_task
+                else None
+            )
+            application_from = None
+            if design_check and (
+                not cad
+                or cad.get("source") != "upstream"
+                or cad.get("save_native", True)
+                or cad.get("exports")
+                or cad.get("edit_mode", "in_place") != "in_place"
+            ):
+                raise _invalid(
+                    f"{title}: inspect an upstream CAD model without saving, copying or exporting it."
+                )
+            if cad and application:
+                raise _invalid("Choose one application resource adapter for this task.")
+            if agent_task and (
+                not isinstance(settings.get("mcp_server"), str)
+                or not settings["mcp_server"].strip()
+            ):
+                raise _invalid(f"{title}: choose a workspace-enabled MCP server.")
+            max_calls = settings.get("max_tool_calls", 8)
+            timeout = settings.get("timeout_seconds", 300)
+            reference_inline_max_bytes = settings.get(
+                "reference_inline_max_bytes", 1_048_576
+            )
+            guidance = settings.get("task_guidance", "")
+            expected = settings.get("expected_result", "")
+            if not isinstance(expected, str) or len(expected) > 16000:
+                raise _invalid(f"{title}: expected result must be bounded text.")
+            if isinstance(guidance, str) and expected:
+                guidance += "\nExpected result: " + expected
+            raw_files = settings.get("expected_files", "")
+            if not isinstance(raw_files, str):
+                raise _invalid(
+                    f"{title}: expected files must be workspace-relative paths, one per line."
+                )
+            expected_files = tuple(
+                _safe_path(p.strip()) for p in raw_files.splitlines() if p.strip()
+            )
+            if len(expected_files) > 16 or (expected_files and not (agent_task or is_mcp)):
+                raise _invalid(
+                    f"{title}: declared tool-created files require an MCP tool or task (maximum 16)."
+                )
+            file_ports = settings.get("expected_file_ports", {})
+            if isinstance(file_ports, str):
+                try:
+                    file_ports = json.loads(file_ports)
+                except ValueError:
+                    raise _invalid(
+                        f"{title}: expected file ports must be a JSON object."
+                    ) from None
+            declared_file_ports = {
+                p["key"]
+                for p in fields.get("outputs", [])
+                if p.get("kind") == "workspace_file"
+            }
+            if not isinstance(file_ports, dict) or any(
+                port not in declared_file_ports or path not in expected_files
+                for port, path in file_ports.items()
+            ):
+                raise _invalid(f"{title}: map file outputs to declared expected files.")
+            if is_mcp and declared_file_ports and expected_files:
+                if not file_ports and len(declared_file_ports) == len(expected_files) == 1:
+                    file_ports = {next(iter(declared_file_ports)): expected_files[0]}
+                if declared_file_ports != set(file_ports):
+                    raise _invalid(
+                        f"{title}: map each file output to one exact expected file."
+                    )
+            if agent_task and (
+                type(max_calls) is not int
+                or not 1 <= max_calls <= 32
+                or type(timeout) is not int
+                or not 30 <= timeout <= 600
+                or not isinstance(guidance, str)
+                or len(guidance) > 16000
+            ):
+                raise _invalid(
+                    f"{title}: use 1�32 tool calls and a 30�600 second task limit."
+                )
+            raw_task_tools = settings.get("mcp_task_tools", [])
+            if (
+                not isinstance(raw_task_tools, list)
+                or len(raw_task_tools) > 32
+                or any(not isinstance(name, str) or not name for name in raw_task_tools)
+                or len(raw_task_tools) != len(set(raw_task_tools))
+                or (raw_task_tools and not agent_task)
+            ):
+                raise _invalid(f"{title}: select distinct tool names for an MCP task.")
+            revision_policy = settings.get("revision_policy", "")
+            if revision_policy not in {"", "create_new_files"} or (
+                revision_policy and not agent_task
+            ):
+                raise _invalid(
+                    f"{title}: use the create-new file revision policy only for an MCP task."
+                )
+            if revision_policy and (
+                not expected_files
+                or not file_ports
+                or set(file_ports) != declared_file_ports
+                or len(set(file_ports.values())) != len(file_ports)
+            ):
+                raise _invalid(
+                    f"{title}: map every declared workspace-file output to one expected file before enabling correction."
+                )
+            if (
+                type(reference_inline_max_bytes) is not int
+                or not 1_024 <= reference_inline_max_bytes <= 1_048_576
+            ):
+                raise _invalid(f"{title}: reference inline limit must be 1 KiB to 1 MiB.")
+            if (
+                fields.get("step_type") != "work"
+                or fields.get("tool") is not None
+                or fields.get("reusable_step") is not None
+                or fields.get("performed_by")
+                != ("configured_tool" if is_mcp else "ai_assisted")
+            ):
+                raise _invalid(
+                    f"{title} needs a supported execution type.",
+                    "Use an AI prompt or an MCP tool block for this run.",
+                )
+            tool_name = str(settings.get("mcp_tool", "")) if is_mcp else ""
+            if is_mcp and not tool_name:
+                raise _invalid(f"{title}: choose an available MCP tool.")
+            fmt = settings.get("output_format", "json" if is_mcp else "text")
+            policy = settings.get("file_policy", "indexed")
+            mode = settings.get("prompt_source", "inline")
+            if (
+                not all(isinstance(value, str) for value in (fmt, policy, mode))
+                or fmt not in FORMATS
+                or policy not in {"indexed", "overwrite"}
+                or mode not in {"inline", "connection"}
+            ):
+                raise _invalid(
+                    f"{title}: choose a valid response format, prompt source and file policy."
+                )
+            if "save_output" in settings and not isinstance(settings["save_output"], bool):
+                raise _invalid(f"{title}: save_output must be true or false.")
+            prompt = fields.get("prompt", "")
+            if not isinstance(prompt, str):
+                raise _invalid(f"{title}: the prompt must be text.")
+            prompt_key = settings.get("prompt_input", "")
+            prompt_from = None
+            references = []
+            for port in fields.get("inputs", []):
+                producers = incoming.get(f"{block_id}.{port['key']}", [])
+                if len(producers) > 1:
+                    raise _invalid(
+                        f"{title}: {port.get('name', 'input')} has multiple sources.",
+                        "Connect one response to each input.",
+                    )
+                is_prompt = mode == "connection" and port["key"] == prompt_key
+                if (is_prompt or port.get("required", False)) and not producers:
+                    raise _invalid(
+                        f"{title}: connect {port.get('name', 'the required input')}."
+                    )
+                if producers:
+                    if (
+                        application
+                        and application.get("source") == "upstream"
+                        and port["key"] == application.get("from_port")
+                    ):
+                        application_from = producers[0]
+                        continue
+                    if (
+                        cad
+                        and cad.get("source") == "upstream"
+                        and port["key"] == cad.get("from_port")
+                    ):
+                        if ports[producers[0]][2].get("kind") != "cad_model":
+                            raise _invalid(f"{title}: connect a CAD model output.")
+                        cad_from = producers[0]
+                        continue
+                    producer_kind = ports[producers[0]][2].get("kind")
+                    if producer_kind == "cad_model":
+                        raise _invalid(
+                            f"{title}: choose this connection under Model to work on.",
+                            "Connect CAD models to a CAD model input; use the response output for text.",
+                        )
+                    if producer_kind == "reference_images" and (is_prompt or is_mcp):
+>                       raise _invalid(
+                            f"{title}: this input cannot consume an image directly.",
+                            "Write the task instructions and connect the image as reference material to an AI prompt or AI task.",
+                        )
+E                       workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Create source mesh: this input cannot consume an image directly.
+
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:898: WorkflowSourceExecutionError
+_ test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding _
+
+printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-after-001/tmp/test_qualified...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+
+    def test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding(
+        printed_configuration,
+    ):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = "configured_tool"
+>       report = module.prepare(workspace, "configured-operations", tools, bindings)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_process_interface_examples.py:520: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+examples\process-interfaces\printed-replacement-part\prepare.py:634: in prepare
+    return flow.save(
+examples\process-interfaces\definition.py:367: in save
+    plan = compile_prompt_workflow(source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+source = 'workflow configured_operations\n  name: "3D Printed Replacement Part"\n  purpose: "Create and verify a dimensioned pr..._operations"\n  to: "review_preparation_configured_operations"\n  label: "accepted process order"\n  when: null\nend\n'
+
+    def compile_prompt_workflow(source: str) -> PromptWorkflow:
+        sections = _parse(source)
+        workflows = [s for s in sections if s["kind"] == "workflow"]
+        tasks = [s for s in sections if s["kind"] == "task"]
+        inputs = [s for s in sections if s["kind"] == "input"]
+        if len(workflows) != 1 or not 1 <= len(tasks) <= 32:
+            raise _invalid("Add between one and 32 AI prompt or MCP tool steps.")
+        if any(
+            s["kind"] not in {"workflow", "task", "input", "connection", "group", "item"}
+            for s in sections
+        ):
+            raise _invalid("The workflow contains an unsupported block.")
+        blocks = {str(s["id"]): s for s in tasks + inputs}
+        if len(blocks) != len(tasks + inputs):
+            raise _invalid("Block names must be unique.")
+        ports: dict[str, tuple[str, str, dict]] = {}
+        for block_id, block in blocks.items():
+            fields = block["fields"]
+            if (
+                block["kind"] == "input"
+                and isinstance(settings := fields.get("settings"), dict)
+                and (
+                    "human_interaction" in settings
+                    or settings.get("authoring_template") == "human-input"
+                )
+            ):
+                raise _invalid(
+                    f"{block_id}: a declared human interaction must be a task barrier.",
+                    "Use interaction_input for preparation metadata or a human-input task for a declared runtime response.",
+                )
+            if not isinstance(fields.get("name"), str) or not fields["name"].strip():
+                raise _invalid(f"{block_id} needs a name.")
+            for direction in ("inputs", "outputs"):
+                values = fields.get(direction, [])
+                if not isinstance(values, list):
+                    raise _invalid(f"{fields['name']}: invalid {direction}.")
+                for port in values:
+                    if not isinstance(port, dict) or not isinstance(port.get("key"), str):
+                        raise _invalid(
+                            f"{fields['name']}: each connection point needs a key."
+                        )
+                    endpoint = f"{block_id}.{port['key']}"
+                    if endpoint in ports:
+                        raise _invalid(f"Duplicate connection point: {endpoint}.")
+                    ports[endpoint] = (block_id, direction, port)
+        _require_connected_process(sections, blocks, ports)
+        incoming: dict[str, list[str]] = {}
+        dependencies: dict[str, set[str]] = {key: set() for key in blocks}
+        outgoing: dict[str, set[str]] = {key: set() for key in blocks}
+        revisions = {}
+        for section in sections:
+            if section["kind"] != "connection":
+                continue
+            fields = section["fields"]
+            if fields.get("type") in {"revision", "approval"}:
+                source_id, target_id = fields.get("from"), fields.get("to")
+                if (
+                    not isinstance(source_id, str)
+                    or not isinstance(target_id, str)
+                    or source_id not in blocks
+                    or target_id not in blocks
+                    or blocks[target_id]["kind"] != "task"
+                    or blocks[source_id]["kind"] != "task"
+                ):
+                    raise _invalid("A design-check path references a missing task.")
+                settings = blocks[source_id]["fields"].get("settings", {})
+                if not isinstance(settings, dict) or (
+                    settings.get("design_check") is not True
+                    and settings.get("authoring_template") != "process-validator"
+                ):
+                    raise _invalid(
+                        "Only an executable design check can release or revise this native run."
+                    )
+                expected = "revise" if fields["type"] == "revision" else "pass"
+                if fields.get("when") != expected:
+                    raise _invalid(
+                        f"Design-check {fields['type']} paths must use the condition {expected}."
+                    )
+                if expected == "revise":
+                    if source_id in revisions:
+                        raise _invalid("Choose one revision target for each design check.")
+                    revisions[source_id] = target_id
+                else:
+                    dependencies[target_id].add(source_id)
+                    outgoing[source_id].add(target_id)
+                continue
+            if fields.get("type") == "order" and fields.get("when") is None:
+                source_id, target_id = fields.get("from"), fields.get("to")
+                if (
+                    not isinstance(source_id, str)
+                    or not isinstance(target_id, str)
+                    or source_id not in blocks
+                    or target_id not in blocks
+                    or blocks[target_id]["kind"] != "task"
+                ):
+                    raise _invalid(
+                        "An execution-order connection references a missing block."
+                    )
+                dependencies[target_id].add(source_id)
+                outgoing[source_id].add(target_id)
+                continue
+            if fields.get("type") != "item" or fields.get("when") is not None:
+                raise _invalid(
+                    "This run contains a conditional or control connection.",
+                    "Use data connections between AI prompts and text inputs for this run.",
+                )
+            source_port, target_port = fields.get("from"), fields.get("to")
+            if (
+                not isinstance(source_port, str)
+                or not isinstance(target_port, str)
+                or source_port not in ports
+                or target_port not in ports
+            ):
+                raise _invalid("A connection references a missing input or output.")
+            source_id, source_direction, _ = ports[source_port]
+            target_id, target_direction, _ = ports[target_port]
+            source_kind = ports[source_port][2].get("kind")
+            target_kind = ports[target_port][2].get("kind")
+            if source_kind != target_kind and not (
+                source_kind in TEXT_KINDS and target_kind in TEXT_KINDS
+            ):
+                raise _invalid(
+                    "These connected inputs and outputs have incompatible types.",
+                    "Connect an image only to an image input, and text to a text-compatible input.",
+                )
+            if (
+                ports[source_port][2].get("quantity") == "many"
+                and ports[target_port][2].get("quantity") != "many"
+            ):
+                raise _invalid("A collection cannot feed a single-item input.")
+            if (
+                source_direction != "outputs"
+                or target_direction != "inputs"
+                or blocks[target_id]["kind"] != "task"
+            ):
+                raise _invalid("Connect a block output to an AI step input.")
+            incoming.setdefault(target_port, []).append(source_port)
+            dependencies[target_id].add(source_id)
+            outgoing[source_id].add(target_id)
+        ordered: list[str] = []
+        remaining = set(blocks)
+        while remaining:
+            ready = [
+                key
+                for key in blocks
+                if key in remaining and dependencies[key].issubset(ordered)
+            ]
+            if not ready:
+                raise _invalid(
+                    "The workflow contains a cycle.",
+                    "Remove the circular prompt connection before running.",
+                )
+            ordered.extend(ready)
+            remaining.difference_update(ready)
+        steps = []
+        for block_id in ordered:
+            block = blocks[block_id]
+            fields = block["fields"]
+            if block["kind"] != "task":
+                continue
+            title = fields["name"]
+            settings = fields.get("settings", {})
+            if not isinstance(settings, dict):
+                raise _invalid(f"{title}: invalid settings.")
+            if settings.get("authoring_template") == "human-input":
+                from .workflow_human_input import compile_human_input
+    
+                steps.append(compile_human_input(block_id, fields, incoming, blocks))
+                continue
+            if "human_interaction" in settings:
+                raise _invalid(
+                    f"{title}: a human interaction must use the human-input template.",
+                    "Declare the input barrier explicitly; do not add questions to an unattended step.",
+                )
+            if settings.get("authoring_template") == "process-validator":
+                from .process_validation.configuration import compile_validator
+    
+                steps.append(compile_validator(block_id, fields, incoming, blocks))
+                continue
+            if settings.get("authoring_template") == "external-action-approval":
+                action_kind = settings.get("action_kind")
+    
+                def approval_object(name, fallback):
+                    value = settings.get(name)
+                    if isinstance(value, str):
+                        try:
+                            value = json.loads(value)
+                        except ValueError:
+                            value = None
+                    return value if value is not None else fallback
+    
+                binding = approval_object(
+                    "approval_binding",
+                    {
+                        "server": settings.get("approval_server"),
+                        "tool": settings.get("approval_tool"),
+                        "schema": settings.get("approval_schema"),
+                    },
+                )
+                destination = approval_object(
+                    "approval_destination",
+                    {
+                        "kind": settings.get("approval_destination_kind"),
+                        "id": settings.get("approval_destination_id"),
+                    },
+                )
+                action_settings = approval_object("approval_settings", None)
+                action = approval_object("approval_action", None)
+                declared_outputs = fields.get("outputs", [])
+                receipt_outputs = tuple(
+                    (port["key"], str(port.get("kind", "engineering_document")))
+                    for port in declared_outputs
+                    if isinstance(port, dict) and isinstance(port.get("key"), str)
+                )
+                receipt_path = ""
+                receipt_declaration = settings.get("run_path_template", "")
+                if receipt_declaration or "output_filename" in settings:
+                    from .workflow_run_paths import VERSION
+    
+                    if (
+                        receipt_declaration != VERSION
+                        or action_kind == "local_review"
+                        or not isinstance(action_settings, dict)
+                        or "receipt_path" in action_settings
+                        or len(declared_outputs) != 1
+                        or len(receipt_outputs) != 1
+                        or receipt_outputs[0][1] != "workspace_file"
+                        or not receipt_outputs[0][0].endswith("receipt")
+                    ):
+                        raise _invalid(
+                            f"{title}: declare one run-scoped receipt output, without a separate approval receipt path."
+                        )
+                    receipt_path = _safe_path(settings.get("output_filename"))
+                    if PurePosixPath(receipt_path).suffix.lower() != ".json":
+                        raise _invalid(f"{title}: the receipt filename must end in .json.")
+                valid_receipt_output = not declared_outputs or (
+                    action_kind != "local_review"
+                    and isinstance(action_settings, dict)
+                    and (receipt_path or isinstance(action_settings.get("receipt_path"), str))
+                    and len(receipt_outputs) == 1
+                    and receipt_outputs[0][1] == "workspace_file"
+                    and receipt_outputs[0][0].endswith("receipt")
+                )
+                if (
+                    action_kind
+                    not in {
+                        "local_review",
+                        "printer_transfer",
+                        "supplier_upload_preview",
+                        "cart_quote_handoff",
+                        "mcp-operation",
+                    }
+                    or fields.get("performed_by") != "engineer"
+                    or fields.get("step_type") != "review"
+                    or fields.get("tool") is not None
+                    or fields.get("reusable_step") is not None
+                    or not valid_receipt_output
+                    or not dependencies[block_id]
+                    or not all(
+                        isinstance(value, dict) and value
+                        for value in (binding, destination, action)
+                    )
+                    or not isinstance(action_settings, dict)
+                    or not (action_settings or receipt_path)
+                    or action.get("kind") != action_kind
+                ):
+                    raise _invalid(
+                        f"{title}: configure an Engineer external-action approval with an upstream dependency and exact binding, destination, settings, and action details."
+                    )
+                instructions = fields.get("instructions", "")
+                if not isinstance(instructions, str) or not instructions.strip():
+                    raise _invalid(f"{title}: enter approval instructions.")
+                steps.append(
+                    PromptStep(
+                        block_id,
+                        title,
+                        instructions,
+                        None,
+                        tuple(
+                            (str(port.get("name", "Document")), source)
+                            for port in fields.get("inputs", [])
+                            for source in incoming.get(f"{block_id}.{port['key']}", [])
+                        ),
+                        "json" if receipt_path else "text",
+                        receipt_path,
+                        False,
+                        "overwrite" if receipt_path else "indexed",
+                        output_ports=receipt_outputs,
+                        expected_files=(receipt_path,) if receipt_path else (),
+                        expected_file_ports={receipt_outputs[0][0]: receipt_path} if receipt_path else {},
+                        run_path_template=receipt_declaration,
+                        external_action={
+                            "action_kind": action_kind,
+                            "binding": binding,
+                            "destination": destination,
+                            "settings": action_settings,
+                            "action": action,
+                        },
+                    )
+                )
+                if action_kind == "mcp-operation":
+                    from .workflow_mcp_operations import operation_step
+    
+                    operation_step(steps[-1])
+                continue
+            if settings.get("authoring_template") == "manual-review":
+                refs = [
+                    (str(port.get("name", "Document")), source)
+                    for port in fields.get("inputs", [])
+                    for source in incoming.get(f"{block_id}.{port['key']}", [])
+                ]
+                instructions = fields.get("instructions", fields.get("prompt", ""))
+                if (
+                    fields.get("performed_by") != "engineer"
+                    or fields.get("step_type") != "work"
+                    or fields.get("tool") is not None
+                    or fields.get("reusable_step") is not None
+                    or len(fields.get("inputs", [])) != 1
+                    or len(refs) != 1
+                    or not isinstance(instructions, str)
+                    or not instructions.strip()
+                    or len(instructions) > 8000
+                ):
+                    raise _invalid(
+                        f"{title}: use an Engineer review with one connected document and review instructions."
+                    )
+                steps.append(
+                    PromptStep(
+                        block_id,
+                        title,
+                        instructions,
+                        None,
+                        tuple(refs),
+                        "text",
+                        "",
+                        False,
+                        "indexed",
+                        output_ports=tuple(
+                            (p["key"], str(p.get("kind", "engineering_document")))
+                            for p in fields.get("outputs", [])
+                        ),
+                        human_review=True,
+                    )
+                )
+                continue
+            is_mcp = settings.get("authoring_template") == "mcp-tool"
+            agent_task = settings.get("authoring_template") == "mcp-task"
+            design_check = settings.get("design_check", False)
+            max_revisions = settings.get("max_revisions", 0)
+            if (
+                type(design_check) is not bool
+                or type(max_revisions) is not int
+                or not 0 <= max_revisions <= 3
+            ):
+                raise _invalid(
+                    f"{title}: use a design-check toggle and a revision limit from zero to three."
+                )
+            if design_check and (not agent_task or settings.get("output_format") != "json"):
+                raise _invalid(
+                    f"{title}: a design check needs an MCP task with a JSON response."
+                )
+            from .workflow_cad import parse_cad
+    
+            cad = (
+                parse_cad(settings.get("cad"), terminal=not outgoing[block_id])
+                if agent_task
+                else None
+            )
+            cad_from = None
+            from .workflow_application_task import parse_application
+    
+            application = (
+                parse_application(settings.get("application_resource"))
+                if agent_task
+                else None
+            )
+            application_from = None
+            if design_check and (
+                not cad
+                or cad.get("source") != "upstream"
+                or cad.get("save_native", True)
+                or cad.get("exports")
+                or cad.get("edit_mode", "in_place") != "in_place"
+            ):
+                raise _invalid(
+                    f"{title}: inspect an upstream CAD model without saving, copying or exporting it."
+                )
+            if cad and application:
+                raise _invalid("Choose one application resource adapter for this task.")
+            if agent_task and (
+                not isinstance(settings.get("mcp_server"), str)
+                or not settings["mcp_server"].strip()
+            ):
+                raise _invalid(f"{title}: choose a workspace-enabled MCP server.")
+            max_calls = settings.get("max_tool_calls", 8)
+            timeout = settings.get("timeout_seconds", 300)
+            reference_inline_max_bytes = settings.get(
+                "reference_inline_max_bytes", 1_048_576
+            )
+            guidance = settings.get("task_guidance", "")
+            expected = settings.get("expected_result", "")
+            if not isinstance(expected, str) or len(expected) > 16000:
+                raise _invalid(f"{title}: expected result must be bounded text.")
+            if isinstance(guidance, str) and expected:
+                guidance += "\nExpected result: " + expected
+            raw_files = settings.get("expected_files", "")
+            if not isinstance(raw_files, str):
+                raise _invalid(
+                    f"{title}: expected files must be workspace-relative paths, one per line."
+                )
+            expected_files = tuple(
+                _safe_path(p.strip()) for p in raw_files.splitlines() if p.strip()
+            )
+            if len(expected_files) > 16 or (expected_files and not (agent_task or is_mcp)):
+                raise _invalid(
+                    f"{title}: declared tool-created files require an MCP tool or task (maximum 16)."
+                )
+            file_ports = settings.get("expected_file_ports", {})
+            if isinstance(file_ports, str):
+                try:
+                    file_ports = json.loads(file_ports)
+                except ValueError:
+                    raise _invalid(
+                        f"{title}: expected file ports must be a JSON object."
+                    ) from None
+            declared_file_ports = {
+                p["key"]
+                for p in fields.get("outputs", [])
+                if p.get("kind") == "workspace_file"
+            }
+            if not isinstance(file_ports, dict) or any(
+                port not in declared_file_ports or path not in expected_files
+                for port, path in file_ports.items()
+            ):
+                raise _invalid(f"{title}: map file outputs to declared expected files.")
+            if is_mcp and declared_file_ports and expected_files:
+                if not file_ports and len(declared_file_ports) == len(expected_files) == 1:
+                    file_ports = {next(iter(declared_file_ports)): expected_files[0]}
+                if declared_file_ports != set(file_ports):
+                    raise _invalid(
+                        f"{title}: map each file output to one exact expected file."
+                    )
+            if agent_task and (
+                type(max_calls) is not int
+                or not 1 <= max_calls <= 32
+                or type(timeout) is not int
+                or not 30 <= timeout <= 600
+                or not isinstance(guidance, str)
+                or len(guidance) > 16000
+            ):
+                raise _invalid(
+                    f"{title}: use 1�32 tool calls and a 30�600 second task limit."
+                )
+            raw_task_tools = settings.get("mcp_task_tools", [])
+            if (
+                not isinstance(raw_task_tools, list)
+                or len(raw_task_tools) > 32
+                or any(not isinstance(name, str) or not name for name in raw_task_tools)
+                or len(raw_task_tools) != len(set(raw_task_tools))
+                or (raw_task_tools and not agent_task)
+            ):
+                raise _invalid(f"{title}: select distinct tool names for an MCP task.")
+            revision_policy = settings.get("revision_policy", "")
+            if revision_policy not in {"", "create_new_files"} or (
+                revision_policy and not agent_task
+            ):
+                raise _invalid(
+                    f"{title}: use the create-new file revision policy only for an MCP task."
+                )
+            if revision_policy and (
+                not expected_files
+                or not file_ports
+                or set(file_ports) != declared_file_ports
+                or len(set(file_ports.values())) != len(file_ports)
+            ):
+                raise _invalid(
+                    f"{title}: map every declared workspace-file output to one expected file before enabling correction."
+                )
+            if (
+                type(reference_inline_max_bytes) is not int
+                or not 1_024 <= reference_inline_max_bytes <= 1_048_576
+            ):
+                raise _invalid(f"{title}: reference inline limit must be 1 KiB to 1 MiB.")
+            if (
+                fields.get("step_type") != "work"
+                or fields.get("tool") is not None
+                or fields.get("reusable_step") is not None
+                or fields.get("performed_by")
+                != ("configured_tool" if is_mcp else "ai_assisted")
+            ):
+                raise _invalid(
+                    f"{title} needs a supported execution type.",
+                    "Use an AI prompt or an MCP tool block for this run.",
+                )
+            tool_name = str(settings.get("mcp_tool", "")) if is_mcp else ""
+            if is_mcp and not tool_name:
+                raise _invalid(f"{title}: choose an available MCP tool.")
+            fmt = settings.get("output_format", "json" if is_mcp else "text")
+            policy = settings.get("file_policy", "indexed")
+            mode = settings.get("prompt_source", "inline")
+            if (
+                not all(isinstance(value, str) for value in (fmt, policy, mode))
+                or fmt not in FORMATS
+                or policy not in {"indexed", "overwrite"}
+                or mode not in {"inline", "connection"}
+            ):
+                raise _invalid(
+                    f"{title}: choose a valid response format, prompt source and file policy."
+                )
+            if "save_output" in settings and not isinstance(settings["save_output"], bool):
+                raise _invalid(f"{title}: save_output must be true or false.")
+            prompt = fields.get("prompt", "")
+            if not isinstance(prompt, str):
+                raise _invalid(f"{title}: the prompt must be text.")
+            prompt_key = settings.get("prompt_input", "")
+            prompt_from = None
+            references = []
+            for port in fields.get("inputs", []):
+                producers = incoming.get(f"{block_id}.{port['key']}", [])
+                if len(producers) > 1:
+                    raise _invalid(
+                        f"{title}: {port.get('name', 'input')} has multiple sources.",
+                        "Connect one response to each input.",
+                    )
+                is_prompt = mode == "connection" and port["key"] == prompt_key
+                if (is_prompt or port.get("required", False)) and not producers:
+                    raise _invalid(
+                        f"{title}: connect {port.get('name', 'the required input')}."
+                    )
+                if producers:
+                    if (
+                        application
+                        and application.get("source") == "upstream"
+                        and port["key"] == application.get("from_port")
+                    ):
+                        application_from = producers[0]
+                        continue
+                    if (
+                        cad
+                        and cad.get("source") == "upstream"
+                        and port["key"] == cad.get("from_port")
+                    ):
+                        if ports[producers[0]][2].get("kind") != "cad_model":
+                            raise _invalid(f"{title}: connect a CAD model output.")
+                        cad_from = producers[0]
+                        continue
+                    producer_kind = ports[producers[0]][2].get("kind")
+                    if producer_kind == "cad_model":
+                        raise _invalid(
+                            f"{title}: choose this connection under Model to work on.",
+                            "Connect CAD models to a CAD model input; use the response output for text.",
+                        )
+                    if producer_kind == "reference_images" and (is_prompt or is_mcp):
+>                       raise _invalid(
+                            f"{title}: this input cannot consume an image directly.",
+                            "Write the task instructions and connect the image as reference material to an AI prompt or AI task.",
+                        )
+E                       workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Create source mesh: this input cannot consume an image directly.
+
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:898: WorkflowSourceExecutionError
+=========================== short test summary info ===========================
+FAILED tests/test_process_interface_examples.py::test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs[configured]
+FAILED tests/test_process_interface_examples.py::test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding
+2 failed, 52 passed in 5.10s

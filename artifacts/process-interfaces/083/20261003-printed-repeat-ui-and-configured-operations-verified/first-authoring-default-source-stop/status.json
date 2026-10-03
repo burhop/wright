@@ -1,0 +1,262 @@
+{
+  "title": "Focus-wheel interface authoring through Wright",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-03T06:41:38.709Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Repeated focus-wheel preparation proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved focus-wheel workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Create an interface",
+      "instruction": "Click Create or choose interface. Enter Focus-wheel digital preparation as the Interface title and request a reusable comparison with shared inputs, results, findings and review controls. Click Create interface."
+    },
+    {
+      "label": "Preview",
+      "instruction": "Wait for Preview ready, then click Open preview and inspect the read-only interface."
+    },
+    {
+      "label": "Save",
+      "instruction": "Return to the common working tab and click Save interface."
+    },
+    {
+      "label": "Open saved interface",
+      "instruction": "Click Open saved interface. Confirm it opens in a Wright workspace tab on the existing run."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Repeated focus-wheel preparation proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the focus-wheel workflow",
+      "summary": "The exact accepted focus-wheel workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-repeatable-default-015.workflow.wflow"
+      ],
+      "expected": "The accepted focus-wheel workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Heat workflow diagram",
+      "summary": "The original focus-wheel assignment opens with its connected review, geometry and slicing stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted focus-wheel workflow file.",
+      "controls": [
+        "workflows/printed-replacement-part-repeatable-default-015.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted focus-wheel diagram and working view action available.",
+      "actual": "Exact saved focus-wheel source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual focus-wheel run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded focus-wheel run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing focus-wheel run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Wright interface authoring",
+      "summary": "The process exposes Wright�s shared interface creation controls.",
+      "purpose": "Author the tailored experience through Wright, within the workspace.",
+      "action": "Click Create or choose interface.",
+      "controls": [
+        "Interface title",
+        "How should this interface help the user?",
+        "Create interface"
+      ],
+      "expected": "Native authoring controls tied to this exact process.",
+      "actual": "Wright interface authoring controls visible.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Visible interface creation",
+      "summary": "Wright is creating the tailored interface using its actual configured default model.",
+      "purpose": "Follow the backend-owned authoring job.",
+      "action": "Enter Interface title: Focus-wheel digital preparation. Request: Adapt the supplied reference into a Focus-wheel digital preparation. Reuse its public components, callbacks, all inputs/readiness, progress, pending interactions, ResultRepresentation viewers and exact evidence/assessment/block navigation. Change the heading and arrange all current geometry, package and assessment result cards in a responsive evidence grid. Keep all contract data and manifest identities; work across runs without fixed output filenames or run IDs. Keep source concise by reusing the reference, without new controls, custom viewers, execution, verdicts or protocols. Return only the required source/manifest JSON.. Click Create interface.",
+      "controls": [
+        "Interface title",
+        "How should this interface help the user?",
+        "Create interface",
+        "Interface creation progress"
+      ],
+      "expected": "Accepted job and visible generation progress.",
+      "actual": "Actual interface job accepted; creation progress visible.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Built comparison ready",
+      "summary": "The actual generated interface has passed Wright�s fixed local build.",
+      "purpose": "Inspect the built preview before saving.",
+      "action": "Wait for Preview ready.",
+      "controls": [
+        "Open preview"
+      ],
+      "expected": "Successful built revision ready for preview.",
+      "actual": "Preview ready is visible.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Managed focus-wheel preparation preview",
+      "summary": "The actual generated comparison renders in a Wright tab with read-only preview controls.",
+      "purpose": "Inspect the generated UI and its actual backend evidence.",
+      "action": "Click Open preview.",
+      "controls": [
+        "Open preview"
+      ],
+      "expected": "Isolated managed preview renders and reads the process contract.",
+      "actual": "Managed preview connected and rendered.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "Reusable focus-wheel interface saved",
+      "summary": "The previewed interface is retained as a versioned process asset.",
+      "purpose": "Save the exact checked source, bindings and build.",
+      "action": "Return to the common tab and click Save interface.",
+      "controls": [
+        "Save interface",
+        "Open saved interface"
+      ],
+      "expected": "The exact previewed revision is saved.",
+      "actual": "Interface saved with its built revision.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    },
+    {
+      "id": "S13",
+      "state": "pass",
+      "label": "Saved focus-wheel preparation opens",
+      "summary": "The saved working interface opens within Wright and reads the existing run.",
+      "purpose": "Open saved built assets without UI regeneration.",
+      "action": "Click Open saved interface.",
+      "controls": [
+        "Open saved interface"
+      ],
+      "expected": "Saved working interface connected to the same process/run.",
+      "actual": "Saved comparison is connected in a workspace tab.",
+      "raw": "screenshots/raw/S13.png",
+      "annotated": "screenshots/annotated/S13.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Entry stopped",
+      "summary": "The normal workspace entry did not meet the expected state.",
+      "purpose": "Retain the first stopping point.",
+      "action": "Stop at the unexpected entry state.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workspace and established editor available.",
+      "actual": "expect(received).toEqual(expected) // deep equality\n\n- Expected  - 2\n+ Received  + 9\n\n  Object {\n-   \"console\": Array [],\n-   \"failedResponses\": Array [],\n+   \"console\": Array [\n+     \"Failed to load resource: the server responded with a status of 404 (Not Found)\",\n+   ],\n+   \"failedResponses\": Array [\n+     Object {\n+       \"path\": \"/api/workspace/workflow-sources\",\n+       \"status\": 404,\n+     },\n+   ],\n    \"pageErrors\": Array [],\n  }",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

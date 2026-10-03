@@ -1,5 +1,6 @@
 {
   "run_path_template": "wright.run-path/1",
+  "geometry_operation_mode": "ai_task",
   "geometry_server": "your-enabled-geometry-server",
   "files_server": "wright-workspace-files",
   "slicer_server": "your-enabled-offline-slicer-server",

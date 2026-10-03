@@ -1,5 +1,52 @@
 # Printed replacement-part proof
 
+## Repeated partial runs, saved UI and explicit operations — 3 October 2026
+
+Same accepted source `9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82`
+and immutable inputs produced runs `86289015177e4d55ab93460101ec1d43` and
+`0a81a465287248d5a2a79a17519f7c74`. Both created actual source STL and failed
+at repair with `MODEL_UNAVAILABLE`: Hermes AI request timed out. Each retains
+two results and a consumed, exactly enrolled synthetic basis decision. Neither
+repair, slicing nor the eighteen-check source gate completed. Do not replay
+their starts, reviews or continuations. Each frozen 22-file baseline is intact.
+
+Actual configured default-model update passes thirteen browser checks. Latest UI
+`ui-ee4c80bbdfad4b2d9468b37a4dbc0451` / revision
+`revision-35cac9bd65794c36a408135a71ac0a65` passes ten second-run waiting-state
+reuse checks and twelve failed-first-run evidence/navigation checks. Both common
+and tailored views retain the exact two result IDs, real timeout and actual STL
+through the shared 3D reader. Producer navigation resolves the exact run/source
+block and selects it in the accepted editor. Reload reuses the saved bundle.
+Six saved assets and authoring tables (two jobs, ten records) remain unchanged;
+the read-only walkthrough submits no authoring, start or decision actions.
+
+First authoring diagnostics and three viewer/navigation harness assumptions
+remain preserved as blocked reports. A separate reload hit the managed-view
+limit after repeated walkthroughs left owned presentations open. Closing seven
+abandoned presentations through the normal owner preserved both run records;
+the fresh continuation passes with clean diagnostics. This does not prove
+automatic browser-abandonment reclamation or full installed-build acceptance.
+
+The optional `geometry_operation_mode: configured_tool` now prepares supplied,
+pinned operations through the existing exact MCP binding. AI still interprets
+the image/proposed basis; its declared review includes the original operation
+templates and qualified application guidance. The tool receives its assigned
+JSON only, plus the repair's exact source-file dependency. Review documents
+remain frozen separately from run-resolved configuration; no authority guard or
+compiler rule was relaxed. Default AI tasks and the retained-source consumer
+remain available. Original profiles, requirements and full eighteen-check gate
+are unchanged. This is controlled preparation/compilation evidence; fresh live
+construction-to-gate proof of the new configuration is still required.
+
+Seven affected suites pass 202 tests, including 55 preparation cases. Three
+separate authoring files pass 48 tests. Ruff passes three owning Python files;
+protected archives/campaign/context and nonretired prototype checks pass.
+Credential-scanned reports, actual source STL, exact hashes, preservation checks
+and initial failed regression attempts are in the
+[scoped evidence](../../../artifacts/process-interfaces/083/20261003-printed-repeat-ui-and-configured-operations-verified/README.md).
+T045/T047, fresh clean qualification, migration and full acceptance remain open.
+No physical operation or human engineering acceptance is claimed.
+
 ## Run paths and receipts — controlled implementation, 3 October 2026
 
 The new explicit configuration resolves the earlier repeat-path audit through
