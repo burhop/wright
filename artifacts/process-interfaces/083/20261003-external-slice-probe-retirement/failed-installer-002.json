@@ -1,0 +1,8 @@
+{
+  "status": "failed_before_install_command",
+  "error": "PermissionError: WinError 5 Access is denied spawning uv",
+  "private_helper": ".local-run/process-interfaces-083/t048-install-independent-slice-probe-002.py",
+  "created_root_was_empty": true,
+  "corrected_attempt": "selected-provider-install-003",
+  "physical_dispatch": false
+}

@@ -1,5 +1,34 @@
 # Generality and prototype migration — partial evidence
 
+## Slice probe migration and embedded file retirement
+
+The diagnostic's independent-provider definition preflights configuration before
+native ownership and verifies the discovered input-schema digest. It records one
+attempt before calling the selected MCP; missing schemas prevent dispatch and
+uncertain outcomes cannot be silently replayed. Its existing bounded passive
+reader inspects actual response/package/profile bytes. It is a qualification
+diagnostic, not a second process executor or provider implementation.
+
+Three embedded slicing implementations and their wrapper-only test are removed
+after migration of both preparers and this final operational diagnostic caller.
+Four exact inactive archives preserve their original bytes. Frozen campaign
+bindings, six assignments and original verification profiles remain unchanged.
+Earlier inventory sections describe history rather than current active slicing.
+
+One fresh selected-provider environment/cache installation and one actual offline
+native call passed on the reused Windows Python/native host. The actual 3MF has
+30 nominal layers, 1,016 model and 14 unclassified path segments. Zero classified
+support segments does not establish no supports or physical fit. The exact MCP
+owner stopped with return code 0. Failed launcher/installer attempts remain,
+and an inherited receipt annotation is explicitly qualified by installation
+evidence. 175 final owning/affected checks and three-file Ruff pass.
+
+See [checked scope](../../../artifacts/process-interfaces/083/20261003-external-slice-probe-retirement/checked-scope.json)
+and its exact archive/artifact inventory. T043/T048/T049 remain open for live
+canonical-runtime qualification of the new preparer bindings, selected clean
+container/host/gateway qualification and existing mesh-repair/other coupling
+dispositions. Direct native diagnostic evidence does not replace those proofs.
+
 ## Shared mechanisms observed
 
 The heat analysis and original focus-wheel preparation use accepted `.wflow`

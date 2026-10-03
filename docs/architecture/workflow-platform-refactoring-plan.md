@@ -8,6 +8,24 @@
 **Status:** Proposed staged implementation of the agreed user experience.
 The shared interaction contract/client/kit and runtime migration are not complete.
 
+## Current migration checkpoint — 3 October 2026
+
+Both original printed/drill-jig preparers declare independent slicing and passive
+inspection. The final diagnostic now uses an explicit independent MCP definition.
+The three embedded slicing implementations and their wrapper-only test are
+removed with exact inactive archives; frozen campaign bindings and engineering
+requirements remain intact. Historical inventory and earlier pending statements
+below retain their original scope and are superseded for these four files.
+
+One fresh selected-provider installation/cache and offline native diagnostic
+produced actual 3MF/preview/nominal paths on the existing Windows Python/native
+host, with exact owned MCP cleanup. 175 final owning/affected checks pass.
+This does not establish live canonical-runtime qualification of the new bindings,
+clean Linux catalog qualification, physical verification or human acceptance.
+Mesh-repair wrappers and other active provider coupling still require their own
+audit/disposition. T043/T048/T049 remain open, as do complete current platform
+acceptance and final audits. See [migration evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#slice-probe-migration-and-embedded-file-retirement).
+
 ## User outcome comes first
 
 Users and AI can define a useful engineering process, then carry it out through

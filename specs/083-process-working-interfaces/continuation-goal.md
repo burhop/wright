@@ -33,6 +33,39 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest implementation — independent diagnostic and embedded slicing retirement
+
+The last user-facing status/prompt review was a no-progress goal turn. The next
+safe action is to save this already verified implementation checkpoint, then
+qualify the new preparer bindings through the canonical runtime.
+
+The diagnostic now accepts an explicit independent MCP definition, checks its
+actual schema pin, records one attempt before dispatch, and retains uncertainty
+without replay. Three embedded slicing implementations and their wrapper-only
+test are removed; exact inactive archives and original campaign bindings remain.
+The first broken cached Python launcher made no native call. A failed installer
+spawn also remains recorded. Fresh selected provider environment/cache installation
+then enabled one successful offline native diagnostic on the existing Windows
+Python/native host. The resulting real 3MF has 30 nominal layers, 1,016 model and
+14 unclassified path segments; zero classified support segments is not a physical
+or manufacturing acceptance claim. Owned MCP PID 40404 stopped with return code 0.
+
+175 final owning/affected checks and three-file Ruff pass. See
+`artifacts/process-interfaces/083/20261003-external-slice-probe-retirement/checked-scope.json`.
+This is direct diagnostic evidence, not live canonical-runtime qualification of
+the newly bound preparer scenarios or clean Linux catalog qualification.
+The earlier probe/file-retirement instructions below are historical and superseded.
+Do not rerun terminal helpers from this evidence directory.
+
+Reconcile Git HEAD and
+`.local-run/process-interfaces-083/external-slice-retirement-001-local-commit.json`
+before staging. Continue all eight open tasks with the ledger at 49 checked / 8
+open: new binding qualification, selected provider qualification, mesh-repair and
+other active coupling audit, and complete current UI/editor/installed/accessibility/
+regression/requirement acceptance. API 8040 was verified live at the preceding
+implementation checkpoint; revalidate all owned handles before use. No process
+start, human decision, physical dispatch or public promotion occurred here.
+
 ### Latest implementation — external slicing declarations in both preparers
 
 The last user-facing status/prompt turn made no implementation progress. This

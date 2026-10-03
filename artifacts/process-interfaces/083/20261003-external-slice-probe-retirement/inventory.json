@@ -1,0 +1,137 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 20,
+      "sha256": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae"
+    },
+    "affected-retirement-checks.xml": {
+      "bytes": 21401,
+      "sha256": "ed459400114a57928664be4a3d0f68d016d16c9ecd31678d37fcec9c0d64d55f"
+    },
+    "archive-engineering_dataset_slice.py.txt": {
+      "bytes": 17555,
+      "sha256": "27f281429a018b9dc2db969d8ce84209ceaa3cbf33955f417ba43a9cabdcaf45"
+    },
+    "archive-engineering_dataset_slice_mcp.py.txt": {
+      "bytes": 2697,
+      "sha256": "99852ba477a4495b255af8f2be2031e5810d2a49459effdf41003512d354e4da"
+    },
+    "archive-engineering_jig_slice_mcp.py.txt": {
+      "bytes": 2646,
+      "sha256": "9943053f566993263f6e93fc5563962dce9cc56e0e97eb5fae88bddc8e605f79"
+    },
+    "archive-test_engineering_jig_slice_mcp.py.txt": {
+      "bytes": 2582,
+      "sha256": "06c01febb978d4a71cc2787abb389da5d3716d7575cf3b8397c256b912a5588d"
+    },
+    "checked-scope.json": {
+      "bytes": 4822,
+      "sha256": "0e1a91bdd32f0dc5fb1b3b54ee252abe6d53a0138833c692415340c0ab15ceee"
+    },
+    "external-slice-attempt.json": {
+      "bytes": 254,
+      "sha256": "a3d1f094267be5219188e8852e18ff4a142d55d414534d3548e98ff17fffb972"
+    },
+    "failed-installer-002.json": {
+      "bytes": 340,
+      "sha256": "69b0e56d08562e5889d3d05f9be94e6d08239dfe5e8813c872697ca9d22c247d"
+    },
+    "filament-profile.json": {
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "install-step-1.json": {
+      "bytes": 752,
+      "sha256": "47eb9eceed32f80a8860586a28ee3805a553c0dc8ddff235a81b8916a7eb785a"
+    },
+    "install-step-2.json": {
+      "bytes": 1876,
+      "sha256": "ee1d4217a079c76344ac3fbb0479290bee652426fbe1b47375d358b4ff0acffc"
+    },
+    "install-step-3.json": {
+      "bytes": 2082,
+      "sha256": "6e5f065ce1b2f111d13f212cd321ebf7dc7e03eefb44824c9faa7db7ed2f3fa2"
+    },
+    "machine-profile.json": {
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "native-corrected-receipt.json": {
+      "bytes": 1997,
+      "sha256": "fe3711097f95748957ac1b09f57c2a7eeb045f22e5443c6bd59565686fef69c6"
+    },
+    "native-first-failure.json": {
+      "bytes": 1000,
+      "sha256": "5cfa6c83f6b673ab1f9b909a25eb657463d02b05c0db27547184814744dedb2d"
+    },
+    "probe-migration-checks.xml": {
+      "bytes": 9154,
+      "sha256": "a0c663113124a7e35aa3304b442699a6131851d4a857f7e361d7818bd233696c"
+    },
+    "process-profile.json": {
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "protected-preservation.json": {
+      "bytes": 1420,
+      "sha256": "605629cea1234cb6eaac3463687bd0b9462c9c8af6b60dc5541a6bd03e6ff411"
+    },
+    "README.md": {
+      "bytes": 1521,
+      "sha256": "c441f112482cb17e5248d6b22516f665a2fb7ae8dd389d3ae2b4a694142652b0"
+    },
+    "repaired_mesh.stl": {
+      "bytes": 684,
+      "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+    },
+    "retired-caller-checks-002.xml": {
+      "bytes": 14118,
+      "sha256": "c39de8ca99d54497aad87208b2b9dc54b564a92a6c40500ea330ac3fb42f8824"
+    },
+    "retired-caller-checks.xml": {
+      "bytes": 14118,
+      "sha256": "f88835ff9c2c9d89ae4c724a4295efd284c630066c7cae96bddff197ac832669"
+    },
+    "retirement.json": {
+      "bytes": 1320,
+      "sha256": "60ae828806f15f753afac9cf4b9e3a47a0b975fe49047b32d55b17047c4e5fa6"
+    },
+    "selected-provider-installation.json": {
+      "bytes": 1955,
+      "sha256": "5ffd6d87ea0485b95eb2a9f7f2c9347d2ca62f0eb07ada3debac20b25bb5e8cd"
+    },
+    "slice-evidence.json": {
+      "bytes": 1099,
+      "sha256": "b75652f2024ba300daed9fe9f5e11734dbfe4bdc926a5a3e8e752183351a7c16"
+    },
+    "slice-preview.png": {
+      "bytes": 3878,
+      "sha256": "44d6169df3da45aa96546b8f91fc5d0d86352de3a1329b52e3f5e08362b097ac"
+    },
+    "slice-provider-response.json": {
+      "bytes": 1830,
+      "sha256": "3ff6835e3a92839f576820c525776ee57f998bda390587caa0270a681274a7ff"
+    },
+    "slice_package.gcode.3mf": {
+      "bytes": 41997,
+      "sha256": "40fa9808a6755c1c1d890949ed516a862755b7a47fd4fb2efe453dc7cf6dff71"
+    },
+    "support-preview.json": {
+      "bytes": 37479,
+      "sha256": "d4c6dfbf3450f877036295c6450d55175009948e604fc125bc617a8325e2c2fb"
+    },
+    "support-preview.svg": {
+      "bytes": 1774,
+      "sha256": "1bf1744088c6edf81b80e0f617f10773e6ca4313e53ae3edaf4f07ec5c48c748"
+    },
+    "test-attempts.json": {
+      "bytes": 1127,
+      "sha256": "6d93971499897c9b4e6c2042516fc91bf2a6d1a600147e08a2a297b5edf07247"
+    },
+    "toolpath-summary.json": {
+      "bytes": 1516,
+      "sha256": "4557c3176064cd4660da10edf90466ab8fbed06e01c86a727cd0a938b164dfde"
+    }
+  },
+  "credential_value_scan": "passed"
+}

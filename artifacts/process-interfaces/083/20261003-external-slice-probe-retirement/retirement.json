@@ -1,0 +1,33 @@
+{
+  "retired_paths": [
+    "scripts/engineering_dataset_slice.py",
+    "scripts/engineering_dataset_slice_mcp.py",
+    "scripts/engineering_jig_slice_mcp.py",
+    "tests/test_engineering_jig_slice_mcp.py"
+  ],
+  "exact_archives": {
+    "scripts/engineering_dataset_slice.py": {
+      "retained_file": "archive-engineering_dataset_slice.py.txt",
+      "bytes": 17555,
+      "sha256": "27f281429a018b9dc2db969d8ce84209ceaa3cbf33955f417ba43a9cabdcaf45"
+    },
+    "scripts/engineering_dataset_slice_mcp.py": {
+      "retained_file": "archive-engineering_dataset_slice_mcp.py.txt",
+      "bytes": 2697,
+      "sha256": "99852ba477a4495b255af8f2be2031e5810d2a49459effdf41003512d354e4da"
+    },
+    "scripts/engineering_jig_slice_mcp.py": {
+      "retained_file": "archive-engineering_jig_slice_mcp.py.txt",
+      "bytes": 2646,
+      "sha256": "9943053f566993263f6e93fc5563962dce9cc56e0e97eb5fae88bddc8e605f79"
+    },
+    "tests/test_engineering_jig_slice_mcp.py": {
+      "retained_file": "archive-test_engineering_jig_slice_mcp.py.txt",
+      "bytes": 2582,
+      "sha256": "06c01febb978d4a71cc2787abb389da5d3716d7575cf3b8397c256b912a5588d"
+    }
+  },
+  "vendor_implementation_relocated": false,
+  "original_campaign_bindings_unchanged": true,
+  "replacement": "existing independent provider and existing passive reader"
+}

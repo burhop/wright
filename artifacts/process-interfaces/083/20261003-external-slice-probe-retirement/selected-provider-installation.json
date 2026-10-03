@@ -1,0 +1,57 @@
+{
+  "status": "installed",
+  "commands": [
+    [
+      "D:/Users/markb/miniconda3/Scripts/uv.exe",
+      "venv",
+      "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment",
+      "--python",
+      "D:\\repos\\wright\\.venv\\Scripts\\python.exe"
+    ],
+    [
+      "D:/Users/markb/miniconda3/Scripts/uv.exe",
+      "pip",
+      "install",
+      "--python",
+      "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Scripts\\python.exe",
+      "D:\\repos\\wright\\.local-run\\feature-081-live\\sources\\bambu-p1s-mcp",
+      "mcp==1.28.1"
+    ],
+    [
+      "D:/Users/markb/miniconda3/Scripts/uv.exe",
+      "pip",
+      "list",
+      "--python",
+      "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Scripts\\python.exe",
+      "--format",
+      "json"
+    ]
+  ],
+  "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "fresh_provider_environment": true,
+  "fresh_provider_cache": true,
+  "base_runtime_modified": false,
+  "native_host_application_reused": true,
+  "physical_dispatch": false,
+  "steps": [
+    {
+      "index": 1,
+      "returncode": 0
+    },
+    {
+      "index": 2,
+      "returncode": 0
+    },
+    {
+      "index": 3,
+      "returncode": 0
+    }
+  ],
+  "runtime": {
+    "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+    "mcp": "1.28.1",
+    "provider": "0.1.0"
+  },
+  "environment_python": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Scripts\\python.exe",
+  "environment_python_sha256": "cae1e5f437a3ee6dca880240605668e1bc1b1c249ddf4d98084b51508e629c70"
+}

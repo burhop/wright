@@ -1,5 +1,41 @@
 # Feature 083 progress
 
+## Latest checkpoint — independent slice diagnostic and embedded retirement
+
+After the preceding handoff-only review, documentation now records the verified
+dirty implementation before a focused local commit. The final diagnostic caller
+selects an explicit independent provider and pins its discovered input schema.
+One persisted attempt prevents replay; a failed or uncertain call does not
+promote an engineering outcome. Three embedded slicing implementations and their
+wrapper-only test are deleted with exact inactive source archives.
+
+The initial cached launcher lacked its referenced Python and made no native call.
+The first installer spawn was denied. Both failures remain. A fresh selected
+provider environment/cache using the existing Windows Python/native host enabled
+one actual offline slice: 30 nominal layers, 1,016 model and 14 unclassified
+segments, zero classified support segments. PID 40404 stopped, return code 0.
+This is neither physical support verification nor canonical-runtime qualification
+of the new preparer bindings. Original receipt metadata has a disclosed inherited
+annotation; separate installation records prove the fresh provider environment.
+
+Final owning/affected suites pass 175 checks; three owning files pass Ruff,
+and protected-preservation/diff checks pass. Exact native artifacts, failed
+attempts, installation, test XMLs, and four archives are published in
+`artifacts/process-interfaces/083/20261003-external-slice-probe-retirement/`.
+Commands and source hashes are in its checked-scope.json. The focused commit
+receipt is `.local-run/process-interfaces-083/external-slice-retirement-001-local-commit.json`.
+Reconcile that receipt and HEAD before repeating any staging operation.
+The first commit helper stopped before committing because Git's rename detection
+collapsed deleted source paths into archive destinations. The corrected inventory
+check disables rename presentation and verifies both exact deletions and archive
+blobs; it does not reset the index or stage unrelated work.
+
+Ledger remains 49 checked / 8 open. Continue new binding/runtime and selected
+provider qualification, mesh-repair/other coupling audit, current authoring/editor/
+installed/accessibility/regressions, and full requirements/evidence audit.
+No review, workflow dispatch, hardware, publication, push, merge or release is
+claimed. API 8040 was last verified live; other owned handles need revalidation.
+
 ## Current correction — exact printed navigation and configured-operation preparation
 
 This turn made implementation/evidence progress after the preceding handoff-only

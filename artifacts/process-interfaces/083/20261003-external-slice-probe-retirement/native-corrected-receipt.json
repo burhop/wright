@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "native_calls": 1,
+  "physical_dispatch": false,
+  "source_commit_before_changes": "369993bee0eb750681da0fc31a7f8fd4643087ca",
+  "provider_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "provider_source": "https://github.com/marctheshark3/bambu-p1s-mcp",
+  "fresh_selected_install": false,
+  "geometry_seed": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\qualification-only.stl",
+  "geometry_seed_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+  "scope": "fresh isolated native call through migrated direct diagnostic; not clean installation, production gateway, CAD creation or engineering acceptance",
+  "runner_cleanup": [
+    {
+      "pid": 40404,
+      "returncode": 0,
+      "stopped": true
+    }
+  ],
+  "result": {
+    "definition_sha256": "6fb7716aac5455f4c3770af9bf146d5031174fb9709ce45c0df4ed6db6d203b2",
+    "inspection": {
+      "method": "Passive recorded-package inspection; no slicer or machine command executed",
+      "slice_evidence": {
+        "path": "diagnostic/artifacts/slice-evidence.json",
+        "sha256": "b75652f2024ba300daed9fe9f5e11734dbfe4bdc926a5a3e8e752183351a7c16",
+        "bytes": 1099
+      },
+      "support_preview": {
+        "path": "diagnostic/artifacts/support-preview.json",
+        "sha256": "d4c6dfbf3450f877036295c6450d55175009948e604fc125bc617a8325e2c2fb",
+        "bytes": 37479
+      },
+      "toolpath_summary": {
+        "path": "diagnostic/artifacts/toolpath-summary.json",
+        "sha256": "4557c3176064cd4660da10edf90466ab8fbed06e01c86a727cd0a938b164dfde",
+        "bytes": 1516
+      },
+      "engineering_acceptance": false
+    },
+    "package_sha256": "40fa9808a6755c1c1d890949ed516a862755b7a47fd4fb2efe453dc7cf6dff71",
+    "response_sha256": "3ff6835e3a92839f576820c525776ee57f998bda390587caa0270a681274a7ff",
+    "engineering_acceptance": false,
+    "protocol_scope": "direct MCP diagnostic; not fresh production-gateway qualification"
+  }
+}

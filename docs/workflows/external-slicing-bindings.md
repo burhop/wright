@@ -75,7 +75,34 @@ fresh proposal and the existing downstream validation/review rules.
 Six-scenario declaration/readiness and passive-reader fixtures pass. They do not
 qualify this new binding end to end against live providers. Existing Feature 083
 digital demonstrations remain separate evidence. The diagnostic
-`probe_printed_blender_binding.py` still uses the old embedded slicing operation;
-its migration is required before removing those implementation files. Existing
+`probe_printed_blender_binding.py` now selects an independent MCP through
+`--slicer-provider`. The three embedded slicing files and their wrapper-only test
+are removed with exact inactive archives. One fresh isolated native diagnostic
+call passes, separately from live canonical-runtime qualification of the six
+newly bound preparer scenarios. Existing
 mesh-repair wrappers and any other active provider implementation also retain
 their own inventory/retirement obligations. T043/T048/T049 remain open.
+
+### Diagnostic provider definition
+
+The diagnostic's `--slicer-provider` JSON declares `schema_version: 1`,
+`offline_only: true`, the installed provider `command` as an argument array,
+optional explicit `cwd`/string `env`, selected `tool`, and the canonical
+SHA-256 of its actual `inputSchema` as `input_schema_sha256`. It also declares
+native `arguments`, `expected_response_fields`, `success_field`,
+`success_contract`, `gcode_entry`, optional exact nominal section markers, and
+the three pinned `profiles`. Use complete `{source}`/`{package}` argument values.
+Record the provider source/revision as metadata. This is a direct qualification
+diagnostic, not another process executor, MCP server or device adapter.
+
+The definition is checked before native Blender ownership begins. The diagnostic
+records its attempt before calling the selected MCP exactly once. Missing/changed
+schemas prevent the call; timeouts retain `outcome_unknown`. Existing attempt,
+package or response prevents replay. Actual response/passive inspection remains
+distinct from manufacturing or human acceptance.
+
+The [retirement/native evidence](../../artifacts/process-interfaces/083/20261003-external-slice-probe-retirement/checked-scope.json)
+records the broken cached launcher, installation permission failure, fresh
+selected environment/cache, actual native package, exact stopped owner and
+175 final owning/affected checks. The Windows Python/native host is reused;
+this is not clean Linux catalog qualification or qualification of every workflow.
