@@ -400,3 +400,21 @@ The three slicing implementation rows, printed/drill-jig operation callers and
 diagnostic remain debt. Original two-process digital UI/handoff/source-gate proof
 now satisfies T045/T047; qualification, active retirement and final platform
 acceptance retain their separate obligations.
+## External slicing preparer migration, 3 October 2026
+
+Both original printed-part/drill-jig preparers now require an explicit exact
+scenario binding to independently installed slicing, file-retention and passive
+inspection providers. No embedded slice operation source is staged. Shared
+declarations reuse the canonical compiler/runtime and original evidence stage;
+they do not derive native profiles, run a CLI or implement a vendor protocol.
+Original six assignments, stage identities, packaged validators and frozen
+campaign bindings remain unchanged.
+
+The existing passive package reader supplies actual nominal toolpaths and their
+historical SVG view; PNG bytes come from the actual package. Predictable missing
+bindings/profile/configuration are rejected before staging/native initialization.
+141 fixture/declaration/affected checks pass. Live qualification of the new
+bindings is pending. The diagnostic probe and three embedded slicing operation
+files remain migration debt; audit other active wrappers separately. T048/T049
+are not complete. See [configuration](../workflows/external-slicing-bindings.md)
+and [migration evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#external-slicing-declarations-in-existing-preparers).

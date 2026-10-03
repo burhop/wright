@@ -33,6 +33,37 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest implementation — external slicing declarations in both preparers
+
+The last user-facing status/prompt turn made no implementation progress. This
+continuation changes both original campaign preparers: explicit exact-scenario
+external slicer/file/inspection bindings and pinned profiles now preflight before
+staging or native CAD init. They insert configured provider slicing and actual
+response retention before the original passive evidence stage. Original stages,
+connections, assignments, full validator profiles and human reviews remain.
+The old operation source is no longer staged by either preparer.
+
+The existing passive reader derives SVG from the same actual nominal-layer data
+and extracts the actual package PNG; missing/duplicate/invalid previews fail
+before publication. Complete JSON toolpaths remain available. No vendor profile
+derivation, CLI invocation, protocol or second executor moved into the helper.
+
+Fresh confined checks pass 69 owning plus 72 affected 082/example cases; nine-file
+Ruff and protected-preservation checks pass. Initial declaration/port/path errors,
+cache denial and a nonexistent test filename are retained. Evidence is in
+20261003-external-slice-preparer-migration. These are fixtures/declarations, not
+fresh live qualification of the migrated preparers. Refer to
+docs/workflows/external-slicing-bindings.md and the binding example for inputs.
+
+Next: qualify exact new bindings on isolated provider subjects and migrate
+scripts/probe_printed_blender_binding.py before removing the three embedded
+slicing files. Audit existing mesh-repair wrappers and other live coupling too.
+Continue T041/T043/T048/T049/T052/T053/T056/T057; 49 checked / 8 open remains.
+No engineering/process/provider start or review decision occurred in this turn.
+Reconcile the exact local receipt
+.local-run/process-interfaces-083/external-slice-migration-001-local-commit.json
+and Git HEAD before staging; services still need current liveness checks.
+
 ### Latest continuation — clean AgentCAD and neutral helper extraction
 
 The audited two-process checkpoint is committed locally as f0ef1068 (325 exact

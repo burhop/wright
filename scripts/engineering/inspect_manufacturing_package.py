@@ -9,8 +9,10 @@ Wright passive toolpath reader; provider protocols remain external.
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 from pathlib import Path
+import zipfile
 
 
 def run(config, read_toolpaths):
@@ -115,6 +117,39 @@ def run(config, read_toolpaths):
         raise ValueError(
             "Choose a fresh inspection output; existing evidence is retained"
         )
+    legacy = None
+    if config.get("legacy_previews"):
+        # Preserve historical example representations without a second parser,
+        # slicer-specific comments, a fixed bed size or fabricated support mesh.
+        populated = [layer for layer in view["layers"]
+                     if layer["model"] or layer["support"] or layer["unclassified"]]
+        layer = max(populated, key=lambda item: len(item["support"]))
+        moves = [segment for kind in ("model", "support", "unclassified")
+                 for segment in layer[kind]]
+        xs = [coordinate for a, b, c, d in moves for coordinate in (a, c)]
+        ys = [-coordinate for a, b, c, d in moves for coordinate in (b, d)]
+        left, top = min(xs) - 3, min(ys) - 3
+        width, height = max(xs) - left + 3, max(ys) - top + 3
+
+        def paths(segments):
+            return " ".join(f"M{a:.3f},{-b:.3f}L{c:.3f},{-d:.3f}"
+                            for a, b, c, d in segments)
+
+        svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{left:.3f} {top:.3f} {width:.3f} {height:.3f}">'
+               f'<path d="{paths(layer["model"])}" fill="none" stroke="#344b5a" stroke-width="0.25"/>'
+               f'<path d="{paths(layer["support"])}" fill="none" stroke="#d65012" stroke-width="0.35"/>'
+               f'<path d="{paths(layer["unclassified"])}" fill="none" stroke="#777777" stroke-width="0.25"/></svg>').encode()
+        preview_entry = config.get("preview_entry", config["gcode_entry"].removesuffix(".gcode") + ".png")
+        with zipfile.ZipFile(io.BytesIO(package)) as archive:
+            members = [item for item in archive.infolist() if item.filename == preview_entry]
+            if len(members) != 1 or not 8 <= members[0].file_size <= 8 * 1024 * 1024:
+                raise ValueError("Actual package preview is missing, ambiguous or exceeds its bound")
+            png = archive.read(members[0])
+        if png[:8] != b"\x89PNG\r\n\x1a\n" or len(svg) > 64 * 1024 * 1024:
+            raise ValueError("Actual package preview is invalid or exceeds its bound")
+        if any((output / name).exists() for name in ("support-preview.svg", "slice-preview.png")):
+            raise ValueError("Choose fresh legacy preview outputs; existing evidence is retained")
+        legacy = {"support-preview.svg": svg, "slice-preview.png": png}
     retained_profiles = {}
     for role, raw in profile_bytes.items():
         with (output / (role + "-profile.json")).open("xb") as stream:
@@ -123,6 +158,10 @@ def run(config, read_toolpaths):
             "path": config["output_root"] + "/" + role + "-profile.json",
             "sha256": sha(raw),
         }
+    if legacy is not None:
+        for filename, raw in legacy.items():
+            with (output / filename).open("xb") as stream:
+                stream.write(raw)
 
     evidence = {
         "operation": config["operation_label"],

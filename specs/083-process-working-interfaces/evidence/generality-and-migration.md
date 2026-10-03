@@ -150,3 +150,29 @@ checks pass. No engineering process ran.
 pin code hashes, commands and AST equality. Actual slicing wrappers, printed/
 drill-jig operation bindings and the diagnostic caller still need replacement.
 This prepares retirement and closes neither T048 nor T049.
+# External slicing declarations in existing preparers
+
+Both original printed-part and drill-jig preparers now use explicit independent
+provider bindings, actual response retention and the existing passive package
+inspector. The shared helper only declares source stages and evidence; it contains
+no vendor executable/profile handling, protocol, native invocation or executor.
+It checks exact scenario/tools/schema identities, profile hashes and original
+process settings before staging/native init. No embedded slice source is staged.
+
+All six existing assignments retain canonical stages/connections, controlling
+files, full validation profiles and human review authority. The original evidence
+stage presents package/profile/evidence roles; added stages provide the actual
+package and response. New JSON toolpaths supplement historical SVG/PNG views.
+SVG uses the existing reader's classified paths without a fixed bed size; PNG is
+the actual package image. Both must exist and preserve prior evidence.
+
+[Checked scope](../../../artifacts/process-interfaces/083/20261003-external-slice-preparer-migration/checked-scope.json)
+records 69 owning/readiness/declaration/passive-reader checks plus 72 affected
+082/example checks, nine-file Ruff, protected hashes and retained failures. This
+does not qualify the new bindings through live execution. Original profiles and
+campaign JSON remain unchanged. The diagnostic probe still invokes the old slice
+operation; its migration is needed before deleting the three embedded slice files.
+Other active implementation, including existing mesh-repair wrappers, keeps its
+separate ownership/retirement obligations. T043/T048/T049 remain open.
+
+See [configuration and boundaries](../../../docs/workflows/external-slicing-bindings.md).

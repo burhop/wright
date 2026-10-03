@@ -34,10 +34,20 @@ renewal = importlib.util.module_from_spec(_renewal_spec)
 _renewal_spec.loader.exec_module(renewal)
 
 
+_slice_spec = importlib.util.spec_from_file_location(
+    "external_campaign_slice_binding", ROOT / "scripts/engineering_external_slice_binding.py"
+)
+external_slice = importlib.util.module_from_spec(_slice_spec)
+_slice_spec.loader.exec_module(external_slice)
+
+
 def prepare(args, directory, tools):
     config = json.loads(BINDING.read_text())
     manifest = json.loads((directory / "scenario.json").read_text())
     identity = manifest["scenario_id"]
+    prepared_slice = external_slice.preflight(
+        getattr(args, "slicer_binding", None), identity, tools, config["slicer"]["process"]
+    )
     suffix = identity.replace("-", "_") + "_" + args.attempt.replace("-", "_")
     workspace = Path(args.workspace_root).resolve()
     draft = Path(args.draft_root).resolve() / identity / args.attempt
@@ -85,26 +95,6 @@ def prepare(args, directory, tools):
     helpers.write_once(helpers.confined(workspace, renewal_path), renewal_data)
     staged.append({"path": renewal_path, "sha256": helpers.digest(renewal_data),
                    "size_bytes": len(renewal_data), "role": "approved_engineering_brief"})
-    slice_config = {
-        "slicer": str((ROOT / config["slicer"]["executable"]).resolve()),
-        "profiles_root": str((ROOT / config["slicer"]["profiles_root"]).resolve()),
-        "machine": config["slicer"]["machine"],
-        "filament": config["slicer"]["filament"],
-        "process": config["slicer"]["process"],
-        "workspace_root": str(workspace),
-        "source": output + "/jig.stl",
-        "output_root": output + "/additive-manufacturing",
-    }
-    slice_config_path = inputs_root + "/jig-slice-operation.json"
-    slice_config_data = (json.dumps(slice_config, indent=2) + "\n").encode()
-    helpers.write_once(helpers.confined(workspace, slice_config_path), slice_config_data)
-    staged.append({"path": slice_config_path, "sha256": helpers.digest(slice_config_data),
-                   "size_bytes": len(slice_config_data), "role": "reviewed_operation_configuration"})
-    slice_operation_path = inputs_root + "/engineering_dataset_slice.py"
-    slice_operation_data = (ROOT / "scripts/engineering_dataset_slice.py").read_bytes()
-    helpers.write_once(helpers.confined(workspace, slice_operation_path), slice_operation_data)
-    staged.append({"path": slice_operation_path, "sha256": helpers.digest(slice_operation_data),
-                   "size_bytes": len(slice_operation_data), "role": "reviewed_executed_source"})
     names = [manifest["files"]["user_profile"], manifest["files"]["prompt"], *manifest["files"]["context"]]
     text = "\n\n".join("## Uploaded file: " + name + "\n\n" + (directory / name).read_text(encoding="utf-8") for name in names)
     context_path = inputs_root + "/assembled-context.md"
@@ -245,57 +235,16 @@ def prepare(args, directory, tools):
     observe = task("inspect_jig_exports", "Read actual independent jig inspection and native file identities")
     bind(observe, f"Call inspect_file(includeText=true,maxTextBytes=8192,offsetBytes=0) for {output}/dimension-report.json and {output}/cad-lineage.json, following nextOffsetBytes until complete with maxTextBytes=8192 on every page. Do not request larger pages or embed native execution JSON; retain the complete files and observe every page. Call inspect_file(includeText=false) for {output}/jig.step, {output}/jig.stl and {output}/hole-layout.dxf. Preserve the actual independent dimensional failures, unresolved evidence and file hashes in the observation report. Never infer physical-fit qualification from successful execution or file presence.", "wright-workspace-files", filename="cad-file-observations.json", customer_context=False)
     slicer = task("slice_jig_for_review", "Prepare the checked jig for additive manufacturing review")
-    slicer_binding = next(
-        (
-            item
-            for item in tools
-            if item["server_id"] == config["slicer"]["server"]
-            and item["tool_name"] == config["slicer"]["tool"]
-        ),
-        None,
+    slice_binding_evidence = external_slice.bind(
+        sections, slicer, stages["generate_jig"]["id"] + ".jig_stl",
+        workspace=workspace, input_root=inputs_root,
+        output_root=output + "/additive-manufacturing", source=output + "/jig.stl",
+        prepared=prepared_slice, staged=staged, operation_label="actual_local_bambu_slice",
     )
-    if slicer_binding is None:
-        raise ValueError("Required confined drill-jig slicer is unavailable")
-    slice_files = config["expected_slice_files"]
-    slicer["fields"].update(
-        performed_by="configured_tool",
-        prompt="",
-        instructions=(
-            "Slice the exact same-attempt jig STL with the reviewed pinned Bambu Studio "
-            "configuration. Retain actual toolpaths, profiles and previews. This is digital "
-            "manufacturing preparation only; do not connect to a printer or claim a physical fit."
-        ),
-        outputs=[
-            helpers.port(slicer["id"] + "_result"),
-            helpers.port("slice_package", "workspace_file"),
-            helpers.port("slice_evidence", "workspace_file"),
-            helpers.port("support_preview", "workspace_file"),
-        ],
-        settings={
-            "authoring_template": "mcp-tool",
-            "mcp_server": config["slicer"]["server"],
-            "mcp_tool": slicer_binding["name"],
-            "mcp_schema_digest": slicer_binding["schema_digest"],
-            "mcp_arguments": json.dumps(
-                {
-                    "configuration_document": slice_config_path,
-                    "operation_source_document": slice_operation_path,
-                },
-                separators=(",", ":"),
-            ),
-            "output_format": "json",
-            "save_output": True,
-            "output_filename": output + "/jig-slice-operation-report.json",
-            "file_policy": "overwrite",
-            "timeout_seconds": 600,
-            "expected_files": "\n".join(output + "/" + path for path in slice_files),
-            "expected_file_ports": {
-                "slice_package": output + "/additive-manufacturing/slice_package.gcode.3mf",
-                "slice_evidence": output + "/additive-manufacturing/slice-evidence.json",
-                "support_preview": output + "/additive-manufacturing/support-preview.svg",
-            },
-        },
-    )
+    sections.append({"kind": "connection", "id": "checked_geometry_before_slice_" + suffix,
+        "fields": {"type": "order", "from": observe["id"],
+                   "to": "invoke_external_slice_" + slicer["id"],
+                   "label": "inspect checked CAD before slicing", "when": None}})
     coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
     support = next(row for row in coverage["scenarios"] if row["scenario_id"] == identity)
     profile = support.get("full_profile")
@@ -351,11 +300,14 @@ def prepare(args, directory, tools):
     plan = compile_prompt_workflow(rendered)
     allowlist = []
     for server, names in config["allowed_tools"].items():
+        if server == config["slicer"]["server"]:
+            continue  # Frozen historical binding; live slicing uses the selected independent provider.
         for name in names:
             item = next((t for t in tools if t["server_id"] == server and t["tool_name"] == name), None)
             if item is None:
                 raise ValueError("Required workspace tool missing: " + server + "/" + name)
             allowlist.append(item)
+    allowlist.extend(prepared_slice[1].values())
     draft.mkdir(parents=True)
     target = draft / "bound.workflow.wflow"
     target.write_text(rendered, encoding="utf-8")
@@ -372,8 +324,7 @@ def prepare(args, directory, tools):
         "native_project_initialization": initialization,
         "blockers": ["Native AgentCAD initialization prerequisite and real MCP context preflight must pass before CAD generation",
                      "Generated CAD, extracted-geometry DXF, inspection and additive slice have not executed"],
-        "slicer_wrapper": {"path": str(ROOT / "scripts/engineering_jig_slice_mcp.py"),
-                           "sha256": helpers.digest((ROOT / "scripts/engineering_jig_slice_mcp.py").read_bytes())}}
+        "external_slicer_binding": slice_binding_evidence}
     helpers.publish_input_binding_evidence(report, directory)
     (draft / "staging-manifest.json").write_text(json.dumps(report, indent=2) + "\n")
     return {"scenario_id": identity, "draft": str(target), "stages": len(plan.steps), "files": len(staged), "executed": False}
@@ -386,7 +337,8 @@ def main():
     parser.add_argument("--attempt", default="attempt-001")
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--session", default="wright-local-e3dc0ef1-06da-45dd-83b9-290347814f8a")
-    parser.add_argument("--scenario")
+    parser.add_argument("--scenario", required=True)
+    parser.add_argument("--slicer-binding", required=True, help="Exact independent slicer/inspection binding and pinned profiles")
     parser.add_argument("--instance-source")
     parser.add_argument("--initialize-agentcad", action="store_true",
                         help="Run pinned native AgentCAD init in each new disposable project; never generates CAD.")

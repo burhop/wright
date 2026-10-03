@@ -2580,3 +2580,32 @@ No engineering process or protected review ran during extraction.
 Counts remain 49 checked / 8 open. Actual slicing/preparer/probe migration,
 remaining qualification and full UI/editor/installed/accessibility/regression/
 audit obligations continue. Current owned changes need focused local commit.
+# Latest implementation checkpoint — external slicing preparer migration
+
+Previous status/prompt turn was no implementation progress. This continuation
+migrates both original printed and drill-jig preparation callers to explicit
+independent slicing, retained provider response and existing passive package
+inspection. Exact configuration preflights before staging or optional native
+init. Original six assignments, controlling inputs, source-stage identities,
+full validators, review subjects and frozen campaign bindings remain intact.
+
+The neutral helper declares runtime stages; it owns no slicer/profile/protocol
+implementation or executor. Historical SVG uses the same bounded nominal paths
+as JSON; package PNG is extracted rather than fabricated. Missing/ambiguous/
+invalid images retain evidence and fail before publication.
+
+69 owning checks plus 72 affected 082/example regressions pass. Nine-file Ruff and
+protected-preservation checks pass. Initial schema/port/Windows-path declaration
+mistakes, py_compile cache denial and a nonexistent test filename are retained
+with raw private XML hashes/paths. Public scoped evidence is in
+artifacts/process-interfaces/083/20261003-external-slice-preparer-migration/.
+No live provider call, process run, human/test review or physical effect occurred.
+
+49 tasks checked / 8 open remains. Qualify the new exact bindings and migrate the
+diagnostic probe before removing the three embedded slicing files. Other active
+implementation retains separate inventory/retirement obligations. Remaining
+authoring/editor/installed/accessibility/regression and complete requirement
+audit continue. Local commit receipt will be saved under
+.local-run/process-interfaces-083/external-slice-migration-001-local-commit.json;
+read its actual commit and Git HEAD before repeating any stage. Services were not
+restarted or revalidated in this turn. No push, merge or release is authorized.

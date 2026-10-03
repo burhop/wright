@@ -20,7 +20,6 @@ ROOT = Path(__file__).resolve().parents[1]
 BINDING = ROOT / "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json"
 TEMPLATE = ROOT / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/printed-replacement-part.workflow.wflow"
 SERVER = "blender-mcp-ahujasid"
-SLICE_WRAPPER = ROOT / "scripts/engineering_dataset_slice_mcp.py"
 REPAIR_WRAPPER = ROOT / "scripts/engineering_dataset_mesh_repair_mcp.py"
 REPAIR_OPERATION = ROOT / "scripts/engineering_dataset_mesh_repair.py"
 VALIDATION_COVERAGE = ROOT / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
@@ -45,14 +44,24 @@ publish_input_binding_evidence = _binding_helpers.publish_input_binding_evidence
 AGENTCAD_ENTRYPOINT_GUIDANCE = _binding_helpers.AGENTCAD_ENTRYPOINT_GUIDANCE
 
 
+_slice_spec = importlib.util.spec_from_file_location(
+    "external_campaign_slice_binding", ROOT / "scripts/engineering_external_slice_binding.py"
+)
+external_slice = importlib.util.module_from_spec(_slice_spec)
+_slice_spec.loader.exec_module(external_slice)
+
+
 def prepare(args, scenario_dir: Path, tools: dict) -> dict:
     renewal = _renewal_module()
     config = json.loads(BINDING.read_text(encoding="utf-8"))
     blender_server = getattr(args, "blender_server", None) or SERVER
     repair_server = getattr(args, "repair_server", None) or config["repair_server"]
-    slicer_server = getattr(args, "slicer_server", None) or config["slicer_server"]
     manifest = json.loads((scenario_dir / "scenario.json").read_text(encoding="utf-8"))
     scenario_id = manifest["scenario_id"]
+    prepared_slice = external_slice.preflight(
+        getattr(args, "slicer_binding", None), scenario_id, tools,
+        config["scenarios"][scenario_id]["process"],
+    )
     correction_source = getattr(args, "review_correction_source", None)
     correction_proof = getattr(args, "review_correction_proof", None)
     correction_files = {}
@@ -269,79 +278,13 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
             },
         })
     profile = config["scenarios"][scenario_id]["process"]
-    slicer_config = {
-        "slicer": str((ROOT / config["slicer"]["executable"]).resolve()),
-        "profiles_root": str((ROOT / config["slicer"]["profiles_root"]).resolve()),
-        "machine": config["slicer"]["machine"], "filament": config["slicer"]["filament"],
-        "process": profile, "workspace_root": str(workspace), "output_root": output_root,
-        "source": f"{output_root}/repaired_mesh.stl",
-    }
-    recipe_path = f"{input_root}/slice-operation.json"
-    write_once(confined(workspace, recipe_path), (json.dumps(slicer_config, indent=2) + "\n").encode())
-    inputs.append({"path": recipe_path, "sha256": digest(confined(workspace, recipe_path).read_bytes()), "kind": "reviewed_operation_configuration"})
-    operation_path = f"{input_root}/slice-operation.py"
-    operation_source = (ROOT / "scripts/engineering_dataset_slice.py").read_bytes()
-    write_once(confined(workspace, operation_path), operation_source)
-    inputs.append({"path": operation_path, "sha256": digest(operation_source), "kind": "reviewed_executed_source"})
     slicer = stage("supports_and_slice")
-    slicer_binding = selected_tool(
-        tools,
-        slicer_server,
-        config["slicer_tool"],
+    slice_binding_evidence = external_slice.bind(
+        sections, slicer, repair["id"] + ".repaired_mesh",
+        workspace=workspace, input_root=input_root, output_root=output_root,
+        source=f"{output_root}/repaired_mesh.stl", prepared=prepared_slice,
+        staged=inputs, operation_label="actual_local_bambu_slice",
     )
-    slicer["fields"].update(
-        step_type="work",
-        performed_by="configured_tool",
-        inputs=[],
-        outputs=[
-            port(slicer["id"] + "_result"),
-            *[
-                port(role, "workspace_file")
-                for role in (
-                    "support_preview",
-                    "slice_package",
-                    "slice_evidence",
-                    "machine_profile",
-                    "filament_profile",
-                    "process_profile",
-                )
-            ],
-        ],
-        prompt="",
-        instructions=config["stages"]["supports_and_slice"]["prompt"],
-        tool=None,
-        reusable_step=None,
-    )
-    slicer["fields"]["settings"] = {
-        "authoring_template": "mcp-tool",
-        "mcp_server": slicer_server,
-        "mcp_tool": slicer_binding["name"],
-        "mcp_schema_digest": slicer_binding["schema_digest"],
-        "mcp_arguments": json.dumps(
-            {
-                "configuration_document": recipe_path,
-                "operation_source_document": operation_path,
-            },
-            separators=(",", ":"),
-        ),
-        "output_format": "json",
-        "save_output": True,
-        "output_filename": f"{output_root}/slice-operation-report.json",
-        "file_policy": "overwrite",
-        "expected_files": "\n".join(
-            f"{output_root}/{name}"
-            for name in config["stages"]["supports_and_slice"]["expected_files"]
-        ),
-        "timeout_seconds": 600,
-        "expected_file_ports": {
-            "support_preview": f"{output_root}/support-preview.svg",
-            "slice_package": f"{output_root}/slice_package.gcode.3mf",
-            "slice_evidence": f"{output_root}/slice-evidence.json",
-            "machine_profile": f"{output_root}/machine-profile.json",
-            "filament_profile": f"{output_root}/filament-profile.json",
-            "process_profile": f"{output_root}/process-profile.json",
-        },
-    }
     approval = stage("authorize_transfer")
     approval["fields"]["outputs"] = [port("receipt", "workspace_file")]
     approval["fields"]["settings"].update({
@@ -456,17 +399,14 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "requires_template_instance_api": not bool(args.instance_source), "preserved_original_stages": [s.id for s in compiled.steps],
         "input_manifest": inputs,
         "tool_allowlist": [selected_tool(tools, blender_server, name) for name in config["allowed_tools"]]
-        + [repair_binding, slicer_binding],
+        + [repair_binding, *prepared_slice[1].values()],
         "fixed_mesh_repair_wrapper": {
             "path": str(REPAIR_WRAPPER),
             "sha256": digest(REPAIR_WRAPPER.read_bytes()),
             "operation_path": str(REPAIR_OPERATION),
             "operation_sha256": digest(REPAIR_OPERATION.read_bytes()),
         },
-        "fixed_slicer_wrapper": {
-            "path": str(SLICE_WRAPPER),
-            "sha256": digest(SLICE_WRAPPER.read_bytes()),
-        },
+        "external_slicer_binding": slice_binding_evidence,
         "execution_lineage_authority": {
             "kind": "canonical_mcp_step_record",
             "model_reports_are_authoritative": False,
@@ -496,12 +436,12 @@ def main():
     parser.add_argument("--instance-source", help="Source returned by original-template instance API; requires --scenario")
     parser.add_argument("--blender-server", help="Registered server ID for the lifecycle-owned guarded Blender endpoint")
     parser.add_argument("--repair-server", help="Registered server ID for the fixed same-attempt Blender repair endpoint")
-    parser.add_argument("--slicer-server", help="Registered server ID for the fixed local slicer")
+    parser.add_argument("--slicer-binding", required=True, help="Explicit independent slicer/inspection binding and pinned profiles for the selected scenario")
     parser.add_argument("--review-correction-source", help="Audited same-case Printed 02 construction to reuse through MCP")
     parser.add_argument("--review-correction-proof", help="Current native qualification bound to the correction source and repair operation")
     args = parser.parse_args()
-    if args.instance_source and not args.scenario:
-        parser.error("--instance-source requires --scenario")
+    if not args.scenario:
+        parser.error("--scenario is required for an exact external slicer binding")
     with urllib.request.urlopen(f"{args.api}/api/workspace/workflow-sources/tools?session_id={args.session}", timeout=30) as response:
         available = json.load(response)["tools"]
     tools = {(t["server_id"], t["tool_name"]): t for t in available}
@@ -513,9 +453,6 @@ def main():
     repair_server = args.repair_server or binding["repair_server"]
     if (repair_server, binding["repair_tool"]) not in tools:
         raise RuntimeError("Required fixed mesh-repair tool is not workspace available")
-    slicer_server = args.slicer_server or binding["slicer_server"]
-    if (slicer_server, binding["slicer_tool"]) not in tools:
-        raise RuntimeError("Required fixed slicer tool is not workspace available")
     rows = []
     for directory in sorted((ROOT / "tests/datasets/engineering-workflows/scenarios/printed-replacement-part").iterdir()):
         scenario = json.loads((directory / "scenario.json").read_text())["scenario_id"]

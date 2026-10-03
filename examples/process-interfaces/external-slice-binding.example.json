@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "scenario_id": "EXACT_EXISTING_SCENARIO_ID",
+  "slicer": {
+    "server": "YOUR_REGISTERED_INDEPENDENT_OFFLINE_PROVIDER",
+    "tool": "slice_model_file",
+    "schema_digest": "ACTUAL_DISCOVERED_SCHEMA_DIGEST",
+    "arguments": {
+      "source": "{source}",
+      "output": "{package}",
+      "plate": 1,
+      "orient": false,
+      "arrange": true,
+      "confirm": true
+    }
+  },
+  "files": {
+    "server": "wright-workspace-files",
+    "tool": "write_text_document",
+    "schema_digest": "ACTUAL_DISCOVERED_SCHEMA_DIGEST"
+  },
+  "inspection": {
+    "server": "YOUR_REGISTERED_ENGINEERING_PYTHON_PROVIDER",
+    "tool": "run_simulation",
+    "schema_digest": "ACTUAL_DISCOVERED_SCHEMA_DIGEST",
+    "workspace_mount": "/workspace",
+    "backend": "YOUR_QUALIFIED_BACKEND"
+  },
+  "success_field": "ok",
+  "success_contract": "RECORD_THE_ACTUALLY_QUALIFIED_PROVIDER_VERSION_AND_SUCCESS_SEMANTICS",
+  "expected_response_fields": {
+    "source": "{source}",
+    "output": "{package}",
+    "plate": 1
+  },
+  "gcode_entry": "Metadata/plate_1.gcode",
+  "profiles": {
+    "machine": {"path": "ACTUAL_CONFIGURED_MACHINE_JSON", "sha256": "ACTUAL_SHA256"},
+    "process": {"path": "ACTUAL_CONFIGURED_PROCESS_JSON", "sha256": "ACTUAL_SHA256"},
+    "filament": {"path": "ACTUAL_CONFIGURED_FILAMENT_JSON", "sha256": "ACTUAL_SHA256"}
+  }
+}

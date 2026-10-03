@@ -208,3 +208,40 @@ def test_explicit_nominal_layer_section_retains_full_package_identity(handoff):
     assert view["provenance"]["selected_section"]["excluded_prefix_lines"] == 2
     assert view["package_sha256"] == hashlib.sha256(archive.getvalue()).hexdigest()
     assert view["layers"][0]["support"]
+
+
+@pytest.mark.parametrize("preview", ["valid", "missing", "invalid", "duplicate", "existing"])
+def test_legacy_preview_uses_actual_package_and_same_passive_paths(handoff, preview):
+    root, config, _ = handoff
+    source_package = root / config["slice_package"]
+    with zipfile.ZipFile(source_package) as archive:
+        gcode = archive.read(config["gcode_entry"])
+    archive_bytes = io.BytesIO()
+    png = b"\x89PNG\r\n\x1a\n" + b"fixture bytes; not a render qualification"
+    with zipfile.ZipFile(archive_bytes, "w") as archive:
+        archive.writestr(config["gcode_entry"], gcode)
+        if preview != "missing":
+            archive.writestr("Metadata/plate_1.png", b"invalid!" if preview == "invalid" else png)
+        if preview == "duplicate":
+            with pytest.warns(UserWarning, match="Duplicate"):
+                archive.writestr("Metadata/plate_1.png", png)
+    source_package.write_bytes(archive_bytes.getvalue())
+    config["legacy_previews"] = True
+    if preview == "existing":
+        (root / "outputs/support-preview.svg").write_bytes(b"retained")
+    if preview != "valid":
+        with pytest.raises(ValueError):
+            operation.run(config, read_3mf_toolpaths)
+        assert {path.name for path in (root / "outputs").iterdir()} == (
+            {"support-preview.svg"} if preview == "existing" else set()
+        )
+        return
+    result = operation.run(config, read_3mf_toolpaths)
+    assert (root / "outputs/slice-preview.png").read_bytes() == png
+    assert result["engineering_acceptance"] is False
+    svg = (root / "outputs/support-preview.svg").read_text()
+    view = json.loads((root / "outputs/support-preview.json").read_bytes())
+    segment = view["layers"][0]["support"][0]
+    a, b, c, d = segment
+    assert f"M{a:.3f},{-b:.3f}L{c:.3f},{-d:.3f}" in svg
+    assert "256" not in svg and "<script" not in svg

@@ -13,6 +13,10 @@ import pytest
 from tool_registry.runners.stdio import StdioRunner
 
 ROOT = Path(__file__).resolve().parents[1]
+fixture_spec = importlib.util.spec_from_file_location("external_slice_fixture", ROOT / "tests/fixtures/external_slice_binding.py")
+slice_fixture = importlib.util.module_from_spec(fixture_spec)
+fixture_spec.loader.exec_module(slice_fixture)
+
 BLENDER_MCP_FIXTURE = ROOT / "tests/fixtures/blender_mcp_5f8ddaf6"
 BLENDER_MCP_SOURCE = BLENDER_MCP_FIXTURE / "src"
 BLENDER_SAFE_MODE = BLENDER_MCP_SOURCE / "blender_mcp/safe_mode.py"
@@ -87,12 +91,11 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
         }
         for name in names
     }
-    tools[("wright-printed-part-slicer", "slice_model_file")] = {
-        "name": "wright-printed-part-slicer__slice_model_file",
-        "tool_name": "slice_model_file",
-        "server_id": "wright-printed-part-slicer",
-        "schema_digest": "fixed-slicer-schema",
-    }
+    args.slicer_binding, extra_tools = slice_fixture.make_binding(
+        tmp_path / "external-binding", f"printed-replacement-part-0{number}",
+        json.loads(prepare.BINDING.read_text())["scenarios"][f"printed-replacement-part-0{number}"]["process"],
+    )
+    tools.update({(item["server_id"], item["tool_name"]): item for item in extra_tools})
     tools[("wright-printed-part-mesh-repair", "repair_model_file")] = {
         "name": "wright-printed-part-mesh-repair__repair_model_file",
         "tool_name": "repair_model_file",
@@ -102,6 +105,12 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     result = prepare.prepare(args, folder, tools)
     bound = Path(result["draft"]).read_text()
     plan = prepare.compile_prompt_workflow(bound)
+    original_steps = [step for step in plan.steps if not step.id.startswith(("invoke_external_slice_", "retain_slice_response_"))]
+    assert len(plan.steps) == 8
+    native_slice = next(step for step in plan.steps if step.id.startswith("invoke_external_slice_"))
+    assert native_slice.tool_name == "independent-offline-slicer__slice_model_file"
+    assert Path(native_slice.arguments["source"]).name == "repaired_mesh.stl"
+    assert Path(native_slice.arguments["output"]).name == "slice_package.gcode.3mf"
     repair_configuration = json.loads(
         (
             Path(args.workspace_root)
@@ -113,35 +122,35 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     assert repair_configuration["envelope_margin_mm"] == 0.0
     assert repair_configuration["planar_cleanup"] is (number == 2)
     assert repair_configuration["measure_handle_features"] is (number == 2)
-    assert len(plan.steps) == 6
-    assert all(step.id.endswith("api_created_identity") for step in plan.steps[:4])
-    assert all(step.expected_files for step in plan.steps[:3])
-    assert plan.steps[0].server_id == blender_server
-    assert plan.steps[1].server_id == "wright-printed-part-mesh-repair"
+    assert len(original_steps) == 6
+    assert all(step.id.endswith("api_created_identity") for step in original_steps[:4])
+    assert all(step.expected_files for step in original_steps[:3])
+    assert original_steps[0].server_id == blender_server
+    assert original_steps[1].server_id == "wright-printed-part-mesh-repair"
     assert (
-        plan.steps[1].tool_name == "wright-printed-part-mesh-repair__repair_model_file"
+        original_steps[1].tool_name == "wright-printed-part-mesh-repair__repair_model_file"
     )
-    assert plan.steps[1].schema_digest == "fixed-repair-schema"
-    assert not plan.steps[1].agent_task
-    assert plan.steps[2].server_id == "wright-printed-part-slicer"
-    assert plan.steps[2].tool_name == "wright-printed-part-slicer__slice_model_file"
-    assert plan.steps[2].schema_digest == "fixed-slicer-schema"
-    assert not plan.steps[2].agent_task
-    assert "runpy.run_path" not in plan.steps[2].prompt
-    assert "runpy.run_path" not in plan.steps[0].prompt
-    assert "runpy.run_path" not in plan.steps[1].prompt
+    assert original_steps[1].schema_digest == "fixed-repair-schema"
+    assert not original_steps[1].agent_task
+    assert original_steps[2].server_id == "independent-python"
+    assert original_steps[2].tool_name == "independent-python__run_simulation"
+    assert original_steps[2].schema_digest == "c" * 64
+    assert not original_steps[2].agent_task
+    assert "runpy.run_path" not in original_steps[2].prompt
+    assert "runpy.run_path" not in original_steps[0].prompt
+    assert "runpy.run_path" not in original_steps[1].prompt
     expected_source_files = (
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/source_mesh.stl",
     )
     if number == 2:
         expected_source_files += ("campaign/printed-replacement-part-02/isolated/artifacts/native-design.blend",)
-        assert "X=15.5 and X=80.5" in plan.steps[0].prompt
-        assert "save_as_mainfile" in plan.steps[0].prompt
-        assert "copy=True" in plan.steps[0].prompt
-    assert plan.steps[0].expected_files == expected_source_files
+        assert "X=15.5 and X=80.5" in original_steps[0].prompt
+        assert "save_as_mainfile" in original_steps[0].prompt
+        assert "copy=True" in original_steps[0].prompt
+    assert original_steps[0].expected_files == expected_source_files
     if with_correction:
-        assert "changing only the two export paths" in plan.steps[0].prompt
-        assert any("review correction source" in reference[0] for reference in plan.steps[0].references)
+        assert "changing only the two export paths" in original_steps[0].prompt
+        assert any("review correction source" in reference[0] for reference in original_steps[0].references)
         staged = Path(args.workspace_root) / "campaign/printed-replacement-part-02/isolated/inputs/review-correction-source.py"
         assert staged.read_bytes() == correction.read_bytes()
         # A changed source cannot reuse this qualification in a fresh attempt.
@@ -150,50 +159,53 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
         with pytest.raises(ValueError, match="qualification identity"):
             prepare.prepare(args, folder, tools)
         assert not (Path(args.workspace_root) / "campaign/printed-replacement-part-02/tampered").exists()
-    assert plan.steps[1].expected_files == (
+    assert original_steps[1].expected_files == (
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/repaired_mesh.stl",
         f"campaign/printed-replacement-part-0{number}/isolated/artifacts/mesh-preview.png",
     )
     assert (
-        plan.steps[1]
+        original_steps[1]
         .arguments["configuration_document"]
         .endswith("/mesh-repair-operation.json")
     )
     assert (
-        plan.steps[1]
+        original_steps[1]
         .arguments["operation_source_document"]
         .endswith("/mesh-repair-operation.py")
     )
-    assert plan.steps[1].timeout_seconds == 600
-    assert plan.steps[1].max_tool_calls == 8
-    assert "do not repeat submitted source code" in plan.steps[0].prompt
+    assert original_steps[1].timeout_seconds == 600
+    assert original_steps[1].max_tool_calls == 8
+    assert "do not repeat submitted source code" in original_steps[0].prompt
     assert (
         "do not pass lambda functions or helper-function parameters"
-        in plan.steps[0].task_guidance
+        in original_steps[0].task_guidance
     )
-    assert "Explicitly import mathutils" in plan.steps[0].task_guidance
-    assert "Call bpy.ops.wm.stl_export(...) directly" in plan.steps[0].task_guidance
-    assert "never inspect bpy.ops" in plan.steps[0].task_guidance
-    assert "Never rebuild already-watertight geometry" in plan.steps[0].task_guidance
-    assert "zero boundary/non-manifold edges" in plan.steps[0].task_guidance
-    assert plan.steps[3].external_action["destination"] == {
+    assert "Explicitly import mathutils" in original_steps[0].task_guidance
+    assert "Call bpy.ops.wm.stl_export(...) directly" in original_steps[0].task_guidance
+    assert "never inspect bpy.ops" in original_steps[0].task_guidance
+    assert "Never rebuild already-watertight geometry" in original_steps[0].task_guidance
+    assert "zero boundary/non-manifold edges" in original_steps[0].task_guidance
+    assert original_steps[3].external_action["destination"] == {
         "kind": "integration_test",
         "id": f"test://test-campaign/printer/printed-replacement-part-0{number}",
     }
-    assert plan.steps[3].external_action["settings"]["nozzle_mm"] == "0.4"
-    assert plan.steps[3].output_ports == (("receipt", "workspace_file"),)
-    assert set(plan.steps[0].expected_file_ports) == ({"source_mesh", "native_design"} if number == 2 else {"source_mesh"})
-    assert set(plan.steps[1].expected_file_ports) == {"repaired_mesh"}
-    assert set(plan.steps[2].expected_file_ports) == {
+    assert original_steps[3].external_action["settings"]["nozzle_mm"] == "0.4"
+    assert original_steps[3].output_ports == (("receipt", "workspace_file"),)
+    assert set(original_steps[0].expected_file_ports) == ({"source_mesh", "native_design"} if number == 2 else {"source_mesh"})
+    assert set(original_steps[1].expected_file_ports) == {"repaired_mesh"}
+    assert set(original_steps[2].expected_file_ports) == {
         "support_preview",
         "slice_package",
         "slice_evidence",
         "machine_profile",
         "filament_profile",
         "process_profile",
+        "toolpath_preview",
+        "toolpath_summary",
+        "slice_preview",
     }
-    review = plan.steps[4]
-    validator = plan.steps[5]
+    review = original_steps[4]
+    validator = original_steps[5]
     assert review.external_action["action_kind"] == "local_review"
     assert {role for role, _ in validator.validation_sources} == {
         "source_mesh",
@@ -225,13 +237,13 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     assert len(endpoint_pairs) == len(set(endpoint_pairs))
     assert sum(
         s["type"] == "order"
-        and s["from"] == plan.steps[0].id
-        and s["to"] == plan.steps[1].id
+        and s["from"] == original_steps[0].id
+        and s["to"] == original_steps[1].id
         for s in connections
     ) == 1
     image = next(s for s in sections if s["id"].startswith("image_and_scale_"))
     assert image["fields"]["settings"]["workspace_file"].endswith("/concept.png")
-    assert len(plan.steps[0].references) == (6 if with_correction else 4)
+    assert len(original_steps[0].references) == (6 if with_correction else 4)
     # PNG, natural prompt, assembled human context, approved engineering brief.
     record = json.loads(
         Path(result["draft"]).with_name("staging-manifest.json").read_text()
@@ -241,9 +253,9 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     assert not any(output_directory.iterdir())
     assert record["requires_template_instance_api"] is False
     assert record["status"] == "prepared_not_dispatched"
-    assert record["fixed_slicer_wrapper"]["sha256"] == prepare.digest(
-        prepare.SLICE_WRAPPER.read_bytes()
-    )
+    assert record["external_slicer_binding"]["vendor_implementation"] == "independent_provider"
+    assert not any("slice-operation.py" in row["path"] for row in record["input_manifest"])
+    assert "engineering_dataset_slice" not in bound
     assert record["fixed_mesh_repair_wrapper"]["operation_sha256"] == prepare.digest(
         prepare.REPAIR_OPERATION.read_bytes()
     )
@@ -255,8 +267,8 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
         "output_hashes": "produced_files[].sha256",
         "persistence": "canonical run/step evidence written by Wright outside Blender",
     }
-    assert plan.steps[0].output_path.endswith("/source-model-report.json")
-    assert plan.steps[1].output_path.endswith("/repair-model-report.json")
+    assert original_steps[0].output_path.endswith("/source-model-report.json")
+    assert original_steps[1].output_path.endswith("/repair-model-report.json")
 
 
 def test_preparation_rejects_escape_and_different_staged_input(tmp_path):
@@ -267,26 +279,6 @@ def test_preparation_rejects_escape_and_different_staged_input(tmp_path):
     with pytest.raises(ValueError, match="replace"):
         prepare.write_once(target, b"different text")
     assert target.read_bytes() == b"human original"
-
-
-@pytest.mark.asyncio
-async def test_fixed_slicer_is_a_separate_configured_mcp_tool(tmp_path):
-    runner = StdioRunner(
-        [sys.executable, str(prepare.SLICE_WRAPPER)],
-        env={"WRIGHT_PRINT_WORKSPACE": str(tmp_path)},
-        cwd=str(ROOT),
-    )
-    await runner.start()
-    try:
-        tools = await runner.list_tools()
-    finally:
-        await runner.stop()
-    assert len(tools) == 1
-    assert tools[0]["name"] == "slice_model_file"
-    assert set(tools[0]["inputSchema"]["required"]) == {
-        "configuration_document",
-        "operation_source_document",
-    }
 
 
 @pytest.mark.asyncio

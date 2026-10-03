@@ -4,6 +4,12 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
+Latest migration progress: both original printed/drill-jig preparers now declare
+independent slicing and passive package inspection, with configuration preflight
+and all six assignments structurally checked. 141 owning/affected checks pass;
+live qualification of these new bindings and remaining probe/implementation
+retirement are still required. See [migration evidence](evidence/generality-and-migration.md#external-slicing-declarations-in-existing-preparers).
+
 T045 and T047 are now checked by the exact two-process obligation audit002.
 Two configured printed016 runs each produce twenty outputs and execute their
 original source gate: 17 passes and mandatory human review held. Heat's actual

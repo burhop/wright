@@ -21,6 +21,10 @@ from agent_adapters.hermes_openai_bridge import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+fixture_spec = importlib.util.spec_from_file_location("external_slice_fixture", ROOT / "tests/fixtures/external_slice_binding.py")
+slice_fixture = importlib.util.module_from_spec(fixture_spec)
+fixture_spec.loader.exec_module(slice_fixture)
+
 spec = importlib.util.spec_from_file_location("jig_path_preparer", ROOT / "scripts/prepare-drill-jig-dataset-campaign.py")
 preparer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(preparer)
@@ -35,6 +39,11 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
         attempt="path-contract-unit", instance_source=None, initialize_agentcad=False)
     directory = next(p for p in (ROOT / "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig").iterdir()
         if p.name.startswith(f"{ordinal:02d}"))
+    args.slicer_binding, extra_tools = slice_fixture.make_binding(
+        tmp_path / "external-binding", json.loads((directory / "scenario.json").read_text())["scenario_id"],
+        config["slicer"]["process"],
+    )
+    tools = [item for item in tools if item["server_id"] != config["slicer"]["server"]] + extra_tools
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text(encoding="utf-8")
     report = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text())
@@ -100,7 +109,12 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
         and node["fields"].get("from") == inspected.id and node["fields"].get("to") == observer.id
         for node in _parse(source))
     slicer = next(step for step in plan.steps if step.id.startswith("slice_jig_for_review_"))
-    assert slicer.tool_name == "wright-drill-jig-slicer__slice_jig_file"
+    assert slicer.tool_name == "independent-python__run_simulation"
+    native_slice = next(step for step in plan.steps if step.id.startswith("invoke_external_slice_"))
+    assert native_slice.tool_name == "independent-offline-slicer__slice_model_file"
+    assert Path(native_slice.arguments["source"]).name == "jig.stl"
+    assert "engineering_dataset_slice" not in source
+    assert not any("slice-operation" in row["path"] for row in report["input_manifest"])
     assert slicer.expected_file_ports["slice_package"].endswith(
         "/additive-manufacturing/slice_package.gcode.3mf"
     )
