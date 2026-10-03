@@ -26,6 +26,60 @@ function fixture() {
 const flushClose = () => act(async () => {await new Promise(resolve => setTimeout(resolve, 5));});
 
 describe("native process interface view lifetime", () => {
+  it.each(["working", "preview"] as const)("page departure closes only the exact %s presentation once", async kind => {
+    const f = fixture(), view = render(<StrictMode><ProcessInterfaceView {...f.props}
+      locator={kind === "preview" ? {kind, ui_id, revision_id, job_id: "job-one"} : f.props.locator}/></StrictMode>);
+    await screen.findByTestId("issued-interface-fixture");
+    const expected = kind === "preview" ? {...presentation, binding: {...presentation.binding, read_only: true}} : presentation;
+    act(() => window.dispatchEvent(new PageTransitionEvent("pagehide", {persisted: false})));
+    expect(f.client.close).toHaveBeenCalledExactlyOnceWith(expected, {keepalive: true});
+    act(() => window.dispatchEvent(new PageTransitionEvent("pagehide", {persisted: false})));
+    view.unmount(); await flushClose();
+    expect(f.client.close).toHaveBeenCalledTimes(1);
+    expect(f.client.submit).not.toHaveBeenCalled(); expect(f.client.cancel).not.toHaveBeenCalled();
+  });
+
+  it("does not revoke a view retained in the browser's back-forward cache", async () => {
+    const f = fixture(), view = render(<ProcessInterfaceView {...f.props}/>);
+    await screen.findByTestId("issued-interface-fixture");
+    act(() => window.dispatchEvent(new PageTransitionEvent("pagehide", {persisted: true})));
+    expect(f.client.close).not.toHaveBeenCalled();
+    expect(screen.getByTestId("issued-interface-fixture")).toBeVisible();
+    view.unmount(); await flushClose();
+    expect(f.client.close).toHaveBeenCalledExactlyOnceWith(presentation);
+  });
+
+  it("releases a late opening reply after departure without mounting it or duplicating cleanup", async () => {
+    const f = fixture(); let resolve!: (value: ProcessInterfacePresentation) => void;
+    f.client.present.mockImplementation(() => new Promise(done => {resolve = done;}));
+    const view = render(<ProcessInterfaceView {...f.props}/>);
+    await waitFor(() => expect(f.client.present).toHaveBeenCalledTimes(1));
+    act(() => window.dispatchEvent(new PageTransitionEvent("pagehide", {persisted: false})));
+    expect(f.client.close).not.toHaveBeenCalled();
+    await act(async () => resolve(presentation));
+    expect(f.client.close).toHaveBeenCalledExactlyOnceWith(presentation, {keepalive: true});
+    expect(screen.queryByTestId("issued-interface-fixture")).not.toBeInTheDocument();
+    view.unmount(); await flushClose();
+    expect(f.client.close).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports departure cleanup failure without cancelling or restarting the run", async () => {
+    const f = fixture(), failure = vi.fn();
+    f.client.close.mockRejectedValue(new Error("unavailable"));
+    window.addEventListener("wright-process-ui-close-failed", failure);
+    const view = render(<ProcessInterfaceView {...f.props}/>);
+    try {
+      await screen.findByTestId("issued-interface-fixture");
+      await act(async () => window.dispatchEvent(new PageTransitionEvent("pagehide", {persisted: false})));
+      expect(failure).toHaveBeenCalledTimes(1);
+      expect((failure.mock.calls[0][0] as CustomEvent).detail).toEqual({viewId: "view"});
+      expect(f.client.submit).not.toHaveBeenCalled(); expect(f.client.cancel).not.toHaveBeenCalled();
+    } finally {
+      view.unmount(); await flushClose();
+      window.removeEventListener("wright-process-ui-close-failed", failure);
+    }
+  });
+
   it("opens one issued view across StrictMode and closing does not submit or cancel work", async () => {
     const f = fixture(), view = render(<StrictMode><ProcessInterfaceView {...f.props}/></StrictMode>);
     await screen.findByTestId("issued-interface-fixture");

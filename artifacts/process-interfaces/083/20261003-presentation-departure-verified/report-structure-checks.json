@@ -1,0 +1,12 @@
+[
+  {
+    "report": "workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n"
+  },
+  {
+    "report": "retained-prelaunch-stop",
+    "exit_code": 1,
+    "output": "ERROR: report.html has no recognizable full-size image interaction\n"
+  }
+]

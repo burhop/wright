@@ -95,8 +95,12 @@ the remaining engineering/provider/migration obligations, then host/editor/audit
 work. Preserve the routing failure and premature Heat-load assertion, plus its
 separate capacity stop. The fixed workspace now selects an exact common evidence
 tab rather than a tailored or preview tab; 106 affected tests and the full app
-typecheck pass. Browser-unload presentation lifetime remains a broader host-audit
-subject, not silently solved by proof cleanup. Reuse qualified harnesses and only
+typecheck pass. Browser departure now has a shared host correction and scoped
+proof under 20261003-presentation-departure-verified: three reloads per saved
+engineering UI and navigation away close prior exact views without changing
+retained files or authoring records. Abrupt termination remains unqualified;
+back-forward-cache and late-open cases have component scope only. Keep the broader
+host audit open. Reuse qualified harnesses and only
 fresh isolated subjects for required starts. Verify output path isolation before
 starting another run; never overwrite the retained first-run engineering files.
 Close only owned isolated proof presentations through the normal owner API when

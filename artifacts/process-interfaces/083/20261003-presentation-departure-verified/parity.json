@@ -1,0 +1,59 @@
+{
+  "cases": [
+    {
+      "label": "heat",
+      "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+      "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170",
+      "result_ids": [
+        "67abaa021ee44972a94e3c9cbaa3dbbe:author_cad_live_default_model_002:cad_source",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:baseline_40_coarse",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:baseline_40_fine",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:correspondence",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:decision",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-coarse-temperature.vtu",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-fine-temperature.vtu",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/heat-balance.json",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/mesh-comparison.json",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-coarse-temperature.vtu",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-fine-temperature.vtu",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:revision_60_coarse",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:revision_60_fine",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:baseline_40_geometry",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:geometry_measurements",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:revision_60_geometry",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:define_thermal_case_live_default_model_002:define_thermal_case_live_default_model_002_result",
+        "67abaa021ee44972a94e3c9cbaa3dbbe:validate_outputs_live_default_model_002:diagnostic:validation/assessment-c1cc56ecf12341938996ff0fa1c07b4e.json"
+      ]
+    },
+    {
+      "label": "wheel",
+      "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+      "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687",
+      "result_ids": [
+        "bebf24bcdec44058a46371fa05d7cd83:authorize_transfer_retained_consumer_003:receipt",
+        "bebf24bcdec44058a46371fa05d7cd83:define_geometry_basis_retained_consumer_003:define_geometry_basis_retained_consumer_003_result",
+        "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:filament_profile",
+        "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:inspect_slice_handoff_retained_consumer_003_result",
+        "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:machine_profile",
+        "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:process_profile",
+        "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:slice_evidence",
+        "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:support_preview",
+        "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:toolpath_summary",
+        "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:mesh_preview",
+        "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:repair_measure_orient_retained_consumer_003_result",
+        "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:repaired_mesh",
+        "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:source_mesh",
+        "bebf24bcdec44058a46371fa05d7cd83:retain_slice_response_retained_consumer_003:provider_response",
+        "bebf24bcdec44058a46371fa05d7cd83:retain_slice_response_retained_consumer_003:retain_slice_response_retained_consumer_003_result",
+        "bebf24bcdec44058a46371fa05d7cd83:summarize_preparation_retained_consumer_003:summarize_preparation_retained_consumer_003_result",
+        "bebf24bcdec44058a46371fa05d7cd83:supports_and_slice_retained_consumer_003:slice_package",
+        "bebf24bcdec44058a46371fa05d7cd83:supports_and_slice_retained_consumer_003:supports_and_slice_retained_consumer_003_result",
+        "bebf24bcdec44058a46371fa05d7cd83:validate_outputs_retained_consumer_003:diagnostic:validation/assessment-46f892fa42ae4a21950679d986815e55.json"
+      ]
+    }
+  ],
+  "reloads_per_interface": 3,
+  "exact_issued_views_closed": true,
+  "files_unchanged": true,
+  "authoring_records_unchanged": true
+}

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createInterfaceAuthoringClient, interfaceAuthoringReason } from "./process-ui-authoring";
+import { createInterfaceAuthoringClient, interfaceAuthoringReason, type ProcessInterfacePresentation } from "./process-ui-authoring";
 import type { AuthoringJob, BuildReport, InterfaceManifest, InterfaceRevision } from "@wright/process-client";
 
 const host = vi.hoisted(() => ({fetch: vi.fn(), resolveBackendUrl: vi.fn((path: string) => "http://localhost:8000" + path),
@@ -19,11 +19,11 @@ const manifest: InterfaceManifest = {ui_id: ui, revision_id: revision, title: "R
 const build: BuildReport = {build_id: "build-one", source_digest: "d".repeat(64), manifest_digest: "e".repeat(64),
   bundle_digest: "f".repeat(64), toolchain_digest: "a".repeat(64), state: "built", created_at: now, bundled_bytes: 21};
 const built = {job, preview: {manifest, build, active_revision: null, previewed_at: null}};
-const descriptor = {schemaVersion: 1, surfaceId: "surface-one", workspaceId: "workspace",
+const descriptor: ProcessInterfacePresentation["descriptor"] = {schemaVersion: 1, surfaceId: "surface-one", workspaceId: "workspace",
   source: {kind: "live_app", sourceId: `process.${ui}.${revision}`, sourceVersion: "a".repeat(64), manifestId: `process.${ui}.${revision}`},
   title: "Comparison", lifecycle: "ready", instance: {instanceId: "instance-one", generation: 1, sharing: "isolated"},
   presentations: [{kind: "panel", eligible: true}], capabilities: [], revision: 2, createdAt: now, updatedAt: now};
-const launch = {presentationId: "presentation-one", instanceId: "instance-one", generation: 1, kind: "panel",
+const launch: ProcessInterfacePresentation["launch"] = {presentationId: "presentation-one", instanceId: "instance-one", generation: 1, kind: "panel",
   absoluteBootstrapUrl: "http://s-presentation-one.localhost:8000/bootstrap?token=issued", expiresAt: now};
 const binding = {process, ui_id: ui, revision_id: revision, run_id: null, read_only: true,
   presentation_id: "presentation-one", generation: 1};
@@ -35,6 +35,24 @@ const client = () => createInterfaceAuthoringClient(process, "owned-session");
 
 describe("native interface authoring client", () => {
   beforeEach(() => {vi.clearAllMocks(); host.validateIssuedPreviewUrl.mockImplementation(value => value);});
+
+  it("keeps exact presentation cleanup alive during document departure", async () => {
+    host.fetch.mockResolvedValue(new Response(null, {status: 204}));
+    await client().close(view, {keepalive: true});
+    expect(host.fetch).toHaveBeenCalledExactlyOnceWith("http://localhost:8000/api/workspace/process-interfaces/presentations/close", {
+      method: "POST", signal: undefined, keepalive: true,
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({surface_id: "surface-one", presentation_id: "presentation-one", session_id: "owned-session",
+        path: process.source_path, expected_storage_digest: process.source_digest}),
+    });
+  });
+
+  it("keeps normal presentation cleanup on the ordinary request path", async () => {
+    host.fetch.mockResolvedValue(new Response(null, {status: 204}));
+    await client().close(view);
+    expect(host.fetch.mock.calls[0][1]).not.toHaveProperty("keepalive");
+    expect(host.fetch.mock.calls[0][0]).toContain("/presentations/close");
+  });
 
   it.each(["details", "detail"])("preserves the backend actionable reason from %s", async key => {
     const reason = {code: "CAPABILITY_UNAVAILABLE", message: "The managed interface is not ready.",

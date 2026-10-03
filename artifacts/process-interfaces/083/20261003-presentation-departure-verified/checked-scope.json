@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "branch": "codex/083-process-working-interfaces",
+  "baseline_commit": "fd3abb7d",
+  "sources": {
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.tsx": "81872ebf4dbbe59ea8d6a5a23875e30cc144309a6336f6177ca21613c2b1d033",
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx": "f75711c8f6990bed74d5a63f939ee4efd87a0d3fbdc83f8500b7c493b00b84a4",
+    "apps/web/src/services/process-ui-authoring.ts": "6e2e56af9e59a9e9eaf5040361351894a065f7cfbe2ca45e560be6cd47791a48",
+    "apps/web/src/services/process-ui-authoring.spec.ts": "6756d0410427f58fc91f7351b53bfe55f9f52a4ddc38644e8830ababd9f47dba"
+  },
+  "browser_checks": 12,
+  "actual_model_saved_interfaces": 2,
+  "reloads_per_interface": 3,
+  "affected_frontend_tests": 63,
+  "backend_authority_tests": 73,
+  "counts_overlap_prior_evidence": true,
+  "app_typecheck_exit": 0,
+  "new_process_starts": 0,
+  "engineering_review_responses": 0,
+  "exact_presentations_closed": true,
+  "baseline_files_unchanged": 57,
+  "ui_authoring_records_unchanged": true,
+  "limitations": [
+    "Healthy completed-open browser views; abrupt browser/OS termination is not tested.",
+    "Late-open and back-forward cache behavior is component-tested, not browser-qualified.",
+    "Browser launch sandbox EPERM is preserved without invented screenshots.",
+    "The earlier typecheck fixture failure is retained; the fresh corrected app typecheck passes.",
+    "This is not full hosting, editor/accessibility, provider, migration or feature acceptance."
+  ]
+}

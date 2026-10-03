@@ -21,6 +21,9 @@ interface ViewLease {
   readonly client: InterfaceAuthoringClient;
   readonly opening: Promise<ProcessInterfacePresentation>;
   released: boolean;
+  presentation?: ProcessInterfacePresentation;
+  closeRequested?: boolean;
+  leaving?: boolean;
   timer?: ReturnType<typeof setTimeout>;
 }
 
@@ -60,15 +63,40 @@ export function ProcessInterfaceView({client, locator, sessionId, viewId, runId,
     held.released = false;
     setPresentation(undefined); setError(undefined);
     let observing = true;
-    void held.opening.then(value => {if (observing && !held.released) setPresentation(value);})
+    const close = () => {
+      if (held.closeRequested) return;
+      held.closeRequested = true;
+      const release = (value: ProcessInterfacePresentation) => (held.leaving
+        ? held.client.close(value, {keepalive: true})
+        : held.client.close(value)).catch(() => {
+        window.dispatchEvent(new CustomEvent("wright-process-ui-close-failed", {detail: {viewId}}));
+      });
+      // A resolved view can be released during pagehide before the browser tears
+      // down this document. Pending opens are released if their reply arrives.
+      if (held.presentation) void release(held.presentation);
+      else void held.opening.then(release, () => undefined);
+    };
+    const pageLeaving = (event: PageTransitionEvent) => {
+      // A cached document can return with its mounted view and bridge intact.
+      if (event.persisted) return;
+      observing = false;
+      held.leaving = true;
+      held.released = true;
+      if (held.timer !== undefined) clearTimeout(held.timer);
+      close();
+    };
+    window.addEventListener("pagehide", pageLeaving);
+    void held.opening.then(value => {
+      held.presentation = value;
+      if (observing && !held.released) setPresentation(value);
+    })
       .catch(reason => {if (observing) setError(interfaceAuthoringReason(reason));});
     return () => {
       observing = false;
+      window.removeEventListener("pagehide", pageLeaving);
       held.timer = setTimeout(() => {
         held.released = true;
-        void held.opening.then(value => held.client.close(value).catch(() => {
-          window.dispatchEvent(new CustomEvent("wright-process-ui-close-failed", {detail: {viewId}}));
-        }), () => undefined);
+        close();
       }, 0);
     };
   }, [client, key, jobId, locator.kind, locator.ui_id, locator.revision_id, runId, viewId]);

@@ -84,9 +84,9 @@ export function createInterfaceAuthoringClient(reference: ProcessRef, sessionId:
       correction: "Open the exact saved process in its owning workspace."
     });
   };
-  async function request(path: string, body?: Record<string, unknown>, signal?: AbortSignal): Promise<unknown> {
+  async function request(path: string, body?: Record<string, unknown>, signal?: AbortSignal, keepalive = false): Promise<unknown> {
     const response = await hostAdapter.fetch(base + path + (body ? "" : (path.includes("?") ? "&" : "?") + query), {
-      method: body ? "POST" : "GET", signal,
+      method: body ? "POST" : "GET", signal, ...(keepalive ? {keepalive: true} : {}),
       ...(body ? {headers: {"Content-Type": "application/json"}, body: JSON.stringify({...body, ...source})} : {}),
     });
     if (response.status === 204 && response.ok) return null;
@@ -219,8 +219,8 @@ export function createInterfaceAuthoringClient(reference: ProcessRef, sessionId:
       return presentation(await request(`/uis/${encodeURIComponent(id(uiId))}/present`, {
         request_id: id(requestId), revision_id: id(revisionId), ...(runId ? {run_id: id(runId)} : {})}), false, uiId, revisionId, runId);
     },
-    async close(value: ProcessInterfacePresentation) {
-      await request("/presentations/close", {surface_id: value.descriptor.surfaceId, presentation_id: value.binding.presentation_id});
+    async close(value: ProcessInterfacePresentation, options?: {readonly keepalive?: boolean}) {
+      await request("/presentations/close", {surface_id: value.descriptor.surfaceId, presentation_id: value.binding.presentation_id}, undefined, options?.keepalive);
     },
     async save(view: InterfaceJobView, expectedActive: string | null) {
       if (!view.preview || !view.preview.build.bundle_digest) throw new TypeError("No built preview to save");

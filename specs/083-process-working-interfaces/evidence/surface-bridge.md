@@ -68,3 +68,35 @@ No new live-model inference, live MCP engineering run, hardware/supplier dispatc
 served workspace authoring journey, managed preview/save/update, installed wheel/
 Docker acceptance, or human engineering/product acceptance occurred here. T021,
 T032, remaining T034/T037–T042 integration, M4 and M5 are still required.
+
+## Browser departure cleanup — current shared host
+
+Later actual model-created saved interfaces and installed native/Docker proofs
+supersede the narrow initial observations above within their recorded scopes;
+see the live authoring, distribution, Heat and printed proof records. A real
+open-view capacity stop then revealed that full-document navigation could abort
+ordinary asynchronous unmount cleanup, retaining issued/active presentations.
+
+The native ProcessInterfaceView now handles noncached pagehide by releasing its
+exact presentation through the existing authenticated owner endpoint with a
+bounded keepalive request. Ordinary unmount/StrictMode cleanup remains deferred
+and happens once. Cached documents retain their mounted view; pending opens are
+released if their response arrives while the document can execute cleanup.
+No process execution, cancellation, review or independent lifecycle is added.
+
+The [current departure evidence](../../../artifacts/process-interfaces/083/20261003-presentation-departure-verified/README.md)
+records twelve actual browser checks on both saved engineering interfaces, three
+reloads each plus departure. Prior exact presentation states become closed while
+all 57 baseline run/output/bundle files and authoring/revision records remain
+unchanged. The browser diagnostics are empty. The two interfaces still match
+their eighteen and nineteen exact results. Preflight closed eight earlier owned
+proof views through the normal API; no limits were raised or database records edited.
+
+The affected frontend group passes 63 tests, the current backend static-host/
+presentation/start-association/API-authority group passes 73 tests, and the app
+typecheck exits 0. Counts overlap retained suites. The first typecheck fixture
+typing error and pre-navigation Chromium sandbox EPERM are preserved. The fresh
+walkthrough structure validator passes. These checks cover healthy opened views;
+abrupt browser/OS termination is unqualified, and back-forward-cache/late-reply
+behavior has component evidence only. Full T034/T037 acceptance remains subject
+to the final hosting/handshake and installed-scope audit, not this correction alone.

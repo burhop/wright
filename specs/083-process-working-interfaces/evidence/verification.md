@@ -148,3 +148,17 @@ prior suites. No generation/build, engineering start/review or physical operatio
 occurs. Earlier wheel routing failure, premature Heat loading assertion and
 separate open-view capacity stop remain preserved. This strengthens T047/T053
 within recorded scope; neither broad task is marked complete.
+
+### Browser document departure and exact presentation cleanup
+
+[Scoped evidence](../../../artifacts/process-interfaces/083/20261003-presentation-departure-verified/README.md)
+retains the actual two-interface twelve-check walkthrough, independent backend
+closed-view observations, unchanged retained artifacts/authoring records, exact
+source hashes, commands and failure limits. The current affected frontend group
+passes **63 tests / five files / 9.67 seconds**; backend static-host, presentation,
+start-association and native API authority passes **73 tests / 38.64 seconds**
+with two existing dependency warnings and zero skips. App typecheck exits 0.
+The earlier 36-case subset overlaps; none of these counts are additive with prior
+suites. Authenticated browser traces remain private. No model generation, build,
+process start, review response or uncertain simulator replay occurs. T053 remains
+open pending its full affected-suite and acceptance audit.

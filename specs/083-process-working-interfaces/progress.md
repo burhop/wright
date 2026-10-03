@@ -1945,3 +1945,39 @@ viewer and navigation work. Task counts remain 44 checked / 13 open. Existing
 service handles are recorded for reconciliation, not freshly verified availability.
 The active goal continues; no review response, engineering start, physical effect,
 push, merge, release or additional publication was performed in this status review.
+
+## Shared presentation cleanup proved on browser departure
+
+The previous goal turn made progress by saving checkpoints `1d759201` and
+`fd3abb7d`. Read the original submitted objective before continuing this turn;
+the unlimited full Feature 083 goal remains active. Current API/UI owner handles
+41512/21619 and HTTP health are live. No native lease or older installed fixture
+availability is newly claimed.
+
+Fixed the real shared host lifetime gap behind the retained open-view capacity
+stop: noncached document pagehide now closes the exact native presentation with
+a bounded authenticated keepalive request, without cancelling or starting its
+process. Normal unmount, StrictMode, cached-document retention and late replies
+have focused tests. Actual Heat and wheel saved interfaces each pass three
+reloads plus navigation-away closure: twelve browser checks, independent exact
+closed-view observations, empty browser errors and unchanged eighteen/nineteen
+result identities. All 57 retained run/output/saved-bundle baseline files and
+authoring/revision records are unchanged. Eight earlier exact owned proof views
+were closed through the normal owner API before the fresh walkthrough; no limits
+were raised. Final fresh browser presentations are closed.
+
+Current affected frontend tests pass 63 cases, backend hosting/authority tests
+pass 73 cases, and app typecheck exits 0. Preserve the first fixture typecheck
+error and sandbox prelaunch EPERM; its nonexistent screenshot is an explicit
+report-validator exception. The successful walkthrough structure passes.
+Credential-scanned evidence with exact inventory is published under
+20261003-presentation-departure-verified. Abrupt browser/OS termination is not
+proved; back-forward-cache/late-open behavior has component scope only.
+
+Current-revision printed second-run reuse still needs isolation: the accepted
+source's prologue and later providers use fixed output paths. Do not blindly
+start it over retained files or infer a compatible UI from a different source.
+Continue provider/migration/host/editor/audit obligations. Task counts remain
+44 checked / 13 open; a focused cleanup correction does not establish all hosting
+or feature acceptance. No engineering start/review, physical effect, push, merge
+or release occurred.

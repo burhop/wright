@@ -1,0 +1,210 @@
+{
+  "title": "Saved engineering interfaces release their views on reload",
+  "summary": "Actual common host cleanup on two saved model-created interfaces; no process restart or review response.",
+  "overall": "pass",
+  "updated": "2026-10-03T03:32:29.985Z",
+  "manualSteps": [
+    {
+      "label": "Open interface",
+      "instruction": "Open the saved Heat comparison or Focus-wheel working-interface link."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the page three times. Check that the same saved interface and exact results return."
+    },
+    {
+      "label": "Leave workspace",
+      "instruction": "Navigate away. Return to the saved interface and check its results. Leave all review decisions unchanged."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "heat saved interface opens",
+      "summary": "The current saved interface displays its exact engineering results.",
+      "purpose": "Establish current immutable saved/run identity.",
+      "action": "Open the saved working-interface link.",
+      "controls": [
+        "Run inputs",
+        "Open representation",
+        "Open assessment"
+      ],
+      "expected": "Exact saved revision, current results and active presentation.",
+      "actual": "18 exact results; existing source/build and run files unchanged.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "heat reload 1 releases previous view",
+      "summary": "Reload restores the same saved interface and closes its prior presentation.",
+      "purpose": "Verify actual browser departure cleanup rather than only component unmount.",
+      "action": "Reload the page.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Prior exact view closed; fresh working presentation with the same results.",
+      "actual": "Previous exact presentation is closed; 18 result identities and immutable records unchanged.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "heat reload 2 releases previous view",
+      "summary": "Reload restores the same saved interface and closes its prior presentation.",
+      "purpose": "Verify actual browser departure cleanup rather than only component unmount.",
+      "action": "Reload the page.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Prior exact view closed; fresh working presentation with the same results.",
+      "actual": "Previous exact presentation is closed; 18 result identities and immutable records unchanged.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "heat reload 3 releases previous view",
+      "summary": "Reload restores the same saved interface and closes its prior presentation.",
+      "purpose": "Verify actual browser departure cleanup rather than only component unmount.",
+      "action": "Reload the page.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Prior exact view closed; fresh working presentation with the same results.",
+      "actual": "Previous exact presentation is closed; 18 result identities and immutable records unchanged.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "heat ready to leave workspace",
+      "summary": "The final saved view is intact before leaving.",
+      "purpose": "Retain the last visible screen before document departure.",
+      "action": "Inspect the saved view before navigating away.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Same exact results and review state.",
+      "actual": "Saved view and current results present; no review action requested.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "heat departure releases view",
+      "summary": "Navigating away closes the exact presentation and preserves the process.",
+      "purpose": "Check native view cleanup independently in the backend.",
+      "action": "Navigate away from the workspace.",
+      "controls": [],
+      "expected": "Exact presentation closed; process and saved artifacts unchanged.",
+      "actual": "Exact presentation closed; all baseline files and UI authoring records unchanged.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "wheel saved interface opens",
+      "summary": "The current saved interface displays its exact engineering results.",
+      "purpose": "Establish current immutable saved/run identity.",
+      "action": "Open the saved working-interface link.",
+      "controls": [
+        "Run inputs",
+        "Open representation",
+        "Open assessment"
+      ],
+      "expected": "Exact saved revision, current results and active presentation.",
+      "actual": "19 exact results; existing source/build and run files unchanged.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "wheel reload 1 releases previous view",
+      "summary": "Reload restores the same saved interface and closes its prior presentation.",
+      "purpose": "Verify actual browser departure cleanup rather than only component unmount.",
+      "action": "Reload the page.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Prior exact view closed; fresh working presentation with the same results.",
+      "actual": "Previous exact presentation is closed; 19 result identities and immutable records unchanged.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "wheel reload 2 releases previous view",
+      "summary": "Reload restores the same saved interface and closes its prior presentation.",
+      "purpose": "Verify actual browser departure cleanup rather than only component unmount.",
+      "action": "Reload the page.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Prior exact view closed; fresh working presentation with the same results.",
+      "actual": "Previous exact presentation is closed; 19 result identities and immutable records unchanged.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "wheel reload 3 releases previous view",
+      "summary": "Reload restores the same saved interface and closes its prior presentation.",
+      "purpose": "Verify actual browser departure cleanup rather than only component unmount.",
+      "action": "Reload the page.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Prior exact view closed; fresh working presentation with the same results.",
+      "actual": "Previous exact presentation is closed; 19 result identities and immutable records unchanged.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "wheel ready to leave workspace",
+      "summary": "The final saved view is intact before leaving.",
+      "purpose": "Retain the last visible screen before document departure.",
+      "action": "Inspect the saved view before navigating away.",
+      "controls": [
+        "Run inputs",
+        "Open assessment"
+      ],
+      "expected": "Same exact results and review state.",
+      "actual": "Saved view and current results present; no review action requested.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "wheel departure releases view",
+      "summary": "Navigating away closes the exact presentation and preserves the process.",
+      "purpose": "Check native view cleanup independently in the backend.",
+      "action": "Navigate away from the workspace.",
+      "controls": [],
+      "expected": "Exact presentation closed; process and saved artifacts unchanged.",
+      "actual": "Exact presentation closed; all baseline files and UI authoring records unchanged.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    }
+  ]
+}
