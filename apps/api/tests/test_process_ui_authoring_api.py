@@ -164,6 +164,72 @@ def test_generation_status_events_idempotency_and_preview_are_native_scoped(case
     assert not (case.root / "first.txt").exists()
 
 
+def test_status_exposes_only_the_retained_trace_after_exact_job_authorization(case):
+    value = generate(case)
+    job_id = value["job"]["job_id"]
+    retained = case.application.interfaces.get_authoring_record(
+        case.process.workspace_id, job_id, "request"
+    )
+    assert value["trace_id"] == retained["trace_id"]
+    assert set(value) == {"job", "preview", "trace_id"}
+    reopened = case.client.get(PREFIX + "/authoring-jobs/" + job_id, params=case.query)
+    assert reopened.status_code == 200
+    assert reopened.json()["trace_id"] == value["trace_id"]
+    assert reopened.headers["cache-control"] == "no-store"
+    assert len(case.author.engine.calls) == 1
+    denied = case.client.get(
+        PREFIX + "/authoring-jobs/" + job_id,
+        params=case.query | {"session_id": "foreign-session"},
+    )
+    assert denied.status_code == 404
+    assert value["trace_id"] not in denied.text
+    case.state["role"] = "viewer"
+    denied = case.client.get(PREFIX + "/authoring-jobs/" + job_id, params=case.query)
+    assert denied.status_code == 403
+    assert value["trace_id"] not in denied.text
+
+
+def test_old_job_without_retained_trace_is_explicitly_unavailable(case, monkeypatch):
+    value = generate(case)
+    original = case.application.interfaces.get_authoring_record
+
+    def without_trace(workspace, job_id, key):
+        record = original(workspace, job_id, key)
+        return {k: v for k, v in record.items() if k != "trace_id"}
+
+    monkeypatch.setattr(
+        case.application.interfaces, "get_authoring_record", without_trace
+    )
+    response = case.client.get(
+        PREFIX + "/authoring-jobs/" + value["job"]["job_id"], params=case.query
+    )
+    assert response.status_code == 200
+    assert response.json()["trace_id"] is None
+    assert response.json()["job"] == value["job"]
+    assert len(case.author.engine.calls) == 1
+
+
+@pytest.mark.parametrize("trace", [True, {}, "SECRET SDK token", "a" * 161])
+def test_invalid_retained_trace_does_not_leak_private_record(case, monkeypatch, trace):
+    value = generate(case)
+    original = case.application.interfaces.get_authoring_record
+
+    def invalid_trace(workspace, job_id, key):
+        record = original(workspace, job_id, key)
+        return record | {"trace_id": trace} if key == "request" else record
+
+    monkeypatch.setattr(
+        case.application.interfaces, "get_authoring_record", invalid_trace
+    )
+    response = case.client.get(
+        PREFIX + "/authoring-jobs/" + value["job"]["job_id"], params=case.query
+    )
+    assert response.status_code == 409
+    assert "SECRET SDK token" not in response.text
+    assert "request" not in response.json().get("details", {})
+    assert len(case.author.engine.calls) == 1
+
+
 @pytest.mark.parametrize("principal", ["user", None])
 def test_runtime_diagnostics_use_native_owner_without_starting_work(
     case, monkeypatch, principal

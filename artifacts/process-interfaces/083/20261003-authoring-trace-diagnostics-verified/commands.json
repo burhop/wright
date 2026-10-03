@@ -1,0 +1,27 @@
+{
+  "backend": {
+    "cwd": "D:\\repos\\wright",
+    "command": ".venv/Scripts/python.exe -m pytest -q -p no:cacheprovider apps/api/tests/test_process_ui_authoring_api.py packages/workspace_service/tests/test_process_ui_authoring.py packages/workspace_service/tests/test_process_ui_revision_compatibility.py --basetemp=.local-run/process-interfaces-083/t056-trace-backend-003-tmp --junitxml=.local-run/process-interfaces-083/t056-trace-backend-003.xml",
+    "exit_code": 0
+  },
+  "frontend": {
+    "cwd": "D:\\repos\\wright\\apps\\web",
+    "command": "node ../../node_modules/vitest/vitest.mjs run src/components/common/ProcessUIKit.spec.tsx src/components/process-interfaces/CommonProcessView.spec.tsx src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx src/services/process-ui-authoring.spec.ts --maxWorkers=1 --reporter=json --outputFile=../../.local-run/process-interfaces-083/t056-trace-frontend-002.json",
+    "exit_code": 0
+  },
+  "typescript": {
+    "cwd": "D:\\repos\\wright\\apps\\web",
+    "command": "node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
+    "exit_code": 0
+  },
+  "ruff_check": {
+    "cwd": "D:\\repos\\wright",
+    "command": ".venv/Scripts/python.exe -m ruff check --no-cache apps/api/src/api/routers/process_ui_authoring.py apps/api/tests/test_process_ui_authoring_api.py",
+    "exit_code": 0
+  },
+  "ruff_format": {
+    "cwd": "D:\\repos\\wright",
+    "command": ".venv/Scripts/python.exe -m ruff format --check --no-cache apps/api/src/api/routers/process_ui_authoring.py apps/api/tests/test_process_ui_authoring_api.py",
+    "exit_code": 0
+  }
+}

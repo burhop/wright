@@ -29,6 +29,28 @@ function describeInterface() {
 const intent: InterfaceAuthoringIntent = {version: "1", process, request: {request_id: "retained-request", instruction: "Compare exact results", title: "Comparison"}};
 
 describe("native interface authoring controls", () => {
+  it("keeps the actual trace and request identity in creation details without generation", async () => {
+    const f = fixture({...intent, job_id: job.job_id});
+    f.client.getJob.mockResolvedValue({...built, trace_id: "trace-recorded-one"} as never);
+    const view = render(f.element);
+    const details = (await screen.findByText("Creation details")).closest("details");
+    expect(details).not.toHaveAttribute("open");
+    expect(details).toHaveTextContent("Trace: trace-recorded-one");
+    expect(details).toHaveTextContent(`Request: ${job.request_id}`);
+    expect(f.client.submit).not.toHaveBeenCalled();
+    view.unmount();
+    expect(f.client.cancel).not.toHaveBeenCalled();
+  });
+
+  it("discloses missing historical trace identity without guessing one", async () => {
+    const f = fixture({...intent, job_id: job.job_id});
+    const view = render(f.element);
+    const details = (await screen.findByText("Creation details")).closest("details");
+    expect(details).toHaveTextContent("Trace identity is unavailable for this record.");
+    expect(f.client.submit).not.toHaveBeenCalled();
+    view.unmount();
+  });
+
   it.each([
     ["queued", "Waiting to create the interface"],
     ["resolving", "Preparing Wright's interface instructions"],

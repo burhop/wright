@@ -195,7 +195,9 @@ export function InterfaceAuthoringPanel({client, sessionId, viewId, recoveryStor
       </div>
       {job.preview && !job.preview.previewed_at && <p>Open the preview and wait for it to load before saving.</p>}
       <details><summary>Creation details</summary><p>Model: {job.job.role_resolution.model_reference} · adapter: {job.job.role_resolution.adapter}</p>
-        <p>Job {job.job.job_id} · revision {job.job.revision_id}</p></details>
+        <p>Job {job.job.job_id} · revision {job.job.revision_id}</p>
+        <p>Request: {job.job.request_id}</p>
+        <p>{job.trace_id ? `Trace: ${job.trace_id}` : "Trace identity is unavailable for this record."}</p></details>
     </section>}
     {observerExpired && <p role="status">Progress observation stopped. The backend job keeps its own state.
       <button className="wp-button" type="button" onClick={() => setRefresh(value => value + 1)}>Refresh job status</button></p>}

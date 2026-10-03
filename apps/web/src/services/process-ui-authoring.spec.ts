@@ -36,6 +36,20 @@ const client = () => createInterfaceAuthoringClient(process, "owned-session");
 describe("native interface authoring client", () => {
   beforeEach(() => {vi.clearAllMocks(); host.validateIssuedPreviewUrl.mockImplementation(value => value);});
 
+  it("preserves the recorded trace on built and active jobs and accepts older responses", async () => {
+    host.fetch.mockResolvedValue(json({...built, trace_id: "trace-recorded-one"}));
+    expect((await client().getJob("job-one")).trace_id).toBe("trace-recorded-one");
+    host.fetch.mockResolvedValue(json({job: {...job, state: "generating"}, preview: null, trace_id: "trace-recorded-one"}));
+    expect((await client().getJob("job-one")).trace_id).toBe("trace-recorded-one");
+    host.fetch.mockResolvedValue(json(built));
+    expect((await client().getJob("job-one")).trace_id).toBeNull();
+  });
+
+  it.each([true, {}, "not an identity", "a".repeat(161)])("rejects an invalid diagnostic trace identity %j", async trace => {
+    host.fetch.mockResolvedValue(json({...built, trace_id: trace}));
+    await expect(client().getJob("job-one")).rejects.toThrow();
+  });
+
   it("keeps exact presentation cleanup alive during document departure", async () => {
     host.fetch.mockResolvedValue(new Response(null, {status: 204}));
     await client().close(view, {keepalive: true});

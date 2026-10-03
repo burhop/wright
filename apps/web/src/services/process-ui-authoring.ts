@@ -30,6 +30,8 @@ export interface InterfaceAuthoringCapabilities {
 }
 export interface InterfaceJobView {
   readonly job: AuthoringJob;
+  /** Actual retained authoring correlation; absent on older native responses. */
+  readonly trace_id?: string | null;
   readonly preview: {
     readonly manifest: InterfaceManifest;
     readonly build: BuildReport;
@@ -115,9 +117,10 @@ export function createInterfaceAuthoringClient(reference: ProcessRef, sessionId:
   };
   const jobView = (raw: unknown): InterfaceJobView => {
     const value = record(raw), checked = job(value.job);
+    const traceId = value.trace_id == null ? null : id(value.trace_id);
     if (value.preview === null) {
       if (["preview_ready", "saved"].includes(checked.state)) throw new TypeError("Built job has no verified preview");
-      return {job: checked, preview: null};
+      return {job: checked, preview: null, trace_id: traceId};
     }
     if (!["preview_ready", "saved"].includes(checked.state)) throw new TypeError("Unbuilt job cannot expose a preview");
     const built = record(value.preview);
@@ -125,7 +128,7 @@ export function createInterfaceAuthoringClient(reference: ProcessRef, sessionId:
     const report = assertContract("BuildReport", built.build);
     exact(manifest.process);
     if (manifest.revision_id !== checked.revision_id || report.state !== "built") throw new TypeError("Preview and job revisions disagree");
-    return {job: checked, preview: {manifest, build: report, active_revision: nullableId(built.active_revision),
+    return {job: checked, trace_id: traceId, preview: {manifest, build: report, active_revision: nullableId(built.active_revision),
       previewed_at: built.previewed_at === null ? null : date(built.previewed_at)}};
   };
   const presentation = (raw: unknown, readonly: boolean, uiId?: string, revisionId?: string, runId?: string): ProcessInterfacePresentation => {

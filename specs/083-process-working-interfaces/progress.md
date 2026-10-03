@@ -1,5 +1,23 @@
 # Feature 083 progress
 
+## Current authoring trace correction — 3 October 2026
+
+The [trace diagnostics correction](../../artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/README.md)
+exposes the existing retained authoring trace/request in collapsed Creation
+details after exact native authorization. Legacy records report unavailable
+identity; malformed metadata is contained without private record projection.
+49 affected backend and 160 frontend cases, TypeScript and Ruff pass. The two
+first failing assertions and source snapshots are retained. This is controlled
+API/owner/client/component scope, not new installed/browser/model/MCP acceptance.
+Earlier installed builds do not contain this correction.
+
+The latest cumulative semantic ledger remains **67 proved / 115 awaiting review**
+of 182. **55 tasks checked; T056/T057 open.** Continue shared UI/progress and the
+remaining engineering/migration/contract review; no full feature or user acceptance
+claim. Existing local implementation/testing authority is sufficient. No physical
+operation, protected decision, push, merge or release is performed.
+
+
 ## Authoring, authority and resource primary audit — 3 October 2026
 
 The [primary authoring/resource review](../../artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/README.md)

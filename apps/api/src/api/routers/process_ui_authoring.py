@@ -1,6 +1,9 @@
 """Native authoring and fixed managed presentation over existing owners."""
 
 import asyncio
+import re
+
+from pydantic import TypeAdapter
 
 from fastapi import APIRouter, Depends, Query, Request, Response
 from fastapi.responses import StreamingResponse
@@ -212,7 +215,23 @@ async def authoring_job(
                 "active_revision": ui.active_revision,
                 "previewed_at": observation["previewed_at"] if observation else None,
             }
-        return {"job": job, "preview": built}
+        # Only expose the retained correlation identity after the existing job
+        # owner has checked the exact process/workspace. Prompts and credentials
+        # from the private request record are not part of the native projection.
+        try:
+            retained = application.interfaces.get_authoring_record(
+                process.workspace_id, job_id, "request"
+            )
+        except KeyError:
+            retained = {}
+        trace_id = retained.get("trace_id")
+        if trace_id is not None:
+            trace_id = TypeAdapter(Identifier).validate_python(trace_id)
+            # Match the scoped client's correlation-ID format rather than the
+            # broader domain Identifier, which also permits display text.
+            if re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9._:-]{0,159}", trace_id) is None:
+                raise ValueError("Invalid retained trace identity")
+        return {"job": job, "preview": built, "trace_id": trace_id}
     except (ProcessInterfaceError, KeyError, ValueError) as error:
         raise _error(error) from error
 
