@@ -47,6 +47,24 @@ overwritten. Accept the proposal through Wright's normal workflow-source service
 using the manifest's `accepted_source_path`; verify the accepted storage digest
 against `source_sha256`. Preparation creates no run or review authority.
 
+The example bindings explicitly select `wright.run-path/1`. One accepted process
+can then prepare distinct output directories for backend-assigned runs. Geometry
+exports, slicer package, retained provider response, package-inspection job and
+simulated receipt use that run identity. Requirements, image, profiles, passive
+inspection source and any retained mesh remain unchanged supplied inputs.
+Legacy private bindings without this declaration retain their earlier paths.
+
+If supplying `geometry_operation_files`, configure construction and repair
+recipes with explicit `{{wright.run_id}}` paths and owned object names before
+pinning their hashes. Fixed recipes are rejected for a reusable configuration;
+Wright does not rewrite vendor code. These template inputs retain their original
+hash plus a separate resolved-content hash. Presence of a token does not qualify
+native effects or prove that all provider writes remain within the run directory;
+qualify those actual recipes through the existing provider process before use.
+The connected package representation pins the exact handoff artifact. The receipt
+is a declared output bound into the existing approval/dispatcher, rather than
+a token in its authority settings. Reopening a view never replays that action.
+
 Open the accepted workflow in the workspace and use its common working view to
 prepare immutable inputs and check readiness. Generate and refine a tailored
 interface through Wright's UI authoring control. Native/provider readiness and

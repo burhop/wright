@@ -112,6 +112,7 @@ def configure(flow, retained, qualified_geometry, create, repair, report):
         "retained-repair-call.json",
         qualified_geometry["repair"][0],
         original=qualified_geometry["repair"][1],
+        run_paths=bool(flow.run_path_template),
     )
     argument_port = flow.reference(operation, repair, "exact_arguments")
     flow.exact_mcp(

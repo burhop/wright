@@ -1,5 +1,30 @@
 # Printed replacement-part proof
 
+## Run paths and receipts — controlled implementation, 3 October 2026
+
+The new explicit configuration resolves the earlier repeat-path audit through
+the existing run-path owner, not by replacing accepted-source identities or
+renaming static outputs. Geometry exports, slice package, retained response,
+inspection job/configuration and simulated receipt resolve from backend run ID.
+Opaque inputs/profiles and the full eighteen-check gate remain unchanged.
+Reusable provider recipes must contain explicit run-id configuration; fixed
+recipes are rejected rather than rewritten. Actual provider-effect confinement
+still needs qualification and live proof.
+
+The shared compiler binds a declared receipt output into existing checkpoint
+settings only after its path is concrete. Two controlled runs of one source retain
+their receipts and previous output hashes; duplicate continuation does no work.
+A neutral controlled digital MCP operation proves the same receipt/dispatcher
+path without provider replay. Generated, configured-recipe and retained-mesh
+preparation are checked. Thirteen affected suites pass 278 cases, with nine-file
+Ruff and protected history checks; see the
+[scoped evidence](../../../artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/README.md).
+
+This does not establish actual repeated native geometry/slicing, current saved
+interface parity, browser/installed acceptance or physical/human verification.
+Earlier actual outputs, failed consumers and skipped gates are preserved.
+T045/T047 and qualification/migration/full acceptance remain pending.
+
 ## Checked preparation — 2 October 2026
 
 The proposal retains the original `printed-replacement-part-01` assignment and

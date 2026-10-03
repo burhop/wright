@@ -556,10 +556,31 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 for port in declared_outputs
                 if isinstance(port, dict) and isinstance(port.get("key"), str)
             )
+            receipt_path = ""
+            receipt_declaration = settings.get("run_path_template", "")
+            if receipt_declaration or "output_filename" in settings:
+                from .workflow_run_paths import VERSION
+
+                if (
+                    receipt_declaration != VERSION
+                    or action_kind == "local_review"
+                    or not isinstance(action_settings, dict)
+                    or "receipt_path" in action_settings
+                    or len(declared_outputs) != 1
+                    or len(receipt_outputs) != 1
+                    or receipt_outputs[0][1] != "workspace_file"
+                    or not receipt_outputs[0][0].endswith("receipt")
+                ):
+                    raise _invalid(
+                        f"{title}: declare one run-scoped receipt output, without a separate approval receipt path."
+                    )
+                receipt_path = _safe_path(settings.get("output_filename"))
+                if PurePosixPath(receipt_path).suffix.lower() != ".json":
+                    raise _invalid(f"{title}: the receipt filename must end in .json.")
             valid_receipt_output = not declared_outputs or (
                 action_kind != "local_review"
                 and isinstance(action_settings, dict)
-                and isinstance(action_settings.get("receipt_path"), str)
+                and (receipt_path or isinstance(action_settings.get("receipt_path"), str))
                 and len(receipt_outputs) == 1
                 and receipt_outputs[0][1] == "workspace_file"
                 and receipt_outputs[0][0].endswith("receipt")
@@ -581,8 +602,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 or not dependencies[block_id]
                 or not all(
                     isinstance(value, dict) and value
-                    for value in (binding, destination, action_settings, action)
+                    for value in (binding, destination, action)
                 )
+                or not isinstance(action_settings, dict)
+                or not (action_settings or receipt_path)
                 or action.get("kind") != action_kind
             ):
                 raise _invalid(
@@ -602,11 +625,14 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                         for port in fields.get("inputs", [])
                         for source in incoming.get(f"{block_id}.{port['key']}", [])
                     ),
-                    "text",
-                    "",
+                    "json" if receipt_path else "text",
+                    receipt_path,
                     False,
-                    "indexed",
+                    "overwrite" if receipt_path else "indexed",
                     output_ports=receipt_outputs,
+                    expected_files=(receipt_path,) if receipt_path else (),
+                    expected_file_ports={receipt_outputs[0][0]: receipt_path} if receipt_path else {},
+                    run_path_template=receipt_declaration,
                     external_action={
                         "action_kind": action_kind,
                         "binding": binding,
@@ -1093,7 +1119,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
     # Reject output collisions within one run before calling any model.
     names: dict[str, str] = {}
     for step in steps:
-        if step.save:
+        if step.save or (step.external_action and step.output_path):
             key = step.output_path.casefold()
             if key in names and (
                 step.file_policy == "overwrite" or names[key] == "overwrite"

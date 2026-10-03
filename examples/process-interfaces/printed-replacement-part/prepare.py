@@ -144,7 +144,10 @@ def prepare(workspace, attempt, tools, bindings):
         if definition.sha(data) != item["sha256"]:
             raise ValueError("Original assignment changed: " + item["path"])
         assignment.append((item, original, data))
-    flow = definition.Definition("printed-replacement-part", workspace, attempt, tools)
+    flow = definition.Definition(
+        "printed-replacement-part", workspace, attempt, tools,
+        run_path_template=bindings.get("run_path_template", ""),
+    )
     for server, names in required:
         for name in names:
             flow.select(server, name)
@@ -234,7 +237,8 @@ def prepare(workspace, attempt, tools, bindings):
     if qualified_geometry:
         raw, original = qualified_geometry["construction"]
         invocation = flow.input_bytes(
-            "construction-provider-arguments.json", raw, original=original
+            "construction-provider-arguments.json", raw, original=original,
+            run_paths=bool(flow.run_path_template),
         )
         flow.reference(invocation, create, "qualified_operation")
         create["fields"]["prompt"] += (
@@ -268,7 +272,8 @@ def prepare(workspace, attempt, tools, bindings):
     if qualified_geometry:
         raw, original = qualified_geometry["repair"]
         invocation = flow.input_bytes(
-            "repair-provider-arguments.json", raw, original=original
+            "repair-provider-arguments.json", raw, original=original,
+            run_paths=bool(flow.run_path_template),
         )
         flow.reference(invocation, repair, "qualified_operation")
         repair["fields"]["prompt"] += (
@@ -305,7 +310,8 @@ def prepare(workspace, attempt, tools, bindings):
         "confirm": True,
     }
     arguments_ref = flow.input_bytes(
-        "slice-call.json", (json.dumps(arguments, indent=2) + "\n").encode()
+        "slice-call.json", (json.dumps(arguments, indent=2) + "\n").encode(),
+        run_paths=bool(flow.run_path_template),
     )
     argument_port = flow.reference(arguments_ref, slice_step, "exact_arguments")
     flow.exact_mcp(
@@ -435,13 +441,14 @@ def prepare(workspace, attempt, tools, bindings):
                 {
                     "solver": bindings["inspection_backend"],
                     "input_content": input_content,
-                    "job_name": flow.relative + "/package-inspection",
+                    "job_name": (flow.output if flow.run_path_template else flow.relative) + "/package-inspection",
                     "critic_approved": False,
                 },
                 indent=2,
             )
             + "\n"
         ).encode(),
+        run_paths=bool(flow.run_path_template),
     )
     argument_port = flow.reference(inspection_call, inspect_step, "exact_arguments")
     flow.exact_mcp(
@@ -561,6 +568,16 @@ def prepare(workspace, attempt, tools, bindings):
             "simulation": True,
         },
     }
+    if flow.run_path_template:
+        transfer_settings = transfer["fields"]["settings"]
+        transfer_settings["approval_settings"].pop("receipt_path")
+        # The connected workspace_file already pins the actual package bytes.
+        # A second literal authority-setting path would refer to another run.
+        transfer_settings["approval_settings"].pop("package_path")
+        transfer_settings.update(
+            run_path_template=flow.run_path_template,
+            output_filename=flow.output + "/simulated-transfer-receipt.json",
+        )
     flow.reference(
         slice_step["id"] + ".slice_package", transfer, "exact_package", "workspace_file"
     )

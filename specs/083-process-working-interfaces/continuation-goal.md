@@ -33,6 +33,34 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest implementation — run receipts and printed preparation paths
+
+Shared receipt declaration/binding and explicit printed run-path preparation
+are implemented. Read `contracts/runtime-and-source.md` and the scoped evidence
+at `artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/`.
+Thirteen affected suites pass 278 cases with no skips; nine-file Ruff and
+protected archive/campaign/context/unrelated-byte checks pass. First exploratory
+product/fixture failures are retained as transcript summaries. No actual native
+provider execution or new browser acceptance is claimed by this proof.
+
+Two controlled same-source handoffs keep separate receipts/earlier output bytes;
+duplicate continuation does no extra work. The neutral digital operation uses
+the same receipt output/dispatcher and duplicate requests make no provider call.
+Printed generated/configured/retained preparation now binds all declared write
+paths and inspection job namespace while retaining original opaque inputs and
+the full original gate. Supplied native recipes must explicitly declare run-id
+paths; fixed code is rejected, not rewritten. Token presence is not native-effect
+qualification. Legacy fixed configurations keep their earlier behavior.
+
+Next use fresh isolated actual provider recipes and accepted source/UI bindings
+for printed same-source execution/reuse, with exact test enrollment and declared
+basis review. Revalidate a current backend before executing the new contract;
+previous service handles were not inspected in this controlled turn. Do not
+rerun existing source preparation over retained files. Preserve earlier failed
+consumers, actual gate/evidence, historical UI and protected reviews. Continue
+T043/T048/T049 migration/qualification, T041/T052/T053 current UI/regressions,
+and T056/T057 full-audit obligations. Counts remain 47 checked / ten open.
+
 ### Latest completed digital checkpoint — Heat repeat gate and saved UI verified
 
 This supersedes the waiting-run/cold-load instructions below. Third run

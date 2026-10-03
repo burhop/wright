@@ -6,6 +6,11 @@ from pathlib import Path
 
 
 def qualified_geometry_inputs(bindings):
+    from workspace_service.workflow_run_paths import TOKEN, VERSION
+
+    version = bindings.get("run_path_template", "")
+    if version not in ("", VERSION):
+        raise ValueError("Declare the supported run-path version before staging geometry inputs")
     selected = bindings.get("geometry_operation_files")
     if selected is None:
         return {}
@@ -45,5 +50,9 @@ def qualified_geometry_inputs(bindings):
             or not value["code"].strip()
         ):
             raise ValueError("Supply the selected provider's explicit code argument")
+        if role != "basis" and version and TOKEN not in value["code"]:
+            raise ValueError(
+                "A reusable geometry recipe must explicitly declare its run-id paths; fixed recipes are not rewritten"
+            )
         result[role] = (raw, str(path))
     return result

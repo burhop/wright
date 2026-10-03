@@ -1,0 +1,59 @@
+{
+  "source": "Summaries of retained tool-call transcripts; complete raw logs were not saved for these initial exploratory runs.",
+  "attempts": [
+    {
+      "attempt": "initial",
+      "result": "5 failed, 9 passed, 1 error",
+      "cause": "Missing receipt declaration support; sandbox default temp/cache permissions."
+    },
+    {
+      "attempt": "001",
+      "result": "14 passed, 1 failed",
+      "cause": "New fixture receipt port lacked required authoring metadata."
+    },
+    {
+      "attempt": "002",
+      "result": "14 passed, 1 failed",
+      "cause": "Compiler rejected empty settings before receipt binding supplied the path."
+    },
+    {
+      "attempt": "003",
+      "result": "14 passed, 1 failed",
+      "cause": "Using save=True for receipts let the model-response writer overwrite receipt JSON with Approved; fixed by declaring expected files and keeping save=False."
+    },
+    {
+      "attempt": "004",
+      "result": "14 passed, 1 failed",
+      "cause": "Second-run fixture omitted required tool_runtime argument."
+    },
+    {
+      "attempt": "005",
+      "result": "120 passed, 1 failed",
+      "cause": "Second-run fixture passed a grant object where policy digest was required."
+    },
+    {
+      "attempt": "006",
+      "result": "15 passed"
+    },
+    {
+      "attempt": "007",
+      "result": "17 passed"
+    },
+    {
+      "attempt": "008",
+      "result": "61 passed"
+    },
+    {
+      "attempt": "009",
+      "result": "277 passed"
+    },
+    {
+      "attempt": "010",
+      "result": "18 passed"
+    },
+    {
+      "attempt": "011",
+      "result": "278 passed"
+    }
+  ]
+}

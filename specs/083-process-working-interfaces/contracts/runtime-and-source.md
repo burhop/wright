@@ -62,6 +62,19 @@ its original run ID and requires the retained directory. Changed source/template
 identity or uncertain execution still follows existing continuation/replay rules.
 Legacy processes without declarations preserve their original behavior.
 
+An external-action approval may declare one `workspace_file` output whose key
+ends in `receipt`, `run_path_template: "wright.run-path/1"`, and a JSON
+`output_filename` such as `outputs/{{wright.run_id}}/submission.json`. It must
+omit `approval_settings.receipt_path`; simultaneous declarations conflict.
+Local reviews cannot declare these receipt outputs. The compiler records the
+expected file, and preparation binds its concrete path into the existing
+approval settings before checkpoint identity, enrollment and dispatch checks.
+No approval dictionary is templated. The existing dispatcher writes and verifies
+the receipt; the model-response writer does not write an approval's response
+over it. Same-run continuation uses the original concrete receipt, while another
+run gets a separate subject and output directory. Legacy literal receipts keep
+their existing behavior, and output-boundary/replay/unknown-outcome rules remain.
+
 Source validator idempotency binds the durable run ID, validator step and revision.
 Two runs of the same accepted source in one workspace receive separate attempts
 for their exact output subjects. Retrying an identical retained request still

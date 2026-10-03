@@ -1,5 +1,25 @@
 # Verification record — partial feature acceptance
 
+## Run receipts and printed preparation, 3 October 2026
+
+Thirteen affected source/runtime/approval/operation/integration/continuation and
+example suites pass **278 tests, zero failures/errors/skips**. Eighteen new receipt
+cases and five printed preparation cases cover separate same-source runs,
+unchanged earlier bytes, duplicate continuation/dispatch, exact receipt evidence,
+neutral digital operation, output-scope guard, unsupported/conflicting declarations
+and output collision. Generated/configured/retained printed preparation preserves
+opaque inputs/full gate and resolves all declared write/job paths. Ruff passes
+nine owning files; protected archive/campaign/context/unrelated-byte checks pass.
+
+Exact command/log/XML/hashes/reproduction and first exploratory failure summaries
+are in the [scoped evidence](../../../artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/README.md).
+Earlier 15/17/18/61/277 case counts overlap this run and must not be summed.
+The initial model-response overwrite exposed by receipt save=True was corrected
+using expected files/save=False, leaving persistence with the existing dispatcher.
+Fixtures for native provider/model operations do not constitute live engineering,
+clean qualification, current browser or installed acceptance. No protected review
+or physical effect occurred. T053 and the broader ten open tasks remain open.
+
 ## Generated-interface and existing surface boundaries, 2 October 2026
 
 Code checkpoint before this run: `beb3339a` on

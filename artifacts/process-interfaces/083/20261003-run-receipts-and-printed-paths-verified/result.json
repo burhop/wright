@@ -1,0 +1,35 @@
+{
+  "command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "packages/workspace_service/tests/test_workflow_source_execution.py",
+    "packages/workspace_service/tests/test_workflow_run_receipts.py",
+    "packages/workspace_service/tests/test_workflow_run_paths.py",
+    "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+    "packages/workspace_service/tests/test_workflow_integration_policy.py",
+    "packages/workspace_service/tests/test_workflow_external_action_execution.py",
+    "packages/workspace_service/tests/test_workflow_execution_continuation.py",
+    "packages/workspace_service/tests/test_workflow_artifact_review.py",
+    "packages/workspace_service/tests/test_workflow_approval_review_settings.py",
+    "packages/workspace_service/tests/test_workflow_approval_resume.py",
+    "packages/workspace_service/tests/test_workflow_approval_execution.py",
+    "tests/test_process_interface_examples.py",
+    "tests/test_process_interface_operator_example.py",
+    "-q",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-receipt-regression-011\\pytest-temp",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-receipt-regression-011\\pytest.xml"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 40.175373600002786,
+  "counts": {
+    "tests": 278,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scope": "Controlled shared receipt/continuation and printed preparation; no native provider or browser proof."
+}

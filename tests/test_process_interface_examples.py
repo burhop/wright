@@ -442,6 +442,91 @@ def test_printed_missing_tool_never_stages_attempt(printed_configuration):
     assert not (workspace / "process-proofs").exists()
 
 
+@pytest.mark.parametrize("mode", ["generated", "qualified", "retained"])
+def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(printed_configuration, mode):
+    from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths, bind_run_input_values
+    from workspace_service.workflow_references import WorkflowReference
+
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    bindings["run_path_template"] = VERSION
+    if mode != "generated":
+        configured_geometry(bindings, workspace, module)
+        for role in ("construction", "repair"):
+            reference = bindings["geometry_operation_files"][role]
+            path = Path(reference["path"])
+            path.write_text(json.dumps({"code": f"print('fixture-only outputs/{TOKEN}/{role}.stl')"}))
+            reference["sha256"] = module.definition.sha(path.read_bytes())
+    if mode == "retained":
+        configured_retained_source(bindings, workspace, module)
+    report = module.prepare(workspace, "repeatable-" + mode, tools, bindings)
+    source_path = workspace / report["source_path"]
+    source_bytes = source_path.read_bytes()
+    plan = compile_prompt_workflow(source_bytes.decode())
+    assert report["output_template"] == report["output_root"] + "/" + TOKEN
+    assert not list((workspace / report["output_root"]).iterdir())
+    assert not (workspace / report["accepted_source_path"]).exists()
+    configured = {}
+    for key, fields in plan.inputs.items():
+        settings = fields["settings"]
+        raw = (workspace / settings["workspace_file"]).read_bytes()
+        if settings.get("run_path_template"):
+            configured[key] = WorkflowReference.from_bytes(settings["workspace_file"], raw, image=False)
+        elif Path(settings["workspace_file"]).name in {
+            "machine-profile.json", "process-profile.json", "filament-profile.json",
+            "retained-source.stl", "configured-geometry-basis.json", "passive-representations.py",
+            "inspect_manufacturing_package.py", "concept.png",
+        }:
+            assert settings.get("run_path_template") is None
+    original_templates = {v.path: (workspace / v.path).read_bytes() for v in configured.values()}
+    for run_id in ("printed-one", "printed-two"):
+        bound = bind_run_paths(plan, run_id)
+        values = bind_run_input_values(bound, configured)
+        assert bound.run_path_roots == (report["output_root"] + "/" + run_id,)
+        for step in bound.steps:
+            if step.save or step.external_action and step.output_path:
+                assert step.output_path.startswith(report["output_root"] + "/" + run_id + "/")
+            assert TOKEN not in step.prompt
+            assert all(TOKEN not in p for p in step.expected_files)
+            assert all(TOKEN not in p for p in step.file_dependencies.values())
+        operations = {Path(value.path).name: json.loads(value.text) for value in values.values()}
+        slicer = operations["slice-call.json"]
+        assert run_id in slicer["source"] and run_id in slicer["output"]
+        inspection = operations["inspection-call.json"]
+        assert inspection["job_name"] == report["output_root"] + "/" + run_id + "/package-inspection"
+        assert TOKEN not in inspection["input_content"] and run_id in inspection["input_content"]
+        assert inspection["critic_approved"] is False
+        transfer = next(s for s in bound.steps if (s.external_action or {}).get("action_kind") == "printer_transfer")
+        assert transfer.external_action["settings"]["receipt_path"] == report["output_root"] + "/" + run_id + "/simulated-transfer-receipt.json"
+        assert "package_path" not in transfer.external_action["settings"]
+        assert transfer.external_action["settings"]["material"] == "PETG"
+        assert transfer.external_action["destination"]["id"] == bindings["simulator_destination"]
+        validator = next(s for s in bound.steps if s.validation)
+        profile = ValidatorConfiguration.model_validate(validator.validation).load(str(workspace))
+        assert profile.id == "printed-replacement-part-01-full" and len(profile.checks) == 18
+    assert source_path.read_bytes() == source_bytes
+    assert all((workspace / p).read_bytes() == raw for p, raw in original_templates.items())
+
+
+def test_reusable_printed_recipe_does_not_rewrite_fixed_vendor_code(printed_configuration):
+    from workspace_service.workflow_run_paths import VERSION
+
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["run_path_template"] = VERSION
+    with pytest.raises(ValueError, match="fixed recipes are not rewritten"):
+        module.prepare(workspace, "fixed-recipe", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def test_published_printed_bindings_select_supported_run_paths():
+    from workspace_service.workflow_run_paths import VERSION
+
+    bindings = json.loads((REPO / "examples/process-interfaces/printed-replacement-part/bindings.example.json").read_bytes())
+    assert bindings["run_path_template"] == VERSION
+
+
 def test_printed_explicit_reader_budget_retains_original_criteria(
     printed_configuration,
 ):

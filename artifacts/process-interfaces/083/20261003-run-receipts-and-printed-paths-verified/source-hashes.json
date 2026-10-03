@@ -1,0 +1,42 @@
+{
+  "packages/workspace_service/src/workspace_service/workflow_source_execution.py": {
+    "sha256": "0e29734066a3bdf0dc7652d2aeb7b17eaf6d56aa438430f54236f532ddd03c7c",
+    "lf_sha256": "ee0e3859cb76d70aec322d70e65ecd5e61612d1215060f8e6fd95344a97f4a72"
+  },
+  "packages/workspace_service/src/workspace_service/workflow_run_paths.py": {
+    "sha256": "79a1667f1e9f9927af31c0a56c1374c10dcd057026ddfb09284cec86902c092c",
+    "lf_sha256": "79a1667f1e9f9927af31c0a56c1374c10dcd057026ddfb09284cec86902c092c"
+  },
+  "packages/workspace_service/tests/test_workflow_run_receipts.py": {
+    "sha256": "e73a4b1755680bd620050df18535cd954555a6d51ae599416e551c35c9ae8732",
+    "lf_sha256": "e73a4b1755680bd620050df18535cd954555a6d51ae599416e551c35c9ae8732"
+  },
+  "packages/workspace_service/tests/test_workflow_approval_execution.py": {
+    "sha256": "f780470cd23bce1493e90bc2326f2663a615b3665060fe4916396f80d5dac2ca",
+    "lf_sha256": "f59d97d452b4df06054515345155fe717213fdd4a8f7a7dcf43f5dbf7a7f7a80"
+  },
+  "packages/workspace_service/tests/test_workflow_mcp_operations.py": {
+    "sha256": "69a1be1c0d83fb3cbe77e95e6eab1bb6c705c2581fc96b64cf02cf4d2454b19b",
+    "lf_sha256": "69a1be1c0d83fb3cbe77e95e6eab1bb6c705c2581fc96b64cf02cf4d2454b19b"
+  },
+  "examples/process-interfaces/printed-replacement-part/prepare.py": {
+    "sha256": "9a32b1ca73460c8b1fb2094675c45a3fcd626f679751afb299ff3170631cb4a0",
+    "lf_sha256": "9a32b1ca73460c8b1fb2094675c45a3fcd626f679751afb299ff3170631cb4a0"
+  },
+  "examples/process-interfaces/printed-replacement-part/provider_inputs.py": {
+    "sha256": "7cbe44fdf929a324b8ce23cf8d3d86ffbc785f876773112358f83847e611bb73",
+    "lf_sha256": "7cbe44fdf929a324b8ce23cf8d3d86ffbc785f876773112358f83847e611bb73"
+  },
+  "examples/process-interfaces/printed-replacement-part/retained_source.py": {
+    "sha256": "84e7c663767b6f2ecc5cf93930da8fb1cf19b42f365f510477fdbbd45acf69c4",
+    "lf_sha256": "84e7c663767b6f2ecc5cf93930da8fb1cf19b42f365f510477fdbbd45acf69c4"
+  },
+  "examples/process-interfaces/printed-replacement-part/bindings.example.json": {
+    "sha256": "d9e276b62d49d666c160ddd87b846df484f114540c366223df69ed6de5c5d57b",
+    "lf_sha256": "d9e276b62d49d666c160ddd87b846df484f114540c366223df69ed6de5c5d57b"
+  },
+  "tests/test_process_interface_examples.py": {
+    "sha256": "b6d6d48e06adbece64b0fc429d467a7084554132ea3d71e5505e5156e03eb23f",
+    "lf_sha256": "12e61b927af0887f0a44c1c40ddb1a87316ade562dbc5780905f1d9662637d0d"
+  }
+}

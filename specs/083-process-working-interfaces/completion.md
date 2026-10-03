@@ -23,6 +23,13 @@ remain open. See the preceding controlled runtime
 This correction does not close an additional task or establish live-provider
 qualification.
 
+Printed run-path adoption and run-owned receipt binding now have controlled
+implementation evidence: 278 affected regressions and preserved eighteen-check
+profile/opaque inputs; see the [receipt/preparation proof](../../artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/README.md).
+This supersedes the preceding unimplemented-adoption claim only for declarative
+preparation. Actual printed same-source repeat execution, current saved-interface
+parity and fresh qualification remain unproven. No additional task is closed.
+
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
 be verified against current source, actual runtime and its required proof scope.

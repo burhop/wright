@@ -205,7 +205,7 @@ def configured_source(*, settings_patch=None, action_patch=None, tool=TOOL):
     )
 
 
-async def prepared_case(tmp_path, *, text=None, gateway=None):
+async def prepared_case(tmp_path, *, text=None, gateway=None, run_id=None):
     services = service(tmp_path)
     services.workflow_sources = WorkspaceWorkflowSourceUseCases(BoundedExecutor())
     text = text or configured_source()
@@ -219,6 +219,7 @@ async def prepared_case(tmp_path, *, text=None, gateway=None):
         path=path,
         expected_digest=document.storage_digest,
         tool_runtime=runtime,
+        run_id=run_id,
     )
     return services, plan, inputs, runtime, gateway
 
@@ -487,9 +488,9 @@ def test_destination_must_match_reviewed_actual_argument(tmp_path):
         )
 
 
-async def approved_case(tmp_path, *, gateway=None, text=None, integration=False):
+async def approved_case(tmp_path, *, gateway=None, text=None, integration=False, run_id=None):
     services, plan, inputs, runtime, gateway = await prepared_case(
-        tmp_path, gateway=gateway, text=text
+        tmp_path, gateway=gateway, text=text, run_id=run_id
     )
     context = None
     if integration:
@@ -552,6 +553,7 @@ async def approved_case(tmp_path, *, gateway=None, text=None, integration=False)
             tool_runtime=runtime,
             on_event=emit,
             execution_context=context,
+            run_id=run_id,
         )
 
     result = await record_workflow_run(
@@ -562,6 +564,7 @@ async def approved_case(tmp_path, *, gateway=None, text=None, integration=False)
         source_digest=plan.definition_digest,
         execute=execute,
         execution_context=context,
+        run_id=run_id,
     )
     checkpoint = services.workflow_external_actions.get(
         result["approval"]["checkpoint_id"],

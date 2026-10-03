@@ -1,5 +1,42 @@
 # Feature 083 progress
 
+## Current implementation checkpoint — run receipts and printed preparation
+
+The preceding goal turn reviewed status and supplied the overnight prompt; it
+was no implementation progress. This continuation read the submitted objective,
+revalidated the current code/task evidence, and implemented the next safe change.
+
+External approvals can now declare their JSON receipt as an explicit run output.
+Preparation derives its concrete path through the existing run-path binder before
+checkpoint identity/policy/dispatch checks. The existing dispatcher remains its
+writer; approval text is not saved over the receipt. Literal authority settings,
+legacy receipts, output-scope guards and uncertain-outcome/replay rules remain.
+
+Printed preparation explicitly adopts run paths for geometry exports, slicer
+package, provider-response retention, inspection job/configuration and simulated
+receipt. Original assignments/profiles and the eighteen-check gate are retained;
+opaque inputs remain unchanged. Reusable supplied provider recipes must already
+declare run-id paths; fixed recipes are rejected rather than rewritten. Actual
+native-effect confinement still requires qualification/proof.
+
+Thirteen affected suites pass **278 tests / zero failures/errors/skips**, with
+nine-file Ruff and fresh protected archive/campaign/context/unrelated-byte checks.
+Two simulated same-source runs retain separate receipts/all earlier outputs and
+duplicate continuation adds no work. A neutral controlled digital MCP submission
+also stores/reuses its receipt without duplicate provider dispatch. Generated,
+configured-recipe and retained-mesh preparation paths are covered. First product
+and fixture failures are retained in transcript-derived summaries; the final full
+log/XML are published under 20261003-run-receipts-and-printed-paths-verified.
+
+This is controlled implementation/preparation evidence, not native printed
+execution, browser, fresh provider qualification or engineering acceptance.
+Regression handles 58086/85500 are terminal; no native/API/UI service was started
+or restarted. Previously recorded services require revalidation before use.
+Counts remain **47 checked / 10 open**. Next qualify actual run-scoped provider
+recipes and prove printed repeat execution/current saved UI, then finish migration,
+current installed UI/editor/regressions and the full requirement audit. Do not
+repeat the completed Heat gate or touch protected checkpoints.
+
 ## Current repeat-run finding — source validator idempotency
 
 The authority-field correction is committed as `4209a847` after exact thirteen-

@@ -100,7 +100,19 @@ def bind_run_paths(plan, run_id):
         for path in ((step.output_path,) if step.save else ()) + step.expected_files:
             _, root = _root(path, run_id)
             roots.add(root)
-        steps.append(replace(step, **{key: _map(value, run_id) for key, value in selected.items()}))
+        mapped = {key: _map(value, run_id) for key, value in selected.items()}
+        if step.external_action and step.output_path:
+            # The compiler declares a receipt as an output. Bind that output
+            # into existing checkpoint/dispatch settings only after its path
+            # is concrete; authority dictionaries never become templates.
+            settings = step.external_action.get("settings", {})
+            if "receipt_path" in settings:
+                raise _invalid("A declared receipt output conflicts with an approval receipt path.")
+            mapped["external_action"] = {
+                **step.external_action,
+                "settings": {**settings, "receipt_path": mapped["output_path"]},
+            }
+        steps.append(replace(step, **mapped))
     for fields in plan.inputs.values():
         _version(fields.get("settings", {}).get("run_path_template", ""))
     return replace(plan, steps=tuple(steps), run_path_id=run_id, run_path_roots=tuple(sorted(roots)))

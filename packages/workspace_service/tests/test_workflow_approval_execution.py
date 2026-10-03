@@ -50,6 +50,7 @@ async def setup_case(
     uploaded_artifact=None,
     include_supplied_files=False,
     run_paths=False,
+    run_receipt=False,
 ):
     run_id = uuid4().hex
     services = service(tmp_path)
@@ -195,6 +196,18 @@ async def setup_case(
                     quantity="one",
                     description="Test artifact",
                 )
+        if run_receipt and block["id"] == "approve":
+            from workspace_service.workflow_run_paths import VERSION, TOKEN
+
+            fields["outputs"] = [{
+                "key": "handoff_receipt", "kind": "workspace_file", "name": "Receipt",
+                "item": None, "required": False, "quantity": "one", "description": "Test receipt",
+            }]
+            fields["settings"]["approval_settings"].pop("receipt_path", None)
+            fields["settings"].update(
+                run_path_template=VERSION,
+                output_filename=f"outputs/attempt/{TOKEN}/receipt.json",
+            )
         if run_paths and block["kind"] == "task" and fields.get("performed_by") == "ai_assisted":
             from workspace_service.workflow_run_paths import VERSION, TOKEN
 
@@ -311,6 +324,8 @@ async def setup_case(
         calls=calls,
         root=tmp_path,
         tool_calls=gateway.calls if gateway else [],
+        plan=plan,
+        inputs=inputs,
     )
 
 
