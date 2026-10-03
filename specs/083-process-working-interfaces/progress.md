@@ -1669,3 +1669,24 @@ external operation was submitted. See evidence/workspace-acceptance.md and
 artifacts/process-interfaces/083/20261002-editor-native-verified/verification.json.
 T052 remains open for pointer sockets/pan/broader accessibility and current-build
 working/preview journeys, alongside the other uncompleted full-goal tasks.
+
+2 October evening, submitted continuation goal active: read its objective file,
+corrected stale completion-ledger retirement/history/editor claims from retained
+evidence, and began the priority printed source-gate proof. Actual read-only agent
+health succeeds; exact owned solver container is exited after authorized Docker
+inspection. New API/solver host shell 41512 and fresh hidden leased Blender host
+shell 67342 are live; native session blender-cb79819f830c49f68aaa5783dccdfc1d,
+port 19986. API is 8030; no CAD/physical provider started. Fresh accepted consumer
+002 with corrected bounded-summary declaration passes readiness and starts as
+dc342991f8ba4f90962e836f513c7038. It durably waits at basis, records the exact
+enrolled synthetic actor/subject, and continues once (202); latest read reports
+running, six outputs, no diagnostic. Early budget-field rejection and premature
+pre-dispatch continuation check are retained; neither dispatched uncertain work.
+Original failed consumer/profiles/requirements and both retained unanswered
+second-run reviews remain protected. Preservation checker passes. Public initial
+proof/accepted source are credential-scanned under
+artifacts/process-interfaces/083/20261003-retained-consumer-002-preparation/.
+Next: poll this exact run/host handles, inspect native handoffs and the actual
+report/gate; respond only to freshly enrolled synthetic simulator authority when
+permitted, never final authenticated engineering acceptance. Then verify matching
+common/tailored views and finish the remaining full-goal tasks.

@@ -1,0 +1,12 @@
+{
+  "scope": "fresh native geometry session plus independent offline slicer configuration",
+  "physical_dispatch": false,
+  "status": "ready",
+  "native_session_id": "blender-cb79819f830c49f68aaa5783dccdfc1d",
+  "native_version": "4.5.10 LTS",
+  "addon_port": 19986,
+  "servers": [
+    "proof-083-blender-wheel-continuation-002",
+    "proof-083-slicer-wheel-continuation-002"
+  ]
+}

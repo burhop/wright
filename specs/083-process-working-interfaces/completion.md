@@ -1,7 +1,7 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Audit checkpoint:** local documentation/example commit `d44b9dcb`.
+**Audit checkpoint:** resumed goal after editor commits `e01f7eb5` and `6bff2ff8`.
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
 be verified against current source, actual runtime and its required proof scope.
@@ -39,9 +39,9 @@ checks passed. No row grants an engineering review or external-effect authority.
 | FR-012 Saved reuse/update/rollback/compatibility/fallback | Actual-model reuse for both jobs: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). | T041/T047 complete parity/recovery plus T051 installed open/reuse without compiler/model. |
 | FR-013 Exact engineering subjects and 082 authority | Partial: [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md), [verification](evidence/verification.md). | Original wheel consumer failed before its report/gate; separate independent checks do not execute that skipped gate. Preserve mandatory review and thresholds. |
 | FR-014 Permitted neutral MCP actions/consume/reconciliation | [MCP operations](evidence/mcp-operations.md), [action controls](evidence/action-controls.md); separate simulator receipt recorded. | Current full action/recovery tests and common/tailored exact subject parity. No hardware qualification. |
-| FR-015 Independent providers and vendor retirement | **Incomplete:** [migration](evidence/generality-and-migration.md), [provider qualification](evidence/provider-qualification.md). Workspace entry migrated; active endpoints/startup/client/protocol/automation debt remains. | Finish T043/T048/T049; preserve unrelated dirty changes and historical campaign bindings. |
+| FR-015 Independent providers and vendor retirement | **Incomplete:** [migration](evidence/generality-and-migration.md), [provider qualification](evidence/provider-qualification.md), [caller retirement](evidence/prototype-caller-retirement.md). Active operational endpoints/startup/client and device/Studio modules/scripts are retired; inert 410 URLs and installed canonical history are verified. Transitive slicing/campaign dependencies, original prototype formats and full replacement remain open. | Finish T043/T048/T049; preserve unrelated dirty changes and historical campaign bindings. |
 | FR-016 Two actual engineering/UI chains | **Partial:** [heat](evidence/heat-proof.md), [wheel](evidence/printed-proof.md). Actual tools/files/model UIs exist; wheel original gate/parity remains incomplete. | T045/T047 full engineering/common-tailored proof, keeping failed runs and genuine review barriers. |
-| FR-017 Protected evidence/history/reporting ownership | [Baseline](evidence/pre-implementation-baseline.json), [legacy adapter](evidence/legacy-run-adapter.md); preservation checks and six source-served history checks. | Finish migration/installed history and final protected/unrelated byte verification. |
+| FR-017 Protected evidence/history/reporting ownership | [Baseline](evidence/pre-implementation-baseline.json), [legacy adapter](evidence/legacy-run-adapter.md), [installed history](evidence/installed-history-retirement.md); original snapshots/protected hashes, six source-served and six installed canonical history checks. | Finish original prototype-format coverage, migration and final protected/unrelated byte verification. |
 | FR-018 Installed resources and compiler-free saved UI | [Distribution](evidence/distribution.md): current wheel inspection/resource tests and both native/clean Linux mounted common/saved/reload journeys checked; T051 complete. | Finish T050 packaging audit; retain authoring capability limits and separate full engineering/editor gates. |
 | FR-019 Useful progress/previews/failures/diagnostics | [Shared controls](evidence/shared-working-controls.md), [readers](evidence/representation-readers.md), [workspace acceptance](evidence/workspace-acceptance.md). | Complete served loading/error/freshness/accessibility/trace and two-process acceptance. |
 
@@ -56,8 +56,8 @@ checks passed. No row grants an engineering review or external-effect authority.
 | SC-005 Matching evidence/stale/binding denials in both views | Controlled boundary coverage exists; complete common/tailored parity pending. |
 | SC-006 Tab/lost acknowledgement cannot duplicate dispatch | Runtime/client checks exist; full served/installed negative journey pending. |
 | SC-007 Tools, real handoffs, outcomes/checks/limits | Actual CAD/solver and geometry/slicer artifacts retained; original wheel gate and overall proof remain incomplete. No fixture substitutes. |
-| SC-008 Editor and native/Docker installed checks/reopen | **Partial:** native/Docker mounted working-view/reload checks pass; full preserved-editor acceptance remains pending. |
-| SC-009 No active vendor control in migrated path/history preserved | **Incomplete:** source history entry is read-only; active API/startup/client/modules/scripts remain. |
+| SC-008 Editor and native/Docker installed checks/reopen | **Partial:** native/Docker mounted working-view/reload checks pass. Installed editor creation/configuration, Undo/Redo, typed keyboard connections/rejection, saved positions, zoom/compact scale and actual save conflict are now checked. Pointer sockets, pan, broader accessibility and current-build working/preview journeys remain pending. |
+| SC-009 No active vendor control in migrated path/history preserved | **Incomplete:** operational API/startup/client and device/Studio source retirement are verified, including installed canonical read-only history. Remaining slicing wrappers/dependencies and original prototype formats still require disposition/proof. |
 
 ## Evidence index and authority
 
@@ -79,8 +79,8 @@ checks passed. No row grants an engineering review or external-effect authority.
 Synthetic integration-test decisions are labelled test authority, never human
 engineering acceptance. Both retained second-run reviews remain unanswered.
 No physical dispatch, supplier action, push, merge, release or public promotion
-is authorized or claimed. Current proof services were found stopped after the
-token pause; recorded localhost links are not an availability promise.
+is authorized or claimed. Service availability must be checked using current
+owned process handles; recorded localhost links are not an availability promise.
 
 T056 remains unchecked until this ledger is resolved requirement by requirement,
 including every task, acceptance case, required artifact and verification command.

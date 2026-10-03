@@ -450,3 +450,40 @@ same-run continuation and native action/checkpoint regressions. A prior test
 attempt exposed the default-behavior regression and is retained privately.
 Full original source-gate/common-tailored parity and installed/migration obligations
 remain pending; T047 and the feature goal remain incomplete.
+
+## Fresh corrected source-gate attempt, 2 October evening
+
+The user submitted the continuation goal. Read-only preflight found the configured
+agent health endpoint available and the original owned network-disabled solver
+container exited. Sandbox Docker access initially obscured that state; the exact
+authorized read-only inspection succeeded. A fresh private API/solver host and
+hidden leased Blender 4.5.10 session were started with new geometry/slicer binding
+identities. No CAD service, printer or external destination was started.
+
+New accepted source
+`workflows/printed-replacement-part-retained-consumer-002.workflow.wflow` retains
+the actual original geometry producer lineage, unchanged original profile and
+requirements, exact pinned repair with fresh owned paths, independent offline
+slicing, full preview and bounded toolpath summary. Its explicit reader capacity
+is one million entities/16 MiB/120 seconds/512 MiB; acceptance thresholds are
+unchanged. A private harness used the wrong memory-budget field initially and
+failed before source creation. Its configuration is retained; correction uses
+the existing strict `memory_limit_mb` contract.
+
+Preparation passed readiness with ten stages and five tool bindings. Fresh run
+`dc342991f8ba4f90962e836f513c7038` was accepted, genuinely waited at its declared
+basis review, received one exact-enrolled `integration_test:` synthetic decision,
+and accepted its same-run continuation with HTTP 202. An early continuation
+helper check ran before the decision helper terminated and stopped before writing
+any request or dispatching. After authoritative decision completion, the single
+recorded continuation was submitted. The backend then reports running with six
+outputs and no diagnostic. No acknowledgement was replayed.
+
+Exact accepted source, native host/readiness identity and start scope are retained
+in `artifacts/process-interfaces/083/20261003-retained-consumer-002-preparation/`
+(artifact name uses UTC; the user-facing date above is America/New_York).
+Fixture credential byte scan passes. Authenticated context and current snapshots
+remain private. These facts do not prove completion of slicing, report, source
+validation gate or final review. Preserve the earlier failed consumer and both
+unanswered retained second-run reviews. T045/T047 remain incomplete until the
+actual fresh outcomes and common/tailored evidence are inspected.
