@@ -1,0 +1,27 @@
+{
+  "exit_code": 0,
+  "modules": [
+    "tests/test_process_prototype_migration.py",
+    "apps/api/tests/test_process_prototype_retirement.py",
+    "packages/workspace_service/tests/test_process_legacy_results.py",
+    "packages/workspace_service/tests/test_workflow_run_history.py",
+    "packages/workspace_service/tests/test_workflow_run_paths.py",
+    "tests/packaging/test_process_prototype_distribution_boundary.py",
+    "tests/test_embedded_slice_retirement.py",
+    "tests/test_embedded_mesh_retirement.py",
+    "tests/test_engineering_external_slice_binding.py",
+    "tests/test_external_mesh_binding.py",
+    "tests/test_independent_slice_diagnostic.py",
+    "tests/test_drill_jig_source_paths.py",
+    "tests/test_printed_dataset_bindings.py"
+  ],
+  "counts": {
+    "tests": 179,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 179
+  },
+  "fresh_provider_or_model_execution": false,
+  "physical_effects": false
+}

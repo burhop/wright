@@ -1,8 +1,17 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Current ledger:** **50 checked / 7 open**: T043, T048, T049, T052,
+**Current ledger:** **51 checked / 6 open**: T043, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
+
+T048's complete caller inventory is now reconciled:21 absent paths, no retired
+implementation imports, explicit dispositions for startup/API/UI/scripts and
+metadata,28 exact archived files,179 owning checks and15 component checks.
+Current installed005 owners match current source, and the retained original
+history owners/evidence and both engineering proof inventories remain unchanged.
+The original installed/browser proofs retain their exact artifact identities;
+this audit did not rerun them or grant a review. Broader coupling/provider and
+full platform acceptance remain open. See [migration disposition audit](evidence/migration-disposition-audit.md).
 
 T041's named authoring verification scope now passes its obligation audit:
 current71 component checks and TypeScript, installed unavailable-authoring/

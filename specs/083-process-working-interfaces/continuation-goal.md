@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile current HEAD and the remaining eight-task ledger. The compact-presentation correction is committed as 6efc357c; installed005 verifies shared navigation, desktop preference/frame preservation, wrapped common results, editor return and read-only preview on both jobs. Reuse the exact007/008 reports and preceding016/017/printed011 scopes; do not repeat completed engineering runs or treat scoped checks as complete acceptance. Advance remaining provider/caller, broader authoring/regression and requirement audits.
+1. Reconcile current HEAD and the remaining six-task ledger: T043, T049, T052, T053, T056 and T057. The latest T048 disposition audit closes the active-caller migration scope, with179 owning and15 component checks, exact archives/current installed owner bytes and unchanged original-history/two-process evidence. T041 and compact-presentation scopes also pass. Reuse those proofs; do not repeat completed engineering runs or treat scoped checks as complete acceptance. Advance remaining provider/coupling, workspace/regression and requirement audits.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 300-pass selected frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
@@ -32,6 +32,23 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### T048 verified — six broader tasks remain
+
+The current disposition audit completes T048's named caller-migration/history
+scope. All inventoried prototype paths have a disposition;21 removed paths stay
+absent, current application/package/script imports have no retired dependency,
+and179 owning/affected plus15 history/tab component checks pass without skips.
+Twenty-eight archived originals and786 retained inventory entries are verified.
+Installed005 startup/API/history owners equal current source; the original-history
+proof's four owner/test hashes and actual engineering/UI evidence are unchanged.
+No provider, model, process, review or external action was invoked by this audit.
+
+Current ledger:51 checked/six open — T043, T049, T052, T053, T056 and T057.
+See `evidence/migration-disposition-audit.md`. Broader provider/process coupling,
+error/currentness behavior, selected qualification and complete platform acceptance
+retain separate obligations. Historical pending T048 statements below are
+superseded only at this named scope; original reports/build identities remain.
 
 ### T041 verified — seven broader tasks remain
 

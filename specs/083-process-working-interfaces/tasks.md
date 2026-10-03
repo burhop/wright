@@ -153,7 +153,13 @@ interfaces use the same foundation, with honest engineering checks and limits.
   twenty outputs per run and 90 nominal layers; Heat has eighteen outputs and
   765 fine-field samples. Reviews remain held; T043/T041/T052 retain separate
   qualification and full platform/installed/accessibility scopes.
-- [ ] T048 [US4] Migrate all active demo callers/startup/API/UI operations, remove embedded vendor protocols/Studio automation after migration, and preserve old URLs through a read-only historical adapter in `packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py`; update the inventory in `docs/architecture/workflow-platform-refactoring-plan.md` with each disposition.
+- [x] T048 [US4] Migrate all active demo callers/startup/API/UI operations, remove embedded vendor protocols/Studio automation after migration, and preserve old URLs through a read-only historical adapter in `packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py`; update the inventory in `docs/architecture/workflow-platform-refactoring-plan.md` with each disposition.
+  The [current disposition audit](evidence/migration-disposition-audit.md) reconciles
+  every inventory row, 21 absent paths, actual imports/entry/client, 28 exact
+  archived files, current installed owner bytes and retained original-history/
+  two-engineering-chain proofs. Current owning checks pass179 and component checks
+  pass15 without skips. Provider/scenario qualification and broader coupling/error
+  acceptance remain T043/T049; no human review or hardware effect is claimed.
 - [ ] T049 [US4] Audit shared packages for provider/process coupling and stale/missing/effect errors; record two-process comparison and active-code retirement evidence in `specs/083-process-working-interfaces/evidence/generality-and-migration.md`, preserving immutable historical catalog/campaign data.
 
 ## Phase 7 — Polish and cross-cutting completion / M5

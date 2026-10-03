@@ -1,0 +1,77 @@
+{
+  "files": {
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/001-command.json": {
+      "bytes": 1011,
+      "sha256": "730c340b9a9b88fe35fff4209f008ec7f9822384828620d311ce6ea456440fde"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/001-history-components.json": {
+      "bytes": 1624,
+      "sha256": "7b721ea0f0e724ea732f4482a4092503f58bd77b3744c4ff820f7b41fdff8d70"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/001-regression-output.txt": {
+      "bytes": 1441,
+      "sha256": "755f6719c5e852a0ad25a3c18995799e2b3628e7b7f52da7137a17da9b0af1eb"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/001-regression.xml": {
+      "bytes": 30039,
+      "sha256": "0fe445e350fb813366d2bedcf8b0c4bf71d291468fffd7856f3afab94b8c2739"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/001-result.json": {
+      "bytes": 969,
+      "sha256": "9745578dc6e1826602b274e14ef49938c3bf4cbb0f62a30d528e57946d736b28"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/001-state-audit.json": {
+      "bytes": 8319,
+      "sha256": "90db1d0b6ea0b0ec771ddeb8a1d8eb6b512b7bb64cb998c0839f31b91a1b32da"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/002-command.json": {
+      "bytes": 1011,
+      "sha256": "323c4b0fe5bd43a97c20d5d06147557ff48859635a851f9a37078d110c4b8edd"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/002-history-components.json": {
+      "bytes": 7027,
+      "sha256": "22e683fadb6e8e1160be3d119c71ee0dbf29456afd959ff2a4c304aeb13a87c6"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/002-regression-output.txt": {
+      "bytes": 1431,
+      "sha256": "92e83237eacde3c027c6a4f432044a3f0701b32a9482826720e2f35a405ec9a7"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/002-regression.xml": {
+      "bytes": 30038,
+      "sha256": "c9f64dc9402e03c94b6f9ed8ef661147538bc18c383641c3f4be150046aa13e4"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/002-result.json": {
+      "bytes": 969,
+      "sha256": "9745578dc6e1826602b274e14ef49938c3bf4cbb0f62a30d528e57946d736b28"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/002-state-audit.json": {
+      "bytes": 8318,
+      "sha256": "d1832eeced6377c8706fab3eaf57b6203b48987e38a16093aea8d26b2379a789"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/checked-scope.json": {
+      "bytes": 5928,
+      "sha256": "0db51a9eb55bd1dda3e655d7dfb4b19112b02c40cd98c2de08ce7bacf9d998a1"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/README.md": {
+      "bytes": 1482,
+      "sha256": "e25a07ce306ff5a045f224916eb2565ac831e5408edb1638764426fe7f935b5b"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/ruff-output.txt": {
+      "bytes": 20,
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/t048-audit-migration-state-002.py": {
+      "bytes": 8932,
+      "sha256": "e738cc139f6078b4b2b18cf3ffca33c73ddfc4efb4a3388bcbeac574e9614b65"
+    },
+    "artifacts/process-interfaces/083/20261003-migration-disposition-verified/t048-run-migration-audit-002.py": {
+      "bytes": 2289,
+      "sha256": "9991e0f3ba567a8bbbef33d66af407a33ca39ba5ae1fdaf043ca9eb2f613da56"
+    }
+  },
+  "credential_value_scan": "passed"
+}

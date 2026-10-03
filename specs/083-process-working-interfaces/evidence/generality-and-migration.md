@@ -304,3 +304,14 @@ Other active implementation, including existing mesh-repair wrappers, keeps its
 separate ownership/retirement obligations. T043/T048/T049 remain open.
 
 See [configuration and boundaries](../../../docs/workflows/external-slicing-bindings.md).
+# Latest caller disposition audit — 3 October 2026
+
+T048 is now checked by the [complete current inventory audit](migration-disposition-audit.md).
+Every original row has a disposition, including the actual workspace entry.
+Twenty-one retired paths are absent; current production imports have no retired
+implementation dependency. Exact archives, installed owner bytes, original-history
+evidence and both engineering/UI inventories are verified. Current owning checks
+pass179 and history/tab components pass15 without skips. No provider/model/process
+or review was invoked. T049's broader shared-package coupling and stale/missing/
+effect-error audit remains open, as do T043 and full platform acceptance. Earlier
+pending statements below describe their historical checkpoints.
