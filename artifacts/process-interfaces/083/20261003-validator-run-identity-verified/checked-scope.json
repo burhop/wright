@@ -1,0 +1,26 @@
+{
+  "defect": "Different durable runs collided on the same source validator step/revision idempotency key",
+  "actual_failed_heat_run": "50942bb6d23649b5bbb4d4e51a019af6",
+  "actual_failed_heat_output_count": 17,
+  "before_fix_reproductions_failed": 2,
+  "after_fix_regressions_passed": 128,
+  "skipped": 0,
+  "new_cases": [
+    "passing second run",
+    "mandatory numeric failure in second run"
+  ],
+  "exact_retry_checks": "original assessment and attempt retained for both runs",
+  "identity": "workspace/invocation remains; key binds durable run, step and revision via canonical digest",
+  "historical_records_modified": false,
+  "ruff": "two files passed",
+  "source_sha256": {
+    "packages/workspace_service/src/workspace_service/process_validation/process.py": "5ebb9f92292986cd5ced5f1f431dcb9d24806f6c1900e5b59a491a31149c8997",
+    "packages/workspace_service/tests/test_workflow_process_validation.py": "e46271adfe0068a188fb199d77da79f587690d6ac6753dd216f1747d61008fb5"
+  },
+  "limits": [
+    "controlled regressions",
+    "existing live API still loaded old validator",
+    "fresh current-backend actual repeat gate not yet proved",
+    "no engineering acceptance"
+  ]
+}

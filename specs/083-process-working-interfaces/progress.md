@@ -1,5 +1,37 @@
 # Feature 083 progress
 
+## Current repeat-run finding — source validator idempotency
+
+The authority-field correction is committed as `4209a847` after exact thirteen-
+file staging, credential and byte-inventory checks. Initial staged README EOL
+normalization was detected and corrected with a scoped artifact attribute; only
+owned files were committed. No task closure or release is implied.
+
+Second actual Heat run `50942bb6d23649b5bbb4d4e51a019af6` is now terminal failed,
+with 17 outputs and `EXECUTION_FAILED`: "Idempotency key was used for different
+input" at its validator. This is a real repeat-run defect, not the first run's
+legitimate authenticated-review hold. The old adapter used the same step/revision
+invocation and revision-only key across runs in one workspace.
+
+Two new regressions reproduce that exact conflict before correction. The source
+validator's key now includes durable run, step and revision via canonical digest;
+storage conflict/retry authority and historical records are unchanged. Six affected
+suites pass 128 tests / zero skips, with two-file Ruff. Passing and mandatory-
+numeric-failure second-run cases both retain their own assessments/attempts on
+identical retry. Scoped before/after proof is `20261003-validator-run-identity-verified`.
+This has not been loaded into the live API or proved by a fresh actual repeat gate.
+
+Focused UI update succeeded and is saved; browser 85473 is terminal. Preserve
+both runs, initial timeout/flag/loading failures and all saved revisions. Next
+freeze the second run/native version, verify first bytes, safely cold-load the
+current backend only after reconciling terminal jobs/owned leases, then start a
+fresh isolated same-source run with the existing UI and exact test enrollment.
+Do not replay the consumed second-run review/continuation or replace its evidence
+with a separate manual assessment. Finish current output/assessment parity and
+navigation, public digital/UI evidence and remaining migration/provider/editor/
+regression/audit requirements. Counts remain 47 checked / 10 open; full M0–M5
+scope is active and no protected human decision or physical operation occurred.
+
 ## Current continuation — readiness correction and actual saved Heat UI reuse
 
 The preceding status review established terminal Heat and authoring outcomes and

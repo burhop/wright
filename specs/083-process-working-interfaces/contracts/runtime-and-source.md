@@ -62,6 +62,12 @@ its original run ID and requires the retained directory. Changed source/template
 identity or uncertain execution still follows existing continuation/replay rules.
 Legacy processes without declarations preserve their original behavior.
 
+Source validator idempotency binds the durable run ID, validator step and revision.
+Two runs of the same accepted source in one workspace receive separate attempts
+for their exact output subjects. Retrying an identical retained request still
+returns its existing assessment; changed input under that same key still conflicts.
+Historical request/attempt records are not rewritten.
+
 Every provider write must be explicitly bound and qualified. Declaring one
 output does not isolate unmodified absolute paths, provider job names, native
 documents, internal caches or other undeclared writes. This mechanism is not a

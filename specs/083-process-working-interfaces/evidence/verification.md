@@ -215,3 +215,19 @@ These are controlled regressions, not installed/UI/live-provider acceptance.
 The isolated Heat API was loaded from `a4cfc474` before this fix; its separate
 proof has no affected tokens and does not establish live verification of the fix.
 T047/T053 and the broader feature audit remain open.
+
+### Source validation identity across repeated durable runs
+
+The actual second Heat run reached 17 outputs before exposing an idempotency
+collision in the source-validator adapter. Two new regressions reproduce that
+exact conflict before the fix. The adapter now scopes its key to durable run,
+step and revision; the repository's exact-input conflict and retry checks remain
+unchanged. Six affected suites pass **128 cases / no skips** with two-file Ruff.
+The cases include both a passing second run and a mandatory numeric failure,
+plus identical retries returning each original assessment and attempt. Before/
+after XML, source hashes and preservation checks are in the
+[validator identity proof](../../../artifacts/process-interfaces/083/20261003-validator-run-identity-verified/README.md).
+This is controlled regression evidence. The old live API still contains the
+original adapter; an actual repeat gate on a fresh current backend remains
+required. Preserve the failed run and all completed outputs; neither T047 nor
+T053 is closed by this correction.

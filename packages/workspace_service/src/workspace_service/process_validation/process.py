@@ -158,7 +158,10 @@ async def execute_validator(
         subjects=tuple(subjects),
         profile_ref=profile.reference(),
         baseline_ref=profile.baseline.reference(),
-        idempotency_key=f"revision:{revision}",
+        # A step/revision repeats in each durable run. Its validation request
+        # binds run-specific output identities and must not collide with a
+        # different run in the same workspace. Exact retries remain stable.
+        idempotency_key="run:" + canonical_digest([run_id, step.id, revision]),
         budget=config.budget,
     )
     await emit(

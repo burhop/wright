@@ -33,6 +33,45 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest finding — actual second-run validator conflict corrected in source
+
+Authority-field fix is committed as `4209a847`. The second actual run
+`50942bb6d23649b5bbb4d4e51a019af6` is terminal **failed**, with 17 outputs and
+`EXECUTION_FAILED` at `validate_outputs_repeatable_default_013`: "Idempotency key
+was used for different input". It is not the first run's mandatory human-review
+hold. Its old source adapter shared step/revision idempotency identity across
+durable runs in the workspace.
+
+The source correction now binds durable run, step and revision to the key.
+Two regression cases reproduce the original conflict before the fix; six
+affected suites pass **128 cases / zero skips**, and two-file Ruff passes.
+Passing and mandatory numeric failure in a second run preserve separate
+attempts/assessments; exact retries retain each original assessment. Repository
+conflict checks and historical records are unchanged. Before/after XML, exact
+source hashes and preservation checks are under
+`artifacts/process-interfaces/083/20261003-validator-run-identity-verified/`.
+The live API has not loaded this fix; actual current-backend repeat-gate proof
+remains open. Do not treat the previous 17-output running observation as current.
+
+Next freeze and inspect second-run output/native version files and recheck the
+35 first-run bytes. Reconcile all exact authoring/run states and native leases
+before gracefully stopping only the owned API8039/provider host20756 for a cold
+load. Preserve its DB, accepted source, frozen inputs, CAD project, both run
+directories, native version history and saved UI assets. A new owned API/provider
+host may reuse those retained resources without recreating the project/workspace
+or regenerating the UI; retain original host logs/context privately. Requalify
+the actual provider schemas after changing a connection. Then use a fresh durable
+start/request identity for the same source and snapshot, with exact test-only
+basis enrollment. Never rerun second review/continuation helpers or manually
+evaluate its failed gate and claim that as execution of the process gate.
+
+The focused UI update below is saved and browser 85473 is terminal. Both UI
+authoring and saved waiting-run reuse have passing reports, but complete current
+gate/output/assessment parity and navigation still need proof. Publish bounded
+digital/UI evidence without credentials and finish the remaining printed
+migration/provider/UI/regression/audit obligations. Counts remain 47 checked /
+10 open. The full goal is active; this finding is not a reason to narrow scope.
+
 ### Active continuation — saved Heat reuse and update proved; second tool chain active
 
 The authority-field readiness gap is corrected: reserved run tokens are rejected

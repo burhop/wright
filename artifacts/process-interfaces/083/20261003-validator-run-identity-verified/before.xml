@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="0.951" timestamp="2026-10-03T01:38:03.293798-04:00" hostname="Work17"><testcase classname="packages.workspace_service.tests.test_workflow_process_validation" name="test_repeated_process_runs_have_independent_validation_attempts[100]" time="0.239"><failure message="data_vault.process_validation_repository.ValidationConflict: Idempotency key was used for different input">tmp_path = WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t047-validator-run-identity-001/before-tmp/test_repeated_process_runs_hav0')
+second_length = 100
+
+    @pytest.mark.parametrize("second_length", [100, 98])
+    def test_repeated_process_runs_have_independent_validation_attempts(tmp_path, second_length):
+        from core.process_validation import Assessment
+        from workspace_service.process_validation.application import ValidationApplication
+    
+        app = runtime_service(tmp_path)
+        plan = compile_prompt_workflow(workflow())
+        assessments = []
+        for run_id, length in (("run-one", 100), ("run-two", second_length)):
+            events = []
+    
+            async def generate(prompt, fmt):
+                return json.dumps({"part_id": "demo-plate", "length_mm": length})
+    
+            async def emit(event):
+                events.append(event)
+    
+            invocation = execute_prompt_workflow(
+                service=app, workspace_dir=str(tmp_path), plan=plan, input_values={},
+                response_generator=generate, on_event=emit, run_id=run_id,
+            )
+            if length == 100:
+&gt;               asyncio.run(invocation)
+
+packages\workspace_service\tests\test_workflow_process_validation.py:322: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+D:\Users\markb\miniconda3\Lib\asyncio\runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:2070: in execute_prompt_workflow
+    response, check_report, evidence = await execute_validator(
+packages\workspace_service\src\workspace_service\process_validation\process.py:180: in execute_validator
+    outcome = await asyncio.shield(work)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\threads.py:25: in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\concurrent\futures\thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\core\src\core\tracing.py:62: in sync_wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_validation\service.py:375: in evaluate
+    attempt, created = self.repository.create(request)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\core\src\core\tracing.py:62: in sync_wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;data_vault.process_validation_repository.ProcessValidationRepository object at 0x00000232B4824410&gt;
+request = ValidationRequest(schema_version='wright.process-validation/1', trace_id='run-two', workspace_id='workspace', invocati...'revision:0', budget=ResourceBudget(max_bytes=16777216, max_entities=100000, timeout_seconds=120, memory_limit_mb=512))
+
+    @traced("db.process_validation.create")
+    def create(self, request: ValidationRequest) -&gt; tuple[AttemptRecord, bool]:
+        raw, digest = _payload(request), canonical_digest(request)
+        with connect_state_db(self.db_path) as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT * FROM process_validation_attempts WHERE workspace_id=? AND invocation_id=? AND idempotency_key=?",
+                (request.workspace_id, request.invocation_id, request.idempotency_key),
+            ).fetchone()
+            if row:
+                if row["request_digest"] != digest:
+&gt;                   raise ValidationConflict(
+                        "Idempotency key was used for different input"
+                    )
+E                   data_vault.process_validation_repository.ValidationConflict: Idempotency key was used for different input
+
+packages\data_vault\src\data_vault\process_validation_repository.py:189: ValidationConflict</failure></testcase><testcase classname="packages.workspace_service.tests.test_workflow_process_validation" name="test_repeated_process_runs_have_independent_validation_attempts[98]" time="0.211"><failure message="data_vault.process_validation_repository.ValidationConflict: Idempotency key was used for different input">tmp_path = WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t047-validator-run-identity-001/before-tmp/test_repeated_process_runs_hav1')
+second_length = 98
+
+    @pytest.mark.parametrize("second_length", [100, 98])
+    def test_repeated_process_runs_have_independent_validation_attempts(tmp_path, second_length):
+        from core.process_validation import Assessment
+        from workspace_service.process_validation.application import ValidationApplication
+    
+        app = runtime_service(tmp_path)
+        plan = compile_prompt_workflow(workflow())
+        assessments = []
+        for run_id, length in (("run-one", 100), ("run-two", second_length)):
+            events = []
+    
+            async def generate(prompt, fmt):
+                return json.dumps({"part_id": "demo-plate", "length_mm": length})
+    
+            async def emit(event):
+                events.append(event)
+    
+            invocation = execute_prompt_workflow(
+                service=app, workspace_dir=str(tmp_path), plan=plan, input_values={},
+                response_generator=generate, on_event=emit, run_id=run_id,
+            )
+            if length == 100:
+                asyncio.run(invocation)
+            else:
+                with pytest.raises(WorkflowSourceExecutionError) as error:
+&gt;                   asyncio.run(invocation)
+
+packages\workspace_service\tests\test_workflow_process_validation.py:325: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+D:\Users\markb\miniconda3\Lib\asyncio\runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:2070: in execute_prompt_workflow
+    response, check_report, evidence = await execute_validator(
+packages\workspace_service\src\workspace_service\process_validation\process.py:180: in execute_validator
+    outcome = await asyncio.shield(work)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\asyncio\threads.py:25: in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\concurrent\futures\thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\core\src\core\tracing.py:62: in sync_wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_validation\service.py:375: in evaluate
+    attempt, created = self.repository.create(request)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\core\src\core\tracing.py:62: in sync_wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;data_vault.process_validation_repository.ProcessValidationRepository object at 0x00000232B48C68B0&gt;
+request = ValidationRequest(schema_version='wright.process-validation/1', trace_id='run-two', workspace_id='workspace', invocati...'revision:0', budget=ResourceBudget(max_bytes=16777216, max_entities=100000, timeout_seconds=120, memory_limit_mb=512))
+
+    @traced("db.process_validation.create")
+    def create(self, request: ValidationRequest) -&gt; tuple[AttemptRecord, bool]:
+        raw, digest = _payload(request), canonical_digest(request)
+        with connect_state_db(self.db_path) as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT * FROM process_validation_attempts WHERE workspace_id=? AND invocation_id=? AND idempotency_key=?",
+                (request.workspace_id, request.invocation_id, request.idempotency_key),
+            ).fetchone()
+            if row:
+                if row["request_digest"] != digest:
+&gt;                   raise ValidationConflict(
+                        "Idempotency key was used for different input"
+                    )
+E                   data_vault.process_validation_repository.ValidationConflict: Idempotency key was used for different input
+
+packages\data_vault\src\data_vault\process_validation_repository.py:189: ValidationConflict</failure></testcase></testsuite></testsuites>
