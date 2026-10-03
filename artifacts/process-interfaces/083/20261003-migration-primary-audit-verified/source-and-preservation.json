@@ -1,0 +1,386 @@
+{
+  "source_commit": "fab085b45f5ab03c54b427d2ba53c84c218273af",
+  "source_parity": [
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py",
+      "recorded_sha256": "171e399e4878e6f45146168ac7136317f19dab460ace59e7c396d62d975ba58d",
+      "current_sha256": "171e399e4878e6f45146168ac7136317f19dab460ace59e7c396d62d975ba58d",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "packages/workspace_service/src/workspace_service/workflow_run_record.py",
+      "recorded_sha256": "2e5870bdb56422802a0a650d23b5501292eb3d8a3d89d4522e6e88253bf86cc9",
+      "current_sha256": "2e5870bdb56422802a0a650d23b5501292eb3d8a3d89d4522e6e88253bf86cc9",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/api/src/api/main.py",
+      "recorded_sha256": "793caaaa13b8edfdbb6b1afb5243716c605d644149ef13eea3d76d91aa5f3a38",
+      "current_sha256": "793caaaa13b8edfdbb6b1afb5243716c605d644149ef13eea3d76d91aa5f3a38",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/api/src/api/routers/workspace.py",
+      "recorded_sha256": "0b922a3cf1b2b1cd253c335a07b8d260c412b96440aeac10cbdb959fc7b0fa7a",
+      "current_sha256": "0b922a3cf1b2b1cd253c335a07b8d260c412b96440aeac10cbdb959fc7b0fa7a",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/api/src/api/routers/process_interfaces.py",
+      "recorded_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37",
+      "current_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/api/src/api/schemas/workspace.py",
+      "recorded_sha256": "8fbf979c91b1c76225eb11cf07fe8abb02401e82ecb2c17a63d4e06a3867989e",
+      "current_sha256": "8fbf979c91b1c76225eb11cf07fe8abb02401e82ecb2c17a63d4e06a3867989e",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/web/src/components/pages/WorkflowRecoveryPage.tsx",
+      "recorded_sha256": "a43170d5a998bc8f23ce0a06fba9c5f04c60831dee12da351333cfc55782060c",
+      "current_sha256": "a43170d5a998bc8f23ce0a06fba9c5f04c60831dee12da351333cfc55782060c",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/web/src/components/chat/WorkspacePanel.tsx",
+      "recorded_sha256": "9657c94b5ec5b51a66b00f1c05466ffab5a9cb422c042444c4d123bddeb62452",
+      "current_sha256": "9657c94b5ec5b51a66b00f1c05466ffab5a9cb422c042444c4d123bddeb62452",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/web/src/services/workspace-service.ts",
+      "recorded_sha256": "1cdb66f4bfbe468487e8383339e99c59d813709a6ea71d5aa5cca644ffafca35",
+      "current_sha256": "1cdb66f4bfbe468487e8383339e99c59d813709a6ea71d5aa5cca644ffafca35",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "apps/web/src/components/process-interfaces/HistoricalResultView.tsx",
+      "recorded_sha256": "8f9d8316b8c42102579ef5f62e1c00bf56452a79f42a2e147ed653771283487a",
+      "current_sha256": "8f9d8316b8c42102579ef5f62e1c00bf56452a79f42a2e147ed653771283487a",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "scripts/engineering_external_slice_binding.py",
+      "recorded_sha256": "ac0e3ff5c18cbf2ede3d49ba0e0ddbce7818ed2016df540412b6cd50f189b40b",
+      "current_sha256": "ac0e3ff5c18cbf2ede3d49ba0e0ddbce7818ed2016df540412b6cd50f189b40b",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "scripts/engineering_external_mesh_binding.py",
+      "recorded_sha256": "7770e9c4085ae02065593c95171eee7d0417bb37b4c8f9629205f1295d9eeaed",
+      "current_sha256": "7770e9c4085ae02065593c95171eee7d0417bb37b4c8f9629205f1295d9eeaed",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "scripts/prepare-printed-dataset-campaign.py",
+      "recorded_sha256": "0da34537afebf2ce1bd477f66763468551207350be0b46905c95a527d1199f70",
+      "current_sha256": "0da34537afebf2ce1bd477f66763468551207350be0b46905c95a527d1199f70",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "scripts/prepare-drill-jig-dataset-campaign.py",
+      "recorded_sha256": "d75d11b70a4587c93d431cb9c268e49ab4ce5f0e703cb1ec0b4f502792a6f3ee",
+      "current_sha256": "d75d11b70a4587c93d431cb9c268e49ab4ce5f0e703cb1ec0b4f502792a6f3ee",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "scripts/probe_printed_blender_binding.py",
+      "recorded_sha256": "2b3fa5cd2b516afb742a1538e21c7d8352332b4a638ad7d6078400938873efd4",
+      "current_sha256": "2b3fa5cd2b516afb742a1538e21c7d8352332b4a638ad7d6078400938873efd4",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": true
+    },
+    {
+      "evidence": "20261003-migration-disposition-verified",
+      "path": "tests/test_process_prototype_migration.py",
+      "recorded_sha256": "141b817a4204a93c650f062a4f3cbbdd23a25f9f30172f9db815bcd5a35295ab",
+      "current_sha256": "141b817a4204a93c650f062a4f3cbbdd23a25f9f30172f9db815bcd5a35295ab",
+      "raw_unchanged": true,
+      "git_anchor": "7be4cc9b02e76258228763c596de3c8e7e67ccc7",
+      "git_anchor_has_file": false,
+      "git_anchor_normalized_equal": null
+    },
+    {
+      "evidence": "20261003-shared-platform-generality-verified",
+      "path": "tests/test_process_platform_generality.py",
+      "recorded_sha256": "479ee9801d1d3a6bfc96bf8555051eef8947ec54152c70303d3a85b99eb75870",
+      "current_sha256": "479ee9801d1d3a6bfc96bf8555051eef8947ec54152c70303d3a85b99eb75870",
+      "raw_unchanged": true,
+      "git_anchor": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "git_anchor_has_file": false,
+      "git_anchor_normalized_equal": null
+    },
+    {
+      "evidence": "20261003-shared-platform-generality-verified",
+      "path": "tests/external/process_validation/test_printing.py",
+      "recorded_sha256": "cb0cb6096df85dc6753b0cc5e055774aec38af3150d050d4ba154e0c20b6ae51",
+      "current_sha256": "cb0cb6096df85dc6753b0cc5e055774aec38af3150d050d4ba154e0c20b6ae51",
+      "raw_unchanged": true,
+      "git_anchor": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": false
+    },
+    {
+      "evidence": "20261003-shared-platform-generality-verified",
+      "path": "packages/workspace_service/src/workspace_service/process_validation/readers/printing.py",
+      "recorded_sha256": "1203cd84d62bc50c24f5067134c73aad4e89f71238dbcdb28b28e4a454a98f1e",
+      "current_sha256": "1203cd84d62bc50c24f5067134c73aad4e89f71238dbcdb28b28e4a454a98f1e",
+      "raw_unchanged": true,
+      "git_anchor": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": false
+    },
+    {
+      "evidence": "20261003-shared-platform-generality-verified",
+      "path": "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+      "recorded_sha256": "4cb4ba95124de46913b9cdc27f1cf11dde88faa0fb7372b396c74d8a0ef5b2da",
+      "current_sha256": "5dd8f783cdcf3bb2cb04ecb42afa48d1c31833723440f272962cb826b752cdb1",
+      "raw_unchanged": false,
+      "git_anchor": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": false
+    },
+    {
+      "evidence": "20261003-shared-platform-generality-verified",
+      "path": "packages/workspace_service/tests/test_workflow_mcp_execution.py",
+      "recorded_sha256": "feb0b8ee19a1432e92ea899c93a0997f67976ba55c06ce97bea162eb6336e686",
+      "current_sha256": "feb0b8ee19a1432e92ea899c93a0997f67976ba55c06ce97bea162eb6336e686",
+      "raw_unchanged": true,
+      "git_anchor": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "git_anchor_has_file": true,
+      "git_anchor_normalized_equal": false
+    }
+  ],
+  "retired_paths_absent": [
+    "packages/workspace_service/src/workspace_service/print_part_demo.py",
+    "packages/workspace_service/src/workspace_service/print_part_demo_printer.py",
+    "apps/web/src/components/pages/PrintPartDemoPage.tsx",
+    "apps/web/src/components/pages/PrintPartDemoPage.css",
+    "scripts/configure_print_demo_offline.py",
+    "scripts/configure_print_demo_studio.py",
+    "scripts/print_demo_p1s_mcp.py",
+    "scripts/print_demo_p1s_session.py",
+    "scripts/print_demo_p1s_transfer.py",
+    "scripts/print_demo_studio.py",
+    "scripts/windows/inspect-bambu-studio.ps1",
+    "scripts/windows/studio-desktop.ps1",
+    "scripts/engineering_dataset_slice.py",
+    "scripts/engineering_dataset_slice_mcp.py",
+    "scripts/engineering_jig_slice_mcp.py",
+    "scripts/engineering_dataset_mesh_repair.py",
+    "scripts/engineering_dataset_mesh_repair_mcp.py",
+    "scripts/run_printed_validator_campaign.py",
+    "tests/test_print_demo_dispatch.py",
+    "tests/test_engineering_jig_slice_mcp.py",
+    "tests/test_printed_validator_campaign_wrapper.py"
+  ],
+  "inventories": [
+    {
+      "path": "artifacts/process-interfaces/083/20261003-external-slice-probe-retirement/inventory.json",
+      "sha256": "60345cebd7c870fad0c8e1ce96eb5b8f2ddb9a3d3e9820187dd1c4a143b39637",
+      "entries": 33,
+      "all_bytes_verified": true
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-mesh-repair-retirement/inventory.json",
+      "sha256": "afdaa71a41fe3c587c244a7abe368b5de682bb9127f3cb2f12f34c7ce95df05f",
+      "entries": 88,
+      "all_bytes_verified": true
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-mesh-repair-retirement/supplemental-inventory.json",
+      "sha256": "7f796a388129c1de943563fa9fbccd7ef7cd7483efc1b4e730afd1f2eb6e1194",
+      "entries": 1,
+      "all_bytes_verified": true
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-original-history-verified/inventory.json",
+      "sha256": "510661cd8e177023472d1bcdb71305561f8d44767f15841686bcf7ff02076a2f",
+      "entries": 114,
+      "all_bytes_verified": true
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/inventory.json",
+      "sha256": "5a24c7592b8f07a627b541d3b1b39d19114eccd59f213f3ce6e2008cd7de3f6f",
+      "entries": 282,
+      "all_bytes_verified": true
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/inventory.json",
+      "sha256": "85fae47b4ac309055fefc65743f97eeb03c1ec33fd452c628cea1982409e21ea",
+      "entries": 268,
+      "all_bytes_verified": true
+    }
+  ],
+  "scope": "Read-only current parity and actual retained tests/artifacts; no execution, review, or provider effects.",
+  "retained_migration_test_parity": [
+    {
+      "path": "tests/test_process_prototype_migration.py",
+      "current_sha256": "141b817a4204a93c650f062a4f3cbbdd23a25f9f30172f9db815bcd5a35295ab",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "apps/api/tests/test_process_prototype_retirement.py",
+      "current_sha256": "7c2cb1eec85eacd37edf83fdfad875a7e644a5995e5cdde3213782970c78543a",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "packages/workspace_service/tests/test_process_legacy_results.py",
+      "current_sha256": "725a44e2f329d4c62b7b85e1bf1b1244870a175bebdc06cc0c541239b0ef1166",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "packages/workspace_service/tests/test_workflow_run_history.py",
+      "current_sha256": "b2a5101505add43e102b35a7dd6338d90567585d51e952f874cc3a2c60312ba6",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "packages/workspace_service/tests/test_workflow_run_paths.py",
+      "current_sha256": "171fbf921d2145f7c5495f8d7085f0fd4c60acf74fecf0309982b322904c8fe8",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/packaging/test_process_prototype_distribution_boundary.py",
+      "current_sha256": "8e75fe8d7335c478643b846c27e0bd9799ffcc3c3b6c526ded3d167193721fca",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_embedded_slice_retirement.py",
+      "current_sha256": "98860f20c3737082503e2a75ac4d175db2c658c1816173ee31c95a7e37a5e774",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_embedded_mesh_retirement.py",
+      "current_sha256": "be1b5ae8feed6c423ea01e4c166fcfc3de2bf506e978209eb2b71bacf4b5ea06",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_engineering_external_slice_binding.py",
+      "current_sha256": "9de8c38eb8efd33c58d1a8d9a5f948f6e91a568546abe00a127f8e69e3dac590",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_external_mesh_binding.py",
+      "current_sha256": "e3d3552ffbf01c5340bf0187452a7937e7121bb2681f2f60a8061a074727a1e3",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_independent_slice_diagnostic.py",
+      "current_sha256": "179ab8495572d1ad5a6d5aeece32f959288a391e945b9708483abfef631bcc01",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_drill_jig_source_paths.py",
+      "current_sha256": "d61899bcc8298190b9afbecb20d4b44b5b2bcf0e0ddf2009645ff778b6af71d4",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_printed_dataset_bindings.py",
+      "current_sha256": "8d873c889332792b13e7cc86c1d08681373b0ef838b16128c68e94f42e0d4587",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    }
+  ],
+  "original_tracked_campaigns": [
+    {
+      "root": "specs/081-engineering-workflow-templates",
+      "tracked_files": 82,
+      "pre083_commit": "679447bb3ad62b670b49b27a278ff14406647809",
+      "tree_listing_sha256": "613eabafe317da90fe2f9a148d0fcefea2fac79b1de8920d8658be2c3fb9d67d",
+      "same_tracked_tree_and_no_worktree_diff": true
+    },
+    {
+      "root": "specs/082-output-content-validation",
+      "tracked_files": 67,
+      "pre083_commit": "679447bb3ad62b670b49b27a278ff14406647809",
+      "tree_listing_sha256": "4976d4e37d5b5a063c8fe758827dc61fc408239420fef0dda1d3801d587a1349",
+      "same_tracked_tree_and_no_worktree_diff": true
+    },
+    {
+      "root": "tests/datasets/engineering-workflows",
+      "tracked_files": 299,
+      "pre083_commit": "679447bb3ad62b670b49b27a278ff14406647809",
+      "tree_listing_sha256": "f757057aff1cedff2ccbf898a38e607272b48f5199caecbd5936a965440c2da9",
+      "same_tracked_tree_and_no_worktree_diff": true
+    }
+  ],
+  "first_helper_failure": {
+    "command": ".venv/Scripts/python.exe .local-run/process-interfaces-083/t056-migration-primary-inspect-017.py",
+    "exit_code": 1,
+    "message": "Git checkpoint 7be4cc9b predates tests/test_process_prototype_migration.py; no artifact or product failure.",
+    "correction": "Recorded raw source hashes remain authoritative; absent pre-change Git files are explicitly null rather than treated as missing current implementation."
+  }
+}

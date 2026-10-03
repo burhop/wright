@@ -1,0 +1,171 @@
+{
+  "command": ".venv/Scripts/python.exe -m pytest -q -p no:cacheprovider tests/test_process_platform_generality.py packages/workspace_service/tests/test_workflow_mcp_execution.py tests/external/process_validation/test_printing.py --basetemp=.local-run/process-interfaces-083/t056-migration-current-018-tmp --junitxml=.local-run/process-interfaces-083/t056-migration-current-018.xml",
+  "exit_code": 0,
+  "passed": 41,
+  "cases": [
+    {
+      "module": "tests.test_process_platform_generality",
+      "name": "test_shared_foundation_has_no_selected_vendor_literals_or_native_imports"
+    },
+    {
+      "module": "tests.test_process_platform_generality",
+      "name": "test_public_client_kit_and_process_views_have_no_provider_branch"
+    },
+    {
+      "module": "tests.test_process_platform_generality",
+      "name": "test_original_slice_profiles_already_declare_their_operation"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_missing_task_tool_has_provider_neutral_correction_without_dispatch[geometry-provider]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_missing_task_tool_has_provider_neutral_correction_without_dispatch[thermal-provider]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_prompt_tool_prompt_passes_exact_values_and_saves_terminal"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_whole_json_arguments_and_final_result_file"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_missing_input_stale_binding_or_bad_literal_fails_preflight[patch0]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_missing_input_stale_binding_or_bad_literal_fails_preflight[patch1]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_missing_input_stale_binding_or_bad_literal_fails_preflight[patch2]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_invalid_generated_arguments_fail_before_call"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_disabled_server_and_tool_error_fail_without_success"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_cached_browser_workspace_failure_preserves_safe_recovery"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_generic_gateway_failure_does_not_expose_raw_message[invalid_binding]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_mcp_execution",
+      "name": "test_generic_gateway_failure_does_not_expose_raw_message[child_unavailable]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_binary_stl_envelope_and_integrity_are_measured"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metrics_measure_actual_disconnected_bytes[triangle_count-8-1]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metrics_measure_actual_disconnected_bytes[connected_components-2-1]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metrics_measure_actual_disconnected_bytes[signed_volume_mm3-2.0-mm3]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_signed_volume_metric_preserves_inward_orientation"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metric_keeps_actual_triangle_edge_budget[10-True]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metric_keeps_actual_triangle_edge_budget[9-False]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metric_rejects_undeclared_selector[mesh/unknown]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metric_rejects_undeclared_selector[connected_components]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metric_rejects_undeclared_selector[mesh/]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_mesh_metric_rejects_undeclared_selector[mesh/x_span_mm]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit[10-True]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit[9-False]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit[3-False]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_identical_source_and_repaired_mesh_are_rejected"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_and_transfer_evidence_bind_exact_package_bytes[actual_local_bambu_slice]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_and_transfer_evidence_bind_exact_package_bytes[independent_slicer_a]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_and_transfer_evidence_bind_exact_package_bytes[independent_slicer_b/v2]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters0]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters1]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters2]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters3]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters4]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters5]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters6]"
+    },
+    {
+      "module": "tests.external.process_validation.test_printing",
+      "name": "test_package_inventory_rejects_missing_required_member"
+    }
+  ]
+}

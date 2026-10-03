@@ -1,0 +1,803 @@
+{
+  "test_source_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+  "source_parity": [
+    {
+      "path": "tests/test_process_prototype_migration.py",
+      "current_sha256": "141b817a4204a93c650f062a4f3cbbdd23a25f9f30172f9db815bcd5a35295ab",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "apps/api/tests/test_process_prototype_retirement.py",
+      "current_sha256": "7c2cb1eec85eacd37edf83fdfad875a7e644a5995e5cdde3213782970c78543a",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "packages/workspace_service/tests/test_process_legacy_results.py",
+      "current_sha256": "725a44e2f329d4c62b7b85e1bf1b1244870a175bebdc06cc0c541239b0ef1166",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "packages/workspace_service/tests/test_workflow_run_history.py",
+      "current_sha256": "b2a5101505add43e102b35a7dd6338d90567585d51e952f874cc3a2c60312ba6",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "packages/workspace_service/tests/test_workflow_run_paths.py",
+      "current_sha256": "171fbf921d2145f7c5495f8d7085f0fd4c60acf74fecf0309982b322904c8fe8",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/packaging/test_process_prototype_distribution_boundary.py",
+      "current_sha256": "8e75fe8d7335c478643b846c27e0bd9799ffcc3c3b6c526ded3d167193721fca",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_embedded_slice_retirement.py",
+      "current_sha256": "98860f20c3737082503e2a75ac4d175db2c658c1816173ee31c95a7e37a5e774",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_embedded_mesh_retirement.py",
+      "current_sha256": "be1b5ae8feed6c423ea01e4c166fcfc3de2bf506e978209eb2b71bacf4b5ea06",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_engineering_external_slice_binding.py",
+      "current_sha256": "9de8c38eb8efd33c58d1a8d9a5f948f6e91a568546abe00a127f8e69e3dac590",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_external_mesh_binding.py",
+      "current_sha256": "e3d3552ffbf01c5340bf0187452a7937e7121bb2681f2f60a8061a074727a1e3",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_independent_slice_diagnostic.py",
+      "current_sha256": "179ab8495572d1ad5a6d5aeece32f959288a391e945b9708483abfef631bcc01",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_drill_jig_source_paths.py",
+      "current_sha256": "d61899bcc8298190b9afbecb20d4b44b5b2bcf0e0ddf2009645ff778b6af71d4",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    },
+    {
+      "path": "tests/test_printed_dataset_bindings.py",
+      "current_sha256": "8d873c889332792b13e7cc86c1d08681373b0ef838b16128c68e94f42e0d4587",
+      "retained_test_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+      "unchanged_after_git_line_ending_normalization": true
+    }
+  ],
+  "passed": 179,
+  "cases": [
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[packages/workspace_service/src/workspace_service/print_part_demo.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[packages/workspace_service/src/workspace_service/print_part_demo_printer.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[apps/web/src/components/pages/PrintPartDemoPage.tsx]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[apps/web/src/components/pages/PrintPartDemoPage.css]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/configure_print_demo_offline.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/configure_print_demo_studio.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/print_demo_p1s_mcp.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/print_demo_p1s_session.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/print_demo_p1s_transfer.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/print_demo_studio.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/windows/inspect-bambu-studio.ps1]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/windows/studio-desktop.ps1]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/engineering_dataset_slice.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/engineering_dataset_slice_mcp.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/engineering_jig_slice_mcp.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/engineering_dataset_mesh_repair.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/engineering_dataset_mesh_repair_mcp.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[scripts/run_printed_validator_campaign.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[tests/test_print_demo_dispatch.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[tests/test_engineering_jig_slice_mcp.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_retired_prototype_source_does_not_return[tests/test_printed_validator_campaign_wrapper.py]"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_application_and_script_imports_do_not_reach_retired_implementations"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_workspace_entry_and_client_use_shared_work_and_read_only_history"
+    },
+    {
+      "module": "tests.test_process_prototype_migration",
+      "name": "test_legacy_reader_delegates_to_recorder_without_execution_imports"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[POST-prepare]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[GET-capabilities]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[GET-printer-status]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[POST-print]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[GET-dispatch]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[POST-allow-retry]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[POST-cancel]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_old_operations_return_retired_without_a_workspace_or_gateway[GET-camera.mjpeg]"
+    },
+    {
+      "module": "apps.api.tests.test_process_prototype_retirement",
+      "name": "test_retired_operation_has_no_vendor_dependencies_or_request_schema"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_historical_read_is_exact_read_only_and_preserves_files"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_historical_locator_cannot_escape_or_select_other_source[../outside.json]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_historical_locator_cannot_escape_or_select_other_source[runs/other/retained.json]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_historical_locator_cannot_escape_or_select_other_source[runs/saved/retained.txt]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_historical_record_cannot_claim_another_source"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_original_recorder_shapes_preserve_exact_results_without_actions[failed-3-True]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_original_recorder_shapes_preserve_exact_results_without_actions[completed-16-True]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_process_legacy_results",
+      "name": "test_original_recorder_shapes_preserve_exact_results_without_actions[completed-16-False]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_history",
+      "name": "test_history_distinguishes_active_owner_and_completed_run"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_history",
+      "name": "test_unfinished_record_is_interrupted_only_when_known_host_lease_is_released"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_history",
+      "name": "test_history_is_scoped_to_exact_workflow_and_rejects_path_escape"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_declared_fields_resolve_before_provider_checks_without_changing_identity"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_run_identity_is_a_safe_backend_path_component[None]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_run_identity_is_a_safe_backend_path_component[../other]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_run_identity_is_a_safe_backend_path_component[run/other]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_run_identity_is_a_safe_backend_path_component[.hidden]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_run_identity_is_a_safe_backend_path_component[run:ads]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_run_identity_is_a_safe_backend_path_component[run$()]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_run_identity_is_a_safe_backend_path_component[run`cmd`]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes0]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes1]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes2]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes3]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes4]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes5]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes6]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_missing_unsupported_or_unsafe_declarations_fail_before_execution[changes7]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_literal_legacy_process_remains_unchanged"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[declared-external_action]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[declared-validation]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[declared-cad]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[declared-application]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[declared-human_interaction]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[undeclared-external_action]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[undeclared-validation]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[undeclared-cad]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[undeclared-application]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[undeclared-human_interaction]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[legacy-external_action]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[legacy-validation]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[legacy-cad]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[legacy-application]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_authority_configuration_tokens_are_rejected_on_every_step[legacy-human_interaction]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_only_declared_text_inputs_resolve_and_pin_template_plus_resolved_content"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_binary_inputs_cannot_become_templates"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_text_template_cannot_be_consumed_as_an_opaque_artifact[file]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_text_template_cannot_be_consumed_as_an_opaque_artifact[application]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_text_template_cannot_be_consumed_as_an_opaque_artifact[review]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_resolved_template_inline_budget_counts_resolved_bytes"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_namespace_reservation_is_exclusive_and_resume_uses_the_retained_directory"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_two_actual_source_runs_share_the_accepted_process_and_preserve_first_outputs"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_connected_mcp_template_is_resolved_before_checks_and_each_dispatch"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_enrolled_local_review_resumes_same_paths_and_duplicate_never_replays"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_declared_file_template_resumes_after_owner_reopen_with_the_same_run_paths[False]"
+    },
+    {
+      "module": "packages.workspace_service.tests.test_workflow_run_paths",
+      "name": "test_declared_file_template_resumes_after_owner_reopen_with_the_same_run_paths[True]"
+    },
+    {
+      "module": "tests.packaging.test_process_prototype_distribution_boundary",
+      "name": "test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo]"
+    },
+    {
+      "module": "tests.packaging.test_process_prototype_distribution_boundary",
+      "name": "test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo_printer]"
+    },
+    {
+      "module": "tests.packaging.test_process_prototype_distribution_boundary",
+      "name": "test_workspace_owner_has_no_imports_of_retired_operational_implementations"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_embedded_vendor_slice_implementation_is_absent[scripts/engineering_dataset_slice.py]"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_embedded_vendor_slice_implementation_is_absent[scripts/engineering_dataset_slice_mcp.py]"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_embedded_vendor_slice_implementation_is_absent[scripts/engineering_jig_slice_mcp.py]"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_preparers_only_declare_the_external_slice_pipeline[scripts/prepare-printed-dataset-campaign.py]"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_preparers_only_declare_the_external_slice_pipeline[scripts/prepare-drill-jig-dataset-campaign.py]"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_diagnostic_has_no_native_slicer_invocation_or_vendor_profile_derivation"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_original_campaign_binding_data_remains_unchanged[tests/datasets/engineering-workflows/bindings/printed-replacement-part.json]"
+    },
+    {
+      "module": "tests.test_embedded_slice_retirement",
+      "name": "test_original_campaign_binding_data_remains_unchanged[tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json]"
+    },
+    {
+      "module": "tests.test_embedded_mesh_retirement",
+      "name": "test_retired_native_implementation_and_launcher_are_absent[scripts/engineering_dataset_mesh_repair.py]"
+    },
+    {
+      "module": "tests.test_embedded_mesh_retirement",
+      "name": "test_retired_native_implementation_and_launcher_are_absent[scripts/engineering_dataset_mesh_repair_mcp.py]"
+    },
+    {
+      "module": "tests.test_embedded_mesh_retirement",
+      "name": "test_retired_native_implementation_and_launcher_are_absent[scripts/run_printed_validator_campaign.py]"
+    },
+    {
+      "module": "tests.test_embedded_mesh_retirement",
+      "name": "test_retired_native_implementation_and_launcher_are_absent[tests/test_printed_validator_campaign_wrapper.py]"
+    },
+    {
+      "module": "tests.test_embedded_mesh_retirement",
+      "name": "test_preparation_declares_existing_capabilities_and_never_starts_a_private_lifecycle"
+    },
+    {
+      "module": "tests.test_embedded_mesh_retirement",
+      "name": "test_original_operation_policy_and_campaign_binding_history_remain_preserved"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_missing_configuration_fails_before_any_staging"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_profile_bytes_and_exact_registered_schemas_are_retained"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[scenario]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[schema]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[missing]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[ambiguous]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[legacy]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[profile_digest]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[process]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[source]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[receipt]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[partial_path]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[mount]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[backend]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[section]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_predictable_missing_changed_or_incompatible_choices_reject[success_contract]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_historical_binding_documents_and_wrappers_are_not_executed_by_preparers"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_inspection_job_uses_the_explicit_provider_workspace_mount[/workspace]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_inspection_job_uses_the_explicit_provider_workspace_mount[/mounted/engineering]"
+    },
+    {
+      "module": "tests.test_engineering_external_slice_binding",
+      "name": "test_package_is_owned_by_slicer_and_inspection_only_produces_new_evidence"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[missing]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[scenario]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[workspace]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[attempt]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[policy]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[profile]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[provider]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[schema]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[ambiguous]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[retired]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[arguments]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[argument-shape]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[nonfinite]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_bindings_fail_before_any_workspace_staging[duplicate]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_pinned_arguments_are_never_interpreted_or_rewritten"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_pinned_policy_identity_preserves_json_types[version-bool]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_pinned_policy_identity_preserves_json_types[policy-bool-as-zero]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_pinned_policy_identity_preserves_json_types[policy-zero-as-bool]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_pinned_policy_identity_preserves_json_types[policy-float-limit]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_actual_final_bytes_and_explicit_noncubic_envelope"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_passive_inspection_rejects_invalid_types_and_unbounded_preview[boolean-tolerance]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_passive_inspection_rejects_invalid_types_and_unbounded_preview[float-limit]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_passive_inspection_rejects_invalid_types_and_unbounded_preview[oversized-preview]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[inward]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[disconnected]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[degenerate]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[oversize]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[over-limit]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[nonfinite]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[truncated]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[preview]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_invalid_or_mandatory_failed_output_never_releases_the_inspection[escape]"
+    },
+    {
+      "module": "tests.test_external_mesh_binding",
+      "name": "test_original_handle_measurement_functions_are_unchanged"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_exact_one_call_and_passive_response_identity[success]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_exact_one_call_and_passive_response_identity[schema]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_exact_one_call_and_passive_response_identity[timeout]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_exact_one_call_and_passive_response_identity[error]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[command]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[embedded]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[offline]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[paths]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[profile]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[partial]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[schema]"
+    },
+    {
+      "module": "tests.test_independent_slice_diagnostic",
+      "name": "test_predictable_configuration_defects_reject_before_native_owner[environment]"
+    },
+    {
+      "module": "tests.test_drill_jig_source_paths",
+      "name": "test_author_path_literals_match_actual_producers_and_native_run_arguments[1]"
+    },
+    {
+      "module": "tests.test_drill_jig_source_paths",
+      "name": "test_author_path_literals_match_actual_producers_and_native_run_arguments[2]"
+    },
+    {
+      "module": "tests.test_drill_jig_source_paths",
+      "name": "test_author_path_literals_match_actual_producers_and_native_run_arguments[3]"
+    },
+    {
+      "module": "tests.test_printed_dataset_bindings",
+      "name": "test_original_full_graph_and_human_inputs_remain_bound[1-False]"
+    },
+    {
+      "module": "tests.test_printed_dataset_bindings",
+      "name": "test_original_full_graph_and_human_inputs_remain_bound[2-False]"
+    },
+    {
+      "module": "tests.test_printed_dataset_bindings",
+      "name": "test_original_full_graph_and_human_inputs_remain_bound[2-True]"
+    },
+    {
+      "module": "tests.test_printed_dataset_bindings",
+      "name": "test_original_full_graph_and_human_inputs_remain_bound[3-False]"
+    },
+    {
+      "module": "tests.test_printed_dataset_bindings",
+      "name": "test_preparation_rejects_escape_and_different_staged_input"
+    },
+    {
+      "module": "tests.test_printed_dataset_bindings",
+      "name": "test_diagnostic_mesh_code_clears_exact_pinned_guard"
+    }
+  ],
+  "scope": "Retained exact migration test/owner bytes; not a rerun or relabelled newer installed build."
+}

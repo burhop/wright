@@ -1,5 +1,22 @@
 # Feature 083 completion audit — incomplete
 
+## Current migration/history primary review — 3 October 2026
+
+The [migration primary review](../../artifacts/process-interfaces/083/20261003-migration-primary-audit-verified/README.md) completes five whole obligations against
+current owners and retained actual behaviors. All 182 identities/texts are preserved:
+**94 proved / 88 awaiting review**. All 21 retired paths remain absent. Current
+shared-code guards/survey and 41 selected checks pass; the retained 179 migration
+cases keep unchanged test/owner source and the original installed history proof
+keeps its actual build scope. Seven inherited integration owners remain documented
+debt, not a vendor-free-platform claim.
+
+Six inventories verify 786 retained entries, including 550 engineering/UI files.
+Tracked 081/082/dataset trees match pre-083 with no worktree diff. Original failed
+records and 3/16/16 output sets remain inspectable through read-only canonical
+history. No protected review or process/provider/physical operation occurs.
+**55 tasks checked; T056/T057 remain open.** Continue provider/engineering and
+remaining contract/runtime review, then final current packaging/documentation.
+
 ## Shared UI/result/workspace primary audit — 3 October 2026
 
 The [shared UI primary review](../../artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/README.md)

@@ -1,0 +1,50 @@
+{
+  "first_publisher_command": ".venv/Scripts/python.exe .local-run/process-interfaces-083/t056-publish-migration-primary-020.py",
+  "exit_code": 1,
+  "exception": "UnicodeDecodeError",
+  "actual_error": "Windows default cp1252 cannot decode byte 0x9d in progress.md at position 15045.",
+  "written_before_stop": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "checked-scope.json": {
+      "bytes": 13158,
+      "sha256": "b8ae48769420876d30c17e9aa0046a56847676df6238862ae9c4a7b4e00767b8"
+    },
+    "current-cases.json": {
+      "bytes": 7416,
+      "sha256": "5545785762e8cecab9f85d0b5078c38be3bbaecb2796394388a55334295bb870"
+    },
+    "current-coupling.json": {
+      "bytes": 32824,
+      "sha256": "160f580585f34baeab82e4f9901f25e2f3ef8abbb1974abef1528d4895a6b3f8"
+    },
+    "current-results.xml": {
+      "bytes": 7058,
+      "sha256": "2a3d2b82d1adae1fa4b8e812a5b51b0ddff596571c2a2e6d9b17b344f6eebfd5"
+    },
+    "primary-review.json": {
+      "bytes": 7868,
+      "sha256": "24fc48e55a31070a752ab4873dfca4006c606f0dfb8f6c4a57fa5c92ac885af5"
+    },
+    "README.md": {
+      "bytes": 2065,
+      "sha256": "97559b30c72f34696273f85452b2eadfab2b630793fd91d84a5df263f32560c7"
+    },
+    "retained-migration-cases.json": {
+      "bytes": 34700,
+      "sha256": "b443d2c9cde8cffc0b25c1f4dda8b92ea5753b3b54041a8f9d0795ec5972d33e"
+    },
+    "semantic-ledger.json": {
+      "bytes": 231678,
+      "sha256": "776ec0d93c92760d5a697a96aa356566700e6ce8e7b172a078bf932631d95a9f"
+    },
+    "source-and-preservation.json": {
+      "bytes": 18804,
+      "sha256": "a6550452c00265dc5f78e3bb33df305cdc270b92b61b66a0ac92c3844fff725b"
+    }
+  },
+  "production_changes": false,
+  "continuation": "Read repository documentation explicitly as UTF-8; complete only remaining documentation/failure/inventory writes. No original evidence file is rewritten."
+}
