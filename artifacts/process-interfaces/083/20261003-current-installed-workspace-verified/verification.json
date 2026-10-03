@@ -1,0 +1,137 @@
+{
+  "source_commit": "68748b837048bc4534353dfdb5f2346822a65b5d",
+  "wheel_sha256": "69e15b125cc54283a2ff56d420a2b361c540569afa37054402d0697b710dd903",
+  "installed_entries_byte_verified": 953,
+  "verification_scope": "Current installed editor, common/saved results and exact navigation, read-only preview/reopen, responsive keyboard and scoped frontend regressions; no new model/provider/engineering run",
+  "fixtures": [
+    {
+      "fixture": "t052-mounted-native-007",
+      "original_files_byte_verified": 696,
+      "copied_files_byte_unchanged": 695,
+      "copied_non_engineering_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary copied workspace context materialization; original is unchanged"
+        }
+      ],
+      "original_and_copied_protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    },
+    {
+      "fixture": "t052-mounted-native-008",
+      "original_files_byte_verified": 135,
+      "copied_files_byte_unchanged": 133,
+      "copied_non_engineering_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary copied workspace context materialization; original is unchanged"
+        },
+        {
+          "path": ".wright/apps/process.ui-512d6109b37f4c0f89b86d86a34827b2.revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0.surface.json",
+          "scope": "Declared host-local relocation only: exact installed interpreter and same immutable UI vault under copied workspace; every other parsed field unchanged"
+        }
+      ],
+      "original_and_copied_protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    },
+    {
+      "fixture": "t052-mounted-native-009",
+      "original_files_byte_verified": 155,
+      "copied_files_byte_unchanged": 153,
+      "copied_non_engineering_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary copied workspace context materialization; original is unchanged"
+        },
+        {
+          "path": ".wright/apps/process.ui-0a09766ccdd94bfdb3dab1f5519d1628.revision-d38d8f51a4674fe7816f9b00ca43ad73.surface.json",
+          "scope": "Declared host-local relocation only: exact installed interpreter and same immutable UI vault under copied workspace; every other parsed field unchanged"
+        }
+      ],
+      "original_and_copied_protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    }
+  ],
+  "reports": [
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-editor-009/workspace-walkthrough/status.json",
+      "passed_steps": 12,
+      "sha256": "623b5abef71a21fae9afdcb96b41f38a3bc7830bcf8ac2008a5299acef92e27a"
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-installed-016/workspace-walkthrough/status.json",
+      "passed_steps": 6,
+      "sha256": "c05c0f171f72a15a8b02c0691839542550620c20d5f6cda61186342af652eb8e"
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-installed-017/workspace-walkthrough/status.json",
+      "passed_steps": 4,
+      "sha256": "11625b401b2cf60c844b372720220e0e8b0321edd14563da42933d175ab14f0e"
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-printed-installed-011/workspace-walkthrough/status.json",
+      "passed_steps": 4,
+      "sha256": "b18fc7ce3269c83a0f672906a90bf54f6ac3e669b9d40977db4a274b2153507d"
+    }
+  ],
+  "regressions": [
+    {
+      "private_report": "t053-current-working-components-012.json",
+      "passes": 287,
+      "failures": 0,
+      "skips": 0,
+      "sha256": "abf506d729e96b3ac21913d86116fe83e89a60d7beef1c737634a417f2497387",
+      "modules": [
+        "apps/web/src/services/process-client.spec.ts",
+        "apps/web/src/services/process-presentation-host.spec.ts",
+        "apps/web/src/services/process-ui-authoring-recovery.spec.ts",
+        "apps/web/src/services/process-ui-authoring.spec.ts",
+        "apps/web/src/services/process-view-recovery.spec.ts",
+        "apps/web/src/services/process-workspace-tabs.spec.ts",
+        "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+        "apps/web/src/components/process-interfaces/HistoricalResultView.spec.tsx",
+        "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx",
+        "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+        "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx",
+        "apps/web/src/services/surfaces/process-presentation.spec.ts",
+        "apps/web/src/services/surfaces/presenters/live-app-presenter.spec.ts"
+      ]
+    },
+    {
+      "private_report": "t053-current-view-cleanup-013.json",
+      "passes": 33,
+      "failures": 0,
+      "skips": 0,
+      "sha256": "f0667bef6fec52dfa7ceda84087572f40de100c216209098c777da2efaf30778",
+      "modules": [
+        "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+        "apps/web/src/components/surfaces/LiveAppSurface.spec.tsx",
+        "apps/web/src/services/host-adapter/browser-adapter.spec.ts"
+      ]
+    }
+  ],
+  "regression_counts_overlap": true,
+  "new_task_closure": false,
+  "human_engineering_acceptance": false,
+  "physical_execution": false,
+  "original_failures_preserved": true,
+  "private_traces_not_published": true
+}

@@ -1,5 +1,36 @@
 # Feature 083 progress
 
+## Current installed proof continuation — 3 October 2026
+
+The previous goal turn refreshed status/prompt only: no implementation progress.
+This continuation takes the next safe action and yields new verified evidence.
+No product fix is presumed from the first blank preview. Trace timing shows long
+issuance/loading; fresh014 reports eight-open-interface capacity. Exact active
+views belong to terminal test browsers. Normal API cleanup closes eight views
+and then three exact remnants, preserving all protected tables. Tests now close
+their captured owned views. Preview016 passes six checks;017 reproduces the
+original working-to-preview path and explicit view reopen with unchanged18-result
+identity and empty authoring/execution guards, on the unchanged installed build.
+
+Printed010's eager response observer terminates during frame disposal; its missing
+stopping screenshot/trace is honestly retained. Fresh011 observes an actual fetch
+clone before returning the response, sends no extra request/mocks, and passes all
+four remaining full-assessment/result-digest/focus/90-layer/producer checks. Human
+review remains held. Current frontend groups pass287 and33; scopes overlap.
+Thirteen current report structures validate. The first publisher's overbroad
+manifest-immutability assumption is retained; fresh002 verifies exact interpreter/
+vault relocation with all other fields preserved.986 original files and953 wheel
+entries match; all five original/copied protected tables match and all views close.
+
+Visual review identifies clipped comparison content at480px despite reachable
+controls/no outer overflow. This is an outstanding shared compact-presentation
+issue, not complete responsive acceptance. The next action is to improve/verify
+that layout, then complete remaining provider/migration/FR/SC/regression audits.
+Evidence: artifacts/process-interfaces/083/20261003-current-installed-workspace-verified.
+Ledger remains49 checked/eight open; no model/provider/process/review/physical
+action ran. Owned installed API hosts008/009 remain live pending exact shutdown
+or further current-build work; editor007 is stopped. No push/merge/release.
+
 ## Latest evidence — required tool authority checked before execution
 
 The slicing handoff checkpoint is committed locally as fca24ce0: 62 exact owned
@@ -2890,3 +2921,32 @@ index-byte checking and unrelated/protected work preservation. Planned private
 receipt: .local-run/process-interfaces-083/mesh-retirement-001-local-commit.json.
 Then advance current-build workspace/editor/working/preview/accessibility proofs
 and the remaining eight-task scope. No push, merge, release or physical effect.
+
+## Bedtime status review — committed migration and installed UI continuation
+
+Reviewed actual HEAD `68748b83`, task ledger, commit receipt, current installed
+walkthrough status files and the 287-pass frontend JSON. Mesh retirement is now
+committed: 116 exact owned paths, 91 byte-verified artifact blobs, credential scan
+passed, 311 unrelated dirty entries and protected context/campaign unchanged.
+Its 66-representation partial-result audit remains additive; no run was replayed.
+
+The intervening implementation built a fresh installed wheel and frontend. Current
+editor009 passes all12 checks, including real pointer connections, pan and an
+automated zero-violation WCAG A/AA scan. Current Heat working/preview proofs retain
+exact18-result/765-sample parity and held assessment. Responsive012 passes six
+checks before a test observer misclassifies a preview-opening request; fresh013
+then retains a real blank preview on reopen requiring diagnosis. Printed009
+passes12 checks for exact20-result parity, geometry and nominal toolpaths before
+a response-body/navigation test race. No stopped report is rewritten as a pass.
+The owning/affected frontend group passes287 with zero failures or skips; full
+acceptance remains incomplete.
+
+This status review runs no tests, models, providers, process starts, responses or
+engineering actions. Read-only health checks return200 for the two owned isolated
+installed hosts: Heat008/session66553/port62189 and printed009/session58428/
+port64083. Editor007 is stopped. Revalidate ownership/liveness before reuse.
+
+Updated continuation-goal.md and completion.md to put the unresolved blank preview
+and printed harness correction ahead of final qualification/migration/acceptance
+audits. Ledger remains49 checked/eight open. The existing unlimited goal stays
+active; no new goal, task closure, release or human/physical acceptance is claimed.

@@ -1,0 +1,1 @@
+Browser traces remain private because they contain authentication data. Public status/scripts/screenshots/diagnostics are retained. Printed010 terminated before its trace could be finalized; its terminal record discloses that limitation.

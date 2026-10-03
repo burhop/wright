@@ -1,0 +1,119 @@
+{
+  "title": "Saved Heat comparison after repeated CAD and solver execution",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-03T11:29:19.913Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved heat workflow and click Use saved process."
+    },
+    {
+      "label": "Attach second run",
+      "instruction": "Open the third recorded run link and inspect its CAD, analysis and held assessment results."
+    },
+    {
+      "label": "Reuse",
+      "instruction": "Click Create or choose interface, select Heat-spreader candidate comparison and click Open saved interface. Inspect the full results; leave human reviews untouched."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working interface and inspect the same third-run results and held assessment."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Current installed workspace entry",
+      "summary": "The normal workspace opens on the same current installed package.",
+      "purpose": "Continue unreached authoring and preview checks after retained harness failures.",
+      "action": "Open the isolated workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Normal workspace available.",
+      "actual": "Workflows is visible on the current installed host.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S15",
+      "state": "pass",
+      "label": "Existing built preview is read-only in a workspace tab",
+      "summary": "The saved job preview renders the same exact engineering outputs without compiler/model availability.",
+      "purpose": "Prove current installed preview hosting and authoritative read-only scope.",
+      "action": "Open the retained preview link for the exact saved revision and recorded run.",
+      "controls": [
+        "Preview tab"
+      ],
+      "expected": "Read-only preview and exact same eighteen result identities.",
+      "actual": "Preview banner, backend read-only context and exact engineering result parity verified in 9090 ms (6517 ms before issuance). Earlier stopping reports remain retained; this separates issuance from frame loading.",
+      "raw": "screenshots/raw/S15.png",
+      "annotated": "screenshots/annotated/S15.png"
+    },
+    {
+      "id": "S16",
+      "state": "pass",
+      "label": "Preview remains in the workspace at tablet width",
+      "summary": "The preview and definition navigation remain available within the workspace.",
+      "purpose": "Preserve practical workspace hosting at a narrower viewport.",
+      "action": "Resize to 1024 by 800 and inspect Open workflow.",
+      "controls": [
+        "Open workflow",
+        "Preview tab"
+      ],
+      "expected": "No outer horizontal overflow and reachable definition navigation.",
+      "actual": "Current preview tab remains hosted with no outer horizontal overflow and visible Open workflow.",
+      "raw": "screenshots/raw/S16.png",
+      "annotated": "screenshots/annotated/S16.png"
+    },
+    {
+      "id": "S17",
+      "state": "pass",
+      "label": "Preview controls at 480 pixels",
+      "summary": "Workspace preview controls remain reachable and keyboard focus stays visible.",
+      "purpose": "Verify responsive workspace hosting without changing engineering state.",
+      "action": "Resize and press Tab from Open workflow.",
+      "controls": [
+        "Open workflow",
+        "Create or choose interface"
+      ],
+      "expected": "No outer overflow and a visible focus ring on the next control.",
+      "actual": "No outer overflow; Create or choose interface receives Tab focus with a 3px outline.",
+      "raw": "screenshots/raw/S17.png",
+      "annotated": "screenshots/annotated/S17.png"
+    },
+    {
+      "id": "S18",
+      "state": "pass",
+      "label": "Preview controls at 1440 pixels",
+      "summary": "Workspace preview controls remain reachable and keyboard focus stays visible.",
+      "purpose": "Verify responsive workspace hosting without changing engineering state.",
+      "action": "Resize and press Tab from Open workflow.",
+      "controls": [
+        "Open workflow",
+        "Create or choose interface"
+      ],
+      "expected": "No outer overflow and a visible focus ring on the next control.",
+      "actual": "No outer overflow; Create or choose interface receives Tab focus with a 3px outline.",
+      "raw": "screenshots/raw/S18.png",
+      "annotated": "screenshots/annotated/S18.png"
+    },
+    {
+      "id": "S19",
+      "state": "pass",
+      "label": "Measured two-times page scale",
+      "summary": "Definition navigation remains reachable at measured page scale two.",
+      "purpose": "Check compact page scaling without claiming desktop zoom preference or assistive-technology acceptance.",
+      "action": "Set measured page scale to two and inspect Open workflow.",
+      "controls": [
+        "Open workflow"
+      ],
+      "expected": "Page scale two and reachable navigation.",
+      "actual": "visualViewport.scale is two and Open workflow remains visible.",
+      "raw": "screenshots/raw/S19.png",
+      "annotated": "screenshots/annotated/S19.png"
+    }
+  ]
+}

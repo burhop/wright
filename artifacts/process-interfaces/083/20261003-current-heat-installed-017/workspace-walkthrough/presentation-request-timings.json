@@ -1,0 +1,125 @@
+[
+  {
+    "path": "/api/workspace/process-interfaces/uis/ui-512d6109b37f4c0f89b86d86a34827b2/present",
+    "method": "POST",
+    "elapsed_ms": 5162
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "GET",
+    "elapsed_ms": 331
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "POST",
+    "elapsed_ms": 37,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/context",
+    "method": "GET",
+    "elapsed_ms": 323
+  },
+  {
+    "path": "/__wright/process/runs/63b639c7a8f446cd90a9285921ab9072",
+    "method": "GET",
+    "elapsed_ms": 1171
+  },
+  {
+    "path": "/api/workspace/process-interfaces/authoring-jobs/job-1e03b43bc5664e6fa1d9fbea3a264299/preview",
+    "method": "POST",
+    "elapsed_ms": 5630
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "GET",
+    "elapsed_ms": 324
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "POST",
+    "elapsed_ms": 61,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/context",
+    "method": "GET",
+    "elapsed_ms": 301
+  },
+  {
+    "path": "/__wright/process/runs/63b639c7a8f446cd90a9285921ab9072",
+    "method": "GET",
+    "elapsed_ms": 1274,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/api/workspace/process-interfaces/uis/ui-512d6109b37f4c0f89b86d86a34827b2/present",
+    "method": "POST",
+    "elapsed_ms": 7974
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "GET",
+    "elapsed_ms": 687
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "POST",
+    "elapsed_ms": 60,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/runs/63b639c7a8f446cd90a9285921ab9072",
+    "method": "GET",
+    "elapsed_ms": 663,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/loaded",
+    "method": "POST",
+    "elapsed_ms": 1024,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/context",
+    "method": "GET",
+    "elapsed_ms": 327
+  },
+  {
+    "path": "/__wright/process/runs/63b639c7a8f446cd90a9285921ab9072",
+    "method": "GET",
+    "elapsed_ms": 1253
+  },
+  {
+    "path": "/api/workspace/process-interfaces/authoring-jobs/job-1e03b43bc5664e6fa1d9fbea3a264299/preview",
+    "method": "POST",
+    "elapsed_ms": 3152
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "GET",
+    "elapsed_ms": 336
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "POST",
+    "elapsed_ms": 40,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/context",
+    "method": "GET",
+    "elapsed_ms": 156
+  },
+  {
+    "path": "/__wright/process/runs/63b639c7a8f446cd90a9285921ab9072",
+    "method": "GET",
+    "elapsed_ms": 887
+  },
+  {
+    "path": "/api/workspace/process-interfaces/presentations/close",
+    "method": "POST",
+    "elapsed_ms": 6114,
+    "failure": "net::ERR_ABORTED"
+  }
+]

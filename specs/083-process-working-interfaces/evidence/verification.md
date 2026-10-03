@@ -1,5 +1,22 @@
 # Verification record — partial feature acceptance
 
+## Current installed UI continuation — 3 October 2026
+
+At source `68748b83`, thirteen frontend modules pass287 checks without failures
+or skips; three view/close/browser-adapter modules pass33. Groups overlap and do
+not establish320 distinct checks or full T053. Current editor, exact evidence
+navigation, read-only preview/reopen and scoped responsive evidence is in
+[current verification](../../../artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/README.md).
+953 wheel entries and986 original files are byte-verified; all five protected
+UI/authoring/continuation tables match in each original/copied fixture. Only exact
+declared host-local manifest relocation and copied context materialization differ.
+
+Thirteen report structures validate. First failures, including printed010's
+missing stopping capture/finalized trace, are retained. Exact view cleanup submits
+no engineering action. Saved views work without model/compiler. Compact-content
+usability keeps T052 open; broader qualification, migration, regression and
+FR/SC/acceptance audit remain separate. No task closes here.
+
 ## Mesh retirement and exact-output gate — 3 October 2026
 
 [Current checked scope, XML, source hashes and runtime evidence](../../../artifacts/process-interfaces/083/20261003-mesh-repair-retirement/checked-scope.json)

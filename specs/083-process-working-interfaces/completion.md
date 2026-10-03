@@ -4,6 +4,17 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
+Current checkpoint is committed as `68748b83`. A fresh installed editor passes
+12 workspace checks, including actual pointer connections and pan; automated
+editor and working-view accessibility scans report zero WCAG A/AA violations.
+The current frontend regression group passes 287 checks without skips. These
+do not close broader acceptance. Exact terminal-test view cleanup now restores
+Heat preview/reopen on the unchanged build; printed011 resolves the observer race
+and verifies exact assessment/path/producer identities. Stopped reports retain
+their scopes. Visual review finds compact comparison content clipped inside the
+narrow frame, so T052 stays open. See the
+[latest continuation checkpoint](continuation-goal.md#latest-handoff--committed-migration-and-current-installed-ui-checks).
+
 Latest migration: the original printed preparer now declares independent native
 geometry and passive inspection. Bundled repair implementation/wrapper, private
 campaign launcher and wrapper-only test are retired with exact inactive archives.

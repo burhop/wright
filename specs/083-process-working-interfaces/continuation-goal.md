@@ -18,10 +18,10 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Finish the current uncommitted mesh-retirement checkpoint: reconcile the 89-file evidence inventory, exact output/partial-result hashes and preserved originals; finish its documentation and a focused local commit. Reuse the fresh positive and negative canonical-runtime proofs and the 207-pass affected/231-pass validation results; their counts overlap. Do not replay their completed runs. Then prioritize the remaining current-build workspace/editor/authoring/accessibility and installed journeys. Preserve the audited two-process digital proof, fresh Blender/OASiS qualification and verified Linux symlink cases. AgentCAD's retained creation-response defect remains an external dependency; continue independent work.
+1. Improve and verify the remaining compact working/preview presentation: visual review at480px shows the fixed workspace sidebar leaves comparison content clipped inside a narrow iframe, even though controls/focus/outer-overflow checks pass. Use shared workspace/client/kit mechanisms and preserve editor capabilities and exact saved UI/run bindings. Reuse current016/017 preview/reopen and printed011 assessment/path/producer proof; their observation/terminal-test resource issues are reconciled without a speculative product lifecycle fix. Do not replay completed engineering runs.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
-4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
+4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 287-pass frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
 5. Audit every requirement, success criterion, acceptance case and task against authoritative evidence. Update completion.md, the evidence index, runnable guidance, progress and task checkboxes. Finish focused local commits. Mark complete only when the full required scope is proved; checked task counts are not percentage completion.
 
 Use fresh isolated proof subjects. Synthetic input/review decisions require exact enrollment, actor attribution and integration_test=true. Never answer retained second-run reviews, protected campaign checkpoints or un-enrolled human decisions. Never override a mandatory measured failure or claim human engineering acceptance. Continue independent work while a genuine review waits. Unknown action outcomes require reconciliation, never blind replay.
@@ -32,6 +32,105 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### Latest progress — installed preview/reopen and exact navigation verified
+
+This supersedes the unresolved preview/observer next actions below. First014
+reports eight-open-interface capacity, and exact state inspection attributes
+those views to terminal automated browsers. Normal API cleanup releases them;
+updated tests explicitly close their own captured view replies. On the unchanged
+installed build,016 passes six exact read-only preview/control/viewport checks
+and017 passes the original working-to-preview path plus explicit presentation
+reopen, preserving eighteen results and all process/run/UI identities.
+
+Printed010 retains its eager CDP observer's terminal frame-removal race and missing
+stopping capture/finalized trace. Fresh011 observes a clone of the actual fetch
+before returning its unchanged response and passes full held assessment/exact
+result/digest/focus, same90 nominal layers and exact producer. No route mocks or
+extra backend requests are used. The original reviews remain held.
+
+953 installed entries and986 original files are byte-verified. Five protected
+UI/authoring/continuation tables match in each original/copied fixture. Copied
+context materialization and exact derived interpreter/vault relocation are
+separate from engineering data. All test views are closed. Thirteen report
+structures validate; frontend groups pass287 and33 with overlapping scopes.
+See artifacts/process-interfaces/083/20261003-current-installed-workspace-verified.
+The first publisher's overbroad declaration-immutability failure is retained.
+
+**Next:** fix/qualify usable compact content through shared presentation. At480px
+the current screenshot shows clipped comparison content inside the narrow frame
+left by the file sidebar. Passing control/focus/no-outer-overflow checks do not
+prove layout acceptance. T052 remains open, along with the other seven tasks.
+Continue provider/caller/generality/regression and full FR/SC/acceptance audits.
+No product lifecycle defect is presumed from the original observer timeout.
+No model/provider/process/review/physical action ran in this continuation.
+Owned API hosts008/009 remain available for current-build investigation; revalidate
+their exact handles before reuse. Do not rerun completed setup or engineering work.
+
+### Latest handoff — committed migration and current installed UI checks
+
+This section supersedes pending-commit and next-action statements in historical
+checkpoints below. Actual HEAD is `68748b83` on
+`codex/083-process-working-interfaces`. The existing unlimited goal is active.
+The ledger remains **49 checked / eight open**: T041, T043, T048, T049, T052,
+T053, T056 and T057. Counts are not percentage completion.
+
+The mesh migration is committed. Its private receipt is
+`.local-run/process-interfaces-083/mesh-retirement-003-local-commit.json`:
+116 exact owned paths, 91 artifact blobs verified, credential scan passed,
+311 unrelated dirty entries and protected context/campaign files preserved.
+The additive audit verifies 66 durable file representations, including five
+negative partial results. No completed model/provider/process was replayed.
+
+A fresh production frontend and installed wheel were built from that checkpoint.
+Wheel SHA-256 is
+`69e15b125cc54283a2ff56d420a2b361c540569afa37054402d0697b710dd903`.
+Current evidence under `artifacts/process-interfaces/083/` includes:
+
+- `20261003-current-editor-009/workspace-walkthrough/`: all 12 checks pass,
+  including normal workspace entry, blank creation, input configuration,
+  Undo/Redo, keyboard and actual pointer connections, pan without source/layout
+  changes, save/reload, and invalid-draft isolation. Automated editor WCAG A/AA
+  scan reports zero violations; human accessibility acceptance remains separate.
+- Heat installed008/010/011 retain exact 18-output parity, 765 field samples,
+  held engineering assessment, exact producer navigation, unavailable authoring
+  capability, saved interface and read-only preview evidence. Installed012 passes
+  six presentation/responsive/keyboard/page-scale checks before an observer
+  incorrectly classified opening a preview as execution. Its stopped report is
+  retained; correcting that observer does not relax execution authority.
+- `20261003-current-heat-installed-013/workspace-walkthrough/`: one workspace
+  check passes, then the preview stays blank. The API remains healthy; preview
+  bootstrap succeeds but context loading is aborted/pending in the private trace.
+  Root cause is unresolved. Investigate surface/iframe lifecycle and presentation
+  reconciliation without assuming the diagnosis or replaying a run.
+- `20261003-current-printed-installed-009/workspace-walkthrough/`: 12 checks
+  pass, including exact 20-output common/saved parity, real geometry and nominal
+  toolpaths. The test then reads a response body after its frame navigates away.
+  Capture the response body when it arrives and continue remaining assessment,
+  saved toolpath and producer checks with a fresh report; preserve the stop.
+- `.local-run/process-interfaces-083/t053-current-working-components-012.json`:
+  287 frontend checks pass, zero failures/skips, across 13 owning/affected modules.
+  This is scoped regression evidence, not full T053 completion.
+
+First finish these two current UI investigations and publish accurate verification
+summaries. The editor clone's ordinary `.hermes.md` context materialization is
+separate from engineering evidence; original files remain preserved. Preview
+observation may legitimately update preview records; verify exact review/source/
+result preservation rather than asserting every copied database row is immutable.
+Never publish bootstrap credentials or private traces.
+
+Owned installed hosts were revalidated with HTTP 200 health responses during this
+handoff: Heat008 on port62189 (session66553), printed009 on port64083
+(session58428). These are isolated proof services, not the user's original demo.
+Editor007 is stopped. Revalidate before reuse; stop only owned services via their
+fixture stop-request and poll the exact handle. Do not rerun once-only setup
+helpers or restart a live owner because an observation timed out.
+
+Then continue selected-provider qualification, complete active-caller/coupling
+audit and the full FR/SC/acceptance ledger. AgentCAD's retained creation-response
+defect remains an external dependency; continue independent work. Preserve all
+original assignments, policies, measured checks and held human reviews. No new
+task closure, human engineering approval or physical verification is claimed.
 
 ### Mesh checkpoint audit — partial results verified
 

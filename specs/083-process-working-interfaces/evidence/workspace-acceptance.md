@@ -1,5 +1,32 @@
 # Workspace acceptance evidence
 
+## Current installed workspace continuation — 3 October 2026
+
+Fresh wheel `68748b83` passes twelve editor checks, including real pointer
+connections and pan. Heat proof retains eighteen exact results/765 samples/full
+held assessment/producer parity; preview016 passes six control/viewport/keyboard
+checks. Fresh017 reproduces working-to-preview and explicit view reopen without
+execution. Printed009/011 retain twenty-result parity, actual geometry/90 nominal
+layers, full held assessment with exact result/digest/focus and producing block.
+Automated editor/working WCAG A/AA scans report zero violations.
+
+Eight views left by terminal test browsers caused the next attempt to hit the
+actual interface limit. Exact API cleanup and per-proof disposal restore preview
+success on the unchanged build. First failures remain stopped. Printed011 records
+the actual navigation fetch body before returning it, with no mocks/extra calls.
+All thirteen report structures validate. The corrected publication verifier checks
+exact declared interpreter/vault relocation; its first failure is retained.
+
+986 original files,953 installed wheel entries and all five original/copied
+protected tables are verified. Context materialization and host-local relocation
+are separate from unchanged engineering data. No model/provider/process/decision
+ran. See [current evidence](../../../artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/README.md).
+
+T052 stays open: visual review at480px finds comparison content clipped inside
+the frame left by the sidebar. Passing control/focus/outer-overflow checks do not
+prove complete compact usability. Improve and verify that shared presentation,
+then finish the broader acceptance audit. Human acceptance remains separate.
+
 ## Process tab controls, 2 October 2026
 
 Branch: `codex/083-process-working-interfaces`; served UI `http://127.0.0.1:5243`,
