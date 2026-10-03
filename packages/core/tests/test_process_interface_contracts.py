@@ -304,6 +304,60 @@ def test_local_assets_are_typed_bounded_and_confined():
         )
 
 
+def test_source_text_limit_accepts_boundary_and_rejects_next_byte():
+    source = "x" * 1_048_576
+    assert SourceEnvelope(files={"App.tsx": source}).files["App.tsx"] == source
+    with pytest.raises(ValidationError, match="Interface source exceeds 1 MiB"):
+        SourceEnvelope(files={"App.tsx": source + "x"})
+    with pytest.raises(ValidationError, match="Interface source exceeds 1 MiB"):
+        SourceEnvelope(files={"App.tsx": source, "style.css": "x"})
+
+
+def test_raster_asset_limit_accepts_boundary_and_rejects_next_byte():
+    content = b"\x89PNG\r\n\x1a\n" + b"x" * (10_485_760 - 8)
+    asset = SourceAsset(
+        media_type="image/png", data_base64=base64.b64encode(content).decode()
+    )
+    assert len(asset.decoded()) == 10_485_760
+    with pytest.raises(ValidationError, match="10 MiB bound"):
+        SourceAsset(
+            media_type="image/png",
+            data_base64=base64.b64encode(content + b"x").decode(),
+        )
+
+
+def test_aggregate_assets_limit_cannot_be_bypassed_with_smaller_files():
+    content = b"\x89PNG\r\n\x1a\n" + b"x" * (5_242_880 - 8)
+    asset = SourceAsset(
+        media_type="image/png", data_base64=base64.b64encode(content).decode()
+    )
+    source = {"App.tsx": "export default function App(){return null}"}
+    boundary = SourceEnvelope(
+        files=source, assets={"assets/first.png": asset, "assets/second.png": asset}
+    )
+    assert len(boundary.assets) == 2
+    larger = SourceAsset(
+        media_type="image/png", data_base64=base64.b64encode(content + b"x").decode()
+    )
+    with pytest.raises(ValidationError, match="Interface assets exceed 10 MiB"):
+        SourceEnvelope(
+            files=source,
+            assets={"assets/first.png": asset, "assets/second.png": larger},
+        )
+
+
+def test_total_source_asset_count_limit_includes_fixed_source_files():
+    asset = SourceAsset(
+        media_type="image/png",
+        data_base64=base64.b64encode(b"\x89PNG\r\n\x1a\n").decode(),
+    )
+    source = {"App.tsx": "export default function App(){return null}", "style.css": ""}
+    assets = {f"assets/reference-{index}.png": asset for index in range(30)}
+    assert len(SourceEnvelope(files=source, assets=assets).assets) == 30
+    with pytest.raises(ValidationError, match="32 source/asset files"):
+        SourceEnvelope(files=source, assets=assets | {"assets/extra.png": asset})
+
+
 @pytest.mark.parametrize("kind", ["block", "run", "result", "assessment", "evidence"])
 def test_navigation_requires_exact_destination(kind):
     with pytest.raises(ValidationError):

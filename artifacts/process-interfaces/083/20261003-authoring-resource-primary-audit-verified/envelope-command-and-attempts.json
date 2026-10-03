@@ -1,0 +1,22 @@
+{
+  "command": ".venv/Scripts/python.exe -m pytest packages/core/tests/test_process_interface_contracts.py -q -rs --tb=short -p no:cacheprovider --basetemp=.pytest-tmp/t056-authoring-envelope-002 --junitxml=.local-run/process-interfaces-083/t056-authoring-envelope-002.xml",
+  "current_source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+  "attempt_001": {
+    "passed": 50,
+    "seconds": 1.13,
+    "scope": "Before one formatting-only correction; exact private source retained."
+  },
+  "formatting": {
+    "initial_check": "Ruff lint passed; formatter requested one line wrap.",
+    "correction": "Owning test file formatted. A nonfatal preexisting .ruff_cache write denial was reported; format completed. Final --no-cache format check passed."
+  },
+  "attempt_002": {
+    "passed": 50,
+    "seconds": 1.05,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "source_implementation_changes": false,
+  "live_opt_ins": false
+}

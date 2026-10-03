@@ -1,5 +1,24 @@
 # Feature 083 completion audit — incomplete
 
+## Authoring, authority and resource primary audit — 3 October 2026
+
+The [primary authoring/resource review](../../artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/README.md)
+disposes 24 additional obligations: FR-009/010/011/012/018 and selected acceptance,
+negative, contract and task rows. All 182 original identities/texts remain;
+**64 proved / 118 awaiting review**. Named current owner/API assertions, unchanged
+qualified role/static/toolchain tests, actual model-generation/update/reuse
+provenance and installed resource records establish their exact recorded scopes.
+Current wheel public resources are byte-compared with source. Earlier Docker
+reports retain their original wheel; current Docker continuation remains open.
+
+Four new contract boundary checks accept exact text/raster/aggregate/file-count
+limits and reject the next byte/file; 50 current contract cases pass. One format
+correction and its cache-write warning are retained; there is no production
+implementation change or new model/MCP/process/review/physical effect. Existing
+engineering reviews, failures, unrelated work and all 550 engineering/UI files
+stay preserved. Shared style/accessibility, progress, engineering/migration and
+the remaining contract/task audit continue. T056/T057 and the goal remain open.
+
 ## Installed source compatibility and unavailable authoring — 3 October 2026
 
 The [installed revision audit](../../artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md)
