@@ -1,0 +1,77 @@
+{
+  "files": {
+    "backend-results.xml": {
+      "bytes": 7527,
+      "sha256": "0f537f3604d0b7d000242e2decab6b579bde056c199d4af190543081f385bce3"
+    },
+    "backend-tests.log": {
+      "bytes": 899,
+      "sha256": "aaa0b6ef7764a67e909a1c3c3dd9301a417c7bcdc02ffbdb1830572300a47def"
+    },
+    "browser-results/process-common-view-reconc-bdce2-e-original-request-identity-chromium/reconciled-start.png": {
+      "bytes": 61018,
+      "sha256": "9dba1231b6c48ce94b79be38dad96abd9710f6b4463dc35f03e3a6bf8eefea56"
+    },
+    "browser-results/process-common-view-reconc-bdce2-e-original-request-identity-chromium/workspace-final-state.png": {
+      "bytes": 61077,
+      "sha256": "908b80fc7d16bd3116969f9c2d7a00cc7f62a8fb438cfdf0125ebcddb4348116"
+    },
+    "browser-results/process-common-view-shows--bb95c-reopens-the-same-failed-run-chromium/undeclared-input-diagnostic.png": {
+      "bytes": 68705,
+      "sha256": "4a39f02004b823780019bb3a5b5c41be32615f84f07650efc39ca3fd28eec04e"
+    },
+    "browser-results/process-common-view-shows--bb95c-reopens-the-same-failed-run-chromium/workspace-final-state.png": {
+      "bytes": 68904,
+      "sha256": "097a1c4397c24a0424bd44729481f7b534c8c59c48f264b69536ea260f25f186"
+    },
+    "browser-results/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/exact-assessment.png": {
+      "bytes": 47638,
+      "sha256": "1f2a7387d4791dc31e2d32f3256a1b11257df6c174c2a9a9eb41b4a25a59f3ba"
+    },
+    "browser-results/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/reopened-exact-run.png": {
+      "bytes": 60604,
+      "sha256": "a0ef7cffa457265e7d7ef40e5f84bbf51e6bae9162165bd9a0f33be61efe4e78"
+    },
+    "browser-results/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/retained-editor-draft.png": {
+      "bytes": 89838,
+      "sha256": "d06c52aaf9519f9790f410184b0c93276b5877d4a1ee1ed0e0f26f98435fc0c8"
+    },
+    "browser-results/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/workspace-final-state.png": {
+      "bytes": 60522,
+      "sha256": "b5efb90b5ad3bbb06969a8e83bed36e39a80d35baf50dede4929776901612415"
+    },
+    "checked-scope.json": {
+      "bytes": 2746,
+      "sha256": "c9633d1c3025f004129c276621e9705ba425bb349473af531c1caf0d6c88b114"
+    },
+    "component-results.json": {
+      "bytes": 21919,
+      "sha256": "ad40a2abf43033bb69ddd4db48caa819d8ed9f8cd5fa583d199f5bb0c77b2ac2"
+    },
+    "component-tests.log": {
+      "bytes": 507,
+      "sha256": "54afdcc671edac553dd806bf5c72efee9c509f5c76a999ef5093ecaee93dcc15"
+    },
+    "preservation.json": {
+      "bytes": 1420,
+      "sha256": "605629cea1234cb6eaac3463687bd0b9462c9c8af6b60dc5541a6bd03e6ff411"
+    },
+    "README.md": {
+      "bytes": 4069,
+      "sha256": "0217152f062401dea2fc1c9aea77f4a593d22e6c9da65982fc6a5baed4228eb3"
+    },
+    "results.json": {
+      "bytes": 345741,
+      "sha256": "32b9e1b212dbfeb0133396ad73c806712cb218110b2c7c3ca38b5d90883a52d5"
+    },
+    "retained-first-attempt/error-context.md": {
+      "bytes": 10483,
+      "sha256": "520a0d83a4e24428cef893554e35138c6fb0d5faaf9020af731d089d04dbc5bf"
+    },
+    "retained-first-attempt/results.json": {
+      "bytes": 21026,
+      "sha256": "b1172889225fe744cf0204511a34fc105cf659f5a11a4b49dcee9c7ce6ff486b"
+    }
+  },
+  "credential_value_scan": "passed"
+}

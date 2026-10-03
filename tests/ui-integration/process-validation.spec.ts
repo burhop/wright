@@ -254,6 +254,7 @@ test("authors a validator and shows correction diagnostics with assessment links
 
   await page.getByTestId("workflow-recovery-run-start").click();
   await expect.poll(() => mock.runCount()).toBe(1);
+  expect(mock.runRequestCount()).toBe(1);
   await expect(page.getByTestId("workflow-native-run-summary")).toContainText(
     "Workflow completed",
   );
@@ -366,6 +367,7 @@ test("shows the exact human requirements review from the workspace Workflows con
   await openRecoveryEditor(page);
   await page.getByTestId("workflow-recovery-run-start").click();
   await expect.poll(() => mock.runCount()).toBe(1);
+  expect(mock.runRequestCount()).toBe(1);
   const review = page.getByTestId("workflow-external-approval");
   await expect(review).toBeVisible();
   await expect(review.getByRole("heading", { level: 3 })).toHaveText(

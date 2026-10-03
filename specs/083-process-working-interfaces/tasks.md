@@ -40,7 +40,13 @@ real outputs and reattaches after close/disconnect without dispatch replay.
 - [x] T018 [US1] Extract themed accessible inputs/image thumbnails/progress/findings/review/actions/results/navigation patterns into `packages/ui_kit/`, adapting existing tokens and format viewers without private `apps/web` imports.
 - [x] T019 [US1] Implement native common working view in `apps/web/src/components/process-interfaces/CommonProcessView.tsx` using the public client/kit, including required reasons, exact evidence and optional-capability fallback.
 - [x] T020 [US1] Integrate typed process tabs/restore/deep links in `apps/web/src/components/chat/WorkspacePanel.tsx`, `EditorTabs.tsx` and `apps/web/src/store/viewer.tsx`; preserve existing workflow/file/editor state and close-without-cancel.
-- [ ] T021 [US1] Verify common-view component states, mocked journey and reconnect/navigation in `apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx` and `tests/ui-integration/process-common-view.spec.ts`, recording actual served-workspace checks in `specs/083-process-working-interfaces/evidence/common-view.md`.
+- [x] T021 [US1] Verify common-view component states, mocked journey and reconnect/navigation in `apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx` and `tests/ui-integration/process-common-view.spec.ts`, recording actual served-workspace checks in `specs/083-process-working-interfaces/evidence/common-view.md`.
+  Current common/recovery checks pass 57 cases; the served mocked common/editor/
+  composer/082 group passes 19, including lost-ack reconciliation and exact
+  navigation. Four stale simulation expectations are replaced by native
+  readiness, zero-request/zero-execution and blocked-start assertions. The first
+  remaining reopen assertion failure is retained. Broader installed editor,
+  authoring and full regression acceptance remain T041/T052/T053.
 
 ## Phase 4 — US2: Deliberate interaction / M1 completion
 

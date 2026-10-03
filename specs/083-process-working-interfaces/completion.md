@@ -7,6 +7,10 @@ exact outputs/navigation and genuine working reload are recorded. The installed
 generic host task T034 is now closed by its scoped source/wheel/evidence audit.
 T037 is subsequently closed by the current scoped transport/theme/navigation
 audit, eight two-process browser checks and fresh fixed-runtime packaging.
+T021 is subsequently closed by 57 common/recovery component checks and the
+19-case served mocked common/editor/composer/082 continuation. The ledger is
+47 checked / 10 open; broader editor, authoring and engineering acceptance remain
+incomplete.
 **Decision:** the complete implementation goal is **not achieved**. This is an
 open requirement ledger, not a completion certificate. Every pending item must
 be verified against current source, actual runtime and its required proof scope.
@@ -35,7 +39,7 @@ checks passed. No row grants an engineering review or external-effect authority.
 
 | Requirement | Current evidence and limits | Next completion check |
 | --- | --- | --- |
-| FR-001 Authoring plus workspace working/preview tabs | Partial: [workspace acceptance](evidence/workspace-acceptance.md), [authoring controls](evidence/workspace-authoring-controls.md). Source workspace entry and selected working journeys checked; complete editor/preview acceptance pending. | T021/T037/T041/T052, preserved editor manipulation and installed journeys. T034 fixed-host scope is complete; see [hosting audit](evidence/hosting-audit.md). |
+| FR-001 Authoring plus workspace working/preview tabs | Partial: [workspace acceptance](evidence/workspace-acceptance.md), [authoring controls](evidence/workspace-authoring-controls.md), [common view](evidence/common-view.md). T021 common/reconnect/navigation scope is verified; complete editor/preview acceptance pending. | T041/T052, preserved editor manipulation and installed journeys. T034 fixed-host and T037 handshake scopes are complete; see [hosting audit](evidence/hosting-audit.md) and [theme handshake](evidence/theme-handshake.md). |
 | FR-002 Versioned interaction description | Local contracts/projection: [foundation](evidence/foundation.md), [projection](evidence/projection.md). | Recheck owning schema/client fixtures and broader negative/served coverage in T053. |
 | FR-003 Immutable run input snapshots | Local input contracts/service checks: [inputs](evidence/inputs.md), [input inspector](evidence/input-inspector.md). | Current combined readiness/continuation/API regressions; exact source remains separate from values. |
 | FR-004 Required supported-path readiness | [Inputs](evidence/inputs.md), [shared controls](evidence/shared-working-controls.md); both retained second runs have preparation checks. | Full omitted-choice/upstream/declared-input regression and common/tailored parity. |

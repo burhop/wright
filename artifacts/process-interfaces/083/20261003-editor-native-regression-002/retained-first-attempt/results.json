@@ -1,0 +1,574 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Program Files\\nodejs\\node.exe",
+      "D:\\repos\\wright\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/ui-integration/workflow-recovery.spec.ts",
+      "--config",
+      ".local-run/process-interfaces-083/playwright-system-chrome.config.ts",
+      "--project",
+      "chromium",
+      "--workers",
+      "1",
+      "--reporter",
+      "line,json",
+      "--timeout",
+      "90000"
+    ],
+    "configFile": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\playwright-system-chrome.config.ts",
+    "rootDir": "D:/repos/wright/tests/ui-integration",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/repos/wright/.local-run/process-interfaces-083/artifacts/process-interfaces/083/20261003-editor-native-regression-001/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "D:/repos/wright/tests/ui-integration",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "workflow-recovery.spec.ts",
+      "file": "workflow-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "automatically creates the default workflow when Workflows is opened",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1452,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:06.500Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-0d69b1b68fd734ed24ee",
+          "file": "workflow-recovery.spec.ts",
+          "line": 52,
+          "column": 5
+        },
+        {
+          "title": "loads and saves the workspace workflow with its current CAS identity",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1574,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:08.334Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-3dff170724aabe97eeb3",
+          "file": "workflow-recovery.spec.ts",
+          "line": 77,
+          "column": 5
+        },
+        {
+          "title": "binds decision and revision edges to explicit typed routing handles",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1352,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:09.919Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-96d56b12d11346b44a5f",
+          "file": "workflow-recovery.spec.ts",
+          "line": 103,
+          "column": 5
+        },
+        {
+          "title": "keeps the engineer's local edit visible when a CAS save conflicts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1810,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:11.284Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-e6618503a3b942109014",
+          "file": "workflow-recovery.spec.ts",
+          "line": 162,
+          "column": 5
+        },
+        {
+          "title": "persists authored input text and a scoped workspace file reference across reopen",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 17572,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('workflow-recovery-run-start')\nExpected: disabled\nReceived: enabled\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('workflow-recovery-run-start')\u001b[22m\n\u001b[2m    33 × locator resolved to <button type=\"button\" title=\"Run the saved workspace workflow\" data-testid=\"workflow-recovery-run-start\" class=\"recovery-button recovery-button--primary\">▶ Run</button>\u001b[22m\n\u001b[2m       - unexpected value \"enabled\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('workflow-recovery-run-start')\nExpected: disabled\nReceived: enabled\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('workflow-recovery-run-start')\u001b[22m\n\u001b[2m    33 × locator resolved to <button type=\"button\" title=\"Run the saved workspace workflow\" data-testid=\"workflow-recovery-run-start\" class=\"recovery-button recovery-button--primary\">▶ Run</button>\u001b[22m\n\u001b[2m       - unexpected value \"enabled\"\u001b[22m\n\n    at D:\\repos\\wright\\tests\\ui-integration\\workflow-recovery.spec.ts:254:65",
+                    "location": {
+                      "file": "D:\\repos\\wright\\tests\\ui-integration\\workflow-recovery.spec.ts",
+                      "column": 65,
+                      "line": 254
+                    },
+                    "snippet": "  252 |     \"references/bracket.png\",\n  253 |   );\n> 254 |   await expect(page.getByTestId(\"workflow-recovery-run-start\")).toBeDisabled();\n      |                                                                 ^\n  255 | });\n  256 |\n  257 | test(\"keeps the canvas-first editor bounded with an optional inspector at 1070 by 791\", async ({"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\repos\\wright\\tests\\ui-integration\\workflow-recovery.spec.ts",
+                        "column": 65,
+                        "line": 254
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('workflow-recovery-run-start')\nExpected: disabled\nReceived: enabled\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('workflow-recovery-run-start')\u001b[22m\n\u001b[2m    33 × locator resolved to <button type=\"button\" title=\"Run the saved workspace workflow\" data-testid=\"workflow-recovery-run-start\" class=\"recovery-button recovery-button--primary\">▶ Run</button>\u001b[22m\n\u001b[2m       - unexpected value \"enabled\"\u001b[22m\n\n\n  252 |     \"references/bracket.png\",\n  253 |   );\n> 254 |   await expect(page.getByTestId(\"workflow-recovery-run-start\")).toBeDisabled();\n      |                                                                 ^\n  255 | });\n  256 |\n  257 | test(\"keeps the canvas-first editor bounded with an optional inspector at 1070 by 791\", async ({\n    at D:\\repos\\wright\\tests\\ui-integration\\workflow-recovery.spec.ts:254:65"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:13.103Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\artifacts\\process-interfaces\\083\\20261003-editor-native-regression-001\\browser-results\\workflow-recovery-persists-f8e72-ile-reference-across-reopen-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\repos\\wright\\tests\\ui-integration\\workflow-recovery.spec.ts",
+                    "column": 65,
+                    "line": 254
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-d9b7a1b5962a8e09c494",
+          "file": "workflow-recovery.spec.ts",
+          "line": 191,
+          "column": 5
+        },
+        {
+          "title": "keeps the canvas-first editor bounded with an optional inspector at 1070 by 791",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1572,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:31.282Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-40b0a31ae9a0fcac17e6",
+          "file": "workflow-recovery.spec.ts",
+          "line": 257,
+          "column": 5
+        },
+        {
+          "title": "expands a reusable component without adding search clutter to a small graph",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1427,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:33.067Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-53abbac901fccb474012",
+          "file": "workflow-recovery.spec.ts",
+          "line": 336,
+          "column": 5
+        },
+        {
+          "title": "keeps overlapping edge labels behind blocks without losing keyboard edge selection",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1369,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:34.506Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-da010097a387bf115adb",
+          "file": "workflow-recovery.spec.ts",
+          "line": 382,
+          "column": 5
+        },
+        {
+          "title": "keeps one accepted definition across canvas, source, and AI review",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2855,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:35.884Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-484f26b43b0118d07be5",
+          "file": "workflow-recovery.spec.ts",
+          "line": 407,
+          "column": 5
+        },
+        {
+          "title": "uses real typed handles and preserves source across a layout save",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3731,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:38.752Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-ad24bc1d0701ff76c829",
+          "file": "workflow-recovery.spec.ts",
+          "line": 557,
+          "column": 5
+        },
+        {
+          "title": "promotes valid source and reviewed AI commands while production execution remains fail-closed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2680,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:42.492Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-02b5087b3842d41ddfbe",
+          "file": "workflow-recovery.spec.ts",
+          "line": 716,
+          "column": 5
+        },
+        {
+          "title": "keeps paired diagram and source edits inside the local one-second feedback bound",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [
+                {
+                  "type": "latency",
+                  "description": "graph→text=7ms; text→graph=114ms; bound<1000ms"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2133,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:45.180Z",
+                  "annotations": [
+                    {
+                      "type": "latency",
+                      "description": "graph→text=7ms; text→graph=114ms; bound<1000ms"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-de91ef296ac43df6ebbe",
+          "file": "workflow-recovery.spec.ts",
+          "line": 776,
+          "column": 5
+        },
+        {
+          "title": "keeps production readiness accessible, reduced-motion legible, and mobile-contained",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5445,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T04:33:47.322Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5399fd3a9c90d1abb51c-a819b70e96877e7e4ff1",
+          "file": "workflow-recovery.spec.ts",
+          "line": 817,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T04:33:05.583Z",
+    "duration": 47455.452,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -105,3 +105,4 @@ artifacts/process-interfaces/083/20261003-installed-host-audit/** -text -whitesp
 artifacts/process-interfaces/083/20261003-theme-handshake-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-repeat-path-audit-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-original-history-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-editor-native-regression-002/** -text -whitespace

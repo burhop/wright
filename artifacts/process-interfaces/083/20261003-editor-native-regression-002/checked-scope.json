@@ -1,0 +1,72 @@
+{
+  "source_checkpoint": "1ef45ee15bd35a1353fef55e0ae84851c46a58af",
+  "branch": "codex/083-process-working-interfaces",
+  "frontend": "http://127.0.0.1:5243",
+  "frontend_http_health": 200,
+  "actual_served_frontend": true,
+  "browser_api_boundaries": "controlled existing mocked HTTP fixtures",
+  "live_backend_or_model_or_mcp_browser_proof": false,
+  "physical_operation": false,
+  "engineering_or_user_acceptance": false,
+  "browser": {
+    "startTime": "2026-10-03T04:34:18.559Z",
+    "duration": 48187.091,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "component_passed": 57,
+  "backend": {
+    "tests": 44,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "app_typecheck_exit_code": 0,
+  "typecheck_terminal_tool_handle": 71141,
+  "independent_browser_diagnostic_audit": false,
+  "first_attempt": {
+    "startTime": "2026-10-03T04:33:05.583Z",
+    "duration": 47455.452,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "source_sha256": {
+    "tests/ui-integration/fixtures/workflow-recovery.ts": "188634fa5af3e891a800995a1f70df8d3ac00472bb4b0c11463d5abad7fc27f1",
+    "tests/ui-integration/workflow-recovery.spec.ts": "50dfbb2813a96333e01ab4eeb426fd0918322d5a7a699d21dc3aeb58da896eb7",
+    "tests/ui-integration/process-validation.spec.ts": "9b6747d709b5928f7a6057afc9a489641e066e12981a39fdb26bd8bae16a9ad6",
+    "tests/ui-integration/process-common-view.spec.ts": "307d1ddf47b3f6b618fb8af0c00ce51996747bed19dd5df89a49b5dfdeb0ee85",
+    "tests/ui-integration/workflow-composer.spec.ts": "135e3d3514a95aa5d942cd122601cfaca9c5b0991a4b4d3d07f9955d5fceb3e6",
+    "apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx": "af7cc46ca32b65a3f66f065447f1eb1c9111165698bf08fa80d44ca29f522689",
+    "apps/web/src/prototypes/workflow-recovery/AuthoringControls.tsx": "69e82f141028d2c0015533249eb1d184d7142495032cee8779d479aa6c735c6a",
+    "apps/web/src/components/process-interfaces/CommonProcessView.tsx": "df6d648572918f3dd607b1771d38286e099e7b86a45d223d34e1d91c87580aa9",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx": "5f7aca9033ae588b0b642d13f724ff48598df0b9851065a5fb952cceb9f01577",
+    "apps/web/src/services/process-view-recovery.spec.ts": "176f49cd9e06d2aec8a93e104524aa8244f67551d19ed0625b9a6977d8bdeb30"
+  },
+  "task_closed": "T021",
+  "remaining_tasks": [
+    "T041",
+    "T043",
+    "T045",
+    "T047",
+    "T048",
+    "T049",
+    "T052",
+    "T053",
+    "T056",
+    "T057"
+  ],
+  "owned_service_handles_revalidated_live": [
+    41512,
+    21619
+  ],
+  "verification_processes_terminal": [
+    88641,
+    84691,
+    58921,
+    71141
+  ]
+}

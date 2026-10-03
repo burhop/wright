@@ -33,6 +33,15 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+Latest continuation closes T021: **47 checked / 10 open**, T041, T043, T045,
+T047, T048, T049, T052, T053, T056, T057. See evidence/common-view.md and
+20261003-editor-native-regression-002 for 19 served mocked browser, 57 component
+and 44 backend passes. Native Run checks now assert actual readiness and blocked
+zero-request/zero-execution boundaries; production gates are unchanged. The first
+12/13 attempt is retained. Prior history checkpoint is `1ef45ee1`; histories and
+engineering files remain preserved. Continue isolation/migration and remaining
+acceptance rather than repeating these checks. The older ledger below is history.
+
 Reviewed against local records after the saved handoff. The ledger has **46 checked
 and 11 open tasks**: T021, T041, T043, T045, T047, T048, T049, T052,
 T053, T056 and T057. Local checkpoints `573eb0b8`, `1d759201` and `dcebc661` save the

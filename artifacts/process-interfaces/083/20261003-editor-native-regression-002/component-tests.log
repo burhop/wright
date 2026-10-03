@@ -1,0 +1,12 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+ ✓ src/components/process-interfaces/CommonProcessView.spec.tsx (46 tests) 2355ms
+ ✓ src/services/process-view-recovery.spec.ts (11 tests) 9ms
+
+ Test Files  2 passed (2)
+      Tests  57 passed (57)
+   Start at  00:34:52
+   Duration  6.17s (transform 298ms, setup 291ms, import 514ms, tests 2.36s, environment 2.55s)
+
+JSON report written to D:/repos/wright/artifacts/process-interfaces/083/20261003-editor-native-regression-002/component-results.json

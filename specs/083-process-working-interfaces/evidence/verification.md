@@ -162,3 +162,18 @@ The earlier 36-case subset overlaps; none of these counts are additive with prio
 suites. Authenticated browser traces remain private. No model generation, build,
 process start, review response or uncertain simulator replay occurs. T053 remains
 open pending its full affected-suite and acceptance audit.
+
+### Current common/editor regression continuation
+
+The [18-file scoped inventory](../../../artifacts/process-interfaces/083/20261003-editor-native-regression-002/inventory.json)
+retains 19-pass served mocked common/editor/composer/082 browser checks,
+57-pass common/recovery components, 44-pass readiness/preparation/service-boundary/
+API-lifetime backend checks, and the first 12/13 browser attempt. No skips; app
+typecheck exits 0. The accepted-run counter now has a pre-rejection POST counter:
+zero blocked requests and one positive request are checked explicitly. Four
+obsolete simulation expectations are replaced without changing production gates.
+See [common-view mapping](common-view.md) for T021 closure and
+[reproduction/scope](../../../artifacts/process-interfaces/083/20261003-editor-native-regression-002/README.md).
+Protected archive/campaign/context and unrelated prototype byte checks pass;
+credential-value scans pass. Controlled regression evidence is not new live
+model/provider or engineering acceptance. T053's broader audit remains open.

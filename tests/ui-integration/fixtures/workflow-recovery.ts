@@ -35,6 +35,7 @@ export interface RecoveryWorkspaceMock {
   createCount(): number;
   missingReadCount(): number;
   runCount(): number;
+  runRequestCount(): number;
   updateCount(): number;
   conflictNextUpdate(): void;
 }
@@ -83,6 +84,7 @@ export async function mockRecoveryWorkspace(
   options: {
     source?: string | null;
     run?: RecoveryWorkflowRunMock;
+    readiness?: "not_template" | "setup_required";
   } = {},
 ): Promise<RecoveryWorkspaceMock> {
   await page.addInitScript(() => {
@@ -93,10 +95,12 @@ export async function mockRecoveryWorkspace(
       ? null
       : workflowDocument(options.source ?? publicWorkflowSource, 1, 2);
   let currentPath = WORKFLOW_PATH;
-  let sourceReadiness: "not_template" | "setup_required" = "not_template";
+  let sourceReadiness: "not_template" | "setup_required" =
+    options.readiness ?? "not_template";
   let creates = 0;
   let missingReads = 0;
   let runs = 0;
+  let runRequests = 0;
   let updates = 0;
   let rejectNextUpdate = false;
 
@@ -255,6 +259,7 @@ export async function mockRecoveryWorkspace(
       });
     }
     if (path === "/api/workspace/workflow-sources/run" && method === "POST") {
+      runRequests += 1;
       if (!options.run || !document) {
         return route.fulfill({
           status: 501,
@@ -531,6 +536,7 @@ export async function mockRecoveryWorkspace(
     createCount: () => creates,
     missingReadCount: () => missingReads,
     runCount: () => runs,
+    runRequestCount: () => runRequests,
     updateCount: () => updates,
     conflictNextUpdate: () => {
       rejectNextUpdate = true;

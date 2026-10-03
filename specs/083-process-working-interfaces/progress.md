@@ -2098,3 +2098,36 @@ This closes the three-original-format evidence gap without checking T048/T049,
 which retain active slicing/transitive migration and broader qualification work.
 Counts remain 46 checked / 11 open. Continue actual repeat-run isolation and
 migration, then remaining UI/regression and full audit obligations.
+
+## Current common/editor regression continuation — T021 complete
+
+The preceding goal turn reviewed status and supplied an overnight prompt without
+changing implementation/evidence; classify it as no progress. Read the original
+submitted objective before this concrete continuation. Owned API/UI handles
+41512/21619 were revalidated live; Vite/5243 HTTP returned 200. No provider or
+older installed fixture availability is newly claimed.
+
+Resolved four simulation-era expectations after inspecting native Run/readiness.
+The fixture counts POSTs before rejection separately from accepted runs. Two
+setup-blocked journeys verify zero requests/runs; positive 082 journeys verify
+one request/run. Input authoring/reopen and feedback verify zero requests.
+Production execution/readiness and engineering gates are unchanged.
+
+First browser continuation passes 12/13 and retains another obsolete reopen
+assertion. Fresh broader continuation passes all 19 common/editor/composer/082
+checks; common/recovery components pass 57; backend readiness/preparation/scopes/
+API-lifetime checks pass 44, no skips. App typecheck exits 0. Desktop/mobile and
+reduced-motion serious/critical Axe assertions reach their final checks. Public
+evidence retains the failure, source hashes, screenshots, reports and 18-file
+inventory; credential-value and protected archive/campaign/context checks pass.
+
+T021 is checked by evidence/common-view.md's obligation mapping. Counts are
+**47 checked / 10 open**: T041, T043, T045, T047, T048, T049, T052, T053, T056,
+T057. Full Feature 083 remains active/incomplete. Controlled screenshots are
+not live engineering or full installed-editor acceptance. All verification
+handles 88641/84691/58921/71141 are terminal. No engineering start/review,
+uncertain simulator replay, physical action or push/merge/release occurred.
+
+Continue safe repeat-run output isolation, active slicing migration/provider
+qualification and remaining authoring/editor/regression/audit tasks. Do not
+repeat the now-passing common batch to create another status-only turn.

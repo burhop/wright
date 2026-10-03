@@ -442,3 +442,45 @@ Current targeted evidence is in [interactions.md](interactions.md): 185 backend
 checks pass (two Windows symlink skips), 126 component checks pass, four distinct
 served browser checks pass, plus a repeated expanded review check. These counts
 do not supersede the earlier broader failure report or prove live MCP/model use.
+
+## 2026-10-03 — Current common/editor continuation closes T021
+
+The four remaining simulation-era expectations are reconciled with the native
+editor. `WorkflowRecoveryConcept.startRun` first checks source/template readiness;
+its native button is a preflight affordance. The backend retains required-input,
+source/capability, scope and durable execution authority. No product gate changes.
+
+The fixture now counts every source-run POST before rejecting or accepting it,
+separately from accepted mock runs. Two setup-required journeys click Run, see
+the actionable pre-dispatch blocker and record zero POST requests / zero runs.
+Both positive 082 journeys record one request / one run. Partial input editing
+and saved reopen preserve values, display 2/3 input readiness and send zero
+execution requests. A disabled simulation button does not replace readiness.
+
+| T021 obligation | Current inspected evidence |
+| --- | --- |
+| Common component states | 46 CommonProcessView and 11 recovery-journal tests pass, including invalidation, expiry, uploads, read-only/optional fallback, permissions, cancellation uncertainty, duplicate/lost acknowledgement and late replies. |
+| Mocked served journey | Three common browser tests pass through normal workspace entry: preparation/start/progress, undeclared-input failure without invented forms, and lost-start acknowledgement reconciliation. Screenshots retain controlled exact outputs/assessments. |
+| Reconnect/reopen without replay | Common journeys reconnect/refresh/reopen the same run and retain original request identity; counters prove one start and no observer-induced restart or cancellation. |
+| Navigation/editor preservation | Exact evidence, assessment and producer navigation pass alongside 13 editor, one composer and two 082 browser checks. Input reopen, CAS, layout-only saves, invalid drafts, source/diagram/AI review and desktop/mobile accessibility assertions pass. |
+| Readiness/runtime boundary | 44 backend tests pass for required/upstream/default inputs, preparation qualification, scoped boundaries and API run lifetime/reconciliation. Controlled backend tests do not grant engineering acceptance. |
+
+Final results: **19 browser passes / 48.19 seconds**, **57 component passes /
+6.17 seconds**, **44 backend passes / 6.77 seconds**, all with no skips;
+whole-app TypeScript exits 0. The first 12/13 browser attempt found an additional
+disabled expectation after saved-input reopen; its original JSON/error context
+is retained. The correction verifies visible readiness and zero requests. The
+exact assessment screenshot was visually inspected.
+
+Commands, reports, screenshots, source hashes, preservation and inventory are
+in the [scoped evidence](../../../artifacts/process-interfaces/083/20261003-editor-native-regression-002/README.md).
+Existing Vite/5243 serves the frontend to installed Chrome; browser APIs are
+mocked, with no real model/MCP/process decision. Counts overlap older suites.
+No independent full browser diagnostic audit or stop-at-first-error walkthrough
+is claimed by this regression batch.
+
+**T021 is complete within its mapped scope.** T041/T052/T053 retain broader
+authoring, installed editor/current-build working-preview and full affected-suite
+obligations. Engineering proofs, output isolation, provider qualification and
+active slicing migration remain open. No retained review, physical action or
+push/merge/release occurred.
