@@ -1,0 +1,8 @@
+[
+  {
+    "classname": "tests.e2e.test_process_validation",
+    "name": "test_served_validator_run_exposes_actionable_and_human_readable_evidence",
+    "skipped": null,
+    "failed": false
+  }
+]

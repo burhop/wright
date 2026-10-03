@@ -1,5 +1,44 @@
 # Verification record — partial feature acceptance
 
+## Current T053 regression audit — 3 October 2026
+
+T053's targeted coverage is verified from `a429c3ff` plus the exact bounded
+corrections retained in the [current regression evidence](../../../artifacts/process-interfaces/083/20261003-current-regression-verified/README.md).
+This is controlled regression and installed-package evidence, not overall feature,
+external-provider qualification, new live-engineering execution or human acceptance.
+
+| Required coverage | Current authoritative scope |
+|---|---|
+| Contracts, persistence and preparation | Core interface/client contracts, database migrations/run identities, preparation, input readiness/overlays/MCP values and source-file authority are in the exact91-module backend selection. |
+| Durable execution and declared interaction | Run supervisor/lifecycle, human-input source, two-interaction continuation, source/runtime approvals, duplicate/lost acknowledgements, unattended outcomes and response timeouts run against existing authorities. |
+| Reviews, external action and recovery | Exact review decisions, action supervision, operation observations/cancellation, uncertain outcomes, async policy and recorded run reads are covered. Test effects are controlled digital operations. |
+| Feature082 and engineering evidence | Core/service/repository/API validation, full-profile coverage/security/subjects/tools/reporting/feedback, exact result identity, source validation/rework and the served structured-validator end-to-end test execute. Historical campaigns are not resumed. |
+| Authoring, hosting and scope security | Build/toolchain/role/provenance, static presentation/start association, granted artifact access, API surface authority and canonical/native-boundary security checks run.124 post-correction cases recheck affected builder/authoring/presentation owners. |
+| Components, client and editor | 53 exact frontend modules pass760 cases across common/tailored/authoring/history, public kit/client, tab/presenter state and the refined authoring editor. Current TypeScript passes. |
+| Mocked served workspace and accessibility | Eight exact specs pass33 cases, one worker/no retries: common preparation/reopen, lost start, two declared inputs, stale/schema responses, review/action/unknown acknowledgements, validator navigation, keyboard inspection/connections, responsive editor and page-scale accessibility. Actual native200% browser-zoom acceptance remains T052. |
+| Package boundary and installed native lifecycle | Nine exact modules pass29 cases for wheel/service-wheel/sdist resources, styles/prototype absence, detached installed public compilation, offline saved serving, compatibility and migration/backup/rollback. Actual native create/restart/package relocation use an installed wheel in permitted external scratch. |
+| Windows/Linux path security | Backend1,538 pass/three symlink skips; current Linux95 pass executes all three symlink cases. Linux's one Windows-only alias skip is a passing Windows case.852 snapshot files have after-test byte parity. The exact owned container stops. |
+
+Counts overlap and are not summed. Commands, selected hashes, XML, cases, source
+diffs and preserved first failures are indexed in the linked evidence. Current
+mock hosts use an unavailable API proxy and are stopped. Browser traces stay
+private; safe screenshots/scope attachments and exact case outcomes are retained.
+
+Two product defects are corrected: native compatibility metadata lagged the
+implemented schema23, and detached public geometry sources could not resolve the
+trusted compiler's three dependencies. Exact range verification and trusted
+aliases repair them. Generated code still cannot import three or its addons
+directly; both new negative cases pass. The protected-workspace rejection remains
+correct behavior; fixture placement is corrected. A fixed keyboard count and
+pytest module/fixture naming assumptions are corrected in tests/private invocation,
+without changing editor capabilities, engineering gates or import authority.
+
+Both changed Python test owners pass Ruff.550 retained actual engineering/UI files
+and protected campaign/context hashes are unchanged. Earlier installed006 and
+Docker browser evidence retain original bytes and scope; current package/owner
+checks establish the new metadata/compiler. Provider qualification and the final
+FR/SC/acceptance audit remain separate T043/T056 obligations.
+
 ## Compact workspace correction — 3 October 2026
 
 Current installed005 verifies shared navigation and text wrapping on both

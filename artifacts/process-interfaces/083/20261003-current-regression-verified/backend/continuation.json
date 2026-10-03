@@ -1,0 +1,11 @@
+{
+  "same_91_modules_disjoint": true,
+  "import_mode": "repository-default prepend",
+  "reason": "retain default fixture imports; isolate three colliding test_process_validation modules",
+  "prior_failures": [
+    "t053-current-regression-003/backend",
+    "t053-current-regression-004/backend",
+    "t053-current-regression-005/backend"
+  ],
+  "product_or_test_changes": false
+}

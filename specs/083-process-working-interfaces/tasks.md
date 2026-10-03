@@ -199,7 +199,16 @@ interfaces use the same foundation, with honest engineering checks and limits.
   original files and550 retained engineering/UI artifacts are byte-verified.
   Fifteen report structures validate; failed attempts and trace-retention limits
   remain explicit. All proof views close. See `evidence/workspace-acceptance.md`.
-- [ ] T053 Run targeted unit/API/component/mocked/browser/security/package-boundary and prior affected continuation/082/editor regression checks; record commands/results/limits in `specs/083-process-working-interfaces/evidence/verification.md`, fixing failures within this feature.
+- [x] T053 Run targeted unit/API/component/mocked/browser/security/package-boundary and prior affected continuation/082/editor regression checks; record commands/results/limits in `specs/083-process-working-interfaces/evidence/verification.md`, fixing failures within this feature.
+  The [current regression audit](../../artifacts/process-interfaces/083/20261003-current-regression-verified/README.md)
+  records91 exact backend modules (1,538 pass/three Windows symlink skips), current
+  Linux95 passes executing those three cases,760 frontend checks,33 mocked
+  workspace/browser cases,29 packaging/native checks and124 post-correction
+  builder/authoring/authority checks. Counts overlap. Schema23 compatibility and
+  detached geometry dependency resolution are corrected; generated-code scopes,
+  protected workspace policy and engineering requirements remain intact. First
+  collection/fixture/browser/build failures are retained. T043 and final FR/SC/
+  commit audits remain open; this is not new live-provider or user acceptance.
 - [x] T054 Add runnable neutral authoring/reference examples and operator/developer/API/role-provider documentation in `examples/process-interfaces/`, `docs/workflows/process-working-interfaces.md` and `docs/architecture/agent-adapters.md`, using actual verified routes/commands/URLs.
   Seventeen controlled read-only utility tests, the packaged reference read,
   earlier actual scoped API reads and 64 resolved documentation links establish

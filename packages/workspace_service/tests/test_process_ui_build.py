@@ -113,7 +113,10 @@ def test_toolchain_versions_match_current_lockfile():
     lock = json.loads((ROOT / "package-lock.json").read_text(encoding="utf-8"))[
         "packages"
     ]
-    for name in ("typescript", "vite", "react", "react-dom"):
+    for name in (
+        "typescript", "vite", "react", "react-dom", "three",
+        "@types/react", "@types/react-dom", "@types/three",
+    ):
         assert declared[name]["version"] == lock[f"node_modules/{name}"]["version"]
 
 
@@ -231,6 +234,8 @@ async def test_reference_compiles_with_public_packages_and_no_generated_scripts(
     "source",
     [
         "import x from 'node:fs'; export default function App(){return null}",
+        "import * as THREE from 'three'; export default function App(){return null}",
+        "import x from 'three/addons/controls/OrbitControls.js'; export default function App(){return null}",
         "import x from '../../apps/web/private'; export default function App(){return null}",
         "export default function App(){import('react');return null}",
         "export default function App(){fetch('/admin');return null}",

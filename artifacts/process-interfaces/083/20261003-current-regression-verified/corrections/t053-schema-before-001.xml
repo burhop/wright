@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="0.933" timestamp="2026-10-03T10:54:43.145527-04:00" hostname="Work17"><testcase classname="tests.native_runtime.test_compatibility" name="test_shipped_contract_supports_the_current_data_schema" time="0.002"><failure message="assert 21 == 23&#10; +  where 21 = CompatibilityPolicy(contract_version=2, runtime_version='0.1.9', runtime_specifier='==0.1.9.*', python_specifier='&gt;=3...._interface='mcp-config', host_specifier=None, transports=('stdio', 'streamable-http'))}, previous_runtime_version=None).data_schema_max&#10; +  and   23 = Migration(version=23, name='process_ui_authoring_provenance', operations=(Operation(kind='sql', sql='CREATE TABLE IF N...oring_records\n        BEGIN SELECT RAISE(ABORT, 'Authoring provenance is immutable'); END&quot;, table=None, column=None))).version">tests\native_runtime\test_compatibility.py:102: in test_shipped_contract_supports_the_current_data_schema
+    assert contract.data_schema_max == MIGRATIONS[-1].version
+E   assert 21 == 23
+E    +  where 21 = CompatibilityPolicy(contract_version=2, runtime_version='0.1.9', runtime_specifier='==0.1.9.*', python_specifier='&gt;=3...._interface='mcp-config', host_specifier=None, transports=('stdio', 'streamable-http'))}, previous_runtime_version=None).data_schema_max
+E    +  and   23 = Migration(version=23, name='process_ui_authoring_provenance', operations=(Operation(kind='sql', sql='CREATE TABLE IF N...oring_records\n        BEGIN SELECT RAISE(ABORT, 'Authoring provenance is immutable'); END", table=None, column=None))).version</failure></testcase><testcase classname="tests.native_runtime.test_native_process_lifecycle" name="test_native_package_contract_matches_readable_schema_and_examples" time="0.009"><failure message="AssertionError: assert {'max': 21, 'min': 0} == {'max': 23, 'min': 0}&#10;  &#10;  Omitting 1 identical items, use -vv to show&#10;  Differing items:&#10;  {'max': 21} != {'max': 23}&#10;  Use -v to get more diff">tests\native_runtime\test_native_process_lifecycle.py:32: in test_native_package_contract_matches_readable_schema_and_examples
+    assert compatibility["data_schema"] == {"min": minimum, "max": maximum}
+E   AssertionError: assert {'max': 21, 'min': 0} == {'max': 23, 'min': 0}
+E     
+E     Omitting 1 identical items, use -vv to show
+E     Differing items:
+E     {'max': 21} != {'max': 23}
+E     Use -v to get more diff</failure></testcase></testsuite></testsuites>

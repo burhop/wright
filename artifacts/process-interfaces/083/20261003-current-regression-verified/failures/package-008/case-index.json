@@ -1,0 +1,176 @@
+[
+  {
+    "classname": "tests.packaging.test_process_interfaces_distribution",
+    "name": "test_public_resources_and_static_host_work_without_compiler_or_model",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_interfaces_distribution",
+    "name": "test_installed_compiler_uses_shipped_public_sources_and_explicit_native_dependencies",
+    "skipped": null,
+    "failed": true
+  },
+  {
+    "classname": "tests.packaging.test_process_interfaces_distribution",
+    "name": "test_private_service_direct_wheel_and_sdist_rebuild_include_the_same_resources",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_interface_frontend_styles",
+    "name": "test_production_frontend_retains_process_interface_styles",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_prototype_distribution_boundary",
+    "name": "test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_prototype_distribution_boundary",
+    "name": "test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo_printer]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_prototype_distribution_boundary",
+    "name": "test_workspace_owner_has_no_imports_of_retired_operational_implementations",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_validation_distribution",
+    "name": "test_wheel_contains_validator_code_profiles_and_console_entrypoint",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_validation_distribution",
+    "name": "test_installed_cli_and_gateway_evaluate_offline_without_checkout",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_wheel_contents",
+    "name": "test_workspace_surface_packages_and_assets_are_declared",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_wheel_contents",
+    "name": "test_built_wheel_contains_public_helper_contracts_and_renderer_assets",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_program_hardening_contents",
+    "name": "test_program_diagnostics_and_current_schema_ship_in_the_wheel",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_program_hardening_contents",
+    "name": "test_program_contracts_and_operator_docs_remain_schema_valid_and_public",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_runtime_and_real_hermes_git_protocol_are_accepted",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_incompatibility_fails_closed[runtime_version-0.2.0-runtime_incompatible]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_incompatibility_fails_closed[manager_version-0.18.2-manager_version_incompatible]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_incompatibility_fails_closed[adapter_protocol-python-distribution-v1-manager_protocol_incompatible]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_incompatibility_fails_closed[manager_id-unknown-manager_unsupported]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_incompatibility_fails_closed[python_version-3.10.14-python_incompatible]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_incompatibility_fails_closed[platform_tag-linux-riscv64-platform_incompatible]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_incompatibility_fails_closed[data_schema-4-data_schema_incompatible]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_missing_or_malformed_contract_fails_closed",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_compatibility",
+    "name": "test_shipped_contract_supports_the_current_data_schema",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_native_process_lifecycle",
+    "name": "test_native_package_contract_matches_readable_schema_and_examples",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_program_state_compatibility",
+    "name": "test_packaged_ceiling_tracks_the_complete_program_schema",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_program_state_compatibility",
+    "name": "test_native_activation_upgrades_predecessor_state_and_creates_backup",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_program_state_compatibility",
+    "name": "test_native_activation_refuses_state_newer_than_candidate",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_program_state_compatibility",
+    "name": "test_program_state_inventory_survives_upgrade_and_same_plan_is_idempotent",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.native_runtime.test_program_state_compatibility",
+    "name": "test_activation_operation_identity_refuses_a_mixed_plan",
+    "skipped": null,
+    "failed": false
+  }
+]

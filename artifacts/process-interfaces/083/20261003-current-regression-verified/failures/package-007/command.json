@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "tests/packaging/test_process_interfaces_distribution.py",
+    "tests/packaging/test_process_interface_frontend_styles.py",
+    "tests/packaging/test_process_prototype_distribution_boundary.py",
+    "tests/packaging/test_process_validation_distribution.py",
+    "tests/packaging/test_wheel_contents.py",
+    "tests/packaging/test_program_hardening_contents.py",
+    "tests/native_runtime/test_compatibility.py",
+    "tests/native_runtime/test_native_process_lifecycle.py",
+    "tests/native_runtime/test_program_state_compatibility.py",
+    "--basetemp=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-current-package-007\\packaging\\temp",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-current-package-007\\packaging\\results.xml"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "selected_modules": 9,
+  "live_opt_ins_removed": true
+}

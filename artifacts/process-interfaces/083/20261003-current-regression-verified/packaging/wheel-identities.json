@@ -1,0 +1,34 @@
+[
+  {
+    "path": "D:\\TEMP\\wright-083-t053-package-009\\process-interface-wheel0\\dist\\wright_engineering-0.1.9-py3-none-any.whl",
+    "sha256": "fd36c56146276b832deaea9a662387a98b6eff93cd2c45532cd7acea0e32da0d",
+    "data_schema": {
+      "min": 0,
+      "max": 23
+    }
+  },
+  {
+    "path": "D:\\TEMP\\wright-083-t053-package-009\\process-validation-wheel0\\dist\\wright_engineering-0.1.9-py3-none-any.whl",
+    "sha256": "fd36c56146276b832deaea9a662387a98b6eff93cd2c45532cd7acea0e32da0d",
+    "data_schema": {
+      "min": 0,
+      "max": 23
+    }
+  },
+  {
+    "path": "D:\\TEMP\\wright-083-t053-package-009\\test_built_wheel_contains_publ0\\wright_engineering-0.1.9-py3-none-any.whl",
+    "sha256": "fd36c56146276b832deaea9a662387a98b6eff93cd2c45532cd7acea0e32da0d",
+    "data_schema": {
+      "min": 0,
+      "max": 23
+    }
+  },
+  {
+    "path": "D:\\TEMP\\wright-083-t053-package-009\\test_program_diagnostics_and_c0\\wright_engineering-0.1.9-py3-none-any.whl",
+    "sha256": "fd36c56146276b832deaea9a662387a98b6eff93cd2c45532cd7acea0e32da0d",
+    "data_schema": {
+      "min": 0,
+      "max": 23
+    }
+  }
+]

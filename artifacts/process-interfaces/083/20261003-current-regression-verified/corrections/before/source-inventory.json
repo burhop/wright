@@ -1,0 +1,10 @@
+{
+  "src/wright_engineering/compatibility.json": {
+    "bytes": 808,
+    "sha256": "2ff8c1d34a2f61f270aef8527794af944f839b2b3fe07cf9229c8957bfe4640e"
+  },
+  "tests/packaging/test_program_hardening_contents.py": {
+    "bytes": 2616,
+    "sha256": "6c0768d4cb1f077f2cb8f13204b863993e5b6632dc7e28cfab08e8a500e66fe9"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "tests/packaging/test_process_interfaces_distribution.py",
+    "tests/packaging/test_process_interface_frontend_styles.py",
+    "tests/packaging/test_process_prototype_distribution_boundary.py",
+    "tests/packaging/test_process_validation_distribution.py",
+    "tests/packaging/test_wheel_contents.py",
+    "--basetemp=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-current-regression-003\\packaging\\temp",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-current-regression-003\\packaging\\results.xml"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "selected_modules": 5,
+  "live_opt_ins_removed": true
+}

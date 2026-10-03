@@ -1,0 +1,20 @@
+{
+  "exit_code": 1,
+  "kind": "packaging",
+  "modules": [
+    "tests/packaging/test_process_interfaces_distribution.py",
+    "tests/packaging/test_process_interface_frontend_styles.py",
+    "tests/packaging/test_process_prototype_distribution_boundary.py",
+    "tests/packaging/test_process_validation_distribution.py",
+    "tests/packaging/test_wheel_contents.py"
+  ],
+  "counts": {
+    "tests": 11,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 10
+  },
+  "source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+  "live_model_provider_or_physical_execution": false
+}

@@ -3097,3 +3097,40 @@ checked before use. T052 checked; ledger53 checked/four open: T043,T053,T056,T05
 Evidence: `artifacts/process-interfaces/083/20261003-current-package-workspace-verified/`
 and `evidence/workspace-acceptance.md`. Continue remaining qualification, full
 regression and exact requirement audits; no push/merge/release or physical action.
+
+## 3 October — T053 current regression and installed build corrections verified
+
+The identical91-module backend selection runs in three disjoint normal-import
+pytest processes:1,538 pass/three Windows symlink skips. A current852-file Linux
+snapshot passes95, executes all three skipped security cases and skips one
+Windows-only alias case which passes on Windows. Exact owned container is stopped.
+Current53-module frontend group passes760; TypeScript and both changed Python
+test owners pass. Eight mocked served-workspace specs pass33, no retries/skips.
+Both first/final mock hosts stop; their unavailable proxy cannot reach real runs.
+
+The package regression exposed shipped max21 despite Feature083 migrations22/23.
+Two existing checks reproduce it. The metadata now declares0–23; the packaging
+guard compares the actual full migration bounds. The first native fixture was
+correctly denied under protected .local-run; policy is preserved and the fixture
+moves to allowed scratch. Detached installed sources then expose a genuine fixed
+compiler dependency-resolution failure for the public geometry kit. Trusted
+toolchain aliases resolve three and its addons; generated import permissions are
+unchanged. Two new direct-import negative cases and affected owner/API checks
+pass124. Current nine-module package/native group passes29 and compiles both
+reference/result-reader interfaces outside the checkout; actual native digital
+create/restart/package-relocation phases pass.
+
+First pytest collection/importlib/helper failures, fixed12-keypress assumption,
+schema mismatch, protected fixture rejection and detached build failure remain.
+The keyboard test now traverses within a32-keypress bound to the actual control,
+retaining relative ordering and all other assertions. Focus order is attached.
+Private traces remain private; safe cases/screenshots/commands/source identities
+and failures are published. Counts overlap.550 retained engineering/UI files and
+protected context/campaign hashes are unchanged. No live model/provider, held
+review, physical or supplier effect ran. Earlier installed006/Docker evidence
+keeps its original bytes; it is not relabelled as proof of the new builder.
+
+Evidence: `artifacts/process-interfaces/083/20261003-current-regression-verified/`.
+T053 checked; ledger54 checked/three open: T043,T056,T057. Finish selected-provider
+qualification disposition and exact requirements/acceptance audit. Focused local
+commit records owned paths and unchanged unrelated baseline; no push/merge/release.

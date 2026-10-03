@@ -1,0 +1,100 @@
+diff --git a/packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs b/packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs
+index d6bcb417..c4831f02 100644
+--- a/packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs
++++ b/packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs
+@@ -111,6 +111,10 @@ export function mount(node: Element, props: HostProps) {
+         {find: /^react$/, replacement: requireInstalled.resolve('react')},
+         {find: /^react\/jsx-runtime$/, replacement: requireInstalled.resolve('react/jsx-runtime')},
+         {find: /^react-dom\/client$/, replacement: requireInstalled.resolve('react-dom/client')},
++        // Installed public sources can be outside the dependency root. Resolve
++        // the kit's qualified geometry dependencies from the trusted toolchain.
++        {find: /^three$/, replacement: path.join(request.dependencyRoot, 'node_modules/three/build/three.module.js')},
++        {find: /^three\/addons\//, replacement: path.join(request.dependencyRoot, 'node_modules/three/examples/jsm') + '/'},
+       ] },
+       build: {
+         outDir: path.join(root, 'dist'), emptyOutDir: false, sourcemap: false,
+diff --git a/packages/workspace_service/tests/test_process_ui_build.py b/packages/workspace_service/tests/test_process_ui_build.py
+index 8ea58061..442504da 100644
+--- a/packages/workspace_service/tests/test_process_ui_build.py
++++ b/packages/workspace_service/tests/test_process_ui_build.py
+@@ -113,7 +113,10 @@ def test_toolchain_versions_match_current_lockfile():
+     lock = json.loads((ROOT / "package-lock.json").read_text(encoding="utf-8"))[
+         "packages"
+     ]
+-    for name in ("typescript", "vite", "react", "react-dom"):
++    for name in (
++        "typescript", "vite", "react", "react-dom", "three",
++        "@types/react", "@types/react-dom", "@types/three",
++    ):
+         assert declared[name]["version"] == lock[f"node_modules/{name}"]["version"]
+ 
+ 
+@@ -231,6 +234,8 @@ async def test_reference_compiles_with_public_packages_and_no_generated_scripts(
+     "source",
+     [
+         "import x from 'node:fs'; export default function App(){return null}",
++        "import * as THREE from 'three'; export default function App(){return null}",
++        "import x from 'three/addons/controls/OrbitControls.js'; export default function App(){return null}",
+         "import x from '../../apps/web/private'; export default function App(){return null}",
+         "export default function App(){import('react');return null}",
+         "export default function App(){fetch('/admin');return null}",
+diff --git a/src/wright_engineering/compatibility.json b/src/wright_engineering/compatibility.json
+index 71a69cdb..0b75a096 100644
+--- a/src/wright_engineering/compatibility.json
++++ b/src/wright_engineering/compatibility.json
+@@ -12,7 +12,7 @@
+   ],
+   "data_schema": {
+     "min": 0,
+-    "max": 21
++    "max": 23
+   },
+   "manager_protocols": {
+     "cli": {
+diff --git a/tests/packaging/test_program_hardening_contents.py b/tests/packaging/test_program_hardening_contents.py
+index f58402d0..b831e5c7 100644
+--- a/tests/packaging/test_program_hardening_contents.py
++++ b/tests/packaging/test_program_hardening_contents.py
+@@ -6,6 +6,8 @@ import sys
+ import zipfile
+ from pathlib import Path
+ 
++from data_vault.migrations import schema_bounds
++
+ 
+ ROOT = Path(__file__).parents[2]
+ 
+@@ -41,7 +43,8 @@ def test_program_diagnostics_and_current_schema_ship_in_the_wheel(
+         compatibility = json.loads(
+             archive.read("wright_engineering/compatibility.json")
+         )
+-        assert compatibility["data_schema"]["max"] == 21
++        minimum, maximum = schema_bounds()
++        assert compatibility["data_schema"] == {"min": minimum, "max": maximum}
+         diagnostic_source = b"\n".join(
+             archive.read(name)
+             for name in (
+diff --git a/tests/ui-integration/workflow-recovery-accessibility.spec.ts b/tests/ui-integration/workflow-recovery-accessibility.spec.ts
+index 98eaa424..61b5f3a6 100644
+--- a/tests/ui-integration/workflow-recovery-accessibility.spec.ts
++++ b/tests/ui-integration/workflow-recovery-accessibility.spec.ts
+@@ -33,10 +33,17 @@ test("supports representative authoring and component inspection with keyboard a
+   const ordered: string[] = [];
+   await page.getByTestId("workflow-recovery-view-diagram").focus();
+   ordered.push(await focusIdentity(page));
+-  for (let index = 0; index < 12; index += 1) {
++  // Traverse to the actual control rather than assuming a fixed toolbar size.
++  for (let index = 0; index < 32; index += 1) {
+     await page.keyboard.press("Tab");
+-    ordered.push(await focusIdentity(page));
++    const identity = await focusIdentity(page);
++    ordered.push(identity);
++    if (identity === "workflow-recovery-ai-request") break;
+   }
++  await test.info().attach("authoring-focus-order.json", {
++    body: Buffer.from(JSON.stringify(ordered, null, 2)),
++    contentType: "application/json",
++  });
+   const orderOf = (identity: string) => ordered.indexOf(identity);
+   expect(orderOf("workflow-recovery-view-diagram")).toBe(0);
+   expect(orderOf("workflow-recovery-view-code")).toBeGreaterThan(

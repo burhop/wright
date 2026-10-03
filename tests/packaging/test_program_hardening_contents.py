@@ -6,6 +6,8 @@ import sys
 import zipfile
 from pathlib import Path
 
+from data_vault.migrations import schema_bounds
+
 
 ROOT = Path(__file__).parents[2]
 
@@ -41,7 +43,8 @@ def test_program_diagnostics_and_current_schema_ship_in_the_wheel(
         compatibility = json.loads(
             archive.read("wright_engineering/compatibility.json")
         )
-        assert compatibility["data_schema"]["max"] == 21
+        minimum, maximum = schema_bounds()
+        assert compatibility["data_schema"] == {"min": minimum, "max": maximum}
         diagnostic_source = b"\n".join(
             archive.read(name)
             for name in (

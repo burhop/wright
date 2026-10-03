@@ -1,0 +1,41 @@
+
+Running 33 tests using 1 worker
+
+(node:45752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/33] [chromium] › tests\ui-integration\process-common-view.spec.ts:39:5 › shows an unattended-input diagnostic without inventing a form and reopens the same failed run
+[2/33] [chromium] › tests\ui-integration\process-common-view.spec.ts:103:5 › uses the normal workspace to prepare, follow and inspect an exact run while retaining source edits
+[3/33] [chromium] › tests\ui-integration\process-common-view.spec.ts:234:5 › reconciles a lost start acknowledgement after reload using the original request identity
+[4/33] [chromium] › tests\ui-integration\process-declared-interactions.spec.ts:21:5 › preserves declared input schemas through workspace source editing, saving and reopening
+[5/33] [chromium] › tests\ui-integration\process-declared-interactions.spec.ts:101:7 › declared response resumes the saved workspace run after closing and reopening its tab
+[6/33] [chromium] › tests\ui-integration\process-declared-interactions.spec.ts:101:7 › declared response resumes the saved workspace run after explicit lost-ack reconciliation
+[7/33] [chromium] › tests\ui-integration\process-input-inspector.spec.ts:18:5 › edits input and human declarations through the workspace inspector and preserves undo, save and reopen
+[8/33] [chromium] › tests\ui-integration\process-input-inspector.spec.ts:122:5 › creates a saveable draft user step without inventing a question or response
+[9/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (none lost acknowledgement)
+[10/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (review lost acknowledgement)
+[11/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (action lost acknowledgement)
+[12/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (unknown lost acknowledgement)
+[13/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (accepted)
+[14/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (lost)
+[15/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (schema)
+[16/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (stale)
+[17/33] [chromium] › tests\ui-integration\process-validation.spec.ts:123:5 › authors a validator and shows correction diagnostics with assessment links from Workflows
+[18/33] [chromium] › tests\ui-integration\process-validation.spec.ts:280:5 › shows the exact human requirements review from the workspace Workflows control
+[19/33] [chromium] › tests\ui-integration\workflow-recovery-accessibility.spec.ts:22:5 › supports representative authoring and component inspection with keyboard actions and ordered focus
+[20/33] [chromium] › tests\ui-integration\workflow-recovery-accessibility.spec.ts:126:5 › keeps the complete screen-reader contract available at a two-times page scale
+[21/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:52:5 › automatically creates the default workflow when Workflows is opened
+[22/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:77:5 › loads and saves the workspace workflow with its current CAS identity
+[23/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:103:5 › binds decision and revision edges to explicit typed routing handles
+[24/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:162:5 › keeps the engineer's local edit visible when a CAS save conflicts
+[25/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:191:5 › persists authored input text and a scoped workspace file reference across reopen
+[26/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:266:5 › keeps the canvas-first editor bounded with an optional inspector at 1070 by 791
+[27/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:345:5 › expands a reusable component without adding search clutter to a small graph
+[28/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:391:5 › keeps overlapping edge labels behind blocks without losing keyboard edge selection
+[29/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:416:5 › keeps one accepted definition across canvas, source, and AI review
+[30/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:566:5 › uses real typed handles and preserves source across a layout save
+[31/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:725:5 › promotes valid source and reviewed AI commands while production execution remains fail-closed
+[32/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:785:5 › keeps paired diagram and source edits inside the local one-second feedback bound
+[33/33] [chromium] › tests\ui-integration\workflow-recovery.spec.ts:826:5 › keeps production readiness accessible, reduced-motion legible, and mobile-contained
+  33 passed (3.2m)

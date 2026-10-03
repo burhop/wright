@@ -33,10 +33,17 @@ test("supports representative authoring and component inspection with keyboard a
   const ordered: string[] = [];
   await page.getByTestId("workflow-recovery-view-diagram").focus();
   ordered.push(await focusIdentity(page));
-  for (let index = 0; index < 12; index += 1) {
+  // Traverse to the actual control rather than assuming a fixed toolbar size.
+  for (let index = 0; index < 32; index += 1) {
     await page.keyboard.press("Tab");
-    ordered.push(await focusIdentity(page));
+    const identity = await focusIdentity(page);
+    ordered.push(identity);
+    if (identity === "workflow-recovery-ai-request") break;
   }
+  await test.info().attach("authoring-focus-order.json", {
+    body: Buffer.from(JSON.stringify(ordered, null, 2)),
+    contentType: "application/json",
+  });
   const orderOf = (identity: string) => ordered.indexOf(identity);
   expect(orderOf("workflow-recovery-view-diagram")).toBe(0);
   expect(orderOf("workflow-recovery-view-code")).toBeGreaterThan(

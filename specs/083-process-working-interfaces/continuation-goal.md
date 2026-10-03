@@ -33,6 +33,27 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### T053 current regression verified — three tasks remain
+
+Exact91 backend modules pass1,538 cases; three Windows symlink skips run on the
+current Linux95-pass snapshot.53 frontend modules pass760, eight mocked workspace
+specs pass33 and nine package/native modules pass29.124 post-correction builder/
+authoring/presentation checks pass. Counts overlap. Native schema metadata now
+matches0–23 and the trusted fixed compiler resolves installed geometry sources
+outside the checkout; generated import scopes remain closed. TypeScript/Ruff pass.
+Original failures, exact commands/hashes and safe screenshots remain. Both mock
+hosts and the exact Linux container are stopped; no model/provider/review/effect
+ran.550 retained engineering/UI files and protected campaign/context are unchanged.
+
+Ledger54 checked/three open: T043,T056,T057. Reconcile selected-provider
+qualification (including the unresolved AgentCAD creation-response defect),
+complete the exact FR/SC/acceptance ledger, and finish the focused commit audit.
+Reuse prior actual engineering proofs and their held decisions; do not rerun
+protected reviews. Installed006 and Docker proofs retain their original builder/
+metadata scope; this current package regression proves the corrections without
+relabelling those earlier reports. See `evidence/verification.md` and
+`artifacts/process-interfaces/083/20261003-current-regression-verified/`.
+
 ### T052 current installed/workspace acceptance verified — four tasks remain
 
 Fresh installed006 from b9ce9a14 contains the latest backend corrections and953

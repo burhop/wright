@@ -1,8 +1,23 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Current ledger:** **53 checked / 4 open**: T043, T053, T056 and T057.
+**Current ledger:** **54 checked / 3 open**: T043, T056 and T057.
 Task counts are not a percentage of completion.
+
+T053's targeted current regression coverage is verified.91 exact backend modules
+pass1,538 cases; the three Windows symlink skips run and pass in the current
+Linux95-pass group.760 component/client/editor checks,33 mocked served workspace
+cases,29 packaging/native checks and124 affected builder/authoring/authority
+checks pass. Counts overlap and are not summed. The shipped schema ceiling now
+matches migrations22/23; detached installed public geometry sources resolve their
+qualified compiler dependencies. Generated import scopes and workspace protection
+remain unchanged. First failures, correction/source identities, commands and
+protected-artifact checks are retained in the
+[regression audit](../../artifacts/process-interfaces/083/20261003-current-regression-verified/README.md).
+Earlier installed006 and Docker reports keep their exact original scope; the new
+metadata/builder are proved by current packaging/owner checks. No engineering
+provider/model, held review or physical action ran. Full requirement and external
+provider qualification remain open.
 
 T052 current installed/workspace acceptance is verified: fresh installed006 from
 `b9ce9a14`,953 byte-verified entries,48 passing primary checks, both actual retained

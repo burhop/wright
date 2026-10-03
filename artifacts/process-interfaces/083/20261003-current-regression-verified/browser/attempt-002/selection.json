@@ -1,0 +1,23 @@
+{
+  "modules": [
+    "tests/ui-integration/process-common-view.spec.ts",
+    "tests/ui-integration/process-declared-interactions.spec.ts",
+    "tests/ui-integration/process-two-input-recovery.spec.ts",
+    "tests/ui-integration/process-review-actions.spec.ts",
+    "tests/ui-integration/process-input-inspector.spec.ts",
+    "tests/ui-integration/process-validation.spec.ts",
+    "tests/ui-integration/workflow-recovery.spec.ts",
+    "tests/ui-integration/workflow-recovery-accessibility.spec.ts"
+  ],
+  "source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+  "sha256": {
+    "tests/ui-integration/process-common-view.spec.ts": "307d1ddf47b3f6b618fb8af0c00ce51996747bed19dd5df89a49b5dfdeb0ee85",
+    "tests/ui-integration/process-declared-interactions.spec.ts": "38b127646594eebb08ac74b0946120466ff63e38736acab867b9a6b1e87b0706",
+    "tests/ui-integration/process-two-input-recovery.spec.ts": "3f279893aa95f487918f90169877bc8ca689aad71c7252794b66e4db8aca72df",
+    "tests/ui-integration/process-review-actions.spec.ts": "737e2493dca52cc09e1e9d03217dba9f7d65d38a0065d73132089d417bfd614a",
+    "tests/ui-integration/process-input-inspector.spec.ts": "e2da6b1490cf45f04392d53527d23834d5ce63fa62d70884541ebade3b3bb9ad",
+    "tests/ui-integration/process-validation.spec.ts": "9b6747d709b5928f7a6057afc9a489641e066e12981a39fdb26bd8bae16a9ad6",
+    "tests/ui-integration/workflow-recovery.spec.ts": "50dfbb2813a96333e01ab4eeb426fd0918322d5a7a699d21dc3aeb58da896eb7",
+    "tests/ui-integration/workflow-recovery-accessibility.spec.ts": "184426d2b5167a99eeac894859319489d2cdc43083e8df49dded032ea9b31709"
+  }
+}

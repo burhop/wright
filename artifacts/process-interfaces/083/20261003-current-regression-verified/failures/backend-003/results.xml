@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="11.149" timestamp="2026-10-03T10:37:49.373099-04:00" hostname="Work17"><testcase classname="" name="tests.e2e.test_process_validation" time="0.000"><error message="collection failure">import file mismatch:
+imported module 'test_process_validation' has this __file__ attribute:
+  D:\repos\wright\packages\core\tests\test_process_validation.py
+which is not the same as the test file we want to collect:
+  D:\repos\wright\tests\e2e\test_process_validation.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules</error></testcase></testsuite></testsuites>
