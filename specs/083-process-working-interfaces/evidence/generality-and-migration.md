@@ -113,3 +113,17 @@ records their current hashes. It excludes cache directories and is not a complet
 data/configuration reference audit. No caller, wrapper, frozen campaign source or
 assignment was changed or executed. Existing independent-provider proof does not
 by itself retire these remaining callers. T048/T049 remain incomplete.
+
+### Original prototype formats verified on a current installed build
+
+The actual original failed CE and completed PETG/PLA pumpkin record shapes now
+pass the shared reader and sixteen diagnostic-strict installed workspace checks
+on an exact isolated copy. Their 3/16/16 result identities, failure, editor return,
+reopen and recorder/artifact file tabs are verified. Original and copied evidence
+and durable reviews remain unchanged; no vendor operation or run is replayed.
+The missing copied source journals were a fixture defect: integrity rejection
+and its later corrected continuation are preserved. This supersedes the earlier
+unverified-original-format statements for these three cases only. See
+[original history compatibility](original-history-compatibility.md). Active
+slicing migration, full provider qualification and generality obligations retain
+T048/T049 as incomplete.

@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile the latest verified theme/handshake checkpoint described below, then finish printed current-revision second-run reuse with safely isolated output paths. Preserve existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload, theme or navigation proofs merely to produce another status report.
+1. Use the now-verified original-history checkpoint below, then resolve printed current-revision second-run output isolation and complete its saved-interface reuse proof. Preserve existing files and unanswered reviews. Do not repeat completed generation, compilation, saved reload, theme, navigation or original-history proofs merely to produce another status report.
 2. Complete common/tailored output, assessment, block/evidence navigation, compatibility, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish provider qualification, remaining active slicing/prototype migration and real historical-format compatibility. Keep retired device/Studio code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid evidence and finish pointer connections, pan and current-build working/preview journeys through the normal workspace entry. Installed older-build evidence does not establish current-build behavior.
@@ -98,7 +98,7 @@ authoring/revision records are unchanged; both retained run files stayed unchang
 during normal cleanup of accumulated owned proof views. Evidence is under
 `artifacts/process-interfaces/083/20261003-two-process-exact-navigation/`.
 
-**Next concrete action:** finish current-revision printed second-run reuse and remaining
+**Next concrete action:** resolve current-revision printed second-run isolation and remaining
 engineering/provider/migration/editor/audit obligations. Preserve the routing
 failure and premature Heat-load assertion, plus its
 separate capacity stop. The fixed workspace now selects an exact common evidence
@@ -129,7 +129,10 @@ Installed older builds do not include the latest committed kit/navigation change
 Current status/evidence updates must distinguish saved assets, preview rendering,
 working/reload proof, engineering checks and human acceptance.
 
-## Retained overnight handoff: observed theme failure
+## Historical overnight handoff: observed theme failure (superseded)
+
+The following records the earlier state, not current instructions. Its partial
+correction and task counts are superseded by the verified continuation below.
 
 The real saved-interface browser check stopped at the first product mismatch:
 Wright's light-theme colors reached the embedded Heat interface, but its browser
@@ -186,3 +189,74 @@ retained files. See 20261003-repeat-path-audit-verified/audit.json and the print
 proof record. Seven active slicing Python implementation/reference files are
 also pinned for the next migration action; data/configuration callers still need
 inspection. These audits made no engineering start, provider call or review.
+
+## Overnight staging checkpoint — 3 October 2026 (completed below)
+
+The following preserves the staging handoff. The later installed original-history
+proof supersedes its pending build/launch/browser actions; do not repeat them.
+
+Current HEAD is `8ea2383b`, following `e33ce3c4`. The task ledger remains
+46 checked / 11 open. The tracked worktree was clean at this status review;
+unrelated untracked artifacts and the user's Studio automation note are preserved.
+Saving this prompt changes documentation only, not the feature's completion state.
+
+Three actual original pumpkin run records were located under the original
+`wright-print-demo-workspaces/offline-part-run` workspace. The current shared
+read-only reader accepts each exact source/run pairing: failed CE has 3 partial
+results, completed PETG has 16, and completed PLA has 16. All have empty permitted
+actions. Recorder completion here describes digital preparation, not a physical
+print. The original records and 41 copied source/evidence files remained unchanged.
+API and browser compatibility on an installed current build are still unverified.
+
+A fresh isolated native proof is already staged at
+`.local-run/process-interfaces-083/t049-original-installed-001/`:
+current-source `package-source/`, freshly built `web-dist/`, private `python/`
+environment, copied database and original-only workspace, `cases.json`,
+`original-baseline.json`, `staging-provenance.json` and private browser context.
+The preparer completed successfully; do not run it again over this directory.
+It downloaded no dependencies and started no engineering process. Do not print
+the private context or publish credentials/traces.
+
+Next build a local wheel from that isolated package source, install it into the
+fresh private environment, verify owning imports and frontend manifest bytes,
+then launch `t049-original-installed-host-001.py` with that environment's Python.
+Its intended loopback port is 8038; verify availability and exact ownership before
+launching. The host must use installed modules/resources, unavailable model and
+compiler, and no provider autostart. It has not yet been launched. Reuse the
+qualified history API/browser harnesses in new continuations to verify all three
+original URLs, original error and result identities, read-only controls, workflow
+return and exact artifact navigation through normal workspace tabs. Rehash the
+original and copied baseline afterwards. Preserve a first failure and fix only
+its demonstrated cause. Publish scoped evidence, clean up only the owned fixture,
+and keep full migration tasks pending until their remaining obligations pass.
+
+Then address the repeat-run collision through existing owning mechanisms, with
+focused regression coverage and a fresh isolated proof. Keep source/UI bindings
+and compatibility explicit; a different source or a waiting fixture alone does
+not establish the required same-interface reuse. Finish the seven active slicing
+Python callers and broader configuration audit without vendor wrappers, the
+remaining clean provider qualification, UI/editor/accessibility/regressions and
+the final requirement/evidence audit. Neither a repeat report nor preparatory
+staging alone is a completed implementation milestone.
+
+## Current continuation — original-history proof verified
+
+The staged wheel was built, inspected and installed with the current frontend.
+Three original pumpkin cases passed exact API checks and sixteen diagnostic-strict
+normal-workspace browser checks, including exact 3/16/16 results, editor return,
+reopen and recorder/artifact tabs. First selector and omitted-journal fixture
+failures are retained; integrity checks were not weakened. Thirty-nine focused
+legacy/exact-recorder regressions pass. Expected unavailable-model responses are
+disclosed. All 48 original/copy source/run/artifact/journal files and five durable
+UI/continuation tables remain unchanged. Evidence is under
+`artifacts/process-interfaces/083/20261003-original-history-verified/` and
+`evidence/original-history-compatibility.md`. The owned host 39523/8038 is stopped
+and terminal; other previously recorded handles still require revalidation.
+
+T048/T049 remain open for active slicing and transitive caller migration plus
+broader generality/qualification obligations. Continue substantive safe repeat-run
+configuration and provider/migration work. The wider caller audit additionally
+found reusable imports of the printed preparer's neutral helpers by bracket,
+heat, jig and other examples: preserve those helpers and existing assignments
+when removing embedded slicer dependencies. Do not retire the entire helper
+module, change frozen campaign data or resume any protected campaign.

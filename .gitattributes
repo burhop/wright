@@ -104,3 +104,4 @@ artifacts/process-interfaces/083/20261003-presentation-departure-verified/** -te
 artifacts/process-interfaces/083/20261003-installed-host-audit/** -text -whitespace
 artifacts/process-interfaces/083/20261003-theme-handshake-verified/** -text -whitespace
 artifacts/process-interfaces/083/20261003-repeat-path-audit-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-original-history-verified/** -text -whitespace

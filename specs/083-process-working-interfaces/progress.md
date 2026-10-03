@@ -2049,3 +2049,52 @@ changed. A publisher's nested ripgrep process was denied by the Windows sandbox;
 the shell search supplied the same scoped inventory for a fresh publication.
 That partial first publication remains separate and is not successful evidence.
 Continue actual repeat-run configuration/isolation and provider/migration work.
+
+## Overnight continuation reviewed — 3 October 2026
+
+Reviewed the active unlimited goal, submitted authority, current task ledger and
+local checkpoints before preparing the user's overnight prompt. HEAD is
+`8ea2383b`; the ledger remains 46 checked / 11 open. No new task is closed by
+this review. Theme/handshake is complete; repeat-run isolation, migration,
+remaining provider/UI/regression proofs and the final audit remain open.
+
+The actual original pumpkin CE/PETG/PLA records now pass the current shared
+read-only history reader with 3/16/16 results and no permitted actions. A current
+frontend and exact original-record copies are staged in the fresh isolated
+`t049-original-installed-001` fixture; preparation reports 41 original files
+unchanged, no dependency downloads and no engineering starts. Wheel installation,
+host launch and actual API/browser acceptance have not happened yet. The updated
+continuation-goal.md records that exact next action and preserves the collision
+audit and protected review constraints. This status review ran no additional
+tests, answered no reviews and performed no external action. Existing service
+handles remain recorded observations requiring revalidation.
+
+## Original pumpkin histories verified in the current installed workspace
+
+The previous turn changed the saved checkpoint and is classified as progress;
+it did not close an implementation task. Read the submitted objective before
+continuing the unlimited goal. Built/inspected the current isolated native wheel
+from source `8ea2383b`, verified installed owning imports and sixteen current
+frontend asset digests, then served only the copied original history fixture.
+Model/compiler are unavailable; provider autostart is disabled.
+
+Original failed CE and completed PETG/PLA records pass exact API and sixteen
+diagnostic-strict normal-workspace checks with 3/16/16 results, original failure,
+editor return, reopen and recorder/artifact tabs. Browser 001 preserves a tab
+selector assumption and omitted default-source fixture; browser 002 preserves
+correct source-integrity refusals because the fixture omitted committed journals.
+Restoring six original journal files fixes the fixture without relaxing product
+checks. Browser 003 has zero unexpected failed responses/page errors; expected
+unavailable-model 503s and console messages remain disclosed. All three reports
+validate. Thirty-nine focused legacy/exact-recorder tests pass; the first missing
+temporary-parent setup failure is retained separately.
+
+All 48 original/copy source/run/artifact/journal files and five UI/continuation
+tables remain unchanged. Protected campaign/context/archive checks pass. The
+owned host handle 39523 on port 8038 is terminal with exit 0 after normal marker
+cleanup; no other service is stopped or newly declared live. Credential-scanned
+evidence has 114 files plus inventory under 20261003-original-history-verified.
+This closes the three-original-format evidence gap without checking T048/T049,
+which retain active slicing/transitive migration and broader qualification work.
+Counts remain 46 checked / 11 open. Continue actual repeat-run isolation and
+migration, then remaining UI/regression and full audit obligations.

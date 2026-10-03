@@ -24,6 +24,11 @@ corrected diagnostic-strict fixture 014, completes T051's installed behavior sco
 Installed completed-output parity,
 complete editor checks, migration and full engineering/audit obligations remain open.
 
+The three actual original pumpkin formats now also have current installed
+[history compatibility evidence](evidence/original-history-compatibility.md):
+sixteen served checks and unchanged original/copy evidence. This resolves that
+specific historical-format gap, not the remaining migration or full acceptance.
+
 The evidence column identifies retained records to inspect; a link alone is not
 proof. “Partial” means the broad requirement remains unproven even where narrower
 checks passed. No row grants an engineering review or external-effect authority.

@@ -1,0 +1,135 @@
+{
+  "title": "Original pumpkin histories through the installed workspace",
+  "summary": "Three original pumpkin records, exact partial/completed outputs and Wright file tabs; read-only history with no device operations.",
+  "overall": "blocked",
+  "updated": "2026-10-03T04:16:52.025Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the proof workspace and click Workflows."
+    },
+    {
+      "label": "History",
+      "instruction": "Open each original pumpkin workflow link with its exact saved run."
+    },
+    {
+      "label": "Return",
+      "instruction": "Click Back to workflow, then View saved result."
+    },
+    {
+      "label": "Saved record",
+      "instruction": "Click Open saved run record and inspect its workspace file tab."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Installed workspace entry",
+      "summary": "Normal Wright workspace loads from the current installed wheel.",
+      "purpose": "Use normal workspace context.",
+      "action": "Open workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workflows visible.",
+      "actual": "Workflows visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Shared authoring entry",
+      "summary": "Established workflow editor remains; active vendor demo entry is absent.",
+      "purpose": "Verify workspace integration.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflow files"
+      ],
+      "expected": "Editor controls without active print demo.",
+      "actual": "Editor controls present; Print a part demo absent.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Original failed pumpkin — exact history",
+      "summary": "Original failed recorder and 3 result identities are preserved.",
+      "purpose": "Preserve original format and exact evidence.",
+      "action": "Open exact historical workspace link.",
+      "controls": [
+        "Back to workflow",
+        "Open saved artifact",
+        "Open saved run record"
+      ],
+      "expected": "Exact recorded run/status/error and result links; no execution controls.",
+      "actual": "997873e33f2143ac90d6bfb9fe02c2e2; failed; 3 exact results and 3 artifact links.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Original failed pumpkin — editor return",
+      "summary": "History returns to its exact saved source.",
+      "purpose": "Preserve complementary authoring view.",
+      "action": "Click Back to workflow.",
+      "controls": [
+        "View saved result",
+        "Workflow files"
+      ],
+      "expected": "Exact workflow editor restored.",
+      "actual": "Exact workflow editor and saved-result reopen control visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Original failed pumpkin — read-only reopen",
+      "summary": "Same retained history reopens without a new run.",
+      "purpose": "Reconcile historical identity.",
+      "action": "Click View saved result.",
+      "controls": [
+        "Open saved run record",
+        "Open saved artifact"
+      ],
+      "expected": "Same retained run and outputs.",
+      "actual": "Same exact retained run restored.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Original failed pumpkin — recorder file tab",
+      "summary": "Exact original recorder opens inside Wright.",
+      "purpose": "Verify evidence navigation.",
+      "action": "Click Open saved run record.",
+      "controls": [
+        "runs/prompt-to-print-ce662210b77a/20260926T165217Z-b6f67611dec7.json"
+      ],
+      "expected": "Exact recorder tab selected; no external window.",
+      "actual": "Exact recorder tab selected; one browser page.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Original-history proof stopped",
+      "summary": "First unexpected state preserved.",
+      "purpose": "Retain honest failure evidence.",
+      "action": "Stop at unexpected state.",
+      "controls": [
+        "Historical result"
+      ],
+      "expected": "Exact original history and workspace navigation.",
+      "actual": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('editor-tab-workflows/prompt-to-print-ce662210b77a.workflow.wflow')\u001b[22m\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

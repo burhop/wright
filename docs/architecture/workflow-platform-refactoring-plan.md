@@ -369,3 +369,17 @@ Copied source/run/UI/continuation identities remain unchanged. The first launche
 and configuration failures are retained separately. Original user prototype
 formats, transitive slicing and complete engineering replacement remain open;
 T048/T049 are not complete. See [installed history evidence](../../specs/083-process-working-interfaces/evidence/installed-history-retirement.md).
+
+### Original prototype compatibility checkpoint, 3 October 2026
+
+The three actual original failed/completed pumpkin recorder formats are verified
+through the shared historical adapter on an isolated current installed build.
+Sixteen served workspace checks preserve exact results/errors, editor return,
+read-only reopen and saved recorder/artifact tabs; eight retired URLs are inert.
+Original and copied source/run/artifact/journal bytes and durable reviews remain
+unchanged. Failed fixture/selector attempts are retained; source integrity was
+not relaxed. See [original history compatibility](../../specs/083-process-working-interfaces/evidence/original-history-compatibility.md).
+This qualifies those formats only. Active slicing wrappers and their transitive
+campaign/probe bindings still require deliberate migration to existing independent
+providers. T048/T049 remain open; historical campaign data and baseline bindings
+remain immutable.

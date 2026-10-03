@@ -1,0 +1,14 @@
+{
+  "source_commit": "8ea2383b",
+  "frontend_manifest_sha256": "ea6590bd0ef9c15f1a039bae6672b38c0ea59cee4ed906ed787d310a65820342",
+  "frontend_build_flags": {
+    "process_definition": true,
+    "composer": true,
+    "recovery": true
+  },
+  "original_records_copied_exactly": 3,
+  "original_files_unchanged": 41,
+  "cached_dependencies": true,
+  "dependency_downloads": false,
+  "physical_effects": false
+}

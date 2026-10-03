@@ -1,0 +1,17 @@
+{
+  "wheel": "wright_engineering-0.1.9-py3-none-any.whl",
+  "wheel_sha256": "ae0fe0e6554488e29a44588fb7026a3a4a4641883e63d0830c1776690111e691",
+  "wheel_members": 951,
+  "frontend_assets": 16,
+  "frontend_manifest_sha256": "ea6590bd0ef9c15f1a039bae6672b38c0ea59cee4ed906ed787d310a65820342",
+  "current_public_sources_and_fixed_runtime_exact": true,
+  "installed_asset_bytes_verified": true,
+  "dependency_downloads": false,
+  "durable_tables": [
+    "process_ui_authoring_jobs",
+    "process_ui_authoring_records",
+    "process_ui_revisions",
+    "process_uis",
+    "workflow_continuation_checkpoints"
+  ]
+}

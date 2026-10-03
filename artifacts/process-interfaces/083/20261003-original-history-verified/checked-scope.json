@@ -1,0 +1,60 @@
+{
+  "branch": "codex/083-process-working-interfaces",
+  "source_commit": "8ea2383b",
+  "source_hashes": {
+    "packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py": "171e399e4878e6f45146168ac7136317f19dab460ace59e7c396d62d975ba58d",
+    "packages/workspace_service/src/workspace_service/workflow_run_record.py": "2e5870bdb56422802a0a650d23b5501292eb3d8a3d89d4522e6e88253bf86cc9",
+    "apps/web/src/components/process-interfaces/HistoricalResultView.tsx": "8f9d8316b8c42102579ef5f62e1c00bf56452a79f42a2e147ed653771283487a",
+    "packages/workspace_service/tests/test_process_legacy_results.py": "725a44e2f329d4c62b7b85e1bf1b1244870a175bebdc06cc0c541239b0ef1166"
+  },
+  "original_case_identities": [
+    {
+      "label": "Original failed pumpkin",
+      "path": "workflows/prompt-to-print-ce662210b77a.workflow.wflow",
+      "run_log_path": "runs/prompt-to-print-ce662210b77a/20260926T165217Z-b6f67611dec7.json",
+      "run_id": "997873e33f2143ac90d6bfb9fe02c2e2",
+      "status": "failed"
+    },
+    {
+      "label": "Original PETG pumpkin",
+      "path": "workflows/prompt-to-print-fb6b5af2a978.workflow.wflow",
+      "run_log_path": "runs/prompt-to-print-fb6b5af2a978/20260926T180232Z-5dde266c0df4.json",
+      "run_id": "55f5dbe635a1444e8229314b959f665c",
+      "status": "completed"
+    },
+    {
+      "label": "Original PLA pumpkin",
+      "path": "workflows/prompt-to-print-93fa4cb77499.workflow.wflow",
+      "run_log_path": "runs/prompt-to-print-93fa4cb77499/20260927T181922Z-f5413c65a42c.json",
+      "run_id": "52e77c29cce9456b8f38788f637b7ece",
+      "status": "completed"
+    }
+  ],
+  "original_result_counts": [
+    3,
+    16,
+    16
+  ],
+  "browser_checks": 16,
+  "regression_tests": 39,
+  "regression_skips": 0,
+  "original_and_copy_files_unchanged": 48,
+  "durable_tables_unchanged": 5,
+  "retired_url_checks": 8,
+  "fresh_current_installed_frontend": true,
+  "model_and_compiler_unavailable": true,
+  "engineering_starts": 0,
+  "review_decisions": 0,
+  "external_effects": 0,
+  "owned_host_stopped": true,
+  "limitations": [
+    "Original files were read; browser/API proof uses an isolated exact copy and copied workspace database.",
+    "First fixture omitted restored default source and committed journals; diagnostics are preserved.",
+    "Normal first Workflows creation initialized the original byte-identical default source in the isolated workspace.",
+    "No result/source journal integrity check was relaxed; six original journal files fix the fixture.",
+    "Expected unavailable-model 503 responses and console messages are disclosed.",
+    "Failed CE history has partial results and no final result object; completed records describe preparation, not physical printing.",
+    "Current build uses cached third-party dependencies, no dependency downloads; it is a local qualification candidate, not a release.",
+    "Full editor acceptance, provider qualification, active slicing migration and full Feature 083 completion remain open."
+  ]
+}

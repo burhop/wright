@@ -1,8 +1,10 @@
+import hashlib
 import json
 import pytest
 
 from workspace_service.process_interfaces.legacy_results import read_legacy_result
 from workspace_service.workflow_run_record import WorkflowRunReadError
+from workspace_service.workflow_results import Provenance, file_result
 
 
 def history(root):
@@ -54,3 +56,53 @@ def test_historical_record_cannot_claim_another_source(tmp_path):
     path.write_text(json.dumps(value))
     with pytest.raises(WorkflowRunReadError):
         read_legacy_result(str(tmp_path), source, relative)
+
+
+@pytest.mark.parametrize(
+    "status,count,top_level_identity",
+    [("failed", 3, True), ("completed", 16, True), ("completed", 16, False)],
+)
+def test_original_recorder_shapes_preserve_exact_results_without_actions(
+    tmp_path, status, count, top_level_identity
+):
+    """Controlled shape checks complement the real original-history browser proof."""
+    source, relative = history(tmp_path)
+    rows = [
+        file_result(
+            {
+                "output_path": f"artifacts/output-{index}.json",
+                "output_format": "json",
+                "output_bytes": 2,
+            },
+            Provenance("recorded-run", f"step-{index}", "result"),
+        ).to_dict()
+        for index in range(count)
+    ]
+    record = {
+        "workflow_path": source,
+        "source_digest": hashlib.sha256((tmp_path / source).read_bytes()).hexdigest(),
+        "status": status,
+        "events": [],
+        "partial_results": {row["id"]: row for row in rows},
+    }
+    if top_level_identity:
+        record["run_id"] = "recorded-run"
+    if status == "completed":
+        record["result"] = {"run_id": "recorded-run", "results": rows}
+    else:
+        record["error"] = "Original mesh operation failed"
+        assert "result" not in record
+    (tmp_path / relative).write_text(json.dumps(record), encoding="utf-8")
+    before = {path: path.read_bytes() for path in tmp_path.rglob("*") if path.is_file()}
+
+    response = read_legacy_result(str(tmp_path), source, relative)
+
+    assert response["read_only"] is True and response["permitted_actions"] == []
+    run = response["run"]
+    assert run["run_id"] == "recorded-run" and run["status"] == status
+    assert run["source_matches_current"] is True
+    assert {row["id"] for row in run["results"]} == {row["id"] for row in rows}
+    assert all(
+        row["provenance"]["run_id"] == "recorded-run" for row in run["results"]
+    )
+    assert {path: path.read_bytes() for path in tmp_path.rglob("*") if path.is_file()} == before

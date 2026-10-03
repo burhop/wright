@@ -1,0 +1,11 @@
+{
+  "cause": "Copied workspace omitted the original source referenced by restored workspace tabs; normal Workflows entry initialized the same template",
+  "copied_original_source": "workflows/mounting-bracket.workflow.wflow",
+  "sha256": "d4a5d071fa2b48345310f7af4f71d7f90fe38b153dd83ba33f9214f8aa50af59",
+  "database_changes": false,
+  "already_created_by_normal_entry": true,
+  "existing_bytes_identical_to_original": true,
+  "original_files_unchanged": 42,
+  "product_changes": false,
+  "prior_report_preserved": true
+}
