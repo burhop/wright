@@ -1,5 +1,25 @@
 # Selected-provider qualification progress — T043
 
+## Actual independent slicing runtime integration — 3 October 2026
+
+[Scoped evidence](../../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json)
+records normal accepted-source execution through the existing supervisor/gateway:
+actual guarded Blender export, independent offline slicing, exact response
+retention and independent Python-backed passive inspection. Direct discovery has
+28 geometry, 11 slicer and 17 inspection tools; selected gateway schemas are pinned
+in the binding. Fifteen exact outputs and same-request reconciliation are checked.
+Reused selected installations retain their earlier host/version scopes. No new
+clean slicer installation or six-assignment qualification is inferred.
+
+All fourteen exact containers from seven attempts are revalidated stopped. Six
+failed attempts remain; two executing failures expose missing test write enrollment
+and then duplicate producer attribution. Both are corrected without changing
+gateway/freshness authority. The passive provider receipt stays
+`completed_unverified`/`trustworthy_result=false`: its solver artifact discovery
+does not see the separately created inspection files. Wright checks those actual
+files/hashes. This is not solver verification or engineering acceptance. T043
+remains open, including AgentCAD's independently retained creation-response defect.
+
 **Date:** 1 October 2026. **Status:** partial; remaining qualification and full
 engineering runs are pending. No public catalog entry is promoted.
 

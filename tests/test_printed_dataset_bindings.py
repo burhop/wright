@@ -195,7 +195,6 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     assert set(original_steps[1].expected_file_ports) == {"repaired_mesh"}
     assert set(original_steps[2].expected_file_ports) == {
         "support_preview",
-        "slice_package",
         "slice_evidence",
         "machine_profile",
         "filament_profile",
@@ -206,6 +205,8 @@ def test_original_full_graph_and_human_inputs_remain_bound(tmp_path, number, wit
     }
     review = original_steps[4]
     validator = original_steps[5]
+    assert dict(validator.validation_sources)["slice_package"] == native_slice.id + ".external_slice_package"
+    assert native_slice.expected_file_ports["external_slice_package"] not in original_steps[2].expected_files
     assert review.external_action["action_kind"] == "local_review"
     assert {role for role, _ in validator.validation_sources} == {
         "source_mesh",

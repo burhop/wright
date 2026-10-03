@@ -1,5 +1,33 @@
 # Verification record — partial feature acceptance
 
+## External slicing producer and mounted inspection — 3 October 2026
+
+[Checked scope and XML](../../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json)
+retain red/green checks, exact owning source hashes and six-file Ruff command.
+Owning preparation/declaration/inspection checks pass **52**; affected independent
+diagnostic/retirement, original validation/examples and exact document-authority
+checks pass **108**, with one Windows symlink-creation permission skip. That skip
+is an explicit security-test coverage limitation, not a pass. Earlier canonical
+MCP/supervisor checks pass **32**; earlier mounting checks overlap the latest owning
+suite and must not be added as distinct coverage. Red checks retain the relative
+job-root and falsely attributed unchanged-package defects.
+
+The actual small source runtime proof completes four provider calls, verifies all
+15 output hashes and reconciles duplicate start without replay. It is distinct
+from full engineering, current browser/installed acceptance and clean provider
+installation. Both original preparers route the unchanged package validation role
+to the real slicer; original required checks are preserved. Full T053 remains open.
+
+Recorded commands (fresh confined test directories; no provider execution):
+
+```powershell
+.venv/Scripts/python.exe -m pytest tests/test_engineering_external_slice_binding.py tests/test_printed_dataset_bindings.py tests/test_drill_jig_source_paths.py tests/test_manufacturing_package_inspection.py -q --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t048-package-owner-green-001 --junitxml=.local-run/process-interfaces-083/t048-package-owner-green-001.xml
+.venv/Scripts/python.exe -m pytest packages/workspace_service/tests/test_workflow_integration_document_write.py tests/external/process_validation/test_printing.py tests/external/process_validation/test_printed_profiles.py tests/test_campaign_example_renewal.py tests/test_campaign_example_renewal_revision.py tests/test_process_interface_examples.py tests/test_independent_slice_diagnostic.py tests/test_embedded_slice_retirement.py -q --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t048-package-owner-affected-001 --junitxml=.local-run/process-interfaces-083/t048-package-owner-affected-001.xml
+```
+
+Use new test directory/XML names when reproducing. The once-only native qualification
+driver and all retained attempt roots are evidence and must not be replayed.
+
 ## Configured-operation preparation and actual partial-run UI — 3 October 2026
 
 Seven affected example/operator/source/run-path/file-dependency/MCP-contract/

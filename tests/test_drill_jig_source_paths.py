@@ -115,9 +115,11 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     assert Path(native_slice.arguments["source"]).name == "jig.stl"
     assert "engineering_dataset_slice" not in source
     assert not any("slice-operation" in row["path"] for row in report["input_manifest"])
-    assert slicer.expected_file_ports["slice_package"].endswith(
+    assert native_slice.expected_file_ports["external_slice_package"].endswith(
         "/additive-manufacturing/slice_package.gcode.3mf"
     )
+    assert native_slice.expected_file_ports["external_slice_package"] not in slicer.expected_files
+    assert dict(validator.validation_sources)["slice_package"] == native_slice.id + ".external_slice_package"
     assert any(
         node["kind"] == "connection"
         and node["fields"].get("type") == "order"

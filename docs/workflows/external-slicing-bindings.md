@@ -65,7 +65,19 @@ Explicit nominal section markers exclude startup/shutdown semantics and remain
 visible in provenance. No firmware, physical-fit or manufacturing-success claim
 is made.
 
-Original validation roles and profiles remain bound to the evidence stage. New
+The package remains an output of the actual independent slicer. The inspection
+stage declares only the evidence/profile/preview files it creates. Its manifest
+returns `package_reference`, and both preparers use that exact producer for the
+unchanged `slice_package` validation role. Existing package consumers are rewired
+to the same producer. An inspector must not claim to have created an unchanged
+upstream file; Wright's file-freshness check remains authoritative.
+
+The inspection job directory resolves beneath the explicitly configured provider
+workspace mount. Response retention requires normal workspace write authority;
+isolated integration tests must enroll their exact source, inputs, tools and
+output root through the existing test-policy mechanism before starting.
+
+Original validation roles and profiles remain intact. New
 response/toolpath records supplement them; they do not remove mandatory checks
 or grant human acceptance. Source, schema, profile or argument changes require a
 fresh proposal and the existing downstream validation/review rules.
@@ -73,7 +85,15 @@ fresh proposal and the existing downstream validation/review rules.
 ## Current evidence and remaining migration
 
 Six-scenario declaration/readiness and passive-reader fixtures pass. They do not
-qualify this new binding end to end against live providers. Existing Feature 083
+qualify all six assignments end to end against live providers. One isolated small
+geometry qualification now exercises the accepted source and durable runtime,
+all four actual tool calls, 15 exact outputs and duplicate-start reconciliation.
+See [runtime evidence](../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json).
+The inspection provider reports `completed_unverified` because its solver-output
+discovery does not include the separately created passive artifacts. Wright
+verifies those actual files and hashes; this does not establish a verified solve
+or engineering acceptance. 52 owning and 108 affected checks pass; one Windows
+symlink-creation check skips due to host permissions. Existing Feature 083
 digital demonstrations remain separate evidence. The diagnostic
 `probe_printed_blender_binding.py` now selects an independent MCP through
 `--slicer-provider`. The three embedded slicing files and their wrapper-only test

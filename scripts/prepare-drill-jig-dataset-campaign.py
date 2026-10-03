@@ -273,7 +273,10 @@ def prepare(args, directory, tools):
         "jig_stl": (stages["generate_jig"], "jig_stl"),
         "dxf": (stages["generate_jig"], "dxf"),
         "report": (stages["check_alignment"], "report"),
-        "slice_package": (slicer, "slice_package"),
+        "slice_package": (
+            next(section for section in sections
+                 if section["id"] == slice_binding_evidence["package_reference"].split(".")[0]),
+            slice_binding_evidence["package_reference"].split(".")[1]),
         "slice_evidence": (slicer, "slice_evidence"),
     }
     validator["fields"].update(

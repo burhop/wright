@@ -91,3 +91,42 @@ def test_historical_binding_documents_and_wrappers_are_not_executed_by_preparers
         assert "engineering_dataset_slice" not in source
         assert "engineering_jig_slice_mcp" not in source
         assert "external_slice.preflight" in source and "external_slice.bind" in source
+
+
+@pytest.mark.parametrize("mount", ["/workspace", "/mounted/engineering"])
+def test_inspection_job_uses_the_explicit_provider_workspace_mount(tmp_path, mount):
+    path, tools = fixture.make_binding(tmp_path / "configuration", "fixture-01", PROCESS)
+    value = json.loads(path.read_text())
+    value["inspection"]["workspace_mount"] = mount
+    path.write_text(json.dumps(value), encoding="utf-8")
+    prepared = binding.preflight(path, "fixture-01", tools, PROCESS)
+    step = {"kind": "task", "id": "inspect", "fields": {"inputs": [], "outputs": [], "settings": {}}}
+    sections = [step]
+    binding.bind(sections, step, "geometry.actual_mesh", workspace=tmp_path / "workspace",
+                 input_root="campaign/fixture/inputs", output_root="campaign/fixture/artifacts",
+                 source="campaign/fixture/artifacts/source.stl", prepared=prepared, staged=[],
+                 operation_label="qualified_fixture_inspection")
+    arguments = json.loads(step["fields"]["settings"]["mcp_arguments"])
+    assert arguments["job_name"] == mount + "/campaign/fixture/artifacts/package-inspection"
+    assert str(mount + "/campaign/fixture/inputs/inspect_manufacturing_package.py") in arguments["input_content"]
+
+
+def test_package_is_owned_by_slicer_and_inspection_only_produces_new_evidence(tmp_path):
+    path, tools = fixture.make_binding(tmp_path / "configuration", "fixture-01", PROCESS)
+    prepared = binding.preflight(path, "fixture-01", tools, PROCESS)
+    step = {"kind": "task", "id": "inspect", "fields": {"inputs": [], "outputs": [], "settings": {}}}
+    consumer = {"kind": "connection", "id": "package_consumer", "fields": {
+        "type": "item", "from": "inspect.slice_package", "to": "review.package",
+        "label": "actual package", "when": None}}
+    sections = [step, consumer]
+    evidence = binding.bind(sections, step, "geometry.actual_mesh", workspace=tmp_path / "workspace",
+                            input_root="campaign/fixture/inputs", output_root="campaign/fixture/artifacts",
+                            source="campaign/fixture/artifacts/source.stl", prepared=prepared, staged=[],
+                            operation_label="qualified_fixture_inspection")
+    native = next(item for item in sections if item["id"] == "invoke_external_slice_inspect")
+    package = "campaign/fixture/artifacts/slice_package.gcode.3mf"
+    assert native["fields"]["settings"]["expected_file_ports"]["external_slice_package"] == package
+    assert package not in step["fields"]["settings"]["expected_files"].splitlines()
+    assert "slice_package" not in step["fields"]["settings"]["expected_file_ports"]
+    assert evidence["package_reference"] == "invoke_external_slice_inspect.external_slice_package"
+    assert consumer["fields"]["from"] == evidence["package_reference"]

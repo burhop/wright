@@ -1,0 +1,22 @@
+{
+  "status": "failed",
+  "scope": "Generated slice/response-retention/passive-inspection declarations on the accepted source and existing durable runtime; small digital qualification only",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false,
+  "ai_generation": false,
+  "workspace": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-slice-runtime-001",
+  "error_type": "IntegrityError",
+  "diagnostic": "UNIQUE constraint failed: mcp_servers.name",
+  "durable_runtime_owner_closed": true,
+  "cleanup": [
+    {
+      "container_id": "e34d802b2719f10d33d0c338789fe7258fd1c8b858ae48c56ff97ac7220bc4a7",
+      "running": false
+    },
+    {
+      "container_id": "cf4aa6ac0e0c726d89951c0207f70ac23d58f0256069fb304a54fc4883979c00",
+      "running": false
+    }
+  ]
+}

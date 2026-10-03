@@ -206,14 +206,25 @@ def bind(sections, step, upstream, *, workspace, input_root, output_root, source
         "exec(compile(operation,'inspect_manufacturing_package.py','exec'),operation_namespace)\n"
         f"print(operation_namespace['run']({config!r},reader_namespace['read_3mf_toolpaths']))\n"
     )
-    outputs = {"slice_package": package, "slice_evidence": output_root + "/slice-evidence.json",
+    # The package already exists from the slicer. The runtime requires each
+    # declared tool-created output to be new or changed by that exact step.
+    # Keep package lineage with its real producer, including old consumers.
+    package_reference = slice_step["id"] + ".external_slice_package"
+    for section in sections:
+        if (section["kind"] == "connection"
+                and section["fields"].get("type") == "item"
+                and section["fields"].get("from") == step["id"] + ".slice_package"):
+            section["fields"]["from"] = package_reference
+    outputs = {"slice_evidence": output_root + "/slice-evidence.json",
                "support_preview": output_root + "/support-preview.svg",
                **{role + "_profile": output_root + "/" + role + "-profile.json" for role in profile_bytes},
                "toolpath_preview": output_root + "/support-preview.json",
                "toolpath_summary": output_root + "/toolpath-summary.json",
                "slice_preview": output_root + "/slice-preview.png"}
     exact(step, selected["inspection"], {"solver": binding["inspection"]["backend"],
-          "input_content": input_content, "job_name": output_root + "/package-inspection", "critic_approved": False},
+          "input_content": input_content,
+          "job_name": str(PurePosixPath(mount) / output_root / "package-inspection"),
+          "critic_approved": False},
           "package-inspection-result.json", outputs)
     dependencies = [("actual_package", slice_step["id"] + ".external_slice_package", package),
                     ("actual_response", response["id"] + ".provider_response", response_path),
@@ -227,6 +238,7 @@ def bind(sections, step, upstream, *, workspace, input_root, output_root, source
                          "fields": {"type": "order", "from": before, "to": after,
                                     "label": "actual slice and retained passive inspection", "when": None}})
     return {"binding_sha256": binding_digest, "selected_tools": selected,
+            "package_reference": package_reference,
             "profile_sha256": {role: helpers.digest(data) for role, data in profile_bytes.items()},
             "vendor_implementation": "independent_provider",
             "inspection": "passive_actual_package", "engineering_acceptance": False}

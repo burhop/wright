@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "scope": "exact attempt005 declaration authoring/compiler shape with fixture tools only; no provider calls",
+  "steps": [
+    "qualified_geometry",
+    "invoke_external_slice_inspect_actual_package",
+    "retain_slice_response_inspect_actual_package",
+    "inspect_actual_package"
+  ]
+}

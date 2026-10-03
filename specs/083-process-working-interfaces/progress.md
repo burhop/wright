@@ -1,5 +1,40 @@
 # Feature 083 progress
 
+## Latest evidence — actual independent slicing handoffs and exact producer
+
+The bedtime status turn refreshed the continuation checkpoint; it did not
+complete implementation. This continuation verifies the new slicing declarations
+through the accepted source and existing durable runtime. Four setup failures
+remain. Attempt005 then produced actual geometry/package but its unenrolled
+document write was denied. Fresh exact-enrolled006 produced passive artifacts,
+then correctly failed the unchanged-package output check. The declaration had
+incorrectly made inspection another producer of the package.
+
+The helper now returns the actual slicer package reference and rewires existing
+consumers. Both original preparers use that producer for the unchanged package
+validation role. The configured inspection job directory uses its explicit mount.
+No runtime freshness check, approval policy or original engineering requirement
+was weakened. Red tests demonstrate both defects; latest owning/affected checks
+pass 52 + 108 cases with one Windows symlink-permission skip. Earlier canonical
+runtime checks pass 32 cases; six-file Ruff passes.
+
+Fresh isolated007 completes with one call per actual provider stage, 15 exact
+recorded output hashes and duplicate-start reconciliation without replay. Both
+providers' reused selected installations retain their prior qualification scope.
+The passive inspection receipt is completed_unverified, not a verified solve;
+Wright independently verifies the actual files. All fourteen exact owned
+containers across001–007 are revalidated stopped. The first publisher's mistaken
+no-gateway cleanup assertion is retained; corrected read-only publication repeats
+no tool calls. Public evidence has 48 credential-scanned files:
+`artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/`.
+
+49 checked / 8 open remains. Full six-assignment live migration, active mesh-repair
+coupling, remaining provider, current UI/editor/installed/accessibility/regression
+and final requirement audits remain. Protected originals are unchanged. Focused
+local commit follows; receipt:
+`.local-run/process-interfaces-083/external-slice-runtime-007-local-commit.json`.
+No physical, supplier, protected review, push, merge or release action occurred.
+
 ## Latest evidence — fresh clean Blender and exact local retirement commit
 
 The preceding goal turn supplied status/a prompt and was no progress. This turn

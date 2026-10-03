@@ -336,11 +336,14 @@ def prepare(args, scenario_dir: Path, tools: dict) -> dict:
         "source_mesh": (source_task, "source_mesh", "workspace_file"),
         "source_report": (source_task, source_result_key, "engineering_document"),
         "repaired_mesh": (repair, "repaired_mesh", "workspace_file"),
+        "slice_package": (
+            next(section for section in sections
+                 if section["id"] == slice_binding_evidence["package_reference"].split(".")[0]),
+            slice_binding_evidence["package_reference"].split(".")[1], "workspace_file"),
         **{
             role: (slicer, role, "workspace_file")
             for role in (
                 "support_preview",
-                "slice_package",
                 "slice_evidence",
                 "machine_profile",
                 "filament_profile",

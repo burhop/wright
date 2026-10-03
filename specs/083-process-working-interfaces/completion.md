@@ -4,6 +4,16 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
+The new external slicing declarations now have one small actual accepted-source
+runtime qualification: four gateway calls, 15 exact recorded outputs and no replay
+on duplicate start. A producer declaration defect is corrected in both preparers;
+original package validation roles/profiles remain intact. 52 owning and 108 affected
+checks pass, with one Windows symlink-permission skip. This does not complete all
+six engineering bindings, selected-provider qualification or active mesh-repair
+retirement. The passive provider receipt remains unverified as a solve; actual
+inspection files are separately hash-checked by Wright. See
+[migration evidence](evidence/generality-and-migration.md#actual-slicing-handoffs-and-package-producer-correction).
+
 Fresh selected Blender Linux installation/protocol and one actual source-host
 production-gateway geometry/export call now have exact schema/artifact/cleanup
 evidence. The first native export failure is retained and corrected only in a

@@ -1,5 +1,34 @@
 # Generality and prototype migration — partial evidence
 
+## Actual slicing handoffs and package producer correction
+
+[Runtime qualification](../../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json)
+executes the new neutral declarations through the accepted source and existing
+durable runtime. A first executing attempt correctly denies an unenrolled file
+write; the next exact-enrolled attempt exposes the declaration's duplicate package
+producer. The slicer already created that file; passive inspection did not create
+or alter it. The owning declaration now returns `package_reference`, rewires old
+package consumers, and both existing preparers bind their unchanged package
+validation role to the actual producer. Inspection declares only its new outputs.
+Its job root resolves below its explicit provider mount. Backend checks remain
+unchanged and original full profiles/campaign bindings are retained.
+
+Fresh007 has four exact gateway calls, 15 hash-verified recorded files and an
+identical receipt for duplicate start with no additional work. Existing runtime,
+gateway, document-write enrollment and passive format readers own the mechanisms;
+the independently installed providers own geometry and slicing execution.
+The provider's passive receipt is `completed_unverified`: artifact discovery in
+its solver job directory differs from these passive files. Wright's exact output
+verification succeeds, without treating this as a verified solve or acceptance.
+
+52 owning and 108 affected checks pass; one Windows symlink-permission case skips.
+Earlier canonical-runtime checks pass 32 cases. Six-file Ruff, stopped-owner and
+original tracked binding/review preservation checks pass. Evidence retains the
+six earlier failures and the first publisher failure. Scope is a small digital
+integration with reused provider installations, not all six original assignments,
+new clean slicer installation, physical execution or human acceptance.
+T043/T048/T049 remain open for their broader qualification/retirement obligations.
+
 ## Slice probe migration and embedded file retirement
 
 The diagnostic's independent-provider definition preflights configuration before

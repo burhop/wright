@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "scenario_id": "printed-replacement-part-01",
+  "slicer": {
+    "server": "qualification-083-runtime-slicer",
+    "tool": "slice_model_file",
+    "schema_digest": "c90e8fd78ba82c576a687320673e9ded017f31e731e4713c2b109570249cb794",
+    "arguments": {
+      "source": "{source}",
+      "output": "{package}",
+      "plate": 1,
+      "orient": false,
+      "arrange": true,
+      "confirm": true
+    }
+  },
+  "files": {
+    "server": "wright-workspace-files",
+    "tool": "write_text_document",
+    "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12"
+  },
+  "inspection": {
+    "server": "qualification-083-runtime-inspection",
+    "tool": "run_simulation",
+    "schema_digest": "531b481b8d27a3eb035dcab9026a61f85e33d929463c3315852eddc50b2baf1f",
+    "workspace_mount": "/workspace",
+    "backend": "skfem"
+  },
+  "profiles": {
+    "machine": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\machine-profile.json",
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "process": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\process-profile.json",
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "filament": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\configured-provider-presets\\filament-profile.json",
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    }
+  },
+  "success_field": "ok",
+  "success_contract": "Selected independent slicer revision 7b50d0288fb7b91af8af422b96c4df4db0f1110c reports ok=true only after offline CLI return code zero; the original provider response and package are retained. This is provider-contract evidence, not an independently observed exit code.",
+  "expected_response_fields": {
+    "source": "{source}",
+    "output": "{package}",
+    "plate": 1
+  },
+  "gcode_entry": "Metadata/plate_1.gcode",
+  "nominal_layer_section": {
+    "start_marker": "; MACHINE_START_GCODE_END",
+    "end_marker": "; MACHINE_END_GCODE_START"
+  }
+}

@@ -10,6 +10,15 @@ The shared interaction contract/client/kit and runtime migration are not complet
 
 ## Current migration checkpoint — 3 October 2026
 
+The new independent slicing declarations now have a small actual accepted-source
+runtime proof. Package ownership stays with the slicer; passive inspection creates
+only its evidence/preview/profile outputs, and both original preparers route their
+unchanged package validation role to the actual producer. Explicit mounted job
+paths, exact test write enrollment, fifteen recorded output hashes and duplicate
+start reconciliation are checked. This supplements the earlier diagnostic below;
+it does not establish all six assignments or complete provider/migration tasks.
+See [runtime evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#actual-slicing-handoffs-and-package-producer-correction).
+
 Both original printed/drill-jig preparers declare independent slicing and passive
 inspection. The final diagnostic now uses an explicit independent MCP definition.
 The three embedded slicing implementations and their wrapper-only test are

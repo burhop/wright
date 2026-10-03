@@ -33,6 +33,100 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest implementation — actual slicing handoffs and producer correction
+
+This continuation completes the next safe runtime qualification after the bedtime
+status turn. HEAD before the new checkpoint remains `989145db`; reconcile the
+planned receipt `.local-run/process-interfaces-083/external-slice-runtime-007-local-commit.json`
+with actual Git HEAD before repeating any staging operation.
+
+Attempt005 passes authoring but response retention is denied: the harness omitted
+exact integration file-write enrollment. Its actual geometry/package are retained.
+Fresh attempt006 uses existing exact enrollment, writes the response and actual
+passive artifacts, then fails Wright's unchanged-output check. The declaration
+incorrectly attributed the already-produced package to the inspection step.
+No runtime freshness or approval rule was weakened. The neutral declaration now
+returns the actual slicer's `package_reference`; both preparers bind the original
+package validation role to it, and existing package consumers are rewired.
+
+Fresh exact-enrolled attempt007 completes through the accepted source and durable
+runtime. Actual gateway audit shows one call each to geometry, independent slicing,
+response retention and passive inspection. All 15 recorded output sizes/hashes
+match current files; a duplicate start reconciles the same receipt with no extra
+calls. Run: `315d74b4187a45aba31c50416e7e7c60`. Fourteen exact owned containers
+across attempts001–007 are revalidated stopped. Their handles are terminal.
+
+Public evidence: `artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/`.
+The first read-only publisher failed before writing because it assumed attempt001
+had constructed a gateway; corrected publisher008 verifies that earlier scope.
+48 files retain failures, source, schemas, inputs, actual artifacts, checks and
+credential-scanned inventory. The provider's passive inspection receipt remains
+`completed_unverified`, not a verified solve; actual files are separately checked
+by Wright. Reused selected installations do not establish a new clean slicer
+installation or execution of all six assignments. No human/physical acceptance.
+
+Latest owning/affected checks: 52 + 108 passes; one Windows test-symlink permission
+skip remains a coverage limit. Earlier canonical-runtime/supervisor checks pass
+32 cases. Six-file Ruff passes. Red tests retain both declaration defects.
+Original binding/review files match HEAD. Task ledger remains 49 checked / 8 open.
+Next finish active mesh-repair/provider coupling migration, outstanding selected
+qualification, current UI/editor/installed/accessibility/regression and complete
+requirement audits. Do not rerun terminal proof drivers or old engineering runs.
+Also audit readiness against the retained005 permission denial: that harness's
+unenrolled snapshot was marked ready before its predictable write denial. Confirm
+how normal workspace tool grants and exact integration authority are represented
+before deciding whether the shared preflight has an uncovered gap. Do not grant
+broad automatic permissions or treat a planned human review as a missing grant.
+
+### Bedtime continuation review — 3 October 2026
+
+Read this checkpoint before the older entries below. Current branch is
+`codex/083-process-working-interfaces`; observed HEAD is `989145db`.
+The task ledger remains **49 checked / 8 open**: T041, T043, T048, T049,
+T052, T053, T056 and T057. Task counts are not a percentage of completion.
+The two engineering chains' audited T045/T047 evidence remains valid within
+its recorded digital scope; do not repeat completed runs or synthetic decisions.
+
+Two tracked files have uncommitted owned changes:
+`scripts/engineering_external_slice_binding.py` and
+`tests/test_engineering_external_slice_binding.py`. The declaration now resolves
+the passive inspection job directory beneath the configured provider workspace
+mount. Two new parametrized checks demonstrate the former relative-path defect.
+The retained red run has 17 passes and two expected failures; corrected owning
+and affected checks have 51 passes, followed by 32 canonical-runtime/supervisor
+passes. Two-file Ruff passes. These results still need scoped evidence publication
+and a focused local commit; they do not establish actual runtime qualification.
+
+The isolated qualification attempts 001–004 are terminal failures, not active
+runs. Their private drivers and receipts are under
+`.local-run/process-interfaces-083/t048-external-slice-runtime-*`.
+Failures were duplicate provider names (001), a missing gateway transport (002),
+an unsupported invented transport value (003), then missing accepted-workflow
+authoring fields (004). Attempt004 reports:
+`workflow external_slice_qualification is missing authoring fields: discipline, purpose, reviewed_ai_suggestions.`
+It failed before accepted-source execution or geometry/slicing stage dispatch.
+Its runtime and gateway closed, and both exact owned containers are recorded
+stopped. Execution handle 3889 was observed terminal with exit code 1 during
+this review. Preserve all four attempts. Inspect the real authoring contract and
+existing valid workflow examples before preparing a fresh isolated continuation;
+do not rerun these once-only drivers or weaken validation to make them pass.
+
+Next finish canonical-runtime qualification of the declared independent slicing,
+response retention and passive inspection handoffs, with exact artifact identities
+and request reconciliation. Keep its small integration scope separate from the
+full engineering assignments. Finish remaining active mesh-repair/provider coupling
+disposition through existing independent providers, remaining selected-provider
+qualification, current served/installed UI/editor/accessibility acceptance, affected
+regressions and the complete requirements/evidence audit. Reuse existing proofs
+where their recorded scope is sufficient. AgentCAD's retained creation-response
+defect remains an external provider dependency; continue unaffected work.
+
+The prior API/frontend and other engineering services have not been revalidated
+in this review. Check current owner identity and liveness before using or restarting
+them. Preserve unrelated untracked evidence and documentation. No push, merge,
+release, physical operation, supplier submission, protected review response or
+vendor security workaround is authorized by this checkpoint.
+
 ### Latest implementation — clean selected Blender installation and gateway proof
 
 The slicing retirement checkpoint is now committed as 24976669: 47 exact owned

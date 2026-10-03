@@ -1,0 +1,460 @@
+{
+  "status": "isolated_canonical_runtime_qualified",
+  "source_commit_before_changes": "989145db39ca67d1539cf002fd0908b451c8d56e",
+  "source_sha256": {
+    "scripts/engineering_external_slice_binding.py": "ac0e3ff5c18cbf2ede3d49ba0e0ddbce7818ed2016df540412b6cd50f189b40b",
+    "scripts/prepare-printed-dataset-campaign.py": "0dc7702f47147017dbed46d8050838238e5b0c36a59f4216cffac592bc39596d",
+    "scripts/prepare-drill-jig-dataset-campaign.py": "d75d11b70a4587c93d431cb9c268e49ab4ce5f0e703cb1ec0b4f502792a6f3ee",
+    "tests/test_engineering_external_slice_binding.py": "9de8c38eb8efd33c58d1a8d9a5f948f6e91a568546abe00a127f8e69e3dac590",
+    "tests/test_printed_dataset_bindings.py": "0f111728f8e829ae60fed5d704c2aa9c829514149e2c07f9692b5e0fbbfcf103",
+    "tests/test_drill_jig_source_paths.py": "d61899bcc8298190b9afbecb20d4b44b5b2bcf0e0ddf2009645ff778b6af71d4"
+  },
+  "run_id": "315d74b4187a45aba31c50416e7e7c60",
+  "actual_gateway_completed_calls": [
+    "execute_blender_code",
+    "slice_model_file",
+    "write_text_document",
+    "run_simulation"
+  ],
+  "exact_recorded_outputs": 15,
+  "all_output_hashes_verified": true,
+  "package_producer": "invoke_external_slice_inspect_actual_package",
+  "duplicate_start_no_replay": true,
+  "integration_test": true,
+  "actor": "integration_test:083-external-slice-runtime-007",
+  "synthetic_review_decisions": 0,
+  "passive_inspection_provider_status": "completed_unverified",
+  "provider_trustworthy_solve": false,
+  "inspection_scope": "Actual retained package/profile/preview/toolpath artifacts verified by runtime hashes; not a solver qualification or engineering verdict",
+  "layer_count": 30,
+  "path_segments": {
+    "model": 1016,
+    "support": 0,
+    "unclassified": 14
+  },
+  "checks": [
+    {
+      "file": "t048-runtime-mount-red-001.xml",
+      "tests": 19,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 17,
+      "skips": []
+    },
+    {
+      "file": "t048-runtime-mount-green-001.xml",
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 51,
+      "skips": []
+    },
+    {
+      "file": "t048-runtime-mount-affected-001.xml",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 32,
+      "skips": []
+    },
+    {
+      "file": "t048-package-owner-red-001.xml",
+      "tests": 20,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 19,
+      "skips": []
+    },
+    {
+      "file": "t048-package-owner-green-001.xml",
+      "tests": 52,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 52,
+      "skips": []
+    },
+    {
+      "file": "t048-package-owner-affected-001.xml",
+      "tests": 109,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 108,
+      "skips": [
+        {
+          "test": "packages.workspace_service.tests.test_workflow_integration_document_write.test_declared_path_cannot_follow_symlink_outside_attempt",
+          "reason": "Host does not permit creation of a test symlink"
+        }
+      ]
+    }
+  ],
+  "latest_owning_and_affected_passes": 160,
+  "latest_skips": 1,
+  "earlier_canonical_runtime_passes": 32,
+  "ruff_command": [
+    ".venv/Scripts/python.exe",
+    "-m",
+    "ruff",
+    "check",
+    "--no-cache",
+    "scripts/engineering_external_slice_binding.py",
+    "scripts/prepare-printed-dataset-campaign.py",
+    "scripts/prepare-drill-jig-dataset-campaign.py",
+    "tests/test_engineering_external_slice_binding.py",
+    "tests/test_printed_dataset_bindings.py",
+    "tests/test_drill_jig_source_paths.py"
+  ],
+  "ruff_exit_code": 0,
+  "failures": [
+    {
+      "attempt": 1,
+      "diagnostic": "UNIQUE constraint failed: mcp_servers.name",
+      "result": null,
+      "start_receipt": null
+    },
+    {
+      "attempt": 2,
+      "diagnostic": "GatewayService.open_session() missing 1 required keyword-only argument: 'transport'",
+      "result": null,
+      "start_receipt": null
+    },
+    {
+      "attempt": 3,
+      "diagnostic": "Unsupported gateway transport: local-native",
+      "result": null,
+      "start_receipt": null
+    },
+    {
+      "attempt": 4,
+      "diagnostic": "workflow external_slice_qualification is missing authoring fields: discipline, purpose, reviewed_ai_suggestions.",
+      "result": null,
+      "start_receipt": null
+    },
+    {
+      "attempt": 5,
+      "diagnostic": "Recorded canonical run did not complete; reconcile retained stages, never replay its start",
+      "result": {
+        "run_id": "dc477baa5396416796cd4f04fc5e4a2a",
+        "status": "failed",
+        "run_log_path": "runs/external-slice-qualification/dc477baa5396416796cd4f04fc5e4a2a.json",
+        "error": "Retain the actual external provider response: the MCP tool reported an error.",
+        "code": "MCP_CALL_FAILED",
+        "correction": "Check the tool's inputs and its server log in Tool Registry, then retry."
+      },
+      "start_receipt": {
+        "principal_id": "qualification-083-local",
+        "process": {
+          "workspace_id": "workspace-083-external-slice-005",
+          "source_path": "workflows/external-slice-qualification.workflow.wflow",
+          "source_digest": "c67274d1328e7845e272b165f1f116a952d3b600c8d2a7fe2f85171e36971d4a",
+          "semantic_digest": null,
+          "source_contract": "canonical-source"
+        },
+        "request_id": "qualification-start-once",
+        "payload_digest": "8f63ff0b2310b42a2dfbbeede0912de18353bc4b5c36ec806805710ee2a63927",
+        "input_snapshot_id": "inputs-22028611b8db4c9d9cb04bf2f578b97f",
+        "input_digest": "3ad7ec0888ed685ea9b138ba2aaede515d94f8dc3dfd9fd0b88736ff497a2c91",
+        "run_id": "dc477baa5396416796cd4f04fc5e4a2a",
+        "run_log_path": "runs/external-slice-qualification/dc477baa5396416796cd4f04fc5e4a2a.json",
+        "initial_outcome": "accepted",
+        "created_at": "2026-10-03T09:25:38.999595+00:00"
+      }
+    },
+    {
+      "attempt": 6,
+      "diagnostic": "Recorded canonical run did not complete; reconcile retained stages, never replay its start",
+      "result": {
+        "run_id": "76baa59a1ee24762908af38bf125b542",
+        "status": "failed",
+        "run_log_path": "runs/external-slice-qualification/76baa59a1ee24762908af38bf125b542.json",
+        "error": "The task did not produce the expected file: qualification/artifacts/slice_package.gcode.3mf.",
+        "code": "WORKFLOW_NOT_READY",
+        "correction": "Inspect the tool results and correct the task or expected filename."
+      },
+      "start_receipt": {
+        "principal_id": "qualification-083-local",
+        "process": {
+          "workspace_id": "workspace-083-external-slice-006",
+          "source_path": "workflows/external-slice-qualification.workflow.wflow",
+          "source_digest": "838fe94be88d49987bcce5563bc9fd769dc04cba7441b74863430f18c40b03ee",
+          "semantic_digest": null,
+          "source_contract": "canonical-source"
+        },
+        "request_id": "qualification-start-once",
+        "payload_digest": "25851e874374c6d06d1806cd4870ef965e8bd237bb473af88a198bd58a419df1",
+        "input_snapshot_id": "inputs-90faa6df16274681b23e7c871d05cf79",
+        "input_digest": "619c986d2b4e34196a14e599043c4d8389e9a21ebe2a430cd736da569987cac7",
+        "run_id": "76baa59a1ee24762908af38bf125b542",
+        "run_log_path": "runs/external-slice-qualification/76baa59a1ee24762908af38bf125b542.json",
+        "initial_outcome": "accepted",
+        "created_at": "2026-10-03T09:27:17.749041+00:00"
+      }
+    }
+  ],
+  "publication_first_failure": "Publisher007 incorrectly demanded gateway cleanup on setup attempt001, which failed before constructing a gateway; stopped before any publication. Publisher008 verifies its actual no-gateway scope and repeats no execution.",
+  "owned_containers_revalidated_stopped": [
+    {
+      "attempt": 1,
+      "container_id": "e34d802b2719f10d33d0c338789fe7258fd1c8b858ae48c56ff97ac7220bc4a7",
+      "running": false
+    },
+    {
+      "attempt": 1,
+      "container_id": "cf4aa6ac0e0c726d89951c0207f70ac23d58f0256069fb304a54fc4883979c00",
+      "running": false
+    },
+    {
+      "attempt": 2,
+      "container_id": "a57c00ea8bbf5411f9f2fce54818cee5c236329362f9f14de8d0ee8081eff0c6",
+      "running": false
+    },
+    {
+      "attempt": 2,
+      "container_id": "88b17c9a8a120e78f72a4b9f0340e1430918ca7edb82dc26eb4d758e3bb09a07",
+      "running": false
+    },
+    {
+      "attempt": 3,
+      "container_id": "443620594a252e033b928f8e275eb5f6ad4d85479ccce7320df4abb9ad570d6a",
+      "running": false
+    },
+    {
+      "attempt": 3,
+      "container_id": "1fc5206be6a029727a3ae30b74e8cfa621ce49b2dc3caa3d2619fc0687a7f3c0",
+      "running": false
+    },
+    {
+      "attempt": 4,
+      "container_id": "8e012ca8f678755cbf90024827c9cd26a4b2066b6ff7f193e0e915d1a3b5b571",
+      "running": false
+    },
+    {
+      "attempt": 4,
+      "container_id": "0a4b1c80eaae0dde6085ae65c9add1124f91e186b644abea30c3dc9b5043fbd6",
+      "running": false
+    },
+    {
+      "attempt": 5,
+      "container_id": "c3a54f51050e6641720a70611c5ea45ad82f4c22deab36e349d44322b21a0a13",
+      "running": false
+    },
+    {
+      "attempt": 5,
+      "container_id": "bdcc51bea079dacbc861141e68d93d5c9cb97157c292e5602567e88321537337",
+      "running": false
+    },
+    {
+      "attempt": 6,
+      "container_id": "118a4fc2013710c21653d96392d47da9fd7f7c193ec9a1c522b14e367cb7d13b",
+      "running": false
+    },
+    {
+      "attempt": 6,
+      "container_id": "d3bfc145216864b399d9bb378fe9423dd61db904d53a8d6f66c8134b80c4650a",
+      "running": false
+    },
+    {
+      "attempt": 7,
+      "container_id": "35f005bfefe20aaebf5fbf5e09fe1ab329ee09b91d537f0be7a855596ad6b201",
+      "running": false
+    },
+    {
+      "attempt": 7,
+      "container_id": "13fa14ee093991b2a56f77a6eeb3a8f7754a4d0fd0466cf011236ffb60a6d853",
+      "running": false
+    }
+  ],
+  "protected_file_hashes": {
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92"
+  },
+  "reused_selected_installations": true,
+  "new_clean_slicer_install": false,
+  "full_six_assignment_live_qualification": false,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false,
+  "T043_T048_T049_complete": false,
+  "task_ledger": "49 checked / 8 open",
+  "publication_sources": {
+    "attempts/001/qualification.json": {
+      "private_source_bytes": 894,
+      "private_source_sha256": "9ee4a6ad699112973b21f5e0598e0cf249f7790e7fb9906e544092c0a6670b9a"
+    },
+    "attempts/002/qualification.json": {
+      "private_source_bytes": 957,
+      "private_source_sha256": "223460f863ff03e9b1681f0f73d8f549bde8a0731cf7b848231c554bbf2c3905"
+    },
+    "attempts/003/qualification.json": {
+      "private_source_bytes": 920,
+      "private_source_sha256": "b00aeb4117434701dc0b5fffcfc2feb26bc810a235bda00e19e3aeb1c393bbf2"
+    },
+    "attempts/004/qualification.json": {
+      "private_source_bytes": 2453,
+      "private_source_sha256": "7cf6d8e69b454890ca6f0e8fc8274a2f9f21f31c10e4bd226b90ff09f4c13ff4"
+    },
+    "attempts/005/qualification.json": {
+      "private_source_bytes": 9229,
+      "private_source_sha256": "aad1b92683ad641cbb445c525055af931a0a7b54b599952f2fa1bfe227ed64e9"
+    },
+    "attempts/005/canonical-run.json": {
+      "private_source_bytes": 13514,
+      "private_source_sha256": "4eee918216cf6019a77a8978f25552f5deba69367ce95a5313bebc51637375d4"
+    },
+    "attempts/006/qualification.json": {
+      "private_source_bytes": 9470,
+      "private_source_sha256": "5cc79e0320cf1d10144ebdcbd147eea5a4eddb04f09b7d3a016db408f4ae6691"
+    },
+    "attempts/006/canonical-run.json": {
+      "private_source_bytes": 22943,
+      "private_source_sha256": "21d0996c6327dd4f9c7c416914d0e5a3feaea9817a4a3500d2bed4a77873f63d"
+    },
+    "attempts/007/qualification.json": {
+      "private_source_bytes": 56482,
+      "private_source_sha256": "cc0b9bf4a505000f2c49c686345f3488c25c2391f2c15a79e627775ef609b591"
+    },
+    "canonical-run.json": {
+      "private_source_bytes": 107812,
+      "private_source_sha256": "c898882c7bf4e1eb587bb14b4fe76949deebeda6a678fc53d8245531875f118b"
+    },
+    "accepted-source.workflow.wflow": {
+      "private_source_bytes": 24198,
+      "private_source_sha256": "6dfec6c42d12f137648bea70a37ecbc80f2150c6ac3ba8f8a8918f53a549ecb6"
+    },
+    "qualification-driver.py": {
+      "private_source_bytes": 18591,
+      "private_source_sha256": "3fd57f481918a20fc305300ac48899ee5c1829a943bc159297b6d9a7eea279e7"
+    },
+    "authoring-preflight.json": {
+      "private_source_bytes": 323,
+      "private_source_sha256": "ca77ccfd8226750af19fc0b1d10beb34d64e70e777114b5bba2468c14a4f70d3"
+    },
+    "schemas/qualification-083-runtime-geometry-tools.json": {
+      "private_source_bytes": 41097,
+      "private_source_sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89"
+    },
+    "schemas/qualification-083-runtime-inspection-tools.json": {
+      "private_source_bytes": 38743,
+      "private_source_sha256": "f6d2119e3f4c6085f5a84b9e14f893601c3b904159008593759b229d937262b4"
+    },
+    "schemas/qualification-083-runtime-slicer-tools.json": {
+      "private_source_bytes": 7199,
+      "private_source_sha256": "4b7170cb04eee77ec0c588eaaa4534f40455385567876f5ea2e17d943ee847a9"
+    },
+    "external-binding.json": {
+      "private_source_bytes": 2280,
+      "private_source_sha256": "0da4b5ac763b2b3f6df9f82c2124c80dbae7dce55a055fbddd67b57e98e4d6eb"
+    },
+    "staged-inputs/machine-profile.json": {
+      "private_source_bytes": 20560,
+      "private_source_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "staged-inputs/process-profile.json": {
+      "private_source_bytes": 8180,
+      "private_source_sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "staged-inputs/filament-profile.json": {
+      "private_source_bytes": 7954,
+      "private_source_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "staged-inputs/passive-representations.py": {
+      "private_source_bytes": 25554,
+      "private_source_sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+    },
+    "staged-inputs/inspect_manufacturing_package.py": {
+      "private_source_bytes": 8561,
+      "private_source_sha256": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568"
+    },
+    "actual-artifacts/source_mesh.stl": {
+      "private_source_bytes": 684,
+      "private_source_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+    },
+    "actual-artifacts/geometry-response.json": {
+      "private_source_bytes": 110,
+      "private_source_sha256": "78508eca3ce9630ca539b57c1c7074ef4def05f01c0221b8fc62a2330b9635bd"
+    },
+    "actual-artifacts/slice_package.gcode.3mf": {
+      "private_source_bytes": 41988,
+      "private_source_sha256": "ddecce7a999ff954a178a7c6bbe43a0ab0143436830ef0d3f354c6ccf84390d9"
+    },
+    "actual-artifacts/slicer-execution.json": {
+      "private_source_bytes": 1826,
+      "private_source_sha256": "1efb9955d0dec6f4299adbb9a2577c5633e96562cdc5a273a234907e32fbd52e"
+    },
+    "actual-artifacts/slice-provider-response.json": {
+      "private_source_bytes": 1826,
+      "private_source_sha256": "1efb9955d0dec6f4299adbb9a2577c5633e96562cdc5a273a234907e32fbd52e"
+    },
+    "actual-artifacts/response-retention-receipt.json": {
+      "private_source_bytes": 269,
+      "private_source_sha256": "3f35edcdd66e2e9368c707d8bb196371121dedefe6008beb441641a8c3e91eb3"
+    },
+    "actual-artifacts/slice-evidence.json": {
+      "private_source_bytes": 1096,
+      "private_source_sha256": "da26f7dc21138552536af55df701436d1840490b8ed9ad26e4dffb1f87683f01"
+    },
+    "actual-artifacts/support-preview.svg": {
+      "private_source_bytes": 1774,
+      "private_source_sha256": "1bf1744088c6edf81b80e0f617f10773e6ca4313e53ae3edaf4f07ec5c48c748"
+    },
+    "actual-artifacts/machine-profile.json": {
+      "private_source_bytes": 20560,
+      "private_source_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "actual-artifacts/process-profile.json": {
+      "private_source_bytes": 8180,
+      "private_source_sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "actual-artifacts/filament-profile.json": {
+      "private_source_bytes": 7954,
+      "private_source_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "actual-artifacts/support-preview.json": {
+      "private_source_bytes": 37479,
+      "private_source_sha256": "f6804e86c003177ae454d0ba7f808ab1fe0cba41b32dcfe52f37d6d0d4d52649"
+    },
+    "actual-artifacts/toolpath-summary.json": {
+      "private_source_bytes": 1519,
+      "private_source_sha256": "39762b39621c8f3b4fb57bd6ad806df76e7ebce86aee877744f15cdeeec2d575"
+    },
+    "actual-artifacts/slice-preview.png": {
+      "private_source_bytes": 3878,
+      "private_source_sha256": "44d6169df3da45aa96546b8f91fc5d0d86352de3a1329b52e3f5e08362b097ac"
+    },
+    "actual-artifacts/package-inspection-result.json": {
+      "private_source_bytes": 1488,
+      "private_source_sha256": "36073eeee6ad9a39a433d7966aa875768c8113fb784340779fe49b4d4dfd7796"
+    },
+    "checks/t048-runtime-mount-red-001.xml": {
+      "private_source_bytes": 4840,
+      "private_source_sha256": "f2267a90f5a30f9207f7f4d431f92a6fb7a7354c494e049819cf0f611bfbeee8"
+    },
+    "checks/t048-runtime-mount-green-001.xml": {
+      "private_source_bytes": 8116,
+      "private_source_sha256": "839cc59be214986d1430caab3d1abaaef897c8f8bfa860a62296f397014b4ce1"
+    },
+    "checks/t048-runtime-mount-affected-001.xml": {
+      "private_source_bytes": 5657,
+      "private_source_sha256": "c4327f7e26e9882ff9f7340462bb84425a121834a75f90d72bb3503bc5626f99"
+    },
+    "checks/t048-package-owner-red-001.xml": {
+      "private_source_bytes": 5758,
+      "private_source_sha256": "aa714a596461d47e9017b970a3fc58a5813a96c7309c90aee86708944fac317f"
+    },
+    "checks/t048-package-owner-green-001.xml": {
+      "private_source_bytes": 8280,
+      "private_source_sha256": "8f739980b142979b4dca8900222fd12a1d1e5e452d8d88a64fa2acde9a552feb"
+    },
+    "checks/t048-package-owner-affected-001.xml": {
+      "private_source_bytes": 25873,
+      "private_source_sha256": "f9a6f853fd39a09908f0ee3690e1fcf11e54aecaaeea3c10e1682e08495805c6"
+    }
+  }
+}
