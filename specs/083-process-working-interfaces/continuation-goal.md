@@ -33,6 +33,41 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 
 ## Current verified checkpoint
 
+### Latest implementation — predictable tool authority at preparation
+
+The slicing runtime correction is committed as `fca24ce0` (62 exact owned paths,
+48 byte-verified artifact blobs). Its receipt is
+`.local-run/process-interfaces-083/external-slice-runtime-007-local-commit.json`.
+The next safe action audited the retained005 readiness/permission discrepancy
+and corrected the shared owner; do not repeat the earlier slicing runs.
+
+`WorkflowMcpRuntime.preflight_authority` checks known configured/AI tool gates
+after `prepare_authorized_workflow_run` resolves actual workspace or authenticated
+integration authority. No permissions are granted; final dispatch guards remain.
+Missing grants block both readiness and start before effects. Enabled grants and
+automatic enrolled document scope pass; manual/absent scope blocks. Declared
+human reviews/actions remain with their existing authority.
+
+Genuine red checks retain both false-ready cases. Earlier fixture mistakes are
+separate. Focused green cases and the current 40-module affected suite pass;
+the broad suite has 746 passes and three Windows symlink-creation permission
+skips. Do not add overlapping focused counts as distinct coverage. Four-file
+Ruff passes. Actual readiness-only observation uses the existing accepted source
+and production gateway metadata on a shadow database: blocked ordinary scope,
+zero added tool-call events, all 32 non-Git workspace files unchanged. Its owner
+closed; no run/model/provider/native operation was started or resumed.
+
+Public evidence: `artifacts/process-interfaces/083/20261003-tool-authority-readiness-verified/`
+(15 credential-scanned files). Planned focused receipt:
+`.local-run/process-interfaces-083/tool-authority-readiness-001-local-commit.json`.
+Reconcile its actual result and Git HEAD before any repeat staging. All new
+qualification/test/observation handles are terminal; old API/frontend owners still
+need liveness checks. Task ledger stays 49 checked / 8 open.
+Next finish the three skipped security cases on an appropriate isolated host,
+active mesh-repair/provider coupling migration, remaining provider qualification,
+current UI/editor/installed/accessibility and complete requirement audits.
+This checkpoint does not establish current served UI behavior or final T053.
+
 ### Latest implementation — actual slicing handoffs and producer correction
 
 This continuation completes the next safe runtime qualification after the bedtime

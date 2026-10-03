@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="12" time="1.184" timestamp="2026-10-03T05:37:48.366953-04:00" hostname="Work17"><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_set_inputs_persists_exact_values_without_source_edit_or_execution" time="0.080" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_read_only_default_view_and_missing_input_reasons" time="0.036" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_stored_snapshot_is_used_in_preparation_projection" time="0.055" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_preparation_permissions_and_foreign_snapshot_are_rejected" time="0.045" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_changed_template_qualification_blocks_the_same_inputs" time="0.065" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_invalid_known_tool_value_blocks_readiness_without_effects" time="0.054" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_text_file_tool_value_uses_contents_for_qualification" time="0.109" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_unavailable_tool_gateway_has_a_useful_blocking_reason" time="0.052" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_predictable_tool_authority_is_checked_before_execution[False-False]" time="0.052"><failure message="AssertionError: assert 'ready' == 'blocked'&#10;  &#10;  - blocked&#10;  + ready">packages\workspace_service\tests\test_process_preparation_service.py:230: in test_predictable_tool_authority_is_checked_before_execution
+    assert readiness.state == ("ready" if granted else "blocked")
+E   AssertionError: assert 'ready' == 'blocked'
+E     
+E     - blocked
+E     + ready</failure></testcase><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_predictable_tool_authority_is_checked_before_execution[False-True]" time="0.005"><failure message="workspace_service.process_interfaces.errors.ProcessInterfaceError: First needs a supported execution type.">packages\workspace_service\src\workspace_service\process_interfaces\inputs.py:88: in _sections
+    plan = compile_prompt_workflow(source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:835: in compile_prompt_workflow
+    raise _invalid(
+E   workspace_service.workflow_source_execution.WorkflowSourceExecutionError: First needs a supported execution type.
+
+The above exception was the direct cause of the following exception:
+packages\workspace_service\tests\test_process_preparation_service.py:227: in test_predictable_tool_authority_is_checked_before_execution
+    prepared = await app.set_inputs(scope(), process(text))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\core\src\core\tracing.py:47: in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\service.py:210: in set_inputs
+    prepared = await prepare_values(
+packages\workspace_service\src\workspace_service\process_interfaces\readiness.py:21: in prepare_values
+    plan, _ = _sections(resolved.document.source)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\inputs.py:91: in _sections
+    raise _unsupported(str(error), error.correction) from error
+E   workspace_service.process_interfaces.errors.ProcessInterfaceError: First needs a supported execution type.</failure></testcase><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_predictable_tool_authority_is_checked_before_execution[True-False]" time="0.067" /><testcase classname="packages.workspace_service.tests.test_process_preparation_service" name="test_predictable_tool_authority_is_checked_before_execution[True-True]" time="0.007"><failure message="workspace_service.process_interfaces.errors.ProcessInterfaceError: First needs a supported execution type.">packages\workspace_service\src\workspace_service\process_interfaces\inputs.py:88: in _sections
+    plan = compile_prompt_workflow(source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:835: in compile_prompt_workflow
+    raise _invalid(
+E   workspace_service.workflow_source_execution.WorkflowSourceExecutionError: First needs a supported execution type.
+
+The above exception was the direct cause of the following exception:
+packages\workspace_service\tests\test_process_preparation_service.py:227: in test_predictable_tool_authority_is_checked_before_execution
+    prepared = await app.set_inputs(scope(), process(text))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\core\src\core\tracing.py:47: in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\service.py:210: in set_inputs
+    prepared = await prepare_values(
+packages\workspace_service\src\workspace_service\process_interfaces\readiness.py:21: in prepare_values
+    plan, _ = _sections(resolved.document.source)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\inputs.py:91: in _sections
+    raise _unsupported(str(error), error.correction) from error
+E   workspace_service.process_interfaces.errors.ProcessInterfaceError: First needs a supported execution type.</failure></testcase></testsuite></testsuites>

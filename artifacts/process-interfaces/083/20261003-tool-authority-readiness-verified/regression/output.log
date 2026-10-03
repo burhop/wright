@@ -1,0 +1,26 @@
+........................................................................ [  9%]
+........................................................................ [ 19%]
+........................................................................ [ 28%]
+........................................................................ [ 38%]
+........................................................................ [ 48%]
+........................................................................ [ 57%]
+........................................................................ [ 67%]
+........................................................................ [ 76%]
+........................................................................ [ 86%]
+...................................s....................s............... [ 96%]
+................s............                                            [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\repos\wright\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] packages\workspace_service\tests\test_workflow_integration_document_write.py:311: Host does not permit creation of a test symlink
+SKIPPED [1] packages\workspace_service\tests\test_workflow_integration_file_read.py:436: Host cannot create symlinks
+SKIPPED [1] packages\workspace_service\tests\test_workflow_integration_file_copy.py:456: Host cannot create symlinks
+746 passed, 3 skipped, 2 warnings in 104.40s (0:01:44)

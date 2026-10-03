@@ -4,6 +4,14 @@
 **Current ledger:** **49 checked / 8 open**: T041, T043, T048, T049, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
 
+Known missing tool permissions now block shared readiness and run start before
+effects, with existing grant/dispatch authority preserved. An actual accepted-source
+metadata observation changes ordinary readiness from false-ready to blocked without
+calls or file changes. The current 40-module affected suite passes 746 tests;
+three Windows symlink-permission security cases remain skipped. This strengthens
+preparation/runtime evidence without closing current browser/installed or full T053
+obligations. See [verification](evidence/verification.md#predictable-tool-authority-and-current-affected-runtime--3-october-2026).
+
 The new external slicing declarations now have one small actual accepted-source
 runtime qualification: four gateway calls, 15 exact recorded outputs and no replay
 on duplicate start. A producer declaration defect is corrected in both preparers;

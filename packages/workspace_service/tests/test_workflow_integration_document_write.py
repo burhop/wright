@@ -178,6 +178,22 @@ def case(tmp_path):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("mode", ["auto", "manual", "absent"])
+async def test_readiness_uses_only_authenticated_automatic_document_authority(case, mode):
+    if mode != "absent":
+        await case.bind(approval_mode=mode)
+    if mode == "auto":
+        case.runtime.preflight_authority(case.step)
+    else:
+        with pytest.raises(WorkflowSourceExecutionError) as denied:
+            case.runtime.preflight_authority(case.step)
+        assert denied.value.code == "WORKFLOW_TOOL_APPROVAL_REQUIRED"
+    assert case.gateway.calls == []
+    assert case.events == []
+    assert not (case.root / "outputs/run/jig.py").exists()
+
+
+@pytest.mark.asyncio
 async def test_declared_python_source_is_written_once_with_exact_attributed_call(case):
     identity = await case.bind()
     value, _ = await case.runtime.call(case.step, case.arguments, on_event=case.emit)

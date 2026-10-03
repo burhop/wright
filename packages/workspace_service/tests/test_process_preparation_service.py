@@ -1,6 +1,7 @@
 """Process preparation composes existing qualification without executing work."""
 
 from types import SimpleNamespace
+from dataclasses import replace
 from unittest.mock import AsyncMock
 import json
 
@@ -205,3 +206,42 @@ async def test_unavailable_tool_gateway_has_a_useful_blocking_reason(tmp_path):
     assert readiness.state == "blocked"
     assert readiness.reasons[0].code == "CAPABILITY_UNAVAILABLE"
     assert readiness.reasons[0].correction
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("agent_task", [False, True])
+@pytest.mark.parametrize("granted", [False, True])
+async def test_predictable_tool_authority_is_checked_before_execution(tmp_path, agent_task, granted):
+    guarded = replace(TOOL, required_approvals=frozenset({"workspace_write_approval"}))
+    blocks = _parse(tool_source(default="Engineering requirements"))
+    first = next(block["fields"] for block in blocks if block["id"] == "first")
+    first["settings"]["mcp_schema_digest"] = schema_digest(guarded)
+    if agent_task:
+        first["performed_by"] = "ai_assisted"
+        first["settings"].update(authoring_template="mcp-task", mcp_task_tools=[guarded.tool_name],
+                                 task_guidance="Use only the declared tool and exact supplied requirements.")
+    text = "".join(section(block["kind"], block["id"], **block["fields"]) for block in blocks)
+    app = owner(tmp_path, text)
+    gateway = Gateway()
+    gateway.list_tools = lambda *args: (guarded,)
+    gateway.workspace_approvals_for_model_call = lambda *args: {"workspace_write_approval"} if granted else set()
+    prepared = await app.set_inputs(scope(), process(text))
+    readiness = await app.check_readiness(scope(), process(text), prepared.snapshot.snapshot_id,
+                                          gateway=gateway, session_id="session")
+    assert readiness.state == ("ready" if granted else "blocked")
+    if not granted:
+        assert readiness.reasons[0].code == "CAPABILITY_UNAVAILABLE"
+        assert "authorization" in readiness.reasons[0].message.lower()
+        assert readiness.reasons[0].correction
+        async def must_not_execute(*args, **kwargs):
+            raise AssertionError("A missing predictable grant must block before execution")
+
+        with pytest.raises(ProcessInterfaceError) as denied:
+            await app.runs.start(scope(), process(text), prepared.snapshot.snapshot_id,
+                                 "missing-tool-grant", expected_input_digest=prepared.snapshot.digest,
+                                 response_generator=must_not_execute, gateway=gateway, session_id="session")
+        assert denied.value.reason.code == "CAPABILITY_UNAVAILABLE"
+        assert app.runs._owned == {}
+    assert gateway.calls == []
+    assert gateway.closed
+    assert not (tmp_path / "first.json").exists()

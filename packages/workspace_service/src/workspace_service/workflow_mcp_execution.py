@@ -377,6 +377,36 @@ class WorkflowMcpRuntime:
             }
             self.validate(step, known, schema)
 
+    def preflight_authority(self, step):
+        """Check known call gates after exact run authority has been resolved.
+
+        This does not grant permission. Dispatch still rechecks current grants
+        and any enrolled document write's exact arguments/source/output target.
+        Declared human action steps are qualified by their separate review owner.
+        """
+        tools = self.task_tools(step) if step.agent_task else (self.resolve(step),)
+        from .workspace_document_artifacts import WORKSPACE_WRITE_APPROVAL
+
+        for tool in tools:
+            approvals = set(self.gateway.workspace_approvals_for_model_call(
+                self.session_id, tool.name
+            ))
+            authority = self._integration_document_write_authority
+            if (
+                tool.name == WORKSPACE_DOCUMENT_TOOL_NAME
+                and authority is not None
+                and authority.context.get("approval_mode") == "auto"
+                and {"server_id": tool.server_id, "name": tool.name,
+                     "schema_digest": schema_digest(tool)} in authority.context["allowed_tools"]
+            ):
+                approvals.add(WORKSPACE_WRITE_APPROVAL)
+            if tool.required_approvals - approvals:
+                raise _error(
+                    "WORKFLOW_TOOL_APPROVAL_REQUIRED",
+                    f"{step.title}: the selected tool needs workspace authorization before this process can run.",
+                    "Configure the required reviewed operation or choose an authorized provider before starting.",
+                )
+
     def validate(self, step, arguments, schema):
         if not isinstance(arguments, dict):
             raise _invalid(f"{step.title}: tool arguments must be a JSON object.")

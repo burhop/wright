@@ -151,6 +151,10 @@ async def prepare_authorized_workflow_run(
                 workspace_id=workspace_id,
                 run_id=run_id,
             )
+        if runtime is not None:
+            for step in plan.steps:
+                if step.tool_name or step.agent_task:
+                    runtime.preflight_authority(step)
         return PreparedWorkflowRun(plan, values, runtime, context, run_id)
     except BaseException:
         if runtime is not None:

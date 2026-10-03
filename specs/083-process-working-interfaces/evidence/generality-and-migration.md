@@ -1,5 +1,18 @@
 # Generality and prototype migration — partial evidence
 
+## Predictable permission readiness in the shared owner
+
+The retained permission denial exposed a shared preflight gap, distinct from vendor
+implementation. [Readiness evidence](../../../artifacts/process-interfaces/083/20261003-tool-authority-readiness-verified/checked-scope.json)
+shows the existing authorized preparation/runtime now check known configured and
+AI tool call gates before execution. They use current workspace grants or exact
+authenticated automatic test scope; they grant no permission. Declared human
+interactions and final dispatch guards remain authoritative. Actual accepted-source
+gateway metadata observation on a shadow database blocks ordinary missing scope
+without calls or changing 32 retained files. Forty affected modules pass 746 cases,
+with three explicit Windows symlink-permission skips. Browser/installed acceptance,
+remaining vendor retirement and complete T049 remain separate obligations.
+
 ## Actual slicing handoffs and package producer correction
 
 [Runtime qualification](../../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json)

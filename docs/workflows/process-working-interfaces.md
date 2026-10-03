@@ -15,6 +15,13 @@ or engineering-acceptance claim. Consult the
 
 ## Open and prepare a process
 
+Readiness checks the selected tools' known execution permissions as well as
+inputs, schemas and configuration. A missing permission identifies the affected
+step and blocks start before execution. Existing workspace provider grants remain
+the authority; built-in reviewed operations and exact integration-test enrollment
+retain their separate scope. This check grants no permission and does not replace
+the final dispatch checks or a process's declared human review.
+
 1. Open the intended workflow file in its Wright workspace. The **Workflows**
    control and file tabs retain the existing editor, diagram and source controls.
    An explicit workflow link selects that source rather than a restored unrelated

@@ -1,5 +1,35 @@
 # Feature 083 progress
 
+## Latest evidence — required tool authority checked before execution
+
+The slicing handoff checkpoint is committed locally as fca24ce0: 62 exact owned
+paths, 48 byte-verified artifact blobs, credential scan and preserved unrelated
+documentation. No push occurred. The follow-up audit reproduces a shared readiness
+gap: configured and AI tool steps were ready despite missing call authorization.
+An initial agent fixture used the wrong performer; its compilation failures are
+retained. Corrected genuine red checks fail only the two missing-permission cases.
+
+Existing authorized preparation now checks known call gates after workspace or
+exact integration authority is resolved. It grants nothing; actual dispatch still
+checks current authority and exact enrolled arguments/source/output. Missing
+permissions block readiness and start before model/tool effects. Authenticated
+automatic document enrollment passes; manual/absent authority blocks. Declared
+human action/review steps remain separate.
+
+Actual accepted-source/frozen-input/production-gateway metadata observation on a
+shadow database reports ordinary execution blocked, zero added calls and all 32
+non-Git basis files unchanged. Forty current affected modules pass 746 cases;
+three Windows symlink-permission skips remain pending isolated-host coverage.
+Focused suites overlap; four-file Ruff passes. Fifteen credential-scanned evidence
+files are in `artifacts/process-interfaces/083/20261003-tool-authority-readiness-verified/`.
+This is backend/preparation proof, not current browser/installed acceptance.
+
+49 checked / 8 open remains. Next finish host-skipped security checks, active
+mesh-repair/provider coupling migration, remaining provider qualification and
+current UI/editor/installed/accessibility/final requirement scope. Focused commit
+receipt: `.local-run/process-interfaces-083/tool-authority-readiness-001-local-commit.json`.
+No protected review, physical/supplier, push/merge/release action occurred.
+
 ## Latest evidence — actual independent slicing handoffs and exact producer
 
 The bedtime status turn refreshed the continuation checkpoint; it did not

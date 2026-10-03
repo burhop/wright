@@ -1,5 +1,22 @@
 # Verification record — partial feature acceptance
 
+## Predictable tool authority and current affected runtime — 3 October 2026
+
+[Scope, actual observation and commands](../../../artifacts/process-interfaces/083/20261003-tool-authority-readiness-verified/checked-scope.json)
+retain the corrected genuine red tests, initial agent-performer fixture failures,
+focused green XML, exact owning hashes and four-file Ruff. The current 40-module
+runtime/continuation/review/validation/API/document-authority suite passes
+**746 tests**, with **three host-permission skips** for symlink security cases.
+The exact 40-file command and output are in its `regression/` directory. Focused
+60/31-case results overlap this suite and are not extra distinct coverage.
+
+Known missing configured/AI tool permissions now block readiness and actual run
+start before effects. Existing enabled grants and authenticated automatic document
+scope pass; manual/absent scope blocks. Dispatch checks remain. Actual production
+gateway metadata/accepted-source readiness on a shadow database is blocked with
+zero calls and 32 unchanged workspace files. This is not native execution, browser,
+installed acceptance or complete T053; skipped security coverage remains pending.
+
 ## External slicing producer and mounted inspection — 3 October 2026
 
 [Checked scope and XML](../../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json)
