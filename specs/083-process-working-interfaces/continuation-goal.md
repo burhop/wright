@@ -1,0 +1,30 @@
+# Continue Feature 083 to completion
+
+This prompt resumes the approved implementation. Use `progress.md` and current
+runtime evidence for the next action; recorded service links do not prove that a
+service is still running. `completion.md` is an open audit, not a certificate.
+
+```text
+/goal Continue and complete Feature 083 in D:/repos/wright on codex/083-process-working-interfaces. Follow specs/083-process-working-interfaces/implementation-goal.md and finish all 57 tasks through M0–M5. This is continuation of the approved complete user experience, including actual AI-created reusable interfaces and two different engineering processes.
+
+I authorize unattended local implementation, testing, fresh isolated digital model/MCP demonstrations, bounded corrections and focused local commits. Keep making meaningful progress until the complete required scope is verified, I explicitly pause, or a genuine missing resource or authority prevents all useful work. Do not stop after a status report or milestone. No token budget is specified.
+
+Read AGENTS.md, the workflow-platform vision, process-app design, refactoring plan, engineering-demonstration principles and workflow UI integration guidance. Inspect the feature's implementation-goal.md, tasks.md, contracts, acceptance-cases.md, completion.md, progress.md and evidence. Verify current branch, worktree, artifacts and owned services before relying on a handoff. Preserve unrelated dirty work and historical failures.
+
+Apply V1–V7: Wright supports varied engineering workflows. Preserve the refined flowchart/source/inspectors and optional common or tailored working UI on one accepted process and durable run. Use Wright workspace tabs, public client/components/style and the existing runtime, gateway, validator, reviews, results, surfaces and storage. The backend owns execution, state, permitted actions and recovery. Generated interfaces contain no second executor or independent status authority. Independent providers own vendor behavior; do not introduce Wright-owned device protocols or vendor workarounds.
+
+Users create and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instruction/adapter and build provenance. Save versioned interfaces with exact bindings and compatibility information, retain common-view fallback, and prove saved reuse without generation or compilation. Gather predictable required choices before starting. Unattended sections continue without opportunistic questions; declared human interactions persist and resume the same run.
+
+Prioritize:
+1. Finish the printed-preparation source-run report and original validation gate, preserving failed consumers and their skipped gates. Diagnose the retained report timeout; verify the corrected bounded-read contract in a fresh exact-enrolled run. Separate retained-artifact assessments or simulator receipts do not count as executing a skipped source gate. Keep all original engineering thresholds, material/profile basis and mandatory reviews.
+2. Finish common/tailored exact-output, assessment, navigation, compatibility, focused update and saved-reuse evidence for both printed preparation and heat-spreader analysis. Show actual engineering tools and meaningful artifact handoffs. Digital and synthetic decisions are not physical verification or human engineering acceptance.
+3. Finish selected provider qualification, remaining slicing/prototype dependencies and real historical-format compatibility. Keep already-retired device/Studio implementation retired; preserve frozen campaign bindings and original evidence. Do not rename vendor code into a shared wrapper or redesign the 30 examples.
+4. Complete outstanding common-view, static hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse valid installed native/Docker and editor evidence; finish remaining pointer connections, pan and current-build working/preview journeys.
+5. Audit every requirement, success criterion, acceptance case and task against actual evidence. Update completion.md, the evidence index, runnable guidance and progress.md; save focused local commits. Mark complete only when the full required scope is proved.
+
+Use fresh isolated proof subjects. Authorized synthetic input/review decisions require exact enrollment, actor attribution and integration_test=true. Never answer retained second-run reviews, protected campaign checkpoints or un-enrolled human decisions. Never override a mandatory measured failure or claim human acceptance. Continue independent work while a genuine review waits.
+
+Reuse existing harnesses and evidence where their scope suffices. Preserve the first failure, diagnose it, make a bounded authorized correction and verify a fresh continuation. Avoid repetitive setup, whole-campaign reruns and status-only loops. Revalidate owned process handles before restart; a timeout does not establish termination. Unknown action outcomes require reconciliation, not blind mutation replay. Keep credentials and private traces out of public evidence.
+
+Continue unaffected tasks when a provider/model/resource is unavailable. Ask only for genuinely necessary missing resources, authority or materially new engineering decisions. No push, merge, release, public catalog promotion, physical machine operation, supplier submission, firmware/security workaround or unrelated campaign execution is authorized. Finish with an honest status, evidence links, remaining dependencies and the exact owned services still running.
+```

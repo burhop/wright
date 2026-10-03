@@ -1,0 +1,14 @@
+{
+  "prior_failed_consumer_run_id": "dc342991f8ba4f90962e836f513c7038",
+  "prior_failure": "TASK_TIMEOUT during report after eight file inspections, including a guessed repair filename",
+  "prior_failure_preserved": true,
+  "correction": "two exact connected bounded reads; supplied construction/repair material; read-only tool allowlist; compact report; 360 second task bound",
+  "producer_origin_unchanged": true,
+  "engineering_thresholds_unchanged": true,
+  "repair_changes": [
+    "fresh owned output path",
+    "fresh owned object prefix"
+  ],
+  "guard_passed": true,
+  "physical_dispatch": false
+}

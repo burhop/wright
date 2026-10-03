@@ -509,11 +509,13 @@ def prepare(workspace, attempt, tools, bindings):
     )
     report_result = flow.ai(
         report,
-        "Use inspect_file to read the actual geometry reports, slice evidence and recorded package/mesh hashes. Summarize construction, socket interpretation, repair, orientation/support consequences, exact PETG settings and nominal toolpaths. Separate design values from measured dimensions and future physical fit. The preview is nominal toolpath data, not completed printing. Retain all original mandatory limits and unresolved review requirements. Do not invent measurements, successful printing, fit, strength or a critic/human verdict.",
+        "The connected construction and repair results and original requirements are supplied reference material. Read those results directly; do not guess report filenames or reread supplied content. Use inspect_file exactly once for each connected slice_evidence and toolpath_summary workspace-file reference, using its verified relative path with includeText=true and maxTextBytes=65536. Those bounded records contain the actual package/mesh identity and profile observations; do not read raw profiles, G-code or the full support preview. Return the report after those two inspections; Wright saves it, so do not call a writing tool. Summarize construction, socket interpretation, repair, orientation/support consequences, exact PETG settings and nominal toolpaths. Separate design values from measured dimensions and future physical fit. The preview is nominal toolpath data, not completed printing. Retain all original mandatory limits and unresolved review requirements. Do not invent measurements, successful printing, fit, strength or a critic/human verdict. Return one compact JSON object under 6000 characters, with artifact_lineage, geometry_observations, preparation_observations, outstanding_requirements, limitations and engineering_acceptance=false.",
         "source-report.json",
         server=files,
-        calls=8,
+        calls=2,
+        timeout=360,
     )
+    report["fields"]["settings"]["mcp_task_tools"] = ["inspect_file"]
     for reference, key in [
         (source_result, "construction"),
         (repair_result, "repair"),

@@ -86,6 +86,15 @@ T056 remains unchecked until this ledger is resolved requirement by requirement,
 including every task, acceptance case, required artifact and verification command.
 The goal remains active.
 
+Latest printed-source continuation: consumer 002 emitted twelve artifacts, then
+failed at its report with `TASK_TIMEOUT`; its report, simulator and original
+source gate remain skipped. A bounded two-read report correction passes all 34
+example-preparation tests and is started in fresh exact-enrolled consumer 003.
+That live outcome and common/tailored parity are still pending. See
+[printed evidence](evidence/printed-proof.md); no requirement is closed by this
+correction's controlled tests or initial readiness alone. The complete resumed
+goal is available in [continuation-goal.md](continuation-goal.md).
+
 ### Resumed runtime evidence
 
 After this ledger was created, the 37-module controlled runtime/continuation/

@@ -487,3 +487,42 @@ remain private. These facts do not prove completion of slicing, report, source
 validation gate or final review. Preserve the earlier failed consumer and both
 unanswered retained second-run reviews. T045/T047 remain incomplete until the
 actual fresh outcomes and common/tailored evidence are inspected.
+
+## Report timeout and fresh bounded correction, 2 October evening
+
+Consumer `dc342991f8ba4f90962e836f513c7038` produced twelve actual outputs,
+including repaired geometry, a nonempty sliced package, complete support preview
+and bounded toolpath summary. It then failed with `TASK_TIMEOUT` at
+`summarize_preparation_retained_consumer_002`. Its report, simulator transfer and
+source validation gate were not executed. Its terminal failure remains unchanged.
+
+The durable report events show eight inspections: one guessed `repair-report.json`
+path failed with `invalid_input`; seven other reads succeeded, including large
+raw machine/profile content. The supplied construction/repair references were
+already available to the model. After the eighth call, the task timed out before
+a final report response. This is distinct from the earlier preview-size failure.
+
+The saved example now directs the report to use supplied geometry/requirements,
+inspect only the two exact connected bounded evidence files, and return a compact
+response for Wright to save. Its existing MCP task allowlist contains only
+`inspect_file`; the call bound is two and the time bound is 360 seconds. Neither
+runtime execution semantics nor engineering acceptance thresholds changed.
+All **34** declarative example-preparation tests pass in 4.78 seconds. These tests
+assert the compiled report contract and unchanged original eighteen-check gate;
+they make no native/model execution claim.
+
+Fresh exact-enrolled consumer
+`workflows/printed-replacement-part-retained-consumer-003.workflow.wflow` passes
+readiness and starts once as `bebf24bcdec44058a46371fa05d7cd83`. It uses fresh
+owned paths/object names with the currently live independent provider bindings,
+unchanged original producer lineage and original requirements/profiles. Its
+latest initial observation is running with no diagnostics; the correction's live
+success, actual gate and common/tailored parity remain unproven.
+
+Credential-scanned evidence:
+`artifacts/process-interfaces/083/20261003-retained-report-correction-003/`.
+Its record retains the failed run's event/filename/hash scope and the fresh exact
+accepted source. Private inspector helper syntax mistakes were corrected before
+any execution; they did not mutate a process or its evidence. Protected archive,
+campaign/context and nonretired prototype byte checks pass. No human acceptance,
+physical operation or retained second-run decision occurred. T045/T047 stay open.

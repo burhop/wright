@@ -1,0 +1,179 @@
+{
+  "failed_run_id": "dc342991f8ba4f90962e836f513c7038",
+  "status": "failed",
+  "code": "TASK_TIMEOUT",
+  "completed_output_files": [
+    {
+      "name": "filament-profile.json",
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "name": "geometry-basis.json",
+      "bytes": 3344,
+      "sha256": "60139c7f29f21c694069314cfa34648f03b252385e356c9152eabdc94352f491"
+    },
+    {
+      "name": "machine-profile.json",
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "name": "mesh-preview.png",
+      "bytes": 266946,
+      "sha256": "b8935b746035d4d77e3a52f4002e2266c38c1ac2e6c09a1c1a4f46edfb929044"
+    },
+    {
+      "name": "process-profile.json",
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "name": "repaired_mesh.stl",
+      "bytes": 540484,
+      "sha256": "1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8"
+    },
+    {
+      "name": "slice-evidence.json",
+      "bytes": 1234,
+      "sha256": "4e8211de3af7af73e5bbbac0b00e561a0aafd9253eb5a78ec5ec8527bfaa8dad"
+    },
+    {
+      "name": "slice-provider-response.json",
+      "bytes": 2040,
+      "sha256": "e55e3d9e3458ec9f8e5618b21b18ab953dd8e80830d66751569af113c0d48067"
+    },
+    {
+      "name": "slice_package.gcode.3mf",
+      "bytes": 361119,
+      "sha256": "3c4a8f2eefb7f6dbfe878854a0e3bbf8ce3a8dda5461e3cffa4f3813583b110c"
+    },
+    {
+      "name": "source_mesh.stl",
+      "bytes": 541284,
+      "sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18"
+    },
+    {
+      "name": "support-preview.json",
+      "bytes": 4493731,
+      "sha256": "cfed4f1b5d72dddaeccb05b1558cea1f893a538b7d25e1e18c6701e659de674f"
+    },
+    {
+      "name": "toolpath-summary.json",
+      "bytes": 1625,
+      "sha256": "35bffffc27956243da2cc52fbdc698cd5f092bb9e74f799282ac0360185e7a13"
+    }
+  ],
+  "report_reads": [
+    {
+      "at": "2026-10-03T01:35:15.475075+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/inputs/retained-construction-observations.json"
+      },
+      "status": "succeeded"
+    },
+    {
+      "at": "2026-10-03T01:35:28.841489+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/outputs/repair-report.json"
+      },
+      "status": "failed"
+    },
+    {
+      "at": "2026-10-03T01:35:42.718940+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/outputs/slice-evidence.json"
+      },
+      "status": "succeeded"
+    },
+    {
+      "at": "2026-10-03T01:35:54.817437+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/outputs/toolpath-summary.json"
+      },
+      "status": "succeeded"
+    },
+    {
+      "at": "2026-10-03T01:36:10.546117+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/outputs/process-profile.json"
+      },
+      "status": "succeeded"
+    },
+    {
+      "at": "2026-10-03T01:36:21.285491+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/outputs/filament-profile.json"
+      },
+      "status": "succeeded"
+    },
+    {
+      "at": "2026-10-03T01:36:33.922818+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/outputs/machine-profile.json"
+      },
+      "status": "succeeded"
+    },
+    {
+      "at": "2026-10-03T01:36:54.161227+00:00",
+      "tool": "wright-workspace-files__inspect_file",
+      "arguments": {
+        "includeText": true,
+        "maxTextBytes": 32768,
+        "offsetBytes": 0,
+        "relativePath": "process-proofs/printed-replacement-part/retained-consumer-002/inputs/retained-producer-origin.json"
+      },
+      "status": "succeeded"
+    }
+  ],
+  "report_emitted": false,
+  "simulator_transfer_executed": false,
+  "source_validation_gate_executed": false,
+  "failure_preserved": true,
+  "synthetic_basis_review_only": true,
+  "correction": "exact two connected bounded evidence reads; existing supplied geometry/requirements; read-only allowlist; compact response; 360 second task bound",
+  "controlled_example_tests": {
+    "command": ".venv/Scripts/python.exe -m pytest tests/test_process_interface_examples.py -q -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t047-report-contract-tests-003",
+    "passed": 34,
+    "failed": 0,
+    "seconds": 4.78,
+    "native_or_model_calls": false
+  },
+  "fresh_run_id": "bebf24bcdec44058a46371fa05d7cd83",
+  "fresh_source_path": "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow",
+  "fresh_source_sha256": "8bb09ab66acc856bf1b9a8310606422a37a16882c6c2db3dec67645aafd00ca5",
+  "fresh_input_digest": "a70ffd619a8d78724e3497ce992001cd096cbbd6e3a7686cf864505f7d0df1f6",
+  "fresh_state_at_start": "accepted",
+  "fresh_readiness": "ready",
+  "engineering_thresholds_unchanged": true,
+  "engineering_acceptance": false,
+  "physical_dispatch": false
+}

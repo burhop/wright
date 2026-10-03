@@ -1690,3 +1690,29 @@ Next: poll this exact run/host handles, inspect native handoffs and the actual
 report/gate; respond only to freshly enrolled synthetic simulator authority when
 permitted, never final authenticated engineering acceptance. Then verify matching
 common/tailored views and finish the remaining full-goal tasks.
+
+2 October evening continuation: authoritative observation shows consumer
+dc342991f8ba4f90962e836f513c7038 failed at report with TASK_TIMEOUT after twelve
+actual output files. Its eight inspection calls included a guessed invalid path
+and redundant raw profile reads. No report/transfer/source gate was produced.
+Preserved its terminal record and introduced a bounded example correction:
+two exact connected evidence reads, existing supplied geometry/requirements,
+read-only task allowlist, compact response and 360 second time bound. All 34
+example preparation tests pass (4.78 seconds); preservation checks pass.
+
+Fresh source consumer 003 passed readiness and started once as
+bebf24bcdec44058a46371fa05d7cd83; current initial read is running, no diagnostics.
+Its private helpers/context are under t047-printed-retained-consumer-003;
+the bounded observer is t047-observe-consumer-003-bounded.py. API/solver shell
+41512 and hidden native Blender shell 67342 were confirmed live. No service
+restart or action replay occurred. Next inspect this exact run, exercise only
+its enrolled synthetic basis/simulator decisions when actually waiting, then
+inspect the original gate and match common/tailored outputs. Do not repeat the
+start, respond to old retained reviews, or substitute the independent assessment
+for a skipped source gate. Public correction evidence is under
+artifacts/process-interfaces/083/20261003-retained-report-correction-003/.
+
+Saved the complete resumed /goal prompt in continuation-goal.md. The existing
+goal remains active and unlimited; the prompt carries forward all 57 tasks and
+the architecture, scope, test authority and protections. Feature completion,
+human engineering acceptance and physical verification remain separate.

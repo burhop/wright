@@ -475,6 +475,12 @@ def test_retained_consumer_uses_exact_repair_and_original_full_gate(
     assert profile.checks[-1].constraint.operator == "review"
     assert source.count('"action_kind":"local_review"') == 2
     summarizer = next(s for s in plan.steps if s.id.startswith("summarize_preparation"))
+    assert summarizer.agent_task is True
+    assert summarizer.max_tool_calls == 2
+    assert summarizer.timeout_seconds == 360
+    assert summarizer.task_tool_allowlist == ("inspect_file",)
+    assert "do not guess report filenames" in summarizer.prompt
+    assert "Wright saves it" in summarizer.prompt
     assert any("toolpath_summary" in address for _, address in summarizer.references)
     assert not any(
         address.endswith(".support_preview") for _, address in summarizer.references
