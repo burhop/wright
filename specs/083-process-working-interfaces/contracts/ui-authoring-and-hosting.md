@@ -85,7 +85,7 @@ Routes relative to the existing workspace mount:
 | GET /process-interfaces/authoring-jobs/{job_id} | Durable state, diagnostics and validated preview reference |
 | GET /process-interfaces/authoring-jobs/{job_id}/events | Bounded progress/diagnostic event stream |
 | POST /process-interfaces/authoring-jobs/{job_id}/cancel | Explicit authoring cancellation |
-| POST /process-interfaces/uis/{ui_id}/revisions/{revision}/save | Save the built previewed revision using expected hashes |
+| POST /process-interfaces/uis/{ui_id}/revisions/{revision_id}/save | Save the built previewed revision using expected hashes |
 | POST /process-interfaces/uis/{ui_id}/activate | Select compatible saved revision/rollback |
 | GET /process-interfaces/uis/{ui_id}/compatibility | Accepted process/current binding comparison |
 | POST /process-interfaces/uis/{ui_id}/present | Resolve saved artifact/grants and create workspace-tab presentation |

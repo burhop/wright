@@ -1,0 +1,25 @@
+{
+  "source_commit": "5323a6d63f740aa36d1aac0eb7e8340b944e7ab3",
+  "obligation_count": 182,
+  "counts_by_kind": {
+    "contract-section": 18,
+    "edge-case": 9,
+    "engineering-required-artifacts": 2,
+    "engineering-stage": 8,
+    "implementation-task": 57,
+    "independent-story-test": 4,
+    "named-runtime-check": 17,
+    "negative-recovery": 15,
+    "requirement": 28,
+    "user-story-acceptance": 21,
+    "workspace-distribution-acceptance": 3
+  },
+  "missing_live_evidence": [],
+  "missing_declared_targets": [],
+  "controlled_cases": 1694,
+  "counts_overlap_do_not_sum": true,
+  "component_cases": 760,
+  "mocked_browser_cases": 33,
+  "semantics_automatically_verified": false,
+  "goal_complete": false
+}

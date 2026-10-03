@@ -15,6 +15,16 @@ exact selected containers are stopped; 550 engineering/UI files and protected
 campaign files match. See [provider audit](evidence/provider-qualification.md#current-selected-provider-audit--3-october-2026).
 Current requirement tables below still need the complete T056 audit.
 
+T056 now has a [fresh derived evidence index](evidence/requirements-audit.md):
+182 obligations, all named task targets, 23 exact native route mappings, four
+retained installed ten-step reports and a passing current generated-contract check.
+The specification has **nine** edge cases. The index preserves exact requirement
+text and current test/proof identities; semantic signoff remains pending. One
+save-route parameter name is aligned with implementation without changing its
+URL shape. The [current FR/SC matrix](../../artifacts/process-interfaces/083/20261003-requirement-evidence-index/requirement-matrix.md)
+is the audit input. Historical tables below retain earlier findings and must not
+be interpreted as current uncompleted implementation tasks.
+
 T053's targeted current regression coverage is verified.91 exact backend modules
 pass1,538 cases; the three Windows symlink skips run and pass in the current
 Linux95-pass group.760 component/client/editor checks,33 mocked served workspace
@@ -187,6 +197,10 @@ and all 57 [tasks](tasks.md) retain their original authority.
 
 ## Functional requirements
 
+**Historical table:** the entries below predate the completed T041/T043/T048–T053
+scopes recorded above. Use the current evidence matrix and owning proof records;
+final T056 scope signoff remains open. Original checkpoint limitations stay intact.
+
 Latest bounded installed-native evidence:
 [saved-interface reuse](evidence/installed-native-reuse.md). Both jobs' common,
 saved and reload paths pass with compiler unavailable and unchanged durable
@@ -227,6 +241,10 @@ checks passed. No row grants an engineering review or external-effect authority.
 | FR-019 Useful progress/previews/failures/diagnostics | [Shared controls](evidence/shared-working-controls.md), [readers](evidence/representation-readers.md), [workspace acceptance](evidence/workspace-acceptance.md). | Complete served loading/error/freshness/accessibility/trace and two-process acceptance. |
 
 ## Success criteria
+
+**Historical table:** superseded implementation-state statements below are retained
+for chronology. They do not reopen checked tasks or establish final acceptance.
+The current 182-item audit still requires semantic review.
 
 | Criterion | Open audit finding |
 | --- | --- |

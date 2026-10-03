@@ -1,0 +1,42 @@
+{
+  "engineering-printed": {
+    "record": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/checked-scope.json",
+    "record_sha256": "b64dd5596ea5d7e82530ea09ff5fda0e305ce2c0a5506cf41ddf2c38ca832091",
+    "inventory_entries_byte_verified": 282
+  },
+  "engineering-heat": {
+    "record": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/checked-scope.json",
+    "record_sha256": "5df19a96bf2fdec9aee68976847cf3612b4862a560f05a468960cba338e82455",
+    "inventory_entries_byte_verified": 268
+  },
+  "engineering-audit": {
+    "record": "artifacts/process-interfaces/083/20261003-two-process-obligation-audit-002/audit.json",
+    "record_sha256": "08b4aae47c49f47a22b4629b0dfaec3377c2287282a6c237b1fce169f08822dd",
+    "inventory_entries_byte_verified": 3
+  },
+  "workspace": {
+    "record": "artifacts/process-interfaces/083/20261003-current-package-workspace-verified/checked-scope.json",
+    "record_sha256": "66a7af557da5887dab3e79d02209f8a958d1789e3bbc88c7677bbdac1d278e59",
+    "inventory_entries_byte_verified": 387
+  },
+  "authoring-states": {
+    "record": "artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/checked-scope.json",
+    "record_sha256": "e3f738341707d716728a059f661a444c0cbf32100f0f3dcf7396200c8c68f47b",
+    "inventory_entries_byte_verified": 42
+  },
+  "theme": {
+    "record": "artifacts/process-interfaces/083/20261003-theme-handshake-verified/checked-scope.json",
+    "record_sha256": "7c3c8ecd1a7889b50beb7b1dd2fcea34740910b0f3582eea02da2b7492124e42",
+    "inventory_entries_byte_verified": 66
+  },
+  "provider": {
+    "record": "artifacts/process-interfaces/083/20261003-agentcad-pinned-upstream-qualified/checked-scope.json",
+    "record_sha256": "9d8dedd927e44e38f4c30664ef54d99c5a7e5247281c531ead2b902955b5beeb",
+    "inventory_entries_byte_verified": 22
+  },
+  "migration": {
+    "record": "artifacts/process-interfaces/083/20261003-migration-disposition-verified/checked-scope.json",
+    "record_sha256": "0db51a9eb55bd1dda3e655d7dfb4b19112b02c40cd98c2de08ce7bacf9d998a1",
+    "inventory_entries_byte_verified": 18
+  }
+}

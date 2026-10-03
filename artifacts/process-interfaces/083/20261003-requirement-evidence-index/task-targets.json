@@ -1,0 +1,932 @@
+[
+  {
+    "task": "T001",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/progress.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/progress.md"
+        ]
+      },
+      {
+        "declared": ".specify/feature.json",
+        "exists": true,
+        "resolved": [
+          ".specify/feature.json"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T002",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/baseline.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/baseline.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T003",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/prerequisites.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/prerequisites.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T004",
+    "targets": [
+      {
+        "declared": "examples/process-interfaces/proof-bindings.json",
+        "exists": true,
+        "resolved": [
+          "examples/process-interfaces/proof-bindings.json"
+        ]
+      },
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/proof-scope.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/proof-scope.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T005",
+    "targets": [
+      {
+        "declared": "packages/core/src/core/process_interactions.py",
+        "exists": true,
+        "resolved": [
+          "packages/core/src/core/process_interactions.py"
+        ]
+      },
+      {
+        "declared": "packages/core/src/core/process_interfaces.py",
+        "exists": true,
+        "resolved": [
+          "packages/core/src/core/process_interfaces.py"
+        ]
+      },
+      {
+        "declared": "packages/core/tests/test_process_interface_contracts.py",
+        "exists": true,
+        "resolved": [
+          "packages/core/tests/test_process_interface_contracts.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T006",
+    "targets": [
+      {
+        "declared": "packages/data_vault/src/data_vault/process_input_repository.py",
+        "exists": true,
+        "resolved": [
+          "packages/data_vault/src/data_vault/process_input_repository.py"
+        ]
+      },
+      {
+        "declared": "packages/data_vault/tests/test_process_interface_migrations.py",
+        "exists": true,
+        "resolved": [
+          "packages/data_vault/tests/test_process_interface_migrations.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T007",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces"
+        ]
+      },
+      {
+        "declared": "packages/workspace_service/src/workspace_service/service.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/service.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T008",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/tests/test_process_interaction_projection.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/tests/test_process_interaction_projection.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T009",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/projection.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/projection.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T010",
+    "targets": [
+      {
+        "declared": "apps/api/src/api/routers/process_interfaces.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/src/api/routers/process_interfaces.py"
+        ]
+      },
+      {
+        "declared": "apps/api/src/api/schemas/process_interfaces.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/src/api/schemas/process_interfaces.py"
+        ]
+      },
+      {
+        "declared": "apps/api/src/api/main.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/src/api/main.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T011",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/tests/test_process_input_readiness.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/tests/test_process_input_readiness.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T012",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T013",
+    "targets": [
+      {
+        "declared": "apps/api/tests/test_process_interface_run_lifecycle.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/tests/test_process_interface_run_lifecycle.py"
+        ]
+      },
+      {
+        "declared": "packages/workspace_service/tests/test_process_run_supervisor.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/tests/test_process_run_supervisor.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T014",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/runs.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/runs.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T015",
+    "targets": [
+      {
+        "declared": "apps/api/src/api/routers/workspace.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/src/api/routers/workspace.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T016",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/workflow_async_operations.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/workflow_async_operations.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T017",
+    "targets": [
+      {
+        "declared": "packages/process_client/",
+        "exists": true,
+        "resolved": [
+          "packages/process_client"
+        ]
+      },
+      {
+        "declared": "apps/web/package.json",
+        "exists": true,
+        "resolved": [
+          "apps/web/package.json"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T018",
+    "targets": [
+      {
+        "declared": "packages/ui_kit/",
+        "exists": true,
+        "resolved": [
+          "packages/ui_kit"
+        ]
+      },
+      {
+        "declared": "apps/web",
+        "exists": true,
+        "resolved": [
+          "apps/web"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T019",
+    "targets": [
+      {
+        "declared": "apps/web/src/components/process-interfaces/CommonProcessView.tsx",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/components/process-interfaces/CommonProcessView.tsx"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T020",
+    "targets": [
+      {
+        "declared": "apps/web/src/components/chat/WorkspacePanel.tsx",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/components/chat/WorkspacePanel.tsx"
+        ]
+      },
+      {
+        "declared": "apps/web/src/store/viewer.tsx",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/store/viewer.tsx"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T021",
+    "targets": [
+      {
+        "declared": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx"
+        ]
+      },
+      {
+        "declared": "tests/ui-integration/process-common-view.spec.ts",
+        "exists": true,
+        "resolved": [
+          "tests/ui-integration/process-common-view.spec.ts"
+        ]
+      },
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/common-view.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/common-view.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T022",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/tests/test_process_human_input_source.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/tests/test_process_human_input_source.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T023",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/workflow_source_execution.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T024",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py"
+        ]
+      },
+      {
+        "declared": "packages/data_vault/src/data_vault/workflow_continuation_repository.py",
+        "exists": true,
+        "resolved": [
+          "packages/data_vault/src/data_vault/workflow_continuation_repository.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T025",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T026",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/workflow_approval_execution.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/workflow_approval_execution.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T027",
+    "targets": [
+      {
+        "declared": "apps/web/src/components/process-interfaces/",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/components/process-interfaces"
+        ]
+      },
+      {
+        "declared": "apps/web/src/prototypes/workflow-recovery/",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/prototypes/workflow-recovery"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T028",
+    "targets": [
+      {
+        "declared": "apps/api/tests/test_process_interface_checkpoints.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/tests/test_process_interface_checkpoints.py"
+        ]
+      },
+      {
+        "declared": "packages/workspace_service/tests/test_process_interface_continuation.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/tests/test_process_interface_continuation.py"
+        ]
+      },
+      {
+        "declared": "tests/ui-integration/process-declared-interactions.spec.ts",
+        "exists": true,
+        "resolved": [
+          "tests/ui-integration/process-declared-interactions.spec.ts"
+        ]
+      },
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/interactions.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/interactions.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T029",
+    "targets": [
+      {
+        "declared": "packages/agent_adapters/src/agent_adapters/base.py",
+        "exists": true,
+        "resolved": [
+          "packages/agent_adapters/src/agent_adapters/base.py"
+        ]
+      },
+      {
+        "declared": "packages/agent_adapters/tests/test_process_ui_author_role.py",
+        "exists": true,
+        "resolved": [
+          "packages/agent_adapters/tests/test_process_ui_author_role.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T030",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/resources/",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/resources"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T031",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/authoring.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/authoring.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T032",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/build.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/build.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T033",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T034",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/surfaces/",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/surfaces"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T035",
+    "targets": [
+      {
+        "declared": "packages/core/src/core/surfaces/live_app_manifest.py",
+        "exists": true,
+        "resolved": [
+          "packages/core/src/core/surfaces/live_app_manifest.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T036",
+    "targets": [
+      {
+        "declared": "apps/api/src/api/routers/surface_preview.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/src/api/routers/surface_preview.py"
+        ]
+      },
+      {
+        "declared": "apps/api/src/api/surface_route_authority.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/src/api/surface_route_authority.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T037",
+    "targets": [
+      {
+        "declared": "packages/process_client/",
+        "exists": true,
+        "resolved": [
+          "packages/process_client"
+        ]
+      },
+      {
+        "declared": "apps/web/src/services/surfaces/",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/services/surfaces"
+        ]
+      },
+      {
+        "declared": "apps/web/src/services/process-presentation-host.ts",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/services/process-presentation-host.ts"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T038",
+    "targets": [
+      {
+        "declared": "apps/api/src/api/routers/process_interfaces.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/src/api/routers/process_interfaces.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T039",
+    "targets": [
+      {
+        "declared": "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T040",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/tests/test_process_ui_authoring.py"
+        ]
+      },
+      {
+        "declared": "apps/api/tests/test_process_ui_surface_authority.py",
+        "exists": true,
+        "resolved": [
+          "apps/api/tests/test_process_ui_surface_authority.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T041",
+    "targets": [
+      {
+        "declared": "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx"
+        ]
+      },
+      {
+        "declared": "apps/web/src/services/process-ui-authoring*.spec.ts",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/services/process-ui-authoring-recovery.spec.ts",
+          "apps/web/src/services/process-ui-authoring.spec.ts"
+        ]
+      },
+      {
+        "declared": "tests/ui-integration/process-ui-authoring-live.spec.ts",
+        "exists": true,
+        "resolved": [
+          "tests/ui-integration/process-ui-authoring-live.spec.ts"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T042",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/live-ui-authoring.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/live-ui-authoring.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T043",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/provider-qualification.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/provider-qualification.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T044",
+    "targets": [
+      {
+        "declared": "packages/ui_kit/",
+        "exists": true,
+        "resolved": [
+          "packages/ui_kit"
+        ]
+      },
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/representations.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/representations.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T045",
+    "targets": [
+      {
+        "declared": "examples/process-interfaces/printed-replacement-part/",
+        "exists": true,
+        "resolved": [
+          "examples/process-interfaces/printed-replacement-part"
+        ]
+      },
+      {
+        "declared": "apps/web/src/components/chat/WorkspacePanel.tsx",
+        "exists": true,
+        "resolved": [
+          "apps/web/src/components/chat/WorkspacePanel.tsx"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T046",
+    "targets": [
+      {
+        "declared": "examples/process-interfaces/heat-spreader-sizing/",
+        "exists": true,
+        "resolved": [
+          "examples/process-interfaces/heat-spreader-sizing"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T047",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/printed-proof.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/printed-proof.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T048",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py"
+        ]
+      },
+      {
+        "declared": "docs/architecture/workflow-platform-refactoring-plan.md",
+        "exists": true,
+        "resolved": [
+          "docs/architecture/workflow-platform-refactoring-plan.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T049",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/generality-and-migration.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/generality-and-migration.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T050",
+    "targets": [
+      {
+        "declared": "packages/workspace_service/pyproject.toml",
+        "exists": true,
+        "resolved": [
+          "packages/workspace_service/pyproject.toml"
+        ]
+      },
+      {
+        "declared": "tests/packaging/test_process_interfaces_distribution.py",
+        "exists": true,
+        "resolved": [
+          "tests/packaging/test_process_interfaces_distribution.py"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T051",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/distribution.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/distribution.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T052",
+    "targets": [
+      {
+        "declared": "artifacts/process-interfaces/083/",
+        "exists": true,
+        "resolved": [
+          "artifacts/process-interfaces/083"
+        ]
+      },
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/workspace-acceptance.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/workspace-acceptance.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T053",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/evidence/verification.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/evidence/verification.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T054",
+    "targets": [
+      {
+        "declared": "examples/process-interfaces/",
+        "exists": true,
+        "resolved": [
+          "examples/process-interfaces"
+        ]
+      },
+      {
+        "declared": "docs/workflows/process-working-interfaces.md",
+        "exists": true,
+        "resolved": [
+          "docs/workflows/process-working-interfaces.md"
+        ]
+      },
+      {
+        "declared": "docs/architecture/agent-adapters.md",
+        "exists": true,
+        "resolved": [
+          "docs/architecture/agent-adapters.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T055",
+    "targets": [
+      {
+        "declared": "docs/design/process-apps.md",
+        "exists": true,
+        "resolved": [
+          "docs/design/process-apps.md"
+        ]
+      },
+      {
+        "declared": "docs/architecture/workflow-platform-refactoring-plan.md",
+        "exists": true,
+        "resolved": [
+          "docs/architecture/workflow-platform-refactoring-plan.md"
+        ]
+      },
+      {
+        "declared": "docs/contributing/workflow-ui-integration.md",
+        "exists": true,
+        "resolved": [
+          "docs/contributing/workflow-ui-integration.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T056",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/completion.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/completion.md"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "T057",
+    "targets": [
+      {
+        "declared": "specs/083-process-working-interfaces/progress.md",
+        "exists": true,
+        "resolved": [
+          "specs/083-process-working-interfaces/progress.md"
+        ]
+      }
+    ]
+  }
+]

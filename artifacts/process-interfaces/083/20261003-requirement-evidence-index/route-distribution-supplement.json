@@ -1,0 +1,587 @@
+{
+  "scope": "Read-only exact route mapping and retained installed report inspection; not fresh browser execution or proof of endpoint semantics by AST alone",
+  "required_native_routes": [
+    {
+      "method": "GET",
+      "route": "/process-interfaces/interaction",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "interaction_snapshot",
+      "line": 171,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/inputs",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "set_process_inputs",
+      "line": 202,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/readiness",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "process_readiness",
+      "line": 344,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/runs",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "start_process_run",
+      "line": 368,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "GET",
+      "route": "/process-interfaces/runs/{run_id}",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "attach_process_run",
+      "line": 494,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "GET",
+      "route": "/process-interfaces/runs/{run_id}/events",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "follow_process_run",
+      "line": 524,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/interactions/{checkpoint_id}/response",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "respond_to_process_input",
+      "line": 401,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/interactions/{checkpoint_id}/decision",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "decide_process_review",
+      "line": 434,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/actions/{action_id}",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "request_process_action",
+      "line": 465,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/runs/{run_id}/cancel",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "cancel_process_run",
+      "line": 583,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/inputs/upload",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "upload_process_input",
+      "line": 251,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/representations/read",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "read_process_representation",
+      "line": 288,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/navigation",
+      "contract": "specs/083-process-working-interfaces/contracts/process-interaction.md",
+      "source": "apps/api/src/api/routers/process_interfaces.py",
+      "function": "resolve_process_navigation",
+      "line": 227,
+      "source_sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "method": "GET",
+      "route": "/process-interfaces/authoring-capabilities",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "authoring_capabilities",
+      "line": 120,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/authoring-jobs",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "create_authoring_job",
+      "line": 151,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "GET",
+      "route": "/process-interfaces/authoring-jobs/{job_id}",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "authoring_job",
+      "line": 175,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "GET",
+      "route": "/process-interfaces/authoring-jobs/{job_id}/events",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "authoring_events",
+      "line": 221,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/authoring-jobs/{job_id}/cancel",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "cancel_authoring_job",
+      "line": 273,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/uis/{ui_id}/revisions/{revision_id}/save",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "save_interface",
+      "line": 290,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/uis/{ui_id}/activate",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "activate_interface",
+      "line": 324,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "GET",
+      "route": "/process-interfaces/uis/{ui_id}/compatibility",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "interface_compatibility",
+      "line": 346,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "POST",
+      "route": "/process-interfaces/uis/{ui_id}/present",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "present_interface",
+      "line": 486,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    },
+    {
+      "method": "GET",
+      "route": "/process-interfaces/uis/{ui_id}/runtime-diagnostics",
+      "contract": "specs/083-process-working-interfaces/contracts/ui-authoring-and-hosting.md",
+      "source": "apps/api/src/api/routers/process_ui_authoring.py",
+      "function": "interface_runtime_diagnostics",
+      "line": 523,
+      "source_sha256": "7b5e59ff45579cce0d5261253a27a65baa00538f61b73424fe2bcd76d1571de9"
+    }
+  ],
+  "required_route_count": 23,
+  "retained_installed_reports": [
+    {
+      "record": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/status.json",
+      "sha256": "553b675ddbaf2218fcd7adc792a38b4c05bcba91eddb377786552fcf253a9642",
+      "overall": "pass",
+      "passed_steps": 10,
+      "screenshots": [
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S01.png",
+          "sha256": "b5620fb80a62370fbe670a8b8926e23a1bc783a7337d45211f4250479c466e16"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S01.png",
+          "sha256": "e9bf41df5600d489daba05bf1e6b8681c2dd92f291d4209f8ac55ccfcc0fba4a"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S02.png",
+          "sha256": "9ac272d11fce9a2e4dcf20484ac3a74a3af427788b0497135f01289f4ad4de09"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S02.png",
+          "sha256": "0d63d0cea5d1fe1152417434b8d5bed89544a50abc606743d17ad97777652fa3"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S03.png",
+          "sha256": "2256b8383a54b759516088fa9fcf2e2abef3aaacf34f605cfebe09baa1509488"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S03.png",
+          "sha256": "2b895cb9ceeb48cd68e4849b323f84c5b659ab98e83061f9e3f1eb1a5d6b771f"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S04.png",
+          "sha256": "5339fbb0ed896f05da2e5dbd8368e8a89027f30c57715943fe7f287ef54e9087"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S04.png",
+          "sha256": "7dfab081c6b063a44f444682ddfe5b69223193844562340112dd6baa41273094"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S05.png",
+          "sha256": "3981775eed058d0bfe5e623179fa4abe03830b7b44c596f22486267e58112e0c"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S05.png",
+          "sha256": "e8ab5a3b334dc6c7b7e8f698bdc4e13b5cdcfa777f6b9e2f16011580c84c257d"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S06.png",
+          "sha256": "2f1caa65e8a6041f60a57811ea11ec256b5e0e7012068ee63a9961a1a87b9974"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S06.png",
+          "sha256": "2da46d1e52ecd21e370b50c867948b59672f67cb9407390338678a5553a8612f"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S07.png",
+          "sha256": "01c5ae638ba28845e7582fb3bdbceffcd46dd5a9e3b616878c84b8c6a7745331"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S07.png",
+          "sha256": "4479e55db05df112884a60dd7e168da770f7cf48316bc0c1d1979d1d46debd98"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S08.png",
+          "sha256": "e67dfdc147190af18674dd8d65b70099107d8eeebb42f189c84c5f8a044bdba1"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S08.png",
+          "sha256": "89f8d321386ff62eef5dd429486df8c5824c08baf886fb3490ba929c1b8abbde"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S09.png",
+          "sha256": "bd8f4277843627e9558af3fd52a4faba4250b1bd72a0e656d0a8d93b9c9a35d1"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S09.png",
+          "sha256": "8e2ebceae9afaccbbc343dfe2c0a9d0f9bfde0d13e9e9c81d53b585ff673c27d"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/raw/S10.png",
+          "sha256": "5133115f85c544c385c6fa8d6488d63c2366c81e6582a6fc41cff0aa6f6f64b1"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/screenshots/annotated/S10.png",
+          "sha256": "08c4d0117f587d28ccc4479de115116ab57d686ae4bd6f08e8e8fa77444aaa69"
+        }
+      ],
+      "current_build_relabelled": false
+    },
+    {
+      "record": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/status.json",
+      "sha256": "a15b88ce6d919c9695d2e374d52d5c6e287d8f22a9a1eee06dd548ac74b16f72",
+      "overall": "pass",
+      "passed_steps": 10,
+      "screenshots": [
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S01.png",
+          "sha256": "2ddf5cc145f62502dbb7b80ee82d64f71a2998b340eabb13e4c3ec498999134f"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S01.png",
+          "sha256": "bfcfdda0d67597a378d86737c840407fae2dbcd6152821ad8ce3242468bfa3cf"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S02.png",
+          "sha256": "7987c6ff748cae1ad3511611f11d89abf8a4164a7d64fa3ceabbb2286ef6f84d"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S02.png",
+          "sha256": "8b7f64c9afc6d29fdfc5ccd70afaa63cc10b91560483c302282a26d4fdf37aea"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S03.png",
+          "sha256": "d0f5a24fed2d0b3fc87867096098897550bdbcb374b205159a6fc702f2964959"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S03.png",
+          "sha256": "2c8c4c7e40793910c8c16491ae1d24a084e5f03c842bc3863a8bf58d72e690f8"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S04.png",
+          "sha256": "4f19da6217ce13b38484f3c58b4da39d492d13f53d8ae7ff12169a4ba8f9e797"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S04.png",
+          "sha256": "d161c440c1b7f55793555c19ca8054297b894f06e925d7e546b03d2cb844716a"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S05.png",
+          "sha256": "1e011c57c633427059b45e93d21dc5922c557a2f290ce2f3387e6ee7df2895f8"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S05.png",
+          "sha256": "c9857b9ffbd66db7c74a45b46f389b46d879648ff30a66711ed3afeee7bbed88"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S06.png",
+          "sha256": "7289379ac4db2ba15745c18e9dbe5b078c3a10a2803741111c0ff39629b3b268"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S06.png",
+          "sha256": "f0307d04476f8a4cfdb577f36f288a5e24f735475b6462624214c2adf41d623d"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S07.png",
+          "sha256": "d2310ad95e8b8b7a100d5c13e30b2717a7ead98e60971d6ca2960ed899890307"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S07.png",
+          "sha256": "afbd554ad1bd2533e32c03d1f4c011dd4204aae5b3f731eb8e9b1340aa9ad64f"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S08.png",
+          "sha256": "e6e29a5502674f296ce241cdbf8da77ee8a26abde86e6f8f84a9879b2aab8f4e"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S08.png",
+          "sha256": "cfa1341e9512cf8955d87a671d24b5e0f96e341f6da6935096b54809349ee97d"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S09.png",
+          "sha256": "e4e769818e4b1046e1504cd1be3f37a2c6de6ac165a6b7fba63ebd6e5a7ab5db"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S09.png",
+          "sha256": "a4dfaddf8535add4b57fa881c9c435b884240608136844629d2f34ea9a544e72"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/raw/S10.png",
+          "sha256": "39c841fd6711021b53723dad1e2d1268f57375e5c8eab58fbea6dc97a692a4ae"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-native-heat-010/workspace-walkthrough/screenshots/annotated/S10.png",
+          "sha256": "02a182404173f599a86dcc1e0eacbddaf6518ddad8ec51812b486cff6f16cd0e"
+        }
+      ],
+      "current_build_relabelled": false
+    },
+    {
+      "record": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/status.json",
+      "sha256": "34a92bd90cf6356e6388d6a14ea258a2d231e91af2900475cdb0efbacf0e88ef",
+      "overall": "pass",
+      "passed_steps": 10,
+      "screenshots": [
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S01.png",
+          "sha256": "0f79c857dd5a62352d4dbe6a7e7ca1409fa6f3afa8643e809740c3dec55bc7bc"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S01.png",
+          "sha256": "3af69ce7fc9e843f8d22b99a2689082335d332566d800adb484e9055549ee6d5"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S02.png",
+          "sha256": "42a789c7339308f682c294e132c628d5814a004ef2edb268015aa57997d6b58e"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S02.png",
+          "sha256": "cb4361526405a63e397be3c17a41905c57d0daefeea14706978d1c84be56146e"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S03.png",
+          "sha256": "855d091007400ae9659b0c1d892e23f0ff53963f7a3eaf12559f7695ac11cfff"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S03.png",
+          "sha256": "d497ffb9f511a50d1745cd704cb94f56cbe0df0e9c21e902b1274d8174b75184"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S04.png",
+          "sha256": "1aeb0136b50c04594cba4aacc66e177a598af06779166915989cade10493c4ec"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S04.png",
+          "sha256": "afaa78d1d129c0efec56450a1a6f1beac1b8e1a7dcfad5c93903e2b1ba4fb75c"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S05.png",
+          "sha256": "ddf05ec53c7ca0ae2e2d88afdf5cf6037cf3afbb0bfbe6a4e84502dce0e1d39d"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S05.png",
+          "sha256": "b08ef9e622e5584f61bf1470af3503bd8d493b3e76a94e721c0fb9bac3e02c21"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S06.png",
+          "sha256": "8b7a7bf3ba3522ad5f1dd003743c6efa0c7df965bbfcf53174851d49ea367125"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S06.png",
+          "sha256": "7834d45589ed91a8579fdc00c6432eb89c481efc5b916912c7d7ccd85e179b20"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S07.png",
+          "sha256": "cd890e92e46e0467e0e2ed91f9776f4fa924ba02a9d30d75eb975e0b236fdca1"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S07.png",
+          "sha256": "6fe73812bf42bef2b064e80e96892eb2520a7c3b57d1acc41d52ebb5447ef12c"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S08.png",
+          "sha256": "4e80c400cc3663c7f5e713c35d8f25cb4ef0d04bed46f830b51a34a4c2a83cdb"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S08.png",
+          "sha256": "f1dd63f738a0ffb0d0181ce7d59fda8620fe7ea22335670efb3e15f2c7f20a23"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S09.png",
+          "sha256": "b224e4b56938d2f2b67d18e1e3e383bd0b24fd8cbf3638f5db267c9e7adef2f9"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S09.png",
+          "sha256": "e6ee67168f976369c343dbc988ee286a15e2104e91d8b7f8d5d84c763cdf3684"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/raw/S10.png",
+          "sha256": "d28d6e853c62c8ad754fdabdd6d4350513f9aab74e133c5649efcbcb55f279e4"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-wheel-014/workspace-walkthrough/screenshots/annotated/S10.png",
+          "sha256": "73ebcb615755e70e15d5525eb3b044fbf979a0b5dbc0a380122f6c3560adec73"
+        }
+      ],
+      "current_build_relabelled": false
+    },
+    {
+      "record": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/status.json",
+      "sha256": "71e9ae3e6bb1513b6ab8497277ba9835d23d542e093174781e5c0f8643aab319",
+      "overall": "pass",
+      "passed_steps": 10,
+      "screenshots": [
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S01.png",
+          "sha256": "dfd16af22cb844e8d89170433bff61313bbbe026cabc6d8a466982b5e86169c9"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S01.png",
+          "sha256": "585a059534910d988159faca195bfb2b97a306f87e2fe0123bd60edc92e9495b"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S02.png",
+          "sha256": "46a4d08c4e7f5b138c4bcccd5a4cf49c91ea95fee8c617fa248f5fcf06e81f14"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S02.png",
+          "sha256": "d577efa23b7110334ac6646185a4db0fd0ae408d50cca5a72b8ef07215fe599f"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S03.png",
+          "sha256": "57aed84367eedf104d3968115e1f381c86d4dc267053c49e9df94021bdd0f759"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S03.png",
+          "sha256": "43524358bc346ecd72e889a82a5a204db7dd0255cf4487a155c7443b49a6a14c"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S04.png",
+          "sha256": "55cae9d89c32c6bb166d71fc7b8998f7b895bbf6f83b2ce4f17d30288741bbf7"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S04.png",
+          "sha256": "0703d2a89e1bafd3bfd1362000800d1933bb4891c09e3f951baea51ddfe0b5d0"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S05.png",
+          "sha256": "f06404b719ff4229ed32bae66c071589009ae79ecfb39dea88226ad66c25934c"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S05.png",
+          "sha256": "caccce39776b1ed5207277d319bc1f512d09abebdff8e4e985cd32b184401bd6"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S06.png",
+          "sha256": "e1fec82f7c13947f8a43ad5a8aef2f14c26a63c971de40813a50cffc713db49b"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S06.png",
+          "sha256": "dcda76552b5a881e507e9ea5c15b7765bdcc0261dcc310076a293942d1d4fa15"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S07.png",
+          "sha256": "0d3768163a6fb101a8169168357609e734ce1f3c7405b5f173fe23d6abd480ea"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S07.png",
+          "sha256": "40cd2980bbebfab8ec966b4007a025fc476dfe7bfdd5522a3a4153ec7850cfaf"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S08.png",
+          "sha256": "e42bc19f67de97e3e345a67bc5a872e60ffba7f35ad82ae5ca1890798de2a30c"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S08.png",
+          "sha256": "edeaf71f4251d63a3bc0c46aa36283bbe0d934387a63b509559395b6de5f9c8c"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S09.png",
+          "sha256": "cd23866f42190fb1a14d6817972b84031c58d0f2b4c55eb3c53b5a39a274df1f"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S09.png",
+          "sha256": "564eaa25ea77ed64b8666ea5ce72d8b737b1c13c9c210a4fdb2766455c7e61fb"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/raw/S10.png",
+          "sha256": "3348ebdad35eebd833aa4c0c03fad6ec94ed06ccf564ebc9f8914afdfa996a86"
+        },
+        {
+          "path": "artifacts/process-interfaces/083/20261002-installed-docker-heat-014/workspace-walkthrough/screenshots/annotated/S10.png",
+          "sha256": "45b0ba718c5da39e386f2b1e8af1dec398b4242097be0e9e68d6d44d911d1c2b"
+        }
+      ],
+      "current_build_relabelled": false
+    }
+  ],
+  "native_saved_reuse_compiler_unavailable": true,
+  "native_saved_reuse_no_model_calls": true,
+  "generated_contract_check": {
+    "command": [
+      ".venv/Scripts/python.exe",
+      "scripts/generate-frontend-contracts.py",
+      "--check"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "provider_or_model_calls": 0,
+  "review_responses": 0,
+  "physical_effects": false,
+  "goal_complete": false
+}

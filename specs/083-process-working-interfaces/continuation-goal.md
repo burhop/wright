@@ -18,9 +18,9 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile current HEAD and the remaining four-task ledger: T043, T053, T056 and T057. T048 caller migration and T049 shared-code/error audits are checked; the latter corrects implicit slice-provider configuration and a vendor-named missing-tool message.372 current controlled checks and156 frontend checks pass. Preserve the explicit prior-feature integration-debt dispositions and older installed build identities. Reuse completed proofs, then advance remaining qualification, full affected regression and requirement audits. T052 current installed006 workspace/native-zoom acceptance is checked; reuse its exact evidence.
+1. Reconcile current HEAD and the remaining two-task ledger: T056 and T057. T043 selected-provider qualification is committed as 5323a6d6; T053 current regression/corrections, T048/T049 migration/shared-code audits and T052 current installed/workspace/native-zoom acceptance are checked within their exact scopes. Reuse them. The current 182-obligation requirement index is an audit input, not semantic signoff; review primary assertions and actual behavior before closing T056. Preserve prior-feature integration-debt dispositions, failed attempts and older build identities.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
-3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
+3. Reuse the completed selected-provider qualification and active prototype migration audits within their scope. Existing pinned AgentCAD upstream2a377583 is separately qualified; the published0.6.0 creation failure remains retained. Reuse actual installed historical-format compatibility. Keep retired device/Studio/mesh code retired, frozen campaign bindings and the existing30 examples preserved. No new vendor implementation or catalog promotion is authorized.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 300-pass selected frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
 5. Audit every requirement, success criterion, acceptance case and task against authoritative evidence. Update completion.md, the evidence index, runnable guidance, progress and task checkboxes. Finish focused local commits. Mark complete only when the full required scope is proved; checked task counts are not percentage completion.
 
@@ -32,6 +32,25 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### T056 evidence index prepared — semantic signoff remains
+
+The current 182-obligation index covers all FR/SC,21 story scenarios,four story
+tests,nine edge cases,15 recovery cases,eight engineering stages/two artifact
+lists,three workspace paragraphs,18 contract sections,17 runtime checks and57
+tasks. Named task targets and live records resolve;23 exact required route
+templates map to implementation. Four retained installed reports have ten passing
+steps and present screenshots; generated contract check passes. The corrected
+save-route parameter is `revision_id`, with no runtime/client/URL-shape change.
+
+Read `evidence/requirements-audit.md` and
+`artifacts/process-interfaces/083/20261003-requirement-evidence-index/`.
+All rows still require final semantic scope review; matching files, families,
+routes or counts cannot close T056. The original two extraction assumptions are
+retained. Review exact primary assertions and real proof per obligation, resolve
+gaps, then publish the final ledger and finish T057.55 checked/two open remains.
+Native handles90330/46681 are revalidated live; model/compiler-unavailable proof
+scope remains deliberate. No provider/model/process/review/effect was replayed.
 
 ### T043 selected-provider audit verified — two tasks remain
 

@@ -1,5 +1,35 @@
 # Feature 083 progress
 
+## Full requirement index prepared — 3 October 2026
+
+T043's focused checkpoint is committed locally as `5323a6d6`: 29 owned paths,
+23 exact artifact blobs, 161 checked documentation links and all 311 unrelated
+status/hash entries unchanged. No push occurred. T056 now derives 182 explicit
+obligations from the specification, contracts, acceptance cases and all 57 tasks;
+no required scope is removed. Every named task target and matched live record
+resolves. Current controlled/component/mock-browser case indexes are retained
+with overlapping counts. Exact executable bytes remain at the T053 checkpoint.
+
+The audit checks both actual engineering inventories/full original profiles,
+all 23 required native API routes, four retained installed ten-step reports and
+their screenshot assets, and the current generated-contract check. The specification
+has nine edge cases, including bounded multi-hour external observation. One
+contract save-route placeholder is aligned with the actual `revision_id`; its
+URL shape/runtime/client behavior are unchanged. Gate-versus-check-count and
+paragraph-boundary harness failures remain. A fresh index follows the correction.
+
+This is an evidence index, **not final semantic signoff**. T056/T057 remain open;
+55 tasks are checked. Next review exact primary assertions and real behavior
+for all 182 obligations, resolve weak/incomplete required evidence, publish the
+final FR/SC/acceptance ledger, then finish preservation/commit/resource handoff.
+The old completion tables are explicitly labelled historical. Matching a family,
+route or file cannot establish goal completion. No new engineering/model/provider,
+review or physical/supplier action ran. Owned native sessions 90330/46681 are
+revalidated live; their unavailable-model fixture scope remains unchanged.
+
+Evidence: [requirements audit](evidence/requirements-audit.md) and
+`artifacts/process-interfaces/083/20261003-requirement-evidence-index/`.
+
 ## Current selected-provider qualification closed — 3 October 2026
 
 The prior goal turn refreshed status/prompt and discovered terminal passing
