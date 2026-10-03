@@ -1,0 +1,117 @@
+{
+  "files": {
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/002-command.json": {
+      "bytes": 1993,
+      "sha256": "58ac806dead296c52263085dfe81cea8c371a60c5f77993e004395d0523e9135"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/002-regression-output.txt": {
+      "bytes": 2408,
+      "sha256": "02521faf0fa79b24c86949a257d18044a027ab528de8b0a74dd2bea339051e8d"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/002-regression.xml": {
+      "bytes": 63830,
+      "sha256": "42876efb035f1768c3e4590c0f858236f3c4e62ee36181fd1a96c6eb14b515ce"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/002-result.json": {
+      "bytes": 1871,
+      "sha256": "5e10bc50736e53081f92005ca9e9041ce6043d64c01d292ed65a28626252a3f7"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/003-command.json": {
+      "bytes": 1993,
+      "sha256": "cc52f14f73d8e3ab1667874977ed68483aad714901b753c3682bea72bf5404f1"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/003-regression-output.txt": {
+      "bytes": 1235,
+      "sha256": "8bc33ee2708d5adbf30182da5a819afa84db7f6421513071297ca34e7f2dd774"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/003-regression.xml": {
+      "bytes": 62979,
+      "sha256": "38495736c67718dce458f63f1ec0eedc9c39d445752a4a31969e10649117af88"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/003-result.json": {
+      "bytes": 1871,
+      "sha256": "b3d64ba0ac2faa47f6287bafcdcf92da2c2d2b27878f7cc05e0f14f6866c2f52"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/004-command.json": {
+      "bytes": 2063,
+      "sha256": "df831fc8f8df748912cd65f8ae93a215c2fcd1414bce71ccaff809106c0e8491"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/004-regression-output.txt": {
+      "bytes": 1316,
+      "sha256": "abfd3242c5015173e4048df329eeacd4143f8dbdf4f2ceb9739aa54c14c0f720"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/004-regression.xml": {
+      "bytes": 65066,
+      "sha256": "c8471079fa4074d39bd62adce6b8053edb172e118e4308721db9a76aef6a4ee6"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/004-result.json": {
+      "bytes": 1943,
+      "sha256": "0e9b11e3b65c169aa96a3d1ad02a44c26e20549978333596180fb1f12aebdc3d"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/checked-scope.json": {
+      "bytes": 7752,
+      "sha256": "be608ba4faceda1c1e8d1ab5ca504ad7c1bf081710cf5c5afceac8721e3618be"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/README.md": {
+      "bytes": 2052,
+      "sha256": "b89b9e93a5a7cd88d39bebfc4dd6ab40990c3848748b2a313901e0d9ef0d9ca1"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/ruff-command.json": {
+      "bytes": 456,
+      "sha256": "47c48c2af2a782396a229e1243e6d1d6211fd5bce341d74c129e44367e2630a2"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/ruff-output.txt": {
+      "bytes": 20,
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-audit-coupling-002.py": {
+      "bytes": 6550,
+      "sha256": "f8d369e15f75f0e7551207caface3486048ff02ca19b92c406d8e55e8e53abbb"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-coupling-audit-001.json": {
+      "bytes": 34253,
+      "sha256": "7ff392d26a2a7f19a4f2cad5f0dcbc5f663ef9a8eb3ecbe7907e5a80b538f0ce"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-coupling-audit-002.json": {
+      "bytes": 33656,
+      "sha256": "3355990066a36f414900234f75dfa2fd00312cc6a0304b449e48a8a144e7ed81"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-generality-001.xml": {
+      "bytes": 1788,
+      "sha256": "19514f8062b73d8523df9b3243bb1efe366c442b6a8ef18954563f4d9d5bd5ed"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-generality-client-001.json": {
+      "bytes": 26386,
+      "sha256": "4a4bc83d9a61c0bdee5c78b493e09b36c76e1be2ef8eabe3e45e9db6147ff13f"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-generality-components-001.json": {
+      "bytes": 82001,
+      "sha256": "6ea9ee7459160c00857ed5f8f54ddedcc262be2b56e0c73672f516b6ceb49937"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-reader-green-001.xml": {
+      "bytes": 4523,
+      "sha256": "3ed10dd96acb448f5c43e9dab71bc07f22ed054a2bae50b43f74687779e07bed"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-reader-red-001.xml": {
+      "bytes": 15060,
+      "sha256": "9949200c3b1dac03e03ee91911f1ae671c879622647c018171b652091b5df6a9"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-run-generality-004.py": {
+      "bytes": 3262,
+      "sha256": "3fe993b3793eea7593cf90ae103a7853501d465aeecfd4c1d931b4401e6291d3"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-task-message-red-001.xml": {
+      "bytes": 3100,
+      "sha256": "eb728f9a4a9cd66c0c773fc7b1c96f3e09691c0e71b725270761d9f9482d7ebd"
+    },
+    "artifacts/process-interfaces/083/20261003-shared-platform-generality-verified/t049-task-message-red-002.xml": {
+      "bytes": 4930,
+      "sha256": "f58be98b661206df3e5aa82368a28b37ab20c2ee5ac8af98a64a8a23a407b7f2"
+    }
+  },
+  "credential_value_scan": "passed"
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="0.342" timestamp="2026-10-03T09:16:58.333906-04:00" hostname="Work17"><testcase classname="tests.test_process_platform_generality" name="test_shared_foundation_has_no_selected_vendor_literals_or_native_imports" time="0.181" /><testcase classname="tests.test_process_platform_generality" name="test_public_client_kit_and_process_views_have_no_provider_branch" time="0.013" /><testcase classname="tests.test_process_platform_generality" name="test_original_slice_profiles_already_declare_their_operation" time="0.001"><failure message="AssertionError: assert 7 == 6&#10; +  where 7 = len([WindowsPath('D:/repos/wright/packages/workspace_service/src/workspace_service/process_validation/profiles/printed-rep...right/packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-02.json'), ...])">def test_original_slice_profiles_already_declare_their_operation():
+        root = (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+        )
+        profiles = sorted(root.glob("printed-replacement-part-*.json"))
+        profiles.extend(sorted(root.glob("parametric-drill-jig-*.json")))
+&gt;       assert len(profiles) == 6
+E       AssertionError: assert 7 == 6
+E        +  where 7 = len([WindowsPath('D:/repos/wright/packages/workspace_service/src/workspace_service/process_validation/profiles/printed-rep...right/packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-02.json'), ...])
+
+tests\test_process_platform_generality.py:90: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,12 @@
+[
+  "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+  "-m",
+  "ruff",
+  "check",
+  "--no-cache",
+  "tests/test_process_platform_generality.py",
+  "tests/external/process_validation/test_printing.py",
+  "packages/workspace_service/src/workspace_service/process_validation/readers/printing.py",
+  "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+  "packages/workspace_service/tests/test_workflow_mcp_execution.py"
+]

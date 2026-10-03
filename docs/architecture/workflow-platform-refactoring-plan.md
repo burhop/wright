@@ -10,6 +10,17 @@ The shared interaction contract/client/kit and runtime migration are not complet
 
 ## Current migration checkpoint — 3 October 2026
 
+T048's complete caller inventory and T049's shared-code/error audit now have
+scoped verification. The implicit vendor slice-operation default and vendor-named
+missing-tool guidance are removed from existing generic owners.372 current
+controlled checks and156 frontend checks pass. Seven unchanged prior-feature
+catalog/lifecycle/source-contract references remain explicitly documented metadata
+or inherited integration debt, not new independent MCP implementations or a
+vendor-free-platform claim. Original profiles and engineering evidence remain
+preserved. See the [shared audit](../../specs/083-process-working-interfaces/evidence/shared-platform-audit.md).
+Current provider/scenario qualification and complete installed/workspace/regression
+acceptance are separate; earlier checkpoint paragraphs retain their original scope.
+
 The original printed preparer now declares independent geometry and passive
 inspection with explicit pinned arguments, original policy and exact native output
 ownership. The bundled repair implementation/wrapper, private campaign launcher

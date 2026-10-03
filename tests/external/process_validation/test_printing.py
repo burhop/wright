@@ -203,7 +203,11 @@ def test_identical_source_and_repaired_mesh_are_rejected():
     assert captured.value.action == "revise_output"
 
 
-def test_slice_and_transfer_evidence_bind_exact_package_bytes():
+@pytest.mark.parametrize(
+    "operation",
+    ["actual_local_bambu_slice", "independent_slicer_a", "independent_slicer_b/v2"],
+)
+def test_slice_and_transfer_evidence_bind_exact_package_bytes(operation):
     repaired = subject(
         "repaired_mesh",
         binary_stl(((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))),
@@ -214,7 +218,7 @@ def test_slice_and_transfer_evidence_bind_exact_package_bytes():
         "slice_evidence",
         json.dumps(
             {
-                "operation": "actual_local_bambu_slice",
+                "operation": operation,
                 "simulation": False,
                 "exit_code": 0,
                 "source_sha256": repaired.subject.sha256,
@@ -238,7 +242,10 @@ def test_slice_and_transfer_evidence_bind_exact_package_bytes():
             check(
                 "slice_binding",
                 selector="slice/hash_binding",
-                parameters={"related_roles": ["repaired_mesh", "slice_package"]},
+                parameters={
+                    "related_roles": ["repaired_mesh", "slice_package"],
+                    "expected_operation": operation,
+                },
             ),
             context,
         )
@@ -256,11 +263,56 @@ def test_slice_and_transfer_evidence_bind_exact_package_bytes():
             check(
                 "slice_binding",
                 selector="slice/hash_binding",
-                parameters={"related_roles": ["repaired_mesh", "slice_package"]},
+                parameters={
+                    "related_roles": ["repaired_mesh", "slice_package"],
+                    "expected_operation": operation,
+                },
             ),
             context,
         )
     assert captured.value.code == "printing.slice_binding"
+
+    with pytest.raises(ValidationIssue) as captured:
+        PrintingArtifactReader().measure(
+            evidence,
+            check(
+                "slice_binding",
+                selector="slice/hash_binding",
+                parameters={
+                    "related_roles": ["repaired_mesh", "slice_package"],
+                    "expected_operation": "another_configured_operation",
+                },
+            ),
+            context,
+        )
+    assert captured.value.code == "printing.slice_binding"
+
+
+@pytest.mark.parametrize(
+    "parameters",
+    [
+        {},
+        {"expected_operation": None},
+        {"expected_operation": ""},
+        {"expected_operation": "   "},
+        {"expected_operation": True},
+        {"expected_operation": 1},
+        {"expected_operation": ["independent_slicer"]},
+    ],
+)
+def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+    parameters,
+):
+    evidence = subject("slice_evidence", b"invalid-json", "json")
+    context = ReaderContext.create(ResourceBudget(), "missing-operation")
+    with pytest.raises(ValidationIssue) as captured:
+        PrintingArtifactReader().measure(
+            evidence,
+            check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+            context,
+        )
+    assert captured.value.code == "profile.printing_slice_operation"
+    assert captured.value.category == "source_conflict"
 
 
 def test_package_inventory_rejects_missing_required_member():

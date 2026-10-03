@@ -160,7 +160,14 @@ interfaces use the same foundation, with honest engineering checks and limits.
   two-engineering-chain proofs. Current owning checks pass179 and component checks
   pass15 without skips. Provider/scenario qualification and broader coupling/error
   acceptance remain T043/T049; no human review or hardware effect is claimed.
-- [ ] T049 [US4] Audit shared packages for provider/process coupling and stale/missing/effect errors; record two-process comparison and active-code retirement evidence in `specs/083-process-working-interfaces/evidence/generality-and-migration.md`, preserving immutable historical catalog/campaign data.
+- [x] T049 [US4] Audit shared packages for provider/process coupling and stale/missing/effect errors; record two-process comparison and active-code retirement evidence in `specs/083-process-working-interfaces/evidence/generality-and-migration.md`, preserving immutable historical catalog/campaign data.
+  The [shared platform audit](evidence/shared-platform-audit.md) surveys447 tracked
+  Python owners, verifies36 shared Python/22 UI-client-kit files and disposes seven
+  unchanged prior-feature integration references. Two vendor assumptions are fixed
+  in existing reader/MCP error owners.372 current controlled checks and156 frontend
+  checks pass; original profiles and550 retained engineering/UI files are unchanged.
+  This does not qualify all providers, erase unrelated integration debt or close
+  current installed/workspace/full-regression acceptance.
 
 ## Phase 7 — Polish and cross-cutting completion / M5
 

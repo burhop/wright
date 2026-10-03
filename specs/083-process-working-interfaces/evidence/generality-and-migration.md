@@ -1,5 +1,16 @@
 # Generality and prototype migration — partial evidence
 
+## Current shared-code audit and two-process comparison
+
+T048 caller migration and T049 coupling/error audit are now checked at their
+named scopes. [Shared platform audit](shared-platform-audit.md) records the actual
+two-process comparison,447-owner survey,36 shared Python/22 frontend guards,
+seven unchanged prior-feature integration dispositions and two concrete generic
+owner corrections.372 current controlled and156 frontend checks pass. Profiles,
+protected subjects and550 actual engineering/UI evidence files remain unchanged.
+Provider/scenario qualification and full current installed/workspace/regression
+acceptance remain T043/T052/T053. Historical checkpoints below keep their scope.
+
 ## Independent mesh retirement and existing validator gate
 
 [Retirement and runtime evidence](../../../artifacts/process-interfaces/083/20261003-mesh-repair-retirement/README.md)

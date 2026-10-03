@@ -18,7 +18,7 @@ Apply V1–V7. Wright supports varied engineering workflows. Preserve complement
 Users generate and refine reusable interfaces through Wright's replaceable coding role and actual configured default model. Record resolved model/profile/instructions/adapter and immutable build provenance. Save versioned interfaces with exact bindings and compatibility information, preserve common-view fallback, and prove saved reuse without generation or compilation. Resolve predictable required choices before execution. Unattended sections do not invent questions; declared human interactions persist waiting state and resume the same run after a valid exact-subject response.
 
 Prioritize:
-1. Reconcile current HEAD and the remaining six-task ledger: T043, T049, T052, T053, T056 and T057. The latest T048 disposition audit closes the active-caller migration scope, with179 owning and15 component checks, exact archives/current installed owner bytes and unchanged original-history/two-process evidence. T041 and compact-presentation scopes also pass. Reuse those proofs; do not repeat completed engineering runs or treat scoped checks as complete acceptance. Advance remaining provider/coupling, workspace/regression and requirement audits.
+1. Reconcile current HEAD and the remaining five-task ledger: T043, T052, T053, T056 and T057. T048 caller migration and T049 shared-code/error audits are checked; the latter corrects implicit slice-provider configuration and a vendor-named missing-tool message.372 current controlled checks and156 frontend checks pass. Preserve the explicit prior-feature integration-debt dispositions and older installed build identities. Reuse completed proofs, then advance remaining qualification, current installed/workspace/regression and requirement audits.
 2. Reuse verified common/tailored engineering output, assessment, block navigation, focused update and saved-reuse proof for both printed preparation and heat-spreader analysis; resolve any genuinely remaining broader compatibility/recovery obligation through its owning task. Retain substantive engineering tools, actual artifact handoffs, original assignments, thresholds, material/profile basis and critic/review requirements.
 3. Finish remaining selected-provider qualification and audit all active prototype callers/coupling. Existing slicing and mesh declarations and exact retired archives are progress, not blanket migration acceptance. Reuse the recorded actual installed historical-format compatibility where its scope suffices. Keep retired device/Studio/mesh code retired; preserve frozen campaign bindings and the existing 30 examples. Do not rename vendor debt into a shared wrapper or create a Wright-owned vendor MCP.
 4. Finish common-view, hosting/handshake, authoring/error/accessibility, editor, packaging and affected regression obligations. Reuse the current pointer-connection, pan, accessibility and responsive checks within their recorded scope; finish current-build working/preview and recovery journeys through the normal workspace entry. The latest 300-pass selected frontend group and older installed evidence do not establish complete acceptance or qualify a later source change.
@@ -32,6 +32,25 @@ Continue unaffected tasks when a provider, model or resource is unavailable. Ask
 ```
 
 ## Current verified checkpoint
+
+### T049 verified — five broader tasks remain
+
+The shared-code survey covers447 tracked Python owners. Permanent guards verify
+36 feature/shared Python and22 public client/kit/process-view files. Two defects
+are corrected: missing slice-operation configuration cannot imply a vendor label,
+and unavailable allowlisted tools give provider-neutral readiness guidance.
+372 current controlled checks and156 component/client checks pass without skips.
+
+Seven residual references are unchanged pre-083 metadata/classification/native
+lifecycle/source-contract owners, explicitly retained as metadata or integration
+debt rather than treated as new independent providers. Six original profiles and
+550 two-process evidence files remain unchanged. New reader config provenance is
+recorded; no older report/build is relabelled as current or rewritten.
+
+Ledger52 checked/five open: T043,T052,T053,T056,T057. Next finish qualification
+and full current workspace/installed/regression/requirement acceptance. Installed005
+retains its original reader/runtime bytes and must not be called the newest backend
+after these two source corrections. See `evidence/shared-platform-audit.md`.
 
 ### T048 verified — six broader tasks remain
 

@@ -736,7 +736,7 @@ class WorkflowMcpRuntime:
         if allowed != {tool.tool_name for tool in tools} and allowed:
             raise _invalid(
                 f"{step.title}: a required MCP task tool is unavailable.",
-                "Enable the configured Blender tools in this workspace, then run again.",
+                "Enable the configured tools for this server in the workspace Tool Registry, then check readiness again.",
             )
         if len(tools) > 64:
             raise _invalid(

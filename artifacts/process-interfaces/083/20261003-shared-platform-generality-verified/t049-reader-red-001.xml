@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="7" skipped="0" tests="26" time="3.269" timestamp="2026-10-03T09:09:18.002188-04:00" hostname="Work17"><testcase classname="tests.external.process_validation.test_printing" name="test_binary_stl_envelope_and_integrity_are_measured" time="0.002" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metrics_measure_actual_disconnected_bytes[triangle_count-8-1]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metrics_measure_actual_disconnected_bytes[connected_components-2-1]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metrics_measure_actual_disconnected_bytes[signed_volume_mm3-2.0-mm3]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_signed_volume_metric_preserves_inward_orientation" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metric_keeps_actual_triangle_edge_budget[10-True]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metric_keeps_actual_triangle_edge_budget[9-False]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metric_rejects_undeclared_selector[mesh/unknown]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metric_rejects_undeclared_selector[connected_components]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metric_rejects_undeclared_selector[mesh/]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metric_rejects_undeclared_selector[mesh/x_span_mm]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit[10-True]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit[9-False]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_shared_mesh_edges_use_actual_budget_and_keep_the_hard_limit[3-False]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_identical_source_and_repaired_mesh_are_rejected" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_slice_and_transfer_evidence_bind_exact_package_bytes[actual_local_bambu_slice]" time="0.002" /><testcase classname="tests.external.process_validation.test_printing" name="test_slice_and_transfer_evidence_bind_exact_package_bytes[independent_slicer_a]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_slice_and_transfer_evidence_bind_exact_package_bytes[independent_slicer_b/v2]" time="0.001" /><testcase classname="tests.external.process_validation.test_printing" name="test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters0]" time="0.001"><failure message="AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'&#10;  &#10;  - profile.printing_slice_operation&#10;  + subject.related_role_missing">parameters = {}
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            {},
+            {"expected_operation": None},
+            {"expected_operation": ""},
+            {"expected_operation": "   "},
+            {"expected_operation": True},
+            {"expected_operation": 1},
+            {"expected_operation": ["independent_slicer"]},
+        ],
+    )
+    def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+        parameters,
+    ):
+        evidence = subject("slice_evidence", b"invalid-json", "json")
+        context = ReaderContext.create(ResourceBudget(), "missing-operation")
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(
+                evidence,
+                check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+                context,
+            )
+&gt;       assert captured.value.code == "profile.printing_slice_operation"
+E       AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'
+E         
+E         - profile.printing_slice_operation
+E         + subject.related_role_missing
+
+tests\external\process_validation\test_printing.py:299: AssertionError</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters1]" time="0.001"><failure message="AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'&#10;  &#10;  - profile.printing_slice_operation&#10;  + subject.related_role_missing">parameters = {'expected_operation': None}
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            {},
+            {"expected_operation": None},
+            {"expected_operation": ""},
+            {"expected_operation": "   "},
+            {"expected_operation": True},
+            {"expected_operation": 1},
+            {"expected_operation": ["independent_slicer"]},
+        ],
+    )
+    def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+        parameters,
+    ):
+        evidence = subject("slice_evidence", b"invalid-json", "json")
+        context = ReaderContext.create(ResourceBudget(), "missing-operation")
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(
+                evidence,
+                check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+                context,
+            )
+&gt;       assert captured.value.code == "profile.printing_slice_operation"
+E       AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'
+E         
+E         - profile.printing_slice_operation
+E         + subject.related_role_missing
+
+tests\external\process_validation\test_printing.py:299: AssertionError</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters2]" time="0.001"><failure message="AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'&#10;  &#10;  - profile.printing_slice_operation&#10;  + subject.related_role_missing">parameters = {'expected_operation': ''}
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            {},
+            {"expected_operation": None},
+            {"expected_operation": ""},
+            {"expected_operation": "   "},
+            {"expected_operation": True},
+            {"expected_operation": 1},
+            {"expected_operation": ["independent_slicer"]},
+        ],
+    )
+    def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+        parameters,
+    ):
+        evidence = subject("slice_evidence", b"invalid-json", "json")
+        context = ReaderContext.create(ResourceBudget(), "missing-operation")
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(
+                evidence,
+                check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+                context,
+            )
+&gt;       assert captured.value.code == "profile.printing_slice_operation"
+E       AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'
+E         
+E         - profile.printing_slice_operation
+E         + subject.related_role_missing
+
+tests\external\process_validation\test_printing.py:299: AssertionError</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters3]" time="0.001"><failure message="AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'&#10;  &#10;  - profile.printing_slice_operation&#10;  + subject.related_role_missing">parameters = {'expected_operation': '   '}
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            {},
+            {"expected_operation": None},
+            {"expected_operation": ""},
+            {"expected_operation": "   "},
+            {"expected_operation": True},
+            {"expected_operation": 1},
+            {"expected_operation": ["independent_slicer"]},
+        ],
+    )
+    def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+        parameters,
+    ):
+        evidence = subject("slice_evidence", b"invalid-json", "json")
+        context = ReaderContext.create(ResourceBudget(), "missing-operation")
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(
+                evidence,
+                check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+                context,
+            )
+&gt;       assert captured.value.code == "profile.printing_slice_operation"
+E       AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'
+E         
+E         - profile.printing_slice_operation
+E         + subject.related_role_missing
+
+tests\external\process_validation\test_printing.py:299: AssertionError</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters4]" time="0.001"><failure message="AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'&#10;  &#10;  - profile.printing_slice_operation&#10;  + subject.related_role_missing">parameters = {'expected_operation': True}
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            {},
+            {"expected_operation": None},
+            {"expected_operation": ""},
+            {"expected_operation": "   "},
+            {"expected_operation": True},
+            {"expected_operation": 1},
+            {"expected_operation": ["independent_slicer"]},
+        ],
+    )
+    def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+        parameters,
+    ):
+        evidence = subject("slice_evidence", b"invalid-json", "json")
+        context = ReaderContext.create(ResourceBudget(), "missing-operation")
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(
+                evidence,
+                check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+                context,
+            )
+&gt;       assert captured.value.code == "profile.printing_slice_operation"
+E       AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'
+E         
+E         - profile.printing_slice_operation
+E         + subject.related_role_missing
+
+tests\external\process_validation\test_printing.py:299: AssertionError</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters5]" time="0.001"><failure message="AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'&#10;  &#10;  - profile.printing_slice_operation&#10;  + subject.related_role_missing">parameters = {'expected_operation': 1}
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            {},
+            {"expected_operation": None},
+            {"expected_operation": ""},
+            {"expected_operation": "   "},
+            {"expected_operation": True},
+            {"expected_operation": 1},
+            {"expected_operation": ["independent_slicer"]},
+        ],
+    )
+    def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+        parameters,
+    ):
+        evidence = subject("slice_evidence", b"invalid-json", "json")
+        context = ReaderContext.create(ResourceBudget(), "missing-operation")
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(
+                evidence,
+                check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+                context,
+            )
+&gt;       assert captured.value.code == "profile.printing_slice_operation"
+E       AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'
+E         
+E         - profile.printing_slice_operation
+E         + subject.related_role_missing
+
+tests\external\process_validation\test_printing.py:299: AssertionError</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_slice_binding_requires_an_explicit_operation_before_reading_artifacts[parameters6]" time="0.001"><failure message="AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'&#10;  &#10;  - profile.printing_slice_operation&#10;  + subject.related_role_missing">parameters = {'expected_operation': ['independent_slicer']}
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            {},
+            {"expected_operation": None},
+            {"expected_operation": ""},
+            {"expected_operation": "   "},
+            {"expected_operation": True},
+            {"expected_operation": 1},
+            {"expected_operation": ["independent_slicer"]},
+        ],
+    )
+    def test_slice_binding_requires_an_explicit_operation_before_reading_artifacts(
+        parameters,
+    ):
+        evidence = subject("slice_evidence", b"invalid-json", "json")
+        context = ReaderContext.create(ResourceBudget(), "missing-operation")
+        with pytest.raises(ValidationIssue) as captured:
+            PrintingArtifactReader().measure(
+                evidence,
+                check("slice_binding", selector="slice/hash_binding", parameters=parameters),
+                context,
+            )
+&gt;       assert captured.value.code == "profile.printing_slice_operation"
+E       AssertionError: assert 'subject.related_role_missing' == 'profile.prin...ice_operation'
+E         
+E         - profile.printing_slice_operation
+E         + subject.related_role_missing
+
+tests\external\process_validation\test_printing.py:299: AssertionError</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_package_inventory_rejects_missing_required_member" time="0.002" /></testsuite></testsuites>

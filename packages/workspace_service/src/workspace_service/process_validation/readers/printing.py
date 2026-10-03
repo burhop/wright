@@ -242,7 +242,8 @@ class PrintingArtifactReader:
                     "safe-package-inventory",
                     "simulator-transfer-binding",
                 ],
-                "version": 4,
+                "version": 5,
+                "slice_operation_policy": "explicit-profile-operation",
                 "mesh_metrics": ["triangle_count", "connected_components", "signed_volume_mm3"],
                 "stl_entity_accounting": "triangles-plus-unique-edges",
             }
@@ -339,6 +340,13 @@ class PrintingArtifactReader:
                 f"subject:{source.subject.id}@{source.subject.sha256}#mesh-lineage"
             )
         elif operation == "slice_binding":
+            expected_operation = check.parameters.get("expected_operation")
+            if not isinstance(expected_operation, str) or not expected_operation.strip():
+                raise ValidationIssue(
+                    "profile.printing_slice_operation",
+                    "Slice binding requires an explicit nonempty expected operation.",
+                    category="source_conflict",
+                )
             input_role = check.parameters.get("input_role", "repaired_mesh")
             if not isinstance(input_role, str) or not input_role:
                 raise ValidationIssue(
@@ -349,10 +357,7 @@ class PrintingArtifactReader:
             repaired, package = _related(context, input_role, "slice_package")
             value = _json_object(snapshot.content, "Slice evidence")
             valid = (
-                value.get("operation")
-                == check.parameters.get(
-                    "expected_operation", "actual_local_bambu_slice"
-                )
+                value.get("operation") == expected_operation
                 and value.get("simulation") is False
                 and value.get("exit_code") == 0
                 and value.get("source_sha256") == repaired.subject.sha256

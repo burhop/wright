@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="0.255" timestamp="2026-10-03T09:27:06.567782-04:00" hostname="Work17"><testcase classname="packages.workspace_service.tests.test_workflow_mcp_execution" name="test_missing_task_tool_has_provider_neutral_correction_without_dispatch[geometry-provider]" time="0.001"><failure message="AssertionError: assert 'Tool Registry' in 'Enable the configured Blender tools in this workspace, then run again.'&#10; +  where 'Enable the configured Blender tools in this workspace, then run again.' = WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.').correction&#10; +    where WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') = &lt;ExceptionInfo WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') tblen=2&gt;.value">server = 'geometry-provider'
+
+    @pytest.mark.parametrize("server", ["geometry-provider", "thermal-provider"])
+    def test_missing_task_tool_has_provider_neutral_correction_without_dispatch(server):
+        gateway = Gateway()
+        tool = replace(TOOL, name=server + "__search", server_id=server)
+        gateway.list_tools = lambda *args: (tool,)
+        runtime = WorkflowMcpRuntime(gateway, workspace_id="workspace", session_id="test")
+        step = SimpleNamespace(
+            server_id=server,
+            title="Prepare engineering result",
+            task_tool_allowlist=("search", "missing-tool"),
+        )
+        with pytest.raises(WorkflowSourceExecutionError) as caught:
+            runtime.task_tools(step)
+        assert caught.value.code == "WORKFLOW_NOT_READY"
+&gt;       assert "Tool Registry" in caught.value.correction
+E       AssertionError: assert 'Tool Registry' in 'Enable the configured Blender tools in this workspace, then run again.'
+E        +  where 'Enable the configured Blender tools in this workspace, then run again.' = WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.').correction
+E        +    where WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') = &lt;ExceptionInfo WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') tblen=2&gt;.value
+
+packages\workspace_service\tests\test_workflow_mcp_execution.py:57: AssertionError</failure></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_execution" name="test_missing_task_tool_has_provider_neutral_correction_without_dispatch[thermal-provider]" time="0.001"><failure message="AssertionError: assert 'Tool Registry' in 'Enable the configured Blender tools in this workspace, then run again.'&#10; +  where 'Enable the configured Blender tools in this workspace, then run again.' = WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.').correction&#10; +    where WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') = &lt;ExceptionInfo WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') tblen=2&gt;.value">server = 'thermal-provider'
+
+    @pytest.mark.parametrize("server", ["geometry-provider", "thermal-provider"])
+    def test_missing_task_tool_has_provider_neutral_correction_without_dispatch(server):
+        gateway = Gateway()
+        tool = replace(TOOL, name=server + "__search", server_id=server)
+        gateway.list_tools = lambda *args: (tool,)
+        runtime = WorkflowMcpRuntime(gateway, workspace_id="workspace", session_id="test")
+        step = SimpleNamespace(
+            server_id=server,
+            title="Prepare engineering result",
+            task_tool_allowlist=("search", "missing-tool"),
+        )
+        with pytest.raises(WorkflowSourceExecutionError) as caught:
+            runtime.task_tools(step)
+        assert caught.value.code == "WORKFLOW_NOT_READY"
+&gt;       assert "Tool Registry" in caught.value.correction
+E       AssertionError: assert 'Tool Registry' in 'Enable the configured Blender tools in this workspace, then run again.'
+E        +  where 'Enable the configured Blender tools in this workspace, then run again.' = WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.').correction
+E        +    where WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') = &lt;ExceptionInfo WorkflowSourceExecutionError('Prepare engineering result: a required MCP task tool is unavailable.') tblen=2&gt;.value
+
+packages\workspace_service\tests\test_workflow_mcp_execution.py:57: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,8 +1,19 @@
 # Feature 083 completion audit — incomplete
 
 **Branch:** `codex/083-process-working-interfaces`.
-**Current ledger:** **51 checked / 6 open**: T043, T049, T052,
+**Current ledger:** **52 checked / 5 open**: T043, T052,
 T053, T056 and T057. Task counts are not a percentage of completion.
+
+T049's shared-code/error audit now passes with two concrete corrections: explicit
+slice-operation configuration replaces the vendor default, and missing task tools
+give a provider-neutral readiness correction.372 controlled backend/API/validation
+checks and156 component/client checks pass. Seven pre-existing integration owners
+are explicitly recorded as unchanged metadata or inherited coupling/debt; this is
+not a claim that all Wright integrations are vendor-free. Original profiles and
+550 retained two-process evidence files remain unchanged. New reader configuration
+provenance is recorded; older installed builds/reports retain their exact identities.
+See [shared platform audit](evidence/shared-platform-audit.md). Current installed
+and complete acceptance remain T052/T053 and the final requirement audit.
 
 T048's complete caller inventory is now reconciled:21 absent paths, no retired
 implementation imports, explicit dispositions for startup/API/UI/scripts and
