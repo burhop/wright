@@ -1,0 +1,7 @@
+{
+  "session_id": "083-printed-prompt-session-055",
+  "path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+  "expected_storage_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+  "subject_digest": "1bca862008823cfbdd195b33a2d32eabe09eeb662795bcda9f0857d60e59202b",
+  "request_id": "fresh-mixed-second-transfer-continuation-071"
+}

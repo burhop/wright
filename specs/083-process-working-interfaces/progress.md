@@ -1,5 +1,30 @@
 # Feature 083 progress
 
+## Original-source saved UI reuse and setup review — 4 October UTC
+
+Local checkpoint `793cede6` retains original stage-input corrections,68 passing
+example checks, ordinary common-view execution and actual UI generation/update.
+The second full digital run now reaches the same original17-pass/required-human-
+hold gate. No required human review is answered. Both runs have20 exact results;
+the same updated built UI follows them without another model/build/execution.
+Two15-check workspace proofs and two exact assessment-display captures pass,
+using declared host navigation for shared geometry/toolpath viewers and exact
+assessment/producer links. First launch/inline-frame/flat-schema assumptions remain
+retained; corrections change test expectations, not product or engineering rules.
+
+[Current engineering review](../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json)
+disposes FR-016/T047; [setup review](../../artifacts/process-interfaces/083/20261004-setup-and-bindings-primary-verified/primary-review.json)
+disposes T001–T004. The [current ledger](../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/semantic-ledger.json)
+preserves all182 original identities/texts: **140 proved / 42 awaiting review**.
+All550 retained engineering/UI files and failed/common/saved records stay intact.
+Full-source public builtin-write readiness remains a disclosed boundary; exact
+test enrollment does not grant general readiness or physical/human acceptance.
+
+**55 tasks checked; T056/T057 open.** Continue remaining contract/task/workspace
+and final documentation review. Owned API8063/UI5246/native19988 remain available;
+existing unrelated services are untouched. No push, merge, release or physical action.
+Earlier dated sections retain their original evidence and counts.
+
 ## Named runtime checks — 3 October 2026
 
 The [current runtime primary verification](../../artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/README.md) disposes all seventeen named

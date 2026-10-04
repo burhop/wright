@@ -1,0 +1,52 @@
+{
+  "title": "Inspect the two original source assessments",
+  "summary": "Read-only exact assessment display for two completed digital preparation chains. Both remain held for required human engineering review. No new execution, decision or acceptance.",
+  "overall": "pass",
+  "updated": "2026-10-04T02:55:32.182Z",
+  "manualSteps": [
+    {
+      "label": "Recorded run",
+      "instruction": "Open the exact recorded-run workspace link."
+    },
+    {
+      "label": "Assessment",
+      "instruction": "Click Open assessment on repaired_mesh.stl, then scroll to the opened assessment."
+    },
+    {
+      "label": "Review hold",
+      "instruction": "Inspect the digital findings and required human-review hold; leave decisions unanswered."
+    }
+  ],
+  "steps": [
+    {
+      "id": "A01",
+      "state": "pass",
+      "label": "Exact first-run assessment is readable",
+      "summary": "The recorded first run assessment shows 17 digital passes and one required human-review hold; no release or human acceptance is claimed.",
+      "purpose": "The exact source assessment and mandatory human-review hold remain visible",
+      "action": "Click Open assessment and scroll to the opened assessment",
+      "controls": [
+        "Click Open assessment and scroll to the opened assessment"
+      ],
+      "expected": "The exact source assessment and mandatory human-review hold remain visible",
+      "actual": "The recorded first run assessment shows 17 digital passes and one required human-review hold; no release or human acceptance is claimed.",
+      "raw": "screenshots/raw/A01.png",
+      "annotated": "screenshots/annotated/A01.png"
+    },
+    {
+      "id": "A02",
+      "state": "pass",
+      "label": "Exact second-run assessment is readable",
+      "summary": "The recorded second run assessment shows 17 digital passes and one required human-review hold; no release or human acceptance is claimed.",
+      "purpose": "The exact source assessment and mandatory human-review hold remain visible",
+      "action": "Click Open assessment and scroll to the opened assessment",
+      "controls": [
+        "Click Open assessment and scroll to the opened assessment"
+      ],
+      "expected": "The exact source assessment and mandatory human-review hold remain visible",
+      "actual": "The recorded second run assessment shows 17 digital passes and one required human-review hold; no release or human acceptance is claimed.",
+      "raw": "screenshots/raw/A02.png",
+      "annotated": "screenshots/annotated/A02.png"
+    }
+  ]
+}

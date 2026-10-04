@@ -1,5 +1,36 @@
 # Feature 083 completion audit — incomplete
 
+## Current checkpoint — 4 October UTC: both engineering/UI demonstrations
+
+The [current primary review](../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json)
+disposes FR-016/T047 after the original-input printed chain, actual default-model
+generation/update and exact saved-interface reuse/navigation. The separate
+[setup review](../../artifacts/process-interfaces/083/20261004-setup-and-bindings-primary-verified/primary-review.json)
+disposes T001–T004 against retained baseline, frozen requirements and later actual
+qualification. **140 proved / 42 awaiting review** of the same182 original
+identities/texts; the [current ledger](../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/semantic-ledger.json)
+preserves their wording.
+
+Both distinct printed runs produce20 exact outputs and execute the original
+gate:17 digital passes and one mandatory authenticated human-review hold.
+The same actual-generated, focus-updated revision opens both runs without
+authoring, build or execution replay. Two15-check workspace walkthroughs verify
+common/saved result parity and exact geometry,90-layer nominal toolpaths,
+assessment and producing-block navigation. Two focused assessment captures
+compare displayed JSON with the complete original files. The saved composition
+uses Wright's common viewer through declared host navigation; inline frame
+rendering is not claimed. All earlier launch/viewer/schema assumptions remain
+retained first stops. The existing Heat proof remains unchanged with actual
+STEP/field handoffs,25 digital passes, required human hold and critic approval false.
+
+The full printed source's public builtin-write readiness constraint remains
+explicit; exact enrolled digital-test authority is not general public readiness.
+Physical/user/engineering acceptance is separate. **55 tasks checked;
+T056/T057 open.** Remaining contract/task, workspace and final documentation
+review continues. No push, merge, release or physical operation occurred.
+
+Earlier checkpoint sections below retain their original evidence and counts.
+
 ## Current checkpoint — 4 October UTC: original inputs and common execution
 
 The [current primary review](../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/primary-review.json)

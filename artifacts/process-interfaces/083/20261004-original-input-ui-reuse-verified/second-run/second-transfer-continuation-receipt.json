@@ -1,0 +1,821 @@
+{
+  "http": 202,
+  "seconds": 11.748467299999902,
+  "snapshot": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "083-fresh-prompt-055",
+        "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+        "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "84cd89a395af406e80d094ec071abe59",
+      "input_snapshot_id": "inputs-a998c6edadf54c0ba80bd8d47e7cca8f",
+      "input_digest": "01f54dbb9014fc70e96ee0ea5256c87edcc728b29e00a0ad3963fcb056061700",
+      "cursor": 81,
+      "generated_at": "2026-10-04T02:40:31.768333+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+        "step_id": "define_geometry_basis_mixed_default_071",
+        "port_id": "define_geometry_basis_mixed_default_071_result",
+        "role": "deliverable",
+        "title": "Interpret the original wheel and manufacturing requirements",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/geometry-basis.json",
+            "sha256": "6e02217bc19013c096cc2116e32d982e6753e874ae54211904c68d299f71631f",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:source_mesh",
+        "step_id": "create_mesh_mixed_default_071",
+        "port_id": "source_mesh",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source_mesh.stl",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source_mesh.stl",
+            "sha256": "662a28365d5808af0d769c37d8b5efee372804c485806fde96627bf21041c618",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:source_mesh",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": [
+          "stl"
+        ]
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repaired_mesh",
+        "step_id": "repair_measure_orient_mixed_default_071",
+        "port_id": "repaired_mesh",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/repaired_mesh.stl",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/repaired_mesh.stl",
+            "sha256": "568cf612a6150b1473155bab3c0f628c547936e9484555c60d9a562ea00e617d",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repaired_mesh",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": [
+          "stl"
+        ]
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:mesh_preview",
+        "step_id": "repair_measure_orient_mixed_default_071",
+        "port_id": "mesh_preview",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/mesh-preview.png",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/mesh-preview.png",
+            "sha256": "3d5d2d5f4e8996b00bb8afe7600c36b6b92661a5e85055028b4d505fc1896bed",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:mesh_preview",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": [
+          "image"
+        ]
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:slice_package",
+        "step_id": "supports_and_slice_mixed_default_071",
+        "port_id": "slice_package",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice_package.gcode.3mf",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice_package.gcode.3mf",
+            "sha256": "2877d7e7b4fc692512da3924774152a6a7320e4bb8381f260a7d576c2bfa64bc",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:slice_package",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:provider_response",
+        "step_id": "retain_slice_response_mixed_default_071",
+        "port_id": "provider_response",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-provider-response.json",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-provider-response.json",
+            "sha256": "287569ca825abd54b19bfd70c4c5c036d2028856d281db2f457b9055ce6e3ae6",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:provider_response",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:slice_evidence",
+        "step_id": "inspect_slice_handoff_mixed_default_071",
+        "port_id": "slice_evidence",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-evidence.json",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-evidence.json",
+            "sha256": "25a041ce10ca491bcb1d56ae92dabef56be5159710d5cc484f6d4a48ef31b8e7",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:slice_evidence",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+        "step_id": "inspect_slice_handoff_mixed_default_071",
+        "port_id": "support_preview",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/support-preview.json",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/support-preview.json",
+            "sha256": "8bb38c5dc49d03d8c8a17304356b24d589dbbd3290e9ac55a2a7f1fad2d31f30",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:toolpath_summary",
+        "step_id": "inspect_slice_handoff_mixed_default_071",
+        "port_id": "toolpath_summary",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/toolpath-summary.json",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/toolpath-summary.json",
+            "sha256": "bf5eac36be5ae76acb9edc2f0dce4842f389705f198862a97b6978d2b3a901f9",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:toolpath_summary",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:machine_profile",
+        "step_id": "inspect_slice_handoff_mixed_default_071",
+        "port_id": "machine_profile",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/machine-profile.json",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/machine-profile.json",
+            "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:machine_profile",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:process_profile",
+        "step_id": "inspect_slice_handoff_mixed_default_071",
+        "port_id": "process_profile",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/process-profile.json",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/process-profile.json",
+            "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:process_profile",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:filament_profile",
+        "step_id": "inspect_slice_handoff_mixed_default_071",
+        "port_id": "filament_profile",
+        "role": "deliverable",
+        "title": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/filament-profile.json",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/filament-profile.json",
+            "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:filament_profile",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:create_mesh_mixed_default_071_result",
+        "step_id": "create_mesh_mixed_default_071",
+        "port_id": "create_mesh_mixed_default_071_result",
+        "role": "deliverable",
+        "title": "Create source mesh",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source-model-report.json",
+            "sha256": "f1525cff869dd054d28ca0a7334a1a6bdf2557fcb44c0a88eee6baba5815e99b",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:create_mesh_mixed_default_071_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repair_measure_orient_mixed_default_071_result",
+        "step_id": "repair_measure_orient_mixed_default_071",
+        "port_id": "repair_measure_orient_mixed_default_071_result",
+        "role": "deliverable",
+        "title": "Repair, measure, and orient mesh",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/mesh-repair-report.json",
+            "sha256": "86dd3ff9dcb1b8fd3ac0c09358c058dbd05625f3d6f630a2c89a5901bbd07c42",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repair_measure_orient_mixed_default_071_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:supports_and_slice_mixed_default_071_result",
+        "step_id": "supports_and_slice_mixed_default_071",
+        "port_id": "supports_and_slice_mixed_default_071_result",
+        "role": "deliverable",
+        "title": "Generate supports and slice",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slicer-execution.json",
+            "sha256": "287569ca825abd54b19bfd70c4c5c036d2028856d281db2f457b9055ce6e3ae6",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:supports_and_slice_mixed_default_071_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:retain_slice_response_mixed_default_071_result",
+        "step_id": "retain_slice_response_mixed_default_071",
+        "port_id": "retain_slice_response_mixed_default_071_result",
+        "role": "deliverable",
+        "title": "Retain the actual slicer response for package inspection",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/response-retention-receipt.json",
+            "sha256": "2135632602731662a751950b96f9d75a08e09d8db51a6c9051672d020d80fd0a",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:retain_slice_response_mixed_default_071_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:inspect_slice_handoff_mixed_default_071_result",
+        "step_id": "inspect_slice_handoff_mixed_default_071",
+        "port_id": "inspect_slice_handoff_mixed_default_071_result",
+        "role": "deliverable",
+        "title": "Inspect actual package, profile and nominal toolpath correspondence",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/package-inspection-result.json",
+            "sha256": "a335a4dad25830a6bcd27c5fc8951ff1680175b0d070da80630f98a00a201331",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:inspect_slice_handoff_mixed_default_071_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      },
+      {
+        "result_id": "84cd89a395af406e80d094ec071abe59:summarize_preparation_mixed_default_071:summarize_preparation_mixed_default_071_result",
+        "step_id": "summarize_preparation_mixed_default_071",
+        "port_id": "summarize_preparation_mixed_default_071_result",
+        "role": "deliverable",
+        "title": "Record measured preparation facts and outstanding engineering review",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source-report.json",
+            "sha256": "66920cde623439529e5c647f5cd0a5344e8f711307fcf28d0a65331e1238acad",
+            "media_type": null,
+            "result_id": "84cd89a395af406e80d094ec071abe59:summarize_preparation_mixed_default_071:summarize_preparation_mixed_default_071_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "checkpoint-5d3ecdb33f799004063d010f",
+        "step_id": "authorize_transfer_mixed_default_071",
+        "kind": "action",
+        "subject_digest": "1bca862008823cfbdd195b33a2d32eabe09eeb662795bcda9f0857d60e59202b",
+        "instructions": "Review the exact process action and its evidence before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [],
+        "state": "consumed",
+        "decision": {
+          "decision": "approved",
+          "actor": "integration_test:083-private-digital-fresh-mixed-071",
+          "reason": "Integration campaign 083-private-digital-fresh-mixed-071 policy 45925c2c911333d3d0d5d9f86cdba369ae7a7b54e39c50cfed4823388e61e2fb",
+          "request_id": "synthetic-fresh-mixed-second-transfer-071",
+          "integration_test": true
+        },
+        "action_receipt": {
+          "request_id": "fresh-mixed-second-transfer-continuation-071",
+          "principal_id": "local-control-plane",
+          "submission": "authorized",
+          "delivery_completed": false,
+          "observed_outcome": null,
+          "provider_reference": null,
+          "cancellation_requested": false,
+          "cancellation_outcome": null
+        }
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-checkpoint-5d3ecdb33f799004063d010f",
+        "operation": "review",
+        "title": "Review action",
+        "enabled": false,
+        "subject_digest": "1bca862008823cfbdd195b33a2d32eabe09eeb662795bcda9f0857d60e59202b",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This run is already executing a segment.",
+            "correction": "Follow the saved run and its current action receipt.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "checkpoint-5d3ecdb33f799004063d010f",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "continue-checkpoint-5d3ecdb33f799004063d010f",
+        "operation": "action",
+        "title": "Continue process",
+        "enabled": false,
+        "subject_digest": "1bca862008823cfbdd195b33a2d32eabe09eeb662795bcda9f0857d60e59202b",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This run is already executing a segment.",
+            "correction": "Follow the saved run and its current action receipt.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "checkpoint-5d3ecdb33f799004063d010f",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "1cfd1d0b6df5e02f3b51f4c515b22b911cfd2e5f0e8cdae44146629fa9600055",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "The active provider operation has no currently qualified cancellation capability.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-04T02:40:31.768333+00:00",
+        "stale_after": null,
+        "operation_id": "84cd89a395af406e80d094ec071abe59",
+        "activity": "Approval is approved.",
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 81,
+          "completed_steps": 8
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/geometry-basis.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:source_mesh",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:source_mesh",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source_mesh.stl"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repaired_mesh",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repaired_mesh",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/repaired_mesh.stl"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:mesh_preview",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:mesh_preview",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/mesh-preview.png"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:slice_package",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:slice_package",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice_package.gcode.3mf"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:provider_response",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:provider_response",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-provider-response.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:slice_evidence",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:slice_evidence",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-evidence.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/support-preview.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:toolpath_summary",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:toolpath_summary",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/toolpath-summary.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:machine_profile",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:machine_profile",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/machine-profile.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:process_profile",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:process_profile",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/process-profile.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:filament_profile",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:filament_profile",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/filament-profile.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:create_mesh_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:create_mesh_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source-model-report.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repair_measure_orient_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repair_measure_orient_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/mesh-repair-report.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:supports_and_slice_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:supports_and_slice_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slicer-execution.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:retain_slice_response_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:retain_slice_response_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/response-retention-receipt.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:inspect_slice_handoff_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:inspect_slice_handoff_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/package-inspection-result.json"
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:summarize_preparation_mixed_default_071:summarize_preparation_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": "84cd89a395af406e80d094ec071abe59:summarize_preparation_mixed_default_071:summarize_preparation_mixed_default_071_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source-report.json"
+      },
+      {
+        "kind": "block",
+        "block_id": "authorize_transfer_mixed_default_071",
+        "run_id": "84cd89a395af406e80d094ec071abe59",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  }
+}

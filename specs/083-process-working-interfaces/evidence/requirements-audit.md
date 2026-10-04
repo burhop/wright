@@ -1,5 +1,32 @@
 # Full requirement audit — primary review in progress
 
+## Current checkpoint — 4 October UTC: original-source UI reuse and setup
+
+The [current primary review](../../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json)
+disposes FR-016/T047 against both substantive engineering jobs, including the
+corrected original-input printed AI stage and new-source UI generation/update/reuse.
+The [setup review](../../../artifacts/process-interfaces/083/20261004-setup-and-bindings-primary-verified/primary-review.json)
+disposes T001–T004 with42 retained initial dirty identities, current feature
+context,17 unchanged original input/profile/binding references, explicit initial
+preflight limitations and later actual provider/model/compiler qualification.
+**140 proved / 42 awaiting review** of182 unchanged identities/texts; see the
+[current cumulative ledger](../../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/semantic-ledger.json).
+
+Two15-check workspace proofs and two focused assessment captures pass.
+The exact saved updated revision follows two distinct20-output runs; their
+common/saved identities agree and no new generation/build/execution occurs
+while viewing. Declared host navigation opens exact geometry,90 nominal layers,
+assessment file and producer. The full original source gate remains17 pass plus
+required human hold. All550 retained earlier engineering/UI files, failed/common
+records and12 saved UI assets stay unchanged. The Heat proof retains original
+limits,25 digital passes and critic false. Earlier browser-launch, inline-frame
+and flat-schema assumptions are preserved, with fresh scoped continuations.
+
+Full-source public write readiness remains disclosed; test enrollment does not
+grant general readiness or human/physical acceptance. **55 tasks checked;
+T056/T057 open.** Contract/task/workspace/final-documentation review remains.
+Earlier dated audits below retain their original scope and counts.
+
 ## Current checkpoint — 4 October UTC: original inputs and common execution
 
 The [current primary review](../../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/primary-review.json)

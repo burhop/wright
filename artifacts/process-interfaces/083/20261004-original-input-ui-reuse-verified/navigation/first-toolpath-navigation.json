@@ -1,0 +1,24 @@
+{
+  "process": {
+    "workspace_id": "083-fresh-prompt-055",
+    "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+    "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "target": {
+    "kind": "evidence",
+    "block_id": "inspect_slice_handoff_mixed_default_071",
+    "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+    "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:inspect_slice_handoff_mixed_default_071:support_preview",
+    "assessment_id": null,
+    "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/support-preview.json"
+  },
+  "representation": {
+    "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/support-preview.json",
+    "sha256": "1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9",
+    "media_type": null,
+    "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:inspect_slice_handoff_mixed_default_071:support_preview",
+    "representation_id": null
+  }
+}

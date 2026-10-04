@@ -1,0 +1,174 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "083-fresh-prompt-055",
+      "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+      "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "84cd89a395af406e80d094ec071abe59",
+    "input_snapshot_id": "inputs-a998c6edadf54c0ba80bd8d47e7cca8f",
+    "input_digest": "01f54dbb9014fc70e96ee0ea5256c87edcc728b29e00a0ad3963fcb056061700",
+    "cursor": 7,
+    "generated_at": "2026-10-04T02:22:47.302505+00:00"
+  },
+  "state": "waiting_human",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+      "step_id": "define_geometry_basis_mixed_default_071",
+      "port_id": "define_geometry_basis_mixed_default_071_result",
+      "role": "deliverable",
+      "title": "Interpret the original wheel and manufacturing requirements",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/geometry-basis.json",
+          "sha256": "6e02217bc19013c096cc2116e32d982e6753e874ae54211904c68d299f71631f",
+          "media_type": null,
+          "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [
+    {
+      "checkpoint_id": "checkpoint-1970fa77eb0054c985619a24",
+      "step_id": "review_basis_mixed_default_071",
+      "kind": "action",
+      "subject_digest": "a4216a96858a03a427ce63eec89624da966819dd69469ae04b21bb3a3fc296de",
+      "instructions": "Review the exact process action and its evidence before continuing.",
+      "response_schema": null,
+      "decisions": [
+        "approved",
+        "changes_requested"
+      ],
+      "evidence": [],
+      "state": "waiting",
+      "decision": null,
+      "action_receipt": null
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "review-checkpoint-1970fa77eb0054c985619a24",
+      "operation": "review",
+      "title": "Review action",
+      "enabled": true,
+      "subject_digest": "a4216a96858a03a427ce63eec89624da966819dd69469ae04b21bb3a3fc296de",
+      "reasons": [],
+      "checkpoint_id": "checkpoint-1970fa77eb0054c985619a24",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "continue-checkpoint-1970fa77eb0054c985619a24",
+      "operation": "action",
+      "title": "Continue process",
+      "enabled": false,
+      "subject_digest": "a4216a96858a03a427ce63eec89624da966819dd69469ae04b21bb3a3fc296de",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This checkpoint is not ready to continue.",
+          "correction": "Complete its required review; an already consumed action cannot be submitted again.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": "checkpoint-1970fa77eb0054c985619a24",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "1cfd1d0b6df5e02f3b51f4c515b22b911cfd2e5f0e8cdae44146629fa9600055",
+      "reasons": [
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+          "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "waiting_human",
+      "observed_at": "2026-10-04T02:22:47.302505+00:00",
+      "stale_after": null,
+      "operation_id": "84cd89a395af406e80d094ec071abe59",
+      "activity": "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success. This process invokes the supplied repair arguments exactly. Check the connected operation templates against the proposed basis and original requirements before releasing this barrier. Operation hashes and all inputs remain part of this exact review subject; the run-resolved call arguments are retained separately. This is not measured or physical acceptance.",
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 7,
+        "completed_steps": 1
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "84cd89a395af406e80d094ec071abe59",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "84cd89a395af406e80d094ec071abe59",
+      "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "84cd89a395af406e80d094ec071abe59",
+      "result_id": "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/geometry-basis.json"
+    },
+    {
+      "kind": "block",
+      "block_id": "review_basis_mixed_default_071",
+      "run_id": "84cd89a395af406e80d094ec071abe59",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    }
+  ],
+  "next_page": null
+}

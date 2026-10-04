@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "integration_test": true,
+  "simulated_handoff": true,
+  "run_id": "84cd89a395af406e80d094ec071abe59",
+  "step_id": "authorize_transfer_mixed_default_071",
+  "checkpoint_id": "checkpoint-5d3ecdb33f799004063d010f",
+  "subject_digest": "1bca862008823cfbdd195b33a2d32eabe09eeb662795bcda9f0857d60e59202b",
+  "action_id": "fresh-mixed-second-transfer-continuation-071",
+  "campaign_id": "083-private-digital-fresh-mixed-071",
+  "dataset_id": "printed-replacement-part-01",
+  "integration_policy_digest": "45925c2c911333d3d0d5d9f86cdba369ae7a7b54e39c50cfed4823388e61e2fb",
+  "destination": {
+    "id": "test://083-private-digital-fresh-mixed-071/printer/printed-replacement-part-01",
+    "kind": "integration_test"
+  },
+  "action_kind": "printer_transfer",
+  "artifact_digests": [
+    "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+    "2135632602731662a751950b96f9d75a08e09d8db51a6c9051672d020d80fd0a",
+    "25a041ce10ca491bcb1d56ae92dabef56be5159710d5cc484f6d4a48ef31b8e7",
+    "287569ca825abd54b19bfd70c4c5c036d2028856d281db2f457b9055ce6e3ae6",
+    "2877d7e7b4fc692512da3924774152a6a7320e4bb8381f260a7d576c2bfa64bc",
+    "3d5d2d5f4e8996b00bb8afe7600c36b6b92661a5e85055028b4d505fc1896bed",
+    "568cf612a6150b1473155bab3c0f628c547936e9484555c60d9a562ea00e617d",
+    "662a28365d5808af0d769c37d8b5efee372804c485806fde96627bf21041c618",
+    "66920cde623439529e5c647f5cd0a5344e8f711307fcf28d0a65331e1238acad",
+    "6e02217bc19013c096cc2116e32d982e6753e874ae54211904c68d299f71631f",
+    "86dd3ff9dcb1b8fd3ac0c09358c058dbd05625f3d6f630a2c89a5901bbd07c42",
+    "8bb38c5dc49d03d8c8a17304356b24d589dbbd3290e9ac55a2a7f1fad2d31f30",
+    "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+    "a335a4dad25830a6bcd27c5fc8951ff1680175b0d070da80630f98a00a201331",
+    "bf5eac36be5ae76acb9edc2f0dce4842f389705f198862a97b6978d2b3a901f9",
+    "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+    "f1525cff869dd054d28ca0a7334a1a6bdf2557fcb44c0a88eee6baba5815e99b"
+  ],
+  "network_dispatch": false
+}

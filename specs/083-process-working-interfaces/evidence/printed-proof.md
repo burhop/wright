@@ -1,5 +1,31 @@
 # Printed replacement-part proof
 
+## Current original-source interface reuse — 4 October UTC
+
+The [current evidence](../../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/README.md)
+adds distinct second run `84cd89a395af406e80d094ec071abe59` on the same accepted
+mixed source and frozen inputs as `85d929ee36e64afdaee61a5cdb0fc2a6`.
+Both actual chains produce20 outputs and execute the unchanged original gate:
+17 digital passes, one required authenticated human-review hold. The second
+41-file record is frozen; original failed, first-run and common-view files and
+12 saved UI assets remain unchanged. Only its exact enrolled test basis and
+nonphysical simulator subjects receive attributed synthetic decisions.
+
+The actual default-model-generated and focus-updated UI is reused on both runs.
+Two15-check workspace walkthroughs verify exact common/saved result identities,
+geometry,90-layer toolpaths, source assessment and producer navigation, with
+zero authoring/execution mutations. Its declared client navigation opens the
+shared Wright viewer in the same workspace; an inline viewer in the generated
+frame is not claimed. Two additional captures compare displayed assessment JSON
+with the complete recorded files. Browser launch, inline-viewer and flat-schema
+test assumptions remain retained stops with fresh continuations.
+
+FR-016/T047 now have [whole primary dispositions](../../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json),
+including unchanged existing Heat evidence. Full-source public readiness still
+discloses builtin-write authority; the exact digital enrollment is not a general
+public-start claim. Fit, strength, physical printing, human acceptance and release
+remain unverified. Earlier checkpoint sections below retain their original scope.
+
 ## Current original-input construction and source gate — 4 October UTC
 
 The [current digital evidence](../../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/README.md)

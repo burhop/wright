@@ -1,0 +1,18 @@
+{
+  "process": {
+    "workspace_id": "083-fresh-prompt-055",
+    "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+    "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "target": {
+    "kind": "block",
+    "block_id": "repair_measure_orient_mixed_default_071",
+    "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+    "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:repair_measure_orient_mixed_default_071:repaired_mesh",
+    "assessment_id": null,
+    "artifact_ref": null
+  },
+  "representation": null
+}

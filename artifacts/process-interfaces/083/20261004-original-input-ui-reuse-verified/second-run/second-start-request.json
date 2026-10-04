@@ -1,0 +1,9 @@
+{
+  "session_id": "083-printed-prompt-session-055",
+  "path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+  "expected_storage_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+  "input_snapshot_id": "inputs-a998c6edadf54c0ba80bd8d47e7cca8f",
+  "expected_input_digest": "01f54dbb9014fc70e96ee0ea5256c87edcc728b29e00a0ad3963fcb056061700",
+  "integration_policy_digest": "45925c2c911333d3d0d5d9f86cdba369ae7a7b54e39c50cfed4823388e61e2fb",
+  "request_id": "fresh-mixed-second-071"
+}
