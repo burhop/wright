@@ -3552,3 +3552,27 @@ The semantic ledger remains **131 proved /51 awaiting review** of182; this refre
 adds no broader signoff. T056/T057, stricter printed first-stage, independent
 common-view execution, current Docker and remaining contract/task review stay
 open. No push, merge, release, physical operation or user acceptance.
+
+## 4 October UTC — current installed native/Docker resources
+
+The [current distribution primary review](../../artifacts/process-interfaces/083/20261004-current-docker-resource-verified/README.md)
+disposes WORKSPACE-03 using the latest unpublished wheel, its953-entry native
+installation and two fresh offline Linux installations. Each Linux install
+byte-verifies all948 application/resources; only pip RECORD metadata changes.
+Fifteen browser checks cover the actual saved18/20-output engineering interfaces,
+preview/reopen/reload, common view and exact creation identities with the
+model/compiler unavailable. Provider startup is disabled and no checkout is used.
+Separate retained selected-MCP clean-install and host/gateway evidence keeps its
+actual platform/pin/backend boundaries. No provider software is added to the base.
+
+A pre-navigation helper syntax error and one transient connection-banner
+assertion are retained. The fresh reload continuation verifies the persistent
+read-only notice, exact results and backend read/results/navigation-only scope;
+no product code or engineering outcome is changed. All297 original files and five
+business tables per copy stay unchanged. Only generated workspace/launch metadata
+changes; all own views close and both fresh Docker hosts stop normally.
+
+The full semantic ledger is now **132 proved /50 awaiting review** of182.
+T056/T057 and stricter first-stage/remaining contract/task obligations are open.
+This is installed resource/readback acceptance, not another engineering run,
+public release, catalog promotion, physical verification or human acceptance.

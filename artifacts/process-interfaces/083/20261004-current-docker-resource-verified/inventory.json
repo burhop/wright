@@ -1,0 +1,100 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 36,
+      "sha256": "5bb9fb3c036954054e63d7512798819ec1dbda5b23388ad6fcaa5d8d43031672"
+    },
+    "browser-preflight-correction-045.json": {
+      "bytes": 401,
+      "sha256": "7d6b3648056c58d1f968df0bffa20a34203c52c40adbd14d2041dd3cce59267b"
+    },
+    "checked-scope.json": {
+      "bytes": 12443,
+      "sha256": "56f6517630a02838d4a584ad5b31daf5a8cdb051f15bce9fbfb03d29b3f6171a"
+    },
+    "final-docker-reload-047-scope.json": {
+      "bytes": 778,
+      "sha256": "81231d8424bad5c2d63ead2045cdff92386e5014627e29585b9d000a6cf7fe06"
+    },
+    "heat/closed-presentations.json": {
+      "bytes": 143,
+      "sha256": "212fbe5c7728b28ad472460433684a31777a63614b1fff503aff626fd8fa2c6d"
+    },
+    "heat/docker-identity.json": {
+      "bytes": 1098,
+      "sha256": "921be616053948ad30f308d7b2720fc9cecff1d15cdd36aa8847b57f94442576"
+    },
+    "heat/host-identity.json": {
+      "bytes": 502,
+      "sha256": "f040077c7c67231c6a4013712b32f0a85e7c011829cbb0eafe4abda0344d708e"
+    },
+    "heat/installed-byte-audit-046.json": {
+      "bytes": 158789,
+      "sha256": "2de1480ba2a61597a13f9a079bdf51ddeabc5b2fb1cee9b6824fdb4c9b259650"
+    },
+    "heat/launch-receipt-044.json": {
+      "bytes": 505,
+      "sha256": "60ffc5557a6dae81a0df1819860f695537d17303684d0f40a63390ef3d6a0c03"
+    },
+    "heat/original-preservation.json": {
+      "bytes": 119,
+      "sha256": "00dd6b6c71e06386266b473ff377201da717c933cbe804b3c0454885004c7e3c"
+    },
+    "heat/preservation.json": {
+      "bytes": 1180,
+      "sha256": "e06d8cca595764bcd38e568332ec89064a232a334e9daab77ec3812bc7a23c39"
+    },
+    "heat/terminal.json": {
+      "bytes": 470,
+      "sha256": "14aaeccb1c64390b49a9979d9a23ddca3699e6e3f69f1954a9880807930683f3"
+    },
+    "primary-review.json": {
+      "bytes": 2673,
+      "sha256": "21f3a388241016372929aed1587ea82d1e09e3ca93af5639fab2dc3e9adeb966"
+    },
+    "printed/closed-presentations.json": {
+      "bytes": 143,
+      "sha256": "bffb3cc3d74a0fdf55c9b1608525bd5553783197367994e42274fc1c492f3591"
+    },
+    "printed/docker-identity.json": {
+      "bytes": 1101,
+      "sha256": "2322999cb2072e1b095c7f84b58b50ca618588a8e76b0dc509f5cccda83b5e61"
+    },
+    "printed/host-identity.json": {
+      "bytes": 502,
+      "sha256": "f040077c7c67231c6a4013712b32f0a85e7c011829cbb0eafe4abda0344d708e"
+    },
+    "printed/installed-byte-audit-046.json": {
+      "bytes": 158789,
+      "sha256": "2de1480ba2a61597a13f9a079bdf51ddeabc5b2fb1cee9b6824fdb4c9b259650"
+    },
+    "printed/launch-receipt-044.json": {
+      "bytes": 508,
+      "sha256": "4611eb176d514cacbd7c4b4bf0d0f31a697caacba9af4041bfc3ae63e2eb9374"
+    },
+    "printed/original-preservation.json": {
+      "bytes": 119,
+      "sha256": "ab3077e96897141d113350fa9bf7b71a16f9bbd4865044f5b9ac81d710d92487"
+    },
+    "printed/preservation.json": {
+      "bytes": 1180,
+      "sha256": "0cac757f7e5dae25f11734051c52a080be479b9dffca5494f64294f16fb9690b"
+    },
+    "printed/terminal.json": {
+      "bytes": 470,
+      "sha256": "a570e9272468ce4c1525f1ab8c5fafb6c59252158262c3ce81b42f713e06e94f"
+    },
+    "README.md": {
+      "bytes": 3033,
+      "sha256": "6417eea8335d3e0faacdb5b5f59e6063f7657cfe239598a849689900512a93bd"
+    },
+    "reload-first-stop-analysis-047.json": {
+      "bytes": 739,
+      "sha256": "f53f5b9de67030e2e3c228a0e8e424feb8cf1cf14f97cc7486eacdd8df0ce379"
+    },
+    "semantic-ledger.json": {
+      "bytes": 284099,
+      "sha256": "4f8e4f394546ff3bd656d4f25d3897442d1b864a7b9d737b6fa7ed84b800a220"
+    }
+  }
+}

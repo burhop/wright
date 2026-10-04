@@ -1,0 +1,64 @@
+{
+  "obligation": "WORKSPACE-03",
+  "reports": [
+    {
+      "status": "artifacts/ui-walkthrough/process-interface-current-docker/20261004-044-heat/status.json",
+      "sha256": "b20cf08900ccd7aa9a7a595474c2b99213d4f506fb0fb58d8bb4a0f8695d27ba",
+      "passes": 4,
+      "stops": 0,
+      "overall": "pass"
+    },
+    {
+      "status": "artifacts/ui-walkthrough/process-interface-current-docker/20261004-045-printed/status.json",
+      "sha256": "978bf542c00f6260bf68d6db8f8f88e69ce8157a97d0c7575911c45c66114a3c",
+      "passes": 7,
+      "stops": 1,
+      "overall": "blocked"
+    },
+    {
+      "status": "artifacts/ui-walkthrough/process-interface-current-docker/20261004-047-printed/status.json",
+      "sha256": "9c46493e5a32ba7144715058c9343148fb6869f3dcd9c5683fe9585f9ffb7e2e",
+      "passes": 4,
+      "stops": 0,
+      "overall": "pass"
+    }
+  ],
+  "browser_passes": 15,
+  "retained_browser_stops": 1,
+  "pre_navigation_helper_syntax_error_retained": true,
+  "fresh_container_count": 2,
+  "fixtures": [
+    {
+      "kind": "heat",
+      "original_files_unchanged": 142,
+      "copied_business_tables_unchanged": 5,
+      "installed_application_and_resource_entries": 948,
+      "closed_views": 4,
+      "stopped_normally": true
+    },
+    {
+      "kind": "printed",
+      "original_files_unchanged": 155,
+      "copied_business_tables_unchanged": 5,
+      "installed_application_and_resource_entries": 948,
+      "closed_views": 8,
+      "stopped_normally": true
+    }
+  ],
+  "wheel_sha256": "314009cea82c1eb6da44c0069dacd1bf80d4540b5bb4d5369d4572357c90fcf2",
+  "frontend_manifest_sha256": "f1fd7ae74f7c6cadeea1c2f9b22b36b107f060623b8a46166dcd78a687031e35",
+  "wheel_source_commit": "2af72d9faa88a28663f70ae33672a6581b19e85f",
+  "primary_review_commit": "cd50fbef10039ea65b7f366cc34f7e725078acea",
+  "native_installed_entries_byte_verified": 953,
+  "linux_application_and_resource_entries_byte_verified_per_container": 948,
+  "pip_record_metadata_rewritten_not_application_data": true,
+  "no_checkout_model_compiler_or_provider_replay_required": true,
+  "read_only_preview_after_reload_capabilities": [
+    "process.read",
+    "process.results",
+    "process.navigate"
+  ],
+  "selected_mcp_qualification_evidence": "artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/primary-review.json",
+  "qualification_separation": "Installed native/Linux UI-resource proof uses no live provider. Separately retained four selected provider clean installations, direct protocol/backend and normal host api.gateway_stdio proofs keep their pin/platform/backend limits.",
+  "physical_supplier_catalog_promotion_release_or_user_acceptance": false
+}

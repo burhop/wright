@@ -1,0 +1,11 @@
+{
+  "first_attempt_passed_steps": 7,
+  "first_stop": "Exact transient static host connection label after reload.",
+  "current_host_sha256": "9b3ce94b1b06ba2f2907bc80302c491cafbfffc5669dd02ed9c9ce5bd775bd06",
+  "actual_saved_source_sha256": "8481cf2cbf530246a5a84b716a293b5b0ac9baa918ff6c89781bedd8ac89f653",
+  "persistent_preview_notice": "Preview is read-only. Inputs and process operations are unavailable until this interface is opened in a writable working view.",
+  "connection_message_changes_on_follow_connected": true,
+  "backend_and_app_read_only_persist_in_first_stopping_screen": true,
+  "product_change": false,
+  "continuation_scope": "Reload, exact results, backend read-only capabilities and retained authoring identity."
+}
