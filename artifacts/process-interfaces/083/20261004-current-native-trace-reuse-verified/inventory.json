@@ -1,0 +1,72 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 36,
+      "sha256": "5bb9fb3c036954054e63d7512798819ec1dbda5b23388ad6fcaa5d8d43031672"
+    },
+    "build-record.json": {
+      "bytes": 490,
+      "sha256": "f21a89eca43190aa38f59d6826aec99349034417820c3c5164885a04291e9a2a"
+    },
+    "checked-scope.json": {
+      "bytes": 10752,
+      "sha256": "b4586914834d35087d5111c704cbbe8d6a1d7d381f91810e99618beabd322dd3"
+    },
+    "creation-identities.json": {
+      "bytes": 995,
+      "sha256": "1b138d35593e09f294564e95726d5cdc54fd2c930dc5649a835a1eccb8ebdf49"
+    },
+    "exact-executed-harnesses.zip": {
+      "bytes": 13388,
+      "sha256": "14c7420f11653af5933c7f74deae6bb68a6fb6519e86a64eab0f7c8ebbc1774e"
+    },
+    "generated-metadata-deltas.json": {
+      "bytes": 758,
+      "sha256": "65977c01dd5110abc8a27d38cfd0539fde1d4c6aca8f1310183da03ba53d8beb"
+    },
+    "host-identity.json": {
+      "bytes": 502,
+      "sha256": "f040077c7c67231c6a4013712b32f0a85e7c011829cbb0eafe4abda0344d708e"
+    },
+    "host-terminal.json": {
+      "bytes": 19,
+      "sha256": "b6cf90660abf60228a58998f2645a1c23a961ac892e2b6e87e706fca82763d73"
+    },
+    "isolation-record.json": {
+      "bytes": 1422,
+      "sha256": "9da6a8f52594ec8a7e705a45eeb1cb95a1d54a553e7ec30b7fc632d3c3c97110"
+    },
+    "metadata-classification.json": {
+      "bytes": 298,
+      "sha256": "c1fb0c1de945b132f084d55211985347a79667242ab6e233e6181c8c1a390ad0"
+    },
+    "preservation.json": {
+      "bytes": 1390,
+      "sha256": "942c9b9a093a4b77e3c5340364dbc23a71069f87395265689c23402ee0b77930"
+    },
+    "primary-review.json": {
+      "bytes": 3805,
+      "sha256": "f309d83cd543dc583eae5030a9ea10b4b6f123da0e23126e393dab97d72ae066"
+    },
+    "README.md": {
+      "bytes": 2574,
+      "sha256": "564e752eba3631aaebb5d059a4f490129eaa5d7ff2b8657c389240c52219727a"
+    },
+    "script-formatting-and-first-commit-guard.json": {
+      "bytes": 1490,
+      "sha256": "d151228342cfe61a7269d076816b2a3d2dd6b4ad7d53d8b547543f51be00770b"
+    },
+    "semantic-ledger.json": {
+      "bytes": 282012,
+      "sha256": "e4cceb88b90979b7bf646d151d8d3ed67b59ea1b2c0cc9c1e505938865cf7a72"
+    },
+    "source-and-installation-audit.json": {
+      "bytes": 255151,
+      "sha256": "f3be38434e35f18b01a9175482fd3477dd02530e16a9a08219e230c8e85d924b"
+    },
+    "visible-creation-identities.json": {
+      "bytes": 3764,
+      "sha256": "ba67c25997af9c98e167db110f27bdcbfa093bf10be24099f7863a2bc6dee579"
+    }
+  }
+}
