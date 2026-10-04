@@ -1,0 +1,94 @@
+workflow common_digital_083
+  name: "Prepare and inspect a focus-wheel mesh"
+  purpose: "Common-view digital mesh preparation only: two configured existing Blender operations, original dimensions and exact STL handoff. Does not certify printing, fit, strength or engineering acceptance."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+input input_construction_arguments_json_common_digital_083
+  name: "Qualified construction operation"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_construction_arguments_json_common_digital_083_out","name":"input construction arguments json common digital 083 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/common-digital-083/inputs/construction-arguments.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+task mesh_construction_common_digital_083
+  name: "Construct original focus-wheel mesh"
+  purpose: "Construct original focus-wheel mesh"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"mesh_construction_common_digital_083_exact_provider_arguments","name":"mesh construction common digital 083 exact provider arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"mesh_construction_common_digital_083_result","name":"mesh construction common digital 083 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"source_mesh","name":"source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-blender-prompt-055","mcp_tool":"proof-083-blender-prompt-055__execute_blender_code","mcp_schema_digest":"2d2c71a6d7d4e096476d0bb4fe046c08070b537502f63ba1d28ea53ae16c964a","mcp_arguments_source":"connection","mcp_arguments_input":"mesh_construction_common_digital_083_exact_provider_arguments","mcp_arguments":"{}","timeout_seconds":360,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/construction-response.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/source_mesh.stl","run_path_template":"wright.run-path/1","expected_file_ports":{"source_mesh":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/source_mesh.stl"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection bind_mesh_construction_common_digital_083_exact_provider_arguments
+  type: "item"
+  from: "input_construction_arguments_json_common_digital_083.input_construction_arguments_json_common_digital_083_out"
+  to: "mesh_construction_common_digital_083.mesh_construction_common_digital_083_exact_provider_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_repair_arguments_json_common_digital_083
+  name: "Qualified repair operation"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_repair_arguments_json_common_digital_083_out","name":"input repair arguments json common digital 083 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/common-digital-083/inputs/repair-arguments.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+task mesh_repair_common_digital_083
+  name: "Repair, measure and orient the exact source STL"
+  purpose: "Repair, measure and orient the exact source STL"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"mesh_repair_common_digital_083_exact_provider_arguments","name":"mesh repair common digital 083 exact provider arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"mesh_repair_common_digital_083_actual_source_mesh","name":"mesh repair common digital 083 actual source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"mesh_repair_common_digital_083_result","name":"mesh repair common digital 083 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repaired_mesh","name":"repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"mesh_preview_png","name":"mesh preview png","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-blender-prompt-055","mcp_tool":"proof-083-blender-prompt-055__execute_blender_code","mcp_schema_digest":"2d2c71a6d7d4e096476d0bb4fe046c08070b537502f63ba1d28ea53ae16c964a","mcp_arguments_source":"connection","mcp_arguments_input":"mesh_repair_common_digital_083_exact_provider_arguments","mcp_arguments":"{}","timeout_seconds":360,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/repair-response.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/repaired_mesh.stl\nprocess-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/mesh-preview.png","run_path_template":"wright.run-path/1","expected_file_ports":{"repaired_mesh":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/repaired_mesh.stl","mesh_preview_png":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/mesh-preview.png"},"mcp_file_dependencies":{"mesh_repair_common_digital_083_actual_source_mesh":"process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}/source_mesh.stl"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection bind_mesh_repair_common_digital_083_exact_provider_arguments
+  type: "item"
+  from: "input_repair_arguments_json_common_digital_083.input_repair_arguments_json_common_digital_083_out"
+  to: "mesh_repair_common_digital_083.mesh_repair_common_digital_083_exact_provider_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_mesh_repair_common_digital_083_actual_source_mesh
+  type: "item"
+  from: "mesh_construction_common_digital_083.source_mesh"
+  to: "mesh_repair_common_digital_083.mesh_repair_common_digital_083_actual_source_mesh"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection sequence_mesh_repair_common_digital_083
+  type: "order"
+  from: "mesh_construction_common_digital_083"
+  to: "mesh_repair_common_digital_083"
+  label: "accepted process order"
+  when: null
+end

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "tests/test_process_interface_examples.py",
+    "-q",
+    "--tb=short",
+    "--basetemp=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-stage-mode-checks-075\\pytest-temp",
+    "-o",
+    "cache_dir=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-stage-mode-checks-075\\pytest-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 8.61,
+  "scope": "Fixture-schema source compilation, independent stage binding and existing all example tests; no live geometry claim.",
+  "sources": {
+    "examples/process-interfaces/printed-replacement-part/prepare.py": "857a16cdddd2e9448d631915439b3324c1c9df94ddc80442e6c06980407c65b1",
+    "examples/process-interfaces/printed-replacement-part/provider_inputs.py": "57e24837f624152e6ef0a36a8be19b37b8297eee46c898d974bbe265d8a218df",
+    "examples/process-interfaces/printed-replacement-part/README.md": "58c1c9ec33465e9fd436940b43c5a864901eb3d89d1fca07209f814a4758f9b7",
+    "tests/test_process_interface_examples.py": "c47b4eff08400355459ac9d53e8ffc505cea65b3f4df4794a21726109fdac419"
+  }
+}

@@ -1,6 +1,42 @@
 # Printed replacement-part proof
 
-## First-stage handoff scope still under review
+## Current original-input construction and source gate — 4 October UTC
+
+The [current digital evidence](../../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/README.md)
+records original image, prompt, context and user profile directly in the actual
+Blender MCP AI construction task. Recorded reference hashes match the original
+bytes; native user_prompt preserves all697 characters byte for byte. The image
+is attached to the AI task, not supplied as a nonexistent native code-tool field.
+The reviewed original numeric basis and unchanged measured requirements remain
+separate authority. JOB-A-stage1 now has a primary disposition at that boundary.
+
+The first fresh AI/AI run produces source STL then times out before repair;
+24 files are frozen. A separate accepted source explicitly selects AI construction
+and the already qualified native repair operation, with exact source-file
+dependency and pinned arguments. It produces the actual source/repaired STL,
+offline3MF, inspected profiles/toolpaths and AI report, then consumes only its
+exact enrolled simulator decision. The original18-check source gate executes:
+17 passes and one mandatory authenticated human-review hold. All41 files,
+original assignments/profile limits and the failed producer remain unchanged.
+No fit, strength, physical print or human engineering acceptance is established.
+
+The two continuation responses initially report OUTCOME_UNKNOWN. Read-only
+observation confirms the same run consumes each once; no uncertain action is
+replayed. Public full-source readiness still discloses its builtin document-write
+authority requirement. The separate two-stage common-view proof passes normal
+public readiness/start and completes, without replacing this full assignment.
+Current example tests pass68. Optional independent stage-mode declarations keep
+the old scalar default and strict complete mappings/pinned-argument checks.
+
+The first new-source default-model request times out with the failed job retained
+and common fallback visible. A smaller generation and focused update each pass13
+normal workspace checks, retain12 assets and the exact original/parent revisions,
+and show all20 current result cards in preview. Exact navigation and updated-UI
+reuse on the second same-source run remain separate work. Existing successful
+UI generation/update/reuse evidence below keeps its own source binding.
+FR-016/T047 whole-scope signoff and remaining audits stay open.
+
+## Historical first-stage handoff before the current correction
 
 The [read-only original construction inspection](../../../artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/earlier-partial-construction.json)
 confirms two earlier real AI-assisted construction stages exported 10,824-triangle

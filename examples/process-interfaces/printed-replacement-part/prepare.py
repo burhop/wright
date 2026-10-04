@@ -33,7 +33,9 @@ retained_spec.loader.exec_module(retained_source)
 def prepare(workspace, attempt, tools, bindings):
     workspace = Path(workspace).resolve(strict=True)
     qualified_geometry = provider_inputs.qualified_geometry_inputs(bindings)
-    configured_geometry = bindings.get("geometry_operation_mode", "ai_task") == "configured_tool"
+    modes = provider_inputs.geometry_operation_modes(bindings)
+    configured_construction = modes["construction"] == "configured_tool"
+    configured_repair = modes["repair"] == "configured_tool"
     retained = retained_source.qualify(bindings)
     validation_budget = (
         ResourceBudget.model_validate(bindings["validation_resource_budget"])
@@ -224,11 +226,11 @@ def prepare(workspace, attempt, tools, bindings):
         "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success.",
     )
     flow.reference(basis_result, basis_review, "basis")
-    if configured_geometry:
+    if configured_construction or configured_repair:
         flow.reference(guidance_ref, basis_review, "qualified_application_guidance")
     absolute_output = workspace / flow.output
     create = flow.original("create_mesh")
-    if configured_geometry:
+    if configured_construction:
         # The fixed operation consumes JSON, not an image. Keep the original
         # scaled reference in the AI interpretation and its declared review.
         image_connection = flow.original("image_to_mesh")
@@ -245,6 +247,15 @@ def prepare(workspace, attempt, tools, bindings):
         calls=2,
         timeout=360,
     )
+    create["fields"]["prompt"] += (
+        " The connected original_user_prompt is the user's supplied text, distinct from "
+        "these task instructions and reviewed_basis. Preserve that original text verbatim "
+        "in user_prompt for each execute_blender_code call; do not replace it with a task "
+        "summary. Interpret the actual connected original_reference image with the supplied "
+        "38 mm scale and written dimensions governing. The connected original_context and "
+        "original_user_profile retain manufacturing and use constraints. A configured "
+        "recipe does not replace those inputs or establish measured compliance."
+    )
     if qualified_geometry:
         raw, original = qualified_geometry["construction"]
         invocation = flow.input_bytes(
@@ -252,7 +263,7 @@ def prepare(workspace, attempt, tools, bindings):
             run_paths=bool(flow.run_path_template),
         )
         argument_port = flow.reference(invocation, create, "qualified_operation")
-        if configured_geometry:
+        if configured_construction:
             flow.exact_mcp(
                 create,
                 flow.select(geometry, "execute_blender_code"),
@@ -275,10 +286,13 @@ def prepare(workspace, attempt, tools, bindings):
                 "or proof of compliance. If its input design differs from reviewed_basis, stop "
                 "with a technical mismatch before executing it."
             )
-    if not configured_geometry:
+    if not configured_construction:
         flow.reference(basis_result, create, "reviewed_basis")
         flow.reference(requirements_ref, create, "requirements")
         flow.reference(guidance_ref, create, "qualified_application_guidance")
+        flow.reference(refs["prompt.txt"], create, "original_user_prompt")
+        flow.reference(refs["context.md"], create, "original_context")
+        flow.reference(refs["user-profile.md"], create, "original_user_profile")
         flow.reference(
             refs["concept.png"], create, "original_reference", "reference_images"
         )
@@ -302,7 +316,7 @@ def prepare(workspace, attempt, tools, bindings):
             run_paths=bool(flow.run_path_template),
         )
         argument_port = flow.reference(invocation, repair, "qualified_operation")
-        if configured_geometry:
+        if configured_repair:
             flow.exact_mcp(
                 repair,
                 flow.select(geometry, "execute_blender_code"),
@@ -315,9 +329,12 @@ def prepare(workspace, attempt, tools, bindings):
                 "repair-operation-review.json", raw, original=original
             )
             flow.reference(reviewed_operation, basis_review, "repair_operation")
+            reviewed_operations = (
+                "construction and repair" if configured_construction else "repair"
+            )
             basis_review["fields"]["instructions"] += (
-                " This process invokes the supplied construction and repair arguments exactly. "
-                "Check both operation templates against the proposed basis and original requirements "
+                " This process invokes the supplied " + reviewed_operations + " arguments exactly. "
+                "Check the connected operation templates against the proposed basis and original requirements "
                 "before releasing this barrier. Operation hashes and all inputs remain part "
                 "of this exact review subject; the run-resolved call arguments are retained "
                 "separately. This is not measured or physical acceptance."
@@ -337,10 +354,18 @@ def prepare(workspace, attempt, tools, bindings):
     repair["fields"]["settings"]["mcp_file_dependencies"] = {
         actual_source_port: flow.output + "/source_mesh.stl"
     }
-    if not configured_geometry:
+    if not configured_repair:
         flow.reference(source_result, repair, "construction_report")
         flow.reference(requirements_ref, repair, "requirements")
         flow.reference(guidance_ref, repair, "qualified_application_guidance")
+        flow.reference(refs["prompt.txt"], repair, "original_user_prompt")
+        flow.reference(refs["context.md"], repair, "original_context")
+        flow.reference(refs["user-profile.md"], repair, "original_user_profile")
+        repair["fields"]["prompt"] += (
+            " Retain the connected original_user_prompt verbatim in user_prompt for "
+            "each execute_blender_code call. Preserve the original_context and "
+            "original_user_profile; a construction summary does not replace them."
+        )
     repaired_roles = flow.file_outputs(
         repair,
         {

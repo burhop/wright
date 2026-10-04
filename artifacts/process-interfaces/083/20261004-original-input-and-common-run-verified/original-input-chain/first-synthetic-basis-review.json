@@ -1,0 +1,11 @@
+{
+  "checkpoint_id": "checkpoint-3429f83f1cfa17abb1df9f31",
+  "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+  "subject_digest": "42deb29da546293fa978cf3eea18b2415523ddccc727d29d615f6b6c38acce42",
+  "state": "approved",
+  "actor": "integration_test:083-private-digital-fresh-mixed-071",
+  "integration_test": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "continuation_executed": false
+}

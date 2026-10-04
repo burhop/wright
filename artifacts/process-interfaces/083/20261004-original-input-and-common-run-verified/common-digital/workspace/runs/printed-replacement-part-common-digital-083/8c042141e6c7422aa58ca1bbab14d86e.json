@@ -1,0 +1,817 @@
+{
+  "workflow_path": "workflows/printed-replacement-part-common-digital-083.workflow.wflow",
+  "source_digest": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06",
+  "owner": {
+    "host": "Work17",
+    "lease": "workflow-run:083-fresh-prompt-055:8c042141e6c7422aa58ca1bbab14d86e"
+  },
+  "started_at": "2026-10-04T02:01:55.555314+00:00",
+  "status": "completed",
+  "events": [
+    {
+      "kind": "run_started",
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "at": "2026-10-04T02:01:55.555314+00:00",
+      "task_id": "",
+      "task_title": "printed-replacement-part-common-digital-083",
+      "run_log_path": "runs/printed-replacement-part-common-digital-083/8c042141e6c7422aa58ca1bbab14d86e.json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-04T02:01:55.770584+00:00",
+      "task_id": "mesh_construction_common_digital_083",
+      "task_title": "Construct original focus-wheel mesh",
+      "execution_kind": "mcp",
+      "tool": "proof-083-blender-prompt-055__execute_blender_code",
+      "arguments": {
+        "code": "import bpy, bmesh, math\nfrom mathutils import Vector\nP = 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_r3_'\nout = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\source_mesh.stl'\nif any((o.name.startswith(P) for o in bpy.data.objects)):\n    raise RuntimeError('Owned-name collision; refusing overwrite')\nbpy.context.scene.unit_settings.system = 'METRIC'\nbpy.context.scene.unit_settings.length_unit = 'MILLIMETERS'\nbpy.context.scene.unit_settings.scale_length = 0.001\n\ndef active(o):\n    bpy.ops.object.select_all(action='DESELECT')\n    o.select_set(True)\n    bpy.context.view_layer.objects.active = o\n\ndef apply_mod(o, m):\n    active(o)\n    bpy.ops.object.modifier_apply(modifier=m.name)\n\ndef boolean(o, c, op):\n    m = o.modifiers.new(P + op, 'BOOLEAN')\n    m.operation = op\n    m.solver = 'EXACT'\n    m.object = c\n    apply_mod(o, m)\n    bpy.data.objects.remove(c, do_unlink=True)\n\ndef join_owned(obs, name):\n    bpy.ops.object.select_all(action='DESELECT')\n    for q in obs:\n        q.select_set(True)\n    bpy.context.view_layer.objects.active = obs[0]\n    bpy.ops.object.join()\n    obs[0].name = name\n    return obs[0]\nbpy.ops.mesh.primitive_cylinder_add(vertices=192, radius=19.0, depth=16.0, location=(0, 0, 8.0))\nbody = bpy.context.object\nbody.name = P + 'focus_wheel'\ncs = []\nfor i in range(6):\n    a = math.radians(60 * i)\n    bpy.ops.mesh.primitive_cylinder_add(vertices=96, radius=8.0, depth=20.0, location=(24.75 * math.cos(a), 24.75 * math.sin(a), 8.0))\n    q = bpy.context.object\n    q.name = P + 'scallop_%02d' % i\n    cs.append(q)\ncut = join_owned(cs, P + 'scallop_cutters')\nboolean(body, cut, 'DIFFERENCE')\nbev = body.modifiers.new(P + 'body_R1', 'BEVEL')\nbev.width = 1.0\nbev.segments = 4\nbev.limit_method = 'ANGLE'\napply_mod(body, bev)\nbpy.ops.mesh.primitive_cylinder_add(vertices=128, radius=6.0, depth=2.2, location=(0, 0, 16.9))\nhub = bpy.context.object\nhub.name = P + 'hub'\nhb = hub.modifiers.new(P + 'hub_R1', 'BEVEL')\nhb.width = 0.95\nhb.segments = 4\nhb.limit_method = 'ANGLE'\napply_mod(hub, hb)\nfeatures = [hub]\ncap_h = 0.35\ncap_a = 0.6\ncap_R = (cap_a * cap_a + cap_h * cap_h) / (2 * cap_h)\ncap_z = 16.0 + cap_h - cap_R\nfor n in range(6):\n    for s in (-8.0, 8.0):\n        a = math.radians(30.0 + 60.0 * n + s)\n        bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=cap_R, location=(13.5 * math.cos(a), 13.5 * math.sin(a), cap_z))\n        q = bpy.context.object\n        q.name = P + 'dot_%02d_%s' % (n, 'm' if s < 0 else 'p')\n        features.append(q)\nfeat = join_owned(features, P + 'raised_features')\nboolean(body, feat, 'UNION')\nr = 3.2\nxf = -2.4\naa = math.acos(xf / r)\npts = []\nN = 96\nfor i in range(N + 1):\n    t = -aa + 2 * aa * i / N\n    pts.append((r * math.cos(t), r * math.sin(t)))\nverts = [(x, y, -0.5) for x, y in pts] + [(x, y, 10.0) for x, y in pts]\nn = len(pts)\nfaces = [tuple(range(n - 1, -1, -1)), tuple(range(n, 2 * n))]\nfor i in range(n):\n    j = (i + 1) % n\n    faces.append((i, j, n + j, n + i))\nme = bpy.data.meshes.new(P + 'socket_mesh')\nme.from_pydata(verts, [], faces)\nme.update()\nsock = bpy.data.objects.new(P + 'socket_cutter', me)\nbpy.context.collection.objects.link(sock)\nboolean(body, sock, 'DIFFERENCE')\ntri = body.modifiers.new(P + 'triangulate', 'TRIANGULATE')\napply_mod(body, tri)\nactive(body)\nbm = bmesh.new()\nbm.from_mesh(body.data)\nnonman = sum((1 for e in bm.edges if not e.is_manifold))\nvol = abs(bm.calc_volume(signed=True))\nbm.free()\nif nonman:\n    raise RuntimeError('Geometry failure: %d non-manifold edges; export refused' % nonman)\ntris = len(body.data.polygons)\nif tris > 80000:\n    raise RuntimeError('Triangle limit exceeded: %d' % tris)\nworld = [body.matrix_world @ Vector(c) for c in body.bound_box]\nmins = [min((v[i] for v in world)) for i in range(3)]\nmaxs = [max((v[i] for v in world)) for i in range(3)]\ndims = [maxs[i] - mins[i] for i in range(3)]\nif max(dims[0], dims[1]) > 38.001 or dims[2] > 18.001:\n    raise RuntimeError('Envelope exceeded: ' + str(dims))\nbpy.ops.wm.stl_export(filepath=out, export_selected_objects=True)\nprint({'exported': out, 'object': body.name, 'triangles': tris, 'non_manifold_edges': nonman, 'bounds_mm': {'min': [round(x, 4) for x in mins], 'max': [round(x, 4) for x in maxs], 'dimensions': [round(x, 4) for x in dims]}, 'volume_mm3': round(vol, 2), 'construction': {'scallops': '6 x R8 at center radius 24.75, phases 0..300 deg', 'nominal_min_grip_diameter_mm': 33.5, 'hub_mm': '12 diameter, visible z16..18; 0.2 hidden union overlap', 'dots': '12 spherical caps, 1.2 diameter x 0.35 high at radius 13.5', 'socket': 'R3.2 clipped x>=-2.4, rear-open z0 to blind end z10', 'minimum_socket_roof_mm': 6.0, 'rounding': 'body perimeter and hub rim nominal R1 (segmented bevel)'}, 'unresolved': ['Nominal rounds and circular features are tessellated approximations.', 'Fit, torque strength, PETG shrinkage, support need and print outcome remain unverified.', 'Hub-root blend and slicer/package/profile checks remain for later review.']})\n",
+        "user_prompt": "The plastic focus wheel on our training telescope cracked. Please use my attached sketch to make a friendlier six-scallop replacement. The outside diameter is 38 mm; use that as the image scale reference. The shaft is a 6.00 mm D shaft, with 5.20 mm from its flat to the far round surface. Make the blind socket 10 mm deep and allow the slip clearance in the notes. Please keep the raised grip dots subtle so gloves do not catch.\r\n\r\nProduce the source mesh, repaired printable mesh, support/slicing preview, and P1S 0.4 mm PETG slice package. Keep the shaft opening facing up if it improves the bore. I need a local test transfer receipt after review; do not send anything to a physical printer.\r\n"
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-04T02:01:57.063334+00:00",
+      "task_id": "mesh_construction_common_digital_083",
+      "task_title": "Construct original focus-wheel mesh",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+            "format": "stl",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+            "size_bytes": 541284
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_construction_common_digital_083",
+          "output_port": "source_mesh",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-04T02:01:57.077904+00:00",
+      "task_id": "mesh_construction_common_digital_083",
+      "task_title": "Construct original focus-wheel mesh",
+      "response": "{\n  \"result\": \"Code executed successfully: Info: File exported successfully\\n{'exported': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\source_mesh.stl', 'object': 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_r3_focus_wheel', 'triangles': 10824, 'non_manifold_edges': 0, 'bounds_mm': {'min': [-18.3605, -19.0, 0.0], 'max': [18.3605, 19.0, 18.0], 'dimensions': [36.7211, 38.0, 18.0]}, 'volume_mm3': 16649.93, 'construction': {'scallops': '6 x R8 at center radius 24.75, phases 0..300 deg', 'nominal_min_grip_diameter_mm': 33.5, 'hub_mm': '12 diameter, visible z16..18; 0.2 hidden union overlap', 'dots': '12 spherical caps, 1.2 diameter x 0.35 high at radius 13.5', 'socket': 'R3.2 clipped x>=-2.4, rear-open z0 to blind end z10', 'minimum_socket_roof_mm': 6.0, 'rounding': 'body perimeter and hub rim nominal R1 (segmented bevel)'}, 'unresolved': ['Nominal rounds and circular features are tessellated approximations.', 'Fit, torque strength, PETG shrinkage, support need and print outcome remain unverified.', 'Hub-root blend and slicer/package/profile checks remain for later review.']}\\n\"\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-04T02:01:57.333453+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "execution_kind": "mcp",
+      "tool": "proof-083-blender-prompt-055__execute_blender_code",
+      "arguments": {
+        "code": "import bpy, bmesh, math\nfrom mathutils import Vector\nsrc = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\source_mesh.stl'\nout = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\repaired_mesh.stl'\npreview = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\mesh-preview.png'\nprefix = 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_'\nexisting = set(bpy.data.objects)\nbpy.ops.wm.stl_import(filepath=src)\nowned = [o for o in bpy.context.selected_objects if o not in existing and o.type == 'MESH']\nif not owned:\n    raise RuntimeError('STL import produced no uniquely owned mesh object')\nfor i, o in enumerate(owned):\n    o.name = prefix + 'source_import_' + str(i)\nbpy.ops.object.select_all(action='DESELECT')\nfor o in owned:\n    o.select_set(True)\nbpy.context.view_layer.objects.active = owned[0]\nif len(owned) > 1:\n    bpy.ops.object.join()\nobj = bpy.context.view_layer.objects.active\nobj.name = prefix + 'repaired_socket_up'\nbpy.ops.object.transform_apply(location=True, rotation=True, scale=True)\n\ndef inspect(o):\n    bm = bmesh.new()\n    bm.from_mesh(o.data)\n    bm.normal_update()\n    nv, ne, nf = (len(bm.verts), len(bm.edges), len(bm.faces))\n    nonman = sum((1 for e in bm.edges if not e.is_manifold))\n    boundary = sum((1 for e in bm.edges if e.is_boundary))\n    wire = sum((1 for e in bm.edges if e.is_wire))\n    degf = sum((1 for f in bm.faces if f.calc_area() <= 1e-10))\n    dege = sum((1 for e in bm.edges if e.calc_length() <= 1e-09))\n    conflicts = 0\n    for e in bm.edges:\n        if len(e.link_faces) == 2:\n            ds = []\n            for f in e.link_faces:\n                lp = next((l for l in f.loops if l.edge == e))\n                ds.append((lp.vert.index, lp.link_loop_next.vert.index))\n            if ds[0] == ds[1]:\n                conflicts += 1\n    vol = bm.calc_volume(signed=True) if nf else 0.0\n    coords = [v.co.copy() for v in bm.verts]\n    mn = Vector((min((v.x for v in coords)), min((v.y for v in coords)), min((v.z for v in coords))))\n    mx = Vector((max((v.x for v in coords)), max((v.y for v in coords)), max((v.z for v in coords))))\n    z0 = mn.z\n    opening = [v for v in coords if abs(v.z - z0) <= 1e-05 and v.x * v.x + v.y * v.y <= 25.0]\n    mating = None\n    if opening:\n        mating = {'opening_plane_z_mm': round(z0, 6), 'x_extent_mm': [round(min((v.x for v in opening)), 6), round(max((v.x for v in opening)), 6)], 'y_extent_mm': [round(min((v.y for v in opening)), 6), round(max((v.y for v in opening)), 6)], 'sampled_boundary_vertices': len(opening)}\n    bm.free()\n    return {'vertices': nv, 'edges': ne, 'triangles': nf, 'non_manifold_edges': nonman, 'boundary_edges': boundary, 'wire_edges': wire, 'degenerate_faces': degf, 'zero_length_edges': dege, 'winding_conflicts': conflicts, 'signed_volume_mm3': round(vol, 5), 'bounds_min_mm': [round(x, 6) for x in mn], 'bounds_max_mm': [round(x, 6) for x in mx], 'dimensions_mm': [round(mx[i] - mn[i], 6) for i in range(3)], 'mating_feature_sample': mating}\nbefore = inspect(obj)\nbm = bmesh.new()\nbm.from_mesh(obj.data)\nv0 = len(bm.verts)\nf0 = len(bm.faces)\nbmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.001)\nfor f in list(bm.faces):\n    if f.is_valid and f.calc_area() <= 1e-10:\n        bm.faces.remove(f)\nbmesh.ops.dissolve_degenerate(bm, dist=1e-06, edges=list(bm.edges))\nbmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))\nbm.normal_update()\nbm.to_mesh(obj.data)\nbm.free()\nobj.data.update()\nrepair_counts = {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'vertices_removed': v0 - len(obj.data.vertices), 'faces_removed': f0 - len(obj.data.polygons), 'normals_recalculated': True}\nrepaired_pre_orientation = inspect(obj)\nif repaired_pre_orientation['non_manifold_edges'] != 0 or repaired_pre_orientation['boundary_edges'] != 0 or repaired_pre_orientation['degenerate_faces'] != 0 or (repaired_pre_orientation['winding_conflicts'] != 0):\n    raise RuntimeError('Repair did not preserve closed consistently wound manifold geometry: ' + str(repaired_pre_orientation))\nfor v in obj.data.vertices:\n    v.co.y = -v.co.y\n    v.co.z = -v.co.z\nminz = min((v.co.z for v in obj.data.vertices))\nfor v in obj.data.vertices:\n    v.co.z -= minz\nobj.data.update()\nafter = inspect(obj)\nif after['non_manifold_edges'] != 0 or after['boundary_edges'] != 0 or after['degenerate_faces'] != 0 or (after['triangles'] > 80000):\n    raise RuntimeError('Final mesh failed topology/triangle constraints: ' + str(after))\nbpy.ops.object.select_all(action='DESELECT')\nobj.select_set(True)\nbpy.context.view_layer.objects.active = obj\nbpy.ops.wm.stl_export(filepath=out, export_selected_objects=True, ascii_format=False)\nmat = bpy.data.materials.new(prefix + 'material')\nmat.diffuse_color = (0.12, 0.42, 0.8, 1.0)\nobj.data.materials.append(mat)\ncam_data = bpy.data.cameras.new(prefix + 'camera_data')\ncam = bpy.data.objects.new(prefix + 'camera', cam_data)\nbpy.context.collection.objects.link(cam)\ncenter = Vector(((after['bounds_min_mm'][0] + after['bounds_max_mm'][0]) / 2, (after['bounds_min_mm'][1] + after['bounds_max_mm'][1]) / 2, (after['bounds_min_mm'][2] + after['bounds_max_mm'][2]) / 2))\ncam.location = center + Vector((55, -55, 46))\ncam.rotation_euler = (center - cam.location).to_track_quat('-Z', 'Y').to_euler()\ncam_data.type = 'ORTHO'\ncam_data.ortho_scale = 52\nbpy.context.scene.camera = cam\nlight_data = bpy.data.lights.new(prefix + 'key_data', 'AREA')\nlight_data.energy = 900\nlight_data.shape = 'DISK'\nlight_data.size = 35\nlight = bpy.data.objects.new(prefix + 'key', light_data)\nbpy.context.collection.objects.link(light)\nlight.location = center + Vector((25, -30, 50))\nlight.rotation_euler = (center - light.location).to_track_quat('-Z', 'Y').to_euler()\nscene = bpy.data.scenes.new(prefix + 'preview_scene')\nfor owned_render_object in (obj, cam, light):\n    scene.collection.objects.link(owned_render_object)\nscene.camera = cam\nscene.world = bpy.data.worlds.new(prefix + 'world')\nscene.render.engine = 'BLENDER_EEVEE_NEXT'\nscene.render.resolution_x = 700\nscene.render.resolution_y = 700\nscene.render.resolution_percentage = 100\nscene.render.image_settings.file_format = 'PNG'\nscene.render.film_transparent = True\nscene.render.filepath = preview\nscene.world.color = (0.035, 0.035, 0.035)\nbpy.ops.render.render(scene=scene.name, write_still=True)\nreport = {'source_path': src, 'source_bytes_preserved': 'source was imported read-only and not overwritten', 'before': before, 'repair': repair_counts, 'after_repair_before_orientation': repaired_pre_orientation, 'transform': {'rotation': '180 degrees about X', 'translation': 'shifted transformed minimum Z to 0 mm', 'result': 'blind D-socket opening faces +Z (socket-up)'}, 'after_export': after, 'outputs': {'binary_stl': out, 'geometry_only_preview_png': preview}, 'orientation_review': 'Source had the blind socket opening on minimum-Z; socket-up reverses Z and places the raised front hub at the build-plate side. The 2 mm raised hub can elevate surrounding front-face regions and create broad underside overhangs, so slicer support may be required around that face. This image is geometry-only, not support/toolpath evidence; zero supports are not claimed.', 'limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'slicer support generation and print outcome', 'hub-root blend', 'profile/package compliance']}\nprint('W083_REPORT', report)\nimport bpy, bmesh\nfrom mathutils import Vector\nsrc = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\source_mesh.stl'\nout = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\repaired_mesh.stl'\npreview = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\mesh-preview.png'\nprefix = 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_'\n\ndef inspect(o):\n    bm = bmesh.new()\n    bm.from_mesh(o.data)\n    bm.normal_update()\n    coords = [v.co.copy() for v in bm.verts]\n    mn = Vector((min((v.x for v in coords)), min((v.y for v in coords)), min((v.z for v in coords))))\n    mx = Vector((max((v.x for v in coords)), max((v.y for v in coords)), max((v.z for v in coords))))\n    conflicts = 0\n    for e in bm.edges:\n        if len(e.link_faces) == 2:\n            dirs = []\n            for f in e.link_faces:\n                lp = next((l for l in f.loops if l.edge == e))\n                dirs.append((lp.vert.index, lp.link_loop_next.vert.index))\n            if dirs[0] == dirs[1]:\n                conflicts += 1\n    z0 = mn.z\n    opening = [v for v in coords if abs(v.z - z0) <= 1e-05 and v.x * v.x + v.y * v.y <= 25.0]\n    d = {'vertices': len(bm.verts), 'edges': len(bm.edges), 'triangles': len(bm.faces), 'non_manifold_edges': sum((1 for e in bm.edges if not e.is_manifold)), 'boundary_edges': sum((1 for e in bm.edges if e.is_boundary)), 'wire_edges': sum((1 for e in bm.edges if e.is_wire)), 'degenerate_faces': sum((1 for f in bm.faces if f.calc_area() <= 1e-10)), 'zero_length_edges': sum((1 for e in bm.edges if e.calc_length() <= 1e-09)), 'winding_conflicts': conflicts, 'signed_volume_mm3': round(bm.calc_volume(signed=True), 5), 'bounds_min_mm': [round(x, 6) for x in mn], 'bounds_max_mm': [round(x, 6) for x in mx], 'dimensions_mm': [round(mx[i] - mn[i], 6) for i in range(3)], 'minimum_z_socket_boundary_sample': None if not opening else {'x_extent_mm': [round(min((v.x for v in opening)), 6), round(max((v.x for v in opening)), 6)], 'y_extent_mm': [round(min((v.y for v in opening)), 6), round(max((v.y for v in opening)), 6)], 'vertices': len(opening)}}\n    bm.free()\n    return d\nexisting = set(bpy.data.objects)\nbpy.ops.wm.stl_import(filepath=src)\nsrc_objs = [o for o in bpy.context.selected_objects if o not in existing and o.type == 'MESH']\nif len(src_objs) != 1:\n    raise RuntimeError('Expected one uniquely owned source verification object')\nsrc_obj = src_objs[0]\nsrc_obj.name = prefix + 'source_verify'\nsource_measure = inspect(src_obj)\nsrc_obj.hide_render = True\nexisting = set(bpy.data.objects)\nbpy.ops.wm.stl_import(filepath=out)\nout_objs = [o for o in bpy.context.selected_objects if o not in existing and o.type == 'MESH']\nif len(out_objs) != 1:\n    raise RuntimeError('Expected one uniquely owned repaired-STL verification object')\nout_obj = out_objs[0]\nout_obj.name = prefix + 'export_verify'\nexported_measure = inspect(out_obj)\nout_obj.hide_render = True\nif exported_measure['non_manifold_edges'] or exported_measure['boundary_edges'] or exported_measure['degenerate_faces'] or exported_measure['winding_conflicts'] or (exported_measure['triangles'] > 80000):\n    raise RuntimeError('Exported repaired STL failed verification: ' + str(exported_measure))\nrender_obj = bpy.data.objects.get(prefix + 'repaired_socket_up')\nif render_obj is None or render_obj.type != 'MESH':\n    raise RuntimeError('Repaired socket-up object unavailable for preview')\nrender_obj.hide_render = False\nfinal_measure = inspect(render_obj)\nscene = bpy.data.scenes.get(prefix + 'preview_scene')\nif scene is None:\n    raise RuntimeError('Owned preview scene unavailable')\nif scene.world is None:\n    scene.world = bpy.data.worlds.new(prefix + 'world')\nscene.world.color = (0.035, 0.035, 0.035)\nscene.render.engine = 'BLENDER_EEVEE_NEXT'\nscene.render.resolution_x = 700\nscene.render.resolution_y = 700\nscene.render.resolution_percentage = 100\nscene.render.image_settings.file_format = 'PNG'\nscene.render.film_transparent = True\nscene.render.filepath = preview\nbpy.ops.render.render(scene=scene.name, write_still=True)\nprint('W083_FINAL_REPORT', {'source_actual': source_measure, 'repair': {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'normals_recalculated': True, 'dimensions_preserved': source_measure['dimensions_mm'] == exported_measure['dimensions_mm']}, 'transform': {'rotation': '180 degrees about X', 'translation': 'transformed minimum Z seated at 0 mm', 'orientation': 'blind D-socket opening faces +Z'}, 'post_transform_object': final_measure, 'exported_binary_stl_verified': exported_measure, 'outputs': {'repaired_mesh_stl': out, 'geometry_only_preview_png': preview}, 'support_consequences': 'Compared with the source, socket-up reverses Z. The raised 2 mm front hub is then on the build-plate side and can elevate surrounding front-face regions, producing broad underside overhangs that may require slicer-generated support. The retained PNG is geometry-only, not a support or toolpath preview; zero supports are not claimed.', 'remaining_review_limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'actual slicer support generation', 'print outcome', 'hub-root blend', 'profile/package compliance']})\n",
+        "user_prompt": "The plastic focus wheel on our training telescope cracked. Please use my attached sketch to make a friendlier six-scallop replacement. The outside diameter is 38 mm; use that as the image scale reference. The shaft is a 6.00 mm D shaft, with 5.20 mm from its flat to the far round surface. Make the blind socket 10 mm deep and allow the slip clearance in the notes. Please keep the raised grip dots subtle so gloves do not catch.\r\n\r\nProduce the source mesh, repaired printable mesh, support/slicing preview, and P1S 0.4 mm PETG slice package. Keep the shaft opening facing up if it improves the bore. I need a local test transfer receipt after review; do not send anything to a physical printer.\r\n"
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-04T02:01:58.646440+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+            "format": "stl",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2",
+            "size_bytes": 540484
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_repair_common_digital_083",
+          "output_port": "repaired_mesh",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-04T02:01:58.661590+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+            "format": "png",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e",
+            "size_bytes": 266982
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_repair_common_digital_083",
+          "output_port": "mesh_preview_png",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-04T02:01:58.677982+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "response": "{\n  \"result\": \"Code executed successfully: Info: File exported successfully\\nW083_REPORT {'source_path': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\source_mesh.stl', 'source_bytes_preserved': 'source was imported read-only and not overwritten', 'before': {'vertices': 5414, 'edges': 16236, 'triangles': 10824, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'mating_feature_sample': {'opening_plane_z_mm': 0.0, 'x_extent_mm': [-2.4, 3.2], 'y_extent_mm': [-3.199881, 3.199881], 'sampled_boundary_vertices': 99}}, 'repair': {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'vertices_removed': 8, 'faces_removed': 16, 'normals_recalculated': True}, 'after_repair_before_orientation': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92556, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'mating_feature_sample': {'opening_plane_z_mm': 0.0, 'x_extent_mm': [-2.4, 3.2], 'y_extent_mm': [-3.199881, 3.199881], 'sampled_boundary_vertices': 99}}, 'transform': {'rotation': '180 degrees about X', 'translation': 'shifted transformed minimum Z to 0 mm', 'result': 'blind D-socket opening faces +Z (socket-up)'}, 'after_export': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'mating_feature_sample': None}, 'outputs': {'binary_stl': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\repaired_mesh.stl', 'geometry_only_preview_png': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\mesh-preview.png'}, 'orientation_review': 'Source had the blind socket opening on minimum-Z; socket-up reverses Z and places the raised front hub at the build-plate side. The 2 mm raised hub can elevate surrounding front-face regions and create broad underside overhangs, so slicer support may be required around that face. This image is geometry-only, not support/toolpath evidence; zero supports are not claimed.', 'limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'slicer support generation and print outcome', 'hub-root blend', 'profile/package compliance']}\\nW083_FINAL_REPORT {'source_actual': {'vertices': 5414, 'edges': 16236, 'triangles': 10824, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'minimum_z_socket_boundary_sample': {'x_extent_mm': [-2.4, 3.2], 'y_extent_mm': [-3.199881, 3.199881], 'vertices': 99}}, 'repair': {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'normals_recalculated': True, 'dimensions_preserved': True}, 'transform': {'rotation': '180 degrees about X', 'translation': 'transformed minimum Z seated at 0 mm', 'orientation': 'blind D-socket opening faces +Z'}, 'post_transform_object': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'minimum_z_socket_boundary_sample': None}, 'exported_binary_stl_verified': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'minimum_z_socket_boundary_sample': None}, 'outputs': {'repaired_mesh_stl': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\repaired_mesh.stl', 'geometry_only_preview_png': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\mesh-preview.png'}, 'support_consequences': 'Compared with the source, socket-up reverses Z. The raised 2 mm front hub is then on the build-plate side and can elevate surrounding front-face regions, producing broad underside overhangs that may require slicer-generated support. The retained PNG is geometry-only, not a support or toolpath preview; zero supports are not claimed.', 'remaining_review_limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'actual slicer support generation', 'print outcome', 'hub-root blend', 'profile/package compliance']}\\n\"\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-04T02:01:58.691227+00:00",
+      "task_id": "mesh_construction_common_digital_083",
+      "task_title": "Construct original focus-wheel mesh",
+      "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+      "output_bytes": 541284,
+      "output_format": "stl",
+      "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+      "output_port": "source_mesh"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-04T02:01:58.721722+00:00",
+      "task_id": "mesh_construction_common_digital_083",
+      "task_title": "Construct original focus-wheel mesh",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result",
+        "kind": "structured",
+        "name": "Construct original focus-wheel mesh",
+        "representations": [
+          {
+            "kind": "value",
+            "location": "steps/mesh_construction_common_digital_083/response",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "run",
+            "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb",
+            "size_bytes": 1301
+          },
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb",
+            "size_bytes": 1301
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_construction_common_digital_083",
+          "output_port": "mesh_construction_common_digital_083_result",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-04T02:01:58.762802+00:00",
+      "task_id": "mesh_construction_common_digital_083",
+      "task_title": "Construct original focus-wheel mesh",
+      "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+      "output_bytes": 1301,
+      "output_format": "json",
+      "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb"
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-04T02:01:58.790428+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+      "output_bytes": 540484,
+      "output_format": "stl",
+      "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2",
+      "output_port": "repaired_mesh"
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-04T02:01:58.835172+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+      "output_bytes": 266982,
+      "output_format": "png",
+      "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e",
+      "output_port": "mesh_preview_png"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-04T02:01:58.867518+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result",
+        "kind": "structured",
+        "name": "Repair, measure and orient the exact source STL",
+        "representations": [
+          {
+            "kind": "value",
+            "location": "steps/mesh_repair_common_digital_083/response",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "run",
+            "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+            "size_bytes": 6183
+          },
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+            "size_bytes": 6183
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_repair_common_digital_083",
+          "output_port": "mesh_repair_common_digital_083_result",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-04T02:01:58.885239+00:00",
+      "task_id": "mesh_repair_common_digital_083",
+      "task_title": "Repair, measure and orient the exact source STL",
+      "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+      "output_bytes": 6183,
+      "output_format": "json",
+      "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f"
+    },
+    {
+      "kind": "run_completed",
+      "at": "2026-10-04T02:01:58.905121+00:00",
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "task_id": "mesh_repair_common_digital_083",
+      "required_steps_completed": [
+        "mesh_construction_common_digital_083",
+        "mesh_repair_common_digital_083"
+      ]
+    }
+  ],
+  "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+  "required_step_ids": [
+    "mesh_construction_common_digital_083",
+    "mesh_repair_common_digital_083"
+  ],
+  "partial_results": {
+    "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh": {
+      "schema_version": 1,
+      "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh",
+      "kind": "file",
+      "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+          "format": "stl",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+          "size_bytes": 541284
+        }
+      ],
+      "provenance": {
+        "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+        "task_id": "mesh_construction_common_digital_083",
+        "output_port": "source_mesh",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh": {
+      "schema_version": 1,
+      "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh",
+      "kind": "file",
+      "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+          "format": "stl",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2",
+          "size_bytes": 540484
+        }
+      ],
+      "provenance": {
+        "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+        "task_id": "mesh_repair_common_digital_083",
+        "output_port": "repaired_mesh",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png": {
+      "schema_version": 1,
+      "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png",
+      "kind": "file",
+      "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+          "format": "png",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e",
+          "size_bytes": 266982
+        }
+      ],
+      "provenance": {
+        "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+        "task_id": "mesh_repair_common_digital_083",
+        "output_port": "mesh_preview_png",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result": {
+      "schema_version": 1,
+      "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result",
+      "kind": "structured",
+      "name": "Construct original focus-wheel mesh",
+      "representations": [
+        {
+          "kind": "value",
+          "location": "steps/mesh_construction_common_digital_083/response",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "run",
+          "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb",
+          "size_bytes": 1301
+        },
+        {
+          "kind": "workspace_file",
+          "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb",
+          "size_bytes": 1301
+        }
+      ],
+      "provenance": {
+        "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+        "task_id": "mesh_construction_common_digital_083",
+        "output_port": "mesh_construction_common_digital_083_result",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result": {
+      "schema_version": 1,
+      "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result",
+      "kind": "structured",
+      "name": "Repair, measure and orient the exact source STL",
+      "representations": [
+        {
+          "kind": "value",
+          "location": "steps/mesh_repair_common_digital_083/response",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "run",
+          "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+          "size_bytes": 6183
+        },
+        {
+          "kind": "workspace_file",
+          "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+          "size_bytes": 6183
+        }
+      ],
+      "provenance": {
+        "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+        "task_id": "mesh_repair_common_digital_083",
+        "output_port": "mesh_repair_common_digital_083_result",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    }
+  },
+  "result": {
+    "workflow_title": "Prepare and inspect a focus-wheel mesh",
+    "task_id": "mesh_repair_common_digital_083",
+    "task_title": "Repair, measure and orient the exact source STL",
+    "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+    "output_bytes": 6183,
+    "output_format": "json",
+    "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+    "outputs": [
+      {
+        "task_id": "mesh_construction_common_digital_083",
+        "task_title": "Construct original focus-wheel mesh",
+        "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+        "output_bytes": 541284,
+        "output_format": "stl",
+        "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+        "output_port": "source_mesh"
+      },
+      {
+        "task_id": "mesh_construction_common_digital_083",
+        "task_title": "Construct original focus-wheel mesh",
+        "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+        "output_bytes": 1301,
+        "output_format": "json",
+        "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb"
+      },
+      {
+        "task_id": "mesh_repair_common_digital_083",
+        "task_title": "Repair, measure and orient the exact source STL",
+        "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+        "output_bytes": 540484,
+        "output_format": "stl",
+        "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2",
+        "output_port": "repaired_mesh"
+      },
+      {
+        "task_id": "mesh_repair_common_digital_083",
+        "task_title": "Repair, measure and orient the exact source STL",
+        "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+        "output_bytes": 266982,
+        "output_format": "png",
+        "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e",
+        "output_port": "mesh_preview_png"
+      },
+      {
+        "task_id": "mesh_repair_common_digital_083",
+        "task_title": "Repair, measure and orient the exact source STL",
+        "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+        "output_bytes": 6183,
+        "output_format": "json",
+        "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f"
+      }
+    ],
+    "steps": [
+      {
+        "execution_kind": "mcp",
+        "tool": "proof-083-blender-prompt-055__execute_blender_code",
+        "arguments": {
+          "code": "import bpy, bmesh, math\nfrom mathutils import Vector\nP = 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_r3_'\nout = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\source_mesh.stl'\nif any((o.name.startswith(P) for o in bpy.data.objects)):\n    raise RuntimeError('Owned-name collision; refusing overwrite')\nbpy.context.scene.unit_settings.system = 'METRIC'\nbpy.context.scene.unit_settings.length_unit = 'MILLIMETERS'\nbpy.context.scene.unit_settings.scale_length = 0.001\n\ndef active(o):\n    bpy.ops.object.select_all(action='DESELECT')\n    o.select_set(True)\n    bpy.context.view_layer.objects.active = o\n\ndef apply_mod(o, m):\n    active(o)\n    bpy.ops.object.modifier_apply(modifier=m.name)\n\ndef boolean(o, c, op):\n    m = o.modifiers.new(P + op, 'BOOLEAN')\n    m.operation = op\n    m.solver = 'EXACT'\n    m.object = c\n    apply_mod(o, m)\n    bpy.data.objects.remove(c, do_unlink=True)\n\ndef join_owned(obs, name):\n    bpy.ops.object.select_all(action='DESELECT')\n    for q in obs:\n        q.select_set(True)\n    bpy.context.view_layer.objects.active = obs[0]\n    bpy.ops.object.join()\n    obs[0].name = name\n    return obs[0]\nbpy.ops.mesh.primitive_cylinder_add(vertices=192, radius=19.0, depth=16.0, location=(0, 0, 8.0))\nbody = bpy.context.object\nbody.name = P + 'focus_wheel'\ncs = []\nfor i in range(6):\n    a = math.radians(60 * i)\n    bpy.ops.mesh.primitive_cylinder_add(vertices=96, radius=8.0, depth=20.0, location=(24.75 * math.cos(a), 24.75 * math.sin(a), 8.0))\n    q = bpy.context.object\n    q.name = P + 'scallop_%02d' % i\n    cs.append(q)\ncut = join_owned(cs, P + 'scallop_cutters')\nboolean(body, cut, 'DIFFERENCE')\nbev = body.modifiers.new(P + 'body_R1', 'BEVEL')\nbev.width = 1.0\nbev.segments = 4\nbev.limit_method = 'ANGLE'\napply_mod(body, bev)\nbpy.ops.mesh.primitive_cylinder_add(vertices=128, radius=6.0, depth=2.2, location=(0, 0, 16.9))\nhub = bpy.context.object\nhub.name = P + 'hub'\nhb = hub.modifiers.new(P + 'hub_R1', 'BEVEL')\nhb.width = 0.95\nhb.segments = 4\nhb.limit_method = 'ANGLE'\napply_mod(hub, hb)\nfeatures = [hub]\ncap_h = 0.35\ncap_a = 0.6\ncap_R = (cap_a * cap_a + cap_h * cap_h) / (2 * cap_h)\ncap_z = 16.0 + cap_h - cap_R\nfor n in range(6):\n    for s in (-8.0, 8.0):\n        a = math.radians(30.0 + 60.0 * n + s)\n        bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=cap_R, location=(13.5 * math.cos(a), 13.5 * math.sin(a), cap_z))\n        q = bpy.context.object\n        q.name = P + 'dot_%02d_%s' % (n, 'm' if s < 0 else 'p')\n        features.append(q)\nfeat = join_owned(features, P + 'raised_features')\nboolean(body, feat, 'UNION')\nr = 3.2\nxf = -2.4\naa = math.acos(xf / r)\npts = []\nN = 96\nfor i in range(N + 1):\n    t = -aa + 2 * aa * i / N\n    pts.append((r * math.cos(t), r * math.sin(t)))\nverts = [(x, y, -0.5) for x, y in pts] + [(x, y, 10.0) for x, y in pts]\nn = len(pts)\nfaces = [tuple(range(n - 1, -1, -1)), tuple(range(n, 2 * n))]\nfor i in range(n):\n    j = (i + 1) % n\n    faces.append((i, j, n + j, n + i))\nme = bpy.data.meshes.new(P + 'socket_mesh')\nme.from_pydata(verts, [], faces)\nme.update()\nsock = bpy.data.objects.new(P + 'socket_cutter', me)\nbpy.context.collection.objects.link(sock)\nboolean(body, sock, 'DIFFERENCE')\ntri = body.modifiers.new(P + 'triangulate', 'TRIANGULATE')\napply_mod(body, tri)\nactive(body)\nbm = bmesh.new()\nbm.from_mesh(body.data)\nnonman = sum((1 for e in bm.edges if not e.is_manifold))\nvol = abs(bm.calc_volume(signed=True))\nbm.free()\nif nonman:\n    raise RuntimeError('Geometry failure: %d non-manifold edges; export refused' % nonman)\ntris = len(body.data.polygons)\nif tris > 80000:\n    raise RuntimeError('Triangle limit exceeded: %d' % tris)\nworld = [body.matrix_world @ Vector(c) for c in body.bound_box]\nmins = [min((v[i] for v in world)) for i in range(3)]\nmaxs = [max((v[i] for v in world)) for i in range(3)]\ndims = [maxs[i] - mins[i] for i in range(3)]\nif max(dims[0], dims[1]) > 38.001 or dims[2] > 18.001:\n    raise RuntimeError('Envelope exceeded: ' + str(dims))\nbpy.ops.wm.stl_export(filepath=out, export_selected_objects=True)\nprint({'exported': out, 'object': body.name, 'triangles': tris, 'non_manifold_edges': nonman, 'bounds_mm': {'min': [round(x, 4) for x in mins], 'max': [round(x, 4) for x in maxs], 'dimensions': [round(x, 4) for x in dims]}, 'volume_mm3': round(vol, 2), 'construction': {'scallops': '6 x R8 at center radius 24.75, phases 0..300 deg', 'nominal_min_grip_diameter_mm': 33.5, 'hub_mm': '12 diameter, visible z16..18; 0.2 hidden union overlap', 'dots': '12 spherical caps, 1.2 diameter x 0.35 high at radius 13.5', 'socket': 'R3.2 clipped x>=-2.4, rear-open z0 to blind end z10', 'minimum_socket_roof_mm': 6.0, 'rounding': 'body perimeter and hub rim nominal R1 (segmented bevel)'}, 'unresolved': ['Nominal rounds and circular features are tessellated approximations.', 'Fit, torque strength, PETG shrinkage, support need and print outcome remain unverified.', 'Hub-root blend and slicer/package/profile checks remain for later review.']})\n",
+          "user_prompt": "The plastic focus wheel on our training telescope cracked. Please use my attached sketch to make a friendlier six-scallop replacement. The outside diameter is 38 mm; use that as the image scale reference. The shaft is a 6.00 mm D shaft, with 5.20 mm from its flat to the far round surface. Make the blind socket 10 mm deep and allow the slip clearance in the notes. Please keep the raised grip dots subtle so gloves do not catch.\r\n\r\nProduce the source mesh, repaired printable mesh, support/slicing preview, and P1S 0.4 mm PETG slice package. Keep the shaft opening facing up if it improves the bore. I need a local test transfer receipt after review; do not send anything to a physical printer.\r\n"
+        },
+        "prompt": "",
+        "response": "{\n  \"result\": \"Code executed successfully: Info: File exported successfully\\n{'exported': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\source_mesh.stl', 'object': 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_r3_focus_wheel', 'triangles': 10824, 'non_manifold_edges': 0, 'bounds_mm': {'min': [-18.3605, -19.0, 0.0], 'max': [18.3605, 19.0, 18.0], 'dimensions': [36.7211, 38.0, 18.0]}, 'volume_mm3': 16649.93, 'construction': {'scallops': '6 x R8 at center radius 24.75, phases 0..300 deg', 'nominal_min_grip_diameter_mm': 33.5, 'hub_mm': '12 diameter, visible z16..18; 0.2 hidden union overlap', 'dots': '12 spherical caps, 1.2 diameter x 0.35 high at radius 13.5', 'socket': 'R3.2 clipped x>=-2.4, rear-open z0 to blind end z10', 'minimum_socket_roof_mm': 6.0, 'rounding': 'body perimeter and hub rim nominal R1 (segmented bevel)'}, 'unresolved': ['Nominal rounds and circular features are tessellated approximations.', 'Fit, torque strength, PETG shrinkage, support need and print outcome remain unverified.', 'Hub-root blend and slicer/package/profile checks remain for later review.']}\\n\"\n}",
+        "produced_files": [
+          {
+            "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+            "output_bytes": 541284,
+            "output_format": "stl",
+            "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+            "output_port": "source_mesh"
+          }
+        ],
+        "references": [
+          {
+            "path": "process-proofs/printed-replacement-part/common-digital-083/inputs/construction-arguments.json",
+            "sha256": "7314c297a23d68d073f5cc6f697b7f49bac437b3a1ecf3ffe4dcbef3d0850266",
+            "kind": "text"
+          }
+        ],
+        "task_id": "mesh_construction_common_digital_083",
+        "task_title": "Construct original focus-wheel mesh",
+        "output_format": "json",
+        "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+        "output_bytes": 1301,
+        "saved_response": {
+          "task_id": "mesh_construction_common_digital_083",
+          "task_title": "Construct original focus-wheel mesh",
+          "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+          "output_bytes": 1301,
+          "output_format": "json",
+          "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb"
+        }
+      },
+      {
+        "execution_kind": "mcp",
+        "tool": "proof-083-blender-prompt-055__execute_blender_code",
+        "arguments": {
+          "code": "import bpy, bmesh, math\nfrom mathutils import Vector\nsrc = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\source_mesh.stl'\nout = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\repaired_mesh.stl'\npreview = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\mesh-preview.png'\nprefix = 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_'\nexisting = set(bpy.data.objects)\nbpy.ops.wm.stl_import(filepath=src)\nowned = [o for o in bpy.context.selected_objects if o not in existing and o.type == 'MESH']\nif not owned:\n    raise RuntimeError('STL import produced no uniquely owned mesh object')\nfor i, o in enumerate(owned):\n    o.name = prefix + 'source_import_' + str(i)\nbpy.ops.object.select_all(action='DESELECT')\nfor o in owned:\n    o.select_set(True)\nbpy.context.view_layer.objects.active = owned[0]\nif len(owned) > 1:\n    bpy.ops.object.join()\nobj = bpy.context.view_layer.objects.active\nobj.name = prefix + 'repaired_socket_up'\nbpy.ops.object.transform_apply(location=True, rotation=True, scale=True)\n\ndef inspect(o):\n    bm = bmesh.new()\n    bm.from_mesh(o.data)\n    bm.normal_update()\n    nv, ne, nf = (len(bm.verts), len(bm.edges), len(bm.faces))\n    nonman = sum((1 for e in bm.edges if not e.is_manifold))\n    boundary = sum((1 for e in bm.edges if e.is_boundary))\n    wire = sum((1 for e in bm.edges if e.is_wire))\n    degf = sum((1 for f in bm.faces if f.calc_area() <= 1e-10))\n    dege = sum((1 for e in bm.edges if e.calc_length() <= 1e-09))\n    conflicts = 0\n    for e in bm.edges:\n        if len(e.link_faces) == 2:\n            ds = []\n            for f in e.link_faces:\n                lp = next((l for l in f.loops if l.edge == e))\n                ds.append((lp.vert.index, lp.link_loop_next.vert.index))\n            if ds[0] == ds[1]:\n                conflicts += 1\n    vol = bm.calc_volume(signed=True) if nf else 0.0\n    coords = [v.co.copy() for v in bm.verts]\n    mn = Vector((min((v.x for v in coords)), min((v.y for v in coords)), min((v.z for v in coords))))\n    mx = Vector((max((v.x for v in coords)), max((v.y for v in coords)), max((v.z for v in coords))))\n    z0 = mn.z\n    opening = [v for v in coords if abs(v.z - z0) <= 1e-05 and v.x * v.x + v.y * v.y <= 25.0]\n    mating = None\n    if opening:\n        mating = {'opening_plane_z_mm': round(z0, 6), 'x_extent_mm': [round(min((v.x for v in opening)), 6), round(max((v.x for v in opening)), 6)], 'y_extent_mm': [round(min((v.y for v in opening)), 6), round(max((v.y for v in opening)), 6)], 'sampled_boundary_vertices': len(opening)}\n    bm.free()\n    return {'vertices': nv, 'edges': ne, 'triangles': nf, 'non_manifold_edges': nonman, 'boundary_edges': boundary, 'wire_edges': wire, 'degenerate_faces': degf, 'zero_length_edges': dege, 'winding_conflicts': conflicts, 'signed_volume_mm3': round(vol, 5), 'bounds_min_mm': [round(x, 6) for x in mn], 'bounds_max_mm': [round(x, 6) for x in mx], 'dimensions_mm': [round(mx[i] - mn[i], 6) for i in range(3)], 'mating_feature_sample': mating}\nbefore = inspect(obj)\nbm = bmesh.new()\nbm.from_mesh(obj.data)\nv0 = len(bm.verts)\nf0 = len(bm.faces)\nbmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.001)\nfor f in list(bm.faces):\n    if f.is_valid and f.calc_area() <= 1e-10:\n        bm.faces.remove(f)\nbmesh.ops.dissolve_degenerate(bm, dist=1e-06, edges=list(bm.edges))\nbmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))\nbm.normal_update()\nbm.to_mesh(obj.data)\nbm.free()\nobj.data.update()\nrepair_counts = {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'vertices_removed': v0 - len(obj.data.vertices), 'faces_removed': f0 - len(obj.data.polygons), 'normals_recalculated': True}\nrepaired_pre_orientation = inspect(obj)\nif repaired_pre_orientation['non_manifold_edges'] != 0 or repaired_pre_orientation['boundary_edges'] != 0 or repaired_pre_orientation['degenerate_faces'] != 0 or (repaired_pre_orientation['winding_conflicts'] != 0):\n    raise RuntimeError('Repair did not preserve closed consistently wound manifold geometry: ' + str(repaired_pre_orientation))\nfor v in obj.data.vertices:\n    v.co.y = -v.co.y\n    v.co.z = -v.co.z\nminz = min((v.co.z for v in obj.data.vertices))\nfor v in obj.data.vertices:\n    v.co.z -= minz\nobj.data.update()\nafter = inspect(obj)\nif after['non_manifold_edges'] != 0 or after['boundary_edges'] != 0 or after['degenerate_faces'] != 0 or (after['triangles'] > 80000):\n    raise RuntimeError('Final mesh failed topology/triangle constraints: ' + str(after))\nbpy.ops.object.select_all(action='DESELECT')\nobj.select_set(True)\nbpy.context.view_layer.objects.active = obj\nbpy.ops.wm.stl_export(filepath=out, export_selected_objects=True, ascii_format=False)\nmat = bpy.data.materials.new(prefix + 'material')\nmat.diffuse_color = (0.12, 0.42, 0.8, 1.0)\nobj.data.materials.append(mat)\ncam_data = bpy.data.cameras.new(prefix + 'camera_data')\ncam = bpy.data.objects.new(prefix + 'camera', cam_data)\nbpy.context.collection.objects.link(cam)\ncenter = Vector(((after['bounds_min_mm'][0] + after['bounds_max_mm'][0]) / 2, (after['bounds_min_mm'][1] + after['bounds_max_mm'][1]) / 2, (after['bounds_min_mm'][2] + after['bounds_max_mm'][2]) / 2))\ncam.location = center + Vector((55, -55, 46))\ncam.rotation_euler = (center - cam.location).to_track_quat('-Z', 'Y').to_euler()\ncam_data.type = 'ORTHO'\ncam_data.ortho_scale = 52\nbpy.context.scene.camera = cam\nlight_data = bpy.data.lights.new(prefix + 'key_data', 'AREA')\nlight_data.energy = 900\nlight_data.shape = 'DISK'\nlight_data.size = 35\nlight = bpy.data.objects.new(prefix + 'key', light_data)\nbpy.context.collection.objects.link(light)\nlight.location = center + Vector((25, -30, 50))\nlight.rotation_euler = (center - light.location).to_track_quat('-Z', 'Y').to_euler()\nscene = bpy.data.scenes.new(prefix + 'preview_scene')\nfor owned_render_object in (obj, cam, light):\n    scene.collection.objects.link(owned_render_object)\nscene.camera = cam\nscene.world = bpy.data.worlds.new(prefix + 'world')\nscene.render.engine = 'BLENDER_EEVEE_NEXT'\nscene.render.resolution_x = 700\nscene.render.resolution_y = 700\nscene.render.resolution_percentage = 100\nscene.render.image_settings.file_format = 'PNG'\nscene.render.film_transparent = True\nscene.render.filepath = preview\nscene.world.color = (0.035, 0.035, 0.035)\nbpy.ops.render.render(scene=scene.name, write_still=True)\nreport = {'source_path': src, 'source_bytes_preserved': 'source was imported read-only and not overwritten', 'before': before, 'repair': repair_counts, 'after_repair_before_orientation': repaired_pre_orientation, 'transform': {'rotation': '180 degrees about X', 'translation': 'shifted transformed minimum Z to 0 mm', 'result': 'blind D-socket opening faces +Z (socket-up)'}, 'after_export': after, 'outputs': {'binary_stl': out, 'geometry_only_preview_png': preview}, 'orientation_review': 'Source had the blind socket opening on minimum-Z; socket-up reverses Z and places the raised front hub at the build-plate side. The 2 mm raised hub can elevate surrounding front-face regions and create broad underside overhangs, so slicer support may be required around that face. This image is geometry-only, not support/toolpath evidence; zero supports are not claimed.', 'limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'slicer support generation and print outcome', 'hub-root blend', 'profile/package compliance']}\nprint('W083_REPORT', report)\nimport bpy, bmesh\nfrom mathutils import Vector\nsrc = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\source_mesh.stl'\nout = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\repaired_mesh.stl'\npreview = 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\common-digital-083\\\\outputs\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\mesh-preview.png'\nprefix = 'W083_common_8c042141e6c7422aa58ca1bbab14d86e_'\n\ndef inspect(o):\n    bm = bmesh.new()\n    bm.from_mesh(o.data)\n    bm.normal_update()\n    coords = [v.co.copy() for v in bm.verts]\n    mn = Vector((min((v.x for v in coords)), min((v.y for v in coords)), min((v.z for v in coords))))\n    mx = Vector((max((v.x for v in coords)), max((v.y for v in coords)), max((v.z for v in coords))))\n    conflicts = 0\n    for e in bm.edges:\n        if len(e.link_faces) == 2:\n            dirs = []\n            for f in e.link_faces:\n                lp = next((l for l in f.loops if l.edge == e))\n                dirs.append((lp.vert.index, lp.link_loop_next.vert.index))\n            if dirs[0] == dirs[1]:\n                conflicts += 1\n    z0 = mn.z\n    opening = [v for v in coords if abs(v.z - z0) <= 1e-05 and v.x * v.x + v.y * v.y <= 25.0]\n    d = {'vertices': len(bm.verts), 'edges': len(bm.edges), 'triangles': len(bm.faces), 'non_manifold_edges': sum((1 for e in bm.edges if not e.is_manifold)), 'boundary_edges': sum((1 for e in bm.edges if e.is_boundary)), 'wire_edges': sum((1 for e in bm.edges if e.is_wire)), 'degenerate_faces': sum((1 for f in bm.faces if f.calc_area() <= 1e-10)), 'zero_length_edges': sum((1 for e in bm.edges if e.calc_length() <= 1e-09)), 'winding_conflicts': conflicts, 'signed_volume_mm3': round(bm.calc_volume(signed=True), 5), 'bounds_min_mm': [round(x, 6) for x in mn], 'bounds_max_mm': [round(x, 6) for x in mx], 'dimensions_mm': [round(mx[i] - mn[i], 6) for i in range(3)], 'minimum_z_socket_boundary_sample': None if not opening else {'x_extent_mm': [round(min((v.x for v in opening)), 6), round(max((v.x for v in opening)), 6)], 'y_extent_mm': [round(min((v.y for v in opening)), 6), round(max((v.y for v in opening)), 6)], 'vertices': len(opening)}}\n    bm.free()\n    return d\nexisting = set(bpy.data.objects)\nbpy.ops.wm.stl_import(filepath=src)\nsrc_objs = [o for o in bpy.context.selected_objects if o not in existing and o.type == 'MESH']\nif len(src_objs) != 1:\n    raise RuntimeError('Expected one uniquely owned source verification object')\nsrc_obj = src_objs[0]\nsrc_obj.name = prefix + 'source_verify'\nsource_measure = inspect(src_obj)\nsrc_obj.hide_render = True\nexisting = set(bpy.data.objects)\nbpy.ops.wm.stl_import(filepath=out)\nout_objs = [o for o in bpy.context.selected_objects if o not in existing and o.type == 'MESH']\nif len(out_objs) != 1:\n    raise RuntimeError('Expected one uniquely owned repaired-STL verification object')\nout_obj = out_objs[0]\nout_obj.name = prefix + 'export_verify'\nexported_measure = inspect(out_obj)\nout_obj.hide_render = True\nif exported_measure['non_manifold_edges'] or exported_measure['boundary_edges'] or exported_measure['degenerate_faces'] or exported_measure['winding_conflicts'] or (exported_measure['triangles'] > 80000):\n    raise RuntimeError('Exported repaired STL failed verification: ' + str(exported_measure))\nrender_obj = bpy.data.objects.get(prefix + 'repaired_socket_up')\nif render_obj is None or render_obj.type != 'MESH':\n    raise RuntimeError('Repaired socket-up object unavailable for preview')\nrender_obj.hide_render = False\nfinal_measure = inspect(render_obj)\nscene = bpy.data.scenes.get(prefix + 'preview_scene')\nif scene is None:\n    raise RuntimeError('Owned preview scene unavailable')\nif scene.world is None:\n    scene.world = bpy.data.worlds.new(prefix + 'world')\nscene.world.color = (0.035, 0.035, 0.035)\nscene.render.engine = 'BLENDER_EEVEE_NEXT'\nscene.render.resolution_x = 700\nscene.render.resolution_y = 700\nscene.render.resolution_percentage = 100\nscene.render.image_settings.file_format = 'PNG'\nscene.render.film_transparent = True\nscene.render.filepath = preview\nbpy.ops.render.render(scene=scene.name, write_still=True)\nprint('W083_FINAL_REPORT', {'source_actual': source_measure, 'repair': {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'normals_recalculated': True, 'dimensions_preserved': source_measure['dimensions_mm'] == exported_measure['dimensions_mm']}, 'transform': {'rotation': '180 degrees about X', 'translation': 'transformed minimum Z seated at 0 mm', 'orientation': 'blind D-socket opening faces +Z'}, 'post_transform_object': final_measure, 'exported_binary_stl_verified': exported_measure, 'outputs': {'repaired_mesh_stl': out, 'geometry_only_preview_png': preview}, 'support_consequences': 'Compared with the source, socket-up reverses Z. The raised 2 mm front hub is then on the build-plate side and can elevate surrounding front-face regions, producing broad underside overhangs that may require slicer-generated support. The retained PNG is geometry-only, not a support or toolpath preview; zero supports are not claimed.', 'remaining_review_limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'actual slicer support generation', 'print outcome', 'hub-root blend', 'profile/package compliance']})\n",
+          "user_prompt": "The plastic focus wheel on our training telescope cracked. Please use my attached sketch to make a friendlier six-scallop replacement. The outside diameter is 38 mm; use that as the image scale reference. The shaft is a 6.00 mm D shaft, with 5.20 mm from its flat to the far round surface. Make the blind socket 10 mm deep and allow the slip clearance in the notes. Please keep the raised grip dots subtle so gloves do not catch.\r\n\r\nProduce the source mesh, repaired printable mesh, support/slicing preview, and P1S 0.4 mm PETG slice package. Keep the shaft opening facing up if it improves the bore. I need a local test transfer receipt after review; do not send anything to a physical printer.\r\n"
+        },
+        "prompt": "",
+        "response": "{\n  \"result\": \"Code executed successfully: Info: File exported successfully\\nW083_REPORT {'source_path': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\source_mesh.stl', 'source_bytes_preserved': 'source was imported read-only and not overwritten', 'before': {'vertices': 5414, 'edges': 16236, 'triangles': 10824, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'mating_feature_sample': {'opening_plane_z_mm': 0.0, 'x_extent_mm': [-2.4, 3.2], 'y_extent_mm': [-3.199881, 3.199881], 'sampled_boundary_vertices': 99}}, 'repair': {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'vertices_removed': 8, 'faces_removed': 16, 'normals_recalculated': True}, 'after_repair_before_orientation': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92556, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'mating_feature_sample': {'opening_plane_z_mm': 0.0, 'x_extent_mm': [-2.4, 3.2], 'y_extent_mm': [-3.199881, 3.199881], 'sampled_boundary_vertices': 99}}, 'transform': {'rotation': '180 degrees about X', 'translation': 'shifted transformed minimum Z to 0 mm', 'result': 'blind D-socket opening faces +Z (socket-up)'}, 'after_export': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'mating_feature_sample': None}, 'outputs': {'binary_stl': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\repaired_mesh.stl', 'geometry_only_preview_png': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\mesh-preview.png'}, 'orientation_review': 'Source had the blind socket opening on minimum-Z; socket-up reverses Z and places the raised front hub at the build-plate side. The 2 mm raised hub can elevate surrounding front-face regions and create broad underside overhangs, so slicer support may be required around that face. This image is geometry-only, not support/toolpath evidence; zero supports are not claimed.', 'limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'slicer support generation and print outcome', 'hub-root blend', 'profile/package compliance']}\\nW083_FINAL_REPORT {'source_actual': {'vertices': 5414, 'edges': 16236, 'triangles': 10824, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'minimum_z_socket_boundary_sample': {'x_extent_mm': [-2.4, 3.2], 'y_extent_mm': [-3.199881, 3.199881], 'vertices': 99}}, 'repair': {'merge_tolerance_mm': 0.001, 'degenerate_edge_tolerance_mm': 1e-06, 'normals_recalculated': True, 'dimensions_preserved': True}, 'transform': {'rotation': '180 degrees about X', 'translation': 'transformed minimum Z seated at 0 mm', 'orientation': 'blind D-socket opening faces +Z'}, 'post_transform_object': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'minimum_z_socket_boundary_sample': None}, 'exported_binary_stl_verified': {'vertices': 5406, 'edges': 16212, 'triangles': 10808, 'non_manifold_edges': 0, 'boundary_edges': 0, 'wire_edges': 0, 'degenerate_faces': 0, 'zero_length_edges': 0, 'winding_conflicts': 0, 'signed_volume_mm3': 16649.92557, 'bounds_min_mm': [-18.360533, -19.0, 0.0], 'bounds_max_mm': [18.360533, 19.0, 18.0], 'dimensions_mm': [36.721066, 38.0, 18.0], 'minimum_z_socket_boundary_sample': None}, 'outputs': {'repaired_mesh_stl': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\repaired_mesh.stl', 'geometry_only_preview_png': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\t047-fresh-prompt-055\\\\\\\\process-proofs\\\\\\\\printed-replacement-part\\\\\\\\common-digital-083\\\\\\\\outputs\\\\\\\\8c042141e6c7422aa58ca1bbab14d86e\\\\\\\\mesh-preview.png'}, 'support_consequences': 'Compared with the source, socket-up reverses Z. The raised 2 mm front hub is then on the build-plate side and can elevate surrounding front-face regions, producing broad underside overhangs that may require slicer-generated support. The retained PNG is geometry-only, not a support or toolpath preview; zero supports are not claimed.', 'remaining_review_limits': ['physical fit', 'torque strength', 'PETG shrinkage', 'actual slicer support generation', 'print outcome', 'hub-root blend', 'profile/package compliance']}\\n\"\n}",
+        "produced_files": [
+          {
+            "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+            "output_bytes": 540484,
+            "output_format": "stl",
+            "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2",
+            "output_port": "repaired_mesh"
+          },
+          {
+            "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+            "output_bytes": 266982,
+            "output_format": "png",
+            "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e",
+            "output_port": "mesh_preview_png"
+          }
+        ],
+        "references": [
+          {
+            "path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+            "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+            "kind": "workspace_file",
+            "source_port": "mesh_construction_common_digital_083.source_mesh"
+          },
+          {
+            "path": "process-proofs/printed-replacement-part/common-digital-083/inputs/repair-arguments.json",
+            "sha256": "406997ae2041b758c65623a4b73c65683637d57908a0dababbc722ae346496c9",
+            "kind": "text"
+          }
+        ],
+        "task_id": "mesh_repair_common_digital_083",
+        "task_title": "Repair, measure and orient the exact source STL",
+        "output_format": "json",
+        "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+        "output_bytes": 6183,
+        "saved_response": {
+          "task_id": "mesh_repair_common_digital_083",
+          "task_title": "Repair, measure and orient the exact source STL",
+          "output_path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+          "output_bytes": 6183,
+          "output_format": "json",
+          "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f"
+        }
+      }
+    ],
+    "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+    "results": [
+      {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+            "format": "stl",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+            "size_bytes": 541284
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_construction_common_digital_083",
+          "output_port": "source_mesh",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      },
+      {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result",
+        "kind": "structured",
+        "name": "Construct original focus-wheel mesh",
+        "representations": [
+          {
+            "kind": "value",
+            "location": "steps/mesh_construction_common_digital_083/response",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "run",
+            "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb",
+            "size_bytes": 1301
+          },
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb",
+            "size_bytes": 1301
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_construction_common_digital_083",
+          "output_port": "mesh_construction_common_digital_083_result",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      },
+      {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+            "format": "stl",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2",
+            "size_bytes": 540484
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_repair_common_digital_083",
+          "output_port": "repaired_mesh",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      },
+      {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+            "format": "png",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e",
+            "size_bytes": 266982
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_repair_common_digital_083",
+          "output_port": "mesh_preview_png",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      },
+      {
+        "schema_version": 1,
+        "id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result",
+        "kind": "structured",
+        "name": "Repair, measure and orient the exact source STL",
+        "representations": [
+          {
+            "kind": "value",
+            "location": "steps/mesh_repair_common_digital_083/response",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "run",
+            "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+            "size_bytes": 6183
+          },
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+            "size_bytes": 6183
+          }
+        ],
+        "provenance": {
+          "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+          "task_id": "mesh_repair_common_digital_083",
+          "output_port": "mesh_repair_common_digital_083_result",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    ],
+    "revision_attempts": [],
+    "status": "completed"
+  },
+  "execution_ended_at": "2026-10-04T02:01:58.929182+00:00",
+  "completed_at": "2026-10-04T02:01:58.929182+00:00"
+}

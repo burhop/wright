@@ -1,0 +1,48 @@
+{
+  "session_id": "083-printed-prompt-session-055",
+  "path": "workflows/printed-replacement-part-common-digital-083.workflow.wflow",
+  "expected_storage_digest": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06",
+  "workspace_id": "083-fresh-prompt-055",
+  "input_snapshot_id": "inputs-0bc76dd1cde24975aab53eb7f9a5a0ff",
+  "expected_input_digest": "366ccd6b83fb69a2a3c1accd5e147278536fc51809e16384b355866ddb860b21",
+  "preparation": {
+    "schema_version": 1,
+    "feature": "083-process-working-interfaces",
+    "status": "prepared_not_executed",
+    "template_id": "printed-replacement-part",
+    "attempt": "common-digital-083",
+    "source_path": "process-proofs/printed-replacement-part/common-digital-083/prepared.workflow.wflow",
+    "accepted_source_path": "workflows/printed-replacement-part-common-digital-083.workflow.wflow",
+    "source_acceptance_required": true,
+    "source_sha256": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06",
+    "template_source_sha256": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf",
+    "input_files": [
+      {
+        "path": "process-proofs/printed-replacement-part/common-digital-083/inputs/construction-arguments.json",
+        "sha256": "7314c297a23d68d073f5cc6f697b7f49bac437b3a1ecf3ffe4dcbef3d0850266",
+        "original": null
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/common-digital-083/inputs/repair-arguments.json",
+        "sha256": "406997ae2041b758c65623a4b73c65683637d57908a0dababbc722ae346496c9",
+        "original": null
+      }
+    ],
+    "output_root": "process-proofs/printed-replacement-part/common-digital-083/outputs",
+    "run_path_template": "wright.run-path/1",
+    "output_template": "process-proofs/printed-replacement-part/common-digital-083/outputs/{{wright.run_id}}",
+    "tool_allowlist": [
+      {
+        "server_id": "proof-083-blender-prompt-055",
+        "name": "proof-083-blender-prompt-055__execute_blender_code",
+        "schema_digest": "2d2c71a6d7d4e096476d0bb4fe046c08070b537502f63ba1d28ea53ae16c964a"
+      }
+    ],
+    "step_count": 2,
+    "physical_dispatch": false,
+    "approval_policy_not_enrolled": true,
+    "engineering_acceptance": false
+  },
+  "integration_policy_enrolled": false,
+  "status": "prepared_not_started"
+}

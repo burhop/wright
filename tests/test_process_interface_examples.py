@@ -368,6 +368,34 @@ def test_printed_proposal_preserves_assignment_and_full_gate(printed_configurati
         step.id for step in plan.steps
     ].index(create.id)
     assert "not human engineering acceptance" in create.prompt
+    assert "Preserve that original text verbatim" in create.prompt
+    assert "do not replace it with a task summary" in create.prompt
+    for step in (create, repair):
+        references = dict(step.references)
+        for role, filename in (
+            ("original_user_prompt", "prompt.txt"),
+            ("original_context", "context.md"),
+            ("original_user_profile", "user-profile.md"),
+        ):
+            address = next(
+                address for name, address in references.items()
+                if name.replace(" ", "_").endswith(role)
+            )
+            settings = plan.inputs[address.split(".")[0]]["settings"]
+            staged = workspace / settings["workspace_file"]
+            assert staged.name == filename
+            assert staged.read_bytes() == (
+                REPO / "tests/datasets/engineering-workflows/scenarios"
+                / "printed-replacement-part/01-observatory-focus-wheel" / filename
+            ).read_bytes()
+        assert "user_prompt" in step.prompt
+    image_addresses = [
+        address for name, address in create.references
+        if name.replace(" ", "_").endswith("original_reference")
+    ]
+    assert len(image_addresses) == 1
+    image_settings = plan.inputs[image_addresses[0].split(".")[0]]["settings"]
+    assert image_settings["workspace_file"].endswith("/concept.png")
     assert (
         report["physical_dispatch"] is False
         and report["engineering_acceptance"] is False
@@ -442,7 +470,7 @@ def test_printed_missing_tool_never_stages_attempt(printed_configuration):
     assert not (workspace / "process-proofs").exists()
 
 
-@pytest.mark.parametrize("mode", ["generated", "qualified", "configured", "retained"])
+@pytest.mark.parametrize("mode", ["generated", "qualified", "configured", "mixed", "retained"])
 def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(printed_configuration, mode):
     from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths, bind_run_input_values
     from workspace_service.workflow_references import WorkflowReference
@@ -452,6 +480,10 @@ def test_printed_run_paths_bind_all_write_boundaries_and_keep_opaque_inputs(prin
     bindings["run_path_template"] = VERSION
     if mode == "configured":
         bindings["geometry_operation_mode"] = "configured_tool"
+    if mode == "mixed":
+        bindings["geometry_operation_modes"] = {
+            "construction": "ai_task", "repair": "configured_tool",
+        }
     if mode != "generated":
         configured_geometry(bindings, workspace, module)
         for role in ("construction", "repair"):
@@ -574,6 +606,70 @@ def test_configured_geometry_requires_qualified_inputs_before_staging(printed_co
     bindings["geometry_operation_mode"] = "configured_tool"
     with pytest.raises(ValueError, match="pinned basis and both qualified"):
         printed_preparer().prepare(workspace, "missing-operations", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+@pytest.mark.parametrize("construction", ["ai_task", "configured_tool"])
+@pytest.mark.parametrize("repair", ["ai_task", "configured_tool"])
+def test_printed_geometry_stage_modes_reuse_existing_bindings(
+    printed_configuration, construction, repair,
+):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_modes"] = {
+        "construction": construction, "repair": repair,
+    }
+    report = module.prepare(workspace, "separate-stage-modes", tools, bindings)
+    source = (workspace / report["source_path"]).read_text(encoding="utf-8")
+    plan = compile_prompt_workflow(source)
+    assert len(plan.steps) == 11
+    review = next(step for step in plan.steps if step.id.startswith("review_basis"))
+    for prefix, role, mode in (
+        ("create_mesh", "construction", construction),
+        ("repair_measure_orient", "repair", repair),
+    ):
+        step = next(step for step in plan.steps if step.id.startswith(prefix))
+        assert step.agent_task is (mode == "ai_task")
+        assert step.server_id == "fixture-geometry" and step.timeout_seconds == 360
+        if mode == "configured_tool":
+            assert step.arguments_from and step.tool_name.endswith("__execute_blender_code")
+            assert step.prompt == ""
+            assert any(role + " operation" in name for name, _ in review.references)
+            address = step.arguments_from.split(".")[0]
+            path = workspace / plan.inputs[address]["settings"]["workspace_file"]
+            assert path.read_bytes() == Path(bindings["geometry_operation_files"][role]["path"]).read_bytes()
+        else:
+            assert step.max_tool_calls == 2 and not step.arguments_from
+            assert any("original user prompt" in name for name, _ in step.references)
+            assert "user_prompt" in step.prompt
+    repair_step = next(step for step in plan.steps if step.id.startswith("repair_measure_orient"))
+    assert list(repair_step.file_dependencies.values()) == [report["output_root"] + "/source_mesh.stl"]
+    assert source.count('"action_kind":"local_review"') == 2
+    gate = next(step for step in plan.steps if step.validation)
+    profile = ValidatorConfiguration.model_validate(gate.validation).load(str(workspace))
+    assert len(profile.checks) == 18 and profile.checks[-1].constraint.operator == "review"
+    assert report["physical_dispatch"] is False
+
+
+@pytest.mark.parametrize("modes", [None, {}, [], False,
+    {"repair": "configured_tool"},
+    {"construction": "ai_task", "repair": "unknown"},
+    {"construction": "ai_task", "repair": "configured_tool", "slice": "configured_tool"},
+])
+def test_invalid_geometry_stage_modes_block_before_staging(printed_configuration, modes):
+    workspace, bindings, tools = printed_configuration
+    bindings["geometry_operation_modes"] = modes
+    with pytest.raises(ValueError, match="both supported geometry operation modes"):
+        printed_preparer().prepare(workspace, "invalid-stage-modes", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def test_mixed_geometry_stage_modes_require_pinned_inputs(printed_configuration):
+    workspace, bindings, tools = printed_configuration
+    bindings["geometry_operation_modes"] = {"construction": "ai_task", "repair": "configured_tool"}
+    with pytest.raises(ValueError, match="pinned basis and both qualified"):
+        printed_preparer().prepare(workspace, "missing-mixed-inputs", tools, bindings)
     assert not (workspace / "process-proofs").exists()
 
 

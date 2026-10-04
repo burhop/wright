@@ -1,0 +1,49 @@
+{
+  "job": {
+    "job_id": "job-8ba8edd218164cafb0aa4b587acb51df",
+    "request_id": "interface-c86bc709-d76b-4c27-ba67-bdebbb020eab",
+    "request_digest": "3734505ccdd0eb3415b8b2b32e1d8c48bed302794a7a0ed308c898d68d31e36a",
+    "process": {
+      "workspace_id": "083-fresh-prompt-055",
+      "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+      "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "base_revision": null,
+    "role_resolution": {
+      "profile": {
+        "role": "process-ui-author",
+        "version": "1",
+        "instructions_version": "process-ui-author-1",
+        "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+        "model_policy": "inherit_default",
+        "allowed_tools": [],
+        "max_repairs": 2
+      },
+      "adapter": "hermes",
+      "model_reference": "gpt-5.6-sol",
+      "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+      "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+      "capability_scope": []
+    },
+    "state": "failed",
+    "repair_attempt": 0,
+    "revision_id": null,
+    "created_at": "2026-10-04T02:07:34.547851+00:00",
+    "updated_at": "2026-10-04T02:09:40.917727+00:00",
+    "diagnostics": [
+      {
+        "code": "UI_MODEL_TIMEOUT",
+        "message": "The configured model did not finish this interface within the time limit.",
+        "correction": "Try a smaller interface request explicitly. The failed job is retained; the common view remains available.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      }
+    ]
+  },
+  "preview": null,
+  "trace_id": "1752a760661646b09d13fbd8fbe40116"
+}

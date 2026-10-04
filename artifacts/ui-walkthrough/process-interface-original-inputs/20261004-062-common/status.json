@@ -1,0 +1,114 @@
+{
+  "title": "Original engineering inputs in the common working view",
+  "summary": "expect(received).toBeTruthy()\n\nReceived: undefined",
+  "overall": "blocked",
+  "updated": "2026-10-04T01:20:31.538Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "Saved process",
+      "instruction": "Click Workflow files, Open workflow, then printed-replacement-part-prompt-default-055.workflow.wflow."
+    },
+    {
+      "label": "Common view",
+      "instruction": "Click Use saved process. Inspect the original inputs and any readiness reason."
+    },
+    {
+      "label": "Run",
+      "instruction": "Open the supplied exact-run link. Inspect progress and the declared basis review without approving it."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Normal workspace",
+      "summary": "Normal Workflows entry is available.",
+      "purpose": "Existing workspace controls",
+      "action": "Open the isolated workspace",
+      "controls": [
+        "Open the isolated workspace"
+      ],
+      "expected": "Existing workspace controls",
+      "actual": "Normal Workflows entry is available.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Existing editor entry",
+      "summary": "The existing editor and file controls are visible.",
+      "purpose": "Refined editor in the workspace",
+      "action": "Click Workflows",
+      "controls": [
+        "Click Workflows"
+      ],
+      "expected": "Refined editor in the workspace",
+      "actual": "The existing editor and file controls are visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Exact saved process",
+      "summary": "The fresh original-input source is available through normal file selection.",
+      "purpose": "Named accepted source listed",
+      "action": "Click Workflow files then Open workflow",
+      "controls": [
+        "Click Workflow files then Open workflow"
+      ],
+      "expected": "Named accepted source listed",
+      "actual": "The fresh original-input source is available through normal file selection.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Accepted diagram",
+      "summary": "The existing diagram opens on the exact accepted source.",
+      "purpose": "Accepted source opens without execution",
+      "action": "Choose printed-replacement-part-prompt-default-055.workflow.wflow",
+      "controls": [
+        "Choose printed-replacement-part-prompt-default-055.workflow.wflow"
+      ],
+      "expected": "Accepted source opens without execution",
+      "actual": "The existing diagram opens on the exact accepted source.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Common preparation view",
+      "summary": "Original configured inputs are presented in the common workspace tab. The browser starts no process.",
+      "purpose": "Common inputs without generating an app",
+      "action": "Click Use saved process",
+      "controls": [
+        "Click Use saved process"
+      ],
+      "expected": "Common inputs without generating an app",
+      "actual": "Original configured inputs are presented in the common workspace tab. The browser starts no process.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "First unexpected stopping point",
+      "summary": "expect(received).toBeTruthy()\n\nReceived: undefined",
+      "purpose": "Preserve the first failure",
+      "action": "Stop current walkthrough",
+      "controls": [],
+      "expected": "The declared next behavior",
+      "actual": "expect(received).toBeTruthy()\n\nReceived: undefined",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

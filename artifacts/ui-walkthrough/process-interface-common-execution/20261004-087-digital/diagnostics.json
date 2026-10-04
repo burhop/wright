@@ -1,0 +1,14 @@
+{
+  "diagnostics": {
+    "console": [],
+    "pageErrors": [],
+    "failedResponses": []
+  },
+  "posts": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    }
+  ],
+  "receipts": []
+}

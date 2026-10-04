@@ -1,0 +1,71 @@
+{
+  "title": "Original engineering inputs in the common working view",
+  "summary": "Fresh continuation after correcting the collector. The common view and actual backend response agree on the exact original-input digital run. Refresh/reload read its durable state without generation, execution, review or replay. Public common start remains separate.",
+  "overall": "pass",
+  "updated": "2026-10-04T01:26:14.438Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "Saved process",
+      "instruction": "Click Workflow files, Open workflow, then printed-replacement-part-prompt-default-055.workflow.wflow."
+    },
+    {
+      "label": "Common view",
+      "instruction": "Click Use saved process. Inspect the original inputs and any readiness reason."
+    },
+    {
+      "label": "Run",
+      "instruction": "Open the supplied exact-run link. Inspect progress and the declared basis review without approving it."
+    }
+  ],
+  "steps": [
+    {
+      "id": "C01",
+      "state": "pass",
+      "label": "Same durable run in the common view",
+      "summary": "The corrected collector and common view agree on the accepted running run with 2 actual outputs; no generated UI is mounted.",
+      "purpose": "Actual owning run response and progress without generated UI",
+      "action": "Open the supplied exact-run link",
+      "controls": [
+        "Open the supplied exact-run link"
+      ],
+      "expected": "Actual owning run response and progress without generated UI",
+      "actual": "The corrected collector and common view agree on the accepted running run with 2 actual outputs; no generated UI is mounted.",
+      "raw": "screenshots/raw/C01.png",
+      "annotated": "screenshots/annotated/C01.png"
+    },
+    {
+      "id": "C02",
+      "state": "pass",
+      "label": "Refresh preserves the run identity",
+      "summary": "Refresh reads the same running run and 2 outputs. It does not start, approve or resume work.",
+      "purpose": "Same source/run readback without another execution",
+      "action": "Click Refresh view",
+      "controls": [
+        "Click Refresh view"
+      ],
+      "expected": "Same source/run readback without another execution",
+      "actual": "Refresh reads the same running run and 2 outputs. It does not start, approve or resume work.",
+      "raw": "screenshots/raw/C02.png",
+      "annotated": "screenshots/annotated/C02.png"
+    },
+    {
+      "id": "C03",
+      "state": "pass",
+      "label": "Reload restores the durable run",
+      "summary": "The common working tab restores the exact run after reload.",
+      "purpose": "Same backend-owned run; no generated UI or replay",
+      "action": "Reload the workspace tab",
+      "controls": [
+        "Reload the workspace tab"
+      ],
+      "expected": "Same backend-owned run; no generated UI or replay",
+      "actual": "The common working tab restores the exact run after reload.",
+      "raw": "screenshots/raw/C03.png",
+      "annotated": "screenshots/annotated/C03.png"
+    }
+  ]
+}

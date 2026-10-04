@@ -1,0 +1,39 @@
+{
+  "title": "Run a saved digital process through the common working view",
+  "summary": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('button', { name: 'Workflow files', exact: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for getByRole('button', { name: 'Workflow files', exact: true })\n",
+  "overall": "blocked",
+  "updated": "2026-10-04T01:59:45.657Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "Saved process",
+      "instruction": "Click Workflow files, Open workflow, then printed-replacement-part-common-digital-083.workflow.wflow."
+    },
+    {
+      "label": "Common view",
+      "instruction": "Click Use saved process. Inspect the original inputs and any readiness reason."
+    },
+    {
+      "label": "Run",
+      "instruction": "Click Prepare and check inputs, then Start process. Inspect the recorded digital results; reload to reconcile the same run."
+    }
+  ],
+  "steps": [
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "First unexpected stopping point",
+      "summary": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('button', { name: 'Workflow files', exact: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for getByRole('button', { name: 'Workflow files', exact: true })\n",
+      "purpose": "Preserve the first failure",
+      "action": "Stop current walkthrough",
+      "controls": [],
+      "expected": "The declared next behavior",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('button', { name: 'Workflow files', exact: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for getByRole('button', { name: 'Workflow files', exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

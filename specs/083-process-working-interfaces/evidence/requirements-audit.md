@@ -1,5 +1,36 @@
 # Full requirement audit — primary review in progress
 
+## Current checkpoint — 4 October UTC: original inputs and common execution
+
+The [current primary review](../../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/primary-review.json)
+disposes JOB-A-stage1 and US1-independent against exact actual stage references,
+native prompt arguments, source/repaired STL bytes, public common-view readiness,
+one UI start receipt, completed backend state and same-run browser readback.
+**134 proved / 48 awaiting review** of182 original identities/texts; the
+[cumulative ledger](../../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/semantic-ledger.json)
+preserves every original text.
+
+Image/prompt handoff is reviewed at the actual Blender MCP AI-task boundary:
+the recorded original image is attached to that task and native user_prompt
+matches the original bytes. The provider code tool accepts code/user_prompt;
+no native image API is claimed. The fresh full run's original gate has17 passes
+and one mandatory human hold. Its full public readiness remains blocked at the
+builtin-write authority seam; exact enrolled integration authority is disclosed.
+The independent common-view proof uses a separate supported two-stage digital
+source without that write step, not a weakened full engineering assignment.
+
+All74 actual frozen files are retained across the failed AI-repair run, fresh
+full run and common-view run. The first UI-authoring timeout remains explicit;
+an actual smaller default-model generation and focused update each pass13
+workspace checks and freeze12 built asset files. Their [continuation](../../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/authoring-continuation.md)
+retains exact parent/source identities, with later same-source reuse/navigation
+still separate. First harness/temp/compiler failures remain. Current example
+checks pass68. FR-016/T047
+and the remaining contract/task/final documentation obligations retain separate
+pending review. No physical or human engineering acceptance, push, merge or release.
+
+Earlier dated audits below retain their original scope and counts.
+
 ## Named runtime checks — 3 October 2026
 
 The [current runtime primary verification](../../../artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/README.md) disposes all seventeen named

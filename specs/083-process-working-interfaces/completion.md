@@ -1,5 +1,41 @@
 # Feature 083 completion audit — incomplete
 
+## Current checkpoint — 4 October UTC: original inputs and common execution
+
+The [current primary review](../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/primary-review.json)
+disposes JOB-A-stage1 and US1-independent. **134 proved / 48 awaiting review** of
+the original182 identities/texts. The actual Blender MCP AI construction task
+records the original image/prompt/context/profile, and its native code call
+preserves the original prompt byte for byte. The image is attached to the AI
+task; the provider code tool has no native image argument.
+
+A distinct fresh mixed-binding run executes construction, qualified repair,
+offline slicing, package inspection, report and the original full source gate:
+**17 pass / one mandatory authenticated human-review hold**. Its41 files and the
+prior failed AI-repair run's24 files are frozen. It does not establish physical
+or human engineering acceptance. Public readiness of that full source retains
+its builtin-write authority block; exact enrolled digital-test authority is explicit.
+
+Separately, a supported two-stage saved process starts through the normal common
+view with ordinary readiness, completes with five actual outputs and restores
+the same run after reload. It needs no generated interface, model, integration
+policy or review. The retained selector/completion-label harness stops and fresh
+read-only continuation are separate from the actual successful backend work.
+Current example checks pass68; optional independent construction/repair bindings
+preserve strict pinned inputs and the existing scalar default.
+
+The first default-model UI request for the new full source timed out; its failed
+job/common fallback are retained. A smaller actual-model request and focused
+update each pass13 workspace checks, save distinct parent/child revisions and
+preserve12 built asset files. See the [authoring continuation](../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/authoring-continuation.md).
+Exact navigation and updated-interface reuse on the distinct second run remain
+separate work. Earlier interfaces keep their exact source bindings.
+**55 tasks checked; T056/T057 open**;
+FR-016/T047 whole-scope review, remaining contracts/tasks and final documentation
+continue. No push, merge, release, physical action or user acceptance.
+
+Earlier dated sections below retain their original evidence and counts.
+
 ## Named runtime checks — 3 October 2026
 
 The [current runtime primary verification](../../artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/README.md) disposes all seventeen named

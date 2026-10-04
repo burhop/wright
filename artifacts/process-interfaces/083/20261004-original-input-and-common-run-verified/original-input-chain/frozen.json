@@ -1,0 +1,261 @@
+{
+  "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+  "state": "failed",
+  "code": "PROCESS_VALIDATION_NEEDS_INPUT",
+  "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+  "files": [
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.png",
+      "bytes": 67577,
+      "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.svg",
+      "bytes": 2295,
+      "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/configured-geometry-basis.json",
+      "bytes": 3882,
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/construction-provider-arguments.json",
+      "bytes": 5272,
+      "sha256": "7d41e1f3b1729d94e75cecd646501870f984df7c54c7f83700e25471b83d78c8"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/context.md",
+      "bytes": 2236,
+      "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/filament-profile.json",
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/geometry-capability-guidance.md",
+      "bytes": 1832,
+      "sha256": "2efc420176a9714335306ec99cd0b616b1418ab690db031f7b2630cdb2d07eef"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/inspect_manufacturing_package.py",
+      "bytes": 8561,
+      "sha256": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/inspection-call.json",
+      "bytes": 3075,
+      "sha256": "e64ce486f5ef7f14c6dbea9d9bf8c2bf2fb75538fa649f17667c6469db239c42"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/machine-profile.json",
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/passive-representations.py",
+      "bytes": 25554,
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/process-profile.json",
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/prompt.txt",
+      "bytes": 697,
+      "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/repair-operation-review.json",
+      "bytes": 13773,
+      "sha256": "cd2decbf3e83e5b6539e914c4690b97c70a1b3fe3421266d2f9838bfe442c7d7"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/repair-provider-arguments.json",
+      "bytes": 13773,
+      "sha256": "cd2decbf3e83e5b6539e914c4690b97c70a1b3fe3421266d2f9838bfe442c7d7"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/requirements.md",
+      "bytes": 1759,
+      "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/scenario.json",
+      "bytes": 1662,
+      "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/slice-call.json",
+      "bytes": 558,
+      "sha256": "61c34bd9a91c3afe2ae5b6bb8bb5169d8659b16829e5118491bc87418679696e"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/user-profile.md",
+      "bytes": 584,
+      "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/filament-profile.json",
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/geometry-basis.json",
+      "bytes": 3312,
+      "sha256": "20e9233c54aaa0bcef046e34904b87c6cebb45834458f1d9847b01db18af678f"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/machine-profile.json",
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/mesh-preview.png",
+      "bytes": 266980,
+      "sha256": "b6b5e40ca6456c9ed697b5de11da1d90a76cf068bc58000d6578ebf7208509e0"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/mesh-repair-report.json",
+      "bytes": 6178,
+      "sha256": "caf5bf0973482e6c23efe939e60f94526287eefad8859d614171bf86c567ddf6"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/package-inspection-result.json",
+      "bytes": 1868,
+      "sha256": "55be38e99faf8efe61cb115840113bc5199be8a2d23c3561724fdceda9a622db"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/process-profile.json",
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/repaired_mesh.stl",
+      "bytes": 540484,
+      "sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/response-retention-receipt.json",
+      "bytes": 344,
+      "sha256": "05566e36e496efb648b422b878c951e84e62dc055e12ff6be882ee5c6a159029"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/simulated-transfer-receipt.json",
+      "bytes": 2058,
+      "sha256": "3f82db15b5f2bdd4997aadb61fac5487510996d7c136dae0577865139ffcedbf"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/slice-evidence.json",
+      "bytes": 1321,
+      "sha256": "e3d381b902aedf6c4e04b33a0a4fd06ac8859d6cd47af0a1585f0013de65eaf6"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/slice-provider-response.json",
+      "bytes": 2135,
+      "sha256": "4dd8b9e9d880b98fdaca3b36491bdb6055ff11b703a9446ad0ec4032f5ef6f22"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/slice_package.gcode.3mf",
+      "bytes": 361151,
+      "sha256": "d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/slicer-execution.json",
+      "bytes": 2135,
+      "sha256": "4dd8b9e9d880b98fdaca3b36491bdb6055ff11b703a9446ad0ec4032f5ef6f22"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/source-model-report.json",
+      "bytes": 1502,
+      "sha256": "790e414700ffe0e6c2efec965292369ec2076b209f07ae956ca3034b43469cda"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/source-report.json",
+      "bytes": 4888,
+      "sha256": "0d4a5274db09f618d4854a6ff42c25edf3e4936f796517052cfee53533443815"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/source_mesh.stl",
+      "bytes": 541284,
+      "sha256": "bb3528ee00f7661864d8289dd810de91c1f40e220285f36081e0f17b15a42f93"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/support-preview.json",
+      "bytes": 4493745,
+      "sha256": "1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/toolpath-summary.json",
+      "bytes": 1654,
+      "sha256": "7e1682e51f43c9f48d852999c4b04d30f8308438ed21039dce5d8ae131fa9bfc"
+    },
+    {
+      "path": "runs/printed-replacement-part-mixed-default-071/85d929ee36e64afdaee61a5cdb0fc2a6.json",
+      "bytes": 3283466,
+      "sha256": "5b4d192a3b8add6ef093208c075bcdd4aa3c4f6a49af23f8acf3e36a4e3b749f"
+    },
+    {
+      "path": "validation/assessment-e16a660ca1854022ad82e2a2fefe0cea.json",
+      "bytes": 70715,
+      "sha256": "b39525d8e88af9e81a1bc07b9294e9913a04634b9405a38853134bf856db9d90"
+    },
+    {
+      "path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+      "bytes": 77388,
+      "sha256": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589"
+    }
+  ],
+  "original_prompt_byte_identity": true,
+  "repair_argument_parity": true,
+  "gate": {
+    "kind": "design_check",
+    "at": "2026-10-04T01:57:20.111189+00:00",
+    "task_id": "validate_outputs_mixed_default_071",
+    "task_title": "Check exact current engineering outputs",
+    "report": {
+      "schema_version": "wright.process-validation/1",
+      "assessment_id": "assessment-e16a660ca1854022ad82e2a2fefe0cea",
+      "assessment_digest": "08c476860174dfc34324084e3a7dd5ebce08451b56761bf63f59ec5df1847dd8",
+      "attempt_id": "82a1ba2e03984a7f85ad1e97f6220e93",
+      "workspace_id": "083-fresh-prompt-055",
+      "is_current": true,
+      "release_eligible": false,
+      "summary": {
+        "content_verified": null,
+        "requirements_compliant": null,
+        "evaluation_complete": false,
+        "release_eligible": false,
+        "physical_validation": "not_assessed",
+        "counts": {
+          "blocked": 1,
+          "error": 0,
+          "fail": 0,
+          "inconclusive": 0,
+          "not_applicable": 0,
+          "pass": 17
+        }
+      },
+      "finding_count": 1,
+      "verdict": "needs_input",
+      "assessment_path": "validation/assessment-e16a660ca1854022ad82e2a2fefe0cea.json",
+      "corrections": [
+        "An authenticated human review is required for this requirement."
+      ]
+    },
+    "revision": 0,
+    "status": "needs_input",
+    "message": "Validation is holding downstream work; inspect the saved findings.",
+    "assessment_id": "assessment-e16a660ca1854022ad82e2a2fefe0cea",
+    "assessment_path": "validation/assessment-e16a660ca1854022ad82e2a2fefe0cea.json",
+    "release_eligible": false
+  },
+  "failed_producer_files_unchanged": 24,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "scope": "Actual AI construction, configured independent native repair, offline slicing, inspection, report and original full source gate; 17 pass and one mandatory human-review hold. No physical or human acceptance."
+}

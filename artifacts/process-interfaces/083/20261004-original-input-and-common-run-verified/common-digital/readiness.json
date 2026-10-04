@@ -1,0 +1,41 @@
+{
+  "state": "ready",
+  "assessment_id": "readiness-86355891dd5149f49335531bc512d6cf",
+  "process": {
+    "workspace_id": "083-fresh-prompt-055",
+    "source_path": "workflows/printed-replacement-part-common-digital-083.workflow.wflow",
+    "source_digest": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "366ccd6b83fb69a2a3c1accd5e147278536fc51809e16384b355866ddb860b21",
+  "assessed_at": "2026-10-04T01:55:08.610545+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "input_construction_arguments_json_common_digital_083",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_repair_arguments_json_common_digital_083",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "mesh_repair_common_digital_083.mesh_repair_common_digital_083_actual_source_mesh",
+      "classification": "upstream_produced",
+      "producer_step": "mesh_construction_common_digital_083",
+      "producer_port": "source_mesh",
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": []
+}

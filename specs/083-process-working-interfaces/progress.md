@@ -3576,3 +3576,47 @@ The full semantic ledger is now **132 proved /50 awaiting review** of182.
 T056/T057 and stricter first-stage/remaining contract/task obligations are open.
 This is installed resource/readback acceptance, not another engineering run,
 public release, catalog promotion, physical verification or human acceptance.
+
+## 4 October UTC — original input handoff and independent common-view execution
+
+The printed preparer directly connects original prompt/context/profile to AI
+construction/repair and asks native code calls to retain original user_prompt.
+Optional complete construction/repair mode mappings support independent explicit
+binding choices while preserving the scalar default, strict pinned operations,
+original requirements/profile and existing runtime. No executor or vendor code
+is added. Current example tests pass68. The first default pytest temp-directory
+rejection and subsequent compiler/harness assumptions remain recorded.
+
+Fresh AI/AI run b12008ec35a14bc39b3d63ff6a8f3f18 creates the original focus-wheel
+source STL then fails at the AI repair timeout;24 files are frozen. Distinct
+mixed run85d929ee36e64afdaee61a5cdb0fc2a6 records the original attached image and
+prompt/context/profile references at AI construction, preserves native prompt
+bytes, performs qualified native repair, offline slicing, package inspection,
+report and original source validation. Its20 outputs/41 files include the gate:
+17 pass, one mandatory authenticated human-review hold, physical not assessed.
+Both uncertain continuation acknowledgements reconcile by read-only observation;
+no mutation replay. Exact synthetic basis/simulator decisions are integration
+tests, not human acceptance. Full public readiness's builtin-write block remains
+explicit; normal authority is not bypassed.
+
+Supporting saved two-stage digital process starts through normal Workflows/file/
+common controls without a generated interface/model/integration policy/review.
+Run8c042141e6c7422aa58ca1bbab14d86e completes with five actual outputs; nine files
+are frozen. A wrong editor selector and Completed label are retained browser
+stops. Fresh read-only continuation verifies the actual Process completed label,
+exact results and same-run refresh/reload. Earlier common collector failure and
+its continuation retain their actual read-only scope.
+
+New-source actual default-model authoring job8ba8edd218164cafb0aa4b587acb51df
+times out with zero browser diagnostics; failed job/common fallback remain.
+A smaller request then succeeds, and a focused update succeeds:13 actual workspace
+checks each,12 saved asset files, unchanged UI ID and exact parent/new revision.
+The original failed job remains. Second same-source run84cd89a395af406e80d094ec071abe59
+is progressing after its exact synthetic basis decision; reuse/navigation and its
+original gate are separate continuation work, not implied by authoring success.
+The [primary evidence](../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/README.md)
+disposes JOB-A-stage1 and US1-independent: **134 proved /48 awaiting review** of
+182 unchanged obligations. T056/T057, FR-016/T047 whole scope and remaining
+contracts/tasks/final documentation continue. No protected review, physical
+effect, push, merge, release or user acceptance. Owned API8063/UI5246/native19988
+remain running for scoped continuation; older retained hosts are not disturbed.

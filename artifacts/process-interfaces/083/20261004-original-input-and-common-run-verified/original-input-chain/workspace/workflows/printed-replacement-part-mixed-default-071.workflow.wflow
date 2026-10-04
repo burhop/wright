@@ -1,0 +1,993 @@
+workflow mixed_default_071
+  name: "3D Printed Replacement Part"
+  purpose: "Create and verify a dimensioned printable replacement from an original image, then stop for exact printer-transfer authorization."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+input image_and_scale_mixed_default_071
+  name: "Provide original image and reference dimension"
+  purpose: "Bind the visual reference to an explicit physical scale and retain its rights record."
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"replacement_image_out","name":"Original image","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Attributed source image with a declared scale reference."}]
+  instructions: "Provide the attributed source image, identify one measurable reference, and state its value in millimetres."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.png","reference_dimension_mm":38.0,"units":"mm"}
+  tool: null
+  reusable_step: null
+end
+
+task create_mesh_mixed_default_071
+  name: "Create source mesh"
+  purpose: "Generate a mesh from the image without treating visual interpretation as dimensional proof."
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"mesh_source_image_in","name":"Scaled source image","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Image and scale reference used to generate this mesh."},{"key":"create_mesh_mixed_default_071_qualified_operation","name":"create mesh mixed default 071 qualified operation","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_mixed_default_071_reviewed_basis","name":"create mesh mixed default 071 reviewed basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_mixed_default_071_requirements","name":"create mesh mixed default 071 requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_mixed_default_071_qualified_application_guidance","name":"create mesh mixed default 071 qualified application guidance","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_mixed_default_071_original_user_prompt","name":"create mesh mixed default 071 original user prompt","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_mixed_default_071_original_context","name":"create mesh mixed default 071 original context","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_mixed_default_071_original_user_profile","name":"create mesh mixed default 071 original user profile","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_mesh_mixed_default_071_original_reference","name":"create mesh mixed default 071 original reference","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"create_mesh_mixed_default_071_result","name":"create mesh mixed default 071 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"source_mesh","name":"source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/source-model-report.json","file_policy":"overwrite","run_path_template":"wright.run-path/1","authoring_template":"mcp-task","mcp_server":"proof-083-blender-prompt-055","max_tool_calls":2,"timeout_seconds":360,"expected_files":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/source_mesh.stl","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval.","expected_file_ports":{"source_mesh":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/source_mesh.stl"}}
+  tool: null
+  reusable_step: null
+  prompt: "Use the existing Blender execute_blender_code tool to construct the reviewed focus wheel from the actual supplied image and dimensions. Wright runs this stage only after consuming its declared exact-subject basis review. The reviewed_basis input remains the unchanged proposed design; use the design released by that order barrier rather than treating its earlier proposal status as a new runtime question. A labelled integration-test decision permits digital construction only and is not human engineering acceptance; retain final measured-feature/support/package review. Work only with uniquely named owned objects and actual geometry. Export binary STL in explicit millimetres at 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-fresh-prompt-055\\\\process-proofs\\\\printed-replacement-part\\\\mixed-default-071\\\\outputs\\\\{{wright.run_id}}\\\\source_mesh.stl'. Preserve the complete original feature requirements; do not substitute a cylinder/cube or infer verified fit. Keep <=80000 triangles. Return compact actual construction observations and unresolved physical limits; Wright retains the exact tool call. Do not request an undeclared review or missing construction choice. If the released design cannot be implemented within original limits, return an explicit blocked technical outcome instead of making up evidence. Use guarded bpy/bmesh/mathutils modelling and Blender STL export only: no open/pathlib/os/sys/hashlib/runpy/subprocess/network/handlers/timers/drivers/addon operations or raw filesystem calls. Do not overwrite unrelated objects. Geometry failure is explicit; no fabricated export or verdict. The connected original_user_prompt is the user's supplied text, distinct from these task instructions and reviewed_basis. Preserve that original text verbatim in user_prompt for each execute_blender_code call; do not replace it with a task summary. Interpret the actual connected original_reference image with the supplied 38 mm scale and written dimensions governing. The connected original_context and original_user_profile retain manufacturing and use constraints. A configured recipe does not replace those inputs or establish measured compliance. Use the code argument in qualified_operation as the supplied native construction recipe. Submit it unchanged to execute_blender_code; do not invent another modelling algorithm or replace its dimensions. Its export path and owned names are configured for this fresh run. Keep actual tool observations and failures. This is reuse of a prior qualified operation, not new AI-authored geometry code or proof of compliance. If its input design differs from reviewed_basis, stop with a technical mismatch before executing it."
+end
+
+task repair_measure_orient_mixed_default_071
+  name: "Repair, measure, and orient mesh"
+  purpose: "Produce a manifold, correctly scaled mesh that fits the P1S build volume."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"repair_measure_orient_mixed_default_071_qualified_operation","name":"repair measure orient mixed default 071 qualified operation","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repair_measure_orient_mixed_default_071_actual_source","name":"repair measure orient mixed default 071 actual source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"repair_measure_orient_mixed_default_071_result","name":"repair measure orient mixed default 071 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repaired_mesh","name":"repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"mesh_preview","name":"mesh preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-blender-prompt-055","mcp_tool":"proof-083-blender-prompt-055__execute_blender_code","mcp_schema_digest":"2d2c71a6d7d4e096476d0bb4fe046c08070b537502f63ba1d28ea53ae16c964a","mcp_arguments_source":"connection","mcp_arguments_input":"repair_measure_orient_mixed_default_071_qualified_operation","mcp_arguments":"{}","timeout_seconds":360,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/mesh-repair-report.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/repaired_mesh.stl\nprocess-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/mesh-preview.png","run_path_template":"wright.run-path/1","mcp_file_dependencies":{"repair_measure_orient_mixed_default_071_actual_source":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/source_mesh.stl"},"expected_file_ports":{"repaired_mesh":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/repaired_mesh.stl","mesh_preview":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/mesh-preview.png"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+task supports_and_slice_mixed_default_071
+  name: "Generate supports and slice"
+  purpose: "Create support-bearing toolpaths and retain process, machine, and material profiles."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"supports_and_slice_mixed_default_071_exact_arguments","name":"supports and slice mixed default 071 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_mixed_default_071_selected_geometry","name":"supports and slice mixed default 071 selected geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_mixed_default_071_machine_configuration","name":"supports and slice mixed default 071 machine configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_mixed_default_071_process_configuration","name":"supports and slice mixed default 071 process configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_mixed_default_071_filament_configuration","name":"supports and slice mixed default 071 filament configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"supports_and_slice_mixed_default_071_result","name":"supports and slice mixed default 071 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"slice_package","name":"slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Slice for the selected P1S profile, preserve the support preview and final 3MF, and verify valid toolpaths and declared material compatibility."
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-slicer-prompt-055","mcp_tool":"proof-083-slicer-prompt-055__slice_model_file","mcp_schema_digest":"4826b49815622348bbca2b9ffa440eafc5d679305d514983bde4e74ed8998a5a","mcp_arguments_source":"connection","mcp_arguments_input":"supports_and_slice_mixed_default_071_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slicer-execution.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice_package.gcode.3mf","run_path_template":"wright.run-path/1","mcp_file_dependencies":{"supports_and_slice_mixed_default_071_selected_geometry":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/repaired_mesh.stl","supports_and_slice_mixed_default_071_machine_configuration":"process-proofs/printed-replacement-part/mixed-default-071/inputs/machine-profile.json","supports_and_slice_mixed_default_071_process_configuration":"process-proofs/printed-replacement-part/mixed-default-071/inputs/process-profile.json","supports_and_slice_mixed_default_071_filament_configuration":"process-proofs/printed-replacement-part/mixed-default-071/inputs/filament-profile.json"},"expected_file_ports":{"slice_package":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice_package.gcode.3mf"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+task authorize_transfer_mixed_default_071
+  name: "Authorize exact package transfer"
+  purpose: "Pause before transfer and bind the engineer decision to the package, printer, material, and process profile."
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"authorize_transfer_mixed_default_071_exact_package","name":"authorize transfer mixed default 071 exact package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_mixed_default_071_preparation_review","name":"authorize transfer mixed default 071 preparation review","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_mixed_default_071_machine_profile","name":"authorize transfer mixed default 071 machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_mixed_default_071_process_profile","name":"authorize transfer mixed default 071 process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_mixed_default_071_filament_profile","name":"authorize transfer mixed default 071 filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"receipt","name":"receipt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Review exact digests and destination identity. Transfer authorization does not claim that the physical print succeeded."
+  settings: {"authoring_template":"external-action-approval","action_kind":"printer_transfer","approval_binding":{"server":"wright","tool":"test_handoff","schema":"f46532036f28b3b052a279f083d505363af9805b95e836aff0092f6ae0fd459d"},"approval_destination":{"kind":"integration_test","id":"test://083-private-digital-fresh-mixed-071/printer/printed-replacement-part-01"},"approval_settings":{"material":"PETG","nozzle_mm":"0.4","simulation":true},"approval_action":{"kind":"printer_transfer","mode":"transfer_only","simulation":true},"run_path_template":"wright.run-path/1","output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/simulated-transfer-receipt.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection image_to_mesh_mixed_default_071
+  type: "item"
+  from: "image_and_scale_mixed_default_071.replacement_image_out"
+  to: "create_mesh_mixed_default_071.mesh_source_image_in"
+  label: "scaled source approved"
+  when: null
+end
+
+connection mesh_to_repair_mixed_default_071
+  type: "order"
+  from: "create_mesh_mixed_default_071"
+  to: "repair_measure_orient_mixed_default_071"
+  label: "source mesh retained"
+  when: null
+end
+
+connection repair_to_slice_mixed_default_071
+  type: "order"
+  from: "repair_measure_orient_mixed_default_071"
+  to: "supports_and_slice_mixed_default_071"
+  label: "geometry checks pass"
+  when: null
+end
+
+connection slice_to_transfer_mixed_default_071
+  type: "order"
+  from: "supports_and_slice_mixed_default_071"
+  to: "authorize_transfer_mixed_default_071"
+  label: "exact package ready"
+  when: null
+end
+
+input input_concept_png_mixed_default_071
+  name: "concept.png"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_png_mixed_default_071_out","name":"input concept png mixed default 071 out","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.png"}
+  tool: null
+  reusable_step: null
+end
+
+input input_concept_svg_mixed_default_071
+  name: "concept.svg"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_svg_mixed_default_071_out","name":"input concept svg mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.svg"}
+  tool: null
+  reusable_step: null
+end
+
+input input_context_md_mixed_default_071
+  name: "context.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_context_md_mixed_default_071_out","name":"input context md mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/context.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_prompt_txt_mixed_default_071
+  name: "prompt.txt"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_prompt_txt_mixed_default_071_out","name":"input prompt txt mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/prompt.txt"}
+  tool: null
+  reusable_step: null
+end
+
+input input_scenario_json_mixed_default_071
+  name: "scenario.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_scenario_json_mixed_default_071_out","name":"input scenario json mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/scenario.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_user_profile_md_mixed_default_071
+  name: "user-profile.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_user_profile_md_mixed_default_071_out","name":"input user profile md mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/user-profile.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_requirements_md_mixed_default_071
+  name: "requirements.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_requirements_md_mixed_default_071_out","name":"input requirements md mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/requirements.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_geometry_capability_guidance_md_mixed_default_071
+  name: "geometry-capability-guidance.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_geometry_capability_guidance_md_mixed_default_071_out","name":"input geometry capability guidance md mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/geometry-capability-guidance.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_machine_profile_json_mixed_default_071
+  name: "machine-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_machine_profile_json_mixed_default_071_out","name":"input machine profile json mixed default 071 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/machine-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_process_profile_json_mixed_default_071
+  name: "process-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_process_profile_json_mixed_default_071_out","name":"input process profile json mixed default 071 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/process-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_filament_profile_json_mixed_default_071
+  name: "filament-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_filament_profile_json_mixed_default_071_out","name":"input filament profile json mixed default 071 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/filament-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+task define_geometry_basis_mixed_default_071
+  name: "Interpret the original wheel and manufacturing requirements"
+  purpose: "Interpret the original wheel and manufacturing requirements"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"define_geometry_basis_mixed_default_071_supplied_geometry_basis","name":"define geometry basis mixed default 071 supplied geometry basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_mixed_default_071_concept_png","name":"define geometry basis mixed default 071 concept png","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_mixed_default_071_concept_svg","name":"define geometry basis mixed default 071 concept svg","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_mixed_default_071_context_md","name":"define geometry basis mixed default 071 context md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_mixed_default_071_prompt_txt","name":"define geometry basis mixed default 071 prompt txt","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_mixed_default_071_scenario_json","name":"define geometry basis mixed default 071 scenario json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_mixed_default_071_user_profile_md","name":"define geometry basis mixed default 071 user profile md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_mixed_default_071_mandatory_requirements","name":"define geometry basis mixed default 071 mandatory requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"define_geometry_basis_mixed_default_071_result","name":"define geometry basis mixed default 071 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/geometry-basis.json","file_policy":"overwrite","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+  prompt: "Prepare a complete proposed digital geometry design for the next declared review, separating supplied requirements from your proposed construction choices. Preserve the 38 mm maximum diameter, 18 mm overall height including 2 mm front hub, six equally spaced shallow scallops, >=33 mm minimum grip, nominal 1 mm exposed rounds and subtle grip dots. The D socket uses the 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and flat clearance, 10 mm blind depth and >=3 mm material above it. No insert, set screw, taper or keyway. Preserve PETG/P1S 0.4/0.20 mm/four walls/35% profiles, proposed +/-0.25 mm non-mating tolerance and original human-review requirements. Propose explicit numeric scallop profile/depth/phase, hub diameter, dot count/dimensions/placement and exposed-edge treatment within the original limits; derive and record the D-boundary/flat construction and depth direction. These are design proposals, not additional requirements or verified fit. Distinguish decisions that must be resolved at this declared basis review from later inspection of actual geometry, supports and final package. Do not leave a predictable construction choice to a later unattended question. No geometry, fit, strength, standards or print-success claim yet. Do not ask runtime questions; output one complete proposal for the declared review. Keep the entire response below 3000 characters. Return only one valid JSON object, with no markdown, comments or trailing commas. Use these keys: supplied_requirements (short object), proposed_geometry (numeric dimensions plus short construction descriptions for scallops, hub, dots, rounds, socket and orientation), basis_review (short list of proposed choices requiring this review), remaining_verification (short list), engineering_acceptance (false). Expressions must be JSON strings; do not put equations in numeric values. Do not repeat input documents or provide lengthy rationale. This run supplies an explicit prior proposed geometry basis. Retain its numeric construction choices exactly instead of proposing replacements. It remains a proposal for this run's declared review, not engineering acceptance. Actual geometry and all original mandatory checks still follow."
+end
+
+input input_configured_geometry_basis_json_mixed_default_071
+  name: "configured-geometry-basis.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_configured_geometry_basis_json_mixed_default_071_out","name":"input configured geometry basis json mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/configured-geometry-basis.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_supplied_geometry_basis
+  type: "item"
+  from: "input_configured_geometry_basis_json_mixed_default_071.input_configured_geometry_basis_json_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_supplied_geometry_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_concept_png
+  type: "item"
+  from: "input_concept_png_mixed_default_071.input_concept_png_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_concept_png"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_concept_svg
+  type: "item"
+  from: "input_concept_svg_mixed_default_071.input_concept_svg_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_concept_svg"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_context_md
+  type: "item"
+  from: "input_context_md_mixed_default_071.input_context_md_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_context_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_prompt_txt
+  type: "item"
+  from: "input_prompt_txt_mixed_default_071.input_prompt_txt_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_prompt_txt"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_scenario_json
+  type: "item"
+  from: "input_scenario_json_mixed_default_071.input_scenario_json_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_scenario_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_user_profile_md
+  type: "item"
+  from: "input_user_profile_md_mixed_default_071.input_user_profile_md_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_user_profile_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_mixed_default_071_mandatory_requirements
+  type: "item"
+  from: "input_requirements_md_mixed_default_071.input_requirements_md_mixed_default_071_out"
+  to: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_mandatory_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task review_basis_mixed_default_071
+  name: "Review wheel dimensions, socket interpretation and original limits"
+  purpose: "Review wheel dimensions, socket interpretation and original limits"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_basis_mixed_default_071_basis","name":"review basis mixed default 071 basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"review_basis_mixed_default_071_qualified_application_guidance","name":"review basis mixed default 071 qualified application guidance","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"review_basis_mixed_default_071_repair_operation","name":"review basis mixed default 071 repair operation","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_basis_mixed_default_071"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success. This process invokes the supplied repair arguments exactly. Check the connected operation templates against the proposed basis and original requirements before releasing this barrier. Operation hashes and all inputs remain part of this exact review subject; the run-resolved call arguments are retained separately. This is not measured or physical acceptance."
+end
+
+connection bind_review_basis_mixed_default_071_basis
+  type: "item"
+  from: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_result"
+  to: "review_basis_mixed_default_071.review_basis_mixed_default_071_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_review_basis_mixed_default_071_qualified_application_guidance
+  type: "item"
+  from: "input_geometry_capability_guidance_md_mixed_default_071.input_geometry_capability_guidance_md_mixed_default_071_out"
+  to: "review_basis_mixed_default_071.review_basis_mixed_default_071_qualified_application_guidance"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_construction_provider_arguments_json_mixed_default_071
+  name: "construction-provider-arguments.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_construction_provider_arguments_json_mixed_default_071_out","name":"input construction provider arguments json mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/construction-provider-arguments.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_create_mesh_mixed_default_071_qualified_operation
+  type: "item"
+  from: "input_construction_provider_arguments_json_mixed_default_071.input_construction_provider_arguments_json_mixed_default_071_out"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_qualified_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_mixed_default_071_reviewed_basis
+  type: "item"
+  from: "define_geometry_basis_mixed_default_071.define_geometry_basis_mixed_default_071_result"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_reviewed_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_mixed_default_071_requirements
+  type: "item"
+  from: "input_requirements_md_mixed_default_071.input_requirements_md_mixed_default_071_out"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_mixed_default_071_qualified_application_guidance
+  type: "item"
+  from: "input_geometry_capability_guidance_md_mixed_default_071.input_geometry_capability_guidance_md_mixed_default_071_out"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_qualified_application_guidance"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_mixed_default_071_original_user_prompt
+  type: "item"
+  from: "input_prompt_txt_mixed_default_071.input_prompt_txt_mixed_default_071_out"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_original_user_prompt"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_mixed_default_071_original_context
+  type: "item"
+  from: "input_context_md_mixed_default_071.input_context_md_mixed_default_071_out"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_original_context"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_mixed_default_071_original_user_profile
+  type: "item"
+  from: "input_user_profile_md_mixed_default_071.input_user_profile_md_mixed_default_071_out"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_original_user_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_mesh_mixed_default_071_original_reference
+  type: "item"
+  from: "input_concept_png_mixed_default_071.input_concept_png_mixed_default_071_out"
+  to: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_original_reference"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_repair_provider_arguments_json_mixed_default_071
+  name: "repair-provider-arguments.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_repair_provider_arguments_json_mixed_default_071_out","name":"input repair provider arguments json mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/repair-provider-arguments.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_repair_measure_orient_mixed_default_071_qualified_operation
+  type: "item"
+  from: "input_repair_provider_arguments_json_mixed_default_071.input_repair_provider_arguments_json_mixed_default_071_out"
+  to: "repair_measure_orient_mixed_default_071.repair_measure_orient_mixed_default_071_qualified_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_repair_operation_review_json_mixed_default_071
+  name: "repair-operation-review.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_repair_operation_review_json_mixed_default_071_out","name":"input repair operation review json mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/repair-operation-review.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_review_basis_mixed_default_071_repair_operation
+  type: "item"
+  from: "input_repair_operation_review_json_mixed_default_071.input_repair_operation_review_json_mixed_default_071_out"
+  to: "review_basis_mixed_default_071.review_basis_mixed_default_071_repair_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_repair_measure_orient_mixed_default_071_actual_source
+  type: "item"
+  from: "create_mesh_mixed_default_071.source_mesh"
+  to: "repair_measure_orient_mixed_default_071.repair_measure_orient_mixed_default_071_actual_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_slice_call_json_mixed_default_071
+  name: "slice-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_slice_call_json_mixed_default_071_out","name":"input slice call json mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/slice-call.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_supports_and_slice_mixed_default_071_exact_arguments
+  type: "item"
+  from: "input_slice_call_json_mixed_default_071.input_slice_call_json_mixed_default_071_out"
+  to: "supports_and_slice_mixed_default_071.supports_and_slice_mixed_default_071_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_mixed_default_071_selected_geometry
+  type: "item"
+  from: "repair_measure_orient_mixed_default_071.repaired_mesh"
+  to: "supports_and_slice_mixed_default_071.supports_and_slice_mixed_default_071_selected_geometry"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_mixed_default_071_machine_configuration
+  type: "item"
+  from: "input_machine_profile_json_mixed_default_071.input_machine_profile_json_mixed_default_071_out"
+  to: "supports_and_slice_mixed_default_071.supports_and_slice_mixed_default_071_machine_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_mixed_default_071_process_configuration
+  type: "item"
+  from: "input_process_profile_json_mixed_default_071.input_process_profile_json_mixed_default_071_out"
+  to: "supports_and_slice_mixed_default_071.supports_and_slice_mixed_default_071_process_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_mixed_default_071_filament_configuration
+  type: "item"
+  from: "input_filament_profile_json_mixed_default_071.input_filament_profile_json_mixed_default_071_out"
+  to: "supports_and_slice_mixed_default_071.supports_and_slice_mixed_default_071_filament_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task retain_slice_response_mixed_default_071
+  name: "Retain the actual slicer response for package inspection"
+  purpose: "Retain the actual slicer response for package inspection"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"retain_slice_response_mixed_default_071_actual_response","name":"retain slice response mixed default 071 actual response","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"retain_slice_response_mixed_default_071_result","name":"retain slice response mixed default 071 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"provider_response","name":"provider response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"wright-workspace-files","mcp_tool":"wright-workspace-files__write_text_document","mcp_schema_digest":"66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12","mcp_arguments_source":"fields","mcp_arguments_input":"retain_slice_response_mixed_default_071_actual_response","mcp_arguments":"{\"relativePath\": \"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice-provider-response.json\", \"mediaType\": \"application/json\", \"overwrite\": false}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/response-retention-receipt.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice-provider-response.json","run_path_template":"wright.run-path/1","mcp_argument_ports":"{\"retain_slice_response_mixed_default_071_actual_response\": \"content\"}","expected_file_ports":{"provider_response":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice-provider-response.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection bind_retain_slice_response_mixed_default_071_actual_response
+  type: "item"
+  from: "supports_and_slice_mixed_default_071.supports_and_slice_mixed_default_071_result"
+  to: "retain_slice_response_mixed_default_071.retain_slice_response_mixed_default_071_actual_response"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_passive_representations_py_mixed_default_071
+  name: "passive-representations.py"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_passive_representations_py_mixed_default_071_out","name":"input passive representations py mixed default 071 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/passive-representations.py"}
+  tool: null
+  reusable_step: null
+end
+
+input input_inspect_manufacturing_package_py_mixed_default_071
+  name: "inspect_manufacturing_package.py"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_inspect_manufacturing_package_py_mixed_default_071_out","name":"input inspect manufacturing package py mixed default 071 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/inspect_manufacturing_package.py"}
+  tool: null
+  reusable_step: null
+end
+
+task inspect_slice_handoff_mixed_default_071
+  name: "Inspect actual package, profile and nominal toolpath correspondence"
+  purpose: "Inspect actual package, profile and nominal toolpath correspondence"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"inspect_slice_handoff_mixed_default_071_exact_arguments","name":"inspect slice handoff mixed default 071 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_slice_package","name":"inspect slice handoff mixed default 071 slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_provider_response","name":"inspect slice handoff mixed default 071 provider response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_slice_source","name":"inspect slice handoff mixed default 071 slice source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_reader","name":"inspect slice handoff mixed default 071 reader","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_operation","name":"inspect slice handoff mixed default 071 operation","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_machine","name":"inspect slice handoff mixed default 071 machine","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_process","name":"inspect slice handoff mixed default 071 process","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_mixed_default_071_filament","name":"inspect slice handoff mixed default 071 filament","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"inspect_slice_handoff_mixed_default_071_result","name":"inspect slice handoff mixed default 071 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"slice_evidence","name":"slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"support_preview","name":"support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"machine_profile","name":"machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"process_profile","name":"process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"filament_profile","name":"filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"toolpath_summary","name":"toolpath summary","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-inspection-prompt-055","mcp_tool":"proof-083-inspection-prompt-055__run_simulation","mcp_schema_digest":"5feb16154984b7bd6a3037cd041558bea44eb05a3de4917bca6dfa33dd235d3b","mcp_arguments_source":"connection","mcp_arguments_input":"inspect_slice_handoff_mixed_default_071_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/package-inspection-result.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice-evidence.json\nprocess-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/support-preview.json\nprocess-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/toolpath-summary.json\nprocess-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/machine-profile.json\nprocess-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/process-profile.json\nprocess-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/filament-profile.json","run_path_template":"wright.run-path/1","mcp_file_dependencies":{"inspect_slice_handoff_mixed_default_071_slice_package":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice_package.gcode.3mf","inspect_slice_handoff_mixed_default_071_provider_response":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice-provider-response.json","inspect_slice_handoff_mixed_default_071_slice_source":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/repaired_mesh.stl","inspect_slice_handoff_mixed_default_071_reader":"process-proofs/printed-replacement-part/mixed-default-071/inputs/passive-representations.py","inspect_slice_handoff_mixed_default_071_operation":"process-proofs/printed-replacement-part/mixed-default-071/inputs/inspect_manufacturing_package.py","inspect_slice_handoff_mixed_default_071_machine":"process-proofs/printed-replacement-part/mixed-default-071/inputs/machine-profile.json","inspect_slice_handoff_mixed_default_071_process":"process-proofs/printed-replacement-part/mixed-default-071/inputs/process-profile.json","inspect_slice_handoff_mixed_default_071_filament":"process-proofs/printed-replacement-part/mixed-default-071/inputs/filament-profile.json"},"expected_file_ports":{"slice_evidence":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/slice-evidence.json","support_preview":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/support-preview.json","machine_profile":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/machine-profile.json","process_profile":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/process-profile.json","filament_profile":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/filament-profile.json","toolpath_summary":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/toolpath-summary.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+input input_inspection_call_json_mixed_default_071
+  name: "inspection-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_inspection_call_json_mixed_default_071_out","name":"input inspection call json mixed default 071 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/mixed-default-071/inputs/inspection-call.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_exact_arguments
+  type: "item"
+  from: "input_inspection_call_json_mixed_default_071.input_inspection_call_json_mixed_default_071_out"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_slice_package
+  type: "item"
+  from: "supports_and_slice_mixed_default_071.slice_package"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_slice_package"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_provider_response
+  type: "item"
+  from: "retain_slice_response_mixed_default_071.provider_response"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_provider_response"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_slice_source
+  type: "item"
+  from: "repair_measure_orient_mixed_default_071.repaired_mesh"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_slice_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_reader
+  type: "item"
+  from: "input_passive_representations_py_mixed_default_071.input_passive_representations_py_mixed_default_071_out"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_reader"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_operation
+  type: "item"
+  from: "input_inspect_manufacturing_package_py_mixed_default_071.input_inspect_manufacturing_package_py_mixed_default_071_out"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_machine
+  type: "item"
+  from: "input_machine_profile_json_mixed_default_071.input_machine_profile_json_mixed_default_071_out"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_machine"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_process
+  type: "item"
+  from: "input_process_profile_json_mixed_default_071.input_process_profile_json_mixed_default_071_out"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_process"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_mixed_default_071_filament
+  type: "item"
+  from: "input_filament_profile_json_mixed_default_071.input_filament_profile_json_mixed_default_071_out"
+  to: "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_filament"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task summarize_preparation_mixed_default_071
+  name: "Record measured preparation facts and outstanding engineering review"
+  purpose: "Record measured preparation facts and outstanding engineering review"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"summarize_preparation_mixed_default_071_construction","name":"summarize preparation mixed default 071 construction","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_mixed_default_071_repair","name":"summarize preparation mixed default 071 repair","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_mixed_default_071_slice_evidence","name":"summarize preparation mixed default 071 slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_mixed_default_071_toolpath_summary","name":"summarize preparation mixed default 071 toolpath summary","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_mixed_default_071_requirements","name":"summarize preparation mixed default 071 requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"summarize_preparation_mixed_default_071_result","name":"summarize preparation mixed default 071 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/mixed-default-071/outputs/{{wright.run_id}}/source-report.json","file_policy":"overwrite","run_path_template":"wright.run-path/1","authoring_template":"mcp-task","mcp_server":"wright-workspace-files","max_tool_calls":2,"timeout_seconds":360,"expected_files":"","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval.","mcp_task_tools":["inspect_file"]}
+  tool: null
+  reusable_step: null
+  prompt: "The connected construction and repair results and original requirements are supplied reference material. Read those results directly; do not guess report filenames or reread supplied content. Use inspect_file exactly once for each connected slice_evidence and toolpath_summary workspace-file reference, using its verified relative path with includeText=true and maxTextBytes=65536. Those bounded records contain the actual package/mesh identity and profile observations; do not read raw profiles, G-code or the full support preview. Return the report after those two inspections; Wright saves it, so do not call a writing tool. Summarize construction, socket interpretation, repair, orientation/support consequences, exact PETG settings and nominal toolpaths. Separate design values from measured dimensions and future physical fit. The preview is nominal toolpath data, not completed printing. Retain all original mandatory limits and unresolved review requirements. Do not invent measurements, successful printing, fit, strength or a critic/human verdict. Return one compact JSON object under 6000 characters, with artifact_lineage, geometry_observations, preparation_observations, outstanding_requirements, limitations and engineering_acceptance=false."
+end
+
+connection bind_summarize_preparation_mixed_default_071_construction
+  type: "item"
+  from: "create_mesh_mixed_default_071.create_mesh_mixed_default_071_result"
+  to: "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_construction"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_mixed_default_071_repair
+  type: "item"
+  from: "repair_measure_orient_mixed_default_071.repair_measure_orient_mixed_default_071_result"
+  to: "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_repair"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_mixed_default_071_slice_evidence
+  type: "item"
+  from: "inspect_slice_handoff_mixed_default_071.slice_evidence"
+  to: "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_slice_evidence"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_mixed_default_071_toolpath_summary
+  type: "item"
+  from: "inspect_slice_handoff_mixed_default_071.toolpath_summary"
+  to: "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_toolpath_summary"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_mixed_default_071_requirements
+  type: "item"
+  from: "input_requirements_md_mixed_default_071.input_requirements_md_mixed_default_071_out"
+  to: "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_mixed_default_071_exact_package
+  type: "item"
+  from: "supports_and_slice_mixed_default_071.slice_package"
+  to: "authorize_transfer_mixed_default_071.authorize_transfer_mixed_default_071_exact_package"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_mixed_default_071_preparation_review
+  type: "item"
+  from: "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_result"
+  to: "authorize_transfer_mixed_default_071.authorize_transfer_mixed_default_071_preparation_review"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_mixed_default_071_machine_profile
+  type: "item"
+  from: "input_machine_profile_json_mixed_default_071.input_machine_profile_json_mixed_default_071_out"
+  to: "authorize_transfer_mixed_default_071.authorize_transfer_mixed_default_071_machine_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_mixed_default_071_process_profile
+  type: "item"
+  from: "input_process_profile_json_mixed_default_071.input_process_profile_json_mixed_default_071_out"
+  to: "authorize_transfer_mixed_default_071.authorize_transfer_mixed_default_071_process_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_mixed_default_071_filament_profile
+  type: "item"
+  from: "input_filament_profile_json_mixed_default_071.input_filament_profile_json_mixed_default_071_out"
+  to: "authorize_transfer_mixed_default_071.authorize_transfer_mixed_default_071_filament_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task validate_outputs_mixed_default_071
+  name: "Check exact current engineering outputs"
+  purpose: "Check exact current engineering outputs"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"validate_source_mesh","name":"validate source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_repaired_mesh","name":"validate repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_slice_package","name":"validate slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_slice_evidence","name":"validate slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_support_preview","name":"validate support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_machine_profile","name":"validate machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_process_profile","name":"validate process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_filament_profile","name":"validate filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_source_report","name":"validate source report","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_transfer_receipt","name":"validate transfer receipt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"assessment","name":"assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"packaged","name":"printed-replacement-part-01","reference":{"id":"printed-replacement-part-01-full","version":"1","sha256":"d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4"}},"baseline":{"id":"printed-replacement-part-01-basis","version":"1","sha256":"26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"},"subjects":{"source_mesh":"validate_source_mesh","repaired_mesh":"validate_repaired_mesh","slice_package":"validate_slice_package","slice_evidence":"validate_slice_evidence","support_preview":"validate_support_preview","machine_profile":"validate_machine_profile","process_profile":"validate_process_profile","filament_profile":"validate_filament_profile","source_report":"validate_source_report","transfer_receipt":"validate_transfer_receipt"},"budget":{"max_bytes":16777216,"max_entities":1000000,"timeout_seconds":120,"memory_limit_mb":512}}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection validate_bind_source_mesh_mixed_default_071
+  type: "item"
+  from: "create_mesh_mixed_default_071.source_mesh"
+  to: "validate_outputs_mixed_default_071.validate_source_mesh"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_repaired_mesh_mixed_default_071
+  type: "item"
+  from: "repair_measure_orient_mixed_default_071.repaired_mesh"
+  to: "validate_outputs_mixed_default_071.validate_repaired_mesh"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_slice_package_mixed_default_071
+  type: "item"
+  from: "supports_and_slice_mixed_default_071.slice_package"
+  to: "validate_outputs_mixed_default_071.validate_slice_package"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_slice_evidence_mixed_default_071
+  type: "item"
+  from: "inspect_slice_handoff_mixed_default_071.slice_evidence"
+  to: "validate_outputs_mixed_default_071.validate_slice_evidence"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_support_preview_mixed_default_071
+  type: "item"
+  from: "inspect_slice_handoff_mixed_default_071.support_preview"
+  to: "validate_outputs_mixed_default_071.validate_support_preview"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_machine_profile_mixed_default_071
+  type: "item"
+  from: "inspect_slice_handoff_mixed_default_071.machine_profile"
+  to: "validate_outputs_mixed_default_071.validate_machine_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_process_profile_mixed_default_071
+  type: "item"
+  from: "inspect_slice_handoff_mixed_default_071.process_profile"
+  to: "validate_outputs_mixed_default_071.validate_process_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_filament_profile_mixed_default_071
+  type: "item"
+  from: "inspect_slice_handoff_mixed_default_071.filament_profile"
+  to: "validate_outputs_mixed_default_071.validate_filament_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_source_report_mixed_default_071
+  type: "item"
+  from: "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_result"
+  to: "validate_outputs_mixed_default_071.validate_source_report"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_transfer_receipt_mixed_default_071
+  type: "item"
+  from: "authorize_transfer_mixed_default_071.receipt"
+  to: "validate_outputs_mixed_default_071.validate_transfer_receipt"
+  label: "exact current validation subject"
+  when: null
+end
+
+task review_preparation_mixed_default_071
+  name: "Review final digital preparation and exact engineering findings"
+  purpose: "Review final digital preparation and exact engineering findings"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_preparation_mixed_default_071_assessment","name":"review preparation mixed default 071 assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_preparation_mixed_default_071"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review the original socket, grip, orientation/support, tolerance and action-scope requirements against exact outputs. This process cannot certify fit, strength, accuracy or a physical print."
+end
+
+connection bind_review_preparation_mixed_default_071_assessment
+  type: "item"
+  from: "validate_outputs_mixed_default_071.assessment"
+  to: "review_preparation_mixed_default_071.review_preparation_mixed_default_071_assessment"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection sequence_review_basis_mixed_default_071
+  type: "order"
+  from: "define_geometry_basis_mixed_default_071"
+  to: "review_basis_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_create_mesh_mixed_default_071
+  type: "order"
+  from: "review_basis_mixed_default_071"
+  to: "create_mesh_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_retain_slice_response_mixed_default_071
+  type: "order"
+  from: "supports_and_slice_mixed_default_071"
+  to: "retain_slice_response_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_inspect_slice_handoff_mixed_default_071
+  type: "order"
+  from: "retain_slice_response_mixed_default_071"
+  to: "inspect_slice_handoff_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_summarize_preparation_mixed_default_071
+  type: "order"
+  from: "inspect_slice_handoff_mixed_default_071"
+  to: "summarize_preparation_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_authorize_transfer_mixed_default_071
+  type: "order"
+  from: "summarize_preparation_mixed_default_071"
+  to: "authorize_transfer_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_validate_outputs_mixed_default_071
+  type: "order"
+  from: "authorize_transfer_mixed_default_071"
+  to: "validate_outputs_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_review_preparation_mixed_default_071
+  type: "order"
+  from: "validate_outputs_mixed_default_071"
+  to: "review_preparation_mixed_default_071"
+  label: "accepted process order"
+  when: null
+end

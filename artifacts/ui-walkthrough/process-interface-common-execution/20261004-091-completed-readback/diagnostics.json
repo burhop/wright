@@ -1,0 +1,21 @@
+{
+  "diagnostics": {
+    "console": [],
+    "pageErrors": [],
+    "failedResponses": []
+  },
+  "posts": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    }
+  ],
+  "actual_run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+  "common_ui_start_in_prior_report": true,
+  "new_process_start_posts": 0,
+  "authoring_review_action_posts": 0
+}

@@ -1,0 +1,269 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "083-fresh-prompt-055",
+      "source_path": "workflows/printed-replacement-part-common-digital-083.workflow.wflow",
+      "source_digest": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+    "input_snapshot_id": "inputs-eacbd96669f1466eab450ec505503eb3",
+    "input_digest": "6ec6fd3c5b33e5c3cea6c03c2856b38a209548ac6377a59c1fbd2d0173ac2434",
+    "cursor": 16,
+    "generated_at": "2026-10-04T02:02:01.022747+00:00"
+  },
+  "state": "completed",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh",
+      "step_id": "mesh_construction_common_digital_083",
+      "port_id": "source_mesh",
+      "role": "deliverable",
+      "title": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+          "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34",
+          "media_type": null,
+          "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": [
+        "stl"
+      ]
+    },
+    {
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result",
+      "step_id": "mesh_construction_common_digital_083",
+      "port_id": "mesh_construction_common_digital_083_result",
+      "role": "deliverable",
+      "title": "Construct original focus-wheel mesh",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+          "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb",
+          "media_type": null,
+          "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh",
+      "step_id": "mesh_repair_common_digital_083",
+      "port_id": "repaired_mesh",
+      "role": "deliverable",
+      "title": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+          "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2",
+          "media_type": null,
+          "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": [
+        "stl"
+      ]
+    },
+    {
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png",
+      "step_id": "mesh_repair_common_digital_083",
+      "port_id": "mesh_preview_png",
+      "role": "deliverable",
+      "title": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+          "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e",
+          "media_type": null,
+          "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": [
+        "image"
+      ]
+    },
+    {
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result",
+      "step_id": "mesh_repair_common_digital_083",
+      "port_id": "mesh_repair_common_digital_083_result",
+      "role": "deliverable",
+      "title": "Repair, measure and orient the exact source STL",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+          "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f",
+          "media_type": null,
+          "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [],
+  "actions": [
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "5a2e9fe9695e1d0b9a44a0f66a2e7880f9f330bd0963b960c2d955a1adb4e0a6",
+      "reasons": [
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+          "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "completed",
+      "observed_at": "2026-10-04T02:02:01.022747+00:00",
+      "stale_after": null,
+      "operation_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "activity": null,
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 16,
+        "completed_steps": 2
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:source_mesh",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_construction_common_digital_083:mesh_construction_common_digital_083_result",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:repaired_mesh",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_preview_png",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+      "result_id": "8c042141e6c7422aa58ca1bbab14d86e:mesh_repair_common_digital_083:mesh_repair_common_digital_083_result",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json"
+    }
+  ],
+  "next_page": null
+}

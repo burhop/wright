@@ -1,0 +1,38 @@
+[
+  {
+    "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004T020653Z-original-input-authoring-092",
+    "overall": "blocked",
+    "pass": 9,
+    "blocked": 1
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interface-original-inputs/20261004-062-common",
+    "overall": "blocked",
+    "pass": 5,
+    "blocked": 1
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interface-original-inputs/20261004-066-common-continuation",
+    "overall": "pass",
+    "pass": 3,
+    "blocked": 0
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interface-common-execution/20261004-087-digital",
+    "overall": "blocked",
+    "pass": 0,
+    "blocked": 1
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interface-common-execution/20261004-089-digital-continuation",
+    "overall": "blocked",
+    "pass": 5,
+    "blocked": 1
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interface-common-execution/20261004-091-completed-readback",
+    "overall": "pass",
+    "pass": 4,
+    "blocked": 0
+  }
+]

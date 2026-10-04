@@ -1,0 +1,1814 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "assessment-e16a660ca1854022ad82e2a2fefe0cea",
+  "attempt_id": "82a1ba2e03984a7f85ad1e97f6220e93",
+  "request": {
+    "schema_version": "wright.process-validation/1",
+    "trace_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+    "workspace_id": "083-fresh-prompt-055",
+    "invocation_id": "validate_outputs_mixed_default_071:1",
+    "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+    "check_step_id": "validate_outputs_mixed_default_071",
+    "subjects": [
+      {
+        "id": "output-a894e0bbfe9c49905e2fdcb78bdaf66ec079e1a6e5eb568c6ad0423cb88e915a",
+        "role": "source_mesh",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:create_mesh_mixed_default_071:source_mesh",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "create_mesh_mixed_default_071",
+          "attempt": 1,
+          "output_port": "source_mesh"
+        },
+        "kind": "file",
+        "sha256": "bb3528ee00f7661864d8289dd810de91c1f40e220285f36081e0f17b15a42f93",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/source_mesh.stl",
+        "format": "stl",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b",
+        "role": "repaired_mesh",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:repair_measure_orient_mixed_default_071:repaired_mesh",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "repair_measure_orient_mixed_default_071",
+          "attempt": 1,
+          "output_port": "repaired_mesh"
+        },
+        "kind": "file",
+        "sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/repaired_mesh.stl",
+        "format": "stl",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e",
+        "role": "slice_package",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:supports_and_slice_mixed_default_071:slice_package",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "supports_and_slice_mixed_default_071",
+          "attempt": 1,
+          "output_port": "slice_package"
+        },
+        "kind": "file",
+        "sha256": "d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/slice_package.gcode.3mf",
+        "format": "3mf",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-78b2b8d573209c0a8e1bb74dd5712b079da18468314e7f1b1d3781d9c0310690",
+        "role": "slice_evidence",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:inspect_slice_handoff_mixed_default_071:slice_evidence",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "inspect_slice_handoff_mixed_default_071",
+          "attempt": 1,
+          "output_port": "slice_evidence"
+        },
+        "kind": "file",
+        "sha256": "e3d381b902aedf6c4e04b33a0a4fd06ac8859d6cd47af0a1585f0013de65eaf6",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/slice-evidence.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-815f690a5192f22a4ba447abb4fd1ea1e2d8fd4a04415cfc70dc1bdd92004dbe",
+        "role": "support_preview",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:inspect_slice_handoff_mixed_default_071:support_preview",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "inspect_slice_handoff_mixed_default_071",
+          "attempt": 1,
+          "output_port": "support_preview"
+        },
+        "kind": "file",
+        "sha256": "1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/support-preview.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-8a93c0284fc381f429fc15e14fdec674cec66ca65874dec3d8105c3d4a7423b2",
+        "role": "machine_profile",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:inspect_slice_handoff_mixed_default_071:machine_profile",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "inspect_slice_handoff_mixed_default_071",
+          "attempt": 1,
+          "output_port": "machine_profile"
+        },
+        "kind": "file",
+        "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/machine-profile.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161",
+        "role": "process_profile",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:inspect_slice_handoff_mixed_default_071:process_profile",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "inspect_slice_handoff_mixed_default_071",
+          "attempt": 1,
+          "output_port": "process_profile"
+        },
+        "kind": "file",
+        "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/process-profile.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-38a71d8972ae63682f76517e28a145fd542f629707e271cb62d073491597e18b",
+        "role": "filament_profile",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:inspect_slice_handoff_mixed_default_071:filament_profile",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "inspect_slice_handoff_mixed_default_071",
+          "attempt": 1,
+          "output_port": "filament_profile"
+        },
+        "kind": "file",
+        "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/filament-profile.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-834917f6a42157f597bb002c645bc6e769c7b27553feab8c45e58baca70dcf4d",
+        "role": "source_report",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:summarize_preparation_mixed_default_071:summarize_preparation_mixed_default_071_result",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "summarize_preparation_mixed_default_071",
+          "attempt": 1,
+          "output_port": "summarize_preparation_mixed_default_071_result"
+        },
+        "kind": "value",
+        "sha256": "0d4a5274db09f618d4854a6ff42c25edf3e4936f796517052cfee53533443815",
+        "value": "{\"artifact_lineage\":{\"source_mesh\":{\"path\":\"process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/source_mesh.stl\",\"sha256\":\"bb3528ee00f7661864d8289dd810de91c1f40e220285f36081e0f17b15a42f93\"},\"repaired_mesh\":{\"path\":\"process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/repaired_mesh.stl\",\"sha256\":\"bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127\"},\"slice\":{\"operation\":\"actual_local_bambu_slice\",\"simulation\":false,\"reported_exit_code\":0,\"exit_code_scope\":\"provider-contract evidence from offline CLI success, not an independently observed exit code\",\"repaired_mesh_binding_sha256\":\"bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127\",\"package_sha256\":\"d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037\",\"provider_response_sha256\":\"4dd8b9e9d880b98fdaca3b36491bdb6055ff11b703a9446ad0ec4032f5ef6f22\"},\"preview\":{\"path\":\"process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/support-preview.json\",\"sha256\":\"1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9\"},\"profiles\":{\"machine_sha256\":\"93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc\",\"process_sha256\":\"0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3\",\"filament_sha256\":\"e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db\"}},\"geometry_observations\":{\"design_values\":{\"envelope_limit_mm\":{\"diameter\":38.0,\"height_including_raised_hub\":18.0,\"raised_hub_height\":2.0},\"grip\":{\"scallops\":6,\"scallop_radius_mm\":8,\"center_radius_mm\":24.75,\"minimum_diameter_mm\":33.5,\"required_minimum_mm\":33,\"nominal_exposed_edge_round_mm\":1.0,\"dots\":12,\"dot_dimensions_mm\":[1.2,0.35]},\"socket\":{\"interpretation\":\"concentric rear-open blind D socket derived from a 6.00 mm round shaft boundary and 5.20 mm across-flat shaft with 0.20 mm radial and flat clearance\",\"radius_mm\":3.2,\"flat_x_mm\":-2.4,\"depth_mm\":10,\"minimum_roof_design_mm\":6,\"required_minimum_material_above_mm\":3,\"prohibited_features\":[\"set screw\",\"insert\",\"taper\",\"keyway\"]}},\"measured_mesh_values\":{\"source_dimensions_mm\":[36.721066,38.0,18.0],\"source_bounds_mm\":[[-18.360533,-19.0,0.0],[18.360533,19.0,18.0]],\"source_volume_mm3\":16649.92557,\"socket_opening_sample_mm\":{\"x\":[-2.4,3.2],\"y\":[-3.199881,3.199881],\"vertices\":99}},\"repair\":{\"merge_tolerance_mm\":0.001,\"degenerate_edge_tolerance_mm\":0.000001,\"vertices\":{\"before\":5414,\"after\":5406},\"triangles\":{\"before\":10824,\"after\":10808},\"vertices_removed\":8,\"faces_removed\":16,\"normals_recalculated\":true,\"dimensions_preserved\":true,\"post_export_non_manifold_edges\":0,\"post_export_boundary_edges\":0,\"post_export_degenerate_faces\":0,\"post_export_winding_conflicts\":0}},\"preparation_observations\":{\"orientation\":\"Repaired mesh was rotated 180 degrees about X and translated to Z=0, placing the blind D-socket opening upward. This puts the raised front hub at the build plate and can elevate surrounding front-face regions, creating broad underside overhangs.\",\"support\":\"Actual nominal toolpaths include support; zero supports are not claimed.\",\"required_exact_petg_settings\":{\"machine\":\"P1S\",\"nozzle_mm\":0.4,\"material\":\"PETG\",\"layer_height_mm\":0.2,\"perimeters\":4,\"infill_percent\":35},\"profile_evidence_scope\":\"The inspected slice record identifies machine, process and filament profiles by path and SHA-256 but does not enumerate their parameter values; exact profile-setting compliance therefore remains unresolved. Any PLA geometry prototype cannot satisfy PETG.\",\"nominal_toolpaths\":{\"layers\":90,\"segments_total\":69559,\"model_segments\":46800,\"support_segments\":22388,\"unclassified_segments\":371,\"extruding_arcs\":10862,\"arc_maximum_chord_error_mm\":0.02,\"scope\":\"selected layer section, lines 857-44233; 856 startup and 57 shutdown lines excluded and unverified\"}},\"outstanding_requirements\":[\"Later review must verify physical D-socket fit, PETG shrinkage, torque strength, dimensional accuracy, print outcome, hub-root blend, actual support suitability, machine/material acceptance and profile/package compliance.\",\"Non-mating prototype dimensions retain proposed ±0.25 mm tolerance; D-socket design values must remain separate from future physical measurements.\",\"Rounds and circular features are tessellated approximations.\",\"A future review must confirm the complete deliverable set, including final P1S PETG package and digest-bound local simulator transfer receipt.\",\"No strength, fit, accuracy, standards compliance, successful printing, physical-printer transfer or print start is established.\"],\"limitations\":{\"toolpaths\":\"Nominal preview data only; firmware commands were not executed. Startup and shutdown commands were excluded.\",\"physical_state\":\"No completed print or physical inspection is evidenced.\",\"review\":\"No critic or human verdict is present.\"},\"engineering_acceptance\":false}",
+        "locator": null,
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-f9d0102262d6750bdc5f8967bfd1e422c511c0f78266e0e6e2748f3a8adb7848",
+        "role": "transfer_receipt",
+        "result_id": "85d929ee36e64afdaee61a5cdb0fc2a6:authorize_transfer_mixed_default_071:receipt",
+        "producer": {
+          "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+          "step_id": "authorize_transfer_mixed_default_071",
+          "attempt": 1,
+          "output_port": "receipt"
+        },
+        "kind": "file",
+        "sha256": "3f82db15b5f2bdd4997aadb61fac5487510996d7c136dae0577865139ffcedbf",
+        "value": null,
+        "locator": "process-proofs/printed-replacement-part/mixed-default-071/outputs/85d929ee36e64afdaee61a5cdb0fc2a6/simulated-transfer-receipt.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      }
+    ],
+    "profile_ref": {
+      "id": "printed-replacement-part-01-full",
+      "version": "1",
+      "sha256": "d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4"
+    },
+    "baseline_ref": {
+      "id": "printed-replacement-part-01-basis",
+      "version": "1",
+      "sha256": "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"
+    },
+    "idempotency_key": "run:452b9a44c21e3b09d751cfa546139ebf82ce5190e5f19ce9c321872c595313f5",
+    "budget": {
+      "max_bytes": 16777216,
+      "max_entities": 1000000,
+      "timeout_seconds": 120,
+      "memory_limit_mb": 512
+    }
+  },
+  "profile": {
+    "schema_version": "wright.process-validation/1",
+    "id": "printed-replacement-part-01-full",
+    "version": "1",
+    "baseline": {
+      "id": "printed-replacement-part-01-basis",
+      "version": "1",
+      "requirements": [
+        {
+          "id": "PRINT01-ENVELOPE",
+          "text": "The complete wheel is no more than 38.0 mm diameter and 18.0 mm high including the 2 mm raised front hub.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+              "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+              "locator": "38 mm scale reference"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Geometry and use"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "PRINT01-GRIP",
+          "text": "The wheel has six equally spaced shallow scallops, at least 33 mm minimum grip diameter, nominal 1.0 mm exposed-edge rounds and subtle raised grip dots that do not form glove catches.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+              "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+              "locator": "six scallops and grip dots"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Geometry and use"
+            }
+          ],
+          "mandatory": true,
+          "review_required": true
+        },
+        {
+          "id": "PRINT01-SOCKET",
+          "text": "The concentric blind D socket is 10.0 mm deep and derives from a 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and 0.20 mm flat clearance.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+              "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+              "locator": "shaft and socket request"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Geometry and use"
+            }
+          ],
+          "mandatory": true,
+          "review_required": true
+        },
+        {
+          "id": "PRINT01-SOCKET-WALL",
+          "text": "At least 3.0 mm material remains above the blind socket and no set screw, insert, taper or keyway is added.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Geometry and use"
+            }
+          ],
+          "mandatory": true,
+          "review_required": true
+        },
+        {
+          "id": "PRINT01-MESH-LINEAGE",
+          "text": "Source and repaired printable meshes are distinct, correspond to the same approved geometry, and the final slice package binds to the repaired mesh revision.",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+              "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+              "locator": "requested mesh lineage"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Review and outputs"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "PRINT01-SLICE",
+          "text": "The final package uses installed matching P1S 0.4 mm PETG profiles, 0.20 mm layers, four perimeters and 35% infill; any PLA geometry prototype is explicitly labeled and cannot satisfy PETG.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Capabilities and internal policy"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "PRINT01-ORIENTATION",
+          "text": "Orientation and support decisions protect the upward-facing blind socket where feasible, retain an actual support/slicing preview, and identify any required support.",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+              "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+              "locator": "orientation request"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Review and outputs"
+            }
+          ],
+          "mandatory": true,
+          "review_required": true
+        },
+        {
+          "id": "PRINT01-TOLERANCE",
+          "text": "Non-mating prototype dimensions use the proposed ±0.25 mm tolerance while D-socket design values remain separate from future measured fit values.",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Capabilities and internal policy"
+            }
+          ],
+          "mandatory": true,
+          "review_required": true
+        },
+        {
+          "id": "PRINT01-DELIVERABLES",
+          "text": "The output set contains source mesh, repaired printable mesh, support/slicing preview, final P1S PETG package and a digest-bound local simulator transfer receipt.",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+              "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+              "locator": "requested outputs"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Review and outputs"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "PRINT01-ACTION-SCOPE",
+          "text": "The result does not claim strength, fit, accuracy, standards compliance or successful printing and does not use printer credentials, transfer to a physical printer or start a print.",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+              "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+              "locator": "Capabilities and internal policy; Review and outputs"
+            }
+          ],
+          "mandatory": true,
+          "review_required": true
+        }
+      ],
+      "unresolved_decisions": [],
+      "amendments": []
+    },
+    "checks": [
+      {
+        "id": "repaired-envelope-x",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-ENVELOPE"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/x_span_mm",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 38.0,
+          "inclusive": true
+        },
+        "unit": "mm",
+        "frame": "model_axes",
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "stl_dimension",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "repaired-envelope-y",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-ENVELOPE"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/y_span_mm",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 38.0,
+          "inclusive": true
+        },
+        "unit": "mm",
+        "frame": "model_axes",
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "stl_dimension",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "repaired-envelope-z",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-ENVELOPE"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/z_span_mm",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 18.0,
+          "inclusive": true
+        },
+        "unit": "mm",
+        "frame": "model_axes",
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "stl_dimension",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "repaired-mesh-integrity",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-MESH-LINEAGE",
+          "PRINT01-DELIVERABLES"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/integrity",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "mesh_integrity",
+          "unit_convention": "mm"
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "distinct-mesh-lineage",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-MESH-LINEAGE"
+        ],
+        "subject_role": "repaired_mesh",
+        "reader": "printing",
+        "selector": "mesh/lineage",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "mesh_lineage",
+          "related_roles": [
+            "source_mesh"
+          ],
+          "span_tolerance_mm": 0.01
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "machine-name",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "machine_profile",
+        "reader": "structured",
+        "selector": "/name",
+        "constraint": {
+          "operator": "equals",
+          "expected": "Bambu Lab P1S 0.4 nozzle",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "machine-nozzle",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "machine_profile",
+        "reader": "structured",
+        "selector": "/nozzle_diameter",
+        "constraint": {
+          "operator": "equals",
+          "expected": [
+            "0.4"
+          ],
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "filament-name",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "filament_profile",
+        "reader": "structured",
+        "selector": "/name",
+        "constraint": {
+          "operator": "equals",
+          "expected": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "filament-type",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "filament_profile",
+        "reader": "structured",
+        "selector": "/filament_type",
+        "constraint": {
+          "operator": "equals",
+          "expected": [
+            "PETG"
+          ],
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "layer-height",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "process_profile",
+        "reader": "structured",
+        "selector": "/layer_height",
+        "constraint": {
+          "operator": "equals",
+          "expected": "0.20",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "wall-loops",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "process_profile",
+        "reader": "structured",
+        "selector": "/wall_loops",
+        "constraint": {
+          "operator": "equals",
+          "expected": "4",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "infill-density",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "process_profile",
+        "reader": "structured",
+        "selector": "/sparse_infill_density",
+        "constraint": {
+          "operator": "equals",
+          "expected": "35%",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "slice-package-inventory",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-SLICE",
+          "PRINT01-DELIVERABLES"
+        ],
+        "subject_role": "slice_package",
+        "reader": "printing",
+        "selector": "package/required_members",
+        "constraint": {
+          "operator": "equals",
+          "expected": 5,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "package_inventory",
+          "required_members": [
+            "3D/3dmodel.model",
+            "3D/Objects/object_1.model",
+            "Metadata/plate_1.gcode",
+            "Metadata/project_settings.config",
+            "Metadata/slice_info.config"
+          ]
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "slice-lineage",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-MESH-LINEAGE",
+          "PRINT01-SLICE"
+        ],
+        "subject_role": "slice_evidence",
+        "reader": "printing",
+        "selector": "slice/hash_binding",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "expected_operation": "actual_local_bambu_slice",
+          "operation": "slice_binding",
+          "related_roles": [
+            "repaired_mesh",
+            "slice_package"
+          ]
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "simulated-transfer-binding",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-DELIVERABLES"
+        ],
+        "subject_role": "transfer_receipt",
+        "reader": "printing",
+        "selector": "transfer/package_binding",
+        "constraint": {
+          "operator": "equals",
+          "expected": true,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "operation": "transfer_binding",
+          "related_roles": [
+            "slice_package"
+          ]
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "support-preview-present",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-DELIVERABLES"
+        ],
+        "subject_role": "support_preview",
+        "reader": "structured",
+        "selector": "",
+        "constraint": {
+          "operator": "exists",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "source-report-present",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-DELIVERABLES"
+        ],
+        "subject_role": "source_report",
+        "reader": "structured",
+        "selector": "",
+        "constraint": {
+          "operator": "exists",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "engineering-review",
+        "version": "1",
+        "requirement_ids": [
+          "PRINT01-ACTION-SCOPE",
+          "PRINT01-GRIP",
+          "PRINT01-ORIENTATION",
+          "PRINT01-SOCKET",
+          "PRINT01-SOCKET-WALL",
+          "PRINT01-TOLERANCE"
+        ],
+        "subject_role": "source_report",
+        "reader": "structured",
+        "selector": "",
+        "constraint": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "human_review",
+        "parameters": {},
+        "applicability_reason": null
+      }
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and production release require authenticated engineering review."
+    ],
+    "supported_kinds": [
+      "file",
+      "value"
+    ]
+  },
+  "created_at": "2026-10-04T01:57:19.641874+00:00",
+  "measurements": [
+    {
+      "id": "m-a44d869ee5673d54ae5db997dd62147626f23b51d6832c3b461a5667892ac781",
+      "subject_id": "output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b",
+      "subject_sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127",
+      "selector": "mesh/x_span_mm",
+      "value": 36.721065521240234,
+      "unit": "mm",
+      "frame": "model_axes",
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/x_span_mm"
+      ]
+    },
+    {
+      "id": "m-cb507cfa3ec2d38495efa4c28e1fcf1b2c45f56a1770ed1d3a71358e6e77d7c5",
+      "subject_id": "output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b",
+      "subject_sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127",
+      "selector": "mesh/y_span_mm",
+      "value": 38.0,
+      "unit": "mm",
+      "frame": "model_axes",
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/y_span_mm"
+      ]
+    },
+    {
+      "id": "m-b6bba9a2452d5ec995bd70a2ec57a212be97c91b45a5c55ec75cd5ab78a2de03",
+      "subject_id": "output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b",
+      "subject_sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127",
+      "selector": "mesh/z_span_mm",
+      "value": 18.0,
+      "unit": "mm",
+      "frame": "model_axes",
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/z_span_mm"
+      ]
+    },
+    {
+      "id": "m-4f6c916fbaabe5a2a97d2a3532c4528da35d9616e1de2f19a712ac706f0eb7f8",
+      "subject_id": "output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b",
+      "subject_sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127",
+      "selector": "mesh/integrity",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/integrity"
+      ]
+    },
+    {
+      "id": "m-7363c62cbf51c7fdabe4ee91f5eaee8e4a80acaf4d0008253ba2c89ef99fb186",
+      "subject_id": "output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b",
+      "subject_sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127",
+      "selector": "mesh/lineage",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/lineage",
+        "subject:output-a894e0bbfe9c49905e2fdcb78bdaf66ec079e1a6e5eb568c6ad0423cb88e915a@bb3528ee00f7661864d8289dd810de91c1f40e220285f36081e0f17b15a42f93#mesh-lineage"
+      ]
+    },
+    {
+      "id": "m-ecb6ecdf72442315e3e8447ec0bd5cbe1afc34aa1665e14180bf73e2b20cc0cb",
+      "subject_id": "output-8a93c0284fc381f429fc15e14fdec674cec66ca65874dec3d8105c3d4a7423b2",
+      "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "selector": "/name",
+      "value": "Bambu Lab P1S 0.4 nozzle",
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-8a93c0284fc381f429fc15e14fdec674cec66ca65874dec3d8105c3d4a7423b2@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+      ]
+    },
+    {
+      "id": "m-bb13d7ec09954939a4e1354f3620f764676a00aa21c2dde1cc62d05ee3baf785",
+      "subject_id": "output-8a93c0284fc381f429fc15e14fdec674cec66ca65874dec3d8105c3d4a7423b2",
+      "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "selector": "/nozzle_diameter",
+      "value": [
+        "0.4"
+      ],
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-8a93c0284fc381f429fc15e14fdec674cec66ca65874dec3d8105c3d4a7423b2@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+      ]
+    },
+    {
+      "id": "m-37fb7adc6a7d024d214f85845c33d45a888c00499c008c24abd5d22727d62600",
+      "subject_id": "output-38a71d8972ae63682f76517e28a145fd542f629707e271cb62d073491597e18b",
+      "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "selector": "/name",
+      "value": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-38a71d8972ae63682f76517e28a145fd542f629707e271cb62d073491597e18b@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+      ]
+    },
+    {
+      "id": "m-f336ce92187f3e8f4b1bdffb1b3a2fb5f65883b795585bfba616c1bc4f98b4b9",
+      "subject_id": "output-38a71d8972ae63682f76517e28a145fd542f629707e271cb62d073491597e18b",
+      "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "selector": "/filament_type",
+      "value": [
+        "PETG"
+      ],
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-38a71d8972ae63682f76517e28a145fd542f629707e271cb62d073491597e18b@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+      ]
+    },
+    {
+      "id": "m-a73006f2fbbe37c1dfa6b449709a1bfa7bbda6d8bfb088ed9cbb25f91d3b2d4e",
+      "subject_id": "output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161",
+      "subject_sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "selector": "/layer_height",
+      "value": "0.20",
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161@0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3#/layer_height"
+      ]
+    },
+    {
+      "id": "m-642eec52bd84902e2271a95578ae5629f9e5e02e468248c22873ef7080e4b041",
+      "subject_id": "output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161",
+      "subject_sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "selector": "/wall_loops",
+      "value": "4",
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161@0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3#/wall_loops"
+      ]
+    },
+    {
+      "id": "m-33b1e8995d32fbb59517598d907bd4f4adcb2f6e99eab81ffaf30ec0415ebaf0",
+      "subject_id": "output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161",
+      "subject_sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "selector": "/sparse_infill_density",
+      "value": "35%",
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161@0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3#/sparse_infill_density"
+      ]
+    },
+    {
+      "id": "m-5d900c2bc3681e61d4a7be53f378df6ad870d32e156dffc7bcd1918823816a7b",
+      "subject_id": "output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e",
+      "subject_sha256": "d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037",
+      "selector": "package/required_members",
+      "value": 5,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e@d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037#package/required_members"
+      ]
+    },
+    {
+      "id": "m-f8fcd6f9a6606efa97752278f49a2ac82f4d397b6008455cccabcc29a156341b",
+      "subject_id": "output-78b2b8d573209c0a8e1bb74dd5712b079da18468314e7f1b1d3781d9c0310690",
+      "subject_sha256": "e3d381b902aedf6c4e04b33a0a4fd06ac8859d6cd47af0a1585f0013de65eaf6",
+      "selector": "slice/hash_binding",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-78b2b8d573209c0a8e1bb74dd5712b079da18468314e7f1b1d3781d9c0310690@e3d381b902aedf6c4e04b33a0a4fd06ac8859d6cd47af0a1585f0013de65eaf6#slice/hash_binding",
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#slice-input",
+        "subject:output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e@d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037#slice-output"
+      ]
+    },
+    {
+      "id": "m-9073ff420f574177e5607e8fb4c5efecae11f22e13b58de49ee810aadb096203",
+      "subject_id": "output-f9d0102262d6750bdc5f8967bfd1e422c511c0f78266e0e6e2748f3a8adb7848",
+      "subject_sha256": "3f82db15b5f2bdd4997aadb61fac5487510996d7c136dae0577865139ffcedbf",
+      "selector": "transfer/package_binding",
+      "value": true,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "printing",
+        "version": "3",
+        "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded mesh/print artifact reader v3",
+        "formats": [
+          "stl",
+          "json",
+          "3mf"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-f9d0102262d6750bdc5f8967bfd1e422c511c0f78266e0e6e2748f3a8adb7848@3f82db15b5f2bdd4997aadb61fac5487510996d7c136dae0577865139ffcedbf#transfer/package_binding",
+        "subject:output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e@d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037#simulated-transfer"
+      ]
+    },
+    {
+      "id": "m-8ffc96f95f605b7d4184cebf9be989d10079ddd486dfa38482399b8d16dd47d1",
+      "subject_id": "output-815f690a5192f22a4ba447abb4fd1ea1e2d8fd4a04415cfc70dc1bdd92004dbe",
+      "subject_sha256": "1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9",
+      "selector": "",
+      "value": {
+        "bytes": 4493745,
+        "present": true,
+        "sha256": "1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9"
+      },
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-815f690a5192f22a4ba447abb4fd1ea1e2d8fd4a04415cfc70dc1bdd92004dbe@1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9#"
+      ]
+    },
+    {
+      "id": "m-23e2db61429dcf7e17d3a304dd82f14435bd5804691a487476f90abb672c8991",
+      "subject_id": "output-834917f6a42157f597bb002c645bc6e769c7b27553feab8c45e58baca70dcf4d",
+      "subject_sha256": "0d4a5274db09f618d4854a6ff42c25edf3e4936f796517052cfee53533443815",
+      "selector": "",
+      "value": {
+        "bytes": 4888,
+        "present": true,
+        "sha256": "0d4a5274db09f618d4854a6ff42c25edf3e4936f796517052cfee53533443815"
+      },
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html",
+          "svg",
+          "dxf",
+          "kicad_sch"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-834917f6a42157f597bb002c645bc6e769c7b27553feab8c45e58baca70dcf4d@0d4a5274db09f618d4854a6ff42c25edf3e4936f796517052cfee53533443815#"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "repaired-envelope-x",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-a44d869ee5673d54ae5db997dd62147626f23b51d6832c3b461a5667892ac781"
+      ],
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/x_span_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "repaired-envelope-y",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-cb507cfa3ec2d38495efa4c28e1fcf1b2c45f56a1770ed1d3a71358e6e77d7c5"
+      ],
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/y_span_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "repaired-envelope-z",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-b6bba9a2452d5ec995bd70a2ec57a212be97c91b45a5c55ec75cd5ab78a2de03"
+      ],
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/z_span_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "repaired-mesh-integrity",
+      "requirement_ids": [
+        "PRINT01-MESH-LINEAGE",
+        "PRINT01-DELIVERABLES"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-4f6c916fbaabe5a2a97d2a3532c4528da35d9616e1de2f19a712ac706f0eb7f8"
+      ],
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/integrity"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "distinct-mesh-lineage",
+      "requirement_ids": [
+        "PRINT01-MESH-LINEAGE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-7363c62cbf51c7fdabe4ee91f5eaee8e4a80acaf4d0008253ba2c89ef99fb186"
+      ],
+      "evidence_refs": [
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#mesh/lineage",
+        "subject:output-a894e0bbfe9c49905e2fdcb78bdaf66ec079e1a6e5eb568c6ad0423cb88e915a@bb3528ee00f7661864d8289dd810de91c1f40e220285f36081e0f17b15a42f93#mesh-lineage"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "machine-name",
+      "requirement_ids": [
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-ecb6ecdf72442315e3e8447ec0bd5cbe1afc34aa1665e14180bf73e2b20cc0cb"
+      ],
+      "evidence_refs": [
+        "subject:output-8a93c0284fc381f429fc15e14fdec674cec66ca65874dec3d8105c3d4a7423b2@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "machine-nozzle",
+      "requirement_ids": [
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-bb13d7ec09954939a4e1354f3620f764676a00aa21c2dde1cc62d05ee3baf785"
+      ],
+      "evidence_refs": [
+        "subject:output-8a93c0284fc381f429fc15e14fdec674cec66ca65874dec3d8105c3d4a7423b2@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "filament-name",
+      "requirement_ids": [
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-37fb7adc6a7d024d214f85845c33d45a888c00499c008c24abd5d22727d62600"
+      ],
+      "evidence_refs": [
+        "subject:output-38a71d8972ae63682f76517e28a145fd542f629707e271cb62d073491597e18b@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "filament-type",
+      "requirement_ids": [
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-f336ce92187f3e8f4b1bdffb1b3a2fb5f65883b795585bfba616c1bc4f98b4b9"
+      ],
+      "evidence_refs": [
+        "subject:output-38a71d8972ae63682f76517e28a145fd542f629707e271cb62d073491597e18b@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "layer-height",
+      "requirement_ids": [
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-a73006f2fbbe37c1dfa6b449709a1bfa7bbda6d8bfb088ed9cbb25f91d3b2d4e"
+      ],
+      "evidence_refs": [
+        "subject:output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161@0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3#/layer_height"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "wall-loops",
+      "requirement_ids": [
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-642eec52bd84902e2271a95578ae5629f9e5e02e468248c22873ef7080e4b041"
+      ],
+      "evidence_refs": [
+        "subject:output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161@0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3#/wall_loops"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "infill-density",
+      "requirement_ids": [
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-33b1e8995d32fbb59517598d907bd4f4adcb2f6e99eab81ffaf30ec0415ebaf0"
+      ],
+      "evidence_refs": [
+        "subject:output-a95b8323d749ab6e42bd206a62d42890b885cd992e2aac197367fc3a3a688161@0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3#/sparse_infill_density"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "slice-package-inventory",
+      "requirement_ids": [
+        "PRINT01-SLICE",
+        "PRINT01-DELIVERABLES"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-5d900c2bc3681e61d4a7be53f378df6ad870d32e156dffc7bcd1918823816a7b"
+      ],
+      "evidence_refs": [
+        "subject:output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e@d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037#package/required_members"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "slice-lineage",
+      "requirement_ids": [
+        "PRINT01-MESH-LINEAGE",
+        "PRINT01-SLICE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-f8fcd6f9a6606efa97752278f49a2ac82f4d397b6008455cccabcc29a156341b"
+      ],
+      "evidence_refs": [
+        "subject:output-78b2b8d573209c0a8e1bb74dd5712b079da18468314e7f1b1d3781d9c0310690@e3d381b902aedf6c4e04b33a0a4fd06ac8859d6cd47af0a1585f0013de65eaf6#slice/hash_binding",
+        "subject:output-f41e841e25a7c73400577ce00e5992f5bb233e344f7ed3594d0560bff910ae5b@bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127#slice-input",
+        "subject:output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e@d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037#slice-output"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "simulated-transfer-binding",
+      "requirement_ids": [
+        "PRINT01-DELIVERABLES"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-9073ff420f574177e5607e8fb4c5efecae11f22e13b58de49ee810aadb096203"
+      ],
+      "evidence_refs": [
+        "subject:output-f9d0102262d6750bdc5f8967bfd1e422c511c0f78266e0e6e2748f3a8adb7848@3f82db15b5f2bdd4997aadb61fac5487510996d7c136dae0577865139ffcedbf#transfer/package_binding",
+        "subject:output-3e0f23c08b5c00577aa11feec3207de2d7a8c9caf0d732355302a309e579328e@d602c7b5857978de2159b8595da2efd6d726e7dc623b9cbcc95f7b92f265a037#simulated-transfer"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "support-preview-present",
+      "requirement_ids": [
+        "PRINT01-DELIVERABLES"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-8ffc96f95f605b7d4184cebf9be989d10079ddd486dfa38482399b8d16dd47d1"
+      ],
+      "evidence_refs": [
+        "subject:output-815f690a5192f22a4ba447abb4fd1ea1e2d8fd4a04415cfc70dc1bdd92004dbe@1a6e5d213372185e545f32a7746268a855088ec9eabf73762202ea593a4ae9c9#"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "source-report-present",
+      "requirement_ids": [
+        "PRINT01-DELIVERABLES"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-23e2db61429dcf7e17d3a304dd82f14435bd5804691a487476f90abb672c8991"
+      ],
+      "evidence_refs": [
+        "subject:output-834917f6a42157f597bb002c645bc6e769c7b27553feab8c45e58baca70dcf4d@0d4a5274db09f618d4854a6ff42c25edf3e4936f796517052cfee53533443815#"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "engineering-review",
+      "requirement_ids": [
+        "PRINT01-ACTION-SCOPE",
+        "PRINT01-GRIP",
+        "PRINT01-ORIENTATION",
+        "PRINT01-SOCKET",
+        "PRINT01-SOCKET-WALL",
+        "PRINT01-TOLERANCE"
+      ],
+      "state": "blocked",
+      "measurement_ids": [],
+      "evidence_refs": [],
+      "finding_ids": [
+        "f-aef2fc6f417a41d0b9b41d2404baae88"
+      ],
+      "applicability_reason": null
+    }
+  ],
+  "findings": [
+    {
+      "id": "f-aef2fc6f417a41d0b9b41d2404baae88",
+      "code": "review.required",
+      "check_id": "engineering-review",
+      "requirement_ids": [
+        "PRINT01-ACTION-SCOPE",
+        "PRINT01-GRIP",
+        "PRINT01-ORIENTATION",
+        "PRINT01-SOCKET",
+        "PRINT01-SOCKET-WALL",
+        "PRINT01-TOLERANCE"
+      ],
+      "state": "blocked",
+      "severity": "error",
+      "category": "review_required",
+      "subject_id": "output-834917f6a42157f597bb002c645bc6e769c7b27553feab8c45e58baca70dcf4d",
+      "owner": {
+        "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+        "step_id": "summarize_preparation_mixed_default_071",
+        "attempt": 1,
+        "output_port": "summarize_preparation_mixed_default_071_result"
+      },
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "observed": null,
+      "unit": null,
+      "frame": null,
+      "observed_unit": null,
+      "observed_frame": null,
+      "evidence_refs": [],
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+          "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+          "locator": "six scallops and grip dots"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+          "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+          "locator": "Geometry and use"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+          "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+          "locator": "shaft and socket request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+          "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+          "locator": "orientation request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+          "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+          "locator": "Review and outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+          "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+          "locator": "Capabilities and internal policy"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+          "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+          "locator": "Capabilities and internal policy; Review and outputs"
+        }
+      ],
+      "summary": "An authenticated human review is required for this requirement.",
+      "explanation": "An authenticated human review is required for this requirement.",
+      "suggested_cause": null,
+      "correction": {
+        "action": "request_review",
+        "target_step_id": null,
+        "target": "An authenticated human review is required for this requirement.",
+        "preserve_requirement_ids": [],
+        "recheck_ids": [
+          "repaired-envelope-x",
+          "repaired-envelope-y",
+          "repaired-envelope-z",
+          "repaired-mesh-integrity",
+          "distinct-mesh-lineage",
+          "machine-name",
+          "machine-nozzle",
+          "filament-name",
+          "filament-type",
+          "layer-height",
+          "wall-loops",
+          "infill-density",
+          "slice-package-inventory",
+          "slice-lineage",
+          "simulated-transfer-binding",
+          "support-preview-present",
+          "source-report-present",
+          "engineering-review"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "content_verified": null,
+    "requirements_compliant": null,
+    "evaluation_complete": false,
+    "release_eligible": false,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 1,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 17
+    }
+  },
+  "subject_current": true,
+  "review_ids": [],
+  "supersedes": null
+}

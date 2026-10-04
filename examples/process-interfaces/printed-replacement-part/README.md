@@ -141,6 +141,15 @@ actual submitted tool arguments, outputs and measurements in the live proof.
 Keep provider qualification and any recipe adaptations explicit. The default
 AI modelling path remains available when these inputs are absent.
 
+In AI-task mode, construction receives the original prompt, image, use context
+and user profile directly alongside the reviewed numeric basis. Repair receives
+the original prompt/context/profile and actual upstream geometry. Both tasks
+instruct the model to preserve the original prompt in the provider's `user_prompt`
+argument. The image is supplied to the AI task; the native code tool does not
+accept an image argument. Inspect actual model/tool evidence to establish that
+these inputs reached the provider operation; preparation tests alone do not prove
+model compliance or geometry correspondence.
+
 For qualified supplied operations, private bindings can explicitly select
 `"geometry_operation_mode": "configured_tool"`. Construction and repair then
 use the existing configured MCP binding with the pinned JSON as its connected
@@ -170,6 +179,27 @@ remain. The AI-task mode retains its two-call bounds; configured calls invoke
 the supplied operation once. A recipe hash is not measured compliance or engineering
 acceptance. This mechanism supplies provider inputs; it adds no device protocol,
 local code executor or new process runner.
+
+Construction and repair can also select their existing bindings independently:
+
+```json
+"geometry_operation_modes": {
+  "construction": "ai_task",
+  "repair": "configured_tool"
+}
+```
+
+When present, this complete two-entry selection overrides the scalar mode for
+those stages. The scalar mode and default remain supported. Both values must
+be `ai_task` or `configured_tool`; unknown, incomplete or invalid selections fail
+before staging. Any configured stage requires the same three pinned inputs.
+Its unchanged operation template and qualification guidance join the declared
+basis review. An AI construction stage retains the original prompt/image/context
+handoff; a configured repair stage imports that run's actual source STL through
+the existing file dependency and gateway. This allows a qualified repair to run
+without asking AI to retranscribe its code. It does not permit fallback after
+an uncertain or failed operation, replay a run, or weaken the final checks. Choose
+and accept the stage bindings before a fresh run; preserve previous failures.
 
 ### Separate consumer of retained geometry
 
