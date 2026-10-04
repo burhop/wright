@@ -1,0 +1,40 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "checked-scope.json": {
+      "bytes": 3773,
+      "sha256": "2b2f5cc51410d3d82e359f15800b8bee6b62ffdd76827a5f6a63b23392bb2ce9"
+    },
+    "commit-guard-first-failure.json": {
+      "bytes": 598,
+      "sha256": "770598f1f777be38b9851dd14a8f13ffd4e4b09ad22608da54fddc1d7c6579a7"
+    },
+    "earlier-partial-construction.json": {
+      "bytes": 2661,
+      "sha256": "44f45270d2e95ece827f0c3a15222ff562a433283d95aafd9e6305b9639f459a"
+    },
+    "inspector-first-failure.json": {
+      "bytes": 543,
+      "sha256": "aa369adadd5221dab5c2c9b8687a9bcd9c0fcf2a67ecba9b38e290158e06870b"
+    },
+    "primary-review.json": {
+      "bytes": 3825,
+      "sha256": "5efa2d821e574a467e0b105fcdb22e3733ea2d5aa48dd27116f2a01bcb1c4b4b"
+    },
+    "provider-inspection.json": {
+      "bytes": 23563,
+      "sha256": "1f00b831709008be1d4eef7d47ca54e7115d311bd0fb718ce514c95f1283f723"
+    },
+    "README.md": {
+      "bytes": 2965,
+      "sha256": "365b6cd990203b0a50eecda15b334820d77361015a57e479a0d7ec37d3d52c65"
+    },
+    "semantic-ledger.json": {
+      "bytes": 269831,
+      "sha256": "e4fe1b8d0b044133049a10d3983be439f1db9938e863671fce2ee4c409daf6cf"
+    }
+  }
+}

@@ -1,5 +1,21 @@
 # Selected-provider qualification progress — T043
 
+## Current primary disposition
+
+The [selected-provider primary review](../../../artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/README.md)
+disposes T043 and FR-015 within their selected digital qualification and bounded
+migration scopes. Original schemas/options, installation identity, policy audit,
+actual native bytes and five selected calls are inspected; all 86 inventory entries
+remain exact. The four providers' original platform/pin limits remain unchanged,
+including the initial clean Blender installation reused by its isolated successful
+continuation and the unreleased AgentCAD pin. Eleven exact owned containers are
+revalidated stopped. No fresh installation, backend call or engineering review occurs.
+
+This completes qualification primary review, not the whole feature. Later installed
+UI and stricter printed first-stage obligations remain separate. Historical pending
+paragraphs below retain their earlier checkpoint meaning; mandatory human/critic
+acceptance and physical verification are not claimed.
+
 ## Current selected-provider audit — 3 October 2026
 
 **T043 is verified within its selected digital qualification scope.** Existing

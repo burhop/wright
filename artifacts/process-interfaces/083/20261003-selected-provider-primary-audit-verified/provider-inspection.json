@@ -1,0 +1,663 @@
+{
+  "scope": "Read-only primary inspection; no installation, model, native operation, review, or replay.",
+  "providers": [
+    {
+      "inventory": {
+        "root": "artifacts/process-interfaces/083/20261003-blender-fresh-clean-qualification-002",
+        "files": 21,
+        "inventory_sha256": "2a9116719d540de7b5a07fc6c6ffd619891d8fcd118902255f11f146272c56dc"
+      },
+      "provider_source_url": "https://github.com/ahujasid/blender-mcp",
+      "provider_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+      "protocol_tool_count": 28,
+      "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+      "selected_image": "sha256:c30619ec27605afb31347ee191a6b43820a58edc3f6b40b030a12e0ea4375c26",
+      "fresh_selected_install": true,
+      "successful_runtime_reuses_initial_clean_install": true,
+      "gateways": [
+        {
+          "folder": "gateway",
+          "selected_tool": "execute_blender_code",
+          "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+          "all_input_schemas_exact": true,
+          "input_schema": {
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "user_prompt": {
+                "default": "",
+                "title": "User Prompt",
+                "type": "string"
+              }
+            },
+            "required": [
+              "code"
+            ],
+            "title": "execute_blender_codeArguments",
+            "type": "object"
+          },
+          "input_schema_sha256": "66be6013537c2cc277046eec14e3b1088b61ea3cd00b00dab115052fad3eb481",
+          "argument_keys": [
+            "code",
+            "user_prompt"
+          ],
+          "normal_gateway_module": "api.gateway_stdio",
+          "response_canonical_sha256": "5142d13d2bf2108ded2f9d5d34a709e23ce8eb9bad8e9acf5e4c3b10338d4396",
+          "exact_saved_response_sha256": "b4f516c710040cde8c1165aa2d78509d4358b765e62c2f832470180f996a4590",
+          "actual_invocations": 1,
+          "lifecycle_observations": [
+            {
+              "operation": "tool.call",
+              "target": "execute_blender_code",
+              "outcome": "started",
+              "reason": "policy_allowed"
+            },
+            {
+              "operation": "tool.call",
+              "target": "execute_blender_code",
+              "outcome": "succeeded",
+              "reason": "policy_allowed"
+            }
+          ]
+        }
+      ],
+      "native_readback": {
+        "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+        "bytes": 684,
+        "triangles": 12,
+        "dimensions_model_units": [
+          10.0,
+          8.0,
+          6.0
+        ],
+        "signed_volume": 480.0
+      },
+      "limits": [
+        "Only guarded execute_blender_code geometry/export exercised; 28 listed tools do not qualify external services.",
+        "Host bootstrap loads exact pinned independent addon under virtual display; no in-container Wright API gateway qualification.",
+        "Linux Blender 4.3.2 qualification does not replace original Windows 4.5.10 engineering evidence.",
+        "Current UI/installed acceptance, migrated workflow binding and remaining slicer/AgentCAD obligations keep T043/full goal open."
+      ]
+    },
+    {
+      "inventory": {
+        "root": "artifacts/process-interfaces/083/20261003-slicer-fresh-clean-qualification-002",
+        "files": 20,
+        "inventory_sha256": "b61b413398b9d1e807516b9040c3d898ca6220a2549a0366418bfa18665230c6"
+      },
+      "provider_source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+      "provider_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+      "protocol_tool_count": 11,
+      "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+      "selected_image": "sha256:07fb28ce80858f2d9dfba83d00d8b1917a7edf1f0bda2b9dde10471dd58ec2d1",
+      "fresh_selected_install": true,
+      "successful_runtime_reuses_initial_clean_install": false,
+      "gateways": [
+        {
+          "folder": "gateway",
+          "selected_tool": "slice_model_file",
+          "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+          "all_input_schemas_exact": true,
+          "input_schema": {
+            "properties": {
+              "source": {
+                "title": "Source",
+                "type": "string"
+              },
+              "plate": {
+                "default": 1,
+                "title": "Plate",
+                "type": "integer"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "orient": {
+                "default": false,
+                "title": "Orient",
+                "type": "boolean"
+              },
+              "arrange": {
+                "default": false,
+                "title": "Arrange",
+                "type": "boolean"
+              },
+              "confirm": {
+                "default": false,
+                "title": "Confirm",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "source"
+            ],
+            "title": "slice_model_fileArguments",
+            "type": "object"
+          },
+          "input_schema_sha256": "3e4975996cd07e298b6b8fd12613ce084f57b4475149d9862bfe7dae8af37413",
+          "argument_keys": [
+            "arrange",
+            "confirm",
+            "orient",
+            "output",
+            "plate",
+            "source"
+          ],
+          "normal_gateway_module": "api.gateway_stdio",
+          "response_canonical_sha256": "8a7dda71fd357d0329168083bd7255e454dc98ab0a18c7c75484de6559dff0fd",
+          "exact_saved_response_sha256": "4f8b904d93754b8af3daaf242317786e451400fc9f9e4ea75ff631da004d1ba8",
+          "actual_invocations": 1,
+          "lifecycle_observations": [
+            {
+              "operation": "tool.call",
+              "target": "slice_model_file",
+              "outcome": "started",
+              "reason": "policy_allowed"
+            },
+            {
+              "operation": "tool.call",
+              "target": "slice_model_file",
+              "outcome": "succeeded",
+              "reason": "policy_allowed"
+            }
+          ]
+        }
+      ],
+      "native_readback": {
+        "bytes": 30054,
+        "sha256": "b4aa238f0d44fc71f169b321e7a5ce00ee30df31ec23d874657430e6b96091f6",
+        "gcode_member": "Metadata/plate_1.gcode",
+        "gcode_bytes": 103622,
+        "gcode_sha256": "01183471b19d55e6818e6e0e22bf0ff2d87d943cf3365d656ac90f402c3cdc7b",
+        "actual_settings": {
+          "filament_type": "PETG",
+          "filament_density": "1.28",
+          "enable_support": "1",
+          "wall_loops": "4",
+          "sparse_infill_density": "35%",
+          "layer_height": "0.2",
+          "printer_model": "Bambu Lab P1S"
+        }
+      },
+      "limits": [
+        "One tiny isolated STL, not an original engineering assignment or all six scenario bindings.",
+        "Listing eleven tools qualifies no printer operation; no printer tools called, no credentials used.",
+        "Native settings and hashes prove this package only, not physical printing, material strength or orientation optimality.",
+        "AgentCAD creation-response defect, migration/generality and complete UI/regression/audit obligations remain."
+      ]
+    },
+    {
+      "inventory": {
+        "root": "artifacts/process-interfaces/083/20261003-oasis-fresh-clean-qualification-002",
+        "files": 23,
+        "inventory_sha256": "45a22c610d918b8bea2bf3fe0aedc061675c84cd26c69e71ef28583c1f1cb758"
+      },
+      "provider_source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+      "provider_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+      "protocol_tool_count": 17,
+      "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+      "selected_image": "sha256:e15942085d86f637c65da60c50804fa31500a43d2a45b3bd69bb19c82311760f",
+      "fresh_selected_install": true,
+      "successful_runtime_reuses_initial_clean_install": false,
+      "gateways": [
+        {
+          "folder": "gateway",
+          "selected_tool": "run_simulation",
+          "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "all_input_schemas_exact": true,
+          "input_schema": {
+            "properties": {
+              "solver": {
+                "title": "Solver",
+                "type": "string"
+              },
+              "input_content": {
+                "title": "Input Content",
+                "type": "string"
+              },
+              "job_name": {
+                "default": "",
+                "title": "Job Name",
+                "type": "string"
+              },
+              "np": {
+                "default": 1,
+                "title": "Np",
+                "type": "integer"
+              },
+              "critic_approved": {
+                "default": false,
+                "title": "Critic Approved",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "solver",
+              "input_content"
+            ],
+            "title": "run_simulationArguments",
+            "type": "object"
+          },
+          "input_schema_sha256": "cf29dfee36fa074671eb5a8ad7dff44fa31e5f73c987996aea47d8f094cec291",
+          "argument_keys": [
+            "critic_approved",
+            "input_content",
+            "job_name",
+            "solver"
+          ],
+          "normal_gateway_module": "api.gateway_stdio",
+          "response_canonical_sha256": "98f337baef4b45455eb9dace822d1248e60b51314397f066daaac511a3d1679a",
+          "exact_saved_response_sha256": "f70d141ccbbc7d75da1589706039670b79399b09bc69dc95bf433647899d6573",
+          "actual_invocations": 1,
+          "lifecycle_observations": [
+            {
+              "operation": "tool.call",
+              "target": "run_simulation",
+              "outcome": "started",
+              "reason": "policy_allowed"
+            },
+            {
+              "operation": "tool.call",
+              "target": "run_simulation",
+              "outcome": "succeeded",
+              "reason": "policy_allowed"
+            }
+          ]
+        }
+      ],
+      "native_readback": {
+        "solver": "skfem",
+        "provider_status": "completed",
+        "trustworthy_result": false,
+        "critic_approved": false,
+        "fields": [
+          {
+            "name": "qualification_fixed-coarse-temperature.csv",
+            "samples": 135,
+            "sha256": "0f843bb9aa086b96f2dddba4d988e52a0e399ab585712591ad84531efb41b3c2"
+          },
+          {
+            "name": "qualification_fixed-fine-temperature.csv",
+            "samples": 765,
+            "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b"
+          }
+        ],
+        "verification": "NOT VERIFIED \u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True."
+      },
+      "limits": [
+        "Only the selected skfem backend was exercised; listing other tools is not qualification of their hosts.",
+        "The actual production gateway ran on the host; no clean-base in-container API gateway claim.",
+        "This is a small backend qualification case, not either original engineering assignment or independent critic approval.",
+        "Remaining selected Blender/slicer/AgentCAD fresh qualification keeps T043 open."
+      ]
+    },
+    {
+      "inventory": {
+        "root": "artifacts/process-interfaces/083/20261003-agentcad-pinned-upstream-qualified",
+        "files": 22,
+        "inventory_sha256": "70c1e0a5c7fbc1cf7e1f984c6e79c9544cc8735fe6b8f0ead2e83f9a5c1acaea"
+      },
+      "provider_source_url": "https://github.com/jdilla1277/agentcad",
+      "provider_revision": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+      "protocol_tool_count": 11,
+      "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+      "selected_image": "sha256:d8b9cd78f929bf4e2705127e09f8b69b0bdf339682a6d79c2fdbf9f0c7b3077f",
+      "fresh_selected_install": true,
+      "successful_runtime_reuses_initial_clean_install": false,
+      "gateways": [
+        {
+          "folder": "gateway-create",
+          "selected_tool": "run",
+          "source_revision": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+          "all_input_schemas_exact": true,
+          "input_schema": {
+            "properties": {
+              "script": {
+                "title": "Script",
+                "type": "string"
+              },
+              "cwd": {
+                "title": "Cwd",
+                "type": "string"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "render": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Render"
+              },
+              "export": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Export"
+              },
+              "preview": {
+                "default": true,
+                "title": "Preview",
+                "type": "boolean"
+              },
+              "params": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Params"
+              },
+              "dry_run": {
+                "default": false,
+                "title": "Dry Run",
+                "type": "boolean"
+              },
+              "diff": {
+                "default": true,
+                "title": "Diff",
+                "type": "boolean"
+              },
+              "view": {
+                "default": true,
+                "title": "View",
+                "type": "boolean"
+              },
+              "build_dir": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Build Dir"
+              }
+            },
+            "required": [
+              "script",
+              "cwd"
+            ],
+            "title": "runArguments",
+            "type": "object"
+          },
+          "input_schema_sha256": "d756cb53d452bd74535e7c7e487da71467c354cb8920302cfc4eeccdebbd5432",
+          "argument_keys": [
+            "build_dir",
+            "cwd",
+            "diff",
+            "output",
+            "preview",
+            "script",
+            "view"
+          ],
+          "normal_gateway_module": "api.gateway_stdio",
+          "response_canonical_sha256": "341327fe928ee59a43b43d4acc91808bdc959c11a770dc30520a056e207d97a6",
+          "exact_saved_response_sha256": "c31919a8321245a152dfaed2dd6b9e4b1cf739ce3c53cb922744c48112db7d2f",
+          "actual_invocations": 1,
+          "lifecycle_observations": [
+            {
+              "operation": "tool.call",
+              "target": "run",
+              "outcome": "started",
+              "reason": "policy_allowed"
+            },
+            {
+              "operation": "tool.call",
+              "target": "run",
+              "outcome": "succeeded",
+              "reason": "policy_allowed"
+            }
+          ]
+        },
+        {
+          "folder": "gateway-measure",
+          "selected_tool": "measure",
+          "source_revision": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+          "all_input_schemas_exact": true,
+          "input_schema": {
+            "properties": {
+              "file": {
+                "title": "File",
+                "type": "string"
+              },
+              "cwd": {
+                "title": "Cwd",
+                "type": "string"
+              },
+              "features": {
+                "default": false,
+                "title": "Features",
+                "type": "boolean"
+              },
+              "cylinders_only": {
+                "default": false,
+                "title": "Cylinders Only",
+                "type": "boolean"
+              },
+              "diameter": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Diameter"
+              },
+              "tolerance": {
+                "default": 0.5,
+                "title": "Tolerance",
+                "type": "number"
+              },
+              "axis": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Axis"
+              },
+              "limit": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Limit"
+              },
+              "no_limit": {
+                "default": false,
+                "title": "No Limit",
+                "type": "boolean"
+              },
+              "build_dir": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Build Dir"
+              }
+            },
+            "required": [
+              "file",
+              "cwd"
+            ],
+            "title": "measureArguments",
+            "type": "object"
+          },
+          "input_schema_sha256": "c42717cd37eb8caf2737f97bf0bd659183b094cfc536fec2976d5b95c09331f5",
+          "argument_keys": [
+            "build_dir",
+            "cwd",
+            "file"
+          ],
+          "normal_gateway_module": "api.gateway_stdio",
+          "response_canonical_sha256": "93e650729fd075ff68345f6e1462c0c86f81985cd8265fb8e87be871d1dd0f49",
+          "exact_saved_response_sha256": "dc79217f1544e6dda7a2ed56a36865c5754f5c6aea489274f226780ec52b0b04",
+          "actual_invocations": 1,
+          "lifecycle_observations": [
+            {
+              "operation": "tool.call",
+              "target": "measure",
+              "outcome": "started",
+              "reason": "policy_allowed"
+            },
+            {
+              "operation": "tool.call",
+              "target": "measure",
+              "outcome": "succeeded",
+              "reason": "policy_allowed"
+            }
+          ]
+        }
+      ],
+      "native_readback": {
+        "step_sha256": "f0ef048e50b45d63348e4186dba10e0013f210a27092e4e835ba8c6034e91341",
+        "bytes": 15378,
+        "measured_dimensions_mm": {
+          "x": 2.0,
+          "y": 3.0,
+          "z": 4.0
+        },
+        "volume_mm3": 24,
+        "provider_deliverable_valid": true,
+        "creation_retried": false,
+        "unreleased_pin": true,
+        "installed_source": {
+          "server_sha256": "3c263c3e47a6112cec7144fc073bd916070849f128257f8c7159b025882c3caf",
+          "agentcad_version": "0.6.0",
+          "mcp_version": "1.28.1",
+          "build123d_version": "0.10.0"
+        }
+      },
+      "limits": [
+        "Unreleased pinned AgentCAD revision; published 0.6.0 creation defect remains retained and is not relabelled as passing.",
+        "Qualification covers listed schemas and selected safe backends, not every listed tool or all campaign assignments.",
+        "Existing substantive engineering proofs retain their original provider revisions; this small box is not an engineering-assignment substitute.",
+        "No in-container API installation, hardware, supplier action, critic approval or human engineering acceptance is claimed."
+      ]
+    }
+  ],
+  "exact_owned_cleanup": [
+    {
+      "container_id": "c6be5a1e643d3417221838717555357f18ba90977b1f0d8a0aa65cd9b1a1fff0",
+      "provider": "Blender geometry",
+      "running": false,
+      "proof": "blender-clean-base-001"
+    },
+    {
+      "container_id": "cb502d9ac8aec6d657a7cb5beae1259110c05b9fd92b3224488464ef05dfebbe",
+      "provider": "Blender geometry",
+      "running": false,
+      "proof": "blender-clean-base-001"
+    },
+    {
+      "container_id": "c17e43b2068e556ec11d7ef6ca109f0d81fb059bef7b84098c0cb8b578f3d782",
+      "provider": "Blender geometry",
+      "running": false,
+      "proof": "blender-clean-continuation-002"
+    },
+    {
+      "container_id": "b5f57eebf838e5b8acc9dd2f9cbe296857cc0bf28cfa762c1ece760c3f02efe3",
+      "provider": "Independent offline slicer",
+      "running": false,
+      "proof": "slicer-clean-base-001"
+    },
+    {
+      "container_id": "18e8bd1ce18bc876b8588ade85148023a5b9e08ace702d9c09650af92d37fd32",
+      "provider": "Independent offline slicer",
+      "running": false,
+      "proof": "slicer-clean-base-002"
+    },
+    {
+      "container_id": "45cb9f66d8bf9f53526f9bdc2c5b73e263acbe9322522ae48a1a6d0188e0be5a",
+      "provider": "Independent offline slicer",
+      "running": false,
+      "proof": "slicer-clean-base-002"
+    },
+    {
+      "container_id": "1aaf22edbda8d29a0533f93b20c954ab19f4a90a706137eb0d796c7e66149e6a",
+      "provider": "OASiS analysis",
+      "running": false,
+      "proof": "oasis-clean-base-003"
+    },
+    {
+      "container_id": "71d09de984a1a8902cf9518e044bd595ee414707a71d1c968b556be2bf0c5ebd",
+      "provider": "OASiS analysis",
+      "running": false,
+      "proof": "oasis-clean-base-003"
+    },
+    {
+      "container_id": "492e39f096ce35a8ac7ae170adb7c83930b5f8a2799179feba234c25d388e30b",
+      "provider": "OASiS analysis",
+      "running": false,
+      "proof": "oasis-clean-base-002"
+    },
+    {
+      "container_id": "5661e8328956f0ec14128728a45dd1c1eee7b9bfb25a520fa7bc818a4e35afbe",
+      "provider": "AgentCAD pinned upstream",
+      "running": false,
+      "proof": "agentcad-fresh-head-002"
+    },
+    {
+      "container_id": "d97c4afc94b1a01b085a3590dea482a09c29fb63bcdd8685c23dc0f6735b7cab",
+      "provider": "AgentCAD pinned upstream",
+      "running": false,
+      "proof": "agentcad-fresh-head-002"
+    }
+  ]
+}

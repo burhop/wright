@@ -1,5 +1,18 @@
 # Printed replacement-part proof
 
+## First-stage handoff scope still under review
+
+The [read-only original construction inspection](../../../artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/earlier-partial-construction.json)
+confirms two earlier real AI-assisted construction stages exported 10,824-triangle
+source STLs and received the attached original image plus reviewed numerical basis.
+The exact original prompt is in the upstream AI basis after newline normalization;
+the native user_prompt contains a stage instruction. Both runs subsequently fail
+with MODEL_UNAVAILABLE before repair/slicing/source validation. All 44 original
+frozen files remain intact. These partial runs do not substitute for the later
+configured016 source gates or silently satisfy the stricter JOB-A-stage1 wording.
+JOB-A-stage1/FR-016/T047 whole-scope signoff remains pending. No provider, run or
+human decision is replayed in this inspection.
+
 ## Current configured016 source gates and reusable interface — verified
 
 The original focus-wheel assignment completes actual construction,
@@ -740,7 +753,7 @@ A later audit corrected the preceding 004 saved-working/reload claim: its saved
 receipt and preview-result parity are valid, but its captured URL still had
 `processUIKind=preview`. `Connected to Wright` alone did not distinguish the
 working context. Original reports and immutable evidence remain intact; see the
-[historical claim audit](../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/historical-claim-audit.json).
+[historical claim audit](../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/historical-claim-audit.json).
 
 The focused viewer update 005 failed `UI_BUILD_FAILED` after bounded repairs and
 produced no revision. A smaller actual configured-model update 006 succeeded
@@ -766,8 +779,8 @@ Both render a visible 3D canvas with **90 nominal layers / 69,559 segments**;
 pointer rotation, layer two, support visibility and all-layer restore work.
 Both exact reads retain 4,493,731 bytes, the evidence digest and `nosniff`.
 
-The [verified walkthrough](../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/workspace-walkthrough/report.html)
-and [checked scope](../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/checked-scope.json)
+The [verified walkthrough](../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/workspace-walkthrough/report.html)
+and [checked scope](../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/checked-scope.json)
 retain immutable source/build/role records, failures and audit corrections.
 Earlier capacity and hidden-preview-selector stops remain distinct from product
 defects. The launch-restriction record has no screenshot because Chromium did
@@ -794,7 +807,7 @@ full app typecheck. Fresh continuation 013 passes three real browser checks:
 working saved view, the original full held assessment focused on the exact
 repaired-mesh result, and the selected repair block with its inspector. The
 original run bytes remain unchanged. The
-[two-process navigation record](../../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/checked-scope.json)
+[two-process navigation record](../../../artifacts/process-interfaces/083/20261003-two-process-exact-navigation/checked-scope.json)
 retains the first failure, correction tests and both engineering-job continuations.
 This closes this current-revision navigation observation, not second-run reuse
 or the full T047 requirement.

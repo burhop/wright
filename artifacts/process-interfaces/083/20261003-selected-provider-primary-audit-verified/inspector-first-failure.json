@@ -1,0 +1,8 @@
+{
+  "exception_type": "AssertionError",
+  "message": "",
+  "public_output_created": false,
+  "fresh_provider_or_review_effects": false,
+  "cause": "The audit helper assumed the successful Blender continuation itself freshly installed. Actual evidence records the original clean installation and a separate isolated corrected export runtime.",
+  "correction": "Verify the original installation exit/pin/image and its recorded evidence identity, then verify the separate successful protocol/native response; no installation or call repeated."
+}

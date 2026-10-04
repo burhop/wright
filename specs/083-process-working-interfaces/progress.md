@@ -1,5 +1,21 @@
 # Feature 083 progress
 
+## Selected-provider primary review — 3 October 2026
+
+The [selected-provider primary review](../../artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/README.md) disposes FR-015/T043 against actual
+independent clean-install/protocol/gateway/backend evidence and unchanged current
+migration owners. **114 proved / 68 awaiting review** of the original 182 identities.
+All 86 qualification files and 44 earlier partial-construction files are rehashed;
+eleven exact owned containers are stopped. No provider/model/review is replayed.
+
+The earlier AI construction receives original image and reviewed dimensions, with
+original prompt at the upstream basis; its native user_prompt is a stage instruction.
+Both original runs later fail before repair/slicing/source gate. The stricter
+JOB-A-stage1/FR-016/T047 scope remains open; completed configured016 gates are not
+silently relabelled. Seven inherited integration owners remain bounded migration
+debt. **55 tasks checked; T056/T057 open.** Remaining contract/runtime review,
+independent common-view start and final post-trace installed verification continue.
+
 ## Actual engineering/UI primary review — 3 October 2026
 
 The [engineering primary review](../../artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/README.md) disposes 18 whole obligations using actual

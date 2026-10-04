@@ -1,0 +1,42 @@
+{
+  "source_commit": "f7c245d4389202bc9cf692e9bdf53de379e29f45",
+  "source_sha256": {
+    "apps/api/src/api/gateway_stdio.py": "06c6d1db0b8de20e6948622c657598b073adc064f45daa2df6e43cefaee5228d",
+    "examples/process-interfaces/definition.py": "9648dd24c482de129df19c9d086b5f56e02241cbcf3d4e3dc84dc0e73404f98b",
+    "examples/process-interfaces/heat-spreader-sizing/prepare.py": "e0fb4aeb98135f332eabc535cac34c4c1ec8be89f3bad19e3684608887c47a0d",
+    "examples/process-interfaces/printed-replacement-part/prepare.py": "9932c138aa75233e749e1447e875f781bb4fa03cc23769d10ba340a0821b36b4",
+    "examples/process-interfaces/printed-replacement-part/provider_inputs.py": "d7ff3ab56d9aad84b8c4e629e4bfc8bc9be031e1b0c444113c7f100b3227276e",
+    "packages/tool_registry/src/tool_registry/gateway_service.py": "a82ed152215d09f9bed0b0be53d8e4ac10c740e8c52d0904185dabaaf1f4da7c",
+    "packages/tool_registry/src/tool_registry/manager.py": "4b4ac4938eedc6d70753863dec7e65e9e71ab96540965701f175690e53aa51ba",
+    "packages/workspace_service/src/workspace_service/process_interfaces/representations.py": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38",
+    "packages/workspace_service/src/workspace_service/process_validation/profiles/heat-spreader-sizing-01-full.json": "33859475386debc00c574f54cb09d5ddc0a95933b8da2872104219c87ac35122",
+    "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json": "3950b7e088a9eb9c3f3b51971db8b4a1813feece448f1c7517a7fa98f7d51d7a"
+  },
+  "protected_file_hashes": {
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92",
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+  },
+  "changed_files": [
+    "specs/083-process-working-interfaces/evidence/provider-qualification.md",
+    "specs/083-process-working-interfaces/evidence/printed-proof.md"
+  ],
+  "additional_owned_artifacts": [],
+  "new_semantic_dispositions": 2,
+  "semantic_ledger": "114 proved / 68 awaiting review of 182",
+  "task_ledger": "55 checked / T056,T057 open; T047 semantic review pending",
+  "fresh_execution": false,
+  "full_semantic_signoff": false,
+  "qualification_inventory_files_verified": 86,
+  "selected_native_invocations_retained": 5,
+  "exact_owned_containers_revalidated_stopped": 11,
+  "earlier_partial_construction_frozen_files_verified": 44,
+  "limits": [
+    "Qualification retains original pin/platform/backend scopes; no model, provider, process, review, install or replay occurs during primary inspection.",
+    "Seven inherited vendor integration owners remain bounded documented migration debt; no universal vendor-free repository or all-tool qualification claim.",
+    "Earlier actual AI construction attaches the original image and receives the reviewed numeric basis, but its native user_prompt is a stage instruction, not the original user prompt; those two runs subsequently fail before repair/slicing/source gate. They do not substitute for the completed configured source gates or dispose JOB-A-stage1/FR-016/T047.",
+    "Remaining contracts/runtime, common-view independent start and final post-trace installed packaging remain open. Mandatory engineering reviews and critic state are unchanged."
+  ]
+}
