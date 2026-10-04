@@ -1,5 +1,16 @@
 # Full requirement audit — primary review in progress
 
+## Final local scope — 4 October UTC
+
+All57tasks and182 original semantic obligations are locally verified. See the
+[completion/evidence index](../completion.md) and [final ledger](../../../artifacts/process-interfaces/083/20261004-local-completion-verified/semantic-ledger.json)
+for exact behavior reviews and limitations. Mandatory human reviews remain held;
+public builtin-write readiness, provider/graph/adapter/solver limits and uncertain
+replay rules are explicit. Physical/human acceptance and release are separate.
+No protected campaign, device or supplier action was performed. Earlier dated
+sections retain their original counts, build/source identities and scope.
+
+
 ## Current checkpoint — 4 October UTC: contracts and runnable guidance
 
 The [whole platform review](../../../artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/primary-review.json)

@@ -1,0 +1,25 @@
+[
+  {
+    "attempt": 135,
+    "scope": "Guidance route index",
+    "reason": "Index initially omitted the already included authoring subrouter.",
+    "correction": 136,
+    "product_defect": false,
+    "authority_changed": false
+  },
+  {
+    "scope": "Summary documentation write",
+    "reason": "Windows default text decoding failed before any file write.",
+    "correction": "Read/write explicit UTF-8 and validate all target reads before writes.",
+    "product_defect": false
+  },
+  {
+    "attempt": 138,
+    "scope": "Focused local commit",
+    "reason": "Byte-preserved CRLF evidence is reported as trailing whitespace by the default Git rule.",
+    "correction": 139,
+    "policy": "Per-command core.whitespace=cr-at-eol preserves exact original bytes while retaining other whitespace checks; no global configuration.",
+    "retained_log_sha256": "920648d4341a710402acfdf55c95341d6034425979638c4866485131c73d8845",
+    "product_defect": false
+  }
+]

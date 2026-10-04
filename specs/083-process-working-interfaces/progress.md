@@ -1,5 +1,82 @@
 # Feature 083 progress
 
+## Final local completion — 4 October UTC
+
+**All57tasks M0–M5 and all182 original semantic obligations are locally verified.**
+The [final ledger](../../artifacts/process-interfaces/083/20261004-local-completion-verified/semantic-ledger.json)
+preserves every original ID/kind/text and its specific behavior/evidence review.
+The implementation remains on `codex/083-process-working-interfaces`; focused
+checkpoint `5ca51bcf` preserves311 unrelated entries and550 earlier engineering/UI
+files. Final report changes pass a focused commit guard before goal completion.
+
+The common and optional AI-created UI use one accepted process/durable run and
+Wright's shared client/kit, exact validation/review/action owners and workspace
+tabs. Actual configured-default-model creation, preview/save, focus-update and
+saved reuse are proved on printed-part preparation and substantially different
+heat-spreader sizing. The refined editor, declared two-input recovery, scoped
+hosting/currentness, ordinary common-view start and native/Linux saved-view use
+retain their exact recorded scopes. Active vendor prototype callers are retired;
+existing independent providers retain implementation ownership.
+
+Printed preparation's two current original-input runs each execute20outputs and
+the original source gate:17 digital passes plus one mandatory human-review hold.
+Heat uses actual STEP/solver fields, retains original2% analytical/refinement,
+1% heat-balance and45°C limits, and has25 passing checks plus a human hold with
+critic approval false. Digital evidence is not physical or human acceptance.
+The generated printed composition opens Wright's common geometry/toolpath viewer
+through exact declared navigation; inline generated-frame viewing is not claimed.
+
+No further resource, approval or product decision is needed for this local goal.
+The [limitations](../../artifacts/process-interfaces/083/20261004-local-completion-verified/limitations.json)
+retain the full printed example's ordinary builtin-write readiness block, exact
+test-only authority, selected provider pins/hosts, supported graph/schema and
+local-supervision scope, nominal toolpaths/rectangular solver limits and unqualified
+future adapters. No push/merge/release, supplier or physical action occurred.
+Human product and engineering acceptance remain separate.
+
+### Evidence and reproduction index
+
+| Claim | Exact evidence / reproduction basis |
+|---|---|
+| Complete requirement/task review | [Final ledger and limitations](../../artifacts/process-interfaces/083/20261004-local-completion-verified/README.md) |
+| Shared contract/client/kit, workspace and restoration | [Whole platform review](../../artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/README.md);109 current component/locator cases, three removed-UI/result negatives and TypeScript |
+| Readiness, immutable inputs and supported source | [Readiness review](../../artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/README.md) |
+|17 named runtime/recovery checks | [Exact81cases/35bodies and commands](../../artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/README.md) |
+| Exact review/action/082 authority | [Authority review](../../artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/README.md) |
+| Default-model authoring, envelopes, revisions and isolation | [Authoring/resource review](../../artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/README.md) |
+| Printed original-input source gate and saved reuse | [Both current runs](../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/README.md); [original handoff/common start](../../artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/README.md) |
+| Different engineering chain | [Actual Heat geometry/field/update/reuse](../../artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md) |
+| Selected independent MCP qualification | [Exact pins, hosts and retained failures](../../artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/README.md) |
+| Active migration and historical access | [Migration dispositions](../../artifacts/process-interfaces/083/20261003-migration-primary-audit-verified/README.md) |
+| Preserved normal-workspace editor | [Installed editor009 walkthrough](../../artifacts/process-interfaces/083/20261003-current-editor-009/workspace-walkthrough/report.html); [compact/keyboard/theme scope](../../artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md) |
+| Current native installed resources/saved reuse | [953byte-verified entries and visible creation identity](../../artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/README.md) |
+| Current network-disabled Linux saved reuse | [Two hosts,948entries each and15browser checks](../../artifacts/process-interfaces/083/20261004-current-docker-resource-verified/README.md) |
+| Affected regression/security/package boundaries | [91backend/53frontend/8browser/9package exact selections](../../artifacts/process-interfaces/083/20261003-current-regression-verified/README.md);1538/760/33/29 counts overlap with later focused groups and are not summed |
+| Runnable guide/API/role/examples | [Current real scoped GETs and99links](../../artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/README.md); [operator guide](../../docs/workflows/process-working-interfaces.md), [examples](../../examples/process-interfaces/README.md) |
+
+Use the recorded commands/selections with fresh permitted output roots and
+qualified existing dependencies. Do not resume retained engineering campaigns,
+answer their reviews or replay uncertain actions to reproduce a UI read. Fixtures,
+actual default-model/MCP runs, installed browser, engineering/test decisions,
+physical and user-acceptance claims stay distinct. First failures remain retained.
+Documentation routes/links/navigation are checked; rendered MkDocs is not claimed.
+
+### Owned resources retained for inspection
+
+API `127.0.0.1:8063` (exec16644), UI `127.0.0.1:5246` (exec39319), Blender4.5.10LTS
+session `blender-27e7f4df7a5a4cacb140454c2e968794`/addon19988 and offline container
+`911e4fa3b49e0c9ceb889f9a7dc31123000cc96e2ded1ce3c56b958858a84a75` are observed
+running. The container has network `none`. No engineering run or browser worker
+is active; mandatory reviews remain unanswered. These exact owned resources are
+retained for local inspection, not a deployment. See [resource record](../../artifacts/process-interfaces/083/20261004-local-completion-verified/owned-resources.json).
+The [local workspace](http://127.0.0.1:5246/workspace/083-fresh-prompt-055?workflow=canonical&workflowPath=workflows%2Fprinted-replacement-part-mixed-default-071.workflow.wflow)
+uses existing local authentication/session setup. Earlier proof addresses below
+remain historical; their original build and stopped-resource scope is unchanged.
+
+Earlier checkpoint sections below are retained history and are superseded by this
+final bounded local status, without relabelling their original proof claims.
+
+
 ## Current checkpoint — 4 October UTC: contracts and runnable guidance
 
 The [whole platform review](../../artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/primary-review.json)

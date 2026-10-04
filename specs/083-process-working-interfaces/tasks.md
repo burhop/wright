@@ -1,5 +1,7 @@
 # Tasks: Process working interfaces
 
+**Final local checkpoint, 4 October UTC:** All57tasks M0–M5 checked. The [complete182-obligation ledger](../../artifacts/process-interfaces/083/20261004-local-completion-verified/semantic-ledger.json) preserves original wording and exact evidence scope. See [completion](completion.md) for limitations, including held mandatory reviews, provider qualification and public-readiness boundaries. Publication/physical/human acceptance are separate. Earlier milestone paragraphs retain their historical scopes.
+
 **Input:** [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), contracts and [acceptance-cases.md](acceptance-cases.md).
 **Authority:** Execute after submission of [implementation-goal.md](implementation-goal.md).
@@ -220,8 +222,8 @@ interfaces use the same foundation, with honest engineering checks and limits.
   from incomplete migration, full engineering parity and distribution acceptance.
   Historical approvals and reviewed-editor evidence remain intact. MkDocs rendering
   is unverified (package absent); target-link existence is the checked scope.
-- [ ] T056 Check every FR/SC against task/evidence coverage and publish status/limitations/reproducible evidence index in `specs/083-process-working-interfaces/completion.md`; distinguish fixture/live model/MCP/browser/engineering/test-decision/physical/user acceptance claims.
-- [ ] T057 Finish focused local commits of owned work, verify unrelated dirty baselines and protected campaign/context history, and update `specs/083-process-working-interfaces/progress.md` with final task IDs/commit/evidence/resources still needed; no push/merge/release is implied.
+- [x] T056 Check every FR/SC against task/evidence coverage and publish status/limitations/reproducible evidence index in `specs/083-process-working-interfaces/completion.md`; distinguish fixture/live model/MCP/browser/engineering/test-decision/physical/user acceptance claims.
+- [x] T057 Finish focused local commits of owned work, verify unrelated dirty baselines and protected campaign/context history, and update `specs/083-process-working-interfaces/progress.md` with final task IDs/commit/evidence/resources still needed; no push/merge/release is implied.
 
 ## Dependencies and execution order
 

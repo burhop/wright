@@ -1,0 +1,49 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "final-reference-check.json": {
+      "bytes": 381,
+      "sha256": "81fe57bcf5bccc7b5d5b0bef909bc2eb9173157141762b2f75e92776eb1a5f9f"
+    },
+    "final-reference-first-stop.json": {
+      "bytes": 406,
+      "sha256": "785a26eaf7e54d06fb64c43b99177c30161985be8fd61666ce5bb28c42902c74"
+    },
+    "focused-checkpoint.json": {
+      "bytes": 513,
+      "sha256": "bc370af0089be0bb73016a0c35b571bf8ec03bf8952308f6767238c9a20b4e7d"
+    },
+    "inventory.json": {
+      "bytes": 1427,
+      "sha256": "6ecd0f0e7f324531c6bbbafba372fe1d83406327140ee86a6aa42eab897ca761"
+    },
+    "limitations.json": {
+      "bytes": 1828,
+      "sha256": "465154d0bcb2f0445bdb7a5c85cfcb5c8dae5aa0cfc234214ae9eabd884e3a07"
+    },
+    "owned-resources.json": {
+      "bytes": 1001,
+      "sha256": "6e053981f119ac41fa3b4edb198af96e91a78b37aee0dc0fe81fbc070e701f90"
+    },
+    "primary-review.json": {
+      "bytes": 2452,
+      "sha256": "3e0881400dd412090d5d91f86d3d2a58a9518e7f019257f7281e7a69dadf9a69"
+    },
+    "README.md": {
+      "bytes": 738,
+      "sha256": "b519c9ca5850f0498f429d8f2ce4bcd60762a0031c1e7f765fe30c2762acf310"
+    },
+    "retained-final-stops.json": {
+      "bytes": 955,
+      "sha256": "1636ee747ecb3f13893c0d23031c7d966cfe0b1511e3c7e90993ba5e69d0cad0"
+    },
+    "semantic-ledger.json": {
+      "bytes": 401214,
+      "sha256": "6ddf4cce75d93d6de4f877440ce2f1dd486dc3959e30b5dc9ed5b79258e53385"
+    }
+  },
+  "original_inventory_preserved": true
+}

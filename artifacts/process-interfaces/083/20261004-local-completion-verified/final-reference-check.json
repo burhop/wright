@@ -1,0 +1,17 @@
+{
+  "local_links": 317,
+  "original_rows_with_specific_behaviors_and_existing_evidence": 182,
+  "earlier_reviewed_behaviors_field_preserved_for": [
+    "FR-013",
+    "FR-014",
+    "SC-005",
+    "US2-AC3",
+    "EDGE-02",
+    "EDGE-03",
+    "NEG-09",
+    "NEG-10"
+  ],
+  "tasks_checked": 57,
+  "human_acceptance_not_substituted": true,
+  "final_focused_commit_guard_pending": true
+}

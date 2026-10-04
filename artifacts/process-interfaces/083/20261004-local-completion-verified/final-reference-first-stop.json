@@ -1,0 +1,9 @@
+{
+  "attempt": 140,
+  "failed_assumption": "The final checker expected all reviewed behavior lists under primary_behaviors. Eight earlier reviewed rows legitimately retain reviewed_behaviors instead.",
+  "product_or_evidence_defect": false,
+  "correction": 141,
+  "original_row_fields_and_evidence_preserved": true,
+  "no_execution_review_or_effect": true,
+  "already_prepared_final_docs_retained": true
+}
