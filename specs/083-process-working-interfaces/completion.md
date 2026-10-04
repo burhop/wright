@@ -1,5 +1,25 @@
 # Feature 083 completion audit — incomplete
 
+## Current checkpoint — 4 October UTC: contracts and runnable guidance
+
+The [whole platform review](../../artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/primary-review.json)
+disposes38 remaining contract/task/workspace obligations with exact retained proof
+scope and109 current component/locator checks, including three removed-interface/
+representation negatives. No product implementation changed.1,311 inventoried
+proof files and550 original engineering/UI files remain byte-identical.
+
+The [current guidance review](../../artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/guidance-review.json)
+aligns vision, roadmap, contributor/API/role guide and documentation navigation.
+99 local links resolve. Two actual authenticated read-only operator GETs preserve
+all five interface/authoring/continuation tables. API8063/UI5246/native19988 accept
+connections; earlier stopped proof addresses remain historical.
+
+**180 proved / two final obligations pending** of the same182 original identities
+and texts.55 tasks checked; T056/T057 remain open until the final completion,
+preservation/resource and focused-commit audit. No release, physical action or
+human engineering acceptance. Earlier sections below retain their original scopes.
+
+
 ## Current checkpoint — 4 October UTC: both engineering/UI demonstrations
 
 The [current primary review](../../artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json)

@@ -73,9 +73,12 @@ currently permitted for which exact subject. The diagram and working interface
 can present that same fact differently.
 
 Map this foundation to existing services and contracts before adding anything.
-Workspace surfaces, process services, and style tokens exist; a complete shared
-process interaction contract, client, and UI kit remain proposed work. This
-document records the intended architecture, not delivery of those additions.
+Feature 083 implements the bounded shared interaction contract, scoped client,
+public UI kit, common view and AI-created saved interfaces on existing owners.
+Local source/native/Linux verification and two actual digital engineering
+demonstrations are recorded in its [completion audit](../../specs/083-process-working-interfaces/completion.md).
+The product direction remains broader: arbitrary graph semantics, adapters,
+providers and physical engineering acceptance are qualified separately.
 
 ## AI authoring through Wright
 
@@ -196,7 +199,7 @@ require generating a new application on every run. Simple processes retain a
 usable common view without custom UI. AI can update affected bindings when the
 process changes. A visual layout change alone need not invalidate engineering
 outputs; changes to inputs, decisions, and actions retain revision-bound checks.
-See the proposed
+See the
 [process app design](process-apps.md) for reuse, hosting, and contract boundaries.
 
 Label the actual action: review, export, submit RFQ, request assessment, send
@@ -309,5 +312,5 @@ vision and the existing constitution and contributor gates.
 For Feature 083's current implementation and limits, use the
 [operator/developer guide](../workflows/process-working-interfaces.md) and
 [task record](../../specs/083-process-working-interfaces/tasks.md). Local
-implementation evidence does not establish the complete goal, installed browser
-acceptance, physical verification or human engineering acceptance.
+implementation and installed browser evidence retain their exact checked scope;
+they do not establish release, physical verification or human engineering acceptance.

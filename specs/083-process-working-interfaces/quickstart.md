@@ -2,9 +2,9 @@
 
 **Workspace:** `D:/repos/wright`.
 **Implementation branch:** `codex/083-process-working-interfaces`.
-**Current state:** Approved implementation in progress. Local shared-interface,
-actual-model and served-workspace checks have evidence; full engineering,
-migration and installed browser acceptance remain pending. See the
+**Current state:** The bounded implementation has local shared-interface,
+actual-model/MCP engineering, migration and installed native/Linux browser evidence.
+Final scope and limitations are in [completion.md](completion.md). See the
 [operator/developer guide](../../docs/workflows/process-working-interfaces.md)
 and [task record](tasks.md) for checked scope.
 
@@ -61,8 +61,8 @@ The operator guide records existing controls, native routes and local proof
 addresses. Use existing
 test tooling (pytest, Vitest, Playwright) and record actual versions/environment.
 Evidence roots and individual gates are in [acceptance-cases.md](acceptance-cases.md).
-Installed/native/Docker full browser proof remains pending; the current local
-source-checkout URLs must not be presented as a release or public deployment.
+Installed native/Linux browser proof retains its exact local scope; proof URLs
+must not be presented as a release or public deployment.
 
 No integration push/merge is implied. If later authorized, follow root AGENTS and
 the authoritative dev/release scripts/runbooks at that transition.

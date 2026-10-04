@@ -1,0 +1,8 @@
+{
+  "attempt": 135,
+  "failure": "Read-only route index inspected only the outer process router; authoring routes live in its already included process_ui_authoring router.",
+  "product_defect": false,
+  "correction": "Fresh136 checks explicit inclusion and both actual route owners.",
+  "before_failure": "Only previously authorized roadmap/document updates; no API action or ledger disposition.",
+  "failed_helper_retained": true
+}

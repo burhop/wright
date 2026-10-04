@@ -5,12 +5,13 @@ flowchart/source editor for building and inspecting, and a common or tailored
 working interface for carrying out the job. The process defines its stages and
 decisions. A tailored interface changes presentation, not execution.
 
-**Qualification:** Feature 083 is in development on
-`codex/083-process-working-interfaces`. Local source-checkout common/tailored
-views, actual-model generation/update and saved reuse have evidence. Complete
-engineering parity, vendor-code retirement, installed native/Docker browser
-acceptance and the completion audit remain pending. This guide is not a release
-or engineering-acceptance claim. Consult the
+**Qualification:** Feature 083 is locally verified on
+`codex/083-process-working-interfaces` within its bounded contracts. Common/tailored
+views, actual-model generation/update, saved reuse, prototype migration, two digital
+engineering chains and installed native/Linux UI-resource checks have evidence.
+The [completion audit](../../specs/083-process-working-interfaces/completion.md)
+records exact limitations. This guide is not a release or engineering-acceptance
+claim. Consult the
 [task record](../../specs/083-process-working-interfaces/tasks.md).
 
 ## Open and prepare a process
@@ -92,8 +93,10 @@ without turning them into the default engineering explanation.
 Older `printDemoRun` links use a bounded read-only recorder adapter. **View saved
 result**, **Back to workflow** and saved file tabs retain original states/errors
 and artifacts. History has no process/device controls and does not turn a failed
-run into a success. Remaining prototype endpoints/startup/automation are still
-migration debt; the read-only entry alone does not prove their retirement.
+run into a success. Active prototype endpoints/startup/automation have been
+retired with exact inactive archives and bounded compatibility evidence.
+Unchanged prior-feature integration references remain inventoried debt; the
+read-only entry does not qualify a replacement device capability.
 
 ## Developer boundaries
 
@@ -131,6 +134,7 @@ native scoped client instead of copying credentials into generated source.
 | `GET /authoring-capabilities` | Current role/model/compiler qualification. |
 | `POST /authoring-jobs` | Durable request identity, instruction/title, optional exact UI/base revision. |
 | `GET /authoring-jobs/{job_id}` and `/events` | Saved status and bounded progress observation. |
+| `POST /authoring-jobs/{job_id}/cancel` | Explicit cancellation of interface creation. |
 | `POST /authoring-jobs/{job_id}/preview` | Managed read-only presentation of an exact build. |
 | `POST /uis/{ui_id}/revisions/{revision_id}/save` | Save only after exact loaded-preview/build checks. |
 | `GET /uis` and `/uis/{ui_id}/revisions` | Scoped saved-interface/revision discovery. |
@@ -143,6 +147,20 @@ native scoped client instead of copying credentials into generated source.
 The [read-only inspection utility](../../examples/process-interfaces/inspect_interface.py)
 uses the first and third rows. Other operations should use Wright's controls and
 owning clients; their request schemas and capabilities remain authoritative.
+
+The same mount exposes the native process client:
+
+| Route | Responsibility |
+| --- | --- |
+| `GET /interaction` | Exact accepted-process/run snapshot. |
+| `POST /inputs`, `/inputs/upload`, `/readiness` | Declared input publication, immutable preparation and fresh readiness. |
+| `POST /runs`, `GET /runs/{run_id}`, `/events` | Durable start, reconciliation and observation; subscription does not execute. |
+| `POST /interactions/{checkpoint_id}/response` or `/decision` | Declared exact-subject response/review, server-derived actor. |
+| `POST /actions/{action_id}`, `/runs/{run_id}/cancel` | Existing permitted action or explicit cancellation; unknown outcomes are not replayed. |
+| `POST /representations/read`, `/navigation` | Exact hash-checked evidence and host navigation, without process mutation. |
+
+See the [versioned interaction contract](../../specs/083-process-working-interfaces/contracts/process-interaction.md)
+for body fields, limits, errors, presentation grants and currentness.
 
 ### Supplied artifacts and external actions
 
@@ -171,6 +189,20 @@ imply universal MCP Tasks or physical-device support. See the
 [operation contract](../../specs/083-process-working-interfaces/evidence/mcp-operations.md).
 
 ## Locally verified proof environment
+
+At the latest 4 October UTC checkpoint, the owned API8063/UI5246/native-addon19988
+accept connections. The documented inspection utility performs two actual scoped
+GETs without changing interface/authoring/continuation records. Open the
+[current local workspace](http://127.0.0.1:5246/workspace/083-fresh-prompt-055?workflow=canonical&workflowPath=workflows%2Fprinted-replacement-part-mixed-default-071.workflow.wflow)
+and choose **Use saved process**. Existing local authentication/session setup is
+required. These temporary source-proof services are separate from the historical
+installed hosts below and may stop with their owned processes. See
+[current operator check](../../artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/checked-scope.json).
+
+The full printed demonstration retains mandatory human review and its ordinary
+builtin-write readiness limitation. Exact enrolled digital-test authority used
+in its proofs is not general public-start permission. Installed saved-view
+reuse needs no model/compiler; new authoring requires qualified resources.
 
 The recorded proof used API [localhost:8030](http://127.0.0.1:8030)
 and frontend [localhost:5243](http://127.0.0.1:5243). The isolated workspace

@@ -19,11 +19,13 @@ experience and this working journey through the served workspace entry. A new
 route, detached form, or extra tab strip alone is not proof of integration.
 
 The historical editor recovery evidence below remains intact. Feature 083's
-shared process UI foundation is now under implementation with local common-view,
-actual-model preview/save/update/reuse and served-workspace evidence. It is not
-a replacement editor or a claim of full source/native runtime, engineering or
-installed-distribution acceptance. Read its task/progress records before treating
-individual checks as complete feature support.
+shared process UI foundation has local common-view, actual-model preview/save/update/reuse
+and current served-workspace/installed native/Linux evidence. The preserved editor
+is exercised through the normal workspace entry, including pointer/keyboard typed
+connections, pan/zoom, source/drafts, Undo/Redo, save/layout/reopen and CAS conflicts.
+Read its [completion audit](../../specs/083-process-working-interfaces/completion.md)
+for exact checked builds and limitations. Verification is separate from user
+acceptance, release and physical engineering acceptance.
 
 Use the [operator/developer guide](../workflows/process-working-interfaces.md)
 for implemented working-view and authoring controls. The

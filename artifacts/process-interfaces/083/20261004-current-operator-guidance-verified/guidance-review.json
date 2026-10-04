@@ -1,0 +1,172 @@
+{
+  "dispositions": {
+    "T054": {
+      "primary_behaviors": [
+        "Runnable neutral instructions/reference resource read and bounded authenticated inspection utility use actual Wright clients/routes, with17 unchanged controlled tests and two current real scoped GETs. Source/job identity and business-table nonmutation are checked; historical unavailable8030 remains retained.",
+        "The operator/API/role guide matches native route owners, separates process execution from authoring, preserves default inheritance/qualified adapters, and discloses installed resources, compatibility, temporary local URLs and exact printed public-readiness/human-review limits."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/checked-scope.json",
+        "specs/083-process-working-interfaces/evidence/operator-examples.md",
+        "examples/process-interfaces/README.md",
+        "docs/workflows/process-working-interfaces.md",
+        "docs/architecture/agent-adapters.md"
+      ]
+    },
+    "T055": {
+      "primary_behaviors": [
+        "Vision, process-apps, roadmap and contributor guidance now distinguish implemented local contract/runtime/UI/engineering/migration/native/Linux scope from broader product intent, release and human/physical acceptance. RoadmapR01\u2013R18 are aligned with the Feature083 primary evidence; dated earlier checkpoints remain historical.",
+        "Existing MkDocs navigation contains the five actual guidance pages; relative links resolve. AGENTS stable V1\u2013V7 and managed083 context remain unchanged. This is source/navigation verification; a rendered MkDocs build is not claimed."
+      ],
+      "evidence": [
+        "docs/design/workflow-platform-vision.md",
+        "docs/design/process-apps.md",
+        "docs/architecture/workflow-platform-refactoring-plan.md",
+        "docs/contributing/workflow-ui-integration.md",
+        "docs/architecture/agent-adapters.md",
+        "docs/workflows/process-working-interfaces.md",
+        "specs/083-process-working-interfaces/quickstart.md",
+        "examples/process-interfaces/README.md",
+        "mkdocs.yml",
+        "artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/guidance-review.json",
+        "artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/primary-review.json"
+      ]
+    }
+  },
+  "local_link_checks": 99,
+  "navigation_existing_entries_verified": 5,
+  "routes_inspected": [
+    [
+      "GET",
+      "/historical-results"
+    ],
+    [
+      "GET",
+      "/interaction"
+    ],
+    [
+      "POST",
+      "/inputs"
+    ],
+    [
+      "POST",
+      "/navigation"
+    ],
+    [
+      "POST",
+      "/inputs/upload"
+    ],
+    [
+      "POST",
+      "/representations/read"
+    ],
+    [
+      "POST",
+      "/readiness"
+    ],
+    [
+      "POST",
+      "/runs"
+    ],
+    [
+      "POST",
+      "/interactions/{checkpoint_id}/response"
+    ],
+    [
+      "POST",
+      "/interactions/{checkpoint_id}/decision"
+    ],
+    [
+      "POST",
+      "/actions/{action_id}"
+    ],
+    [
+      "GET",
+      "/runs/{run_id}"
+    ],
+    [
+      "GET",
+      "/runs/{run_id}/events"
+    ],
+    [
+      "POST",
+      "/runs/{run_id}/cancel"
+    ],
+    [
+      "GET",
+      "/authoring-capabilities"
+    ],
+    [
+      "POST",
+      "/authoring-jobs"
+    ],
+    [
+      "GET",
+      "/authoring-jobs/{job_id}"
+    ],
+    [
+      "GET",
+      "/authoring-jobs/{job_id}/events"
+    ],
+    [
+      "POST",
+      "/authoring-jobs/{job_id}/cancel"
+    ],
+    [
+      "POST",
+      "/uis/{ui_id}/revisions/{revision_id}/save"
+    ],
+    [
+      "POST",
+      "/uis/{ui_id}/activate"
+    ],
+    [
+      "GET",
+      "/uis/{ui_id}/compatibility"
+    ],
+    [
+      "GET",
+      "/uis"
+    ],
+    [
+      "GET",
+      "/uis/{ui_id}/revisions"
+    ],
+    [
+      "POST",
+      "/authoring-jobs/{job_id}/preview"
+    ],
+    [
+      "POST",
+      "/uis/{ui_id}/present"
+    ],
+    [
+      "GET",
+      "/uis/{ui_id}/runtime-diagnostics"
+    ],
+    [
+      "POST",
+      "/presentations/close"
+    ],
+    [
+      "POST",
+      "/presentations/start-receipt"
+    ]
+  ],
+  "source_sha256": {
+    "docs/design/workflow-platform-vision.md": "c8fc3216481a7acc612a76355690abbb5806989afba6cfc3dd6db19b7e1892ae",
+    "docs/design/process-apps.md": "3fb004211a9c7ba50317e8081e6ecabadbbd898742c83eb9aaa2d7d2467374ec",
+    "docs/architecture/workflow-platform-refactoring-plan.md": "433ef356e7e95e70d2e2a749366550f66e055a04c6bff8a022c05d591eacb920",
+    "docs/contributing/workflow-ui-integration.md": "685c0330e013fd10eb5b7000b9c8a5a74655b9af433b67351bdf04f26596ca9d",
+    "docs/architecture/agent-adapters.md": "d2e49ccca0aab32f70329b0853196e456df304f839e6be4ca95d749bfa1703bc",
+    "docs/workflows/process-working-interfaces.md": "c7ce89a257bf7e69ef35d7277dfd50b9a4c71a55fb7c7fdbf2adbcdea69f4c39",
+    "specs/083-process-working-interfaces/quickstart.md": "81ad7b6dcbc76376d57484c96ea5a92dba87d75121f210123e9643dc9b8868f2",
+    "examples/process-interfaces/README.md": "ae5083fc657e122726ed5a95289c993707ed45e7c5a9e0c9c1eb41248785938e",
+    "mkdocs.yml": "549b5daaf74be0393d5b4ab0dede7303df87ba1991fbce40c92a0698ca704a11",
+    "apps/api/src/api/routers/process_interfaces.py": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37",
+    "apps/api/src/api/routers/process_ui_authoring.py": "e2ed589f7afde5655e5e0d965751def7905056f1a0d0824b86057e3ba295e867"
+  },
+  "mkdocs_rendered_build": false,
+  "full_feature_signoff": false,
+  "human_engineering_acceptance_or_release": false
+}

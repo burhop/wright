@@ -3,9 +3,12 @@
 **Date:** 30 September 2026.
 **Direction:** [Workflow platform vision](workflow-platform-vision.md), V1-V7.
 **Status:** Agreed user experience and architectural direction. Feature 083 is
-under implementation; its interaction contract, scoped client, common view,
-public UI kit and configured-model authoring path have local verification.
-Complete engineering, distribution and migration acceptance remains pending.
+locally implements its bounded interaction contract, scoped client, common view,
+public UI kit and configured-model authoring path. Two actual digital engineering
+chains, saved reuse, migration and installed native/Linux UI-resource checks have
+recorded evidence. Final local completion and limitations are tracked in the
+[completion audit](../../specs/083-process-working-interfaces/completion.md);
+release and human/physical engineering acceptance remain separate.
 
 The concrete technical package and ready-to-use goal are in
 [Feature 083](../../specs/083-process-working-interfaces/plan.md). It includes
@@ -107,7 +110,7 @@ failure in both common and tailored views.
 
 ## Start with reusable interactions
 
-Propose a small kit assembled from existing Wright components and design tokens:
+Feature 083 provides a bounded kit assembled from Wright components and design tokens:
 
 - Text, image/file, dimension/unit, and capability-backed option inputs.
 - Run progress, current activity, actionable errors, and reconnect state.
@@ -135,8 +138,9 @@ operations include binding inputs, starting an accepted workflow, reading and
 following a run, retrieving outputs and assessments, recording a review decision,
 and requesting the next permitted action or a supported cancellation.
 
-These are proposed operation categories, not new endpoint or method guarantees.
-Map them to current services first. Where a contract is missing, add the smallest
+Feature 083's [interaction contract](../../specs/083-process-working-interfaces/contracts/process-interaction.md)
+defines implemented operations and native/presentation transports. Map future
+operations to current services first. Where a contract is missing, add the smallest
 reviewed extension to the owning service; do not create a process-app executor.
 
 The host supplies the actual workspace, workflow revision, run, and permitted

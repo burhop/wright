@@ -1,0 +1,33 @@
+{
+  "read_only_authenticated_GETs": 2,
+  "same_process_and_job_checked": true,
+  "existing_job_state": "saved",
+  "authoring_available": true,
+  "business_tables_unchanged": [
+    "workflow_continuation_checkpoints",
+    "process_uis",
+    "process_ui_revisions",
+    "process_ui_authoring_jobs",
+    "process_ui_authoring_records"
+  ],
+  "model_generation_build_execution_decision_or_dispatch": false,
+  "api_url": "http://127.0.0.1:8063",
+  "frontend_url": "http://127.0.0.1:5246",
+  "workspace_id": "083-fresh-prompt-055",
+  "session_id": "083-printed-prompt-session-055",
+  "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+  "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+  "job_id": "job-439a49a6248944f0b411c9c1a689cce3",
+  "owned_ports_accept_connection": [
+    8063,
+    5246,
+    19988
+  ],
+  "selected_source_sha256": {
+    "examples/process-interfaces/inspect_interface.py": "1c8e33139afd664757a4f57fd98846bff4577bd74d28f8790542b5766f504ace",
+    "tests/test_process_interface_operator_example.py": "c115459918d954fc2139bf62909db5b982c891745e8548fce9f293fed954359f"
+  },
+  "earlier_17_controlled_tests_retained": true,
+  "historical_8030_unavailable_attempt_retained": true,
+  "physical_human_acceptance_or_release": false
+}

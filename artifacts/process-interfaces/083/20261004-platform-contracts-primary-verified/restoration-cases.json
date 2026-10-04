@@ -1,0 +1,547 @@
+[
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators routes exact evidence to the common tab even when tailored tabs precede it",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators does not reuse a common tab for a different subject {\"process\":{\"workspace_id\":\"other-workspace\",\"source_path\":\"workflows/thermal.workflow.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"runId\":\"run-one\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators does not reuse a common tab for a different subject {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"workflows/other.workflow.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"runId\":\"run-one\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators does not reuse a common tab for a different subject {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"workflows/thermal.workflow.wflow\",\"source_digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"},\"runId\":\"run-one\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators does not reuse a common tab for a different subject {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"workflows/thermal.workflow.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"runId\":\"other-run\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators does not reuse a common tab for a different subject {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"workflows/thermal.workflow.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators keeps prepared common views separate from recorded-run evidence",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators creates a typed tab with no user input, credentials or browser run state",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators preserves source identity and accepts only a current-workspace restoration",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators discards the generic dirty marker when reopening a process view",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"version\":\"2\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"view_id\":\"../other\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"view_id\":\"\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"run_id\":\"\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"run_id\":\"../outside\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"state\":\"completed\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"inputs\":[{\"value\":\"secret\"}]}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"permissions\":[\"admin\"]}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"workflows/thermal.workflow.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"source_contract\":\"another-executor\"}}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"../outside.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"workflows/thermal.workflow.wflow\",\"source_digest\":\"not-a-hash\"}}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing locators {\"process\":{\"workspace_id\":\"workspace-one\",\"source_path\":\"workflows/thermal.workflow.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"token\":\"secret\"}}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incompatible persisted tabs {\"type\":\"code\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incompatible persisted tabs {\"path\":\"/.wright/process-views/another-view\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incompatible persisted tabs {\"name\":\"\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incompatible persisted tabs {\"name\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incompatible persisted tabs {\"token\":\"secret\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incompatible persisted tabs {\"last_modified\":42}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators round-trips links while preserving editor/file context",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators derives workspace scope from the host rather than a query parameter",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators does not invent a run identifier for a preparation view",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators replaces only process locators when switching views",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incomplete/ambiguous query locators ?processView=view-one",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incomplete/ambiguous query locators ?processRun=run-one",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incomplete/ambiguous query locators ?processPath=workflows%2Fone.wflow&processDigest=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incomplete/ambiguous query locators ?processView=view-one&processPath=workflows%2Fthermal.workflow.wflow&processDigest=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&processRun=run-one&processRun=another-run",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incomplete/ambiguous query locators ?processView=view-one&processPath=workflows%2Fthermal.workflow.wflow&processDigest=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&processRun=run-one&processView=another-view",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects incomplete/ambiguous query locators ?processView=view-one&processPath=workflows%2Fthermal.workflow.wflow&processDigest=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&processRun=",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators leaves normal file/editor navigation alone",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators round-trips exact working interface locators in existing tabs",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators round-trips exact preview interface locators in existing tabs",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing interface locators {\"kind\":\"working\",\"ui_id\":\"ui-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"revision_id\":\"revision-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"job_id\":\"job-one\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing interface locators {\"kind\":\"preview\",\"ui_id\":\"ui-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"revision_id\":\"revision-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing interface locators {\"kind\":\"working\",\"ui_id\":\"../outside\",\"revision_id\":\"revision-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing interface locators {\"kind\":\"preview\",\"ui_id\":\"ui-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"revision_id\":\"revision-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"job_id\":\"../outside\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects malformed or authority-bearing interface locators {\"kind\":\"working\",\"ui_id\":\"ui-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"revision_id\":\"revision-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"token\":\"secret\"}",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects partial interface queries &processUI=ui-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects partial interface queries &processUIKind=working",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/services/process-workspace-tabs.spec.ts",
+    "name": "workspace process locators rejects partial interface queries &processUIJob=job-one",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls requires a changes reason and records only the declared exact review",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls keeps review approval separate from confirmed action submission and provider observations",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls reopens a lost response acknowledgement without replay, then explicitly reconciles the same intent",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls reopens a lost review acknowledgement without replay, then explicitly reconciles the same intent",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls reopens a lost action acknowledgement without replay, then explicitly reconciles the same intent",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls does not dispatch when request preservation is unavailable or the view is read-only (false)",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "declared review and action controls does not dispatch when request preservation is unavailable or the view is read-only (true)",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority shows an undeclared-input diagnostic and exact correction without inventing a response form",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority renders only the declared form, submits its exact subject and follows the same run",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority keeps a lost acknowledgement's exact response frozen for explicit reconciliation",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority preserves declared form inspection without giving read-only views response authority",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority evaluates fresh observations at snapshot receipt without waiting for a clock tick",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority reads on mount without preparing, starting, reviewing or cancelling",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority checks the saved input overlay before the explicit start and records recovery before submission",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority invalidates readiness as soon as a prepared value is edited, without changing accepted source",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority preserves a supplied false value and explicitly reports downstream unresolved input",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority expires readiness while idle and requires a fresh assessment",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority does not start when backend permission or exact input subject is absent",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority contains late preparation replies when another process is opened",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority shows uploading progress and prevents preparation until selected files are ready",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process preparation and authority preserves usable read-only and missing-capability fallback",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime keeps exact-request recovery available even when the source read fails",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime blocks preparation rather than overwriting an unreadable recovery record",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime preserves another view's pending start when an older view edits its draft",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime does not overwrite a start that arrives while input preparation is in flight",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime cancels the explicit recorded run with a stable ID even when browser recovery is unavailable",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime does not adopt a cached receipt when an explicit different run is opened",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime blocks submission if the request identity cannot be preserved",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime retains the same start request through lost acknowledgement, close and explicit recovery",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime does not replay a start on double click or StrictMode attachment",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime persists an accepted receipt after closing while start is in flight",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime releases only the observer on close and reopens the exact existing run",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime shows cancellation as a request and preserves its identity on a repeat",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime reports a disconnected observer without guessing completion or restarting work",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime retains exact result, assessment, evidence and producer navigation",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime aborts a representation read on close without cancelling the process",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime a reopened run whose recorded representation was removed shows its exact failure without substitution or execution",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: false)",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: true)",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime rejects foreign navigation without reading files or changing the run",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime shows only declared interactions and never submits an invented response",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "common process request recovery and observer lifetime pages exact outputs and rejects a page from a changed snapshot",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage round-trips compact identities without user input values or credentials",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage isolates sessions, workspaces, source paths and accepted revisions",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage rejects malformed, oversized, changed-subject and foreign-run records",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage returns a visible failure if storage is unavailable or silently drops the record",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "name": "native recovery locator storage derives stable distinct identities for an immutable preparation and cancellation",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime a restored working locator for a removed interface retains common fallback without execution",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime a restored preview locator for a removed interface retains common fallback without execution",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime page departure closes only the exact working presentation once",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime page departure closes only the exact preview presentation once",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime does not revoke a view retained in the browser's back-forward cache",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime releases a late opening reply after departure without mounting it or duplicating cleanup",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime reports departure cleanup failure without cancelling or restarting the run",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime opens one issued view across StrictMode and closing does not submit or cancel work",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime closes a late open reply after the tab has closed",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime preview opens only its verified job revision and retains exact attached run context",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime a preview job for another revision cannot be opened",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime incompatible bindings retain the common view without opening an app",
+    "status": "passed"
+  },
+  {
+    "file": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "name": "native process interface view lifetime changing run context replaces presentation only, with no new model or process request",
+    "status": "passed"
+  }
+]

@@ -39,7 +39,9 @@ agent platform provides its execution environment. Hermes is the current path,
 with other platforms qualified separately rather than assumed equivalent.
 Feature 083 implements a local `process-ui-author/1` path through this boundary.
 Actual configured-model preview/save/update and saved reuse have recorded
-evidence; complete feature/distribution acceptance remains pending. The
+evidence, including installed saved-interface reuse. The
+[completion audit](../../specs/083-process-working-interfaces/completion.md)
+records the bounded local feature scope; release and user acceptance are separate. The
 manager-specific examples below do not make each platform an immutable
 engineering role or qualify it for scoped UI authoring.
 

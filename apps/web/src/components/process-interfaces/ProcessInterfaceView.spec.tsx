@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { ProcessClientError } from "@wright/process-client";
 import type { InterfaceAuthoringClient, ProcessInterfacePresentation } from "../../services/process-ui-authoring";
 import type { LiveAppSurfaceProps } from "../surfaces/LiveAppSurface";
 import { ProcessInterfaceView } from "./ProcessInterfaceView";
@@ -26,6 +27,22 @@ function fixture() {
 const flushClose = () => act(async () => {await new Promise(resolve => setTimeout(resolve, 5));});
 
 describe("native process interface view lifetime", () => {
+  it.each(["working", "preview"] as const)("a restored %s locator for a removed interface retains common fallback without execution", async kind => {
+    const f = fixture();
+    const missing = new ProcessClientError({code: "UI_INCOMPATIBLE",
+      message: "This saved interface is no longer available.", correction: "Use the common working view."});
+    f.client.compatibility.mockRejectedValue(missing);
+    f.client.getJob.mockRejectedValue(missing);
+    const view = render(<ProcessInterfaceView {...f.props} runId="run-one"
+      locator={kind === "preview" ? {kind, ui_id, revision_id, job_id: "job-one"} : f.props.locator}/>);
+    await screen.findByText(missing.reason.message);
+    expect(screen.queryByTestId("issued-interface-fixture")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name: "Use common working view"}));
+    expect(f.props.onUseCommon).toHaveBeenCalledOnce();
+    expect(f.client.present).not.toHaveBeenCalled(); expect(f.client.preview).not.toHaveBeenCalled();
+    expect(f.client.submit).not.toHaveBeenCalled(); expect(f.client.cancel).not.toHaveBeenCalled();
+    view.unmount(); await flushClose(); expect(f.client.close).not.toHaveBeenCalled();
+  });
   it.each(["working", "preview"] as const)("page departure closes only the exact %s presentation once", async kind => {
     const f = fixture(), view = render(<StrictMode><ProcessInterfaceView {...f.props}
       locator={kind === "preview" ? {kind, ui_id, revision_id, job_id: "job-one"} : f.props.locator}/></StrictMode>);

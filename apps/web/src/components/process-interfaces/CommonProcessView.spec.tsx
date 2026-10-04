@@ -1525,6 +1525,30 @@ describe("common process request recovery and observer lifetime", () => {
     expect(client.cancel).not.toHaveBeenCalled();
     expect(client.start).not.toHaveBeenCalled();
   });
+  it("a reopened run whose recorded representation was removed shows its exact failure without substitution or execution", async () => {
+    const { client, store } = fixture();
+    const artifact = {artifact_ref: "outputs/removed.stl", sha256: hash, result_id: "removed-result"};
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield {type: "snapshot", snapshot: {...running, state: "completed", actions: [], outputs: [{
+        result_id: artifact.result_id, step_id: "geometry", port_id: "out", role: "geometry",
+        title: "Original recorded part", representations: [artifact],
+      }]}};
+    });
+    vi.mocked(client.getRepresentation).mockRejectedValue(new ProcessClientError({
+      code: "CAPABILITY_UNAVAILABLE", message: "The recorded part file is no longer available.",
+      correction: "Inspect the recorded run; no replacement file was selected.",
+    }));
+    const view = render(<CommonProcessView client={client} sessionId="session" runId="run-one"
+      recoveryStore={store} canReadRepresentations/>);
+    await screen.findByText("Original recorded part");
+    fireEvent.click(screen.getByRole("button", {name: "Open representation"}));
+    await screen.findByText("The recorded part file is no longer available.");
+    expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(artifact, {runId: "run-one", signal: expect.any(AbortSignal)});
+    expect(screen.queryByRole("link", {name: "Download exact file"})).not.toBeInTheDocument();
+    expect(client.start).not.toHaveBeenCalled(); expect(client.cancel).not.toHaveBeenCalled();
+    expect(client.requestAction).not.toHaveBeenCalled(); expect(client.navigate).not.toHaveBeenCalled();
+    view.unmount();
+  });
   it.each([false, true])("focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: %s)", async (sharedAssessment) => {
     const { client, store } = fixture();
     const output = {

@@ -5,8 +5,12 @@
 **Implementation branch:** `codex/083-process-working-interfaces`.
 **Direction:** [Workflow platform vision](../design/workflow-platform-vision.md) and
 [process UI design](../design/process-apps.md).
-**Status:** Proposed staged implementation of the agreed user experience.
-The shared interaction contract/client/kit and runtime migration are not complete.
+**Status:** Feature 083 locally implements the bounded stages below. The shared
+interaction contract/client/kit, runtime and migration have actual scoped evidence.
+Final local completion is recorded in the
+[completion audit](../../specs/083-process-working-interfaces/completion.md);
+release, arbitrary provider support and human/physical engineering acceptance
+remain separate. Earlier dated checkpoints retain their original scopes.
 
 ## Current migration checkpoint — 3 October 2026
 
@@ -190,10 +194,10 @@ screen language or support every graph shape in the initial slice.
   `AGENTS.md`; align specification, planning, task, and PR templates.
 - [x] D03 Record this roadmap with the shared platform foundation first and
   prototype migration inventory as supporting material.
-- [ ] R01 Capture a reviewed snapshot of the existing prototype, uncommitted
+- [x] R01 Capture a reviewed snapshot of the existing prototype, uncommitted
   fixes, saved runs, artifact identities, and rollback basis with explicit paths.
   Preserve needed ignored evidence separately; exclude credentials.
-- [ ] R02 Map the proposed first user journey to accepted definitions, run,
+- [x] R02 Map the proposed first user journey to accepted definitions, run,
   event, review, result, validation, readiness, agent, and hosting contracts.
   State real gaps and capabilities before proposing extensions.
 
@@ -204,17 +208,17 @@ prove runtime delivery, engineering correctness, or user acceptance.
 
 Depends on M0 and review of the first feature's technical plan.
 
-- [ ] R03 Define the minimal versioned interaction description using existing
+- [x] R03 Define the minimal versioned interaction description using existing
   contract shapes: context, inputs, outputs/evidence, pending interactions,
   observations, declared interaction policy, readiness, and permitted actions
   with exact subjects and reasons.
-- [ ] R04 Map those interactions to current services and accepted source semantics.
+- [x] R04 Map those interactions to current services and accepted source semantics.
   Declare unsupported arrangements and any minimal approved schema extensions,
   including compatibility and migration. Define pre-run input readiness and
   durable declared pause/resume without creating a second executor.
-- [ ] R05 Define scoped host/client operations and server enforcement. Keep the
+- [x] R05 Define scoped host/client operations and server enforcement. Keep the
   existing runner as the execution authority; preserve provider-panel grants.
-- [ ] R06 Define UI artifact/binding compatibility, invalidation, restoration,
+- [x] R06 Define UI artifact/binding compatibility, invalidation, restoration,
   common-view fallback, and rules for separating definition edits from run inputs.
 
 Exit: a common view and a tailored view can consume the same process interactions.
@@ -224,14 +228,14 @@ No screen layout, mandatory stage order, or device protocol controls the contrac
 
 Depends on approved M1 contracts.
 
-- [ ] R07 Implement the narrow process client over existing services, including
+- [x] R07 Implement the narrow process client over existing services, including
   following and reconciling durable run state, results, and current decisions.
-- [ ] R08 Assemble shared inputs, result viewers, progress/findings, review/actions,
+- [x] R08 Assemble shared inputs, result viewers, progress/findings, review/actions,
   and navigation using existing style tokens and useful components. Package the
   public pieces required by the chosen host; avoid copying private page code.
-- [ ] R09 Integrate the common view into Wright workspace tabs. Preserve the editor,
+- [x] R09 Integrate the common view into Wright workspace tabs. Preserve the editor,
   exact process/run context, deep links, and close/reopen behaviour.
-- [ ] R10 Preserve evidence gates, actionable errors, missing-capability behaviour,
+- [x] R10 Preserve evidence gates, actionable errors, missing-capability behaviour,
   currentness, option invalidation, and uncertain-action handling in the common view.
   Reject unresolved predictable input before a run; show planned human waiting,
   external waiting, and failure distinctly without inventing runtime questions.
@@ -243,15 +247,15 @@ Reopening reconstructs presentation from backend state without resending work.
 
 Depends on M2 and the reviewed packaging model.
 
-- [ ] R11 Implement UI generation, preview, saving, and updates through Wright's
+- [x] R11 Implement UI generation, preview, saving, and updates through Wright's
   default coding-agent role over the existing agent boundary. Supply versioned
   API/kit instructions, documented client, examples, and a reference UI. Record
   resolved model/profile/prompt/adapter and artifact provenance. Design replaceable
   platform bindings without claiming unqualified future adapters.
-- [ ] R12 Save a generated UI with its binding manifest and supported versions.
+- [x] R12 Save a generated UI with its binding manifest and supported versions.
   Check bindings on process/capability changes; support focused updates and
   common-view fallback when incompatible.
-- [ ] R13 Verify a tailored UI can present the same inputs, results, decisions,
+- [x] R13 Verify a tailored UI can present the same inputs, results, decisions,
   and permitted actions as the common view. Inspect actual layout, accessibility,
   failures, stale bindings, reload, navigation, and restored runs. Prove generation
   through Wright, upfront readiness, declared pause/resume, and uninterrupted
@@ -264,19 +268,19 @@ code contains no graph executor, vendor protocol, or independent job-status trut
 
 Depends on M2; use M3 when proving AI-authored composition.
 
-- [ ] R14 Inspect and select one substantially different existing engineering
+- [x] R14 Inspect and select one substantially different existing engineering
   workflow and its useful tool chain. Reuse the existing examples and evidence;
   avoid inventing a new campaign or silently rewriting an assignment.
-- [ ] R15 Qualify the existing providers needed by the chosen reference workflows
+- [x] R15 Qualify the existing providers needed by the chosen reference workflows
   through normal onboarding. Record actual schemas, operating requirements, and
   gaps. Provider-specific compatibility work does not block shared platform design.
-- [ ] R16 Migrate the prompt-to-part reference using public capability bindings
+- [x] R16 Migrate the prompt-to-part reference using public capability bindings
   and the shared process UI foundation. Retire embedded vendor code after all
   live callers migrate; preserve saved-result access and historical evidence.
-- [ ] R17 Use the same contract/client/kit to complete the supported journey for
+- [x] R17 Use the same contract/client/kit to complete the supported journey for
   the different process, including an AI-authored view. Document its substantive
   engineering tools and handoffs, applicable checks, and actual limitations.
-- [ ] R18 Compare the two experiences, remove discovered coupling in the owning
+- [x] R18 Compare the two experiences, remove discovered coupling in the owning
   layer, and record exactly which architecture and engineering claims are proved.
 
 Exit: different process arrangements use one platform and consistent workspace
@@ -310,10 +314,12 @@ Record direction, planning, implementation, protocol qualification, engineering
 evidence, browser verification, and user acceptance separately. Run push/merge/
 release gates at their authorised transitions, not as a substitute for user evidence.
 
-## Authority and next feature
+## Authority and Feature 083 implementation
 
-The user approved the concept and requested these documentation and guidance
-updates. This proposal does not start runtime implementation or an autonomous goal.
+The original 30 September proposal recorded the concept and guidance without
+starting implementation. The subsequently submitted Feature083 goal explicitly
+authorized local M0–M5 implementation and verification; its task/evidence record
+defines the bounded delivered scope.
 
 The concrete follow-on is
 [Feature 083: Process working interfaces](../../specs/083-process-working-interfaces/plan.md),
@@ -324,8 +330,9 @@ through Wright's coding role, and proof on two different existing engineering
 processes. The shared foundation is an increment, not the final deliverable.
 The user submitted that goal and approved local implementation and verification.
 Local interaction/runtime, client/kit/common view, actual-model authoring and
-saved reuse have evidence. Full engineering parity, active vendor-code retirement,
-installed browser acceptance and the final completion audit remain pending. See
+saved reuse, digital engineering parity, active prototype retirement and installed
+native/Linux browser checks have bounded evidence. The completion audit records
+their limits rather than implying physical or universal provider acceptance. See
 the [operator guide](../workflows/process-working-interfaces.md) and the feature's
 [task record](../../specs/083-process-working-interfaces/tasks.md).
 

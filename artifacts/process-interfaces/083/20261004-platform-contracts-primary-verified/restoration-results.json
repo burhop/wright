@@ -1,0 +1,11 @@
+{
+  "passed": 109,
+  "failed": 0,
+  "new_negative_cases": 3,
+  "source_report_sha256": "aa98e6dc702b1788771ec136348ae188aae9dcbe01e46028df079bdb38fe1baa",
+  "command": "node ../../node_modules/vitest/vitest.mjs run src/components/process-interfaces/ProcessInterfaceView.spec.tsx src/components/process-interfaces/CommonProcessView.spec.tsx src/services/process-workspace-tabs.spec.ts --reporter=json --outputFile=FRESH_REPORT",
+  "working_directory": "apps/web",
+  "typescript_command": "node ../../node_modules/typescript/bin/tsc -b --pretty false",
+  "typescript_exit_code": 0,
+  "scope": "Controlled component/locator/read-error fixtures; no product implementation change or live engineering/physical action."
+}
