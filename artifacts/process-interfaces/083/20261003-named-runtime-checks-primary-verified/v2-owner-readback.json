@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "scope": "Fresh persisted v2 checkpoints from the controlled canonical two-review fixture; recreated current service owner readback.",
+  "fixture": "packages/workspace_service/tests/test_workflow_execution_continuation.py::test_two_sequential_checkpoints_resume_same_run_and_execute_true_final_step",
+  "state_path": ".local-run/process-interfaces-083/t056-runtime-checks-029/temp/test_two_sequential_checkpoint0/state.db",
+  "recorded_continuations_unchanged": true,
+  "lookup_only_no_decision_dispatch_or_resume": true,
+  "checkpoints": [
+    {
+      "checkpoint_id": "checkpoint-ba38c854c0decbbbcf6e2c96",
+      "run_id": "b860cafcf9934580827857a1b06c164a",
+      "step_id": "approve",
+      "schema_version": 2,
+      "checkpoint_kind": "approval",
+      "continuation_sha256": "b5a85196e7d7ff370a7680d131fd1b90c739b572835facc2e1ad5816944c4bed",
+      "readback_matches": true
+    },
+    {
+      "checkpoint_id": "checkpoint-c31d6c5be9880d35cdbe8d7e",
+      "run_id": "b860cafcf9934580827857a1b06c164a",
+      "step_id": "approve_second",
+      "schema_version": 2,
+      "checkpoint_kind": "approval",
+      "continuation_sha256": "c0c18865429dff1cbebe7fb868b6038b5703135dd580235f633a03ae98a83ce2",
+      "readback_matches": true
+    }
+  ],
+  "source_sha256": {
+    "packages/workspace_service/src/workspace_service/workflow_external_actions.py": "e5c68454deadc6707e92c08704319dc996cd53509c1e54540bbd993efaf1e8be",
+    "packages/data_vault/src/data_vault/workflow_continuation_repository.py": "b3d3d3f0482ef878b5a43128de428c9383e7030a9169bfd9a46dd4029c5e428d",
+    "packages/workspace_service/tests/test_workflow_execution_continuation.py": "b34beb885ffe8a3f5ce8048be44cd4dc4531349d40d02a8cd5542418da2331fa"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "source_commit": "66fab12b522a64e5e185b0ff35c0722773ddc8b6",
+  "source_sha256": {
+    "apps/api/src/api/routers/process_interfaces.py": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37",
+    "apps/api/src/api/routers/workspace.py": "0b922a3cf1b2b1cd253c335a07b8d260c412b96440aeac10cbdb959fc7b0fa7a",
+    "apps/api/tests/test_process_interface_checkpoints.py": "b0d00bd655e5dd617e958254e77d968f453d892c93a9334ac695cb88fe8aac87",
+    "apps/api/tests/test_process_interface_run_lifecycle.py": "1c6f5f7deeec237ba52de09767a84015aae0181c72816145e9fc1595c6b213fe",
+    "packages/data_vault/src/data_vault/workflow_continuation_repository.py": "b3d3d3f0482ef878b5a43128de428c9383e7030a9169bfd9a46dd4029c5e428d",
+    "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py": "d0f7468bbfe7979ab27ec4b88cbddcfd3f2317fa6aebcd610da62e9e086f8536",
+    "packages/workspace_service/src/workspace_service/process_interfaces/interactions.py": "30419e26f900337df8a6193818f7eb1af532117220a2ca3e6da47ef85e239d2b",
+    "packages/workspace_service/src/workspace_service/process_interfaces/projection.py": "3acd0410f123f66367b2eaba2e05cfc7f2a71b7699e541d81cecde1a40e60c4b",
+    "packages/workspace_service/src/workspace_service/process_interfaces/readiness.py": "d0746df74f4f072acb2753fb3d3d47d8998264c2e18b5d1deb5e97822906225e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/runs.py": "3c71ed98e00624079b5f4a040b165f3110ca5bdd9b1f9c408fdfc3278b035d33",
+    "packages/workspace_service/src/workspace_service/workflow_async_operations.py": "6ee3d9f067eee6ba29c4001038b6c76716082962cf8eff7b347a4cca7d67d969",
+    "packages/workspace_service/src/workspace_service/workflow_execution_continuation.py": "92eb7fb5db9ab85bdf449d62beb9b5ac90f764963afb9235c501ef4576160930",
+    "packages/workspace_service/src/workspace_service/workflow_external_actions.py": "e5c68454deadc6707e92c08704319dc996cd53509c1e54540bbd993efaf1e8be",
+    "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py": "5dd8f783cdcf3bb2cb04ecb42afa48d1c31833723440f272962cb826b752cdb1",
+    "packages/workspace_service/src/workspace_service/workflow_run_preparation.py": "9d0d02613c9a721461b72edd45e83384835b03968d426e65ccab9da1e090ea26",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py": "0e29734066a3bdf0dc7652d2aeb7b17eaf6d56aa438430f54236f532ddd03c7c",
+    "packages/workspace_service/tests/test_process_human_input_source.py": "081a970091d8846773f50991a1f348869e55d6682a3fbafa1a90dc9f5adbce55",
+    "packages/workspace_service/tests/test_process_input_readiness.py": "64757198e7770a721307821fb9940b7ca959d2a1218a38685c94b24439af498f",
+    "packages/workspace_service/tests/test_process_interface_continuation.py": "9b9814397e73239710d3fb35c283e314cb995415ebd43e7de56992029b12ed2f",
+    "packages/workspace_service/tests/test_process_interface_service_boundaries.py": "a27210d14505bb3bdf95d03028a043b2298dc61245a072e5800303cf9d41276c",
+    "packages/workspace_service/tests/test_process_preparation_service.py": "78e7b3ded4ad13879a34affada6e48cdc6168c5aa1ab97d2f4115452d4ef8298",
+    "packages/workspace_service/tests/test_process_run_supervisor.py": "21360d5b2305a7b7aacc1970ec76150fc4d94f49ea1d65a7af175ec6c82dfcce",
+    "packages/workspace_service/tests/test_workflow_async_operations.py": "2aac7447a8cb99138f545b4cd197e4e9e0d38ade1d08c3344ce6ef15edd82fbf",
+    "packages/workspace_service/tests/test_workflow_execution_continuation.py": "b34beb885ffe8a3f5ce8048be44cd4dc4531349d40d02a8cd5542418da2331fa",
+    "packages/workspace_service/tests/test_workflow_mcp_execution.py": "feb0b8ee19a1432e92ea899c93a0997f67976ba55c06ce97bea162eb6336e686"
+  },
+  "protected_file_hashes": {
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92",
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+  },
+  "changed_files": [
+    "specs/083-process-working-interfaces/evidence/interactions.md"
+  ],
+  "additional_owned_artifacts": [],
+  "new_semantic_dispositions": 17,
+  "semantic_ledger": "131 proved / 51 awaiting review of 182",
+  "task_ledger": "55 checked / T056,T057 open; T047 semantic review pending",
+  "current_selected_test_cases": 81,
+  "current_selected_test_functions": 35,
+  "fresh_live_engineering_execution": false,
+  "full_semantic_signoff": false,
+  "limits": [
+    "81 cases in 35 existing test functions exercise controlled current backend/compiler/transport fixtures, with fake model/provider behavior; they are not another live engineering/MCP/browser or physical demonstration.",
+    "Backend reopening is in-process owner/API recreation and persisted state inspection, not arbitrary OS crash or distributed lease guarantee.",
+    "Provider cancellation confirms only the configured reported outcome, never a physical stop; unknown outcomes and mandatory engineering reviews stay held.",
+    "Broader contract sections, remaining implementation-task signoff, independent common-view start, stricter printed first-stage and final post-trace installed packaging remain open."
+  ]
+}

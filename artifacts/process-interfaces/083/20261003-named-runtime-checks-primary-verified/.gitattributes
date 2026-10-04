@@ -1,0 +1,3 @@
+* -text
+output.log whitespace=cr-at-eol
+v2-owner-readback.json whitespace=cr-at-eol

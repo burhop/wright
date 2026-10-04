@@ -1,0 +1,120 @@
+{
+  "command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "apps/api/tests/test_process_interface_checkpoints.py::test_changed_actual_artifact_returns_actionable_conflict",
+    "apps/api/tests/test_process_interface_checkpoints.py::test_route_rejects_stale_invalid_and_cross_process_answer",
+    "apps/api/tests/test_process_interface_checkpoints.py::test_undeclared_question_after_response_is_a_diagnostic_not_another_form",
+    "apps/api/tests/test_process_interface_run_lifecycle.py::test_actual_sse_disconnect_leaves_backend_running",
+    "apps/api/tests/test_process_interface_run_lifecycle.py::test_legacy_actual_ndjson_disconnect_detaches_observer",
+    "apps/api/tests/test_process_interface_run_lifecycle.py::test_reopened_api_reconciles_interruption_without_restarting",
+    "packages/workspace_service/tests/test_process_human_input_source.py::test_every_required_evidence_port_must_have_a_producer",
+    "packages/workspace_service/tests/test_process_human_input_source.py::test_readiness_distinguishes_planned_human_response_from_ordinary_production",
+    "packages/workspace_service/tests/test_process_human_input_source.py::test_rejects_unsupported_declarations",
+    "packages/workspace_service/tests/test_process_input_readiness.py::test_file_reference_is_hashed_and_reread_without_path_as_contents",
+    "packages/workspace_service/tests/test_process_input_readiness.py::test_supplied_value_and_declared_upstream_output_are_ready",
+    "packages/workspace_service/tests/test_process_input_readiness.py::test_unknown_schema_or_graph_semantics_are_explicitly_unsupported",
+    "packages/workspace_service/tests/test_process_interface_continuation.py::test_concurrent_duplicate_response_and_consumption_are_single_use",
+    "packages/workspace_service/tests/test_process_interface_continuation.py::test_exact_lost_ack_retry_retains_original_answer_after_consumption",
+    "packages/workspace_service/tests/test_process_interface_continuation.py::test_interrupted_input_continuation_blocks_replay_of_uncertain_segment",
+    "packages/workspace_service/tests/test_process_interface_continuation.py::test_invalid_schema_scope_and_subject_create_no_response",
+    "packages/workspace_service/tests/test_process_interface_continuation.py::test_two_source_barriers_resume_original_record_and_retry_without_model_replay",
+    "packages/workspace_service/tests/test_process_interface_continuation.py::test_v3_restore_rejects_changed_or_unconsumed_subject",
+    "packages/workspace_service/tests/test_process_interface_service_boundaries.py::test_changed_source_requires_repreparation_not_silent_rebinding",
+    "packages/workspace_service/tests/test_process_preparation_service.py::test_missing_later_choice_blocks_public_start_before_any_dispatch",
+    "packages/workspace_service/tests/test_process_preparation_service.py::test_unavailable_tool_gateway_has_a_useful_blocking_reason",
+    "packages/workspace_service/tests/test_process_run_supervisor.py::test_cancel_observer_disconnect_does_not_abandon_persisted_command",
+    "packages/workspace_service/tests/test_process_run_supervisor.py::test_concurrent_duplicate_start_allocates_only_one_task",
+    "packages/workspace_service/tests/test_process_run_supervisor.py::test_explicit_local_cancel_keeps_completed_earlier_output",
+    "packages/workspace_service/tests/test_process_run_supervisor.py::test_reopened_supervisor_reattaches_terminal_run_without_model_work",
+    "packages/workspace_service/tests/test_process_run_supervisor.py::test_wrong_input_digest_rejects_before_allocating_or_generating",
+    "packages/workspace_service/tests/test_workflow_async_operations.py::test_explicit_observation_timeout_retains_uncertainty_and_single_submit",
+    "packages/workspace_service/tests/test_workflow_async_operations.py::test_invalid_observation_timeout_blocks_readiness",
+    "packages/workspace_service/tests/test_workflow_async_operations.py::test_invalid_observation_timeout_rejected_before_submission",
+    "packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_budget_does_not_hold_a_stalled_status_call_open",
+    "packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded",
+    "packages/workspace_service/tests/test_workflow_async_operations.py::test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission",
+    "packages/workspace_service/tests/test_workflow_execution_continuation.py::test_stale_or_uncertain_continuations_never_execute_later_steps",
+    "packages/workspace_service/tests/test_workflow_execution_continuation.py::test_two_sequential_checkpoints_resume_same_run_and_execute_true_final_step",
+    "packages/workspace_service/tests/test_workflow_mcp_execution.py::test_missing_task_tool_has_provider_neutral_correction_without_dispatch",
+    "--basetemp=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-runtime-checks-029\\temp",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-runtime-checks-029\\results.xml"
+  ],
+  "source_commit": "66fab12b522a64e5e185b0ff35c0722773ddc8b6",
+  "mapped_obligations": {
+    "RUNTIME-CHECK-01": [
+      "packages/workspace_service/tests/test_process_interface_service_boundaries.py::test_changed_source_requires_repreparation_not_silent_rebinding",
+      "packages/workspace_service/tests/test_process_run_supervisor.py::test_wrong_input_digest_rejects_before_allocating_or_generating"
+    ],
+    "RUNTIME-CHECK-02": [
+      "packages/workspace_service/tests/test_process_input_readiness.py::test_file_reference_is_hashed_and_reread_without_path_as_contents"
+    ],
+    "RUNTIME-CHECK-03": [
+      "packages/workspace_service/tests/test_process_preparation_service.py::test_unavailable_tool_gateway_has_a_useful_blocking_reason",
+      "packages/workspace_service/tests/test_workflow_mcp_execution.py::test_missing_task_tool_has_provider_neutral_correction_without_dispatch",
+      "packages/workspace_service/tests/test_process_human_input_source.py::test_every_required_evidence_port_must_have_a_producer"
+    ],
+    "RUNTIME-CHECK-04": [
+      "packages/workspace_service/tests/test_process_input_readiness.py::test_unknown_schema_or_graph_semantics_are_explicitly_unsupported",
+      "packages/workspace_service/tests/test_process_human_input_source.py::test_rejects_unsupported_declarations"
+    ],
+    "RUNTIME-CHECK-05": [
+      "packages/workspace_service/tests/test_process_preparation_service.py::test_missing_later_choice_blocks_public_start_before_any_dispatch"
+    ],
+    "RUNTIME-CHECK-06": [
+      "packages/workspace_service/tests/test_process_input_readiness.py::test_supplied_value_and_declared_upstream_output_are_ready",
+      "packages/workspace_service/tests/test_process_human_input_source.py::test_readiness_distinguishes_planned_human_response_from_ordinary_production"
+    ],
+    "RUNTIME-CHECK-07": [
+      "packages/workspace_service/tests/test_process_interface_continuation.py::test_two_source_barriers_resume_original_record_and_retry_without_model_replay"
+    ],
+    "RUNTIME-CHECK-08": [
+      "packages/workspace_service/tests/test_process_interface_continuation.py::test_invalid_schema_scope_and_subject_create_no_response",
+      "apps/api/tests/test_process_interface_checkpoints.py::test_route_rejects_stale_invalid_and_cross_process_answer"
+    ],
+    "RUNTIME-CHECK-09": [
+      "packages/workspace_service/tests/test_process_interface_continuation.py::test_v3_restore_rejects_changed_or_unconsumed_subject",
+      "apps/api/tests/test_process_interface_checkpoints.py::test_changed_actual_artifact_returns_actionable_conflict"
+    ],
+    "RUNTIME-CHECK-10": [
+      "packages/workspace_service/tests/test_process_interface_continuation.py::test_exact_lost_ack_retry_retains_original_answer_after_consumption",
+      "packages/workspace_service/tests/test_process_interface_continuation.py::test_concurrent_duplicate_response_and_consumption_are_single_use",
+      "packages/workspace_service/tests/test_process_run_supervisor.py::test_concurrent_duplicate_start_allocates_only_one_task"
+    ],
+    "RUNTIME-CHECK-11": [
+      "apps/api/tests/test_process_interface_run_lifecycle.py::test_actual_sse_disconnect_leaves_backend_running",
+      "apps/api/tests/test_process_interface_run_lifecycle.py::test_legacy_actual_ndjson_disconnect_detaches_observer"
+    ],
+    "RUNTIME-CHECK-12": [
+      "packages/workspace_service/tests/test_process_run_supervisor.py::test_reopened_supervisor_reattaches_terminal_run_without_model_work",
+      "apps/api/tests/test_process_interface_run_lifecycle.py::test_reopened_api_reconciles_interruption_without_restarting"
+    ],
+    "RUNTIME-CHECK-13": [
+      "packages/workspace_service/tests/test_workflow_execution_continuation.py::test_two_sequential_checkpoints_resume_same_run_and_execute_true_final_step"
+    ],
+    "RUNTIME-CHECK-14": [
+      "packages/workspace_service/tests/test_process_interface_continuation.py::test_interrupted_input_continuation_blocks_replay_of_uncertain_segment",
+      "packages/workspace_service/tests/test_workflow_execution_continuation.py::test_stale_or_uncertain_continuations_never_execute_later_steps",
+      "packages/workspace_service/tests/test_workflow_async_operations.py::test_explicit_observation_timeout_retains_uncertainty_and_single_submit"
+    ],
+    "RUNTIME-CHECK-15": [
+      "packages/workspace_service/tests/test_workflow_async_operations.py::test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission",
+      "packages/workspace_service/tests/test_process_run_supervisor.py::test_explicit_local_cancel_keeps_completed_earlier_output",
+      "packages/workspace_service/tests/test_process_run_supervisor.py::test_cancel_observer_disconnect_does_not_abandon_persisted_command"
+    ],
+    "RUNTIME-CHECK-16": [
+      "packages/workspace_service/tests/test_workflow_async_operations.py::test_invalid_observation_timeout_rejected_before_submission",
+      "packages/workspace_service/tests/test_workflow_async_operations.py::test_invalid_observation_timeout_blocks_readiness",
+      "packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded",
+      "packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_budget_does_not_hold_a_stalled_status_call_open"
+    ],
+    "RUNTIME-CHECK-17": [
+      "apps/api/tests/test_process_interface_checkpoints.py::test_undeclared_question_after_response_is_a_diagnostic_not_another_form"
+    ]
+  },
+  "unique_selected_functions": 35
+}

@@ -1,0 +1,56 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 84,
+      "sha256": "1c37f95bd709d91bba266530b368bb70f80e1cb973ca84eb6aa552b41d1583d2"
+    },
+    "case-index.json": {
+      "bytes": 27376,
+      "sha256": "f458ae635628d2759531d611ff472ee82701914cc3475f83bbc14c16419f7498"
+    },
+    "checked-scope.json": {
+      "bytes": 5634,
+      "sha256": "7584572201a5e1018092a1e310b3aeb7180390e57a32f9d57bb634c1652d9615"
+    },
+    "command.json": {
+      "bytes": 10704,
+      "sha256": "a667b993d0f85987bf06492baeec44fb84a49abb166f8701de421466230ddb33"
+    },
+    "commit-guard-first-failure.json": {
+      "bytes": 822,
+      "sha256": "57e38094224d509dcc763c59367afd51bf73fbdf3db0511ba75e68e16a715cc2"
+    },
+    "output.log": {
+      "bytes": 981,
+      "sha256": "9a2db4e3bda75af148aa26c3eeb16db76249612bcbd17b49544c61999d92df6a"
+    },
+    "primary-assertions.json": {
+      "bytes": 10643,
+      "sha256": "a5d04b093d42854cad6a5e5bbfd9426bdbd3d37045850dcc8d8e4f3559e2fafa"
+    },
+    "README.md": {
+      "bytes": 2211,
+      "sha256": "9e4da5970e131394b21aad51d1e2caea98d511148ce56c63590f7ab2869f8cd0"
+    },
+    "result.json": {
+      "bytes": 240,
+      "sha256": "a06fda875948cbadb351d465bf03d692575a2bcca327d367f468a5faba5b837b"
+    },
+    "results.xml": {
+      "bytes": 22595,
+      "sha256": "6e8feb4f77c236fa8fb640fa490b386eb586d2cb20704bab36a5effe89c853db"
+    },
+    "semantic-ledger.json": {
+      "bytes": 282320,
+      "sha256": "34d22d857ef8e2adcb74c906350484924f1da6a368199b5df03cc305dade8fc2"
+    },
+    "source-inspection.json": {
+      "bytes": 55355,
+      "sha256": "5c1156fe51af4b573d9e284a65139558155dda33033e3aff0892d7b82a945c76"
+    },
+    "v2-owner-readback.json": {
+      "bytes": 1778,
+      "sha256": "8b23bc6c99cc820cc72898c5d9158ab5dc548d45e9e85e711c74d7a186bd540d"
+    }
+  }
+}

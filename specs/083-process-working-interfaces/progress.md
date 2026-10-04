@@ -1,5 +1,21 @@
 # Feature 083 progress
 
+## Named runtime checks — 3 October 2026
+
+The [current runtime primary verification](../../artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/README.md) disposes all seventeen named
+runtime checks using 35 existing test functions and **81 fresh passing cases**,
+zero failures/errors/skips. **131 proved / 51 awaiting review** of 182 original
+identities/texts. Selected tests inspect current source/file/readiness, declared
+barriers, stale/schema/duplicate responses, disconnect/recreation, uncertain
+actions, observed cancellation, finite budgets and undeclared questions.
+
+Separate current owner lookup reads two persisted v2 approvals unchanged. Models
+and provider responses are controlled fixtures; this is not another live engineering
+or physical proof. Mandatory reviews, old failures and original actual outputs stay
+intact. **55 tasks checked; T056/T057 open.** Remaining contract/task review,
+independent common-view start, stricter printed first-stage and final installed
+packaging continue; no full feature or human engineering acceptance claim.
+
 ## Selected-provider primary review — 3 October 2026
 
 The [selected-provider primary review](../../artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/README.md) disposes FR-015/T043 against actual

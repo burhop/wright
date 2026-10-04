@@ -1,0 +1,149 @@
+{
+  "checks": [
+    {
+      "id": "RUNTIME-CHECK-01",
+      "behavior": "Changed accepted source requires repreparation with SOURCE_CHANGED; wrong frozen input digest returns SUBJECT_STALE before run allocation or model generation.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_interface_service_boundaries.py::test_changed_source_requires_repreparation_not_silent_rebinding",
+        "packages/workspace_service/tests/test_process_run_supervisor.py::test_wrong_input_digest_rejects_before_allocating_or_generating"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-02",
+      "behavior": "Prepared file contents are read and hashed, not treated as their path string. Changing the actual file makes a later preparation reject SUBJECT_STALE.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_input_readiness.py::test_file_reference_is_hashed_and_reread_without_path_as_contents"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-03",
+      "behavior": "Unavailable gateway/tool produces actionable CAPABILITY_UNAVAILABLE/WORKFLOW_NOT_READY without dispatch. A declared required evidence port without a producer is rejected by compilation.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_preparation_service.py::test_unavailable_tool_gateway_has_a_useful_blocking_reason",
+        "packages/workspace_service/tests/test_workflow_mcp_execution.py::test_missing_task_tool_has_provider_neutral_correction_without_dispatch",
+        "packages/workspace_service/tests/test_process_human_input_source.py::test_every_required_evidence_port_must_have_a_producer"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-04",
+      "behavior": "Unknown schema/graph semantics and unsupported human declarations fail READINESS_UNSUPPORTED/WORKFLOW_NOT_READY with correction; they do not weaken the accepted schema.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_input_readiness.py::test_unknown_schema_or_graph_semantics_are_explicitly_unsupported",
+        "packages/workspace_service/tests/test_process_human_input_source.py::test_rejects_unsupported_declarations"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-05",
+      "behavior": "A required choice consumed by a later step blocks public start as unresolved/INPUT_REQUIRED before any model call, owned task, durable receipt, log or early output.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_preparation_service.py::test_missing_later_choice_blocks_public_start_before_any_dispatch"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-06",
+      "behavior": "Declared upstream output is ready before its producer executes and retains exact producer step/port. A declared human response is classified separately; only actual preparation inputs are frozen.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_input_readiness.py::test_supplied_value_and_declared_upstream_output_are_ready",
+        "packages/workspace_service/tests/test_process_human_input_source.py::test_readiness_distinguishes_planned_human_response_from_ordinary_production"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-07",
+      "behavior": "Two structured human barriers wait and resume the same run/log. Two retained typed answers feed only their eligible later steps; exact retry after consumption performs no model replay.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_interface_continuation.py::test_two_source_barriers_resume_original_record_and_retry_without_model_replay"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-08",
+      "behavior": "Invalid frozen schema, wrong source/scope/subject and malformed route answers create no response, alter no checkpoint, and dispatch no additional step.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_interface_continuation.py::test_invalid_schema_scope_and_subject_create_no_response",
+        "apps/api/tests/test_process_interface_checkpoints.py::test_route_rejects_stale_invalid_and_cross_process_answer"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-09",
+      "behavior": "Changed/unconsumed v3 subject cannot restore continuation. Changed actual artifact returns actionable 409 SUBJECT_STALE without another model call.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_interface_continuation.py::test_v3_restore_rejects_changed_or_unconsumed_subject",
+        "apps/api/tests/test_process_interface_checkpoints.py::test_changed_actual_artifact_returns_actionable_conflict"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-10",
+      "behavior": "Lost-ack retry returns the original immutable response before/after consumption. Concurrent response/consume and duplicate start each allocate or dispatch once; changed payload conflicts.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_interface_continuation.py::test_exact_lost_ack_retry_retains_original_answer_after_consumption",
+        "packages/workspace_service/tests/test_process_interface_continuation.py::test_concurrent_duplicate_response_and_consumption_are_single_use",
+        "packages/workspace_service/tests/test_process_run_supervisor.py::test_concurrent_duplicate_start_allocates_only_one_task"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-11",
+      "behavior": "Actual controlled ASGI SSE and legacy NDJSON disconnect leave the backend owner live; releasing the fake model finishes the same run with one model call.",
+      "selected_tests": [
+        "apps/api/tests/test_process_interface_run_lifecycle.py::test_actual_sse_disconnect_leaves_backend_running",
+        "apps/api/tests/test_process_interface_run_lifecycle.py::test_legacy_actual_ndjson_disconnect_detaches_observer"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-12",
+      "behavior": "Recreated owner reattaches a terminal run without model work; API recreation while interrupted reports reconciliation_required without silently restarting the retained receipt.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_run_supervisor.py::test_reopened_supervisor_reattaches_terminal_run_without_model_work",
+        "apps/api/tests/test_process_interface_run_lifecycle.py::test_reopened_api_reconciles_interruption_without_restarting"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-13",
+      "behavior": "Canonical two-review fixture resumes its original v2 run and true final step. Separate current production owner lookup rereads both actual persisted v2 records unchanged as approvals, without decision/dispatch/resume.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_workflow_execution_continuation.py::test_two_sequential_checkpoints_resume_same_run_and_execute_true_final_step"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-14",
+      "behavior": "Interrupted consumed response segments and stale/uncertain approvals do not execute later work or alter the original log. Unconfirmed external cancellation stays cancellation_unconfirmed and never becomes completed; submission occurs once.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_process_interface_continuation.py::test_interrupted_input_continuation_blocks_replay_of_uncertain_segment",
+        "packages/workspace_service/tests/test_workflow_execution_continuation.py::test_stale_or_uncertain_continuations_never_execute_later_steps",
+        "packages/workspace_service/tests/test_workflow_async_operations.py::test_explicit_observation_timeout_retains_uncertainty_and_single_submit"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-15",
+      "behavior": "Cancellation requested and actual provider-status cancelled are separate events. Local cancellation retains earlier completed output; disconnecting its observer does not abandon the durable cancellation command or replay it.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_workflow_async_operations.py::test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission",
+        "packages/workspace_service/tests/test_process_run_supervisor.py::test_explicit_local_cancel_keeps_completed_earlier_output",
+        "packages/workspace_service/tests/test_process_run_supervisor.py::test_cancel_observer_disconnect_does_not_abandon_persisted_command"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-16",
+      "behavior": "Invalid finite observation budgets fail before submission/readiness. A qualified multihour external budget remains outside bounded model decisions, while one stalled status call stays short and triggers explicit cancellation without resubmission.",
+      "selected_tests": [
+        "packages/workspace_service/tests/test_workflow_async_operations.py::test_invalid_observation_timeout_rejected_before_submission",
+        "packages/workspace_service/tests/test_workflow_async_operations.py::test_invalid_observation_timeout_blocks_readiness",
+        "packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded",
+        "packages/workspace_service/tests/test_workflow_async_operations.py::test_multihour_budget_does_not_hold_a_stalled_status_call_open"
+      ]
+    },
+    {
+      "id": "RUNTIME-CHECK-17",
+      "behavior": "A model asking an undeclared runtime question, or returning an invalid outcome envelope, fails with an owning-block diagnostic. No new waiting interaction/respond authority appears; retry is OUTCOME_UNKNOWN and does not call the model again.",
+      "selected_tests": [
+        "apps/api/tests/test_process_interface_checkpoints.py::test_undeclared_question_after_response_is_a_diagnostic_not_another_form"
+      ]
+    }
+  ],
+  "source_test_bodies_reviewed": 35,
+  "fresh_cases": 81,
+  "limits": [
+    "81 cases in 35 existing test functions exercise controlled current backend/compiler/transport fixtures, with fake model/provider behavior; they are not another live engineering/MCP/browser or physical demonstration.",
+    "Backend reopening is in-process owner/API recreation and persisted state inspection, not arbitrary OS crash or distributed lease guarantee.",
+    "Provider cancellation confirms only the configured reported outcome, never a physical stop; unknown outcomes and mandatory engineering reviews stay held.",
+    "Broader contract sections, remaining implementation-task signoff, independent common-view start, stricter printed first-stage and final post-trace installed packaging remain open."
+  ]
+}

@@ -1,5 +1,17 @@
 # Declared interaction implementation evidence
 
+## Current named runtime verification
+
+The [current runtime primary evidence](../../../artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/README.md)
+maps all seventeen named checks to exact current test bodies and 81 fresh passing
+parameterized cases. It retains same-run two-input barriers, immutable and stale
+responses, lost-ack/concurrent single use, actual ASGI observer detach, safe owner
+recreation, preserved uncertainty, observed cancellation and finite model/operation
+budgets. Undeclared questions fail diagnostically without creating another form.
+Separate current owner lookup reads two fresh persisted v2 approval records
+unchanged. These are controlled digital runtime/transport fixtures; no protected
+checkpoint, live engineering provider or physical action is invoked.
+
 ## 2026-10-01 — Accepted-source declaration and editor preservation
 
 **Scope:** T022 completed; T023 is in progress. T024–T028 are pending.
