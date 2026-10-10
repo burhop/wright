@@ -63,6 +63,8 @@ printf '%s\n' "$PIP_CHECK_OUTPUT"
 printf '%s\n' "$PIP_CHECK_OUTPUT" | "${PYTHON_CMD[@]}" \
   scripts/reconcile_hermes_pip_check.py --exit-code "$PIP_CHECK_EXIT"
 echo -e "${GREEN}✓ Hermes environment dependency contract is satisfied.${NC}"
+docker run --rm -i --network none --entrypoint /opt/hermes/.venv/bin/python "$IMAGE_TAG" - \
+  < scripts/check-hermes-jwt-compatibility.py
 
 echo -e "Testing packaged Rivet runtime dependencies..."
 NODE_VERSION=$(docker run --rm --entrypoint node "$IMAGE_TAG" --version)

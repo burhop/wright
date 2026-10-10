@@ -49,7 +49,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV HERMES_HOME=/home/agent/.hermes
 
-RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     ca-certificates \
     curl \
@@ -57,10 +57,14 @@ RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get inst
     libblkid1 \
     liblastlog2-2 \
     libmount1 \
+    libpcre2-8-0=10.46-1~deb13u3 \
     libsmartcols1 \
+    libssl3t64=3.5.7-1~deb13u3 \
     libuuid1 \
     login \
     mount \
+    openssl=3.5.7-1~deb13u3 \
+    openssl-provider-legacy=3.5.7-1~deb13u3 \
     util-linux \
     && rm -rf /var/lib/apt/lists/*
 
@@ -126,7 +130,7 @@ ENV WRIGHT_SURFACES_LIVE_APPS_ENABLED=1
 # System packages: Wright operator utilities and supervisor. Hermes, Python,
 # and uv come from the Hermes base image. The Rivet runtime uses the same
 # pinned Node.js distribution as the frontend build stage.
-RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     bzip2 \
     ca-certificates \
@@ -135,7 +139,7 @@ RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get inst
     libblkid1 \
     liblastlog2-2 \
     libmount1 \
-    libpcre2-8-0 \
+    libpcre2-8-0=10.46-1~deb13u3 \
     libpython3.13-minimal \
     libpython3.13-stdlib \
     libsmartcols1 \
@@ -143,11 +147,11 @@ RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get inst
     libssh2-1t64 \
     libuuid1 \
     libatomic1 \
-    libssl3t64 \
+    libssl3t64=3.5.7-1~deb13u3 \
     login \
     mount \
-    openssl \
-    openssl-provider-legacy \
+    openssl=3.5.7-1~deb13u3 \
+    openssl-provider-legacy=3.5.7-1~deb13u3 \
     perl-base \
     python3.13 \
     python3.13-minimal \
@@ -187,9 +191,9 @@ RUN set -eux; \
     rm -f /tmp/micromamba.tar.bz2
 
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
-# Hermes 0.19.0 exactly pins older cryptography and Pillow releases. Wright
+# Hermes 0.19.0 exactly pins older cryptography, Pillow and PyJWT releases. Wright
 # installs the security-fixed releases below and the exact-image smoke gate
-# runs `uv pip check`, accepting only those two version-specific metadata
+# runs `uv pip check`, accepting only those three version-specific metadata
 # conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
 # independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \

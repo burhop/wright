@@ -186,6 +186,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "openssl-provider-legacy" in dockerfile
     assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
     assert "reconcile_hermes_pip_check.py" in smoke
+    assert "scripts/check-hermes-jwt-compatibility.py" in smoke
 
 
 def test_docker_smoke_checks_offline_rivet_first_run_runtime() -> None:

@@ -98,3 +98,18 @@ file hashes, generated vault filenames and typed idempotency identifiers. Automa
 approval review rejected changing scanner configuration under delivery authority.
 The [exact proposed handling](scanner-findings-proposal-090.md) awaits user approval;
 no scanner policy has been changed and no push has occurred.
+
+## Packaging follow-up
+
+Gate 04 passed 391 control-plane tests (one skipped), then stopped on two release
+contracts. The OS update is now bounded to exact PCRE2/OpenSSL packages rather
+than an unrestricted upgrade. The private-package check now respects the existing
+external FreeCAD provider submodule's independent publication ownership. All 212
+focused release, dependency and container contracts pass after those corrections.
+
+The exact-image smoke exposed Hermes 0.19's strict PyJWT 2.13.0 metadata pin. The
+security-fixed 2.15.1 version is recorded alongside the two existing exact security
+overrides. Changed versions and unrelated conflicts still fail. An additional
+image-level check verifies RSA JWT signing/verification and rejection of invalid
+signatures, expired tokens, wrong issuers and wrong audiences. These checks pass;
+the new bounded OS package build and complete gate remain pending.

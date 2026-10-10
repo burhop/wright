@@ -94,7 +94,10 @@ fresh vulnerability database, OS/Python/Node coverage checks and unchanged
 `docker/release-policy.json` evaluator. Dependency compatibility (`pip check`)
 and Wright's own dependency audit do not cover the installed Hermes/OS image
 inventory: PR #121 exposed this gap when Tornado 6.5.6 passed smoke but failed
-the fixable High policy. Tornado 6.5.8 is the bounded upstream security fix.
+the fixable High policy. The current image pins Tornado 6.5.9 and the other
+reviewed security updates in `docker/Dockerfile`; it does not run an unrestricted
+OS package upgrade. The exact-image smoke also checks raw Hermes dependency
+metadata and exercises JWT signing/verification with invalid-token rejection.
 Missing candidate images, source mismatch, unavailable databases, malformed
 reports and policy violations fail. Every reported vulnerability must have a
 valid identity, installed version and exact known severity. A missing fixed

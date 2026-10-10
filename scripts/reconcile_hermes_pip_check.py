@@ -12,11 +12,13 @@ EXPECTED_CONFLICTS = {
     "The package `hermes-agent` requires `cryptography==46.0.7`, "
     "but `50.0.0` is installed",
     "The package `hermes-agent` requires `pillow==12.2.0`, but `12.3.0` is installed",
+    "The package `hermes-agent` requires `pyjwt[crypto]==2.13.0`, "
+    "but `2.15.1` is installed",
 }
 
 
 def reconcile_pip_check(output: str, exit_code: int) -> None:
-    """Accept a clean check or exactly the two reviewed Hermes 0.19 conflicts."""
+    """Accept a clean check or exactly the reviewed Hermes 0.19 conflicts."""
     lines = [line.strip() for line in output.splitlines() if line.strip()]
     conflict_lines = [line for line in lines if line.startswith("The package `")]
 
@@ -32,12 +34,16 @@ def reconcile_pip_check(output: str, exit_code: int) -> None:
             f"uv pip check exited with unexpected status {exit_code}"
         )
 
-    if "Found 2 incompatibilities" not in lines:
+    expected_count = len(EXPECTED_CONFLICTS)
+    if f"Found {expected_count} incompatibilities" not in lines:
         raise HermesDependencyReconciliationError(
-            "uv pip check did not report exactly two incompatibilities"
+            f"uv pip check did not report exactly {expected_count} incompatibilities"
         )
 
-    if len(conflict_lines) != 2 or set(conflict_lines) != EXPECTED_CONFLICTS:
+    if (
+        len(conflict_lines) != expected_count
+        or set(conflict_lines) != EXPECTED_CONFLICTS
+    ):
         unexpected = sorted(set(conflict_lines) - EXPECTED_CONFLICTS)
         missing = sorted(EXPECTED_CONFLICTS - set(conflict_lines))
         raise HermesDependencyReconciliationError(
@@ -63,7 +69,7 @@ def main() -> int:
         print("uv pip check passed without reconciliation.")
     else:
         print(
-            "Accepted only the reviewed Hermes 0.19 cryptography/Pillow "
+            "Accepted only the reviewed Hermes 0.19 cryptography/Pillow/PyJWT "
             "security overrides."
         )
     return 0
