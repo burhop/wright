@@ -77,3 +77,24 @@ and `.local-run/dev-delivery-*`. Failures and corrected reruns are retained.
   waits for two actual asynchronous readiness events. The complete rerun is pending.
 
 These are local candidate repairs, not GitHub CI or dev integration evidence.
+
+## Verified candidate d4156470
+
+The complete frontend rerun passes: 198 test files and 1,789 tests. The exact clean
+image `sha256:70533e9695cc104a94beb0d9ca9075dd34a76e4e9f3c01aba7478e9a2c57dd21`
+built from `d4156470280de860b820753c58a9cc667be5a249` passes the current Trivy policy.
+The runtime Python dependency audit reports no known vulnerabilities. Twenty
+container security/packaging contracts and ten README/scanner-setup contracts pass.
+The final strict docs build passes after the adapter-support/API corrections.
+
+Full merge gate 03 stopped because port 18000 was occupied. Attempt 04 uses
+verified free ports 18183/15283. It has passed the audits, Ruff/format, ESLint,
+Prettier, TypeScript and the blocking release/control-plane type check, and is
+running backend tests. The broad warning-mode MyPy check reports duplicate test
+`conftest` modules; it is not reported as a pass.
+
+The history credential scan found 47 public evidence fields: independently checked
+file hashes, generated vault filenames and typed idempotency identifiers. Automatic
+approval review rejected changing scanner configuration under delivery authority.
+The [exact proposed handling](scanner-findings-proposal-090.md) awaits user approval;
+no scanner policy has been changed and no push has occurred.

@@ -12,7 +12,19 @@ Final local completion is recorded in the
 release, arbitrary provider support and human/physical engineering acceptance
 remain separate. Earlier dated checkpoints retain their original scopes.
 
-## 7 October 2026 — instruction portability and deliberate input
+## Current source checkpoint — 10 October 2026
+
+The instruction-portability correction described below was implemented and locally
+qualified on 8 October. Saved instruction bodies, explicit assumption policy,
+declared input waits and portable dependencies now have
+[recorded implementation evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/instruction-portability-completion.md).
+The [current user guide](../workflows/process-working-interfaces.md) describes the
+shipped source controls. Later usability/engineering checks and unfinished examples
+are tracked separately in the
+[development delivery checkpoint](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/dev-delivery-checkpoint-090.md).
+Local qualification does not establish GitHub CI, dev integration or user acceptance.
+
+## Historical finding — 7 October 2026: instruction portability and deliberate input
 
 The user requires saved/exported workflows to carry their applicable prompts and
 prefers questions at declared process steps. A code audit found hidden prompt
@@ -24,7 +36,7 @@ assumptions, portable export and improvements to the existing user-input step.
 This is planned correction work; earlier implementation evidence does not prove
 these newly identified requirements or close these gaps.
 
-## Current migration checkpoint — 3 October 2026
+## Historical migration checkpoint — 3 October 2026
 
 T048's complete caller inventory and T049's shared-code/error audit now have
 scoped verification. The implicit vendor slice-operation default and vendor-named
