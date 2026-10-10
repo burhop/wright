@@ -1866,8 +1866,9 @@ describe("common process request recovery and observer lifetime", () => {
     expect(
       screen.getByRole("region", { name: "Selected file" }),
     ).not.toHaveFocus();
+    await waitFor(() => expect(finishPreview).toBeDefined());
     await act(async () => {
-      finishPreview?.("exact output");
+      finishPreview!("exact output");
     });
     await screen.findByText("exact output");
     expect(screen.getByRole("region", { name: "Selected file" })).toHaveFocus();

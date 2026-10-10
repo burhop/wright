@@ -101,13 +101,10 @@ describe("App route compatibility", () => {
   });
 
   it("guards the stable process route before the wildcard fallback", () => {
-    const guard = "{processDefinitionEnabled && (";
+    const guard = "{processDefinitionViewEnabled() && (";
     const route = 'path="/processes/product-definition-v1"';
     const wildcard = 'path="*"';
 
-    expect(appSource).toContain(
-      "const processDefinitionEnabled = processDefinitionViewEnabled();",
-    );
     expect(appSource.indexOf(guard)).toBeGreaterThan(-1);
     expect(appSource.indexOf(route)).toBeGreaterThan(appSource.indexOf(guard));
     expect(appSource.indexOf(route)).toBeLessThan(appSource.indexOf(wildcard));

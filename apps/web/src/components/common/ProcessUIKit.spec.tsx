@@ -1515,7 +1515,7 @@ describe("bounded representation views", () => {
       screen.getByRole("link", { name: "Download exact file" }),
     ).toHaveAttribute("download", "inspection-plan.md");
     expect(create).toHaveBeenCalledWith(blob);
-    expect(ready).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(ready).toHaveBeenCalledTimes(1));
     view.unmount();
     expect(revoke).toHaveBeenCalledWith("blob:exact-markdown");
   });

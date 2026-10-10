@@ -424,6 +424,9 @@ export default defineConfig(({ command, mode }) => {
       // user-event sequences. Keep the timeout bounded but realistic on
       // shared and Windows CI runners where JSDOM workers contend for CPU.
       testTimeout: 30_000,
+      // Bound JSDOM concurrency: unrestricted workers cause CPU starvation and
+      // delayed effects on the same shared hosts used by local and CI gates.
+      maxWorkers: 2,
       environmentOptions: {
         jsdom: {
           url: "http://localhost/",

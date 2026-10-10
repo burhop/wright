@@ -59,3 +59,21 @@ exact dev health verification remain pending. No pending check is counted as pas
 
 Local receipts are under `.local-run/process-interfaces-083/mechanical-engineering-20261008`
 and `.local-run/dev-delivery-*`. Failures and corrected reruns are retained.
+
+## Candidate repairs before publication
+
+- `cd836801` records the accumulated source/docs checkpoint; `732946ac` fixes
+  the clean Docker build's missing local process-client/UI-kit packages.
+- `b550da6f` updates PyJWT to 2.15.1 and urllib3 to 2.8.0. The runtime dependency
+  audit then reports no known vulnerabilities. The strict documentation build
+  passes after repairing published-site links; repository evidence links now
+  target tracked GitHub files and local-only evidence is identified honestly.
+- Full gate attempt 01 stopped at the dependency audit. Attempt 02 passed that
+  audit and found fixable image dependencies. The clean image built successfully;
+  its scan remains blocking until the separate OS/npm/pip/Hermes repairs pass.
+- The first whole frontend run recorded 1,782 passes and seven failures. A bounded
+  two-worker reproduction passed 237/238 and isolated a stale route assertion.
+  The correction preserves all test cases, bounds JSDOM worker contention and
+  waits for two actual asynchronous readiness events. The complete rerun is pending.
+
+These are local candidate repairs, not GitHub CI or dev integration evidence.

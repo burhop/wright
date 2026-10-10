@@ -160,7 +160,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"cryptography==50.0.0"' in dockerfile
     assert '"pillow==12.3.0"' in dockerfile
     assert '"msgpack==1.2.1"' in dockerfile
-    assert '"tornado==6.5.8"' in dockerfile
+    assert '"tornado==6.5.9"' in dockerfile
     assert (
         "debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258"
         in dockerfile
@@ -168,7 +168,15 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"setuptools==84.0.0"' in dockerfile
     assert "pip/_vendor" in dockerfile
     assert "setuptools@78.1.1" in dockerfile
-    assert "brace-expansion@5.0.9" in dockerfile
+    assert "brace-expansion@5.0.11" in dockerfile
+    assert "undici@6.28.1" in dockerfile
+    assert (
+        "cp -a node_modules/undici /usr/local/lib/node_modules/npm/node_modules/undici;"
+        in dockerfile
+    )
+    assert '"pyjwt==2.15.1"' in dockerfile
+    assert '"urllib3==2.8.0"' in dockerfile
+    assert "urllib3@2.8.0" in dockerfile
     assert "ip-address@10.3.1" in dockerfile
     assert "tar@7.5.22" in dockerfile
     assert "unexpected npm tar override" in dockerfile

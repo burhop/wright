@@ -17,18 +17,19 @@ COPY packages/process_client/ packages/process_client/
 COPY packages/ui_kit/ packages/ui_kit/
 RUN npm ci
 # npm 12.0.2 still bundles fixed upstream dependencies at vulnerable versions.
-# Replace only those three nested packages in a temporary clean project so the
+# Replace only those affected nested packages in a temporary clean project so the
 # global npm CLI remains functional without inheriting a vulnerable bundle.
 RUN npm install --global npm@12.0.2
 RUN set -eux; \
     mkdir -p /tmp/npm-security-overrides; \
     cd /tmp/npm-security-overrides; \
     npm init -y >/dev/null; \
-    npm install --omit=dev brace-expansion@5.0.9 ip-address@10.3.1 tar@7.5.22 >/dev/null; \
-    rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/tar; \
+    npm install --omit=dev brace-expansion@5.0.11 ip-address@10.3.1 tar@7.5.22 undici@6.28.1 >/dev/null; \
+    rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/tar /usr/local/lib/node_modules/npm/node_modules/undici; \
     cp -a node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/brace-expansion; \
     cp -a node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/ip-address; \
     cp -a node_modules/tar /usr/local/lib/node_modules/npm/node_modules/tar; \
+    cp -a node_modules/undici /usr/local/lib/node_modules/npm/node_modules/undici; \
     node -e "const version=require('/usr/local/lib/node_modules/npm/node_modules/tar/package.json').version; if(version !== '7.5.22') throw new Error('unexpected npm tar override '+version)"; \
     rm -rf /tmp/npm-security-overrides
 COPY apps/web/ apps/web/
@@ -48,7 +49,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV HERMES_HOME=/home/agent/.hermes
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get install -y --no-install-recommends \
     bsdutils \
     ca-certificates \
     curl \
@@ -68,21 +69,24 @@ COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a
 RUN uv pip install --system "msgpack==1.2.1" "setuptools==84.0.0" && \
     rm -rf /root/.cache/uv
 
-# pip 26.2.1 vendors vulnerable msgpack and a deprecated setuptools
+# pip 26.2.1 vendors vulnerable msgpack/urllib3 and a deprecated setuptools
 # pkg_resources compatibility module. The supported pip CLI does not use that
-# module, so replace msgpack, remove it, and update its inventory together.
+# module, so replace the affected libraries, remove it, and update its inventory together.
 RUN set -eux; \
     pip_vendor=/usr/local/lib/python3.13/site-packages/pip/_vendor; \
     mkdir -p /tmp/pip-security-overrides; \
-    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1"; \
-    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/pkg_resources"; \
+    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1" "urllib3==2.8.0"; \
+    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/urllib3" "${pip_vendor}/pkg_resources"; \
     cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
+    cp -a /tmp/pip-security-overrides/urllib3 "${pip_vendor}/urllib3"; \
     sed -i \
       -e "s/msgpack==1.1.2/msgpack==1.2.1/" \
+      -e "s/urllib3==2.7.0/urllib3==2.8.0/" \
       -e "s/setuptools==70.3.0/setuptools==78.1.1/" \
       "${pip_vendor}/vendor.txt"; \
     sed -i \
       -e "s/msgpack@1.1.2/msgpack@1.2.1/g" \
+      -e "s/urllib3@2.7.0/urllib3@2.8.0/g" \
       -e "s/setuptools@70.3.0/setuptools@78.1.1/g" \
       "${pip_vendor}/bom.cdx.json"; \
     rm -rf /tmp/pip-security-overrides /root/.cache/uv
@@ -122,7 +126,7 @@ ENV WRIGHT_SURFACES_LIVE_APPS_ENABLED=1
 # System packages: Wright operator utilities and supervisor. Hermes, Python,
 # and uv come from the Hermes base image. The Rivet runtime uses the same
 # pinned Node.js distribution as the frontend build stage.
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get install -y --no-install-recommends \
     bsdutils \
     bzip2 \
     ca-certificates \
@@ -194,7 +198,9 @@ RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \
-        "tornado==6.5.8" && \
+        "tornado==6.5.9" \
+        "pyjwt==2.15.1" \
+        "urllib3==2.8.0" && \
     rm -rf /root/.cache/uv /home/agent/.cache/uv
 
 # Create agent user (UID 1000).
