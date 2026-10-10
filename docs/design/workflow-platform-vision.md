@@ -139,8 +139,12 @@ runtime and evidence identities. Permission and validation enforcement remain
 backend responsibilities.
 
 The [instruction and interaction refactoring plan](../architecture/workflow-instructions-and-interactions-plan.md)
-records the current code gaps and proposed implementation. These paragraphs
-capture direction, not a claim that instruction portability is implemented.
+preserves the original 7 October analysis. The bounded implementation of saved
+instruction bodies, typed assumption policy, declared input waits and portable
+dependencies completed local verification on 8 October; see the
+[implementation audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/instruction-portability-completion.md)
+and [current user guide](../workflows/process-working-interfaces.md). Local
+verification does not establish release availability or engineering acceptance.
 
 ## Decisions agents must preserve
 
