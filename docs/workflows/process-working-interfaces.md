@@ -34,7 +34,7 @@ in the [getting-started guides](../getting-started/overview.md).
 
 ## Instructions, assumptions and deliberate questions
 
-Open **Instructions** from the workflow editor's menu to inspect the saved
+Choose **Instructions** in the workflow editor to inspect the saved
 instruction collection, effective role instructions and assumption policy.
 **Document reasonable assumptions** allows unspecified choices to be recorded;
 explicit requirements still constrain the task. Step overrides are inspectable

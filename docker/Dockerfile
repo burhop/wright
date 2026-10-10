@@ -11,6 +11,10 @@ FROM node:26-slim@sha256:4ebb5ace66f15a24c14c492e01a8beeed4fddf970a856109f5126e7
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
+# Local file dependencies must be present when npm installs their links and when
+# TypeScript compiles the web app from a clean checkout.
+COPY packages/process_client/ packages/process_client/
+COPY packages/ui_kit/ packages/ui_kit/
 RUN npm ci
 # npm 12.0.2 still bundles fixed upstream dependencies at vulnerable versions.
 # Replace only those three nested packages in a temporary clean project so the

@@ -1,6 +1,6 @@
 # Test Wright as an engineer
 
-10 October 2026 · working build 45 · **product testing in progress**
+10 October 2026 · working build 47 · **product testing in progress**
 
 Start in [Mechanical design studies](http://127.0.0.1:5250/workspace/a6d46bd6-8b43-4263-ae5f-99d8d9924ee5).
 Use your existing signed-in Wright browser tab. These links contain no token.
@@ -68,17 +68,21 @@ cause once while preserving every individual failed check in the assessment.
 See the [malformed-output repair](evidence/process-malformed-output-087.md).
 
 The full goal remains unfinished. You authorized a separate 130 mm shelf variant
-for the dock. Its [separate R5 process and current evidence](evidence/dock-130-variant-088.md)
-are now saved. The initial run retained supplier research but timed out preparing
-intent; no CAD was produced. A corrected direct material-inventory handoff is
-saved and software-tested, with live execution still pending. The original75mm
-design remains preserved. The reviewed responsibility/swim-lane
-implementation still needs locating. Browser coverage now includes software
-fixtures for uncertain cancellation, missing files and nonempty malformed data.
-These do not certify live provider behavior. A final pair of fresh engineering journeys remains
-due after product changes settle. Keep native application launch/provider
-availability separate from the ability to inspect retained results. PPT work is
-deferred.
+for the dock. The latest accepted revision reached its declared intent review
+with 23 outputs, including material inventory and manufacturing intent. It remains
+waiting for that review; no native CAD deliverable or supplier release is claimed.
+The source currently has a port-type mismatch that prevents drawing its diagram.
+Its saved-run history still opens the exact working view and survives reload.
+That source correction requires a visible new revision; the waiting run is preserved.
+See the [development delivery checkpoint](dev-delivery-checkpoint-090.md).
+The original 75 mm design remains preserved.
+
+The reviewed responsibility/swim-lane implementation still needs locating. Browser
+coverage includes software fixtures for uncertain cancellation, missing files and
+nonempty malformed data. These do not certify live provider behavior. A final pair
+of fresh engineering journeys remains due after product changes settle. Keep native
+application launch/provider availability separate from inspecting retained results.
+PPT work is deferred. Codex-as-agent integration is a separate next project.
 
 The UI/API and the three exact-run links above were checked on 10 October;
 local artifact links were checked for existence and recorded by hash. This guide

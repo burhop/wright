@@ -220,6 +220,14 @@ def test_dockerfile_copies_root_package_files_before_workspace_install() -> None
     assert dockerfile.index(src_copy) < dockerfile.index(workspace_install)
 
 
+def test_dockerfile_copies_local_frontend_packages_before_npm_install() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+    for package in ("process_client", "ui_kit"):
+        package_copy = f"COPY packages/{package}/ packages/{package}/"
+        assert package_copy in dockerfile
+        assert dockerfile.index(package_copy) < dockerfile.index("RUN npm ci")
+
+
 def test_hermes_plugin_lifecycle_scripts_are_documented_and_docker_backed() -> None:
     makefile = read_text("Makefile")
     readme = read_text("scripts/README.md")
