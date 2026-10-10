@@ -76,7 +76,7 @@ Map this foundation to existing services and contracts before adding anything.
 Feature 083 implements the bounded shared interaction contract, scoped client,
 public UI kit, common view and AI-created saved interfaces on existing owners.
 Local source/native/Linux verification and two actual digital engineering
-demonstrations are recorded in its [completion audit](../../specs/083-process-working-interfaces/completion.md).
+demonstrations are recorded in its [completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md).
 The product direction remains broader: arbitrary graph semantics, adapters,
 providers and physical engineering acceptance are qualified separately.
 
@@ -336,6 +336,6 @@ vision and the existing constitution and contributor gates.
 
 For Feature 083's current implementation and limits, use the
 [operator/developer guide](../workflows/process-working-interfaces.md) and
-[task record](../../specs/083-process-working-interfaces/tasks.md). Local
+[task record](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/tasks.md). Local
 implementation and installed browser evidence retain their exact checked scope;
 they do not establish release, physical verification or human engineering acceptance.

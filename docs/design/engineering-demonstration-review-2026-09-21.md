@@ -28,7 +28,7 @@ Do not continue using Robot as the principal proof of Wright's product value.
 ## What was reviewed
 
 This review applies the agreed
-[engineering demonstration principles](../../docs/design/engineering-demonstration-principles.md).
+[engineering demonstration principles](engineering-demonstration-principles.md).
 It examines the purpose, tools, meaningful handoffs, engineering outcome, and
 smallest justified change for each case.
 
@@ -76,36 +76,36 @@ the table. “Targeted” proposals are options for approval, not new requiremen
 
 | Scenario and recognizable engineering job | Chain | Treatment | Main gap / smallest recommended adjustment |
 | --- | --- | --- | --- |
-| [printed-replacement-part-01: replace a broken telescope focus wheel](../../tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md) | P | Keep | Explain how the reference and shaft dimensions become the scalloped model and actual printer toolpaths. Show the socket fit dimensions; call the outcome print preparation, not a proven replacement. |
-| [printed-replacement-part-02: replace a drawer handle with gloved-hand clearance](../../tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md) | P | Keep | Make the mounting centres, finger clearance and requested orientation comparison visible beside the sliced geometry. Preserve the existing part and printing requirements. |
-| [printed-replacement-part-03: recreate a removable synthesizer tilt foot](../../tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md) | P | Keep | Connect the sloped support, screw/pad interfaces and cable clearance to the model and slice. Explain handedness; do not silently mirror the part. |
-| [lightweight-equipment-bracket-01: reduce camera-mount mass without excessive deflection](../../tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/01-conveyor-vision-mount/context.md) | B | Keep | CAD-to-FEA is the right foundation. Resolve the permitted pocket/blend design choices, then show the baseline/revision mass, deflection and stress trade-off. Do not add a drawing merely to increase the stage count. |
-| [lightweight-equipment-bracket-02: lighten an instrument outrigger under an angled load](../../tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/02-pump-instrument-outrigger/context.md) | B | Keep | Clarify which rib/pocket geometry Wright may propose while preserving mounts, cable corridor and manufacturing limits. Compare both actual designs under the same load. |
-| [lightweight-equipment-bracket-03: lighten a dock-sensor yoke under a cable-snag load case](../../tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/03-dock-sensor-yoke/context.md) | B | Keep | Preserve pivot and service clearances; show the mass-versus-stiffness assessment. Repair the recorded solver availability problem separately. Do not claim dynamic impact or fatigue qualification from a static calculation. |
-| [raspberry-pi-enclosure-01: choose vents for a quiet desktop computer case](../../tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md) | E | Keep | Show sourced board dimensions, two actual enclosure designs, matching thermal models and the choice between them. Explain what temperature is being compared and the analysis limitations. |
-| [raspberry-pi-enclosure-02: cool a serviceable greenhouse gateway](../../tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md) | E | Keep | Connect louvres/chimney alternatives to temperature and service access. Preserve the two heat sources and warmer environment. Do not suggest a weatherproof/IP qualification. |
-| [raspberry-pi-enclosure-03: cool an edge-vision computer with a restricted fan path](../../tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/03-edge-vision-instrument/context.md) | E | Keep | Explain how the guide changes flow resistance and cooling while preserving rear access. Show the supplied fan-curve assumption and corresponding fields, not only a coloured image. |
-| [sensor-interface-pcb-01: make a thermistor-interface board for a coffee roaster](../../tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md) | C | Keep | Expose the real schematic → placement → routing → fabrication chain. Present outstanding rule-check warnings and native files alongside the fabrication package. |
-| [sensor-interface-pcb-02: make a two-channel pressure-sensor filter board](../../tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md) | C | Keep | Show that channel connectivity, fixed placement and test points survive routing and export. Keep the approved placement corrections rather than resetting the design. |
-| [sensor-interface-pcb-03: make a fan-power/tachometer service board](../../tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md) | C | Keep | Explain the distinction between fan-power paths and tachometer filtering; relate copper constraints and connector locations to the routed board. Do not describe it as a fan controller. |
-| [heat-spreader-sizing-01: select a conduction strap for a silent sign controller](../../tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md) | H | Targeted | Genuine CAD/FE work, but CAD contributes only rectangular dimensions. Consider carrying the selected existing plate into a usable cutting/detail drawing through a real downstream tool. Keep the simple thermal assumptions explicit. |
-| [heat-spreader-sizing-02: fit a camera-to-frame thermal link within a width limit](../../tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/02-camera-cold-wall-link/context.md) | H | Targeted | Connect the temperature-versus-width decision to the selected part's manufacturing detail. Do not add holes, joints or arbitrary 3D physics to make the test look richer. |
-| [heat-spreader-sizing-03: minimise a copper link while allowing for contact resistance](../../tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/03-calibration-lamp-copper-link/context.md) | H | Targeted | Keep the real contact-resistance trade-off and carry the selected geometry into the same focused downstream handoff. Distinguish supplied interface resistance from a measured joint. |
-| [parametric-drill-jig-01: locate repeatable insert holes in furniture rails](../../tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/01-furniture-rail-insert-jig/context.md) | J | Targeted | Strong job; current CAD plus generated hole-layout DXF lacks the advertised separate drafting capability. Feed the actual jig into a qualified drawing/production-preparation tool for a usable bushing and datum detail. |
-| [parametric-drill-jig-02: drill a rectangular tube using a clamped saddle jig](../../tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md) | J | Targeted | Reuse the CAD and approved amendments. The downstream detail should explain seating, bushings, chuck/clamp access and the index tongue; it must not silently alter the workpiece or hole locations. |
-| [parametric-drill-jig-03: drill a keyed six-hole pattern in a circular plate](../../tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/03-indexable-circular-fixture-jig/context.md) | J | Targeted | Reuse the model and governed hole coordinates. Make key orientation, clamps and bushing installation usable in the downstream manufacturing/assembly detail. |
-| [sensor-fan-harness-01: prepare wiring for an incubator fan and sensor](../../tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/01-desktop-incubator/context.md) | W | Targeted | Preserve WireViz and the build package. Consider replacing the custom electrical-analysis stage with an existing electrical-network tool consuming the actual emitted wiring data. No new voltage or load requirements are needed. |
-| [sensor-fan-harness-02: size long ventilation branches with simultaneous fan startup](../../tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md) | W | Targeted | Best harness candidate for a meaningful analysis handoff: shared trunk/startup loading should drive wire/connector decisions, then the build documents. Preserve the separate sensor return and physical branch-control constraints. |
-| [sensor-fan-harness-03: document a serviceable two-zone sampler harness](../../tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/03-dual-zone-air-sampler/context.md) | W | Targeted | Carry the real netlist into the same proposed analysis stage and retain shielding, reserved pins and zone identity in the resulting package. Circuit analysis cannot prove physical mis-mating prevention. |
-| [sheet-metal-supplier-handoff-01: prepare a bent wall dock for a barcode reader](../../tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md) | S | Targeted | Keep the useful sheet-metal job, but simulated supplier gates are not a second engineering application. Propose a genuine flat-pattern manufacturing/DFM consumer; resolve material and bend-access questions without calling a HOLD an approval. |
-| [sheet-metal-supplier-handoff-02: prepare a four-bend cable trough](../../tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/context.md) | S | Targeted | Repair native CAD execution separately. Carry the developed pattern and quantity into a real cutting/nesting or manufacturing-check stage, preserving interior service clearance and bend requirements. |
-| [sheet-metal-supplier-handoff-03: prepare a fitted two-piece instrument chassis](../../tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/context.md) | S | Targeted | Preserve the approved tray/lid relationship and keepout clarification. Resolve forming/feature constraints, then demonstrate a real downstream consumer of both developed parts. A visual export is not a dimensioned manufacturing drawing. |
-| [water-heater-sizing-01: select heater power for a single-cup brewer](../../tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md) | M | Narrower | Useful bounded Modelica sizing study, not yet an extended application chain. Retain it as a simulation example. Component selection or packaging would expand the assignment and needs a separate proposal. |
-| [water-heater-sizing-02: budget heat-up power and energy for a mobile brewer](../../tests/datasets/engineering-workflows/scenarios/water-heater-sizing/02-mobile-field-brewer/context.md) | M | Narrower | Keep the inverter and energy constraints; make clear the battery estimate is accounting, not a separate battery simulation. Do not add a token second tool to relabel the same calculation. |
-| [water-heater-sizing-03: choose batch-heater power robust to heat-loss uncertainty](../../tests/datasets/engineering-workflows/scenarios/water-heater-sizing/03-pilot-batch-dispensing/context.md) | M | Narrower | Preserve the candidate-power/loss matrix and worst-case choice as useful analysis coverage. A later component/thermal-packaging chain requires new agreed scope. |
-| [robot-tracking-diagnosis-01: investigate tracking near a floor seam](../../tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/01-aisle-floor-seam/context.md) | R | Narrower | Preserve the motion-analysis and review tests, including improved plots. Do not call it a complete corrective-design process or infer a proven mechanical cause. A richer robot job requires a separately agreed engineering question and tools. |
-| [robot-tracking-diagnosis-02: compare tracking despite a separate camera clock](../../tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/02-corner-time-alignment/context.md) | R | Narrower | Valuable clock/frame-alignment test. Preserve the specified transformation and timing correction; neither more reporting nor a new title creates a broader tool chain. |
-| [robot-tracking-diagnosis-03: assess tracking with an external-pose dropout](../../tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md) | R | Narrower | Valuable missing-data and evidence-limitation test. Retain the gap-handling rules and explicitly unobserved interval rather than manufacturing a diagnosis or synthetic proof of a fix. |
+| [printed-replacement-part-01: replace a broken telescope focus wheel](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md) | P | Keep | Explain how the reference and shaft dimensions become the scalloped model and actual printer toolpaths. Show the socket fit dimensions; call the outcome print preparation, not a proven replacement. |
+| [printed-replacement-part-02: replace a drawer handle with gloved-hand clearance](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md) | P | Keep | Make the mounting centres, finger clearance and requested orientation comparison visible beside the sliced geometry. Preserve the existing part and printing requirements. |
+| [printed-replacement-part-03: recreate a removable synthesizer tilt foot](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md) | P | Keep | Connect the sloped support, screw/pad interfaces and cable clearance to the model and slice. Explain handedness; do not silently mirror the part. |
+| [lightweight-equipment-bracket-01: reduce camera-mount mass without excessive deflection](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/01-conveyor-vision-mount/context.md) | B | Keep | CAD-to-FEA is the right foundation. Resolve the permitted pocket/blend design choices, then show the baseline/revision mass, deflection and stress trade-off. Do not add a drawing merely to increase the stage count. |
+| [lightweight-equipment-bracket-02: lighten an instrument outrigger under an angled load](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/02-pump-instrument-outrigger/context.md) | B | Keep | Clarify which rib/pocket geometry Wright may propose while preserving mounts, cable corridor and manufacturing limits. Compare both actual designs under the same load. |
+| [lightweight-equipment-bracket-03: lighten a dock-sensor yoke under a cable-snag load case](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/03-dock-sensor-yoke/context.md) | B | Keep | Preserve pivot and service clearances; show the mass-versus-stiffness assessment. Repair the recorded solver availability problem separately. Do not claim dynamic impact or fatigue qualification from a static calculation. |
+| [raspberry-pi-enclosure-01: choose vents for a quiet desktop computer case](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/context.md) | E | Keep | Show sourced board dimensions, two actual enclosure designs, matching thermal models and the choice between them. Explain what temperature is being compared and the analysis limitations. |
+| [raspberry-pi-enclosure-02: cool a serviceable greenhouse gateway](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/context.md) | E | Keep | Connect louvres/chimney alternatives to temperature and service access. Preserve the two heat sources and warmer environment. Do not suggest a weatherproof/IP qualification. |
+| [raspberry-pi-enclosure-03: cool an edge-vision computer with a restricted fan path](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/03-edge-vision-instrument/context.md) | E | Keep | Explain how the guide changes flow resistance and cooling while preserving rear access. Show the supplied fan-curve assumption and corresponding fields, not only a coloured image. |
+| [sensor-interface-pcb-01: make a thermistor-interface board for a coffee roaster](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md) | C | Keep | Expose the real schematic → placement → routing → fabrication chain. Present outstanding rule-check warnings and native files alongside the fabrication package. |
+| [sensor-interface-pcb-02: make a two-channel pressure-sensor filter board](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md) | C | Keep | Show that channel connectivity, fixed placement and test points survive routing and export. Keep the approved placement corrections rather than resetting the design. |
+| [sensor-interface-pcb-03: make a fan-power/tachometer service board](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/context.md) | C | Keep | Explain the distinction between fan-power paths and tachometer filtering; relate copper constraints and connector locations to the routed board. Do not describe it as a fan controller. |
+| [heat-spreader-sizing-01: select a conduction strap for a silent sign controller](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md) | H | Targeted | Genuine CAD/FE work, but CAD contributes only rectangular dimensions. Consider carrying the selected existing plate into a usable cutting/detail drawing through a real downstream tool. Keep the simple thermal assumptions explicit. |
+| [heat-spreader-sizing-02: fit a camera-to-frame thermal link within a width limit](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/02-camera-cold-wall-link/context.md) | H | Targeted | Connect the temperature-versus-width decision to the selected part's manufacturing detail. Do not add holes, joints or arbitrary 3D physics to make the test look richer. |
+| [heat-spreader-sizing-03: minimise a copper link while allowing for contact resistance](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/03-calibration-lamp-copper-link/context.md) | H | Targeted | Keep the real contact-resistance trade-off and carry the selected geometry into the same focused downstream handoff. Distinguish supplied interface resistance from a measured joint. |
+| [parametric-drill-jig-01: locate repeatable insert holes in furniture rails](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/01-furniture-rail-insert-jig/context.md) | J | Targeted | Strong job; current CAD plus generated hole-layout DXF lacks the advertised separate drafting capability. Feed the actual jig into a qualified drawing/production-preparation tool for a usable bushing and datum detail. |
+| [parametric-drill-jig-02: drill a rectangular tube using a clamped saddle jig](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md) | J | Targeted | Reuse the CAD and approved amendments. The downstream detail should explain seating, bushings, chuck/clamp access and the index tongue; it must not silently alter the workpiece or hole locations. |
+| [parametric-drill-jig-03: drill a keyed six-hole pattern in a circular plate](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/03-indexable-circular-fixture-jig/context.md) | J | Targeted | Reuse the model and governed hole coordinates. Make key orientation, clamps and bushing installation usable in the downstream manufacturing/assembly detail. |
+| [sensor-fan-harness-01: prepare wiring for an incubator fan and sensor](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/01-desktop-incubator/context.md) | W | Targeted | Preserve WireViz and the build package. Consider replacing the custom electrical-analysis stage with an existing electrical-network tool consuming the actual emitted wiring data. No new voltage or load requirements are needed. |
+| [sensor-fan-harness-02: size long ventilation branches with simultaneous fan startup](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md) | W | Targeted | Best harness candidate for a meaningful analysis handoff: shared trunk/startup loading should drive wire/connector decisions, then the build documents. Preserve the separate sensor return and physical branch-control constraints. |
+| [sensor-fan-harness-03: document a serviceable two-zone sampler harness](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/03-dual-zone-air-sampler/context.md) | W | Targeted | Carry the real netlist into the same proposed analysis stage and retain shielding, reserved pins and zone identity in the resulting package. Circuit analysis cannot prove physical mis-mating prevention. |
+| [sheet-metal-supplier-handoff-01: prepare a bent wall dock for a barcode reader](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md) | S | Targeted | Keep the useful sheet-metal job, but simulated supplier gates are not a second engineering application. Propose a genuine flat-pattern manufacturing/DFM consumer; resolve material and bend-access questions without calling a HOLD an approval. |
+| [sheet-metal-supplier-handoff-02: prepare a four-bend cable trough](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/context.md) | S | Targeted | Repair native CAD execution separately. Carry the developed pattern and quantity into a real cutting/nesting or manufacturing-check stage, preserving interior service clearance and bend requirements. |
+| [sheet-metal-supplier-handoff-03: prepare a fitted two-piece instrument chassis](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/context.md) | S | Targeted | Preserve the approved tray/lid relationship and keepout clarification. Resolve forming/feature constraints, then demonstrate a real downstream consumer of both developed parts. A visual export is not a dimensioned manufacturing drawing. |
+| [water-heater-sizing-01: select heater power for a single-cup brewer](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/context.md) | M | Narrower | Useful bounded Modelica sizing study, not yet an extended application chain. Retain it as a simulation example. Component selection or packaging would expand the assignment and needs a separate proposal. |
+| [water-heater-sizing-02: budget heat-up power and energy for a mobile brewer](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/water-heater-sizing/02-mobile-field-brewer/context.md) | M | Narrower | Keep the inverter and energy constraints; make clear the battery estimate is accounting, not a separate battery simulation. Do not add a token second tool to relabel the same calculation. |
+| [water-heater-sizing-03: choose batch-heater power robust to heat-loss uncertainty](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/water-heater-sizing/03-pilot-batch-dispensing/context.md) | M | Narrower | Preserve the candidate-power/loss matrix and worst-case choice as useful analysis coverage. A later component/thermal-packaging chain requires new agreed scope. |
+| [robot-tracking-diagnosis-01: investigate tracking near a floor seam](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/01-aisle-floor-seam/context.md) | R | Narrower | Preserve the motion-analysis and review tests, including improved plots. Do not call it a complete corrective-design process or infer a proven mechanical cause. A richer robot job requires a separately agreed engineering question and tools. |
+| [robot-tracking-diagnosis-02: compare tracking despite a separate camera clock](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/02-corner-time-alignment/context.md) | R | Narrower | Valuable clock/frame-alignment test. Preserve the specified transformation and timing correction; neither more reporting nor a new title creates a broader tool chain. |
+| [robot-tracking-diagnosis-03: assess tracking with an external-pose dropout](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md) | R | Narrower | Valuable missing-data and evidence-limitation test. Retain the gap-handling rules and explicitly unobserved interval rather than manufacturing a diagnosis or synthetic proof of a fix. |
 
 ## Tool chains and supporting evidence
 
@@ -121,8 +121,8 @@ The native modeller and slicer make distinct contributions toward producing a
 replacement part; the custom repair wrapper does not need to count as another
 engineering application.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/printed-replacement-part.json),
-[preparer](../../scripts/prepare-printed-dataset-campaign.py),
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/printed-replacement-part.json),
+[preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-printed-dataset-campaign.py),
 and retained native slice receipt (local retained evidence: `artifacts/engineering-workflow-datasets/output/printed-replacement-part-01/attempt-003/artifacts/slice-evidence.json`).
 The receipt records Bambu Studio consuming the repaired mesh and producing a
 nonempty package; it explicitly records no printer connection. Existing native
@@ -136,8 +136,8 @@ measured mass, displacement, stress and reaction comparison. AgentCAD substitute
 for the originally named BREP provider. The field-export helper supplements the
 native analysis evidence; it is not another independent design application.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/lightweight-equipment-bracket.json)
-and [preparer](../../scripts/prepare-bracket-dataset-campaign.py).
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/lightweight-equipment-bracket.json)
+and [preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-bracket-dataset-campaign.py).
 Both revisions are authored before comparison: do not advertise an autonomous
 optimisation loop that has not been demonstrated. This is already a coherent
 design-assessment chain; successful execution and engineering review remain
@@ -152,9 +152,9 @@ The fixed path exposes AgentCAD, reference-retrieval and CFD preparation tools,
 and the foam-agent server. Do not describe this path using the older Blender
 binding's story.
 
-Evidence: [fixed binding](../../tests/datasets/engineering-workflows/bindings/raspberry-pi-enclosure-fixed.json),
-[visual preparer](../../scripts/prepare-pi-visual-dataset-campaign.py),
-[CAD-to-mesh operations](../../scripts/pi_cfd_operations.py), and
+Evidence: [fixed binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/raspberry-pi-enclosure-fixed.json),
+[visual preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-pi-visual-dataset-campaign.py),
+[CAD-to-mesh operations](https://github.com/burhop/wright/blob/dev/scripts/pi_cfd_operations.py), and
 retained preparation record (local retained evidence: `artifacts/engineering-workflow-datasets/output/raspberry-pi-enclosure-01/attempt-032/artifacts/cfd-preparation-a.json`).
 This has a strong product-demonstration structure, but mesh/energy/convergence
 and material assumptions still need their own current validation.
@@ -167,8 +167,8 @@ files. The blwfish KiCad MCP provider exposes the routing engine as well as
 KiCad operations. Separate copying/evidence nodes preserve revisions but do not
 add engineering capabilities.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/sensor-interface-pcb.json),
-[preparer](../../scripts/prepare-pcb-dataset-campaign.py),
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/sensor-interface-pcb.json),
+[preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-pcb-dataset-campaign.py),
 retained routing summary (local retained evidence: `artifacts/engineering-workflow-datasets/output/sensor-interface-pcb-01/attempt-007/artifacts/routing-evidence.md`), and
 [native run record](C:/Users/markb/wright-feature-081/engineering-workflow-demos/runs/campaign-sensor-interface-pcb-01-attempt-007/20260913T095221Z-7dc1de2083bb.json).
 The recorded autoroute call used FreeRouting 2.2.4 and returned 27 tracks with
@@ -185,9 +185,9 @@ closed-form answer disguised as solver output. However, the FE mesh is built
 from measured rectangular extents, not imported CAD surfaces; the permitted
 physics is intentionally close to a simple conduction-bar model.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json),
-[preparer](../../scripts/prepare-heat-dataset-campaign.py), and
-[solver operation](../../scripts/engineering/heat_conduction_skfem.py).
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json),
+[preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-heat-dataset-campaign.py), and
+[solver operation](https://github.com/burhop/wright/blob/dev/scripts/engineering/heat_conduction_skfem.py).
 The handoff exists, but its engineering breadth is modest. A selected-part
 manufacturing detail is a possible focused extension, only if an actual
 downstream application uses the selected geometry. Without that extension,
@@ -202,8 +202,8 @@ checks. The actual binding explicitly substitutes AgentCAD and CAD-derived DXF
 for the original BREP/AutoCAD combination. Extracting drawing geometry is useful,
 but it does not demonstrate a separate established drafting application.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json)
-and [preparer](../../scripts/prepare-drill-jig-dataset-campaign.py).
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json)
+and [preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-drill-jig-dataset-campaign.py).
 Smallest substantive proposal: preserve the designed jig and checks, then feed
 the actual geometry to a qualified tool producing the manufacturing/assembly
 detail an engineer needs. Do not represent the current hole-layout DXF as a full
@@ -217,9 +217,9 @@ schedule, wire cut list, BOM and assembly information. This is useful work.
 However, Graphviz is the rendering dependency, and the custom electrical check
 does not establish another existing engineering analysis application.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/sensor-fan-harness.json),
-[preparer](../../scripts/prepare-harness-dataset-campaign.py), and
-[native generation/custom verification operations](../../scripts/harness_engineering_operations.py).
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/sensor-fan-harness.json),
+[preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-harness-dataset-campaign.py), and
+[native generation/custom verification operations](https://github.com/burhop/wright/blob/dev/scripts/harness_engineering_operations.py).
 The proposed improvement is a qualified electrical-network analysis capability
 consuming the actual generated connections, wire resistances and approved loads;
 its result must affect wire/connector selection and the resulting assembly
@@ -235,8 +235,8 @@ valuable engineering transformation, but the selected supplier leg is explicitly
 simulated; file access and web retrieval do not substitute for a substantive
 second engineering application.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/sheet-metal-supplier-handoff.json)
-and [preparer](../../scripts/prepare-sheet-metal-dataset-campaign.py).
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/sheet-metal-supplier-handoff.json)
+and [preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-sheet-metal-dataset-campaign.py).
 A qualified cutting/nesting or manufacturing-check application consuming the
 actual developed DXF would strengthen the existing job without ordering parts.
 Choose the capability because it resolves the manufacturing need, not because
@@ -251,8 +251,8 @@ heater-power recommendation. The selected tools expose the same bounded model
 and its results. Export, numerical checks and report generation are important
 supporting steps, but not an extended multi-application design process.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/water-heater-sizing.json)
-and [native Modelica preparer](../../scripts/prepare-modelica-dataset-campaign.py).
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/water-heater-sizing.json)
+and [native Modelica preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-modelica-dataset-campaign.py).
 Retain all three as genuine engineering-analysis examples and solver tests.
 Do not replace the native model with a custom calculation. A later component
 selection/packaging process could reuse the study, but would change the current
@@ -266,8 +266,8 @@ operation server provide real work, but largely within one analysis activity.
 The three cases add seam-event, clock/frame and missing-data coverage, not three
 extended corrective-design processes.
 
-Evidence: [binding](../../tests/datasets/engineering-workflows/bindings/robot-tracking-diagnosis.json)
-and [preparer](../../scripts/prepare-robot-dataset-campaign.py).
+Evidence: [binding](https://github.com/burhop/wright/blob/dev/tests/datasets/engineering-workflows/bindings/robot-tracking-diagnosis.json)
+and [preparer](https://github.com/burhop/wright/blob/dev/scripts/prepare-robot-dataset-campaign.py).
 Preserve these tests and their improved review experience. Do not bolt CAD/FEA
 onto the log analysis without a justified engineering question, necessary data
 and a meaningful downstream decision.

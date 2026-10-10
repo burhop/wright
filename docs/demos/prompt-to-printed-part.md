@@ -9,7 +9,7 @@ environment switches and button instructions below describe the retained
 prototype; they are not current installation or operating instructions.
 
 For current work, use [process working interfaces](../workflows/process-working-interfaces.md)
-and the [printed replacement-part example](../../examples/process-interfaces/printed-replacement-part/README.md).
+and the [printed replacement-part example](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/printed-replacement-part/README.md).
 Open the accepted workflow file through the workspace's **Workflows** control,
 then choose **Use saved process**. The common working view provides inputs,
 readiness, results and declared decisions. Create or choose a tailored interface
@@ -23,7 +23,7 @@ establish physical fit, strength, printer compatibility or human acceptance.
 The current isolated preparation proofs retain the original engineering-review
 holds and do not dispatch a physical printer. Migration of remaining campaign
 slicing bindings and full Feature 083 acceptance remain incomplete; see the
-[task and evidence ledger](../../specs/083-process-working-interfaces/completion.md).
+[task and evidence ledger](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md).
 
 Historical result links remain read-only and retain their exact source, run and
 artifact identities. Opening one must not rerun or dispatch the old process.

@@ -3,7 +3,7 @@
 **Status:** published 0.6.0 defect retained; an existing unreleased pinned upstream
 revision is separately qualified. No Wright workaround or catalog promotion.
 **Source:** https://github.com/jdilla1277/agentcad, installed version 0.6.0.
-**Evidence:** [fresh Linux qualification](../../../artifacts/process-interfaces/083/20261003-agentcad-fresh-clean-partial/README.md).
+**Evidence:** [fresh Linux qualification](https://github.com/burhop/wright/blob/dev/artifacts/process-interfaces/083/20261003-agentcad-fresh-clean-partial/README.md).
 
 ## Reproduction and environment
 
@@ -45,7 +45,7 @@ install records matching source SHA, official 11-tool discovery, exact gateway
 schemas, one successful creation and one successful exact-STEP readback. The
 2×3×4 mm/24 mm³ output remains byte-identical through measurement. Both exact
 new containers are stopped. No provider source was modified or native failed
-creation retried. See [pinned qualification](../../../artifacts/process-interfaces/083/20261003-agentcad-pinned-upstream-qualified/README.md).
+creation retried. See [pinned qualification](https://github.com/burhop/wright/blob/dev/artifacts/process-interfaces/083/20261003-agentcad-pinned-upstream-qualified/README.md).
 
 The inspected PyPI version is still 0.6.0. Use the recorded Git pin to reproduce
 this selected qualification; do not assume the package version string identifies

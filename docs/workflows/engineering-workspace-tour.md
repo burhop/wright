@@ -83,7 +83,7 @@ interface source. It does not inherit the original user's credentials or approva
 - [Working interfaces and exact controls](process-working-interfaces.md)
 - [Output validation and review boundaries](process-output-validation.md)
 - [Workflow template catalog and readiness](engineering-workflow-templates.md)
-- [Current implementation and remaining work](../../specs/083-process-working-interfaces/mechanical-engineering-execution.md)
+- [Current implementation and remaining work](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/mechanical-engineering-execution.md)
 
 Screenshots were captured from production preview build 47 on 10 October 2026.
 They show the actual served UI and contain no authentication token. The

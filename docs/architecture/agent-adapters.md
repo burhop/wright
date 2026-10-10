@@ -40,7 +40,7 @@ with other platforms qualified separately rather than assumed equivalent.
 Feature 083 implements a local `process-ui-author/1` path through this boundary.
 Actual configured-model preview/save/update and saved reuse have recorded
 evidence, including installed saved-interface reuse. The
-[completion audit](../../specs/083-process-working-interfaces/completion.md)
+[completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md)
 records the bounded local feature scope; release and user acceptance are separate. The
 manager-specific examples below do not make each platform an immutable
 engineering role or qualify it for scoped UI authoring.
@@ -67,8 +67,8 @@ Hermes is the locally verified adapter path. Other adapters/platforms or model
 overrides need independent capability qualification; being named in this
 architecture document is not proof of scoped authoring support. See
 [process working interfaces](../workflows/process-working-interfaces.md), the
-[public authoring resource](../../packages/workspace_service/src/workspace_service/process_interfaces/resources/public-api.md)
-and [actual-model evidence](../../specs/083-process-working-interfaces/evidence/live-ui-authoring.md).
+[public authoring resource](https://github.com/burhop/wright/blob/dev/packages/workspace_service/src/workspace_service/process_interfaces/resources/public-api.md)
+and [actual-model evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/live-ui-authoring.md).
 
 The agent adapter layer bridges the system to any target LLM provider:
 

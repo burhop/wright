@@ -8,7 +8,7 @@ run repair locally or stage the retired native implementation.
 The original three assignments, source stages, full validation profiles, material
 and process basis, review identities and controlling inputs remain. The original
 repair constraints are retained as
-[configuration](../../examples/process-interfaces/printed-replacement-part/original-repair-policy.json).
+[configuration](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/printed-replacement-part/original-repair-policy.json).
 The 256 mm envelope belongs to this historical reference policy, not to generic
 Wright inspection or a universal manufacturing requirement. A different process
 declares its own requirements and qualified capabilities.
@@ -30,7 +30,7 @@ Supply one exact scenario, fresh workspace and attempt. The binding identifies:
   `handle_triangle_limit`. For case 02 use that handle limit (24,000 triangles) and
   `planar_cleanup: true`; other original cases retain 80,000 and `false`.
 
-Use [the declaration example](../../examples/process-interfaces/external-mesh-binding.example.json)
+Use [the declaration example](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/external-mesh-binding.example.json)
 as a field reference. Its placeholder paths/digests are not ready to execute.
 Native arguments must already name the actual source and expected repaired STL
 and geometry PNG paths under the provider's explicitly configured workspace.

@@ -8,7 +8,7 @@
 **Status:** Feature 083 locally implements the bounded stages below. The shared
 interaction contract/client/kit, runtime and migration have actual scoped evidence.
 Final local completion is recorded in the
-[completion audit](../../specs/083-process-working-interfaces/completion.md);
+[completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md);
 release, arbitrary provider support and human/physical engineering acceptance
 remain separate. Earlier dated checkpoints retain their original scopes.
 
@@ -33,7 +33,7 @@ controlled checks and156 frontend checks pass. Seven unchanged prior-feature
 catalog/lifecycle/source-contract references remain explicitly documented metadata
 or inherited integration debt, not new independent MCP implementations or a
 vendor-free-platform claim. Original profiles and engineering evidence remain
-preserved. See the [shared audit](../../specs/083-process-working-interfaces/evidence/shared-platform-audit.md).
+preserved. See the [shared audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/shared-platform-audit.md).
 Current provider/scenario qualification and complete installed/workspace/regression
 acceptance are separate; earlier checkpoint paragraphs retain their original scope.
 
@@ -50,7 +50,7 @@ a fresh valid cube passes 13 checks and reaches the actual independent slicer.
 This reuses the existing validator, subjects, reports and recovery; it adds no
 executor or inferred vendor status authority. 207 owning/affected and 231 broader
 082 checks pass (overlapping counts); all twelve exact proof containers are stopped.
-See [mesh evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#independent-mesh-retirement-and-existing-validator-gate)
+See [mesh evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#independent-mesh-retirement-and-existing-validator-gate)
 and [explicit configuration](../workflows/external-mesh-bindings.md).
 Small digital handoff qualification does not prove native repair-policy equivalence
 for the original assignments or complete provider/UI/installed migration acceptance.
@@ -62,7 +62,7 @@ unchanged package validation role to the actual producer. Explicit mounted job
 paths, exact test write enrollment, fifteen recorded output hashes and duplicate
 start reconciliation are checked. This supplements the earlier diagnostic below;
 it does not establish all six assignments or complete provider/migration tasks.
-See [runtime evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#actual-slicing-handoffs-and-package-producer-correction).
+See [runtime evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#actual-slicing-handoffs-and-package-producer-correction).
 
 Both original printed/drill-jig preparers declare independent slicing and passive
 inspection. The final diagnostic now uses an explicit independent MCP definition.
@@ -78,7 +78,7 @@ This does not establish live canonical-runtime qualification of the new bindings
 clean Linux catalog qualification, physical verification or human acceptance.
 Other active provider coupling and full qualification still require their own
 audit/disposition. T043/T048/T049 remain open, as do complete current platform
-acceptance and final audits. See [migration evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#slice-probe-migration-and-embedded-file-retirement).
+acceptance and final audits. See [migration evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#slice-probe-migration-and-embedded-file-retirement).
 
 ## User outcome comes first
 
@@ -334,8 +334,8 @@ authorized local M0–M5 implementation and verification; its task/evidence reco
 defines the bounded delivered scope.
 
 The concrete follow-on is
-[Feature 083: Process working interfaces](../../specs/083-process-working-interfaces/plan.md),
-with a [saved implementation goal](../../specs/083-process-working-interfaces/implementation-goal.md).
+[Feature 083: Process working interfaces](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/plan.md),
+with a [saved implementation goal](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/implementation-goal.md).
 Its approved scope is the complete experience selected by the user: interaction/runtime
 foundation, shared client/kit/common view, actual UI generation/preview/save/update
 through Wright's coding role, and proof on two different existing engineering
@@ -346,7 +346,7 @@ saved reuse, digital engineering parity, active prototype retirement and install
 native/Linux browser checks have bounded evidence. The completion audit records
 their limits rather than implying physical or universal provider acceptance. See
 the [operator guide](../workflows/process-working-interfaces.md) and the feature's
-[task record](../../specs/083-process-working-interfaces/tasks.md).
+[task record](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/tasks.md).
 
 The managed context now points to approved Feature 083; preserve Feature 082's
 historical approvals and validator contracts. This roadmap
@@ -359,7 +359,7 @@ The responsibilities below describe the original prototype. The dispositions
 are reconciled against current source at `7be4cc9b` by the 3 October T048 audit.
 This is migration evidence, not qualification of every provider/scenario, hardware
 support or engineering acceptance. Earlier checkpoints below retain their
-historical scopes. See the [complete caller audit](../../specs/083-process-working-interfaces/evidence/migration-disposition-audit.md).
+historical scopes. See the [complete caller audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/migration-disposition-audit.md).
 
 | Original location | Original responsibility | Current disposition and boundary |
 |---|---|---|
@@ -422,7 +422,7 @@ The history adapter remains read-only and exact-source/run bound.
 Original mixed/untracked prototype bytes are preserved in a private ignored
 archive, with protected campaign/context checks retained. Fourteen API/history
 checks and fourteen affected component tests pass; web TypeScript passes.
-See [caller retirement evidence](../../specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
+See [caller retirement evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
 Service modules, vendor scripts, transitive slicing bindings and fresh installed
 history verification remain open T048/T049 work. Source retirement alone does
 not establish their removal or the full migration.
@@ -442,14 +442,14 @@ their effects are not replayed or silently substituted.
 This supersedes the historical inventory's two `print_part_demo` service rows
 and device/Studio script rows. Dataset/jig slicing still has campaign/proof
 dependencies. T048/T049 remain open for those dispositions, full replacement
-proof and fresh installed history. See the [retirement evidence](../../specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
+proof and fresh installed history. See the [retirement evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
 
 Fresh installed native history now passes six read-only workspace/editor/file-tab
 checks with the retired modules absent and eight inert compatibility replies.
 Copied source/run/UI/continuation identities remain unchanged. The first launcher
 and configuration failures are retained separately. Original user prototype
 formats, transitive slicing and complete engineering replacement remain open;
-T048/T049 are not complete. See [installed history evidence](../../specs/083-process-working-interfaces/evidence/installed-history-retirement.md).
+T048/T049 are not complete. See [installed history evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/installed-history-retirement.md).
 
 ### Original prototype compatibility checkpoint, 3 October 2026
 
@@ -459,7 +459,7 @@ Sixteen served workspace checks preserve exact results/errors, editor return,
 read-only reopen and saved recorder/artifact tabs; eight retired URLs are inert.
 Original and copied source/run/artifact/journal bytes and durable reviews remain
 unchanged. Failed fixture/selector attempts are retained; source integrity was
-not relaxed. See [original history compatibility](../../specs/083-process-working-interfaces/evidence/original-history-compatibility.md).
+not relaxed. See [original history compatibility](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/original-history-compatibility.md).
 This qualifies those formats only. Active slicing wrappers and their transitive
 campaign/probe bindings still require deliberate migration to existing independent
 providers. T048/T049 remain open; historical campaign data and baseline bindings
@@ -473,7 +473,7 @@ fixture load that file directly. Original function ASTs/preparation bodies and
 campaign bindings remain unchanged; 74 focused/affected checks pass. The printed
 preparer loads the exact file without an installed namespace assumption. Existing
 AgentCAD guidance is metadata; no slicing/device implementation is relocated.
-See [migration evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#neutral-helper-extraction-before-slicer-retirement).
+See [migration evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#neutral-helper-extraction-before-slicer-retirement).
 
 This removes transitive helper coupling before actual vendor slicing retirement.
 The three slicing implementation rows, printed/drill-jig operation callers and
@@ -497,4 +497,4 @@ bindings/profile/configuration are rejected before staging/native initialization
 bindings is pending. The diagnostic probe and three embedded slicing operation
 files remain migration debt; audit other active wrappers separately. T048/T049
 are not complete. See [configuration](../workflows/external-slicing-bindings.md)
-and [migration evidence](../../specs/083-process-working-interfaces/evidence/generality-and-migration.md#external-slicing-declarations-in-existing-preparers).
+and [migration evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#external-slicing-declarations-in-existing-preparers).

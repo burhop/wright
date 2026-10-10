@@ -7,15 +7,15 @@ locally implements its bounded interaction contract, scoped client, common view,
 public UI kit and configured-model authoring path. Two actual digital engineering
 chains, saved reuse, migration and installed native/Linux UI-resource checks have
 recorded evidence. Final local completion and limitations are tracked in the
-[completion audit](../../specs/083-process-working-interfaces/completion.md);
+[completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md);
 release and human/physical engineering acceptance remain separate.
 
 The concrete technical package and ready-to-use goal are in
-[Feature 083](../../specs/083-process-working-interfaces/plan.md). It includes
+[Feature 083](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/plan.md). It includes
 the complete AI-created/reusable interface experience and two engineering proofs,
 not only the shared kit. The submitted goal approved implementation. See the
-[task record](../../specs/083-process-working-interfaces/tasks.md) and
-[progress record](../../specs/083-process-working-interfaces/progress.md) for
+[task record](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/tasks.md) and
+[progress record](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/progress.md) for
 checked scope; this vision is not a completion or release claim.
 
 ## User experience
@@ -154,7 +154,7 @@ operations include binding inputs, starting an accepted workflow, reading and
 following a run, retrieving outputs and assessments, recording a review decision,
 and requesting the next permitted action or a supported cancellation.
 
-Feature 083's [interaction contract](../../specs/083-process-working-interfaces/contracts/process-interaction.md)
+Feature 083's [interaction contract](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/contracts/process-interaction.md)
 defines implemented operations and native/presentation transports. Map future
 operations to current services first. Where a contract is missing, add the smallest
 reviewed extension to the owning service; do not create a process-app executor.
@@ -263,6 +263,6 @@ See the [refactoring plan](../architecture/workflow-platform-refactoring-plan.md
 The [operator/developer guide](../workflows/process-working-interfaces.md) describes
 the implemented controls, native API, replaceable coding role and current
 qualification limits. Runnable read-only examples are in
-[process-interface examples](../../examples/process-interfaces/README.md).
+[process-interface examples](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/README.md).
 This is a bounded addition to the workflow platform, not a requirement to build
 or maintain a new Bambu MCP, replace the flowchart, or generate every UI by AI.

@@ -12,7 +12,7 @@ campaigns do not acquire new bindings when reopened.
 
 ## Configure before preparation
 
-Copy [the declaration example](../../examples/process-interfaces/external-slice-binding.example.json)
+Copy [the declaration example](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/external-slice-binding.example.json)
 and fill it using the selected providers' actual discovery and qualification.
 Choose one exact scenario per binding. Record the registered server/tool names,
 current schema digests, explicit native arguments and observed success semantics.
@@ -95,7 +95,7 @@ Six-scenario declaration/readiness and passive-reader fixtures pass. They do not
 qualify all six assignments end to end against live providers. One isolated small
 geometry qualification now exercises the accepted source and durable runtime,
 all four actual tool calls, 15 exact outputs and duplicate-start reconciliation.
-See [runtime evidence](../../artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json).
+See [runtime evidence](https://github.com/burhop/wright/blob/dev/artifacts/process-interfaces/083/20261003-external-slice-runtime-qualified-007/checked-scope.json).
 The inspection provider reports `completed_unverified` because its solver-output
 discovery does not include the separately created passive artifacts. Wright
 verifies those actual files and hashes; this does not establish a verified solve
@@ -130,7 +130,7 @@ schemas prevent the call; timeouts retain `outcome_unknown`. Existing attempt,
 package or response prevents replay. Actual response/passive inspection remains
 distinct from manufacturing or human acceptance.
 
-The [retirement/native evidence](../../artifacts/process-interfaces/083/20261003-external-slice-probe-retirement/checked-scope.json)
+The [retirement/native evidence](https://github.com/burhop/wright/blob/dev/artifacts/process-interfaces/083/20261003-external-slice-probe-retirement/checked-scope.json)
 records the broken cached launcher, installation permission failure, fresh
 selected environment/cache, actual native package, exact stopped owner and
 175 final owning/affected checks. The Windows Python/native host is reused;

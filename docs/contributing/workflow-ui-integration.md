@@ -23,13 +23,13 @@ shared process UI foundation has local common-view, actual-model preview/save/up
 and current served-workspace/installed native/Linux evidence. The preserved editor
 is exercised through the normal workspace entry, including pointer/keyboard typed
 connections, pan/zoom, source/drafts, Undo/Redo, save/layout/reopen and CAS conflicts.
-Read its [completion audit](../../specs/083-process-working-interfaces/completion.md)
+Read its [completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md)
 for exact checked builds and limitations. Verification is separate from user
 acceptance, release and physical engineering acceptance.
 
 Use the [operator/developer guide](../workflows/process-working-interfaces.md)
 for implemented working-view and authoring controls. The
-[neutral examples](../../examples/process-interfaces/README.md) reuse Wright's
+[neutral examples](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/README.md) reuse Wright's
 owning services; they do not provide a separate process executor. Their API
 read checks and packaged-template read are narrower than served-editor or
 installed-workspace acceptance.

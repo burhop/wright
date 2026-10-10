@@ -9,10 +9,10 @@ decisions. A tailored interface changes presentation, not execution.
 `codex/083-process-working-interfaces` within its bounded contracts. Common/tailored
 views, actual-model generation/update, saved reuse, prototype migration, two digital
 engineering chains and installed native/Linux UI-resource checks have evidence.
-The [completion audit](../../specs/083-process-working-interfaces/completion.md)
+The [completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md)
 records exact limitations. This guide is not a release or engineering-acceptance
 claim. Consult the
-[task record](../../specs/083-process-working-interfaces/tasks.md).
+[task record](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/tasks.md).
 
 ## Current-source setup
 
@@ -116,7 +116,7 @@ ordinary local interface creation remain available when import data is unusable.
 
 Local controlled tests and actual-model workspace verification cover selection,
 rebuild, preview, save, chooser reuse, reload and common-view fallback. The
-[engineering execution ledger](../../specs/083-process-working-interfaces/mechanical-engineering-execution.md)
+[engineering execution ledger](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/mechanical-engineering-execution.md)
 records the exact build, workflow and retained failures. This does not certify
 arbitrary imported interfaces or grant engineering acceptance.
 
@@ -288,7 +288,7 @@ work is not replayed.
 
 In the working tab choose **Create or choose interface**. Enter **Interface
 title** and **How should this interface help the user?**, then **Create interface**.
-The [neutral reference instruction](../../examples/process-interfaces/reference-instruction.txt)
+The [neutral reference instruction](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/reference-instruction.txt)
 is a useful starting point. Ask for a comparison, dashboard or other layout that
 helps accomplish this particular job; no lifecycle is mandatory.
 
@@ -340,9 +340,9 @@ read-only entry does not qualify a replacement device capability.
 | Hosting | Wright workspace tabs and managed isolated surfaces; presentation-bound process bridge. |
 | Tool capabilities | Existing independent MCP providers and qualified operation contracts. |
 
-Use the [public client](../../packages/process_client/README.md),
-[UI kit](../../packages/ui_kit/README.md) and
-[runnable examples](../../examples/process-interfaces/README.md). Version-1
+Use the [public client](https://github.com/burhop/wright/blob/dev/packages/process_client/README.md),
+[UI kit](https://github.com/burhop/wright/blob/dev/packages/ui_kit/README.md) and
+[runnable examples](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/README.md). Version-1
 client/kit packages are currently private workspace/build resources, not published
 npm dependencies. The packaged authoring instructions, public API and reference
 template are in `workspace_service.process_interfaces.resources` and are shipped
@@ -385,7 +385,7 @@ native scoped client instead of copying credentials into generated source.
 | `GET /uis/{ui_id}/runtime-diagnostics` | Exact UI/revision/surface diagnostics, labelled live or reconciliation state. |
 | `POST /presentations/close` | Close only that view. |
 
-The [read-only inspection utility](../../examples/process-interfaces/inspect_interface.py)
+The [read-only inspection utility](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/inspect_interface.py)
 uses the first and third rows. Other operations should use Wright's controls and
 owning clients; their request schemas and capabilities remain authoritative.
 
@@ -400,7 +400,7 @@ The same mount exposes the native process client:
 | `POST /actions/{action_id}`, `/runs/{run_id}/cancel` | Existing permitted action or explicit cancellation; unknown outcomes are not replayed. |
 | `POST /representations/read`, `/navigation` | Exact hash-checked evidence and host navigation, without process mutation. |
 
-See the [versioned interaction contract](../../specs/083-process-working-interfaces/contracts/process-interaction.md)
+See the [versioned interaction contract](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/contracts/process-interaction.md)
 for body fields, limits, errors, presentation grants and currentness.
 
 ### Supplied artifacts and external actions
@@ -411,7 +411,7 @@ without regenerating them. Default behavior is preserved. Exact source/input/fil
 identity checks and existing approval/effect authority still apply. This setting
 does not make an input a tool-produced output, authorize a printer/supplier,
 or extend MCP-operation argument contracts. See the
-[runtime contract](../../specs/083-process-working-interfaces/contracts/runtime-and-source.md).
+[runtime contract](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/contracts/runtime-and-source.md).
 
 ### Longer external operations
 
@@ -427,7 +427,7 @@ observed completion, cancellation and unknown outcome remain distinct facts.
 Closing a view does not submit another job; an uncertain action is reconciled.
 This requires the provider's qualified observation capabilities and does not
 imply universal MCP Tasks or physical-device support. See the
-[operation contract](../../specs/083-process-working-interfaces/evidence/mcp-operations.md).
+[operation contract](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/mcp-operations.md).
 
 ## Locally verified proof environment
 
@@ -439,7 +439,7 @@ and choose **Open working view** (called **Use saved process** in the 4 October
 evidence). Existing local authentication/session setup is
 required. These temporary source-proof services are separate from the historical
 installed hosts below and may stop with their owned processes. See
-[current operator check](../../artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/checked-scope.json).
+[current operator check](https://github.com/burhop/wright/blob/dev/artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/checked-scope.json).
 
 The full printed demonstration retains mandatory human review and its ordinary
 builtin-write readiness limitation. Exact enrolled digital-test authority used
@@ -458,10 +458,10 @@ This source frontend enables `VITE_WRIGHT_WORKFLOW_RECOVERY`,
 `VITE_WRIGHT_WORKFLOW_COMPOSER` and `VITE_WRIGHT_PROCESS_DEFINITION_VIEW`, with
 its API proxy target explicitly set. Those build flags describe this checked
 environment, not an installed-release guarantee. Evidence:
-[workspace acceptance](../../specs/083-process-working-interfaces/evidence/workspace-acceptance.md),
-[heat proof](../../specs/083-process-working-interfaces/evidence/heat-proof.md),
-[wheel proof](../../specs/083-process-working-interfaces/evidence/printed-proof.md),
-and [installed scope](../../specs/083-process-working-interfaces/evidence/distribution.md).
+[workspace acceptance](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/workspace-acceptance.md),
+[heat proof](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/heat-proof.md),
+[wheel proof](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/printed-proof.md),
+and [installed scope](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/distribution.md).
 
 ### Fresh installed qualification, 2 October
 
@@ -478,8 +478,8 @@ with an existing authorized operator session. Its browser fixture supplies that
 session; this is not a new login mechanism or a weakening of native loopback
 bootstrap. Both environments are copied private qualification workspaces, with
 provider autostart disabled. They may stop with their owned services.
-See the [native report](../../artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/report.html)
-and [current Docker qualification record](../../specs/083-process-working-interfaces/evidence/installed-docker-reuse.md)
+See the [native report](https://github.com/burhop/wright/blob/dev/artifacts/process-interfaces/083/20261002-installed-native-workspace-009/workspace-walkthrough/report.html)
+and [current Docker qualification record](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/installed-docker-reuse.md)
 for exact build, capability limits and checked scope. These local candidate
 checks do not establish release, full engineering parity or human acceptance.
 
@@ -498,5 +498,5 @@ wording update. It verified reload and common fallback, plus a required output
 rename that visibly blocked the incompatible UI. Restoring the original source
 made the saved view compatible again. This API-driven proof does not establish a
 one-click import/rebuild picker or destination engineering execution. See the
-[illustrated record](../../artifacts/process-interfaces/083/20261010-portable-working-interface/index.html)
-and the [execution ledger](../../specs/083-process-working-interfaces/mechanical-engineering-execution.md).
+illustrated record (local evidence archive; see the retained execution record)
+and the [execution ledger](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/mechanical-engineering-execution.md).
