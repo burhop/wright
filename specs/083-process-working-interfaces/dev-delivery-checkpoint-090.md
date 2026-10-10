@@ -113,3 +113,13 @@ overrides. Changed versions and unrelated conflicts still fail. An additional
 image-level check verifies RSA JWT signing/verification and rejection of invalid
 signatures, expired tokens, wrong issuers and wrong audiences. These checks pass;
 the new bounded OS package build and complete gate remain pending.
+
+The corrected clean image from `2e3011906820` is
+`sha256:d0937408b6add3f54325fed71dedc85af3bfb03e361a75891ba37af3a5fdf19c`.
+Its vulnerability scan and offline API/Hermes/JWT smoke pass. Release/native
+coverage passes with 323 tests, nine skips and 85.42% coverage. The independent
+API suite passes 752 tests with one skip. Gate 05 again passes 391 control-plane
+tests and the release suite, then exposes the same independent-provider assumption
+in `test_public_python_distribution.py`. Both ownership checks are now corrected
+and their four focused tests pass. A complete merge-gate pass is still pending;
+the scanner-configuration approval remains pending and no publication has occurred.

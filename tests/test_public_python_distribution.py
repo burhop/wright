@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import configparser
 import tomllib
 
 
@@ -50,10 +51,20 @@ def test_one_public_distribution_carries_the_complete_native_application() -> No
 
 
 def test_all_workspace_component_distributions_remain_private() -> None:
+    # Initialized independent provider submodules are not Wright distributions.
+    submodules = configparser.ConfigParser()
+    submodules.read(ROOT / ".gitmodules", encoding="utf-8")
+    external_roots = {
+        ROOT / submodules[section]["path"] for section in submodules.sections()
+    }
     projects = [
         ROOT / "apps/api/pyproject.toml",
         ROOT / "hermes-plugin-wright/pyproject.toml",
-        *sorted((ROOT / "packages").glob("*/pyproject.toml")),
+        *sorted(
+            path
+            for path in (ROOT / "packages").glob("*/pyproject.toml")
+            if path.parent not in external_roots
+        ),
     ]
     observed = set()
     for path in projects:
